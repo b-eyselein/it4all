@@ -17,6 +17,13 @@ generates:
       - typescript-operations
       - typescript-apollo-angular
 
+  src/app/_services/apollo-mutation.service.ts:
+    documents: src/mutations.graphql
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-apollo-angular
+
   src/app/tools/collection-tools/sql/sql-apollo-service.ts:
     documents: src/app/tools/collection-tools/sql/sql-mutations.graphql
     plugins:
@@ -24,8 +31,8 @@ generates:
       - typescript-operations
       - typescript-apollo-angular
 
-  src/app/_services/apollo-mutation.service.ts:
-    documents: src/mutations.graphql
+  src/app/tools/collection-tools/xml/xml-apollo-service.ts:
+    documents: src/app/tools/collection-tools/xml/xml-mutations.graphql
     plugins:
       - typescript
       - typescript-operations

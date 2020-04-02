@@ -51,7 +51,12 @@ export abstract class ComponentWithExercise<SolutionType,
   protected correctAbstract(exId: number, collId: number, toolId: string, part: PartType, oldPart: ToolPart): void {
     this.isCorrecting = true;
 
-    const solution: SolutionType = this.getSolution();
+    const solution: SolutionType | undefined = this.getSolution();
+
+    if (!solution) {
+      alert('Ihre Lösung war nicht valide!');
+      return;
+    }
 
     const mutationQueryVars = {exId, collId, part, solution};
 
@@ -64,6 +69,7 @@ export abstract class ComponentWithExercise<SolutionType,
       .subscribe(({data}) => {
         this.resultQuery = data;
         this.activateCorrectionTab();
+        this.isCorrecting = false;
       });
   }
 
@@ -72,7 +78,7 @@ export abstract class ComponentWithExercise<SolutionType,
       .then((dbSol) => dbSol ? dbSol.solution : undefined);
   }
 
-  protected abstract getSolution(): SolutionType;
+  protected abstract getSolution(): SolutionType | undefined;
 
   protected abstract get sampleSolutions(): SolutionType[];
 

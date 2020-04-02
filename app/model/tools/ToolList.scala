@@ -17,7 +17,7 @@ object ToolList {
     NaryToolMain,
     ProgToolMain,
     RegexToolMain,
-    RoseToolMain,
+//    RoseToolMain,
     SqlToolMain,
     UmlToolMain,
     WebToolMain,

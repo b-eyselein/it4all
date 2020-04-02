@@ -13,7 +13,7 @@
         <it4all-tab [title]="'Aufgabenstellung'">
 
           <div class="notification is-light-grey">
-            <ng-container *ngIf="part.id === 'grammar'; else documentTextBlock">
+            <ng-container *ngIf="isGrammarPart; else documentTextBlock">
               <p class="has-text-weight-bold">Erstellen Sie eine DTD zu folgender Beschreibung:</p>
               <p>{{grammarDescription}}</p>
               <p class="is-italic has-text-info">
@@ -40,25 +40,26 @@
         </it4all-tab>
         <it4all-tab [title]="correctionTabTitle">
 
-          <ng-container *ngIf="result">
+          <ng-container *ngIf="resultQuery">
 
-            <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
+            <it4all-solution-saved [saved]="resultQuery.correctXml.solutionSaved"></it4all-solution-saved>
 
             <br>
 
-            <it4all-points-notification [points]="result.points" [maxPoints]="result.maxPoints" *ngIf="isGrammarPart">
+            <it4all-points-notification [points]="resultQuery.correctXml.points" [maxPoints]="resultQuery.correctXml.maxPoints" *ngIf="isGrammarPart">
             </it4all-points-notification>
 
             <br>
 
-            <ng-container *ngIf="result.documentResult.length > 0">
+            <ng-container *ngIf="documentResult.length > 0">
               <!-- Document correction! -->
-              <it4all-xml-document-correction [result]="result.documentResult"></it4all-xml-document-correction>
+              <it4all-xml-document-correction [result]="documentResult"></it4all-xml-document-correction>
             </ng-container>
-            <ng-container *ngIf="result.grammarResult">
+
+            <ng-container *ngIf="grammarResult">
               <!-- Grammar correction -->
 
-              <div *ngFor="let parseError of result.grammarResult.parseErrors">
+              <div *ngFor="let parseError of grammarResult.parseErrors">
                 <div>Fehler beim Parse von &quot;<code>{{parseError.parsedLine}}</code>&quot;:
                 </div>
                 <div class="has-text-danger">{{parseError.msg}}</div>

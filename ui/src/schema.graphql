@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Apr 01 2020 11:58:17 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Thu Apr 02 2020 10:43:19 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -15,16 +15,10 @@ type AdditionalComparison {
 }
 
 enum BinaryClassificationResultType {
-  TruePositive
-  FalsePositive
   FalseNegative
+  FalsePositive
   TrueNegative
-}
-
-type BinaryExpressionMatch {
-  matchType: MatchType!
-  userArg: String
-  sampleArg: String
+  TruePositive
 }
 
 type Collection {
@@ -38,18 +32,30 @@ type Collection {
   exercise(exId: Int!): Exercise
 }
 
-type ColumnMatch {
-  matchType: MatchType!
-  userArg: String
-  sampleArg: String
-}
-
 type DTDParseException {
   msg: String!
   parsedLine: String!
 }
 
-union ExContent = ProgExerciseContent | RegexExerciseContent | RoseExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
+type ElementLine {
+  todo: Int
+}
+
+type ElementLineAnalysisResult {
+  contentCorrect: Boolean!
+  correctContent: String!
+  attributesCorrect: Boolean!
+  correctAttributes: String!
+}
+
+type ElementLineMatch {
+  matchType: MatchType!
+  userArg: ElementLine
+  sampleArg: ElementLine
+  maybeAnalysisResult: ElementLineAnalysisResult
+}
+
+union ExContent = ProgExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
 
 type Exercise {
   id: Int!
@@ -79,21 +85,9 @@ input ExerciseFileInput {
   content: String!
 }
 
-type ExpressionListMatch {
-  matchType: MatchType!
-  userArg: String
-  sampleArg: String
-}
-
 type ExTag {
   abbreviation: String!
   title: String!
-}
-
-type GroupByMatch {
-  matchType: MatchType!
-  userArg: String
-  sampleArg: String
 }
 
 type HtmlTask {
@@ -119,10 +113,8 @@ type Lesson {
   description: String!
 }
 
-type LimitMatch {
-  matchType: MatchType!
-  userArg: String
-  sampleArg: String
+interface Match {
+  matchType: MatchType
 }
 
 interface MatchingResult {
@@ -131,17 +123,16 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_SAMPLE
-  ONLY_USER
   SUCCESSFUL_MATCH
+  ONLY_USER
   UNSUCCESSFUL_MATCH
+  ONLY_SAMPLE
   PARTIAL_MATCH
 }
 
 type Mutation {
   correctProgramming(collId: Int!, exId: Int!, part: ProgExPart!, solution: ProgSolutionInput!): ProgCompleteResult
   correctRegex(collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): AbstractRegexResult
-  correctRose(collId: Int!, exId: Int!, part: RoseExPart!, solution: String!): RoseCompleteResult
   correctSql(collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlAbstractResult
   correctUml(collId: Int!, exId: Int!, part: UmlExPart!, solution: UmlClassDiagramInput!): UmlCompleteResult
   correctWeb(collId: Int!, exId: Int!, part: WebExPart!, solution: [ExerciseFileInput!]!): WebCompleteResult
@@ -151,12 +142,6 @@ type Mutation {
 type NormalExecutionResult {
   success: SuccessType!
   logs: String!
-}
-
-type OrderByMatch {
-  matchType: MatchType!
-  userArg: String
-  sampleArg: String
 }
 
 type Points {
@@ -203,8 +188,8 @@ type Query {
 }
 
 enum RegexCorrectionType {
-  MATCHING
   EXTRACTION
+  MATCHING
 }
 
 type RegexExerciseContent {
@@ -219,6 +204,14 @@ enum RegexExPart {
   RegexSingleExPart
 }
 
+type RegexExtractedValuesComparisonMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  points: Points!
+  maxPoints: Points!
+  allMatches: [RegexMatchMatch!]!
+}
+
 type RegexExtractionResult implements AbstractCorrectionResult {
   solutionSaved: Boolean!
   extractionResults: [RegexExtractionSingleResult!]!
@@ -228,6 +221,7 @@ type RegexExtractionResult implements AbstractCorrectionResult {
 
 type RegexExtractionSingleResult {
   base: String!
+  extractionMatchingResult: RegexExtractedValuesComparisonMatchingResult!
   correct: Boolean!
 }
 
@@ -256,27 +250,16 @@ type RegexMatchingSingleResult {
   resultType: BinaryClassificationResultType!
 }
 
+type RegexMatchMatch implements Match {
+  matchType: MatchType
+  sampleArg: String
+  userArg: String
+}
+
 type RegexMatchTestData {
   id: Int!
   data: String!
   isIncluded: Boolean!
-}
-
-type RoseCompleteResult {
-  points: Points!
-  maxPoints: Points!
-  solutionSaved: Boolean!
-}
-
-type RoseExerciseContent {
-  fieldWidth: Int!
-  fieldHeight: Int!
-  isMultiplayer: Boolean!
-  sampleSolutions: [StringSampleSolution!]!
-}
-
-enum RoseExPart {
-  RoseSingleExPart
 }
 
 type SelectAdditionalComparisons {
@@ -305,7 +288,13 @@ type SqlBinaryExpressionComparisonMatchingResult implements MatchingResult {
   matchSingularName: String! @deprecated(reason: "Will be deleted")
   points: Points!
   maxPoints: Points!
-  allMatches: [BinaryExpressionMatch!]!
+  allMatches: [SqlBinaryExpressionMatch!]!
+}
+
+type SqlBinaryExpressionMatch implements Match {
+  matchType: MatchType
+  sampleArg: String
+  userArg: String
 }
 
 type SqlColumnComparisonMatchingResult implements MatchingResult {
@@ -313,7 +302,13 @@ type SqlColumnComparisonMatchingResult implements MatchingResult {
   matchSingularName: String! @deprecated(reason: "Will be deleted")
   points: Points!
   maxPoints: Points!
-  allMatches: [ColumnMatch!]!
+  allMatches: [SqlColumnMatch!]!
+}
+
+type SqlColumnMatch implements Match {
+  matchType: MatchType
+  sampleArg: String
+  userArg: String
 }
 
 type SqlExecutionResult {
@@ -327,11 +322,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  DELETE
   INSERT
   SELECT
   UPDATE
   CREATE
+  DELETE
 }
 
 enum SqlExPart {
@@ -343,7 +338,13 @@ type SqlGroupByComparisonMatchingResult implements MatchingResult {
   matchSingularName: String! @deprecated(reason: "Will be deleted")
   points: Points!
   maxPoints: Points!
-  allMatches: [GroupByMatch!]!
+  allMatches: [SqlGroupByMatch!]!
+}
+
+type SqlGroupByMatch implements Match {
+  matchType: MatchType
+  sampleArg: String
+  userArg: String
 }
 
 type SqlIllegalQueryResult implements AbstractCorrectionResult {
@@ -358,7 +359,13 @@ type SqlInsertComparisonMatchingResult implements MatchingResult {
   matchSingularName: String! @deprecated(reason: "Will be deleted")
   points: Points!
   maxPoints: Points!
-  allMatches: [ExpressionListMatch!]!
+  allMatches: [SqlInsertMatch!]!
+}
+
+type SqlInsertMatch implements Match {
+  matchType: MatchType
+  sampleArg: String
+  userArg: String
 }
 
 type SqlLimitComparisonMatchingResult implements MatchingResult {
@@ -366,7 +373,13 @@ type SqlLimitComparisonMatchingResult implements MatchingResult {
   matchSingularName: String! @deprecated(reason: "Will be deleted")
   points: Points!
   maxPoints: Points!
-  allMatches: [LimitMatch!]!
+  allMatches: [SqlLimitMatch!]!
+}
+
+type SqlLimitMatch implements Match {
+  matchType: MatchType
+  sampleArg: String
+  userArg: String
 }
 
 type SqlOrderByComparisonMatchingResult implements MatchingResult {
@@ -374,7 +387,13 @@ type SqlOrderByComparisonMatchingResult implements MatchingResult {
   matchSingularName: String! @deprecated(reason: "Will be deleted")
   points: Points!
   maxPoints: Points!
-  allMatches: [OrderByMatch!]!
+  allMatches: [SqlOrderByMatch!]!
+}
+
+type SqlOrderByMatch implements Match {
+  matchType: MatchType
+  sampleArg: String
+  userArg: String
 }
 
 type SqlQueriesStaticComparison {
@@ -398,7 +417,13 @@ type SqlTableComparisonMatchingResult implements MatchingResult {
   matchSingularName: String! @deprecated(reason: "Will be deleted")
   points: Points!
   maxPoints: Points!
-  allMatches: [TableMatch!]!
+  allMatches: [SqlTableMatch!]!
+}
+
+type SqlTableMatch implements Match {
+  matchType: MatchType
+  sampleArg: String
+  userArg: String
 }
 
 type SqlWrongQueryTypeResult implements AbstractCorrectionResult {
@@ -418,12 +443,6 @@ enum SuccessType {
   NONE
   PARTIALLY
   COMPLETE
-}
-
-type TableMatch {
-  matchType: MatchType!
-  userArg: String
-  sampleArg: String
 }
 
 type Tool {
@@ -649,6 +668,14 @@ type XmlCompleteResult {
   solutionSaved: Boolean!
 }
 
+type XmlElementLineComparisonMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  points: Points!
+  maxPoints: Points!
+  allMatches: [ElementLineMatch!]!
+}
+
 type XmlError {
   errorType: XmlErrorType!
   errorMessage: String!
@@ -675,6 +702,7 @@ enum XmlExPart {
 
 type XmlGrammarResult {
   parseErrors: [DTDParseException!]!
+  results: XmlElementLineComparisonMatchingResult!
 }
 
 type XmlSampleSolution {

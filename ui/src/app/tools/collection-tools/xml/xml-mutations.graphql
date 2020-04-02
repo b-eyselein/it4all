@@ -1,0 +1,41 @@
+mutation XmlCorrection($collId: Int!, $exId: Int!,$part: XmlExPart!, $solution: XmlSolutionInput!) {
+  correctXml(collId: $collId, exId: $exId,part: $part, solution: $solution) {
+    ...XmlCompleteResult
+  }
+}
+
+fragment XmlCompleteResult on XmlCompleteResult {
+  solutionSaved
+  successType
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+  grammarResult {
+    ...XmlGrammarResult
+  }
+  documentResult {
+    ...XmlError
+  }
+}
+
+fragment XmlGrammarResult on XmlGrammarResult {
+  parseErrors {
+    msg
+    parsedLine
+  }
+}
+
+fragment  XmlError on XmlError {
+  success
+  line
+  errorType
+  errorMessage
+}
+
+
+fragment Points on Points {
+  quarters
+}

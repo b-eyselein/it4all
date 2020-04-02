@@ -24,9 +24,6 @@
             "name": "RegexExerciseContent"
           },
           {
-            "name": "RoseExerciseContent"
-          },
-          {
             "name": "SqlExerciseContent"
           },
           {
@@ -80,24 +77,12 @@
         ]
       },
       {
-        "kind": "UNION",
-        "name": "SqlAbstractResult",
-        "possibleTypes": [
-          {
-            "name": "SqlIllegalQueryResult"
-          },
-          {
-            "name": "SqlWrongQueryTypeResult"
-          },
-          {
-            "name": "SqlResult"
-          }
-        ]
-      },
-      {
         "kind": "INTERFACE",
         "name": "MatchingResult",
         "possibleTypes": [
+          {
+            "name": "RegexExtractedValuesComparisonMatchingResult"
+          },
           {
             "name": "SqlColumnComparisonMatchingResult"
           },
@@ -118,6 +103,54 @@
           },
           {
             "name": "SqlInsertComparisonMatchingResult"
+          },
+          {
+            "name": "XmlElementLineComparisonMatchingResult"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "Match",
+        "possibleTypes": [
+          {
+            "name": "RegexMatchMatch"
+          },
+          {
+            "name": "SqlColumnMatch"
+          },
+          {
+            "name": "SqlTableMatch"
+          },
+          {
+            "name": "SqlBinaryExpressionMatch"
+          },
+          {
+            "name": "SqlGroupByMatch"
+          },
+          {
+            "name": "SqlOrderByMatch"
+          },
+          {
+            "name": "SqlLimitMatch"
+          },
+          {
+            "name": "SqlInsertMatch"
+          }
+        ]
+      },
+      {
+        "kind": "UNION",
+        "name": "SqlAbstractResult",
+        "possibleTypes": [
+          {
+            "name": "SqlIllegalQueryResult"
+          },
+          {
+            "name": "SqlWrongQueryTypeResult"
+          },
+          {
+            "name": "SqlResult"
           }
         ]
       }

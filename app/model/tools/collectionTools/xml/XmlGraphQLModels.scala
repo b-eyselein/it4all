@@ -1,6 +1,8 @@
 package model.tools.collectionTools.xml
 
+import de.uniwue.dtd.model.ElementLine
 import de.uniwue.dtd.parser.DTDParseException
+import model.core.matching.{MatchType, MatchingResult}
 import model.core.result.SuccessType
 import model.points.Points
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
@@ -35,13 +37,33 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSo
 
   private val dtdParseExceptionType: ObjectType[Unit, DTDParseException] = deriveObjectType()
 
+  private val elementLineType: ObjectType[Unit, ElementLine] = ObjectType(
+    "ElementLine",
+    fields[Unit, ElementLine](
+      Field("todo", OptionType(IntType), resolve = _ => None)
+    )
+  )
+  /* {
+    implicit val edt: ObjectType[Unit, ElementDefinition] = ???
+
+    deriveObjectType()
+  }
+   */
+
+  private val elementLineMatchType: ObjectType[Unit, ElementLineMatch] = {
+    implicit val mt: EnumType[MatchType]                           = matchTypeType
+    implicit val elt: ObjectType[Unit, ElementLine]                = elementLineType
+    implicit val elar: ObjectType[Unit, ElementLineAnalysisResult] = deriveObjectType()
+
+    deriveObjectType()
+  }
+
   private val xmlGrammarResultType: ObjectType[Unit, XmlGrammarResult] = {
     implicit val dpet: ObjectType[Unit, DTDParseException] = dtdParseExceptionType
+    implicit val elct: ObjectType[Unit, MatchingResult[ElementLine, ElementLineMatch]] =
+      matchingResultType[ElementLine, ElementLineMatch]("XmlElementLineComparison", elementLineMatchType)
 
-    deriveObjectType(
-      // TODO: include fields!
-      ExcludeFields("results")
-    )
+    deriveObjectType()
   }
 
   override val AbstractResultTypeType: OutputType[Any] = {

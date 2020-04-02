@@ -56,9 +56,30 @@ fragment RegexMatchingResult on RegexMatchingResult {
   }
 }
 
+fragment RegexExtractionMatch on RegexMatchMatch {
+  matchType
+  userArg
+  sampleArg
+}
+
+fragment ExtractionMatchingResult on RegexExtractedValuesComparisonMatchingResult {
+  allMatches {
+    ...RegexExtractionMatch
+  }
+  points {
+    ...Points
+  }
+  maxPoints {
+    ...Points
+  }
+}
+
 fragment RegexExtractionSingleResult on RegexExtractionSingleResult {
   base
   correct
+  extractionMatchingResult {
+    ...ExtractionMatchingResult
+  }
 }
 
 fragment RegexExtractionResult on RegexExtractionResult {
@@ -107,31 +128,6 @@ fragment WebCompleteResult on WebCompleteResult {
   }
   maxPoints {
     ...Points
-  }
-}
-
-# Xml
-
-mutation XmlCorrection($collId: Int!, $exId: Int!,$part: XmlExPart!, $solution: XmlSolutionInput!) {
-  correctXml(collId: $collId, exId: $exId,part: $part, solution: $solution) {
-    ...XmlCompleteResult
-  }
-}
-
-fragment XmlCompleteResult on XmlCompleteResult {
-  solutionSaved
-  successType
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
-  grammarResult {
-    __typename
-  }
-  documentResult {
-    __typename
   }
 }
 

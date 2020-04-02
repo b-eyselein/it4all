@@ -11,13 +11,10 @@ import {
   ExerciseSolveFieldsFragment,
   ProgExerciseContentSolveFieldsFragment
 } from "../../../../_services/apollo_services";
-import {
-  ProgCorrectionGQL,
-  ProgCorrectionMutation,
-  ProgCorrectionMutationVariables
-} from '../../../../_services/apollo-mutation.service';
+import {ProgCorrectionGQL, ProgCorrectionMutation} from '../../../../_services/apollo-mutation.service';
 
 import 'codemirror/mode/python/python';
+import {ProgExPart} from "../../sql/sql-apollo-service";
 
 @Component({
   selector: 'it4all-programming-exercise',
@@ -25,19 +22,19 @@ import 'codemirror/mode/python/python';
   styleUrls: ['./programming-exercise.component.sass']
 })
 export class ProgrammingExerciseComponent
-  extends ComponentWithExercise<IProgSolution, ProgCorrectionMutation, ProgCorrectionMutationVariables, ProgCorrectionGQL, ProgrammingCorrectionResult>
+  extends ComponentWithExercise<IProgSolution, ProgCorrectionMutation, ProgExPart, ProgCorrectionGQL, ProgrammingCorrectionResult>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: ProgExerciseContentSolveFieldsFragment;
 
   @Input() exercise: IExercise;
-  @Input() part: ToolPart;
+  @Input() oldPart: ToolPart;
 
   exerciseFiles: IExerciseFile[] = [];
 
-  constructor(apiService: ApiService, dexieService: DexieService) {
-    super(apiService, dexieService);
+  constructor(progCorrectionGQL: ProgCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
+    super(progCorrectionGQL, apiService, dexieService);
   }
 
   get sampleSolutionFilesList(): IExerciseFile[][] {
@@ -45,7 +42,7 @@ export class ProgrammingExerciseComponent
   }
 
   ngOnInit(): void {
-    this.exerciseFiles = (this.part === ProgrammingImplementationToolPart) ?
+    this.exerciseFiles = (this.oldPart === ProgrammingImplementationToolPart) ?
       this.exercise.content.implementationPart.files :
       this.exercise.content.unitTestPart.unitTestFiles;
 
@@ -76,7 +73,8 @@ export class ProgrammingExerciseComponent
   }
 
   correct(): void {
-    this.correctAbstract(this.exercise.id, this.exercise.collectionId, this.exercise.toolId, this.part);
+    const part: ProgExPart = false ? null : null;
+    this.correctAbstract(this.exercise.id, this.exercise.collectionId, this.exercise.toolId, part, this.oldPart);
   }
 
 }

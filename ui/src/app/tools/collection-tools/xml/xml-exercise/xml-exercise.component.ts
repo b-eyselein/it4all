@@ -9,14 +9,16 @@ import {
   ExerciseSolveFieldsFragment,
   XmlExerciseContentSolveFieldsFragment
 } from "../../../../_services/apollo_services";
-import {
-  XmlCorrectionGQL,
-  XmlCorrectionMutation,
-  XmlCorrectionMutationVariables
-} from '../../../../_services/apollo-mutation.service';
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
+import {XmlExPart} from "../../sql/sql-apollo-service";
+import {
+  XmlCorrectionGQL,
+  XmlCorrectionMutation,
+  XmlErrorFragment,
+  XmlGrammarResultFragment
+} from "../xml-apollo-service";
 
 function getXmlGrammarContent(rootNode: string): string {
   return `<!ELEMENT ${rootNode} (EMPTY)>`;
@@ -35,10 +37,10 @@ function getXmlDocumentContent(rootNode: string): string {
   templateUrl: './xml-exercise.component.html'
 })
 export class XmlExerciseComponent
-  extends ComponentWithExercise<IXmlSolution, XmlCorrectionMutation, XmlCorrectionMutationVariables, XmlCorrectionGQL, IXmlCompleteResult>
+  extends ComponentWithExercise<IXmlSolution, XmlCorrectionMutation, XmlExPart, XmlCorrectionGQL, IXmlCompleteResult>
   implements OnInit {
 
-  @Input() part: ToolPart;
+  @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() xmlExerciseContent: XmlExerciseContentSolveFieldsFragment;
 
@@ -49,14 +51,14 @@ export class XmlExerciseComponent
 
   exerciseFiles: ExerciseFile[] = [];
 
-  constructor(apiService: ApiService, dexieService: DexieService) {
-    super(apiService, dexieService);
+  constructor(xmlCorrectionGQL: XmlCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
+    super(xmlCorrectionGQL, apiService, dexieService);
   }
 
   ngOnInit() {
     const rootNode = this.xmlExerciseContent.rootNode;
 
-    this.isGrammarPart = this.part.id === 'grammar';
+    this.isGrammarPart = this.oldPart.id === 'grammar';
 
     const grammarFileName = `${rootNode}.dtd`;
     this.grammarFile = {
@@ -78,7 +80,7 @@ export class XmlExerciseComponent
 
     this.exerciseFiles = [this.grammarFile, this.documentFile];
 
-    this.loadOldSolutionAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part)
+    this.loadOldSolutionAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.oldPart)
       .then((oldSol) => {
         if (oldSol) {
           this.grammarFile.content = oldSol.grammar;
@@ -91,7 +93,9 @@ export class XmlExerciseComponent
   }
 
   correct(): void {
-    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part);
+    const part: XmlExPart = this.isGrammarPart ? XmlExPart.GrammarCreationXmlPart : XmlExPart.DocumentCreationXmlPart;
+
+    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, part, this.oldPart);
   }
 
   protected getSolution(): IXmlSolution {
@@ -107,6 +111,14 @@ export class XmlExerciseComponent
 
   get grammarDescription(): string {
     return this.xmlExerciseContent.grammarDescription;
+  }
+
+  get grammarResult(): XmlGrammarResultFragment | null {
+    return this.resultQuery?.correctXml.grammarResult;
+  }
+
+  get documentResult(): XmlErrorFragment[] | null {
+    return this.resultQuery?.correctXml.documentResult;
   }
 
 }

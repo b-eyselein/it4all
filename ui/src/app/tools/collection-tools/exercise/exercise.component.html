@@ -5,42 +5,42 @@
     [exercise]="exercise"
     [exerciseFragment]="exerciseQuery.tool.collection.exercise"
     [contentFragment]="progExerciseContent"
-    [part]="part">
+    [oldPart]="oldPart">
   </it4all-programming-exercise>
 
   <it4all-regex-exercise
     *ngIf="regexExerciseContent"
     [exerciseFragment]="exerciseQuery.tool.collection.exercise"
     [regexExerciseContent]="regexExerciseContent"
-    [oldPart]="part">
+    [oldPart]="oldPart">
   </it4all-regex-exercise>
 
   <it4all-sql-exercise
     *ngIf="sqlExerciseContent"
     [exerciseFragment]="exerciseQuery.tool.collection.exercise"
     [sqlExerciseContent]="sqlExerciseContent"
-    [oldPart]="part">
+    [oldPart]="oldPart">
   </it4all-sql-exercise>
 
   <it4all-uml-exercise
     *ngIf="umlExerciseContent"
     [exerciseFragment]="exerciseQuery.tool.collection.exercise"
     [umlExerciseContent]="umlExerciseContent"
-    [part]="part">
+    [part]="oldPart">
   </it4all-uml-exercise>
 
   <it4all-web-exercise
     *ngIf="webExerciseContent"
     [exerciseFragment]="exerciseQuery.tool.collection.exercise"
     [webExerciseContent]="webExerciseContent"
-    [part]="part">
+    [part]="oldPart">
   </it4all-web-exercise>
 
   <it4all-xml-exercise
     *ngIf="xmlExerciseContent"
     [exerciseFragment]="exerciseQuery.tool.collection.exercise"
     [xmlExerciseContent]="xmlExerciseContent"
-    [part]="part">
+    [oldPart]="oldPart">
   </it4all-xml-exercise>
 
 </ng-container>

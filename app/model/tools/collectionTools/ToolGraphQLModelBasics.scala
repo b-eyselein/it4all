@@ -6,6 +6,8 @@ import model.points.Points
 import sangria.macros.derive._
 import sangria.schema._
 
+import scala.reflect.ClassTag
+
 trait ToolGraphQLModelBasics[
   ExContentType <: ExerciseContent,
   SolType,
@@ -59,10 +61,23 @@ trait ToolGraphQLModelBasics[
     "Match",
     () =>
       fields(
-        Field("matchType", OptionType(matchTypeType), resolve = _.value.matchType),
+        Field("matchType", OptionType(matchTypeType), resolve = _.value.matchType)
         // Field("sampleArg", OptionType(StringType), resolve = _.value.sampleArgDescription),
         // Field("userArg", OptionType(StringType), resolve = _.value.userArgDescription)
       )
+  )
+
+  protected def buildStringMatchTypeType[T, M <: Match[T]](
+    name: String,
+    argDescription: T => String = (x: T) => x.toString
+  )(implicit _x: ClassTag[M]): ObjectType[Unit, M] = ObjectType(
+    name,
+    interfaces[Unit, M](matchInterface[T, M]),
+    fields[Unit, M](
+      Field("matchType", OptionType(matchTypeType), resolve = _.value.matchType),
+      Field("sampleArg", OptionType(StringType), resolve = _.value.sampleArg.map(argDescription)),
+      Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(argDescription))
+    )
   )
 
   protected def matchingResultType[T, M <: Match[T]](

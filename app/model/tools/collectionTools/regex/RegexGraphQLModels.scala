@@ -1,9 +1,12 @@
 package model.tools.collectionTools.regex
 
 import model.points.Points
+import model.tools.collectionTools.regex.RegexToolMain.ExtractedValuesComparison
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.{ExcludeFields, Interfaces, deriveEnumType, deriveObjectType}
+import sangria.macros.derive.{Interfaces, deriveEnumType, deriveObjectType}
 import sangria.schema._
+
+import scala.util.matching.Regex.{Match => RegexMatch}
 
 object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, String, RegexExPart] {
 
@@ -36,14 +39,14 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, S
     deriveObjectType()
   }
 
-  private val regexExtractionEvaluationResultType: ObjectType[Unit, RegexExtractionSingleResult] = {
+  private val regexMatchMatchType: ObjectType[Unit, RegexMatchMatch] =
+    buildStringMatchTypeType("RegexMatchMatch", argDescription = (m: RegexMatch) => m.group(0))
 
-    deriveObjectType(
-      // FIXME: do not exclude fields anymore!
-      ExcludeFields(
-        "extractionMatchingResult"
-      )
-    )
+  private val regexExtractionEvaluationResultType: ObjectType[Unit, RegexExtractionSingleResult] = {
+    implicit val extractedValuesComparisonType: ObjectType[Unit, ExtractedValuesComparison] =
+      matchingResultType("RegexExtractedValuesComparison", regexMatchMatchType)
+
+    deriveObjectType()
   }
 
   private val regexIllegalRegexResultType: ObjectType[Unit, RegexIllegalRegexResult] = {

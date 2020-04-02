@@ -1,15 +1,20 @@
 package model.tools.collectionTools.sql
 
+import model.core.matching.MatchType
 import model.points.Points
 import model.tools.collectionTools.sql.SqlToolMain._
 import model.tools.collectionTools.sql.matcher._
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList
+import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
+import net.sf.jsqlparser.schema.Table
+import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 import sangria.macros.derive._
 import sangria.schema._
 
 object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, String, SqlExPart] {
 
-  private implicit val mtt = matchTypeType
+  private implicit val mtt: EnumType[MatchType] = matchTypeType
 
   override val ExContentTypeType: ObjectType[Unit, SqlExerciseContent] = {
     implicit val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
@@ -25,40 +30,26 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
 
   // Result types
 
-  private val columnMatchType: ObjectType[Unit, ColumnMatch] = deriveObjectType(
-    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.getColName))),
-    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.getColName)))
-  )
+  private val columnMatchType: ObjectType[Unit, ColumnMatch] =
+    buildStringMatchTypeType[ColumnWrapper, ColumnMatch]("SqlColumnMatch", _.getColName)
 
-  private val tableMatchType: ObjectType[Unit, TableMatch] = deriveObjectType(
-    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.getName))),
-    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.getName)))
-  )
+  private val tableMatchType: ObjectType[Unit, TableMatch] =
+    buildStringMatchTypeType[Table, TableMatch]("SqlTableMatch", _.getName)
 
-  private val binaryExpressionMatchType: ObjectType[Unit, BinaryExpressionMatch] = deriveObjectType(
-    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString))),
-    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString)))
-  )
+  private val binaryExpressionMatchType: ObjectType[Unit, BinaryExpressionMatch] =
+    buildStringMatchTypeType[BinaryExpression, BinaryExpressionMatch]("SqlBinaryExpressionMatch")
 
-  private val groupByMatchType: ObjectType[Unit, GroupByMatch] = deriveObjectType(
-    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString))),
-    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString)))
-  )
+  private val groupByMatchType: ObjectType[Unit, GroupByMatch] =
+    buildStringMatchTypeType[Expression, GroupByMatch]("SqlGroupByMatch")
 
-  private val orderByMatchType: ObjectType[Unit, OrderByMatch] = deriveObjectType(
-    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString))),
-    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString)))
-  )
+  private val orderByMatchType: ObjectType[Unit, OrderByMatch] =
+    buildStringMatchTypeType[OrderByElement, OrderByMatch]("SqlOrderByMatch")
 
-  private val limitMatchType: ObjectType[Unit, LimitMatch] = deriveObjectType(
-    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString))),
-    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString)))
-  )
+  private val limitMatchType: ObjectType[Unit, LimitMatch] =
+    buildStringMatchTypeType[Limit, LimitMatch]("SqlLimitMatch")
 
-  private val insertMatchType: ObjectType[Unit, ExpressionListMatch] = deriveObjectType(
-    ReplaceField("userArg", Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString))),
-    ReplaceField("sampleArg", Field("sampleArg", OptionType(StringType), resolve = _.value.userArg.map(_.toString)))
-  )
+  private val insertMatchType: ObjectType[Unit, ExpressionListMatch] =
+    buildStringMatchTypeType[ExpressionList, ExpressionListMatch]("SqlInsertMatch")
 
   private val sqlSelectAdditionalComparisons: ObjectType[Unit, SelectAdditionalComparisons] = {
     implicit val gbmt: ObjectType[Unit, GroupByComparison] =

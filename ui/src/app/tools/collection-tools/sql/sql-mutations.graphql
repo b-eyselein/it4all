@@ -30,7 +30,7 @@ fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
 
 # Column comparison
 
-fragment ColumnMatch on ColumnMatch {
+fragment ColumnMatch on SqlColumnMatch {
   matchType
   userArg
   sampleArg
@@ -50,7 +50,7 @@ fragment ColumnComparison on SqlColumnComparisonMatchingResult {
 
 # Table comparison
 
-fragment TableMatch on TableMatch {
+fragment TableMatch on SqlTableMatch {
   matchType
   userArg
   sampleArg
@@ -70,7 +70,7 @@ fragment TableComparison on SqlTableComparisonMatchingResult {
 
 # JoinExpression / Where Comparison
 
-fragment BinaryExpressionMatch on BinaryExpressionMatch {
+fragment BinaryExpressionMatch on SqlBinaryExpressionMatch {
   matchType
   userArg
   sampleArg
@@ -90,7 +90,7 @@ fragment BinaryExpressionComparison on SqlBinaryExpressionComparisonMatchingResu
 
 # Insert comparison
 
-fragment InsertMatch on ExpressionListMatch {
+fragment InsertMatch on SqlInsertMatch {
   matchType
   userArg
   sampleArg
@@ -110,7 +110,7 @@ fragment InsertComparison on SqlInsertComparisonMatchingResult {
 
 # Group by comparison
 
-fragment GroupByMatch on GroupByMatch {
+fragment GroupByMatch on SqlGroupByMatch {
   matchType
   sampleArg
   userArg
@@ -130,7 +130,7 @@ fragment  GroupByComparison on SqlGroupByComparisonMatchingResult {
 
 # Order By comparison
 
-fragment OrderByMatch on OrderByMatch {
+fragment OrderByMatch on SqlOrderByMatch {
   matchType
   sampleArg
   userArg
@@ -150,7 +150,7 @@ fragment OrderByComparison on SqlOrderByComparisonMatchingResult {
 
 # Limit comparison
 
-fragment LimitMatch on LimitMatch {
+fragment LimitMatch on SqlLimitMatch {
   matchType
   sampleArg
   userArg

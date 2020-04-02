@@ -26,7 +26,7 @@ export class ExerciseComponent implements OnInit {
 
   exercise: IExercise;
 
-  part: ToolPart;
+  oldPart: ToolPart;
 
   constructor(
     private route: ActivatedRoute,
@@ -36,7 +36,7 @@ export class ExerciseComponent implements OnInit {
   ) {
     this.route.paramMap.subscribe((paramMap) => {
       this.tool = collectionTools.find((t) => t.id === paramMap.get('toolId'));
-      this.part = this.tool.parts.find((p) => p.id === paramMap.get('partId'));
+      this.oldPart = this.tool.parts.find((p) => p.id === paramMap.get('partId'));
 
       this.collectionId = parseInt(paramMap.get('collId'), 10);
       this.exerciseId = parseInt(paramMap.get('exId'), 10);

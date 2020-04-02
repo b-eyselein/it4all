@@ -902,233 +902,51 @@ export type XmlSolutionInput = {
   grammar: Scalars['String'];
 };
 
-export type SqlCorrectionMutationVariables = {
+export type XmlCorrectionMutationVariables = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
-  part: SqlExPart;
-  solution: Scalars['String'];
+  part: XmlExPart;
+  solution: XmlSolutionInput;
 };
 
 
-export type SqlCorrectionMutation = (
+export type XmlCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctSql?: Maybe<(
-    { __typename?: 'SqlIllegalQueryResult' }
-    & SqlIllegalQueryResultFragment
-  ) | (
-    { __typename?: 'SqlWrongQueryTypeResult' }
-    & SqlWrongQueryTypeResultFragment
-  ) | (
-    { __typename?: 'SqlResult' }
-    & SqlResultFragment
+  & { correctXml?: Maybe<(
+    { __typename?: 'XmlCompleteResult' }
+    & XmlCompleteResultFragment
   )> }
 );
 
-export type SqlIllegalQueryResultFragment = (
-  { __typename?: 'SqlIllegalQueryResult' }
-  & Pick<SqlIllegalQueryResult, 'solutionSaved' | 'message'>
+export type XmlCompleteResultFragment = (
+  { __typename?: 'XmlCompleteResult' }
+  & Pick<XmlCompleteResult, 'solutionSaved' | 'successType'>
   & { points: (
     { __typename?: 'Points' }
     & PointsFragment
   ), maxPoints: (
     { __typename?: 'Points' }
     & PointsFragment
-  ) }
+  ), grammarResult?: Maybe<(
+    { __typename?: 'XmlGrammarResult' }
+    & XmlGrammarResultFragment
+  )>, documentResult: Array<(
+    { __typename?: 'XmlError' }
+    & XmlErrorFragment
+  )> }
 );
 
-export type SqlWrongQueryTypeResultFragment = (
-  { __typename?: 'SqlWrongQueryTypeResult' }
-  & Pick<SqlWrongQueryTypeResult, 'solutionSaved' | 'message'>
-  & { points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+export type XmlGrammarResultFragment = (
+  { __typename?: 'XmlGrammarResult' }
+  & { parseErrors: Array<(
+    { __typename?: 'DTDParseException' }
+    & Pick<DtdParseException, 'msg' | 'parsedLine'>
+  )> }
 );
 
-export type ColumnMatchFragment = (
-  { __typename?: 'SqlColumnMatch' }
-  & Pick<SqlColumnMatch, 'matchType' | 'userArg' | 'sampleArg'>
-);
-
-export type ColumnComparisonFragment = (
-  { __typename?: 'SqlColumnComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlColumnMatch' }
-    & ColumnMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
-);
-
-export type TableMatchFragment = (
-  { __typename?: 'SqlTableMatch' }
-  & Pick<SqlTableMatch, 'matchType' | 'userArg' | 'sampleArg'>
-);
-
-export type TableComparisonFragment = (
-  { __typename?: 'SqlTableComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlTableMatch' }
-    & TableMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
-);
-
-export type BinaryExpressionMatchFragment = (
-  { __typename?: 'SqlBinaryExpressionMatch' }
-  & Pick<SqlBinaryExpressionMatch, 'matchType' | 'userArg' | 'sampleArg'>
-);
-
-export type BinaryExpressionComparisonFragment = (
-  { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlBinaryExpressionMatch' }
-    & BinaryExpressionMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
-);
-
-export type InsertMatchFragment = (
-  { __typename?: 'SqlInsertMatch' }
-  & Pick<SqlInsertMatch, 'matchType' | 'userArg' | 'sampleArg'>
-);
-
-export type InsertComparisonFragment = (
-  { __typename?: 'SqlInsertComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlInsertMatch' }
-    & InsertMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
-);
-
-export type GroupByMatchFragment = (
-  { __typename?: 'SqlGroupByMatch' }
-  & Pick<SqlGroupByMatch, 'matchType' | 'sampleArg' | 'userArg'>
-);
-
-export type GroupByComparisonFragment = (
-  { __typename?: 'SqlGroupByComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlGroupByMatch' }
-    & GroupByMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
-);
-
-export type OrderByMatchFragment = (
-  { __typename?: 'SqlOrderByMatch' }
-  & Pick<SqlOrderByMatch, 'matchType' | 'sampleArg' | 'userArg'>
-);
-
-export type OrderByComparisonFragment = (
-  { __typename?: 'SqlOrderByComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlOrderByMatch' }
-    & OrderByMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
-);
-
-export type LimitMatchFragment = (
-  { __typename?: 'SqlLimitMatch' }
-  & Pick<SqlLimitMatch, 'matchType' | 'sampleArg' | 'userArg'>
-);
-
-export type LimitComparisonFragment = (
-  { __typename?: 'SqlLimitComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlLimitMatch' }
-    & LimitMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
-);
-
-export type SelectAdditionalComparisonFragment = (
-  { __typename?: 'SelectAdditionalComparisons' }
-  & { groupByComparison: (
-    { __typename?: 'SqlGroupByComparisonMatchingResult' }
-    & GroupByComparisonFragment
-  ), orderByComparison: (
-    { __typename?: 'SqlOrderByComparisonMatchingResult' }
-    & OrderByComparisonFragment
-  ), limitComparison: (
-    { __typename?: 'SqlLimitComparisonMatchingResult' }
-    & LimitComparisonFragment
-  ) }
-);
-
-export type SqlResultFragment = (
-  { __typename?: 'SqlResult' }
-  & Pick<SqlResult, 'solutionSaved'>
-  & { staticComparison: (
-    { __typename?: 'SqlQueriesStaticComparison' }
-    & { columnComparison: (
-      { __typename?: 'SqlColumnComparisonMatchingResult' }
-      & ColumnComparisonFragment
-    ), tableComparison: (
-      { __typename?: 'SqlTableComparisonMatchingResult' }
-      & TableComparisonFragment
-    ), joinExpressionComparison: (
-      { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-      & BinaryExpressionComparisonFragment
-    ), whereComparison: (
-      { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-      & BinaryExpressionComparisonFragment
-    ), additionalComparisons: (
-      { __typename?: 'AdditionalComparison' }
-      & { selectComparisons?: Maybe<(
-        { __typename?: 'SelectAdditionalComparisons' }
-        & SelectAdditionalComparisonFragment
-      )>, insertComparison?: Maybe<(
-        { __typename?: 'SqlInsertComparisonMatchingResult' }
-        & InsertComparisonFragment
-      )> }
-    ) }
-  ), executionResult: { __typename: 'SqlExecutionResult' }, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+export type XmlErrorFragment = (
+  { __typename?: 'XmlError' }
+  & Pick<XmlError, 'success' | 'line' | 'errorType' | 'errorMessage'>
 );
 
 export type PointsFragment = (
@@ -1141,249 +959,54 @@ export const PointsFragmentDoc = gql`
   quarters
 }
     `;
-export const SqlIllegalQueryResultFragmentDoc = gql`
-    fragment SqlIllegalQueryResult on SqlIllegalQueryResult {
+export const XmlGrammarResultFragmentDoc = gql`
+    fragment XmlGrammarResult on XmlGrammarResult {
+  parseErrors {
+    msg
+    parsedLine
+  }
+}
+    `;
+export const XmlErrorFragmentDoc = gql`
+    fragment XmlError on XmlError {
+  success
+  line
+  errorType
+  errorMessage
+}
+    `;
+export const XmlCompleteResultFragmentDoc = gql`
+    fragment XmlCompleteResult on XmlCompleteResult {
   solutionSaved
-  message
+  successType
   points {
     ...Points
   }
   maxPoints {
     ...Points
   }
-}
-    ${PointsFragmentDoc}`;
-export const SqlWrongQueryTypeResultFragmentDoc = gql`
-    fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
-  solutionSaved
-  message
-  points {
-    ...Points
+  grammarResult {
+    ...XmlGrammarResult
   }
-  maxPoints {
-    ...Points
+  documentResult {
+    ...XmlError
   }
 }
-    ${PointsFragmentDoc}`;
-export const ColumnMatchFragmentDoc = gql`
-    fragment ColumnMatch on SqlColumnMatch {
-  matchType
-  userArg
-  sampleArg
-}
-    `;
-export const ColumnComparisonFragmentDoc = gql`
-    fragment ColumnComparison on SqlColumnComparisonMatchingResult {
-  allMatches {
-    ...ColumnMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
+    ${PointsFragmentDoc}
+${XmlGrammarResultFragmentDoc}
+${XmlErrorFragmentDoc}`;
+export const XmlCorrectionDocument = gql`
+    mutation XmlCorrection($collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
+  correctXml(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+    ...XmlCompleteResult
   }
 }
-    ${ColumnMatchFragmentDoc}
-${PointsFragmentDoc}`;
-export const TableMatchFragmentDoc = gql`
-    fragment TableMatch on SqlTableMatch {
-  matchType
-  userArg
-  sampleArg
-}
-    `;
-export const TableComparisonFragmentDoc = gql`
-    fragment TableComparison on SqlTableComparisonMatchingResult {
-  allMatches {
-    ...TableMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
-}
-    ${TableMatchFragmentDoc}
-${PointsFragmentDoc}`;
-export const BinaryExpressionMatchFragmentDoc = gql`
-    fragment BinaryExpressionMatch on SqlBinaryExpressionMatch {
-  matchType
-  userArg
-  sampleArg
-}
-    `;
-export const BinaryExpressionComparisonFragmentDoc = gql`
-    fragment BinaryExpressionComparison on SqlBinaryExpressionComparisonMatchingResult {
-  allMatches {
-    ...BinaryExpressionMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
-}
-    ${BinaryExpressionMatchFragmentDoc}
-${PointsFragmentDoc}`;
-export const GroupByMatchFragmentDoc = gql`
-    fragment GroupByMatch on SqlGroupByMatch {
-  matchType
-  sampleArg
-  userArg
-}
-    `;
-export const GroupByComparisonFragmentDoc = gql`
-    fragment GroupByComparison on SqlGroupByComparisonMatchingResult {
-  allMatches {
-    ...GroupByMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
-}
-    ${GroupByMatchFragmentDoc}
-${PointsFragmentDoc}`;
-export const OrderByMatchFragmentDoc = gql`
-    fragment OrderByMatch on SqlOrderByMatch {
-  matchType
-  sampleArg
-  userArg
-}
-    `;
-export const OrderByComparisonFragmentDoc = gql`
-    fragment OrderByComparison on SqlOrderByComparisonMatchingResult {
-  allMatches {
-    ...OrderByMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
-}
-    ${OrderByMatchFragmentDoc}
-${PointsFragmentDoc}`;
-export const LimitMatchFragmentDoc = gql`
-    fragment LimitMatch on SqlLimitMatch {
-  matchType
-  sampleArg
-  userArg
-}
-    `;
-export const LimitComparisonFragmentDoc = gql`
-    fragment LimitComparison on SqlLimitComparisonMatchingResult {
-  allMatches {
-    ...LimitMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
-}
-    ${LimitMatchFragmentDoc}
-${PointsFragmentDoc}`;
-export const SelectAdditionalComparisonFragmentDoc = gql`
-    fragment SelectAdditionalComparison on SelectAdditionalComparisons {
-  groupByComparison {
-    ...GroupByComparison
-  }
-  orderByComparison {
-    ...OrderByComparison
-  }
-  limitComparison {
-    ...LimitComparison
-  }
-}
-    ${GroupByComparisonFragmentDoc}
-${OrderByComparisonFragmentDoc}
-${LimitComparisonFragmentDoc}`;
-export const InsertMatchFragmentDoc = gql`
-    fragment InsertMatch on SqlInsertMatch {
-  matchType
-  userArg
-  sampleArg
-}
-    `;
-export const InsertComparisonFragmentDoc = gql`
-    fragment InsertComparison on SqlInsertComparisonMatchingResult {
-  allMatches {
-    ...InsertMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
-}
-    ${InsertMatchFragmentDoc}
-${PointsFragmentDoc}`;
-export const SqlResultFragmentDoc = gql`
-    fragment SqlResult on SqlResult {
-  solutionSaved
-  staticComparison {
-    columnComparison {
-      ...ColumnComparison
-    }
-    tableComparison {
-      ...TableComparison
-    }
-    joinExpressionComparison {
-      ...BinaryExpressionComparison
-    }
-    whereComparison {
-      ...BinaryExpressionComparison
-    }
-    additionalComparisons {
-      selectComparisons {
-        ...SelectAdditionalComparison
-      }
-      insertComparison {
-        ...InsertComparison
-      }
-    }
-  }
-  executionResult {
-    __typename
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
-}
-    ${ColumnComparisonFragmentDoc}
-${TableComparisonFragmentDoc}
-${BinaryExpressionComparisonFragmentDoc}
-${SelectAdditionalComparisonFragmentDoc}
-${InsertComparisonFragmentDoc}
-${PointsFragmentDoc}`;
-export const SqlCorrectionDocument = gql`
-    mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
-  correctSql(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...SqlIllegalQueryResult
-    ...SqlWrongQueryTypeResult
-    ...SqlResult
-  }
-}
-    ${SqlIllegalQueryResultFragmentDoc}
-${SqlWrongQueryTypeResultFragmentDoc}
-${SqlResultFragmentDoc}`;
+    ${XmlCompleteResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
   })
-  export class SqlCorrectionGQL extends Apollo.Mutation<SqlCorrectionMutation, SqlCorrectionMutationVariables> {
-    document = SqlCorrectionDocument;
+  export class XmlCorrectionGQL extends Apollo.Mutation<XmlCorrectionMutation, XmlCorrectionMutationVariables> {
+    document = XmlCorrectionDocument;
     
   }

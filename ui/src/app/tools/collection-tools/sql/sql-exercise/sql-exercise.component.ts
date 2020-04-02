@@ -6,7 +6,10 @@ import {DbSolution} from '../../../../_interfaces/exercise';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ISqlQueryResult} from '../sql-interfaces';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {ExerciseSolveFieldsFragment, SqlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {
+  ExerciseSolveFieldsFragment,
+  SqlExerciseContentSolveFieldsFragment
+} from '../../../../_services/apollo_services';
 import {SqlExPart} from '../../../../_services/apollo-mutation.service';
 import {
   SqlCorrectionGQL,
@@ -52,8 +55,8 @@ export class SqlExerciseComponent
       .then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');
   }
 
-  protected getSolution(): string {
-    return this.solution;
+  protected getSolution(): string | undefined {
+    return this.solution.length > 0 ? this.solution : undefined;
   }
 
   get sampleSolutions(): string[] {

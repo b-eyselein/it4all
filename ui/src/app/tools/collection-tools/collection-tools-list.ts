@@ -12,7 +12,7 @@ import {UmlTool} from './uml/uml-tools';
 export const collectionTools: CollectionTool[] = [
   ProgrammingTool,
   RegexTool,
-  RoseTool,
+  // RoseTool,
   SqlTool,
   UmlTool,
   WebTool,
