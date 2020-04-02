@@ -1,5 +1,4 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {IMatchingResult} from '../../sql-interfaces';
 import {MatchingResult} from '../../../../../_services/apollo-mutation.service';
 
 @Component({

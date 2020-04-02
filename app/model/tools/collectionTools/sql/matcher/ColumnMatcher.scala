@@ -10,6 +10,8 @@ final case class ColumnMatch(
   sampleArg: Option[ColumnWrapper]
 ) extends Match[ColumnWrapper] {
 
+  override protected def argDescription: ColumnWrapper => String = _.getColName
+
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
   override def maxPoints: Points = sampleArg match {

@@ -51,32 +51,31 @@ trait ToolGraphQLModelBasics[
     "MatchingResult",
     () =>
       fields(
-//        Field("allMatches", ListType(matchInterface[T, M]), resolve = _.value.allMatches),
-        Field("points", pointsType, resolve = _.value.points),
-        Field("maxPoints", pointsType, resolve = _.value.maxPoints)
+        Field("matchName", StringType, resolve = _.value.matchName),
+        Field("matchSingularName", StringType, resolve = _.value.matchSingularName),
+        Field("points", FloatType, resolve = _.value.points.asDouble),
+        Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble),
+        Field("allMatches", ListType(newMatchInterface), resolve = _.value.allMatches)
       )
   )
 
-  protected def matchInterface[T, M <: Match[T]]: InterfaceType[Unit, M] = InterfaceType(
-    "Match",
-    () =>
-      fields(
-        Field("matchType", OptionType(matchTypeType), resolve = _.value.matchType)
-        // Field("sampleArg", OptionType(StringType), resolve = _.value.sampleArgDescription),
-        // Field("userArg", OptionType(StringType), resolve = _.value.userArgDescription)
-      )
+  protected val newMatchInterface: InterfaceType[Unit, Match[_]] = InterfaceType(
+    "NewMatch",
+    fields[Unit, Match[_]](
+      Field("matchType", matchTypeType, resolve = _.value.matchType),
+      Field("userArgDescription", OptionType(StringType), resolve = _.value.userArgDescription),
+      Field("sampleArgDescription", OptionType(StringType), resolve = _.value.sampleArgDescription)
+    )
   )
 
-  protected def buildStringMatchTypeType[T, M <: Match[T]](
-    name: String,
-    argDescription: T => String = (x: T) => x.toString
-  )(implicit _x: ClassTag[M]): ObjectType[Unit, M] = ObjectType(
+  protected def buildStringMatchTypeType[T, M <: Match[T]](name: String)(
+    implicit _x: ClassTag[M]
+  ): ObjectType[Unit, M] = ObjectType(
     name,
-    interfaces[Unit, M](matchInterface[T, M]),
+    interfaces[Unit, M](newMatchInterface),
     fields[Unit, M](
-      Field("matchType", OptionType(matchTypeType), resolve = _.value.matchType),
-      Field("sampleArg", OptionType(StringType), resolve = _.value.sampleArg.map(argDescription)),
-      Field("userArg", OptionType(StringType), resolve = _.value.userArg.map(argDescription))
+      Field("sampleArg", OptionType(StringType), resolve = _.value.sampleArgDescription),
+      Field("userArg", OptionType(StringType), resolve = _.value.userArgDescription)
     )
   )
 
@@ -89,6 +88,7 @@ trait ToolGraphQLModelBasics[
     deriveObjectType(
       ObjectTypeName(s"${name}MatchingResult"),
       Interfaces(matchingResultInterface[T, M]),
+      ExcludeFields("points", "maxPoints"),
       ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches))
     )
   }
@@ -97,8 +97,8 @@ trait ToolGraphQLModelBasics[
     "AbstractCorrectionResult",
     fields[Unit, AbstractCorrectionResult](
       Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
-      Field("points", pointsType, resolve = _.value.points),
-      Field("maxPoints", pointsType, resolve = _.value.maxPoints)
+      Field("points", FloatType, resolve = _.value.points.asDouble),
+      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     )
   )
 

@@ -10,7 +10,11 @@ final case class RegexMatchMatch(
   matchType: MatchType,
   userArg: Option[RegexMatch],
   sampleArg: Option[RegexMatch]
-) extends Match[RegexMatch]
+) extends Match[RegexMatch] {
+
+  override protected def argDescription: RegexMatch => String = _.group(0)
+
+}
 
 object RegexMatchMatcher extends Matcher[RegexMatch, RegexMatchMatch] {
 

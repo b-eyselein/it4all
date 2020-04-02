@@ -1,6 +1,5 @@
 package model.tools.collectionTools.uml
 
-import model.points
 import model.tools.collectionTools.{KeyValueObject, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
@@ -101,14 +100,14 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlCl
 
   // Result types
 
-  override val AbstractResultTypeType: OutputType[Any] = {
-    implicit val pt: ObjectType[Unit, points.Points] = pointsType
+  private val umlCompleteResultType: ObjectType[Unit, UmlCompleteResult] = deriveObjectType[Unit, UmlCompleteResult](
+    Interfaces(abstractResultTypeType),
+    ExcludeFields(/*"solutionSaved",*/ "points", "maxPoints"),
+    // TODO: include fields...
+    ExcludeFields("classResult", "assocResult", "implResult")
+  )
 
-    deriveObjectType[Unit, UmlCompleteResult](
-      // TODO: include fields...
-      ExcludeFields("classResult", "assocResult", "implResult")
-    )
-  }
+  override val AbstractResultTypeType: OutputType[Any] = umlCompleteResultType
 
   override val PartTypeInputType: EnumType[UmlExPart] = EnumType(
     "UmlExPart",

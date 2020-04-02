@@ -40,6 +40,8 @@ class ApiController @Inject() (
 
   private implicit val graphQlRequest: Format[GraphQLRequest] = Json.format
 
+  private val graphQLSchema = GraphQLModel.schema
+
   private def executeGraphQLQuery(
     query: Document,
     user: Option[User],
@@ -48,7 +50,7 @@ class ApiController @Inject() (
   ): Future[Result] =
     Executor
       .execute(
-        GraphQLModel.schema,
+        graphQLSchema,
         query,
         userContext = GraphQLContext(tables, ec, user),
         operationName = operationName,

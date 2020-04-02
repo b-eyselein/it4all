@@ -10,6 +10,8 @@ final case class TableMatch(
   sampleArg: Option[Table]
 ) extends Match[Table] {
 
+  override protected def argDescription: Table => String = _.getName
+
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
   override def maxPoints: Points = sampleArg match {

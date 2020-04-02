@@ -4,7 +4,6 @@ import de.uniwue.dtd.model.ElementLine
 import de.uniwue.dtd.parser.DTDParseException
 import model.core.matching.{MatchType, MatchingResult}
 import model.core.result.SuccessType
-import model.points.Points
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
@@ -55,7 +54,9 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSo
     implicit val elt: ObjectType[Unit, ElementLine]                = elementLineType
     implicit val elar: ObjectType[Unit, ElementLineAnalysisResult] = deriveObjectType()
 
-    deriveObjectType()
+    deriveObjectType(
+      Interfaces(newMatchInterface)
+    )
   }
 
   private val xmlGrammarResultType: ObjectType[Unit, XmlGrammarResult] = {
@@ -66,14 +67,18 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSo
     deriveObjectType()
   }
 
-  override val AbstractResultTypeType: OutputType[Any] = {
+  private val xmlCompleteResultType: ObjectType[Unit, XmlCompleteResult] = {
     implicit val st: EnumType[SuccessType]                = successTypeType
     implicit val xet: ObjectType[Unit, XmlError]          = xmlErrorType
     implicit val xgrt: ObjectType[Unit, XmlGrammarResult] = xmlGrammarResultType
-    implicit val pt: ObjectType[Unit, Points]             = pointsType
 
-    deriveObjectType[Unit, XmlCompleteResult]()
+    deriveObjectType[Unit, XmlCompleteResult](
+      Interfaces(abstractResultTypeType),
+      ExcludeFields("solutionSaved", "points", "maxPoints")
+    )
   }
+
+  override val AbstractResultTypeType: OutputType[Any] = xmlCompleteResultType
 
   override val PartTypeInputType: EnumType[XmlExPart] = EnumType(
     "XmlExPart",

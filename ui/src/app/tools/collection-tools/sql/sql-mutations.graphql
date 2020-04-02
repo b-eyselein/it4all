@@ -1,3 +1,9 @@
+fragment AbstractCorrectionResult on AbstractCorrectionResult {
+  solutionSaved
+  points
+  maxPoints
+}
+
 mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
   correctSql(collId: $collId, exId: $exId,part: $part, solution: $solution) {
     ...SqlIllegalQueryResult
@@ -7,25 +13,11 @@ mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution:
 }
 
 fragment SqlIllegalQueryResult on SqlIllegalQueryResult {
-  solutionSaved
-  message
-  points {
-    ... Points
-  }
-  maxPoints {
-    ...Points
-  }
+  ...AbstractCorrectionResult
 }
 
 fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
-  solutionSaved
-  message
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
+  ...AbstractCorrectionResult
 }
 
 # Column comparison
@@ -37,14 +29,9 @@ fragment ColumnMatch on SqlColumnMatch {
 }
 
 fragment ColumnComparison on SqlColumnComparisonMatchingResult {
+  ...MR
   allMatches {
     ...ColumnMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
   }
 }
 
@@ -57,14 +44,9 @@ fragment TableMatch on SqlTableMatch {
 }
 
 fragment TableComparison on SqlTableComparisonMatchingResult {
+  ...MR
   allMatches {
     ...TableMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
   }
 }
 
@@ -77,14 +59,9 @@ fragment BinaryExpressionMatch on SqlBinaryExpressionMatch {
 }
 
 fragment BinaryExpressionComparison on SqlBinaryExpressionComparisonMatchingResult {
+  ...MR
   allMatches {
     ...BinaryExpressionMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
   }
 }
 
@@ -97,14 +74,9 @@ fragment InsertMatch on SqlInsertMatch {
 }
 
 fragment InsertComparison on SqlInsertComparisonMatchingResult {
+  ...MR
   allMatches {
     ...InsertMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
   }
 }
 
@@ -117,14 +89,9 @@ fragment GroupByMatch on SqlGroupByMatch {
 }
 
 fragment  GroupByComparison on SqlGroupByComparisonMatchingResult {
+  ...MR
   allMatches  {
     ...GroupByMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
   }
 }
 
@@ -137,14 +104,9 @@ fragment OrderByMatch on SqlOrderByMatch {
 }
 
 fragment OrderByComparison on SqlOrderByComparisonMatchingResult {
+  ...MR
   allMatches {
     ...OrderByMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
   }
 }
 
@@ -157,14 +119,9 @@ fragment LimitMatch on SqlLimitMatch {
 }
 
 fragment LimitComparison on SqlLimitComparisonMatchingResult {
+  ...MR
   allMatches {
     ...LimitMatch
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
   }
 }
 
@@ -185,12 +142,13 @@ fragment SelectAdditionalComparison on SelectAdditionalComparisons {
 # Complete result
 
 fragment SqlResult on SqlResult {
-  solutionSaved
+  ...AbstractCorrectionResult
   staticComparison {
     columnComparison {
       ...ColumnComparison
     }
     tableComparison {
+      ...MR
       ...TableComparison
     }
     joinExpressionComparison {
@@ -211,14 +169,13 @@ fragment SqlResult on SqlResult {
   executionResult {
     __typename
   }
-  points {
-    ...Points
-  }
-  maxPoints{
-    ...Points
-  }
 }
 
-fragment Points on Points {
-  quarters
+# other fragments
+
+fragment MR on MatchingResult  {
+  matchName
+  matchSingularName
+  points
+  maxPoints
 }

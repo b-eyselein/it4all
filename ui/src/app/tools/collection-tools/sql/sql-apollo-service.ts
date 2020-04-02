@@ -15,8 +15,8 @@ export type Scalars = {
 
 export type AbstractCorrectionResult = {
   solutionSaved: Scalars['Boolean'];
-  points: Points;
-  maxPoints: Points;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type AbstractRegexResult = RegexIllegalRegexResult | RegexMatchingResult | RegexExtractionResult;
@@ -70,12 +70,14 @@ export type ElementLineAnalysisResult = {
   correctAttributes: Scalars['String'];
 };
 
-export type ElementLineMatch = {
+export type ElementLineMatch = NewMatch & {
    __typename?: 'ElementLineMatch';
   matchType: MatchType;
   userArg?: Maybe<ElementLine>;
   sampleArg?: Maybe<ElementLine>;
   maybeAnalysisResult?: Maybe<ElementLineAnalysisResult>;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type ExContent = ProgExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent;
@@ -143,21 +145,20 @@ export type Lesson = {
   description: Scalars['String'];
 };
 
-export type Match = {
-  matchType?: Maybe<MatchType>;
-};
-
 export type MatchingResult = {
-  points: Points;
-  maxPoints: Points;
+  matchName: Scalars['String'];
+  matchSingularName: Scalars['String'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+  allMatches: Array<NewMatch>;
 };
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlyUser = 'ONLY_USER',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   OnlySample = 'ONLY_SAMPLE',
-  PartialMatch = 'PARTIAL_MATCH'
+  PartialMatch = 'PARTIAL_MATCH',
+  OnlyUser = 'ONLY_USER',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -218,15 +219,16 @@ export type MutationCorrectXmlArgs = {
   solution: XmlSolutionInput;
 };
 
+export type NewMatch = {
+  matchType: MatchType;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
+};
+
 export type NormalExecutionResult = {
    __typename?: 'NormalExecutionResult';
   success: SuccessType;
   logs: Scalars['String'];
-};
-
-export type Points = {
-   __typename?: 'Points';
-  quarters: Scalars['Int'];
 };
 
 export type ProgCompleteResult = {
@@ -302,17 +304,17 @@ export type RegexExtractedValuesComparisonMatchingResult = MatchingResult & {
   matchName: Scalars['String'];
   /** @deprecated Will be deleted */
   matchSingularName: Scalars['String'];
-  points: Points;
-  maxPoints: Points;
   allMatches: Array<RegexMatchMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type RegexExtractionResult = AbstractCorrectionResult & {
    __typename?: 'RegexExtractionResult';
-  solutionSaved: Scalars['Boolean'];
   extractionResults: Array<RegexExtractionSingleResult>;
-  points: Points;
-  maxPoints: Points;
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type RegexExtractionSingleResult = {
@@ -330,18 +332,18 @@ export type RegexExtractionTestData = {
 
 export type RegexIllegalRegexResult = AbstractCorrectionResult & {
    __typename?: 'RegexIllegalRegexResult';
-  solutionSaved: Scalars['Boolean'];
   message: Scalars['String'];
-  maxPoints: Points;
-  points: Points;
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type RegexMatchingResult = AbstractCorrectionResult & {
    __typename?: 'RegexMatchingResult';
-  solutionSaved: Scalars['Boolean'];
   matchingResults: Array<RegexMatchingSingleResult>;
-  points: Points;
-  maxPoints: Points;
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type RegexMatchingSingleResult = {
@@ -351,11 +353,13 @@ export type RegexMatchingSingleResult = {
   resultType: BinaryClassificationResultType;
 };
 
-export type RegexMatchMatch = Match & {
+export type RegexMatchMatch = NewMatch & {
    __typename?: 'RegexMatchMatch';
-  matchType?: Maybe<MatchType>;
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
+  matchType: MatchType;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type RegexMatchTestData = {
@@ -395,16 +399,18 @@ export type SqlBinaryExpressionComparisonMatchingResult = MatchingResult & {
   matchName: Scalars['String'];
   /** @deprecated Will be deleted */
   matchSingularName: Scalars['String'];
-  points: Points;
-  maxPoints: Points;
   allMatches: Array<SqlBinaryExpressionMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
-export type SqlBinaryExpressionMatch = Match & {
+export type SqlBinaryExpressionMatch = NewMatch & {
    __typename?: 'SqlBinaryExpressionMatch';
-  matchType?: Maybe<MatchType>;
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
+  matchType: MatchType;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type SqlColumnComparisonMatchingResult = MatchingResult & {
@@ -413,16 +419,18 @@ export type SqlColumnComparisonMatchingResult = MatchingResult & {
   matchName: Scalars['String'];
   /** @deprecated Will be deleted */
   matchSingularName: Scalars['String'];
-  points: Points;
-  maxPoints: Points;
   allMatches: Array<SqlColumnMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
-export type SqlColumnMatch = Match & {
+export type SqlColumnMatch = NewMatch & {
    __typename?: 'SqlColumnMatch';
-  matchType?: Maybe<MatchType>;
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
+  matchType: MatchType;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type SqlExecutionResult = {
@@ -438,11 +446,11 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
-  Insert = 'INSERT',
-  Select = 'SELECT',
-  Update = 'UPDATE',
   Create = 'CREATE',
-  Delete = 'DELETE'
+  Select = 'SELECT',
+  Insert = 'INSERT',
+  Delete = 'DELETE',
+  Update = 'UPDATE'
 }
 
 export enum SqlExPart {
@@ -455,24 +463,26 @@ export type SqlGroupByComparisonMatchingResult = MatchingResult & {
   matchName: Scalars['String'];
   /** @deprecated Will be deleted */
   matchSingularName: Scalars['String'];
-  points: Points;
-  maxPoints: Points;
   allMatches: Array<SqlGroupByMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
-export type SqlGroupByMatch = Match & {
+export type SqlGroupByMatch = NewMatch & {
    __typename?: 'SqlGroupByMatch';
-  matchType?: Maybe<MatchType>;
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
+  matchType: MatchType;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type SqlIllegalQueryResult = AbstractCorrectionResult & {
    __typename?: 'SqlIllegalQueryResult';
-  solutionSaved: Scalars['Boolean'];
   message: Scalars['String'];
-  maxPoints: Points;
-  points: Points;
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type SqlInsertComparisonMatchingResult = MatchingResult & {
@@ -481,16 +491,18 @@ export type SqlInsertComparisonMatchingResult = MatchingResult & {
   matchName: Scalars['String'];
   /** @deprecated Will be deleted */
   matchSingularName: Scalars['String'];
-  points: Points;
-  maxPoints: Points;
   allMatches: Array<SqlInsertMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
-export type SqlInsertMatch = Match & {
+export type SqlInsertMatch = NewMatch & {
    __typename?: 'SqlInsertMatch';
-  matchType?: Maybe<MatchType>;
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
+  matchType: MatchType;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type SqlLimitComparisonMatchingResult = MatchingResult & {
@@ -499,16 +511,18 @@ export type SqlLimitComparisonMatchingResult = MatchingResult & {
   matchName: Scalars['String'];
   /** @deprecated Will be deleted */
   matchSingularName: Scalars['String'];
-  points: Points;
-  maxPoints: Points;
   allMatches: Array<SqlLimitMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
-export type SqlLimitMatch = Match & {
+export type SqlLimitMatch = NewMatch & {
    __typename?: 'SqlLimitMatch';
-  matchType?: Maybe<MatchType>;
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
+  matchType: MatchType;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type SqlOrderByComparisonMatchingResult = MatchingResult & {
@@ -517,16 +531,18 @@ export type SqlOrderByComparisonMatchingResult = MatchingResult & {
   matchName: Scalars['String'];
   /** @deprecated Will be deleted */
   matchSingularName: Scalars['String'];
-  points: Points;
-  maxPoints: Points;
   allMatches: Array<SqlOrderByMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
-export type SqlOrderByMatch = Match & {
+export type SqlOrderByMatch = NewMatch & {
    __typename?: 'SqlOrderByMatch';
-  matchType?: Maybe<MatchType>;
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
+  matchType: MatchType;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type SqlQueriesStaticComparison = {
@@ -543,8 +559,8 @@ export type SqlResult = AbstractCorrectionResult & {
   staticComparison: SqlQueriesStaticComparison;
   executionResult: SqlExecutionResult;
   solutionSaved: Scalars['Boolean'];
-  points: Points;
-  maxPoints: Points;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type SqlTableComparisonMatchingResult = MatchingResult & {
@@ -553,24 +569,26 @@ export type SqlTableComparisonMatchingResult = MatchingResult & {
   matchName: Scalars['String'];
   /** @deprecated Will be deleted */
   matchSingularName: Scalars['String'];
-  points: Points;
-  maxPoints: Points;
   allMatches: Array<SqlTableMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
-export type SqlTableMatch = Match & {
+export type SqlTableMatch = NewMatch & {
    __typename?: 'SqlTableMatch';
-  matchType?: Maybe<MatchType>;
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
+  matchType: MatchType;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type SqlWrongQueryTypeResult = AbstractCorrectionResult & {
    __typename?: 'SqlWrongQueryTypeResult';
-  solutionSaved: Scalars['Boolean'];
   message: Scalars['String'];
-  maxPoints: Points;
-  points: Points;
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type StringSampleSolution = {
@@ -580,10 +598,10 @@ export type StringSampleSolution = {
 };
 
 export enum SuccessType {
+  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY',
-  Complete = 'COMPLETE'
+  Partially = 'PARTIALLY'
 }
 
 export type Tool = {
@@ -644,8 +662,8 @@ export type UmlAssociationInput = {
 };
 
 export enum UmlAssociationType {
-  Association = 'ASSOCIATION',
   Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
   Composition = 'COMPOSITION'
 }
 
@@ -697,16 +715,16 @@ export type UmlClassInput = {
 };
 
 export enum UmlClassType {
+  Abstract = 'ABSTRACT',
   Class = 'CLASS',
-  Interface = 'INTERFACE',
-  Abstract = 'ABSTRACT'
+  Interface = 'INTERFACE'
 }
 
-export type UmlCompleteResult = {
+export type UmlCompleteResult = AbstractCorrectionResult & {
    __typename?: 'UmlCompleteResult';
-  points: Points;
-  maxPoints: Points;
   solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type UmlExerciseContent = {
@@ -765,10 +783,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
-  Public = 'PUBLIC',
   Package = 'PACKAGE',
+  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Private = 'PRIVATE'
+  Public = 'PUBLIC'
 }
 
 export type UnitTestCorrectionResult = {
@@ -801,15 +819,15 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Simplified = 'Simplified',
-  Normal = 'Normal'
+  Normal = 'Normal',
+  Simplified = 'Simplified'
 }
 
-export type WebCompleteResult = {
+export type WebCompleteResult = AbstractCorrectionResult & {
    __typename?: 'WebCompleteResult';
-  points: Points;
-  maxPoints: Points;
   solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type WebExerciseContent = {
@@ -832,14 +850,14 @@ export type WebSampleSolution = {
   sample: Array<ExerciseFile>;
 };
 
-export type XmlCompleteResult = {
+export type XmlCompleteResult = AbstractCorrectionResult & {
    __typename?: 'XmlCompleteResult';
   successType: SuccessType;
   documentResult: Array<XmlError>;
   grammarResult?: Maybe<XmlGrammarResult>;
-  points: Points;
-  maxPoints: Points;
   solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type XmlElementLineComparisonMatchingResult = MatchingResult & {
@@ -848,9 +866,9 @@ export type XmlElementLineComparisonMatchingResult = MatchingResult & {
   matchName: Scalars['String'];
   /** @deprecated Will be deleted */
   matchSingularName: Scalars['String'];
-  points: Points;
-  maxPoints: Points;
   allMatches: Array<ElementLineMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type XmlError = {
@@ -902,6 +920,53 @@ export type XmlSolutionInput = {
   grammar: Scalars['String'];
 };
 
+type AbstractCorrectionResult_RegexIllegalRegexResult_Fragment = (
+  { __typename?: 'RegexIllegalRegexResult' }
+  & Pick<RegexIllegalRegexResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type AbstractCorrectionResult_RegexMatchingResult_Fragment = (
+  { __typename?: 'RegexMatchingResult' }
+  & Pick<RegexMatchingResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type AbstractCorrectionResult_RegexExtractionResult_Fragment = (
+  { __typename?: 'RegexExtractionResult' }
+  & Pick<RegexExtractionResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type AbstractCorrectionResult_SqlIllegalQueryResult_Fragment = (
+  { __typename?: 'SqlIllegalQueryResult' }
+  & Pick<SqlIllegalQueryResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment = (
+  { __typename?: 'SqlWrongQueryTypeResult' }
+  & Pick<SqlWrongQueryTypeResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type AbstractCorrectionResult_SqlResult_Fragment = (
+  { __typename?: 'SqlResult' }
+  & Pick<SqlResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type AbstractCorrectionResult_UmlCompleteResult_Fragment = (
+  { __typename?: 'UmlCompleteResult' }
+  & Pick<UmlCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type AbstractCorrectionResult_WebCompleteResult_Fragment = (
+  { __typename?: 'WebCompleteResult' }
+  & Pick<WebCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type AbstractCorrectionResult_XmlCompleteResult_Fragment = (
+  { __typename?: 'XmlCompleteResult' }
+  & Pick<XmlCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+export type AbstractCorrectionResultFragment = AbstractCorrectionResult_RegexIllegalRegexResult_Fragment | AbstractCorrectionResult_RegexMatchingResult_Fragment | AbstractCorrectionResult_RegexExtractionResult_Fragment | AbstractCorrectionResult_SqlIllegalQueryResult_Fragment | AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment | AbstractCorrectionResult_SqlResult_Fragment | AbstractCorrectionResult_UmlCompleteResult_Fragment | AbstractCorrectionResult_WebCompleteResult_Fragment | AbstractCorrectionResult_XmlCompleteResult_Fragment;
+
 export type SqlCorrectionMutationVariables = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
@@ -926,26 +991,12 @@ export type SqlCorrectionMutation = (
 
 export type SqlIllegalQueryResultFragment = (
   { __typename?: 'SqlIllegalQueryResult' }
-  & Pick<SqlIllegalQueryResult, 'solutionSaved' | 'message'>
-  & { points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+  & AbstractCorrectionResult_SqlIllegalQueryResult_Fragment
 );
 
 export type SqlWrongQueryTypeResultFragment = (
   { __typename?: 'SqlWrongQueryTypeResult' }
-  & Pick<SqlWrongQueryTypeResult, 'solutionSaved' | 'message'>
-  & { points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+  & AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment
 );
 
 export type ColumnMatchFragment = (
@@ -958,13 +1009,8 @@ export type ColumnComparisonFragment = (
   & { allMatches: Array<(
     { __typename?: 'SqlColumnMatch' }
     & ColumnMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+  )> }
+  & Mr_SqlColumnComparisonMatchingResult_Fragment
 );
 
 export type TableMatchFragment = (
@@ -977,13 +1023,8 @@ export type TableComparisonFragment = (
   & { allMatches: Array<(
     { __typename?: 'SqlTableMatch' }
     & TableMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+  )> }
+  & Mr_SqlTableComparisonMatchingResult_Fragment
 );
 
 export type BinaryExpressionMatchFragment = (
@@ -996,13 +1037,8 @@ export type BinaryExpressionComparisonFragment = (
   & { allMatches: Array<(
     { __typename?: 'SqlBinaryExpressionMatch' }
     & BinaryExpressionMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+  )> }
+  & Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment
 );
 
 export type InsertMatchFragment = (
@@ -1015,13 +1051,8 @@ export type InsertComparisonFragment = (
   & { allMatches: Array<(
     { __typename?: 'SqlInsertMatch' }
     & InsertMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+  )> }
+  & Mr_SqlInsertComparisonMatchingResult_Fragment
 );
 
 export type GroupByMatchFragment = (
@@ -1034,13 +1065,8 @@ export type GroupByComparisonFragment = (
   & { allMatches: Array<(
     { __typename?: 'SqlGroupByMatch' }
     & GroupByMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+  )> }
+  & Mr_SqlGroupByComparisonMatchingResult_Fragment
 );
 
 export type OrderByMatchFragment = (
@@ -1053,13 +1079,8 @@ export type OrderByComparisonFragment = (
   & { allMatches: Array<(
     { __typename?: 'SqlOrderByMatch' }
     & OrderByMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+  )> }
+  & Mr_SqlOrderByComparisonMatchingResult_Fragment
 );
 
 export type LimitMatchFragment = (
@@ -1072,13 +1093,8 @@ export type LimitComparisonFragment = (
   & { allMatches: Array<(
     { __typename?: 'SqlLimitMatch' }
     & LimitMatchFragment
-  )>, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+  )> }
+  & Mr_SqlLimitComparisonMatchingResult_Fragment
 );
 
 export type SelectAdditionalComparisonFragment = (
@@ -1097,7 +1113,6 @@ export type SelectAdditionalComparisonFragment = (
 
 export type SqlResultFragment = (
   { __typename?: 'SqlResult' }
-  & Pick<SqlResult, 'solutionSaved'>
   & { staticComparison: (
     { __typename?: 'SqlQueriesStaticComparison' }
     & { columnComparison: (
@@ -1105,6 +1120,7 @@ export type SqlResultFragment = (
       & ColumnComparisonFragment
     ), tableComparison: (
       { __typename?: 'SqlTableComparisonMatchingResult' }
+      & Mr_SqlTableComparisonMatchingResult_Fragment
       & TableComparisonFragment
     ), joinExpressionComparison: (
       { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
@@ -1122,49 +1138,82 @@ export type SqlResultFragment = (
         & InsertComparisonFragment
       )> }
     ) }
-  ), executionResult: { __typename: 'SqlExecutionResult' }, points: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ), maxPoints: (
-    { __typename?: 'Points' }
-    & PointsFragment
-  ) }
+  ), executionResult: { __typename: 'SqlExecutionResult' } }
+  & AbstractCorrectionResult_SqlResult_Fragment
 );
 
-export type PointsFragment = (
-  { __typename?: 'Points' }
-  & Pick<Points, 'quarters'>
+type Mr_RegexExtractedValuesComparisonMatchingResult_Fragment = (
+  { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
+  & Pick<RegexExtractedValuesComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
 );
 
-export const PointsFragmentDoc = gql`
-    fragment Points on Points {
-  quarters
+type Mr_SqlColumnComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlColumnComparisonMatchingResult' }
+  & Pick<SqlColumnComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+type Mr_SqlTableComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlTableComparisonMatchingResult' }
+  & Pick<SqlTableComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+type Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
+  & Pick<SqlBinaryExpressionComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+type Mr_SqlGroupByComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlGroupByComparisonMatchingResult' }
+  & Pick<SqlGroupByComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+type Mr_SqlOrderByComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlOrderByComparisonMatchingResult' }
+  & Pick<SqlOrderByComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+type Mr_SqlLimitComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlLimitComparisonMatchingResult' }
+  & Pick<SqlLimitComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+type Mr_SqlInsertComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlInsertComparisonMatchingResult' }
+  & Pick<SqlInsertComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+type Mr_XmlElementLineComparisonMatchingResult_Fragment = (
+  { __typename?: 'XmlElementLineComparisonMatchingResult' }
+  & Pick<XmlElementLineComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+export type MrFragment = Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
+
+export const AbstractCorrectionResultFragmentDoc = gql`
+    fragment AbstractCorrectionResult on AbstractCorrectionResult {
+  solutionSaved
+  points
+  maxPoints
 }
     `;
 export const SqlIllegalQueryResultFragmentDoc = gql`
     fragment SqlIllegalQueryResult on SqlIllegalQueryResult {
-  solutionSaved
-  message
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
+  ...AbstractCorrectionResult
 }
-    ${PointsFragmentDoc}`;
+    ${AbstractCorrectionResultFragmentDoc}`;
 export const SqlWrongQueryTypeResultFragmentDoc = gql`
     fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
-  solutionSaved
-  message
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
+  ...AbstractCorrectionResult
 }
-    ${PointsFragmentDoc}`;
+    ${AbstractCorrectionResultFragmentDoc}`;
+export const MrFragmentDoc = gql`
+    fragment MR on MatchingResult {
+  matchName
+  matchSingularName
+  points
+  maxPoints
+}
+    `;
 export const ColumnMatchFragmentDoc = gql`
     fragment ColumnMatch on SqlColumnMatch {
   matchType
@@ -1174,18 +1223,13 @@ export const ColumnMatchFragmentDoc = gql`
     `;
 export const ColumnComparisonFragmentDoc = gql`
     fragment ColumnComparison on SqlColumnComparisonMatchingResult {
+  ...MR
   allMatches {
     ...ColumnMatch
   }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
 }
-    ${ColumnMatchFragmentDoc}
-${PointsFragmentDoc}`;
+    ${MrFragmentDoc}
+${ColumnMatchFragmentDoc}`;
 export const TableMatchFragmentDoc = gql`
     fragment TableMatch on SqlTableMatch {
   matchType
@@ -1195,18 +1239,13 @@ export const TableMatchFragmentDoc = gql`
     `;
 export const TableComparisonFragmentDoc = gql`
     fragment TableComparison on SqlTableComparisonMatchingResult {
+  ...MR
   allMatches {
     ...TableMatch
   }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
 }
-    ${TableMatchFragmentDoc}
-${PointsFragmentDoc}`;
+    ${MrFragmentDoc}
+${TableMatchFragmentDoc}`;
 export const BinaryExpressionMatchFragmentDoc = gql`
     fragment BinaryExpressionMatch on SqlBinaryExpressionMatch {
   matchType
@@ -1216,18 +1255,13 @@ export const BinaryExpressionMatchFragmentDoc = gql`
     `;
 export const BinaryExpressionComparisonFragmentDoc = gql`
     fragment BinaryExpressionComparison on SqlBinaryExpressionComparisonMatchingResult {
+  ...MR
   allMatches {
     ...BinaryExpressionMatch
   }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
 }
-    ${BinaryExpressionMatchFragmentDoc}
-${PointsFragmentDoc}`;
+    ${MrFragmentDoc}
+${BinaryExpressionMatchFragmentDoc}`;
 export const GroupByMatchFragmentDoc = gql`
     fragment GroupByMatch on SqlGroupByMatch {
   matchType
@@ -1237,18 +1271,13 @@ export const GroupByMatchFragmentDoc = gql`
     `;
 export const GroupByComparisonFragmentDoc = gql`
     fragment GroupByComparison on SqlGroupByComparisonMatchingResult {
+  ...MR
   allMatches {
     ...GroupByMatch
   }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
 }
-    ${GroupByMatchFragmentDoc}
-${PointsFragmentDoc}`;
+    ${MrFragmentDoc}
+${GroupByMatchFragmentDoc}`;
 export const OrderByMatchFragmentDoc = gql`
     fragment OrderByMatch on SqlOrderByMatch {
   matchType
@@ -1258,18 +1287,13 @@ export const OrderByMatchFragmentDoc = gql`
     `;
 export const OrderByComparisonFragmentDoc = gql`
     fragment OrderByComparison on SqlOrderByComparisonMatchingResult {
+  ...MR
   allMatches {
     ...OrderByMatch
   }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
 }
-    ${OrderByMatchFragmentDoc}
-${PointsFragmentDoc}`;
+    ${MrFragmentDoc}
+${OrderByMatchFragmentDoc}`;
 export const LimitMatchFragmentDoc = gql`
     fragment LimitMatch on SqlLimitMatch {
   matchType
@@ -1279,18 +1303,13 @@ export const LimitMatchFragmentDoc = gql`
     `;
 export const LimitComparisonFragmentDoc = gql`
     fragment LimitComparison on SqlLimitComparisonMatchingResult {
+  ...MR
   allMatches {
     ...LimitMatch
   }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
 }
-    ${LimitMatchFragmentDoc}
-${PointsFragmentDoc}`;
+    ${MrFragmentDoc}
+${LimitMatchFragmentDoc}`;
 export const SelectAdditionalComparisonFragmentDoc = gql`
     fragment SelectAdditionalComparison on SelectAdditionalComparisons {
   groupByComparison {
@@ -1315,26 +1334,22 @@ export const InsertMatchFragmentDoc = gql`
     `;
 export const InsertComparisonFragmentDoc = gql`
     fragment InsertComparison on SqlInsertComparisonMatchingResult {
+  ...MR
   allMatches {
     ...InsertMatch
   }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
 }
-    ${InsertMatchFragmentDoc}
-${PointsFragmentDoc}`;
+    ${MrFragmentDoc}
+${InsertMatchFragmentDoc}`;
 export const SqlResultFragmentDoc = gql`
     fragment SqlResult on SqlResult {
-  solutionSaved
+  ...AbstractCorrectionResult
   staticComparison {
     columnComparison {
       ...ColumnComparison
     }
     tableComparison {
+      ...MR
       ...TableComparison
     }
     joinExpressionComparison {
@@ -1355,19 +1370,14 @@ export const SqlResultFragmentDoc = gql`
   executionResult {
     __typename
   }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
 }
-    ${ColumnComparisonFragmentDoc}
+    ${AbstractCorrectionResultFragmentDoc}
+${ColumnComparisonFragmentDoc}
+${MrFragmentDoc}
 ${TableComparisonFragmentDoc}
 ${BinaryExpressionComparisonFragmentDoc}
 ${SelectAdditionalComparisonFragmentDoc}
-${InsertComparisonFragmentDoc}
-${PointsFragmentDoc}`;
+${InsertComparisonFragmentDoc}`;
 export const SqlCorrectionDocument = gql`
     mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
   correctSql(collId: $collId, exId: $exId, part: $part, solution: $solution) {

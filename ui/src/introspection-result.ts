@@ -73,6 +73,15 @@
           },
           {
             "name": "SqlResult"
+          },
+          {
+            "name": "UmlCompleteResult"
+          },
+          {
+            "name": "WebCompleteResult"
+          },
+          {
+            "name": "XmlCompleteResult"
           }
         ]
       },
@@ -111,7 +120,7 @@
       },
       {
         "kind": "INTERFACE",
-        "name": "Match",
+        "name": "NewMatch",
         "possibleTypes": [
           {
             "name": "RegexMatchMatch"
@@ -136,6 +145,9 @@
           },
           {
             "name": "SqlInsertMatch"
+          },
+          {
+            "name": "ElementLineMatch"
           }
         ]
       },

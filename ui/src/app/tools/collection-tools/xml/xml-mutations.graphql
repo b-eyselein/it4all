@@ -1,3 +1,9 @@
+fragment AbstractCorrectionResult on AbstractCorrectionResult {
+  solutionSaved
+  points
+  maxPoints
+}
+
 mutation XmlCorrection($collId: Int!, $exId: Int!,$part: XmlExPart!, $solution: XmlSolutionInput!) {
   correctXml(collId: $collId, exId: $exId,part: $part, solution: $solution) {
     ...XmlCompleteResult
@@ -5,14 +11,8 @@ mutation XmlCorrection($collId: Int!, $exId: Int!,$part: XmlExPart!, $solution: 
 }
 
 fragment XmlCompleteResult on XmlCompleteResult {
-  solutionSaved
+  ...AbstractCorrectionResult
   successType
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
   grammarResult {
     ...XmlGrammarResult
   }
@@ -33,9 +33,4 @@ fragment  XmlError on XmlError {
   line
   errorType
   errorMessage
-}
-
-
-fragment Points on Points {
-  quarters
 }

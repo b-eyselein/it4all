@@ -31,10 +31,10 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
   // Result types
 
   private val columnMatchType: ObjectType[Unit, ColumnMatch] =
-    buildStringMatchTypeType[ColumnWrapper, ColumnMatch]("SqlColumnMatch", _.getColName)
+    buildStringMatchTypeType[ColumnWrapper, ColumnMatch]("SqlColumnMatch")
 
   private val tableMatchType: ObjectType[Unit, TableMatch] =
-    buildStringMatchTypeType[Table, TableMatch]("SqlTableMatch", _.getName)
+    buildStringMatchTypeType[Table, TableMatch]("SqlTableMatch")
 
   private val binaryExpressionMatchType: ObjectType[Unit, BinaryExpressionMatch] =
     buildStringMatchTypeType[BinaryExpression, BinaryExpressionMatch]("SqlBinaryExpressionMatch")
@@ -56,24 +56,29 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
       matchingResultType("SqlGroupByComparison", groupByMatchType)
     implicit val obct: ObjectType[Unit, OrderByComparison] =
       matchingResultType("SqlOrderByComparison", orderByMatchType)
-    implicit val lct: ObjectType[Unit, LimitComparison] = matchingResultType("SqlLimitComparison", limitMatchType)
+    implicit val lct: ObjectType[Unit, LimitComparison] =
+      matchingResultType("SqlLimitComparison", limitMatchType)
 
     deriveObjectType()
   }
 
   private val additionalComparisonsType: ObjectType[Unit, AdditionalComparison] = {
     implicit val ssac: ObjectType[Unit, SelectAdditionalComparisons] = sqlSelectAdditionalComparisons
-    implicit val sqct: ObjectType[Unit, InsertComparison]            = matchingResultType("SqlInsertComparison", insertMatchType)
+    implicit val sqct: ObjectType[Unit, InsertComparison] =
+      matchingResultType("SqlInsertComparison", insertMatchType)
 
     deriveObjectType()
   }
 
   private val sqlQueriesStaticComparisonType: ObjectType[Unit, SqlQueriesStaticComparison] = {
 
-    implicit val cct: ObjectType[Unit, ColumnComparison] = matchingResultType("SqlColumnComparison", columnMatchType)
-    implicit val tct: ObjectType[Unit, TableComparison]  = matchingResultType("SqlTableComparison", tableMatchType)
+    implicit val cct: ObjectType[Unit, ColumnComparison] =
+      matchingResultType("SqlColumnComparison", columnMatchType)
+    implicit val tct: ObjectType[Unit, TableComparison] =
+      matchingResultType("SqlTableComparison", tableMatchType)
     implicit val jct: ObjectType[Unit, BinaryExpressionComparison] =
       matchingResultType("SqlBinaryExpressionComparison", binaryExpressionMatchType)
+
     implicit val act: ObjectType[Unit, AdditionalComparison] = additionalComparisonsType
 
     deriveObjectType()
@@ -90,13 +95,19 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
   private val sqlIllegalQueryResultType: ObjectType[Unit, SqlIllegalQueryResult] = {
     implicit val pt: ObjectType[Unit, Points] = pointsType
 
-    deriveObjectType(Interfaces(abstractResultTypeType))
+    deriveObjectType(
+      Interfaces(abstractResultTypeType),
+      ExcludeFields("solutionSaved", /* "points",*/ "maxPoints")
+    )
   }
 
   private val sqlWrongQueryTypeResult: ObjectType[Unit, SqlWrongQueryTypeResult] = {
     implicit val pt: ObjectType[Unit, Points] = pointsType
 
-    deriveObjectType(Interfaces(abstractResultTypeType))
+    deriveObjectType(
+      Interfaces(abstractResultTypeType),
+      ExcludeFields("solutionSaved", /*"points",*/ "maxPoints")
+    )
   }
 
   private val sqlResultType: ObjectType[Unit, SqlResult] = {

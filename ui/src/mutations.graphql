@@ -1,3 +1,9 @@
+fragment AbstractCorrectionResult on AbstractCorrectionResult {
+  solutionSaved
+  points
+  maxPoints
+}
+
 # Programming
 
 mutation ProgCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
@@ -28,14 +34,9 @@ mutation RegexCorrection($collId: Int!, $exId: Int!, $part: RegexExPart!, $solut
 }
 
 fragment RegexIllegalRegexResult on RegexIllegalRegexResult {
-  solutionSaved
+  ...AbstractCorrectionResult
   message
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
+
 }
 
 fragment RegexMatchingSingleResult on RegexMatchingSingleResult {
@@ -44,15 +45,9 @@ fragment RegexMatchingSingleResult on RegexMatchingSingleResult {
 }
 
 fragment RegexMatchingResult on RegexMatchingResult {
-  solutionSaved
+  ...AbstractCorrectionResult
   matchingResults {
     ...RegexMatchingSingleResult
-  }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
   }
 }
 
@@ -66,12 +61,8 @@ fragment ExtractionMatchingResult on RegexExtractedValuesComparisonMatchingResul
   allMatches {
     ...RegexExtractionMatch
   }
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
+  points
+  maxPoints
 }
 
 fragment RegexExtractionSingleResult on RegexExtractionSingleResult {
@@ -83,15 +74,9 @@ fragment RegexExtractionSingleResult on RegexExtractionSingleResult {
 }
 
 fragment RegexExtractionResult on RegexExtractionResult {
-  solutionSaved
+  ...AbstractCorrectionResult
   extractionResults {
     ...RegexExtractionSingleResult
-  }
-  points {
-    ...Points
-  }
-  maxPoints{
-    ...Points
   }
 }
 
@@ -104,13 +89,7 @@ mutation UmlCorrection($collId: Int!, $exId: Int!, $part: UmlExPart!, $solution:
 }
 
 fragment UmlCompleteResult on UmlCompleteResult {
-  solutionSaved
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
+  ...AbstractCorrectionResult
 }
 
 # Web
@@ -122,17 +101,5 @@ mutation WebCorrection($collId: Int!, $exId: Int!,$part: WebExPart!, $solution: 
 }
 
 fragment WebCompleteResult on WebCompleteResult {
-  solutionSaved
-  points {
-    ...Points
-  }
-  maxPoints {
-    ...Points
-  }
-}
-
-# general fragments
-
-fragment Points on Points {
-  quarters
+  ...AbstractCorrectionResult
 }

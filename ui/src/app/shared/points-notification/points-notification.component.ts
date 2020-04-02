@@ -31,14 +31,18 @@ export class PointsNotificationComponent implements OnInit, OnChanges {
   }
 
   updatePercentage(): void {
-    this.percentage = this.points / this.maxPoints * 100;
+    if (isNaN(this.points) || isNaN(this.maxPoints)) {
+      console.error(this.points + " :: " + this.maxPoints);
+      this.percentage = 0;
+    } else {
+      this.percentage = this.points / this.maxPoints * 100;
 
-    if (this.percentage >= 90) {
-      this.textColor = 'success';
-    } else if (this.percentage >= 75) {
-      this.textColor = 'warning';
+      if (this.percentage >= 90) {
+        this.textColor = 'success';
+      } else if (this.percentage >= 75) {
+        this.textColor = 'warning';
+      }
     }
-
   }
 
 }

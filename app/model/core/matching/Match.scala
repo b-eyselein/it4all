@@ -12,4 +12,9 @@ trait Match[T] {
 
   def maxPoints: Points = (-1).point
 
+  protected def argDescription: T => String = (t: T) => t.toString
+
+  def userArgDescription: Option[String]   = userArg.map(argDescription)
+  def sampleArgDescription: Option[String] = sampleArg.map(argDescription)
+
 }

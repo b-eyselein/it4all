@@ -3,7 +3,7 @@ package model.tools.collectionTools.regex
 import model.points.Points
 import model.tools.collectionTools.regex.RegexToolMain.ExtractedValuesComparison
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.{Interfaces, deriveEnumType, deriveObjectType}
+import sangria.macros.derive.{ExcludeFields, Interfaces, deriveEnumType, deriveObjectType}
 import sangria.schema._
 
 import scala.util.matching.Regex.{Match => RegexMatch}
@@ -40,7 +40,7 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, S
   }
 
   private val regexMatchMatchType: ObjectType[Unit, RegexMatchMatch] =
-    buildStringMatchTypeType("RegexMatchMatch", argDescription = (m: RegexMatch) => m.group(0))
+    buildStringMatchTypeType[RegexMatch, RegexMatchMatch]("RegexMatchMatch")
 
   private val regexExtractionEvaluationResultType: ObjectType[Unit, RegexExtractionSingleResult] = {
     implicit val extractedValuesComparisonType: ObjectType[Unit, ExtractedValuesComparison] =
@@ -53,7 +53,8 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, S
     implicit val pt: ObjectType[Unit, Points] = pointsType
 
     deriveObjectType(
-      Interfaces(abstractResultTypeType)
+      Interfaces(abstractResultTypeType),
+      ExcludeFields("solutionSaved", /*"points",*/ "maxPoints")
     )
   }
 
@@ -62,7 +63,8 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, S
     implicit val pt: ObjectType[Unit, Points]                       = pointsType
 
     deriveObjectType(
-      Interfaces(abstractResultTypeType)
+      Interfaces(abstractResultTypeType),
+      ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }
 
@@ -71,7 +73,8 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, S
     implicit val pt: ObjectType[Unit, Points]                         = pointsType
 
     deriveObjectType(
-      Interfaces(abstractResultTypeType)
+      Interfaces(abstractResultTypeType),
+      ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }
 
