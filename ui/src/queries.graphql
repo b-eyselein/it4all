@@ -310,7 +310,9 @@ fragment WebExerciseContentSolveFields on WebExerciseContent {
   }
   webSampleSolutions: sampleSolutions {
     sample {
-      ...ExFileAll
+      files {
+        ...ExFileAll
+      }
     }
   }
 }

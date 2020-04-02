@@ -20,7 +20,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
 
   override type PartType       = WebExPart
   override type ExContentType  = WebExerciseContent
-  override type SolType        = Seq[ExerciseFile]
+  override type SolType        = WebSolution
   override type CompResultType = WebCompleteResult
 
   // Other members
@@ -30,10 +30,10 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebExPart] =
+  override val toolJsonProtocol: ToolJsonProtocol[WebExerciseContent, WebSolution, WebExPart] =
     WebToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[WebExerciseContent, Seq[ExerciseFile], WebExPart] =
+  override val graphQlModels: ToolGraphQLModelBasics[WebExerciseContent, WebSolution, WebExPart] =
     WebGraphQLModels
 
   // DB
@@ -42,7 +42,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
     username: String,
     collId: Int,
     exerciseId: Int,
-    exerciseFiles: Seq[ExerciseFile]
+    webSolution: WebSolution
   ): Try[Seq[File]] = Try {
 
     val targetDir: File = solutionDirForExercise(username, collId, exerciseId)
@@ -50,7 +50,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
     val openOptions: OpenOptions =
       Seq(StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
 
-    exerciseFiles.map { exerciseFile =>
+    webSolution.files.map { exerciseFile =>
       val fileTargetPath = targetDir / exerciseFile.name
 
       fileTargetPath.createFileIfNotExists(createParents = true).write(exerciseFile.content)(openOptions)
@@ -103,7 +103,7 @@ object WebToolMain extends CollectionToolMain(WebConsts) {
 
   override def correctEx(
     user: User,
-    learnerSolution: Seq[ExerciseFile],
+    learnerSolution: WebSolution,
     collection: ExerciseCollection,
     exercise: Exercise,
     content: WebExerciseContent,

@@ -113,19 +113,3 @@ abstract class StringSampleSolutionToolJsonProtocol[E <: StringExerciseContent, 
   protected val sampleSolutionFormat: Format[SampleSolution[String]] = Json.format[SampleSolution[String]]
 
 }
-
-abstract class FilesSampleSolutionToolJsonProtocol[E <: FileExerciseContent, PartType <: ExPart]
-    extends ToolJsonProtocol[E, Seq[ExerciseFile], PartType] {
-
-  override val solutionFormat: Format[Seq[ExerciseFile]] = Format(
-    Reads.seq(ToolJsonProtocol.exerciseFileFormat),
-    Writes.seq(ToolJsonProtocol.exerciseFileFormat)
-  )
-
-  protected val sampleSolutionFormat: Format[SampleSolution[Seq[ExerciseFile]]] = {
-    implicit val eff: Format[Seq[ExerciseFile]] = solutionFormat
-
-    Json.format[SampleSolution[Seq[ExerciseFile]]]
-  }
-
-}

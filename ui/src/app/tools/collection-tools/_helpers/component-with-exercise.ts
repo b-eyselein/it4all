@@ -8,9 +8,10 @@ import * as Apollo from 'apollo-angular';
 
 @Directive()
 export abstract class ComponentWithExercise<SolutionType,
+  SolutionInputType,
   MutationQueryType,
   PartType,
-  MutationGQL extends Apollo.Mutation<MutationQueryType, { exId: number, collId: number, part: PartType, solution: SolutionType }>,
+  MutationGQL extends Apollo.Mutation<MutationQueryType, { exId: number, collId: number, part: PartType, solution: SolutionInputType }>,
   ResultType> {
 
   readonly exerciseTextTabTitle = 'Aufgabenstellung';
@@ -51,7 +52,7 @@ export abstract class ComponentWithExercise<SolutionType,
   protected correctAbstract(exId: number, collId: number, toolId: string, part: PartType, oldPart: ToolPart): void {
     this.isCorrecting = true;
 
-    const solution: SolutionType | undefined = this.getSolution();
+    const solution: SolutionInputType | undefined = this.getSolution();
 
     if (!solution) {
       alert('Ihre Lösung war nicht valide!');
@@ -61,7 +62,7 @@ export abstract class ComponentWithExercise<SolutionType,
     const mutationQueryVars = {exId, collId, part, solution};
 
     // noinspection JSIgnoredPromiseFromCall
-    this.dexieService.upsertSolution<SolutionType>(exId, collId, toolId, oldPart.id, solution);
+    this.dexieService.upsertSolution<SolutionInputType>(exId, collId, toolId, oldPart.id, solution);
 
 
     this.mutationGQL
@@ -73,12 +74,12 @@ export abstract class ComponentWithExercise<SolutionType,
       });
   }
 
-  protected loadOldSolutionAbstract(exId: number, collId: number, toolId: string, part: ToolPart): Promise<SolutionType | undefined> {
-    return this.dexieService.getSolution<SolutionType>(exId, collId, toolId, part.id)
+  protected loadOldSolutionAbstract(exId: number, collId: number, toolId: string, part: ToolPart): Promise<SolutionInputType | undefined> {
+    return this.dexieService.getSolution<SolutionInputType>(exId, collId, toolId, part.id)
       .then((dbSol) => dbSol ? dbSol.solution : undefined);
   }
 
-  protected abstract getSolution(): SolutionType | undefined;
+  protected abstract getSolution(): SolutionInputType | undefined;
 
   protected abstract get sampleSolutions(): SolutionType[];
 

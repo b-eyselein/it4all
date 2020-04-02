@@ -9,7 +9,9 @@ import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {IExerciseFile, IProgSolution} from '../programming-interfaces';
 import {
   ExerciseSolveFieldsFragment,
-  ProgExerciseContentSolveFieldsFragment
+  ProgExerciseContentSolveFieldsFragment,
+  ProgSolution,
+  ProgSolutionInput
 } from "../../../../_services/apollo_services";
 import {ProgCorrectionGQL, ProgCorrectionMutation} from '../../../../_services/apollo-mutation.service';
 
@@ -22,7 +24,7 @@ import {ProgExPart} from "../../sql/sql-apollo-service";
   styleUrls: ['./programming-exercise.component.sass']
 })
 export class ProgrammingExerciseComponent
-  extends ComponentWithExercise<IProgSolution, ProgCorrectionMutation, ProgExPart, ProgCorrectionGQL, ProgrammingCorrectionResult>
+  extends ComponentWithExercise<ProgSolution, ProgSolutionInput, ProgCorrectionMutation, ProgExPart, ProgCorrectionGQL, ProgrammingCorrectionResult>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;

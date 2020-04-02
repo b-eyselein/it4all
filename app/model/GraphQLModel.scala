@@ -11,7 +11,7 @@ import sangria.schema._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class GraphQLContext(
+final case class GraphQLContext(
   tables: ExerciseTableDefs,
   ec: ExecutionContext,
   user: Option[User]

@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Apr 02 2020 13:44:50 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Thu Apr 02 2020 14:31:46 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -136,7 +136,7 @@ type Mutation {
   correctRegex(collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): AbstractRegexResult
   correctSql(collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlAbstractResult
   correctUml(collId: Int!, exId: Int!, part: UmlExPart!, solution: UmlClassDiagramInput!): UmlCompleteResult
-  correctWeb(collId: Int!, exId: Int!, part: WebExPart!, solution: [ExerciseFileInput!]!): WebCompleteResult
+  correctWeb(collId: Int!, exId: Int!, part: WebExPart!, solution: WebSolutionInput!): WebCompleteResult
   correctXml(collId: Int!, exId: Int!, part: XmlExPart!, solution: XmlSolutionInput!): XmlCompleteResult
 }
 
@@ -480,9 +480,9 @@ type Tool {
 }
 
 enum ToolState {
-  LIVE
   ALPHA
   BETA
+  LIVE
 }
 
 type UmlAssociation {
@@ -675,7 +675,15 @@ enum WebExPart {
 
 type WebSampleSolution {
   id: Int!
-  sample: [ExerciseFile!]!
+  sample: WebSolution!
+}
+
+type WebSolution {
+  files: [ExerciseFile!]!
+}
+
+input WebSolutionInput {
+  files: [ExerciseFileInput!]!
 }
 
 type XmlCompleteResult implements AbstractCorrectionResult {

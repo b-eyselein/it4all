@@ -15,10 +15,18 @@ object WebExParts extends ExParts[WebExPart] {
 
 }
 
+final case class WebSolution(
+  files: Seq[ExerciseFile]
+)
+
 final case class WebExerciseContent(
   htmlText: Option[String],
   jsText: Option[String],
   siteSpec: SiteSpec,
   files: Seq[ExerciseFile],
-  sampleSolutions: Seq[SampleSolution[Seq[ExerciseFile]]]
-) extends FileExerciseContent
+  sampleSolutions: Seq[SampleSolution[WebSolution]]
+) extends ExerciseContent {
+
+  override type SolType = WebSolution
+
+}

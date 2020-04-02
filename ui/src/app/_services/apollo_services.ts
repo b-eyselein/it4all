@@ -208,7 +208,7 @@ export type MutationCorrectWebArgs = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
   part: WebExPart;
-  solution: Array<ExerciseFileInput>;
+  solution: WebSolutionInput;
 };
 
 
@@ -637,9 +637,9 @@ export type ToolExerciseContentArgs = {
 };
 
 export enum ToolState {
-  Live = 'LIVE',
   Alpha = 'ALPHA',
-  Beta = 'BETA'
+  Beta = 'BETA',
+  Live = 'LIVE'
 }
 
 export type UmlAssociation = {
@@ -847,7 +847,16 @@ export enum WebExPart {
 export type WebSampleSolution = {
    __typename?: 'WebSampleSolution';
   id: Scalars['Int'];
-  sample: Array<ExerciseFile>;
+  sample: WebSolution;
+};
+
+export type WebSolution = {
+   __typename?: 'WebSolution';
+  files: Array<ExerciseFile>;
+};
+
+export type WebSolutionInput = {
+  files: Array<ExerciseFileInput>;
 };
 
 export type XmlCompleteResult = AbstractCorrectionResult & {
@@ -1340,10 +1349,13 @@ export type WebExerciseContentSolveFieldsFragment = (
     )> }
   ), webSampleSolutions: Array<(
     { __typename?: 'WebSampleSolution' }
-    & { sample: Array<(
-      { __typename?: 'ExerciseFile' }
-      & ExFileAllFragment
-    )> }
+    & { sample: (
+      { __typename?: 'WebSolution' }
+      & { files: Array<(
+        { __typename?: 'ExerciseFile' }
+        & ExFileAllFragment
+      )> }
+    ) }
   )> }
 );
 
@@ -1533,7 +1545,9 @@ export const WebExerciseContentSolveFieldsFragmentDoc = gql`
   }
   webSampleSolutions: sampleSolutions {
     sample {
-      ...ExFileAll
+      files {
+        ...ExFileAll
+      }
     }
   }
 }

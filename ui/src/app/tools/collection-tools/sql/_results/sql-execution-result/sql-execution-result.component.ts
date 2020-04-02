@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ISqlExecutionResult} from '../../sql-interfaces';
+import {SqlExecutionResult} from "../../sql-apollo-service";
 
 @Component({
   selector: 'it4all-sql-execution-result',
@@ -7,6 +7,6 @@ import {ISqlExecutionResult} from '../../sql-interfaces';
 })
 export class SqlExecutionResultComponent {
 
-  @Input() result: ISqlExecutionResult;
+  @Input() result: SqlExecutionResult;
 
 }

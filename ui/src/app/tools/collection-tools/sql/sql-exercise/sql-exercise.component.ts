@@ -30,7 +30,7 @@ import 'codemirror/mode/sql/sql';
   encapsulation: ViewEncapsulation.None // style editor also
 })
 export class SqlExerciseComponent
-  extends ComponentWithExercise<string, SqlCorrectionMutation, SqlExPart, SqlCorrectionGQL, any>
+  extends ComponentWithExercise<string, string, SqlCorrectionMutation, SqlExPart, SqlCorrectionGQL, any>
   implements OnInit {
 
   readonly editorOptions = getDefaultEditorOptions('sql');

@@ -94,7 +94,7 @@ fragment UmlCompleteResult on UmlCompleteResult {
 
 # Web
 
-mutation WebCorrection($collId: Int!, $exId: Int!,$part: WebExPart!, $solution: [ExerciseFileInput!]!) {
+mutation WebCorrection($collId: Int!, $exId: Int!,$part: WebExPart!, $solution: WebSolutionInput!) {
   correctWeb(collId: $collId, exId: $exId,part: $part, solution: $solution) {
     ...WebCompleteResult
   }

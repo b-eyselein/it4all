@@ -3,10 +3,10 @@ package model.tools.collectionTools.web
 import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
 import model.points
 import model.tools.collectionTools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.{AddFields, ExcludeFields, Interfaces, deriveObjectType}
+import sangria.macros.derive._
 import sangria.schema._
 
-object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, Seq[ExerciseFile], WebExPart] {
+object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, WebSolution, WebExPart] {
 
   private val HtmlTaskType: ObjectType[Unit, HtmlTask] = ObjectType(
     "HtmlTask",
@@ -28,20 +28,32 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, Seq[E
     )
   }
 
+  private val webSolutionType: ObjectType[Unit, WebSolution] = {
+    implicit val eft: ObjectType[Unit, ExerciseFile] = ExerciseFileType
+
+    deriveObjectType()
+  }
+
   override val ExContentTypeType: ObjectType[Unit, WebExerciseContent] = {
     implicit val siteSpecT: ObjectType[Unit, SiteSpec] = siteSpecType
 
     implicit val eft: ObjectType[Unit, ExerciseFile] = ExerciseFileType
 
-    implicit val sampleSolType: ObjectType[Unit, SampleSolution[Seq[ExerciseFile]]] =
-      sampleSolutionType("Web", ListType(ExerciseFileType))
+    implicit val sampleSolType: ObjectType[Unit, SampleSolution[WebSolution]] =
+      sampleSolutionType("Web", webSolutionType)
 
     deriveObjectType()
   }
 
   // Solution types
 
-  override val SolTypeInputType: InputType[Seq[ExerciseFile]] = ListInputType(ExerciseFileInputType)
+  override val SolTypeInputType: InputType[WebSolution] = {
+    implicit val eft: InputObjectType[ExerciseFile] = ExerciseFileInputType
+
+    deriveInputObjectType[WebSolution](
+      InputObjectTypeName("WebSolutionInput")
+    )
+  }
 
   // Result types
 
@@ -50,7 +62,7 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, Seq[E
 
     deriveObjectType(
       Interfaces(abstractResultTypeType),
-      ExcludeFields(/*"solutionSaved",*/ "points", "maxPoints"),
+      ExcludeFields( /*"solutionSaved",*/ "points", "maxPoints"),
       // TODO: include fields!
       ExcludeFields("gradedHtmlTaskResults", "gradedJsTaskResults")
     )

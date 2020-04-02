@@ -3,7 +3,10 @@ import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {RegexExercisePart} from '../regex-tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-import {ExerciseSolveFieldsFragment, RegexExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {
+  ExerciseSolveFieldsFragment,
+  RegexExerciseContentSolveFieldsFragment
+} from '../../../../_services/apollo_services';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {
   RegexCorrectionGQL,
@@ -20,7 +23,7 @@ import {
   templateUrl: './regex-exercise.component.html'
 })
 export class RegexExerciseComponent
-  extends ComponentWithExercise<string, RegexCorrectionMutation, RegexExPart, RegexCorrectionGQL, any>
+  extends ComponentWithExercise<string, string, RegexCorrectionMutation, RegexExPart, RegexCorrectionGQL, any>
   implements OnInit {
 
   @Input() oldPart: ToolPart;

@@ -6,7 +6,6 @@ import model.tools.collectionTools.programming.ProgrammingTSTypes
 import model.tools.collectionTools.sql.SqlTSTypes
 import model.tools.collectionTools.uml.UmlTSTypes
 import model.tools.collectionTools.web.WebTSTypes
-import model.tools.collectionTools.xml.XmlTSTypes
 import nl.codestar.scalatsi.DefaultTSTypes
 import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
 import nl.codestar.scalatsi.output.{OutputOptions, WriteTSToFiles}
@@ -29,7 +28,6 @@ object TsInterfaceGenerator extends DefaultTSTypes {
     TsTypesFile(SqlTSTypes.exported, collToolInterfacesFile("sql")),
     TsTypesFile(UmlTSTypes.exported, collToolInterfacesFile("uml")),
     TsTypesFile(WebTSTypes.exported, collToolInterfacesFile("web")),
-    TsTypesFile(XmlTSTypes.exported, collToolInterfacesFile("xml"))
   )
 
   def main(args: Array[String]): Unit = tsTypesFiles.foreach {

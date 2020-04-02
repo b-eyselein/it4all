@@ -208,7 +208,7 @@ export type MutationCorrectWebArgs = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
   part: WebExPart;
-  solution: Array<ExerciseFileInput>;
+  solution: WebSolutionInput;
 };
 
 
@@ -637,9 +637,9 @@ export type ToolExerciseContentArgs = {
 };
 
 export enum ToolState {
-  Live = 'LIVE',
   Alpha = 'ALPHA',
-  Beta = 'BETA'
+  Beta = 'BETA',
+  Live = 'LIVE'
 }
 
 export type UmlAssociation = {
@@ -847,7 +847,16 @@ export enum WebExPart {
 export type WebSampleSolution = {
    __typename?: 'WebSampleSolution';
   id: Scalars['Int'];
-  sample: Array<ExerciseFile>;
+  sample: WebSolution;
+};
+
+export type WebSolution = {
+   __typename?: 'WebSolution';
+  files: Array<ExerciseFile>;
+};
+
+export type WebSolutionInput = {
+  files: Array<ExerciseFileInput>;
 };
 
 export type XmlCompleteResult = AbstractCorrectionResult & {
@@ -1088,7 +1097,7 @@ export type WebCorrectionMutationVariables = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
   part: WebExPart;
-  solution: Array<ExerciseFileInput>;
+  solution: WebSolutionInput;
 };
 
 
@@ -1238,7 +1247,7 @@ export const UmlCorrectionDocument = gql`
     
   }
 export const WebCorrectionDocument = gql`
-    mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution: [ExerciseFileInput!]!) {
+    mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
   correctWeb(collId: $collId, exId: $exId, part: $part, solution: $solution) {
     ...WebCompleteResult
   }

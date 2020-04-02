@@ -16,7 +16,12 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
-import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment, UmlExPart} from '../../../../_services/apollo_services';
+import {
+  ExerciseSolveFieldsFragment,
+  UmlClassDiagram,
+  UmlExerciseContentSolveFieldsFragment,
+  UmlExPart
+} from '../../../../_services/apollo_services';
 import {UmlCorrectionGQL, UmlCorrectionMutation} from '../../../../_services/apollo-mutation.service';
 
 import * as joint from 'jointjs';
@@ -50,7 +55,7 @@ interface SelectableClassDiagramObject {
   `]
 })
 export class UmlDiagramDrawingComponent
-  extends ComponentWithExercise<ExportedUmlClassDiagram, UmlCorrectionMutation, UmlExPart, UmlCorrectionGQL, IUmlCompleteResult>
+  extends ComponentWithExercise<UmlClassDiagram, ExportedUmlClassDiagram, UmlCorrectionMutation, UmlExPart, UmlCorrectionGQL, IUmlCompleteResult>
   implements OnInit {
 
   readonly nextPart = UmlMemberAllocationPart;

@@ -73,12 +73,6 @@ final case class ExerciseFile(
   content: String
 )
 
-trait FileExerciseContent extends ExerciseContent {
-
-  override type SolType = Seq[ExerciseFile]
-
-}
-
 trait StringExerciseContent extends ExerciseContent {
 
   override type SolType = String

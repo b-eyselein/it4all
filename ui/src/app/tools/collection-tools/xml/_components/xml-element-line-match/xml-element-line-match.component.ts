@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IElementLineMatch} from '../../xml-interfaces';
+import {ElementLineMatch} from "../../xml-apollo-service";
 
 @Component({
   selector: 'it4all-xml-element-line-match',
@@ -7,7 +7,7 @@ import {IElementLineMatch} from '../../xml-interfaces';
 })
 export class XmlElementLineMatchComponent implements OnInit {
 
-  @Input() match: IElementLineMatch;
+  @Input() match: ElementLineMatch;
 
   isCorrect = false;
 

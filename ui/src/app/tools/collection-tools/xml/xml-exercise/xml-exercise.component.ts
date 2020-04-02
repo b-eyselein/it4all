@@ -3,22 +3,25 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {ApiService} from '../../_services/api.service';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
-import {IXmlCompleteResult, IXmlSolution} from '../xml-interfaces';
 import {
   ExerciseFile,
   ExerciseSolveFieldsFragment,
   XmlExerciseContentSolveFieldsFragment
 } from "../../../../_services/apollo_services";
 
-import 'codemirror/mode/dtd/dtd';
-import 'codemirror/mode/xml/xml';
-import {XmlExPart} from "../../sql/sql-apollo-service";
 import {
+  XmlCompleteResultFragment,
   XmlCorrectionGQL,
   XmlCorrectionMutation,
   XmlErrorFragment,
-  XmlGrammarResultFragment
+  XmlExPart,
+  XmlGrammarResultFragment,
+  XmlSolution,
+  XmlSolutionInput
 } from "../xml-apollo-service";
+
+import 'codemirror/mode/dtd/dtd';
+import 'codemirror/mode/xml/xml';
 
 function getXmlGrammarContent(rootNode: string): string {
   return `<!ELEMENT ${rootNode} (EMPTY)>`;
@@ -37,7 +40,7 @@ function getXmlDocumentContent(rootNode: string): string {
   templateUrl: './xml-exercise.component.html'
 })
 export class XmlExerciseComponent
-  extends ComponentWithExercise<IXmlSolution, XmlCorrectionMutation, XmlExPart, XmlCorrectionGQL, IXmlCompleteResult>
+  extends ComponentWithExercise<XmlSolution, XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionGQL, XmlCompleteResultFragment>
   implements OnInit {
 
   @Input() oldPart: ToolPart;
@@ -63,7 +66,7 @@ export class XmlExerciseComponent
     const grammarFileName = `${rootNode}.dtd`;
     this.grammarFile = {
       name: grammarFileName,
-      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : (this.xmlExerciseContent.xmlSampleSolutions[0].sample as IXmlSolution).grammar,
+      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : (this.xmlExerciseContent.xmlSampleSolutions[0].sample).grammar,
       fileType: 'dtd',
       editable: this.isGrammarPart,
       resourcePath: grammarFileName
@@ -98,14 +101,14 @@ export class XmlExerciseComponent
     this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, part, this.oldPart);
   }
 
-  protected getSolution(): IXmlSolution {
+  protected getSolution(): XmlSolutionInput {
     return {
       grammar: this.grammarFile.content,
       document: this.documentFile.content
     };
   }
 
-  get sampleSolutions(): IXmlSolution[] {
+  get sampleSolutions(): XmlSolution[] {
     return this.xmlExerciseContent.xmlSampleSolutions.map((sample) => sample.sample);
   }
 

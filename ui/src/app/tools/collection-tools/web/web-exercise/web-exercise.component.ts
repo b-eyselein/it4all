@@ -9,7 +9,9 @@ import {
   ExerciseFile,
   ExerciseSolveFieldsFragment,
   WebExerciseContentSolveFieldsFragment,
-  WebExPart
+  WebExPart,
+  WebSolution,
+  WebSolutionInput
 } from '../../../../_services/apollo_services';
 import {WebCorrectionGQL, WebCorrectionMutation} from '../../../../_services/apollo-mutation.service';
 
@@ -20,12 +22,11 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
   templateUrl: './web-exercise.component.html'
 })
 export class WebExerciseComponent
-  extends ComponentWithExercise<ExerciseFile[], WebCorrectionMutation, WebExPart, WebCorrectionGQL, IWebCompleteResult>
+  extends ComponentWithExercise<WebSolution, WebSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionGQL, IWebCompleteResult>
   implements OnInit {
 
 
   @Input() part: ToolPart;
-  @Input() exPart: WebExPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() webExerciseContent: WebExerciseContentSolveFieldsFragment;
 
@@ -44,14 +45,18 @@ export class WebExerciseComponent
   }
 
   correct(): void {
-    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.exPart, this.part);
+    const exPart = this.part.id === 'html' ? WebExPart.HtmlPart : WebExPart.JsPart;
+
+    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, exPart, this.part);
   }
 
-  protected getSolution(): ExerciseFile[] {
-    return this.exerciseFiles;
+  protected getSolution(): WebSolution {
+    console.info(JSON.stringify(this.exerciseFiles, null, 2));
+
+    return {files: this.exerciseFiles};
   }
 
-  get sampleSolutions(): ExerciseFile[][] {
+  get sampleSolutions(): WebSolution[] {
     return this.webExerciseContent.webSampleSolutions.map((s) => s.sample);
   }
 
