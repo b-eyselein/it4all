@@ -1,0 +1,85 @@
+fragment AbstractCorrectionResult on AbstractCorrectionResult {
+  solutionSaved
+  points
+  maxPoints
+}
+
+mutation UmlCorrection($collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
+  correctUml(collId: $collId, exId: $exId,part: $part, solution: $solution) {
+    ...UmlCompleteResult
+  }
+}
+
+fragment UmlCompleteResult on UmlCompleteResult {
+  ...AbstractCorrectionResult
+  classResult {
+    ...UmlClassMatchingResult
+  }
+  assocResult {
+    ...UmlAssociationMatchingResult
+  }
+  implResult {
+    ...UmlImplementationMatchingResult
+  }
+}
+
+
+fragment UmlClassMatchingResult on UmlClassMatchingResult {
+  allMatches {
+    ...UmlClassMatch
+  }
+  points
+  maxPoints
+}
+
+fragment UmlClassMatch on UmlClassMatch {
+  matchType
+  userArg {
+    __typename
+  }
+  sampleArg {
+    __typename
+  }
+  analysisResult {
+    __typename
+  }
+}
+
+fragment UmlAssociationMatchingResult on UmlAssociationMatchingResult  {
+  allMatches {
+    ...UmlAssociationMatch
+  }
+  points
+  maxPoints
+}
+
+fragment UmlAssociationMatch on UmlAssociationMatch {
+  matchType
+  userArg {
+    __typename
+  }
+  sampleArg {
+    __typename
+  }
+  maybeAnalysisResult {
+    __typename
+  }
+}
+
+fragment UmlImplementationMatchingResult on UmlImplementationMatchingResult {
+  allMatches {
+    ...UmlImplementationMatch
+  }
+  points
+  maxPoints
+}
+
+fragment UmlImplementationMatch on UmlImplementationMatch {
+  matchType
+  userArg {
+    __typename
+  }
+  sampleArg {
+    __typename
+  }
+}

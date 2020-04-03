@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Apr 02 2020 14:31:46 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Fri Apr 03 2020 09:31:01 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -494,6 +494,13 @@ type UmlAssociation {
   secondMult: UmlMultiplicity!
 }
 
+type UmlAssociationAnalysisResult {
+  endsParallel: Boolean!
+  assocTypeEqual: Boolean!
+  correctAssocType: UmlAssociationType!
+  multiplicitiesEqual: Boolean!
+}
+
 input UmlAssociationInput {
   assocType: UmlAssociationType!
   assocName: String
@@ -501,6 +508,23 @@ input UmlAssociationInput {
   firstMult: UmlMultiplicity!
   secondEnd: String!
   secondMult: UmlMultiplicity!
+}
+
+type UmlAssociationMatch implements NewMatch {
+  matchType: MatchType!
+  userArg: UmlAssociation
+  sampleArg: UmlAssociation
+  maybeAnalysisResult: UmlAssociationAnalysisResult
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type UmlAssociationMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  allMatches: [UmlAssociationMatch!]!
+  points: Float!
+  maxPoints: Float!
 }
 
 enum UmlAssociationType {
@@ -518,6 +542,19 @@ type UmlAttribute {
   isAbstract: Boolean!
 }
 
+type UmlAttributeAnalysisResult {
+  visibilityComparison: Boolean!
+  correctVisibility: UmlVisibility!
+  typeComparison: Boolean!
+  correctType: String!
+  staticCorrect: Boolean!
+  correctStatic: Boolean!
+  derivedCorrect: Boolean!
+  correctDerived: Boolean!
+  abstractCorrect: Boolean!
+  correctAbstract: Boolean!
+}
+
 input UmlAttributeInput {
   visibility: UmlVisibility!
   memberName: String!
@@ -525,6 +562,23 @@ input UmlAttributeInput {
   isStatic: Boolean = false
   isDerived: Boolean = false
   isAbstract: Boolean = false
+}
+
+type UmlAttributeMatch implements NewMatch {
+  matchType: MatchType!
+  userArg: UmlAttribute
+  sampleArg: UmlAttribute
+  maybeAnalysisResult: UmlAttributeAnalysisResult
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type UmlAttributeMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  allMatches: [UmlAttributeMatch!]!
+  points: Float!
+  maxPoints: Float!
 }
 
 type UmlClass {
@@ -553,6 +607,31 @@ input UmlClassInput {
   methods: [UmlMethodInput!]!
 }
 
+type UmlClassMatch implements NewMatch {
+  matchType: MatchType!
+  userArg: UmlClass
+  sampleArg: UmlClass
+  compAM: Boolean!
+  analysisResult: UmlClassMatchAnalysisResult
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type UmlClassMatchAnalysisResult {
+  classTypeCorrect: Boolean!
+  correctClassType: UmlClassType!
+  maybeAttributeMatchingResult: UmlAttributeMatchingResult
+  maybeMethodMatchingResult: UmlMethodMatchingResult
+}
+
+type UmlClassMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  allMatches: [UmlClassMatch!]!
+  points: Float!
+  maxPoints: Float!
+}
+
 enum UmlClassType {
   ABSTRACT
   CLASS
@@ -560,6 +639,9 @@ enum UmlClassType {
 }
 
 type UmlCompleteResult implements AbstractCorrectionResult {
+  classResult: UmlClassMatchingResult
+  assocResult: UmlAssociationMatchingResult
+  implResult: UmlImplementationMatchingResult
   solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
@@ -588,6 +670,22 @@ input UmlImplementationInput {
   superClass: String!
 }
 
+type UmlImplementationMatch implements NewMatch {
+  matchType: MatchType!
+  userArg: UmlImplementation
+  sampleArg: UmlImplementation
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type UmlImplementationMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  allMatches: [UmlImplementationMatch!]!
+  points: Float!
+  maxPoints: Float!
+}
+
 type UmlMethod {
   visibility: UmlVisibility!
   memberName: String!
@@ -597,6 +695,19 @@ type UmlMethod {
   isAbstract: Boolean!
 }
 
+type UmlMethodAnalysisResult {
+  visibilityComparison: Boolean!
+  correctVisibility: UmlVisibility!
+  typeComparison: Boolean!
+  correctType: String!
+  parameterComparison: Boolean!
+  correctParameters: String!
+  staticCorrect: Boolean!
+  correctStatic: Boolean!
+  abstractCorrect: Boolean!
+  correctAbstract: Boolean!
+}
+
 input UmlMethodInput {
   visibility: UmlVisibility!
   memberName: String!
@@ -604,6 +715,23 @@ input UmlMethodInput {
   parameters: String!
   isStatic: Boolean = false
   isAbstract: Boolean = false
+}
+
+type UmlMethodMatch implements NewMatch {
+  matchType: MatchType!
+  userArg: UmlMethod
+  sampleArg: UmlMethod
+  maybeAnalysisResult: UmlMethodAnalysisResult
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type UmlMethodMatchingResult implements MatchingResult {
+  matchName: String! @deprecated(reason: "Will be deleted")
+  matchSingularName: String! @deprecated(reason: "Will be deleted")
+  allMatches: [UmlMethodMatch!]!
+  points: Float!
+  maxPoints: Float!
 }
 
 enum UmlMultiplicity {

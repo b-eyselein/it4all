@@ -8,7 +8,6 @@ import {
   UmlMemberAllocationPart
 } from '../uml-tools';
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
-import {IUmlClassDiagram, IUmlCompleteResult} from '../uml-interfaces';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
 import {ExportedUmlClassDiagram, umlAssocfromConnection, umlImplfromConnection} from '../_model/my-uml-interfaces';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
@@ -19,10 +18,11 @@ import {environment} from '../../../../../environments/environment';
 import {
   ExerciseSolveFieldsFragment,
   UmlClassDiagram,
+  UmlClassDiagramInput,
   UmlExerciseContentSolveFieldsFragment,
   UmlExPart
 } from '../../../../_services/apollo_services';
-import {UmlCorrectionGQL, UmlCorrectionMutation} from '../../../../_services/apollo-mutation.service';
+import {UmlCorrectionGQL, UmlCorrectionMutation} from '../uml-';
 
 import * as joint from 'jointjs';
 
@@ -55,13 +55,12 @@ interface SelectableClassDiagramObject {
   `]
 })
 export class UmlDiagramDrawingComponent
-  extends ComponentWithExercise<UmlClassDiagram, ExportedUmlClassDiagram, UmlCorrectionMutation, UmlExPart, UmlCorrectionGQL, IUmlCompleteResult>
+  extends ComponentWithExercise<UmlClassDiagram, UmlClassDiagramInput, UmlCorrectionMutation, UmlExPart, UmlCorrectionGQL, any>
   implements OnInit {
 
   readonly nextPart = UmlMemberAllocationPart;
 
   @Input() part: ToolPart;
-  @Input() exPart: UmlExPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() exerciseContent: UmlExerciseContentSolveFieldsFragment;
 
@@ -259,7 +258,7 @@ export class UmlDiagramDrawingComponent
     };
   }
 
-  get sampleSolutions(): IUmlClassDiagram[] {
+  get sampleSolutions(): UmlClassDiagram[] {
     return this.exerciseContent.umlSampleSolutions.map((sample) => sample.sample);
   }
 

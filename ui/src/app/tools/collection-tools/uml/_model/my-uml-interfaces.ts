@@ -1,28 +1,29 @@
-import {
-  IUmlAssociation,
-  IUmlAttribute,
-  IUmlClass,
-  IUmlImplementation,
-  IUmlMethod,
-  UmlAssociationType,
-  UmlMultiplicity
-} from '../uml-interfaces';
 import * as joint from 'jointjs';
 import {MyJointClass} from './joint-class-diag-elements';
+import {
+  UmlAssociationInput,
+  UmlAssociationType,
+  UmlAttribute,
+  UmlClassDiagramInput,
+  UmlClassInput,
+  UmlImplementationInput,
+  UmlMethod,
+  UmlMultiplicity
+} from "../../../../_services/apollo_services";
 
 export const CLASS_TYPES = ['CLASS', 'ABSTRACT', 'INTERFACE'];
 
-export interface ExportedUmlClassDiagram {
+export interface ExportedUmlClassDiagram extends UmlClassDiagramInput {
   classes: ExportedUmlClass[];
-  implementations: IUmlImplementation[];
-  associations: IUmlAssociation[];
+  implementations: UmlImplementationInput[];
+  associations: UmlAssociationInput[];
 }
 
-export interface ExportedUmlClass extends IUmlClass {
+export interface ExportedUmlClass extends UmlClassInput {
   position?: { x: number, y: number };
 }
 
-export function buildMethodString(cm: IUmlMethod): string {
+export function buildMethodString(cm: UmlMethod): string {
   const modifier = [];
 
   if (cm.isAbstract) {
@@ -38,7 +39,7 @@ export function buildMethodString(cm: IUmlMethod): string {
   ) + cm.memberName + '(' + cm.parameters + '): ' + cm.memberType;
 }
 
-export function buildAttributeString(ca: IUmlAttribute): string {
+export function buildAttributeString(ca: UmlAttribute): string {
   const modifier = [];
 
   if (ca.isAbstract) {
@@ -72,18 +73,18 @@ function getTypeName(type: string): string {
 }
 
 export function getMultiplicity(label): UmlMultiplicity {
-  return label.attrs.text.text === '1' ? 'SINGLE' : 'UNBOUND';
+  return label.attrs.text.text === '1' ? UmlMultiplicity.Single : UmlMultiplicity.Unbound;
 }
 
 
-export function umlImplfromConnection(conn: joint.dia.Link): IUmlImplementation {
+export function umlImplfromConnection(conn: joint.dia.Link): UmlImplementationInput {
   return {
     subClass: (conn.getSourceCell() as MyJointClass).getClassName(),
     superClass: (conn.getTargetCell() as MyJointClass).getClassName()
   };
 }
 
-export function umlAssocfromConnection(conn: joint.dia.Link): IUmlAssociation {
+export function umlAssocfromConnection(conn: joint.dia.Link): UmlAssociationInput {
   return {
     assocType: getTypeName(conn.attributes.type) as UmlAssociationType,
     assocName: '',        // TODO: name of association!?!

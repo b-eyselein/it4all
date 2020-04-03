@@ -1,9 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IUmlAttribute, IUmlClassDiagram, IUmlMethod, UmlVisibility} from '../uml-interfaces';
+import {IUmlAttribute, IUmlMethod, UmlVisibility} from '../uml-interfaces';
 import {distinctObjectArray, flatMapArray} from '../../../../helpers';
 import {
   ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment
+  UmlAttribute,
+  UmlClassDiagram,
+  UmlExerciseContentSolveFieldsFragment,
+  UmlMethod
 } from "../../../../_services/apollo_services";
 
 function printVisibility(v: UmlVisibility): string {
@@ -50,9 +53,9 @@ export class UmlMemberAllocationComponent implements OnInit {
 
   data: MemberAllocClass[];
 
-  sample: IUmlClassDiagram;
-  allAttributes: IUmlAttribute[];
-  allMethods: IUmlMethod[];
+  sample: UmlClassDiagram;
+  allAttributes: UmlAttribute[];
+  allMethods: UmlMethod[];
 
   corrected = false;
 

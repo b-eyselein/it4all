@@ -652,6 +652,14 @@ export type UmlAssociation = {
   secondMult: UmlMultiplicity;
 };
 
+export type UmlAssociationAnalysisResult = {
+   __typename?: 'UmlAssociationAnalysisResult';
+  endsParallel: Scalars['Boolean'];
+  assocTypeEqual: Scalars['Boolean'];
+  correctAssocType: UmlAssociationType;
+  multiplicitiesEqual: Scalars['Boolean'];
+};
+
 export type UmlAssociationInput = {
   assocType: UmlAssociationType;
   assocName?: Maybe<Scalars['String']>;
@@ -659,6 +667,27 @@ export type UmlAssociationInput = {
   firstMult: UmlMultiplicity;
   secondEnd: Scalars['String'];
   secondMult: UmlMultiplicity;
+};
+
+export type UmlAssociationMatch = NewMatch & {
+   __typename?: 'UmlAssociationMatch';
+  matchType: MatchType;
+  userArg?: Maybe<UmlAssociation>;
+  sampleArg?: Maybe<UmlAssociation>;
+  maybeAnalysisResult?: Maybe<UmlAssociationAnalysisResult>;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
+};
+
+export type UmlAssociationMatchingResult = MatchingResult & {
+   __typename?: 'UmlAssociationMatchingResult';
+  /** @deprecated Will be deleted */
+  matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
+  matchSingularName: Scalars['String'];
+  allMatches: Array<UmlAssociationMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export enum UmlAssociationType {
@@ -677,6 +706,20 @@ export type UmlAttribute = {
   isAbstract: Scalars['Boolean'];
 };
 
+export type UmlAttributeAnalysisResult = {
+   __typename?: 'UmlAttributeAnalysisResult';
+  visibilityComparison: Scalars['Boolean'];
+  correctVisibility: UmlVisibility;
+  typeComparison: Scalars['Boolean'];
+  correctType: Scalars['String'];
+  staticCorrect: Scalars['Boolean'];
+  correctStatic: Scalars['Boolean'];
+  derivedCorrect: Scalars['Boolean'];
+  correctDerived: Scalars['Boolean'];
+  abstractCorrect: Scalars['Boolean'];
+  correctAbstract: Scalars['Boolean'];
+};
+
 export type UmlAttributeInput = {
   visibility: UmlVisibility;
   memberName: Scalars['String'];
@@ -684,6 +727,27 @@ export type UmlAttributeInput = {
   isStatic?: Maybe<Scalars['Boolean']>;
   isDerived?: Maybe<Scalars['Boolean']>;
   isAbstract?: Maybe<Scalars['Boolean']>;
+};
+
+export type UmlAttributeMatch = NewMatch & {
+   __typename?: 'UmlAttributeMatch';
+  matchType: MatchType;
+  userArg?: Maybe<UmlAttribute>;
+  sampleArg?: Maybe<UmlAttribute>;
+  maybeAnalysisResult?: Maybe<UmlAttributeAnalysisResult>;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
+};
+
+export type UmlAttributeMatchingResult = MatchingResult & {
+   __typename?: 'UmlAttributeMatchingResult';
+  /** @deprecated Will be deleted */
+  matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
+  matchSingularName: Scalars['String'];
+  allMatches: Array<UmlAttributeMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type UmlClass = {
@@ -714,6 +778,36 @@ export type UmlClassInput = {
   methods: Array<UmlMethodInput>;
 };
 
+export type UmlClassMatch = NewMatch & {
+   __typename?: 'UmlClassMatch';
+  matchType: MatchType;
+  userArg?: Maybe<UmlClass>;
+  sampleArg?: Maybe<UmlClass>;
+  compAM: Scalars['Boolean'];
+  analysisResult?: Maybe<UmlClassMatchAnalysisResult>;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
+};
+
+export type UmlClassMatchAnalysisResult = {
+   __typename?: 'UmlClassMatchAnalysisResult';
+  classTypeCorrect: Scalars['Boolean'];
+  correctClassType: UmlClassType;
+  maybeAttributeMatchingResult?: Maybe<UmlAttributeMatchingResult>;
+  maybeMethodMatchingResult?: Maybe<UmlMethodMatchingResult>;
+};
+
+export type UmlClassMatchingResult = MatchingResult & {
+   __typename?: 'UmlClassMatchingResult';
+  /** @deprecated Will be deleted */
+  matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
+  matchSingularName: Scalars['String'];
+  allMatches: Array<UmlClassMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
 export enum UmlClassType {
   Abstract = 'ABSTRACT',
   Class = 'CLASS',
@@ -722,6 +816,9 @@ export enum UmlClassType {
 
 export type UmlCompleteResult = AbstractCorrectionResult & {
    __typename?: 'UmlCompleteResult';
+  classResult?: Maybe<UmlClassMatchingResult>;
+  assocResult?: Maybe<UmlAssociationMatchingResult>;
+  implResult?: Maybe<UmlImplementationMatchingResult>;
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -752,6 +849,26 @@ export type UmlImplementationInput = {
   superClass: Scalars['String'];
 };
 
+export type UmlImplementationMatch = NewMatch & {
+   __typename?: 'UmlImplementationMatch';
+  matchType: MatchType;
+  userArg?: Maybe<UmlImplementation>;
+  sampleArg?: Maybe<UmlImplementation>;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
+};
+
+export type UmlImplementationMatchingResult = MatchingResult & {
+   __typename?: 'UmlImplementationMatchingResult';
+  /** @deprecated Will be deleted */
+  matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
+  matchSingularName: Scalars['String'];
+  allMatches: Array<UmlImplementationMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
 export type UmlMethod = {
    __typename?: 'UmlMethod';
   visibility: UmlVisibility;
@@ -762,6 +879,20 @@ export type UmlMethod = {
   isAbstract: Scalars['Boolean'];
 };
 
+export type UmlMethodAnalysisResult = {
+   __typename?: 'UmlMethodAnalysisResult';
+  visibilityComparison: Scalars['Boolean'];
+  correctVisibility: UmlVisibility;
+  typeComparison: Scalars['Boolean'];
+  correctType: Scalars['String'];
+  parameterComparison: Scalars['Boolean'];
+  correctParameters: Scalars['String'];
+  staticCorrect: Scalars['Boolean'];
+  correctStatic: Scalars['Boolean'];
+  abstractCorrect: Scalars['Boolean'];
+  correctAbstract: Scalars['Boolean'];
+};
+
 export type UmlMethodInput = {
   visibility: UmlVisibility;
   memberName: Scalars['String'];
@@ -769,6 +900,27 @@ export type UmlMethodInput = {
   parameters: Scalars['String'];
   isStatic?: Maybe<Scalars['Boolean']>;
   isAbstract?: Maybe<Scalars['Boolean']>;
+};
+
+export type UmlMethodMatch = NewMatch & {
+   __typename?: 'UmlMethodMatch';
+  matchType: MatchType;
+  userArg?: Maybe<UmlMethod>;
+  sampleArg?: Maybe<UmlMethod>;
+  maybeAnalysisResult?: Maybe<UmlMethodAnalysisResult>;
+  userArgDescription?: Maybe<Scalars['String']>;
+  sampleArgDescription?: Maybe<Scalars['String']>;
+};
+
+export type UmlMethodMatchingResult = MatchingResult & {
+   __typename?: 'UmlMethodMatchingResult';
+  /** @deprecated Will be deleted */
+  matchName: Scalars['String'];
+  /** @deprecated Will be deleted */
+  matchSingularName: Scalars['String'];
+  allMatches: Array<UmlMethodMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export enum UmlMultiplicity {
@@ -1191,12 +1343,37 @@ type Mr_SqlInsertComparisonMatchingResult_Fragment = (
   & Pick<SqlInsertComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
 );
 
+type Mr_UmlClassMatchingResult_Fragment = (
+  { __typename?: 'UmlClassMatchingResult' }
+  & Pick<UmlClassMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+type Mr_UmlAttributeMatchingResult_Fragment = (
+  { __typename?: 'UmlAttributeMatchingResult' }
+  & Pick<UmlAttributeMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+type Mr_UmlMethodMatchingResult_Fragment = (
+  { __typename?: 'UmlMethodMatchingResult' }
+  & Pick<UmlMethodMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+type Mr_UmlAssociationMatchingResult_Fragment = (
+  { __typename?: 'UmlAssociationMatchingResult' }
+  & Pick<UmlAssociationMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
+type Mr_UmlImplementationMatchingResult_Fragment = (
+  { __typename?: 'UmlImplementationMatchingResult' }
+  & Pick<UmlImplementationMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+);
+
 type Mr_XmlElementLineComparisonMatchingResult_Fragment = (
   { __typename?: 'XmlElementLineComparisonMatchingResult' }
   & Pick<XmlElementLineComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
 );
 
-export type MrFragment = Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
+export type MrFragment = Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_UmlClassMatchingResult_Fragment | Mr_UmlAttributeMatchingResult_Fragment | Mr_UmlMethodMatchingResult_Fragment | Mr_UmlAssociationMatchingResult_Fragment | Mr_UmlImplementationMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
 
 export const AbstractCorrectionResultFragmentDoc = gql`
     fragment AbstractCorrectionResult on AbstractCorrectionResult {

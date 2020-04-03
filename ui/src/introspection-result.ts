@@ -114,6 +114,21 @@
             "name": "SqlInsertComparisonMatchingResult"
           },
           {
+            "name": "UmlClassMatchingResult"
+          },
+          {
+            "name": "UmlAttributeMatchingResult"
+          },
+          {
+            "name": "UmlMethodMatchingResult"
+          },
+          {
+            "name": "UmlAssociationMatchingResult"
+          },
+          {
+            "name": "UmlImplementationMatchingResult"
+          },
+          {
             "name": "XmlElementLineComparisonMatchingResult"
           }
         ]
@@ -145,6 +160,21 @@
           },
           {
             "name": "SqlInsertMatch"
+          },
+          {
+            "name": "UmlClassMatch"
+          },
+          {
+            "name": "UmlAttributeMatch"
+          },
+          {
+            "name": "UmlMethodMatch"
+          },
+          {
+            "name": "UmlAssociationMatch"
+          },
+          {
+            "name": "UmlImplementationMatch"
           },
           {
             "name": "ElementLineMatch"

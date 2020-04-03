@@ -24,7 +24,6 @@ fragment ProgCompleteResult on ProgCompleteResult {
 
 # Regex
 
-
 mutation RegexCorrection($collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
   correctRegex(collId: $collId, exId: $exId,part:$part, solution: $solution) {
     ...RegexIllegalRegexResult
@@ -78,18 +77,6 @@ fragment RegexExtractionResult on RegexExtractionResult {
   extractionResults {
     ...RegexExtractionSingleResult
   }
-}
-
-# Uml
-
-mutation UmlCorrection($collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
-  correctUml(collId: $collId, exId: $exId,part: $part, solution: $solution) {
-    ...UmlCompleteResult
-  }
-}
-
-fragment UmlCompleteResult on UmlCompleteResult {
-  ...AbstractCorrectionResult
 }
 
 # Web

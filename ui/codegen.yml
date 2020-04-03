@@ -31,6 +31,13 @@ generates:
       - typescript-operations
       - typescript-apollo-angular
 
+  src/app/tools/collection-tools/uml/uml-apollo-service.ts:
+    documents: src/app/tools/collections-tools/uml/uml-mutations.graphql
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-apollo-angular
+
   src/app/tools/collection-tools/xml/xml-apollo-service.ts:
     documents: src/app/tools/collection-tools/xml/xml-mutations.graphql
     plugins:

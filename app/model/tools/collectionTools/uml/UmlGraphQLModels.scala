@@ -1,5 +1,8 @@
 package model.tools.collectionTools.uml
 
+import model.core.matching.{MatchType, MatchingResult}
+import model.tools.collectionTools.uml.UmlToolMain.{AssociationComparison, ClassComparison, ImplementationComparison}
+import model.tools.collectionTools.uml.matcher._
 import model.tools.collectionTools.{KeyValueObject, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
@@ -62,10 +65,12 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlCl
     deriveInputObjectType(InputObjectTypeName("UmlAssociationInput"))
   }
 
+  private val umlImplementationType: ObjectType[Unit, UmlImplementation] = deriveObjectType()
+
   private val umlClassDiagramType: ObjectType[Unit, UmlClassDiagram] = {
-    implicit val uct: ObjectType[Unit, UmlClass]                            = umlClassType
-    implicit val uat: ObjectType[Unit, UmlAssociation]                      = umlAssociationType
-    implicit val umlImplementationType: ObjectType[Unit, UmlImplementation] = deriveObjectType()
+    implicit val uct: ObjectType[Unit, UmlClass]          = umlClassType
+    implicit val uat: ObjectType[Unit, UmlAssociation]    = umlAssociationType
+    implicit val uit: ObjectType[Unit, UmlImplementation] = umlImplementationType
 
     deriveObjectType()
   }
@@ -100,12 +105,97 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlCl
 
   // Result types
 
-  private val umlCompleteResultType: ObjectType[Unit, UmlCompleteResult] = deriveObjectType[Unit, UmlCompleteResult](
-    Interfaces(abstractResultTypeType),
-    ExcludeFields(/*"solutionSaved",*/ "points", "maxPoints"),
-    // TODO: include fields...
-    ExcludeFields("classResult", "assocResult", "implResult")
-  )
+  private val umlAttributeAnalysisResultType: ObjectType[Unit, UmlAttributeAnalysisResult] = {
+    implicit val uvt: EnumType[UmlVisibility] = umlVisibilityType
+
+    deriveObjectType()
+  }
+
+  private val umlAttributeMatchType: ObjectType[Unit, UmlAttributeMatch] = {
+    implicit val mt: EnumType[MatchType]                             = matchTypeType
+    implicit val uat: ObjectType[Unit, UmlAttribute]                 = umlAttributeType
+    implicit val uaart: ObjectType[Unit, UmlAttributeAnalysisResult] = umlAttributeAnalysisResultType
+
+    deriveObjectType(
+      Interfaces(newMatchInterface)
+    )
+  }
+
+  private val umlMethodAnalysisResultType: ObjectType[Unit, UmlMethodAnalysisResult] = {
+    implicit val uvt: EnumType[UmlVisibility] = umlVisibilityType
+
+    deriveObjectType()
+  }
+
+  private val umlMethodMatchType: ObjectType[Unit, UmlMethodMatch] = {
+    implicit val mt: EnumType[MatchType]                          = matchTypeType
+    implicit val umt: ObjectType[Unit, UmlMethod]                 = umlMethodType
+    implicit val umart: ObjectType[Unit, UmlMethodAnalysisResult] = umlMethodAnalysisResultType
+
+    deriveObjectType(
+      Interfaces(newMatchInterface)
+    )
+  }
+
+  private val umlClassMatchAnalysisResultType: ObjectType[Unit, UmlClassMatchAnalysisResult] = {
+    implicit val uctt: EnumType[UmlClassType] = umlClassTypeType
+
+    implicit val uact: ObjectType[Unit, MatchingResult[UmlAttribute, UmlAttributeMatch]] =
+      matchingResultType("UmlAttribute", umlAttributeMatchType)
+    implicit val umct: ObjectType[Unit, MatchingResult[UmlMethod, UmlMethodMatch]] =
+      matchingResultType("UmlMethod", umlMethodMatchType)
+
+    deriveObjectType()
+  }
+
+  private val umlClassMatchType: ObjectType[Unit, UmlClassMatch] = {
+    implicit val mt: EnumType[MatchType]                               = matchTypeType
+    implicit val uct: ObjectType[Unit, UmlClass]                       = umlClassType
+    implicit val ucmart: ObjectType[Unit, UmlClassMatchAnalysisResult] = umlClassMatchAnalysisResultType
+
+    deriveObjectType(
+      Interfaces(newMatchInterface)
+    )
+  }
+
+  private val umlAssociationAnalysisResultType: ObjectType[Unit, UmlAssociationAnalysisResult] = {
+    implicit val uatt: EnumType[UmlAssociationType] = umlAssociationTypeType
+
+    deriveObjectType()
+  }
+
+  private val umlAssociationMatchType: ObjectType[Unit, UmlAssociationMatch] = {
+    implicit val mt: EnumType[MatchType]                               = matchTypeType
+    implicit val uat: ObjectType[Unit, UmlAssociation]                 = umlAssociationType
+    implicit val uaart: ObjectType[Unit, UmlAssociationAnalysisResult] = umlAssociationAnalysisResultType
+
+    deriveObjectType(
+      Interfaces(newMatchInterface)
+    )
+  }
+
+  private val umlImplementationMatchType: ObjectType[Unit, UmlImplementationMatch] = {
+    implicit val mt: EnumType[MatchType]                  = matchTypeType
+    implicit val uit: ObjectType[Unit, UmlImplementation] = umlImplementationType
+
+    deriveObjectType(
+      Interfaces(newMatchInterface)
+    )
+  }
+
+  private val umlCompleteResultType: ObjectType[Unit, UmlCompleteResult] = {
+    implicit val cct: ObjectType[Unit, ClassComparison] =
+      matchingResultType("UmlClass", umlClassMatchType)
+    implicit val act: ObjectType[Unit, AssociationComparison] =
+      matchingResultType("UmlAssociation", umlAssociationMatchType)
+    implicit val ict: ObjectType[Unit, ImplementationComparison] =
+      matchingResultType("UmlImplementation", umlImplementationMatchType)
+
+    deriveObjectType[Unit, UmlCompleteResult](
+      Interfaces(abstractResultTypeType),
+      ExcludeFields("solutionSaved", "points", "maxPoints")
+    )
+  }
 
   override val AbstractResultTypeType: OutputType[Any] = umlCompleteResultType
 
