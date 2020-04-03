@@ -26,11 +26,48 @@ fragment XmlGrammarResult on XmlGrammarResult {
     msg
     parsedLine
   }
+  results {
+    ...MR
+    ...XmlElementLineMatchingResult
+  }
 }
 
-fragment  XmlError on XmlError {
+fragment XmlElementLineMatchingResult on XmlElementLineComparisonMatchingResult {
+  allMatches  {
+    ...XmlElementLineMatch
+  }
+}
+
+fragment XmlElementLineMatch on ElementLineMatch {
+  matchType
+  userArg  {
+    ...ElementLine
+  }
+  sampleArg {
+    ...ElementLine
+  }
+}
+
+fragment ElementLine on ElementLine {
+  elementName
+  elementDefinition {
+    elementName
+    content
+  }
+  attributeLists {
+    elementName
+    attributeDefinitions
+  }
+}
+
+fragment XmlError on XmlError {
   success
   line
   errorType
   errorMessage
+}
+
+fragment MR on MatchingResult {
+  points
+  maxPoints
 }

@@ -84,12 +84,31 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
     deriveObjectType()
   }
 
-  private val sqlExecutionResultType: ObjectType[Unit, SqlExecutionResult] = {
-    deriveObjectType(
-      // TODO: do not exclude fields...
-      AddFields(Field("X", OptionType(IntType), resolve = _ => None)),
-      ExcludeFields("userResultTry", "sampleResultTry")
+  private val sqlCellType: ObjectType[Unit, SqlCell] = deriveObjectType()
+
+  private val KeyCellValueObjectType = ObjectType(
+    "SqlKeyCellValueObject",
+    fields[Unit, (String, SqlCell)](
+      Field("key", StringType, resolve = _.value._1),
+      Field("value", sqlCellType, resolve = _.value._2)
     )
+  )
+
+  private val sqlRowType: ObjectType[Unit, SqlRow] =
+    deriveObjectType(
+      ReplaceField("cells", Field("cells", ListType(KeyCellValueObjectType), resolve = _.value.cells.toSeq))
+    )
+
+  private val sqlQueryResultType: ObjectType[Unit, SqlQueryResult] = {
+    implicit val srt: ObjectType[Unit, SqlRow] = sqlRowType
+
+    deriveObjectType()
+  }
+
+  private val sqlExecutionResultType: ObjectType[Unit, SqlExecutionResult] = {
+    implicit val sqrt: ObjectType[Unit, SqlQueryResult] = sqlQueryResultType
+
+    deriveObjectType()
   }
 
   private val sqlIllegalQueryResultType: ObjectType[Unit, SqlIllegalQueryResult] = {

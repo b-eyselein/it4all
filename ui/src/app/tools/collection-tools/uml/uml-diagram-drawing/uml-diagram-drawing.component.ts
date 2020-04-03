@@ -22,7 +22,7 @@ import {
   UmlExerciseContentSolveFieldsFragment,
   UmlExPart
 } from '../../../../_services/apollo_services';
-import {UmlCorrectionGQL, UmlCorrectionMutation} from '../uml-';
+import {UmlCorrectionGQL, UmlCorrectionMutation} from '../uml-apollo-service';
 
 import * as joint from 'jointjs';
 

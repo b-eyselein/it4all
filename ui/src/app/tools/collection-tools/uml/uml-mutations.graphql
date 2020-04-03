@@ -35,12 +35,23 @@ fragment UmlClassMatchingResult on UmlClassMatchingResult {
 fragment UmlClassMatch on UmlClassMatch {
   matchType
   userArg {
-    __typename
+    ...UmlClass
   }
   sampleArg {
-    __typename
+    ...UmlClass
   }
   analysisResult {
+    __typename
+  }
+}
+
+fragment UmlClass on UmlClass  {
+  classType
+  name
+  attributes {
+    __typename
+  }
+  methods {
     __typename
   }
 }
@@ -56,14 +67,23 @@ fragment UmlAssociationMatchingResult on UmlAssociationMatchingResult  {
 fragment UmlAssociationMatch on UmlAssociationMatch {
   matchType
   userArg {
-    __typename
+    ...UmlAssociation
   }
   sampleArg {
-    __typename
+    ...UmlAssociation
   }
   maybeAnalysisResult {
     __typename
   }
+}
+
+fragment UmlAssociation on UmlAssociation {
+  assocType
+  assocName
+  firstEnd
+  firstMult
+  secondEnd
+  secondMult
 }
 
 fragment UmlImplementationMatchingResult on UmlImplementationMatchingResult {
@@ -77,9 +97,14 @@ fragment UmlImplementationMatchingResult on UmlImplementationMatchingResult {
 fragment UmlImplementationMatch on UmlImplementationMatch {
   matchType
   userArg {
-    __typename
+    ...UmlImplementation
   }
   sampleArg {
-    __typename
+    ...UmlImplementation
   }
+}
+
+fragment UmlImplementation on UmlImplementation {
+  subClass
+  superClass
 }

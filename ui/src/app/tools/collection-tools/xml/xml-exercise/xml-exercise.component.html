@@ -65,7 +65,7 @@
                 <div class="has-text-danger">{{parseError.msg}}</div>
               </div>
 
-              <div *ngFor="let gr of result.grammarResult.results.allMatches" class="content">
+              <div *ngFor="let gr of grammarResult.results.allMatches" class="content">
                 <it4all-xml-element-line-match [match]="gr"></it4all-xml-element-line-match>
               </div>
 

@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 
 import {calcRectHeight, COLORS, fontSize, STD_ELEMENT_WIDTH, STD_PADDING} from './uml-consts';
 import {buildAttributeString, buildMethodString, CLASS_TYPES, ExportedUmlClass} from './my-uml-interfaces';
-import {IUmlAttribute, IUmlMethod, UmlClassType} from '../uml-interfaces';
+import {UmlAttribute, UmlClassType, UmlMethod} from "../uml-apollo-service";
 
 export const STD_CLASS_HEIGHT = 160;
 export const STD_CLASS_WIDTH = 200;
@@ -83,8 +83,8 @@ export class MyJointClass extends joint.shapes.basic.Generic {
 
       className: '' as string,
       classType: '',
-      attributes: [] as IUmlAttribute[],
-      methods: [] as IUmlMethod[]
+      attributes: [] as UmlAttribute[],
+      methods: [] as UmlMethod[]
     }, joint.shapes.basic.Generic.prototype.defaults);
   }
 
@@ -126,15 +126,15 @@ export class MyJointClass extends joint.shapes.basic.Generic {
     return this.get('attributes').map(buildAttributeString);
   }
 
-  getAttributes(): IUmlAttribute[] {
+  getAttributes(): UmlAttribute[] {
     return this.get('attributes');
   }
 
-  setAttributes(attributes: IUmlAttribute[]): void {
+  setAttributes(attributes: UmlAttribute[]): void {
     this.set('attributes', attributes);
   }
 
-  getMethods(): IUmlMethod[] {
+  getMethods(): UmlMethod[] {
     return this.get('methods');
   }
 
@@ -142,7 +142,7 @@ export class MyJointClass extends joint.shapes.basic.Generic {
     return this.get('methods').map(buildMethodString);
   }
 
-  setMethods(methods: IUmlMethod[]): void {
+  setMethods(methods: UmlMethod[]): void {
     this.set('methods', methods);
   }
 

@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Fri Apr 03 2020 09:31:01 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Fri Apr 03 2020 10:22:05 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -12,6 +12,11 @@ union AbstractRegexResult = RegexIllegalRegexResult | RegexMatchingResult | Rege
 type AdditionalComparison {
   selectComparisons: SelectAdditionalComparisons
   insertComparison: SqlInsertComparisonMatchingResult
+}
+
+type AttributeList {
+  elementName: String!
+  attributeDefinitions: [String!]!
 }
 
 enum BinaryClassificationResultType {
@@ -37,8 +42,15 @@ type DTDParseException {
   parsedLine: String!
 }
 
+type ElementDefinition {
+  elementName: String!
+  content: String!
+}
+
 type ElementLine {
-  todo: Int
+  elementName: String!
+  elementDefinition: ElementDefinition!
+  attributeLists: [AttributeList!]!
 }
 
 type ElementLineAnalysisResult {
@@ -304,6 +316,11 @@ type SqlBinaryExpressionMatch implements NewMatch {
   sampleArgDescription: String
 }
 
+type SqlCell {
+  colName: String!
+  content: String!
+}
+
 type SqlColumnComparisonMatchingResult implements MatchingResult {
   matchName: String! @deprecated(reason: "Will be deleted")
   matchSingularName: String! @deprecated(reason: "Will be deleted")
@@ -321,7 +338,8 @@ type SqlColumnMatch implements NewMatch {
 }
 
 type SqlExecutionResult {
-  X: Int
+  userResultTry: SqlQueryResult
+  sampleResultTry: SqlQueryResult
 }
 
 type SqlExerciseContent {
@@ -331,11 +349,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
+  UPDATE
   CREATE
   SELECT
-  INSERT
   DELETE
-  UPDATE
+  INSERT
 }
 
 enum SqlExPart {
@@ -381,6 +399,11 @@ type SqlInsertMatch implements NewMatch {
   sampleArgDescription: String
 }
 
+type SqlKeyCellValueObject {
+  key: String!
+  value: SqlCell!
+}
+
 type SqlLimitComparisonMatchingResult implements MatchingResult {
   matchName: String! @deprecated(reason: "Will be deleted")
   matchSingularName: String! @deprecated(reason: "Will be deleted")
@@ -421,12 +444,22 @@ type SqlQueriesStaticComparison {
   additionalComparisons: AdditionalComparison!
 }
 
+type SqlQueryResult {
+  columnNames: [String!]!
+  rows: [SqlRow!]!
+  tableName: String!
+}
+
 type SqlResult implements AbstractCorrectionResult {
   staticComparison: SqlQueriesStaticComparison!
   executionResult: SqlExecutionResult!
   solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
+}
+
+type SqlRow {
+  cells: [SqlKeyCellValueObject!]!
 }
 
 type SqlTableComparisonMatchingResult implements MatchingResult {

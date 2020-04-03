@@ -14,10 +14,12 @@ mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution:
 
 fragment SqlIllegalQueryResult on SqlIllegalQueryResult {
   ...AbstractCorrectionResult
+  message
 }
 
 fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
   ...AbstractCorrectionResult
+  message
 }
 
 # Column comparison
@@ -167,9 +169,33 @@ fragment SqlResult on SqlResult {
     }
   }
   executionResult {
-    __typename
+    ...SqlExecutionResult
   }
 }
+
+fragment SqlExecutionResult on SqlExecutionResult {
+  userResultTry {
+    ...SqlQueryResult
+  }
+  sampleResultTry {
+    ...SqlQueryResult
+  }
+}
+
+fragment SqlQueryResult on SqlQueryResult {
+  tableName
+  columnNames
+  rows {
+    cells {
+      key
+      value {
+        colName
+        content
+      }
+    }
+  }
+}
+
 
 # other fragments
 

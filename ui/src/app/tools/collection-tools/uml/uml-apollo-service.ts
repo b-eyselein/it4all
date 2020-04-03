@@ -1167,155 +1167,115 @@ type AbstractCorrectionResult_XmlCompleteResult_Fragment = (
 
 export type AbstractCorrectionResultFragment = AbstractCorrectionResult_RegexIllegalRegexResult_Fragment | AbstractCorrectionResult_RegexMatchingResult_Fragment | AbstractCorrectionResult_RegexExtractionResult_Fragment | AbstractCorrectionResult_SqlIllegalQueryResult_Fragment | AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment | AbstractCorrectionResult_SqlResult_Fragment | AbstractCorrectionResult_UmlCompleteResult_Fragment | AbstractCorrectionResult_WebCompleteResult_Fragment | AbstractCorrectionResult_XmlCompleteResult_Fragment;
 
-export type XmlCorrectionMutationVariables = {
+export type UmlCorrectionMutationVariables = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
-  part: XmlExPart;
-  solution: XmlSolutionInput;
+  part: UmlExPart;
+  solution: UmlClassDiagramInput;
 };
 
 
-export type XmlCorrectionMutation = (
+export type UmlCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctXml?: Maybe<(
-    { __typename?: 'XmlCompleteResult' }
-    & XmlCompleteResultFragment
+  & { correctUml?: Maybe<(
+    { __typename?: 'UmlCompleteResult' }
+    & UmlCompleteResultFragment
   )> }
 );
 
-export type XmlCompleteResultFragment = (
-  { __typename?: 'XmlCompleteResult' }
-  & Pick<XmlCompleteResult, 'successType'>
-  & { grammarResult?: Maybe<(
-    { __typename?: 'XmlGrammarResult' }
-    & XmlGrammarResultFragment
-  )>, documentResult: Array<(
-    { __typename?: 'XmlError' }
-    & XmlErrorFragment
+export type UmlCompleteResultFragment = (
+  { __typename?: 'UmlCompleteResult' }
+  & { classResult?: Maybe<(
+    { __typename?: 'UmlClassMatchingResult' }
+    & UmlClassMatchingResultFragment
+  )>, assocResult?: Maybe<(
+    { __typename?: 'UmlAssociationMatchingResult' }
+    & UmlAssociationMatchingResultFragment
+  )>, implResult?: Maybe<(
+    { __typename?: 'UmlImplementationMatchingResult' }
+    & UmlImplementationMatchingResultFragment
   )> }
-  & AbstractCorrectionResult_XmlCompleteResult_Fragment
+  & AbstractCorrectionResult_UmlCompleteResult_Fragment
 );
 
-export type XmlGrammarResultFragment = (
-  { __typename?: 'XmlGrammarResult' }
-  & { parseErrors: Array<(
-    { __typename?: 'DTDParseException' }
-    & Pick<DtdParseException, 'msg' | 'parsedLine'>
-  )>, results: (
-    { __typename?: 'XmlElementLineComparisonMatchingResult' }
-    & Mr_XmlElementLineComparisonMatchingResult_Fragment
-    & XmlElementLineMatchingResultFragment
-  ) }
-);
-
-export type XmlElementLineMatchingResultFragment = (
-  { __typename?: 'XmlElementLineComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'ElementLineMatch' }
-    & XmlElementLineMatchFragment
-  )> }
-);
-
-export type XmlElementLineMatchFragment = (
-  { __typename?: 'ElementLineMatch' }
-  & Pick<ElementLineMatch, 'matchType'>
-  & { userArg?: Maybe<(
-    { __typename?: 'ElementLine' }
-    & ElementLineFragment
-  )>, sampleArg?: Maybe<(
-    { __typename?: 'ElementLine' }
-    & ElementLineFragment
-  )> }
-);
-
-export type ElementLineFragment = (
-  { __typename?: 'ElementLine' }
-  & Pick<ElementLine, 'elementName'>
-  & { elementDefinition: (
-    { __typename?: 'ElementDefinition' }
-    & Pick<ElementDefinition, 'elementName' | 'content'>
-  ), attributeLists: Array<(
-    { __typename?: 'AttributeList' }
-    & Pick<AttributeList, 'elementName' | 'attributeDefinitions'>
-  )> }
-);
-
-export type XmlErrorFragment = (
-  { __typename?: 'XmlError' }
-  & Pick<XmlError, 'success' | 'line' | 'errorType' | 'errorMessage'>
-);
-
-type Mr_RegexExtractedValuesComparisonMatchingResult_Fragment = (
-  { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
-  & Pick<RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlColumnComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlColumnComparisonMatchingResult' }
-  & Pick<SqlColumnComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlTableComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlTableComparisonMatchingResult' }
-  & Pick<SqlTableComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-  & Pick<SqlBinaryExpressionComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlGroupByComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlGroupByComparisonMatchingResult' }
-  & Pick<SqlGroupByComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlOrderByComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlOrderByComparisonMatchingResult' }
-  & Pick<SqlOrderByComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlLimitComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlLimitComparisonMatchingResult' }
-  & Pick<SqlLimitComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlInsertComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlInsertComparisonMatchingResult' }
-  & Pick<SqlInsertComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_UmlClassMatchingResult_Fragment = (
+export type UmlClassMatchingResultFragment = (
   { __typename?: 'UmlClassMatchingResult' }
   & Pick<UmlClassMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlClassMatch' }
+    & UmlClassMatchFragment
+  )> }
 );
 
-type Mr_UmlAttributeMatchingResult_Fragment = (
-  { __typename?: 'UmlAttributeMatchingResult' }
-  & Pick<UmlAttributeMatchingResult, 'points' | 'maxPoints'>
+export type UmlClassMatchFragment = (
+  { __typename?: 'UmlClassMatch' }
+  & Pick<UmlClassMatch, 'matchType'>
+  & { userArg?: Maybe<(
+    { __typename?: 'UmlClass' }
+    & UmlClassFragment
+  )>, sampleArg?: Maybe<(
+    { __typename?: 'UmlClass' }
+    & UmlClassFragment
+  )>, analysisResult?: Maybe<{ __typename: 'UmlClassMatchAnalysisResult' }> }
 );
 
-type Mr_UmlMethodMatchingResult_Fragment = (
-  { __typename?: 'UmlMethodMatchingResult' }
-  & Pick<UmlMethodMatchingResult, 'points' | 'maxPoints'>
+export type UmlClassFragment = (
+  { __typename?: 'UmlClass' }
+  & Pick<UmlClass, 'classType' | 'name'>
+  & { attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }
 );
 
-type Mr_UmlAssociationMatchingResult_Fragment = (
+export type UmlAssociationMatchingResultFragment = (
   { __typename?: 'UmlAssociationMatchingResult' }
   & Pick<UmlAssociationMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlAssociationMatch' }
+    & UmlAssociationMatchFragment
+  )> }
 );
 
-type Mr_UmlImplementationMatchingResult_Fragment = (
+export type UmlAssociationMatchFragment = (
+  { __typename?: 'UmlAssociationMatch' }
+  & Pick<UmlAssociationMatch, 'matchType'>
+  & { userArg?: Maybe<(
+    { __typename?: 'UmlAssociation' }
+    & UmlAssociationFragment
+  )>, sampleArg?: Maybe<(
+    { __typename?: 'UmlAssociation' }
+    & UmlAssociationFragment
+  )>, maybeAnalysisResult?: Maybe<{ __typename: 'UmlAssociationAnalysisResult' }> }
+);
+
+export type UmlAssociationFragment = (
+  { __typename?: 'UmlAssociation' }
+  & Pick<UmlAssociation, 'assocType' | 'assocName' | 'firstEnd' | 'firstMult' | 'secondEnd' | 'secondMult'>
+);
+
+export type UmlImplementationMatchingResultFragment = (
   { __typename?: 'UmlImplementationMatchingResult' }
   & Pick<UmlImplementationMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlImplementationMatch' }
+    & UmlImplementationMatchFragment
+  )> }
 );
 
-type Mr_XmlElementLineComparisonMatchingResult_Fragment = (
-  { __typename?: 'XmlElementLineComparisonMatchingResult' }
-  & Pick<XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints'>
+export type UmlImplementationMatchFragment = (
+  { __typename?: 'UmlImplementationMatch' }
+  & Pick<UmlImplementationMatch, 'matchType'>
+  & { userArg?: Maybe<(
+    { __typename?: 'UmlImplementation' }
+    & UmlImplementationFragment
+  )>, sampleArg?: Maybe<(
+    { __typename?: 'UmlImplementation' }
+    & UmlImplementationFragment
+  )> }
 );
 
-export type MrFragment = Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_UmlClassMatchingResult_Fragment | Mr_UmlAttributeMatchingResult_Fragment | Mr_UmlMethodMatchingResult_Fragment | Mr_UmlAssociationMatchingResult_Fragment | Mr_UmlImplementationMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
+export type UmlImplementationFragment = (
+  { __typename?: 'UmlImplementation' }
+  & Pick<UmlImplementation, 'subClass' | 'superClass'>
+);
 
 export const AbstractCorrectionResultFragmentDoc = gql`
     fragment AbstractCorrectionResult on AbstractCorrectionResult {
@@ -1324,90 +1284,129 @@ export const AbstractCorrectionResultFragmentDoc = gql`
   maxPoints
 }
     `;
-export const MrFragmentDoc = gql`
-    fragment MR on MatchingResult {
+export const UmlClassFragmentDoc = gql`
+    fragment UmlClass on UmlClass {
+  classType
+  name
+  attributes {
+    __typename
+  }
+  methods {
+    __typename
+  }
+}
+    `;
+export const UmlClassMatchFragmentDoc = gql`
+    fragment UmlClassMatch on UmlClassMatch {
+  matchType
+  userArg {
+    ...UmlClass
+  }
+  sampleArg {
+    ...UmlClass
+  }
+  analysisResult {
+    __typename
+  }
+}
+    ${UmlClassFragmentDoc}`;
+export const UmlClassMatchingResultFragmentDoc = gql`
+    fragment UmlClassMatchingResult on UmlClassMatchingResult {
+  allMatches {
+    ...UmlClassMatch
+  }
   points
   maxPoints
 }
-    `;
-export const ElementLineFragmentDoc = gql`
-    fragment ElementLine on ElementLine {
-  elementName
-  elementDefinition {
-    elementName
-    content
-  }
-  attributeLists {
-    elementName
-    attributeDefinitions
-  }
+    ${UmlClassMatchFragmentDoc}`;
+export const UmlAssociationFragmentDoc = gql`
+    fragment UmlAssociation on UmlAssociation {
+  assocType
+  assocName
+  firstEnd
+  firstMult
+  secondEnd
+  secondMult
 }
     `;
-export const XmlElementLineMatchFragmentDoc = gql`
-    fragment XmlElementLineMatch on ElementLineMatch {
+export const UmlAssociationMatchFragmentDoc = gql`
+    fragment UmlAssociationMatch on UmlAssociationMatch {
   matchType
   userArg {
-    ...ElementLine
+    ...UmlAssociation
   }
   sampleArg {
-    ...ElementLine
+    ...UmlAssociation
+  }
+  maybeAnalysisResult {
+    __typename
   }
 }
-    ${ElementLineFragmentDoc}`;
-export const XmlElementLineMatchingResultFragmentDoc = gql`
-    fragment XmlElementLineMatchingResult on XmlElementLineComparisonMatchingResult {
+    ${UmlAssociationFragmentDoc}`;
+export const UmlAssociationMatchingResultFragmentDoc = gql`
+    fragment UmlAssociationMatchingResult on UmlAssociationMatchingResult {
   allMatches {
-    ...XmlElementLineMatch
+    ...UmlAssociationMatch
   }
+  points
+  maxPoints
 }
-    ${XmlElementLineMatchFragmentDoc}`;
-export const XmlGrammarResultFragmentDoc = gql`
-    fragment XmlGrammarResult on XmlGrammarResult {
-  parseErrors {
-    msg
-    parsedLine
-  }
-  results {
-    ...MR
-    ...XmlElementLineMatchingResult
-  }
-}
-    ${MrFragmentDoc}
-${XmlElementLineMatchingResultFragmentDoc}`;
-export const XmlErrorFragmentDoc = gql`
-    fragment XmlError on XmlError {
-  success
-  line
-  errorType
-  errorMessage
+    ${UmlAssociationMatchFragmentDoc}`;
+export const UmlImplementationFragmentDoc = gql`
+    fragment UmlImplementation on UmlImplementation {
+  subClass
+  superClass
 }
     `;
-export const XmlCompleteResultFragmentDoc = gql`
-    fragment XmlCompleteResult on XmlCompleteResult {
-  ...AbstractCorrectionResult
-  successType
-  grammarResult {
-    ...XmlGrammarResult
+export const UmlImplementationMatchFragmentDoc = gql`
+    fragment UmlImplementationMatch on UmlImplementationMatch {
+  matchType
+  userArg {
+    ...UmlImplementation
   }
-  documentResult {
-    ...XmlError
+  sampleArg {
+    ...UmlImplementation
+  }
+}
+    ${UmlImplementationFragmentDoc}`;
+export const UmlImplementationMatchingResultFragmentDoc = gql`
+    fragment UmlImplementationMatchingResult on UmlImplementationMatchingResult {
+  allMatches {
+    ...UmlImplementationMatch
+  }
+  points
+  maxPoints
+}
+    ${UmlImplementationMatchFragmentDoc}`;
+export const UmlCompleteResultFragmentDoc = gql`
+    fragment UmlCompleteResult on UmlCompleteResult {
+  ...AbstractCorrectionResult
+  classResult {
+    ...UmlClassMatchingResult
+  }
+  assocResult {
+    ...UmlAssociationMatchingResult
+  }
+  implResult {
+    ...UmlImplementationMatchingResult
   }
 }
     ${AbstractCorrectionResultFragmentDoc}
-${XmlGrammarResultFragmentDoc}
-${XmlErrorFragmentDoc}`;
-export const XmlCorrectionDocument = gql`
-    mutation XmlCorrection($collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
-  correctXml(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...XmlCompleteResult
+${UmlClassMatchingResultFragmentDoc}
+${UmlAssociationMatchingResultFragmentDoc}
+${UmlImplementationMatchingResultFragmentDoc}`;
+export const UmlCorrectionDocument = gql`
+    mutation UmlCorrection($collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
+  correctUml(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+    ...UmlCompleteResult
   }
 }
-    ${XmlCompleteResultFragmentDoc}`;
+    ${UmlCompleteResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
   })
-  export class XmlCorrectionGQL extends Apollo.Mutation<XmlCorrectionMutation, XmlCorrectionMutationVariables> {
-    document = XmlCorrectionDocument;
+  export class UmlCorrectionGQL extends Apollo.Mutation<UmlCorrectionMutation, UmlCorrectionMutationVariables> {
+    document = UmlCorrectionDocument;
     
   }

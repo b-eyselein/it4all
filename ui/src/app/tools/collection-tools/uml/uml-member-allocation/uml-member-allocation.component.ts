@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IUmlAttribute, IUmlMethod, UmlVisibility} from '../uml-interfaces';
 import {distinctObjectArray, flatMapArray} from '../../../../helpers';
 import {
   ExerciseSolveFieldsFragment,
@@ -8,6 +7,7 @@ import {
   UmlExerciseContentSolveFieldsFragment,
   UmlMethod
 } from "../../../../_services/apollo_services";
+import {UmlVisibility} from "../uml-apollo-service";
 
 function printVisibility(v: UmlVisibility): string {
   switch (v) {
@@ -22,11 +22,11 @@ function printVisibility(v: UmlVisibility): string {
   }
 }
 
-function printAttribute(a: IUmlAttribute): string {
+function printAttribute(a: UmlAttribute): string {
   return `${printVisibility(a.visibility)} ${a.memberName}: ${a.memberType}`;
 }
 
-function printMethod(m: IUmlMethod): string {
+function printMethod(m: UmlMethod): string {
   return `${printVisibility(m.visibility)} ${m.memberName}(${m.parameters}): ${m.memberType}`;
 }
 

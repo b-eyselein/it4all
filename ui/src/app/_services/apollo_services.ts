@@ -27,6 +27,12 @@ export type AdditionalComparison = {
   insertComparison?: Maybe<SqlInsertComparisonMatchingResult>;
 };
 
+export type AttributeList = {
+   __typename?: 'AttributeList';
+  elementName: Scalars['String'];
+  attributeDefinitions: Array<Scalars['String']>;
+};
+
 export enum BinaryClassificationResultType {
   FalseNegative = 'FalseNegative',
   FalsePositive = 'FalsePositive',
@@ -57,9 +63,17 @@ export type DtdParseException = {
   parsedLine: Scalars['String'];
 };
 
+export type ElementDefinition = {
+   __typename?: 'ElementDefinition';
+  elementName: Scalars['String'];
+  content: Scalars['String'];
+};
+
 export type ElementLine = {
    __typename?: 'ElementLine';
-  todo?: Maybe<Scalars['Int']>;
+  elementName: Scalars['String'];
+  elementDefinition: ElementDefinition;
+  attributeLists: Array<AttributeList>;
 };
 
 export type ElementLineAnalysisResult = {
@@ -413,6 +427,12 @@ export type SqlBinaryExpressionMatch = NewMatch & {
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
+export type SqlCell = {
+   __typename?: 'SqlCell';
+  colName: Scalars['String'];
+  content: Scalars['String'];
+};
+
 export type SqlColumnComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlColumnComparisonMatchingResult';
   /** @deprecated Will be deleted */
@@ -435,7 +455,8 @@ export type SqlColumnMatch = NewMatch & {
 
 export type SqlExecutionResult = {
    __typename?: 'SqlExecutionResult';
-  X?: Maybe<Scalars['Int']>;
+  userResultTry?: Maybe<SqlQueryResult>;
+  sampleResultTry?: Maybe<SqlQueryResult>;
 };
 
 export type SqlExerciseContent = {
@@ -446,11 +467,11 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
+  Update = 'UPDATE',
   Create = 'CREATE',
   Select = 'SELECT',
-  Insert = 'INSERT',
   Delete = 'DELETE',
-  Update = 'UPDATE'
+  Insert = 'INSERT'
 }
 
 export enum SqlExPart {
@@ -505,6 +526,12 @@ export type SqlInsertMatch = NewMatch & {
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
+export type SqlKeyCellValueObject = {
+   __typename?: 'SqlKeyCellValueObject';
+  key: Scalars['String'];
+  value: SqlCell;
+};
+
 export type SqlLimitComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlLimitComparisonMatchingResult';
   /** @deprecated Will be deleted */
@@ -554,6 +581,13 @@ export type SqlQueriesStaticComparison = {
   additionalComparisons: AdditionalComparison;
 };
 
+export type SqlQueryResult = {
+   __typename?: 'SqlQueryResult';
+  columnNames: Array<Scalars['String']>;
+  rows: Array<SqlRow>;
+  tableName: Scalars['String'];
+};
+
 export type SqlResult = AbstractCorrectionResult & {
    __typename?: 'SqlResult';
   staticComparison: SqlQueriesStaticComparison;
@@ -561,6 +595,11 @@ export type SqlResult = AbstractCorrectionResult & {
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+};
+
+export type SqlRow = {
+   __typename?: 'SqlRow';
+  cells: Array<SqlKeyCellValueObject>;
 };
 
 export type SqlTableComparisonMatchingResult = MatchingResult & {

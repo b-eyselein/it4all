@@ -1,5 +1,5 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {IUmlAssociation, IUmlAssociationMatch, UmlMultiplicity} from '../../uml-interfaces';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {UmlAssociation, UmlAssociationMatch, UmlMultiplicity} from "../../uml-apollo-service";
 
 function printCardinality(c: UmlMultiplicity): string {
   switch (c) {
@@ -18,7 +18,7 @@ function printCardinality(c: UmlMultiplicity): string {
 })
 export class UmlAssocMatchComponent implements OnChanges {
 
-  @Input() assocMatch: IUmlAssociationMatch;
+  @Input() assocMatch: UmlAssociationMatch;
 
   isCorrect = false;
 
@@ -65,7 +65,7 @@ export class UmlAssocMatchComponent implements OnChanges {
   }
 
 
-  cardinalitiesCorrect(userAssoc: IUmlAssociation, sampleAssoc: IUmlAssociation): boolean {
+  cardinalitiesCorrect(userAssoc: UmlAssociation, sampleAssoc: UmlAssociation): boolean {
     return this.assocMatch.maybeAnalysisResult.multiplicitiesEqual;
   }
 

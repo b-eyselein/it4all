@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {IUmlImplementationMatch} from '../../uml-interfaces';
+import {UmlImplementationMatchFragment} from "../../uml-apollo-service";
 
 @Component({
   selector: 'it4all-uml-impl-match',
@@ -7,7 +7,7 @@ import {IUmlImplementationMatch} from '../../uml-interfaces';
 })
 export class UmlImplMatchComponent implements OnChanges {
 
-  @Input() implMatch: IUmlImplementationMatch;
+  @Input() implMatch: UmlImplementationMatchFragment;
 
   isCorrect = false;
   directionCorrect = false;

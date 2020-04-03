@@ -4,7 +4,6 @@ import better.files.File
 import model.tools.collectionTools.BasicTSTypes
 import model.tools.collectionTools.programming.ProgrammingTSTypes
 import model.tools.collectionTools.sql.SqlTSTypes
-import model.tools.collectionTools.uml.UmlTSTypes
 import model.tools.collectionTools.web.WebTSTypes
 import nl.codestar.scalatsi.DefaultTSTypes
 import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
@@ -26,8 +25,7 @@ object TsInterfaceGenerator extends DefaultTSTypes {
     TsTypesFile(BasicTSTypes.exported, clientBaseDir / "_interfaces" / "models.ts"),
     TsTypesFile(ProgrammingTSTypes.exported, collToolInterfacesFile("programming")),
     TsTypesFile(SqlTSTypes.exported, collToolInterfacesFile("sql")),
-    TsTypesFile(UmlTSTypes.exported, collToolInterfacesFile("uml")),
-    TsTypesFile(WebTSTypes.exported, collToolInterfacesFile("web")),
+    TsTypesFile(WebTSTypes.exported, collToolInterfacesFile("web"))
   )
 
   def main(args: Array[String]): Unit = tsTypesFiles.foreach {

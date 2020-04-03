@@ -1,6 +1,6 @@
 package model.tools.collectionTools.xml
 
-import de.uniwue.dtd.model.ElementLine
+import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
 import model.core.matching.{MatchType, MatchingResult}
 import model.core.result.SuccessType
@@ -36,18 +36,23 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSo
 
   private val dtdParseExceptionType: ObjectType[Unit, DTDParseException] = deriveObjectType()
 
-  private val elementLineType: ObjectType[Unit, ElementLine] = ObjectType(
-    "ElementLine",
-    fields[Unit, ElementLine](
-      Field("todo", OptionType(IntType), resolve = _ => None)
+  private val elementDefinitionType: ObjectType[Unit, ElementDefinition] = deriveObjectType(
+    ReplaceField("content", Field("content", StringType, resolve = _.value.contentAsString))
+  )
+
+  private val attributeListType: ObjectType[Unit, AttributeList] = deriveObjectType(
+    ReplaceField(
+      "attributeDefinitions",
+      Field("attributeDefinitions", ListType(StringType), resolve = _.value.attributeDefinitions.map(_.asString))
     )
   )
-  /* {
-    implicit val edt: ObjectType[Unit, ElementDefinition] = ???
+
+  private val elementLineType: ObjectType[Unit, ElementLine] = {
+    implicit val edt: ObjectType[Unit, ElementDefinition] = elementDefinitionType
+    implicit val alt: ObjectType[Unit, AttributeList]     = attributeListType
 
     deriveObjectType()
   }
-   */
 
   private val elementLineMatchType: ObjectType[Unit, ElementLineMatch] = {
     implicit val mt: EnumType[MatchType]                           = matchTypeType
@@ -61,7 +66,7 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSo
 
   private val xmlGrammarResultType: ObjectType[Unit, XmlGrammarResult] = {
     implicit val dpet: ObjectType[Unit, DTDParseException] = dtdParseExceptionType
-    implicit val elct: ObjectType[Unit, MatchingResult[ElementLine, ElementLineMatch]] =
+    implicit val elct: ObjectType[Unit, XmlToolMain.ElementLineComparison] =
       matchingResultType[ElementLine, ElementLineMatch]("XmlElementLineComparison", elementLineMatchType)
 
     deriveObjectType()
