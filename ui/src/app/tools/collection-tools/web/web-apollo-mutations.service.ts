@@ -72,6 +72,9 @@ export type WebCompleteResultFragment = (
   & { gradedHtmlTaskResults: Array<(
     { __typename?: 'GradedHtmlTaskResult' }
     & GradedHtmlTaskResultFragment
+  )>, gradedJsTaskResults: Array<(
+    { __typename?: 'GradedJsTaskResult' }
+    & GradedJsTaskResultFragment
   )> }
   & AbstractCorrectionResult_WebCompleteResult_Fragment
 );
@@ -91,6 +94,32 @@ export type GradedHtmlTaskResultFragment = (
 export type GradedTextContentResultFragment = (
   { __typename?: 'GradedTextResult' }
   & Pick<Types.GradedTextResult, 'keyName' | 'awaitedContent' | 'maybeFoundContent' | 'isSuccessful' | 'points' | 'maxPoints'>
+);
+
+export type GradedJsTaskResultFragment = (
+  { __typename?: 'GradedJsTaskResult' }
+  & Pick<Types.GradedJsTaskResult, 'id' | 'success' | 'points' | 'maxPoints'>
+  & { gradedPreResults: Array<(
+    { __typename?: 'GradedJsHtmlElementSpecResult' }
+    & GradedJsHtmlElementSpecResultFragment
+  )>, gradedJsActionResult: (
+    { __typename?: 'GradedJsActionResult' }
+    & GradedJsActionResultFragment
+  ), gradedPostResults: Array<(
+    { __typename?: 'GradedJsHtmlElementSpecResult' }
+    & GradedJsHtmlElementSpecResultFragment
+  )> }
+);
+
+export type GradedJsHtmlElementSpecResultFragment = (
+  { __typename?: 'GradedJsHtmlElementSpecResult' }
+  & Pick<Types.GradedJsHtmlElementSpecResult, 'id'>
+);
+
+export type GradedJsActionResultFragment = (
+  { __typename?: 'GradedJsActionResult' }
+  & Pick<Types.GradedJsActionResult, 'actionPerformed' | 'points' | 'maxPoints'>
+  & { jsAction: { __typename: 'JsAction' } }
 );
 
 export const AbstractCorrectionResultFragmentDoc = gql`
@@ -126,15 +155,52 @@ export const GradedHtmlTaskResultFragmentDoc = gql`
   maxPoints
 }
     ${GradedTextContentResultFragmentDoc}`;
+export const GradedJsHtmlElementSpecResultFragmentDoc = gql`
+    fragment GradedJsHtmlElementSpecResult on GradedJsHtmlElementSpecResult {
+  id
+}
+    `;
+export const GradedJsActionResultFragmentDoc = gql`
+    fragment GradedJsActionResult on GradedJsActionResult {
+  jsAction {
+    __typename
+  }
+  actionPerformed
+  points
+  maxPoints
+}
+    `;
+export const GradedJsTaskResultFragmentDoc = gql`
+    fragment GradedJsTaskResult on GradedJsTaskResult {
+  id
+  gradedPreResults {
+    ...GradedJsHtmlElementSpecResult
+  }
+  gradedJsActionResult {
+    ...GradedJsActionResult
+  }
+  gradedPostResults {
+    ...GradedJsHtmlElementSpecResult
+  }
+  success
+  points
+  maxPoints
+}
+    ${GradedJsHtmlElementSpecResultFragmentDoc}
+${GradedJsActionResultFragmentDoc}`;
 export const WebCompleteResultFragmentDoc = gql`
     fragment WebCompleteResult on WebCompleteResult {
   ...AbstractCorrectionResult
   gradedHtmlTaskResults {
     ...GradedHtmlTaskResult
   }
+  gradedJsTaskResults {
+    ...GradedJsTaskResult
+  }
 }
     ${AbstractCorrectionResultFragmentDoc}
-${GradedHtmlTaskResultFragmentDoc}`;
+${GradedHtmlTaskResultFragmentDoc}
+${GradedJsTaskResultFragmentDoc}`;
 export const WebCorrectionDocument = gql`
     mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
   correctWeb(collId: $collId, exId: $exId, part: $part, solution: $solution) {

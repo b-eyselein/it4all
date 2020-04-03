@@ -29,10 +29,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  FalseNegative = 'FalseNegative',
+  TruePositive = 'TruePositive',
   FalsePositive = 'FalsePositive',
-  TrueNegative = 'TrueNegative',
-  TruePositive = 'TruePositive'
+  FalseNegative = 'FalseNegative',
+  TrueNegative = 'TrueNegative'
 }
 
 export type Collection = {
@@ -139,6 +139,37 @@ export type GradedHtmlTaskResult = {
   maxPoints: Scalars['Float'];
 };
 
+export type GradedJsActionResult = {
+   __typename?: 'GradedJsActionResult';
+  actionPerformed: Scalars['Boolean'];
+  jsAction: JsAction;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
+export type GradedJsHtmlElementSpecResult = {
+   __typename?: 'GradedJsHtmlElementSpecResult';
+  id: Scalars['Int'];
+  success: SuccessType;
+  elementFound: Scalars['Boolean'];
+  textContentResult?: Maybe<GradedTextResult>;
+  attributeResults: Array<GradedTextResult>;
+  isSuccessful: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
+export type GradedJsTaskResult = {
+   __typename?: 'GradedJsTaskResult';
+  id: Scalars['Int'];
+  gradedPreResults: Array<GradedJsHtmlElementSpecResult>;
+  gradedPostResults: Array<GradedJsHtmlElementSpecResult>;
+  success: SuccessType;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+  gradedJsActionResult: GradedJsActionResult;
+};
+
 export type GradedTextResult = {
    __typename?: 'GradedTextResult';
   keyName: Scalars['String'];
@@ -161,6 +192,18 @@ export type ImplementationPart = {
   implFileName: Scalars['String'];
   sampleSolFileNames: Array<Scalars['String']>;
 };
+
+export type JsAction = {
+   __typename?: 'JsAction';
+  xpathQuery: Scalars['String'];
+  actionType: JsActionType;
+  keysToSend?: Maybe<Scalars['String']>;
+};
+
+export enum JsActionType {
+  Click = 'Click',
+  FillOut = 'FillOut'
+}
 
 export type KeyValueObject = {
    __typename?: 'KeyValueObject';
@@ -186,10 +229,10 @@ export type MatchingResult = {
 
 export enum MatchType {
   OnlyUser = 'ONLY_USER',
-  PartialMatch = 'PARTIAL_MATCH',
   OnlySample = 'ONLY_SAMPLE',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -312,8 +355,8 @@ export type QueryToolArgs = {
 };
 
 export enum RegexCorrectionType {
-  Extraction = 'EXTRACTION',
-  Matching = 'MATCHING'
+  Matching = 'MATCHING',
+  Extraction = 'EXTRACTION'
 }
 
 export type RegexExerciseContent = {
@@ -484,11 +527,11 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
-  Create = 'CREATE',
+  Delete = 'DELETE',
   Select = 'SELECT',
   Update = 'UPDATE',
-  Delete = 'DELETE',
-  Insert = 'INSERT'
+  Insert = 'INSERT',
+  Create = 'CREATE'
 }
 
 export enum SqlExPart {
@@ -654,10 +697,10 @@ export type StringSampleSolution = {
 };
 
 export enum SuccessType {
-  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY'
+  Partially = 'PARTIALLY',
+  Complete = 'COMPLETE'
 }
 
 export type Tool = {
@@ -693,9 +736,9 @@ export type ToolExerciseContentArgs = {
 };
 
 export enum ToolState {
+  Live = 'LIVE',
   Alpha = 'ALPHA',
-  Beta = 'BETA',
-  Live = 'LIVE'
+  Beta = 'BETA'
 }
 
 export type UmlAssociation = {
@@ -747,8 +790,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
 };
 
 export enum UmlAssociationType {
-  Aggregation = 'AGGREGATION',
   Association = 'ASSOCIATION',
+  Aggregation = 'AGGREGATION',
   Composition = 'COMPOSITION'
 }
 
@@ -865,9 +908,9 @@ export type UmlClassMatchingResult = MatchingResult & {
 };
 
 export enum UmlClassType {
-  Abstract = 'ABSTRACT',
   Class = 'CLASS',
-  Interface = 'INTERFACE'
+  Interface = 'INTERFACE',
+  Abstract = 'ABSTRACT'
 }
 
 export type UmlCompleteResult = AbstractCorrectionResult & {
@@ -991,10 +1034,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
+  Public = 'PUBLIC',
   Package = 'PACKAGE',
-  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Public = 'PUBLIC'
+  Private = 'PRIVATE'
 }
 
 export type UnitTestCorrectionResult = {
@@ -1027,13 +1070,14 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Normal = 'Normal',
-  Simplified = 'Simplified'
+  Simplified = 'Simplified',
+  Normal = 'Normal'
 }
 
 export type WebCompleteResult = AbstractCorrectionResult & {
    __typename?: 'WebCompleteResult';
   gradedHtmlTaskResults: Array<GradedHtmlTaskResult>;
+  gradedJsTaskResults: Array<GradedJsTaskResult>;
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];

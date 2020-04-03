@@ -102,11 +102,15 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, WebSo
   private val gradedJsTaskResultType: ObjectType[Unit, GradedJsTaskResult] = {
     implicit val stt: EnumType[SuccessType]                               = successTypeType
     implicit val gjtesrt: ObjectType[Unit, GradedJsHtmlElementSpecResult] = gradedJsHtmlElementSpecResultType
-    implicit val gjart: ObjectType[Unit, GradedJsActionResult]            = gradedJsActionResultType
 
     deriveObjectType(
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
-      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
+      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)),
+      // TODO: seems to be a bug...
+      ReplaceField(
+        "gradedJsActionResult",
+        Field("gradedJsActionResult", gradedJsActionResultType, resolve = _.value.gradedJsActionResult)
+      )
     )
   }
 

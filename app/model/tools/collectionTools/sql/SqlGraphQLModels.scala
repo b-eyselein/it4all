@@ -1,6 +1,5 @@
 package model.tools.collectionTools.sql
 
-import model.core.matching.MatchType
 import model.tools.collectionTools.sql.SqlToolMain._
 import model.tools.collectionTools.sql.matcher._
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
@@ -12,8 +11,6 @@ import sangria.macros.derive._
 import sangria.schema._
 
 object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, String, SqlExPart] {
-
-  private implicit val mtt: EnumType[MatchType] = matchTypeType
 
   override val ExContentTypeType: ObjectType[Unit, SqlExerciseContent] = {
     implicit val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()

@@ -15,6 +15,9 @@ fragment WebCompleteResult on WebCompleteResult {
   gradedHtmlTaskResults {
     ...GradedHtmlTaskResult
   }
+  gradedJsTaskResults {
+    ...GradedJsTaskResult
+  }
 }
 
 fragment GradedHtmlTaskResult on GradedHtmlTaskResult {
@@ -37,6 +40,35 @@ fragment GradedTextContentResult on GradedTextResult {
   awaitedContent
   maybeFoundContent
   isSuccessful
+  points
+  maxPoints
+}
+
+fragment GradedJsTaskResult on GradedJsTaskResult {
+  id
+  gradedPreResults {
+    ...GradedJsHtmlElementSpecResult
+  }
+  gradedJsActionResult {
+    ...GradedJsActionResult
+  }
+  gradedPostResults {
+    ...GradedJsHtmlElementSpecResult
+  }
+  success
+  points
+  maxPoints
+}
+
+fragment GradedJsHtmlElementSpecResult on GradedJsHtmlElementSpecResult {
+  id
+}
+
+fragment GradedJsActionResult on GradedJsActionResult {
+  jsAction {
+    __typename
+  }
+  actionPerformed
   points
   maxPoints
 }

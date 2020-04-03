@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Fri Apr 03 2020 13:49:22 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Fri Apr 03 2020 14:10:32 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -20,10 +20,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  FalseNegative
-  FalsePositive
-  TrueNegative
   TruePositive
+  FalsePositive
+  FalseNegative
+  TrueNegative
 }
 
 type Collection {
@@ -115,6 +115,34 @@ type GradedHtmlTaskResult {
   maxPoints: Float!
 }
 
+type GradedJsActionResult {
+  actionPerformed: Boolean!
+  jsAction: JsAction!
+  points: Float!
+  maxPoints: Float!
+}
+
+type GradedJsHtmlElementSpecResult {
+  id: Int!
+  success: SuccessType!
+  elementFound: Boolean!
+  textContentResult: GradedTextResult
+  attributeResults: [GradedTextResult!]!
+  isSuccessful: Boolean!
+  points: Float!
+  maxPoints: Float!
+}
+
+type GradedJsTaskResult {
+  id: Int!
+  gradedPreResults: [GradedJsHtmlElementSpecResult!]!
+  gradedPostResults: [GradedJsHtmlElementSpecResult!]!
+  success: SuccessType!
+  points: Float!
+  maxPoints: Float!
+  gradedJsActionResult: GradedJsActionResult!
+}
+
 type GradedTextResult {
   keyName: String!
   awaitedContent: String!
@@ -133,6 +161,17 @@ type ImplementationPart {
   files: [ExerciseFile!]!
   implFileName: String!
   sampleSolFileNames: [String!]!
+}
+
+type JsAction {
+  xpathQuery: String!
+  actionType: JsActionType!
+  keysToSend: String
+}
+
+enum JsActionType {
+  Click
+  FillOut
 }
 
 type KeyValueObject {
@@ -157,10 +196,10 @@ interface MatchingResult {
 
 enum MatchType {
   ONLY_USER
-  PARTIAL_MATCH
   ONLY_SAMPLE
-  SUCCESSFUL_MATCH
   UNSUCCESSFUL_MATCH
+  PARTIAL_MATCH
+  SUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -223,8 +262,8 @@ type Query {
 }
 
 enum RegexCorrectionType {
-  EXTRACTION
   MATCHING
+  EXTRACTION
 }
 
 type RegexExerciseContent {
@@ -369,11 +408,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  CREATE
+  DELETE
   SELECT
   UPDATE
-  DELETE
   INSERT
+  CREATE
 }
 
 enum SqlExPart {
@@ -511,10 +550,10 @@ type StringSampleSolution {
 }
 
 enum SuccessType {
-  COMPLETE
   ERROR
   NONE
   PARTIALLY
+  COMPLETE
 }
 
 type Tool {
@@ -533,9 +572,9 @@ type Tool {
 }
 
 enum ToolState {
+  LIVE
   ALPHA
   BETA
-  LIVE
 }
 
 type UmlAssociation {
@@ -581,8 +620,8 @@ type UmlAssociationMatchingResult implements MatchingResult {
 }
 
 enum UmlAssociationType {
-  AGGREGATION
   ASSOCIATION
+  AGGREGATION
   COMPOSITION
 }
 
@@ -686,9 +725,9 @@ type UmlClassMatchingResult implements MatchingResult {
 }
 
 enum UmlClassType {
-  ABSTRACT
   CLASS
   INTERFACE
+  ABSTRACT
 }
 
 type UmlCompleteResult implements AbstractCorrectionResult {
@@ -798,10 +837,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PACKAGE
-  PRIVATE
-  PROTECTED
   PUBLIC
+  PACKAGE
+  PROTECTED
+  PRIVATE
 }
 
 type UnitTestCorrectionResult {
@@ -831,12 +870,13 @@ type UnitTestTestConfig {
 }
 
 enum UnitTestType {
-  Normal
   Simplified
+  Normal
 }
 
 type WebCompleteResult implements AbstractCorrectionResult {
   gradedHtmlTaskResults: [GradedHtmlTaskResult!]!
+  gradedJsTaskResults: [GradedJsTaskResult!]!
   solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
