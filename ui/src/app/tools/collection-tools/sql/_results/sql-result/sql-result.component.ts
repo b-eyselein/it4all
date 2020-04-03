@@ -3,7 +3,7 @@ import {
   InsertComparisonFragment,
   SelectAdditionalComparisonFragment,
   SqlResultFragment
-} from '../../sql-apollo-service';
+} from '../../sql-apollo-mutations.service';
 
 @Component({
   selector: 'it4all-sql-result',

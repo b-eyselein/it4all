@@ -16,7 +16,7 @@ import {
   SqlIllegalQueryResultFragment,
   SqlResultFragment,
   SqlWrongQueryTypeResultFragment
-} from '../sql-apollo-service';
+} from '../sql-apollo-mutations.service';
 import {SqlExPart} from "../../../../_interfaces/graphql-types";
 
 import 'codemirror/mode/sql/sql';

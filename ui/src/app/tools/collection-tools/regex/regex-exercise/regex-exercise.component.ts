@@ -14,7 +14,7 @@ import {
   RegexExtractionResultFragment,
   RegexIllegalRegexResultFragment,
   RegexMatchingResultFragment
-} from '../../../../_services/apollo-mutation.service';
+} from '../regex-apollo-mutations.service';
 import {RegexExPart} from "../../../../_interfaces/graphql-types";
 
 

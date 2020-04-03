@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {XmlErrorFragment} from "../../xml-apollo-service";
+import {XmlErrorFragment} from "../../xml-apollo-mutations.service";
 
 @Component({
   selector: 'it4all-xml-document-correction',

@@ -1,4 +1,4 @@
-import * as Types from '../_interfaces/graphql-types';
+import * as Types from '../../../_interfaces/graphql-types';
 
 import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
@@ -50,28 +50,6 @@ type AbstractCorrectionResult_XmlCompleteResult_Fragment = (
 );
 
 export type AbstractCorrectionResultFragment = AbstractCorrectionResult_RegexIllegalRegexResult_Fragment | AbstractCorrectionResult_RegexMatchingResult_Fragment | AbstractCorrectionResult_RegexExtractionResult_Fragment | AbstractCorrectionResult_SqlIllegalQueryResult_Fragment | AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment | AbstractCorrectionResult_SqlResult_Fragment | AbstractCorrectionResult_UmlCompleteResult_Fragment | AbstractCorrectionResult_WebCompleteResult_Fragment | AbstractCorrectionResult_XmlCompleteResult_Fragment;
-
-export type ProgCorrectionMutationVariables = {
-  collId: Types.Scalars['Int'];
-  exId: Types.Scalars['Int'];
-  part: Types.ProgExPart;
-  solution: Types.ProgSolutionInput;
-};
-
-
-export type ProgCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { correctProgramming?: Types.Maybe<(
-    { __typename?: 'ProgCompleteResult' }
-    & ProgCompleteResultFragment
-  )> }
-);
-
-export type ProgCompleteResultFragment = (
-  { __typename?: 'ProgCompleteResult' }
-  & Pick<Types.ProgCompleteResult, 'solutionSaved'>
-  & { normalResult?: Types.Maybe<{ __typename: 'NormalExecutionResult' }>, unitTestResults: Array<{ __typename: 'UnitTestCorrectionResult' }> }
-);
 
 export type RegexCorrectionMutationVariables = {
   collId: Types.Scalars['Int'];
@@ -147,38 +125,6 @@ export type RegexExtractionResultFragment = (
   & AbstractCorrectionResult_RegexExtractionResult_Fragment
 );
 
-export type WebCorrectionMutationVariables = {
-  collId: Types.Scalars['Int'];
-  exId: Types.Scalars['Int'];
-  part: Types.WebExPart;
-  solution: Types.WebSolutionInput;
-};
-
-
-export type WebCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { correctWeb?: Types.Maybe<(
-    { __typename?: 'WebCompleteResult' }
-    & WebCompleteResultFragment
-  )> }
-);
-
-export type WebCompleteResultFragment = (
-  { __typename?: 'WebCompleteResult' }
-  & AbstractCorrectionResult_WebCompleteResult_Fragment
-);
-
-export const ProgCompleteResultFragmentDoc = gql`
-    fragment ProgCompleteResult on ProgCompleteResult {
-  solutionSaved
-  normalResult {
-    __typename
-  }
-  unitTestResults {
-    __typename
-  }
-}
-    `;
 export const AbstractCorrectionResultFragmentDoc = gql`
     fragment AbstractCorrectionResult on AbstractCorrectionResult {
   solutionSaved
@@ -241,26 +187,6 @@ export const RegexExtractionResultFragmentDoc = gql`
 }
     ${AbstractCorrectionResultFragmentDoc}
 ${RegexExtractionSingleResultFragmentDoc}`;
-export const WebCompleteResultFragmentDoc = gql`
-    fragment WebCompleteResult on WebCompleteResult {
-  ...AbstractCorrectionResult
-}
-    ${AbstractCorrectionResultFragmentDoc}`;
-export const ProgCorrectionDocument = gql`
-    mutation ProgCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
-  correctProgramming(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...ProgCompleteResult
-  }
-}
-    ${ProgCompleteResultFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class ProgCorrectionGQL extends Apollo.Mutation<ProgCorrectionMutation, ProgCorrectionMutationVariables> {
-    document = ProgCorrectionDocument;
-    
-  }
 export const RegexCorrectionDocument = gql`
     mutation RegexCorrection($collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
   correctRegex(collId: $collId, exId: $exId, part: $part, solution: $solution) {
@@ -278,20 +204,5 @@ ${RegexExtractionResultFragmentDoc}`;
   })
   export class RegexCorrectionGQL extends Apollo.Mutation<RegexCorrectionMutation, RegexCorrectionMutationVariables> {
     document = RegexCorrectionDocument;
-    
-  }
-export const WebCorrectionDocument = gql`
-    mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
-  correctWeb(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...WebCompleteResult
-  }
-}
-    ${WebCompleteResultFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class WebCorrectionGQL extends Apollo.Mutation<WebCorrectionMutation, WebCorrectionMutationVariables> {
-    document = WebCorrectionDocument;
     
   }

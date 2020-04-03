@@ -11,7 +11,7 @@ import {
   ExerciseSolveFieldsFragment,
   ProgExerciseContentSolveFieldsFragment,
 } from "../../../../_services/apollo_services";
-import {ProgCorrectionGQL, ProgCorrectionMutation} from '../../../../_services/apollo-mutation.service';
+import {ProgCorrectionGQL, ProgCorrectionMutation} from '../programming-apollo-mutations.service';
 import {ProgExPart, ProgSolution, ProgSolutionInput} from "../../../../_interfaces/graphql-types";
 
 import 'codemirror/mode/python/python';

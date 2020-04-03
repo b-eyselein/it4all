@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {RegexExtractionSingleResultFragment} from '../../../../_services/apollo-mutation.service';
+import {RegexExtractionSingleResultFragment} from '../regex-apollo-mutations.service';
 
 @Component({
   selector: 'it4all-regex-extraction-result',

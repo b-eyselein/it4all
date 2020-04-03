@@ -1,0 +1,15 @@
+fragment AbstractCorrectionResult on AbstractCorrectionResult {
+  solutionSaved
+  points
+  maxPoints
+}
+
+mutation WebCorrection($collId: Int!, $exId: Int!,$part: WebExPart!, $solution: WebSolutionInput!) {
+  correctWeb(collId: $collId, exId: $exId,part: $part, solution: $solution) {
+    ...WebCompleteResult
+  }
+}
+
+fragment WebCompleteResult on WebCompleteResult {
+  ...AbstractCorrectionResult
+}

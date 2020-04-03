@@ -19,7 +19,7 @@ import {
   ExerciseSolveFieldsFragment,
   UmlExerciseContentSolveFieldsFragment,
 } from '../../../../_services/apollo_services';
-import {UmlCorrectionGQL, UmlCorrectionMutation} from '../uml-apollo-service';
+import {UmlCorrectionGQL, UmlCorrectionMutation} from '../uml-apollo-mutations.service';
 import {UmlClassDiagram, UmlClassDiagramInput, UmlExPart} from "../../../../_interfaces/graphql-types";
 
 import * as joint from 'jointjs';

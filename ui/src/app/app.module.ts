@@ -12,7 +12,7 @@ import {SharedModule} from './shared/shared.module';
 import {CollectionToolsModule} from './tools/collection-tools/collection-tools.module';
 import {LessonsModule} from './lessons/lessons.module';
 import {AdminModule} from './admin/admin.module';
-import { GraphQLModule } from './graphql.module';
+import {GraphQLModule} from './graphql.module';
 
 
 @NgModule({

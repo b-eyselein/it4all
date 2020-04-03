@@ -4,26 +4,6 @@ fragment AbstractCorrectionResult on AbstractCorrectionResult {
   maxPoints
 }
 
-# Programming
-
-mutation ProgCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
-  correctProgramming(collId: $collId, exId: $exId, part: $part, solution: $solution)  {
-    ...ProgCompleteResult
-  }
-}
-
-fragment ProgCompleteResult on ProgCompleteResult {
-  solutionSaved
-  normalResult {
-    __typename
-  }
-  unitTestResults {
-    __typename
-  }
-}
-
-# Regex
-
 mutation RegexCorrection($collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
   correctRegex(collId: $collId, exId: $exId,part:$part, solution: $solution) {
     ...RegexIllegalRegexResult
@@ -77,16 +57,4 @@ fragment RegexExtractionResult on RegexExtractionResult {
   extractionResults {
     ...RegexExtractionSingleResult
   }
-}
-
-# Web
-
-mutation WebCorrection($collId: Int!, $exId: Int!,$part: WebExPart!, $solution: WebSolutionInput!) {
-  correctWeb(collId: $collId, exId: $exId,part: $part, solution: $solution) {
-    ...WebCompleteResult
-  }
-}
-
-fragment WebCompleteResult on WebCompleteResult {
-  ...AbstractCorrectionResult
 }

@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
-import {RegexExtractionMatchFragment} from "../../../../../_services/apollo-mutation.service";
+import {RegexExtractionMatchFragment} from "../../regex-apollo-mutations.service";
+import {MatchType} from "../../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-regex-extraction-match',
@@ -16,7 +17,7 @@ export class RegexExtractionMatchComponent {
   @Input() match: RegexExtractionMatchFragment;
 
   isCorrect(): boolean {
-    return this.match.matchType === 'SUCCESSFUL_MATCH';
+    return this.match.matchType === MatchType.SuccessfulMatch;
   }
 
 }

@@ -4,22 +4,21 @@ import {ApiService} from '../../_services/api.service';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
-import {IWebCompleteResult} from '../web-interfaces';
 import {
   ExerciseSolveFieldsFragment,
   WebExerciseContentSolveFieldsFragment,
 } from '../../../../_services/apollo_services';
-import {WebCorrectionGQL, WebCorrectionMutation} from '../../../../_services/apollo-mutation.service';
+import {WebCorrectionGQL, WebCorrectionMutation} from '../web-apollo-mutations.service';
+import {ExerciseFile, WebExPart, WebSolution, WebSolutionInput} from "../../../../_interfaces/graphql-types";
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
-import {ExerciseFile, WebExPart, WebSolution, WebSolutionInput} from "../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-web-exercise',
   templateUrl: './web-exercise.component.html'
 })
 export class WebExerciseComponent
-  extends ComponentWithExercise<WebSolution, WebSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionGQL, IWebCompleteResult>
+  extends ComponentWithExercise<WebSolution, WebSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionGQL, any>
   implements OnInit {
 
 

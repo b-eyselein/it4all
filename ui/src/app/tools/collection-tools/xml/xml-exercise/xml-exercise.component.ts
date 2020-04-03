@@ -13,7 +13,7 @@ import {
   XmlCorrectionMutation,
   XmlErrorFragment,
   XmlGrammarResultFragment,
-} from "../xml-apollo-service";
+} from "../xml-apollo-mutations.service";
 import {ExerciseFile, XmlExPart, XmlSolution, XmlSolutionInput} from "../../../../_interfaces/graphql-types";
 
 import 'codemirror/mode/dtd/dtd';

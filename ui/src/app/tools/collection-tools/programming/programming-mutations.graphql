@@ -1,0 +1,23 @@
+fragment AbstractCorrectionResult on AbstractCorrectionResult {
+  solutionSaved
+  points
+  maxPoints
+}
+
+# Programming
+
+mutation ProgCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
+  correctProgramming(collId: $collId, exId: $exId, part: $part, solution: $solution)  {
+    ...ProgCompleteResult
+  }
+}
+
+fragment ProgCompleteResult on ProgCompleteResult {
+  solutionSaved
+  normalResult {
+    __typename
+  }
+  unitTestResults {
+    __typename
+  }
+}
