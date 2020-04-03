@@ -1,7 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {ApiService} from '../_services/api.service';
-import {IExercise} from '../../../_interfaces/models';
+import {ActivatedRoute} from '@angular/router';
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
 import {collectionTools} from '../collection-tools-list';
 import {
@@ -24,16 +22,9 @@ export class ExerciseComponent implements OnInit {
 
   exerciseQuery: ExerciseQuery;
 
-  exercise: IExercise;
-
   oldPart: ToolPart;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private exerciseGQL: ExerciseGQL,
-    private apiService: ApiService
-  ) {
+  constructor(private route: ActivatedRoute, private exerciseGQL: ExerciseGQL) {
     this.route.paramMap.subscribe((paramMap) => {
       this.tool = collectionTools.find((t) => t.id === paramMap.get('toolId'));
       this.oldPart = this.tool.parts.find((p) => p.id === paramMap.get('partId'));
@@ -43,25 +34,11 @@ export class ExerciseComponent implements OnInit {
     });
   }
 
-  private updateExercise(): void {
-    this.apiService.getExercise(this.tool.id, this.collectionId, this.exerciseId)
-      .subscribe((ex: IExercise | undefined) => {
-        if (ex) {
-          this.exercise = ex;
-        } else {
-          // noinspection JSIgnoredPromiseFromCall
-          this.router.navigate(['../..']);
-        }
-      });
-  }
-
   ngOnInit() {
     this.exerciseGQL
       .watch({toolId: this.tool.id, collId: this.collectionId, exId: this.exerciseId})
       .valueChanges
       .subscribe(({data}) => this.exerciseQuery = data);
-
-    this.updateExercise();
   }
 
   private get exContent() {

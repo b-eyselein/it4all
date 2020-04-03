@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {IExTag} from '../../../../_interfaces/models';
+import {ExTag} from "../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-tag',
@@ -7,7 +7,7 @@ import {IExTag} from '../../../../_interfaces/models';
 })
 export class TagComponent implements OnInit {
 
-  @Input() tag: IExTag;
+  @Input() tag: ExTag;
 
   constructor() {
   }

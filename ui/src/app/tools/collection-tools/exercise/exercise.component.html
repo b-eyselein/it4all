@@ -1,8 +1,7 @@
-<ng-container *ngIf="exercise && exerciseQuery; else loadingDataBlock">
+<ng-container *ngIf=" exerciseQuery; else loadingDataBlock">
 
   <it4all-programming-exercise
     *ngIf="progExerciseContent"
-    [exercise]="exercise"
     [exerciseFragment]="exerciseQuery.tool.collection.exercise"
     [contentFragment]="progExerciseContent"
     [oldPart]="oldPart">

@@ -4,7 +4,6 @@ import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {ProgrammingImplementationToolPart} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {IExercise} from '../../../../_interfaces/models';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {
   ExerciseSolveFieldsFragment,
@@ -24,11 +23,11 @@ export class ProgrammingExerciseComponent
   extends ComponentWithExercise<ProgSolution, ProgSolutionInput, ProgCorrectionMutation, ProgExPart, ProgCorrectionGQL, ProgrammingCorrectionResult>
   implements OnInit {
 
+
+  @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: ProgExerciseContentSolveFieldsFragment;
 
-  @Input() exercise: IExercise;
-  @Input() oldPart: ToolPart;
 
   exerciseFiles: ExerciseFile[] = [];
 
@@ -37,13 +36,13 @@ export class ProgrammingExerciseComponent
   }
 
   get sampleSolutionFilesList(): ExerciseFile[][] {
-    return this.exercise ? this.exercise.content.sampleSolutions.map((s) => s.sample.files) : [];
+    return this.contentFragment.progSampleSolutions.map((s) => s.sample.files);
   }
 
   ngOnInit(): void {
     this.exerciseFiles = (this.oldPart === ProgrammingImplementationToolPart) ?
-      this.exercise.content.implementationPart.files :
-      this.exercise.content.unitTestPart.unitTestFiles;
+      this.contentFragment.implementationPart.files :
+      this.contentFragment.unitTestPart.unitTestFiles;
 
     this.loadOldSolution();
   }
@@ -73,7 +72,7 @@ export class ProgrammingExerciseComponent
 
   correct(): void {
     const part: ProgExPart = false ? null : null;
-    this.correctAbstract(this.exercise.id, this.exercise.collectionId, this.exercise.toolId, part, this.oldPart);
+    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, part, this.oldPart);
   }
 
 }
