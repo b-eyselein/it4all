@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ExerciseFile} from '../../../../_services/apollo_services';
+import {ExerciseFile} from "../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-exercise-file-card',

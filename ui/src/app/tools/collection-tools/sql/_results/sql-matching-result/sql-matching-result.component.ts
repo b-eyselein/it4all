@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {MatchingResult} from '../../../../../_services/apollo-mutation.service';
+import {MatchingResult} from "../../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-sql-matching-result',

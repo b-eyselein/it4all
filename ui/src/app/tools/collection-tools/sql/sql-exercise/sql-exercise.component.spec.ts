@@ -29,11 +29,7 @@ describe('SqlExerciseComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SqlExerciseComponent);
     component = fixture.componentInstance;
-    component.exercise = {
-      id: 0, collectionId: 0, toolId: 'sql', title: '', authors: [], text: '',
-      semanticVersion: {major: 0, minor: 1, patch: 0}, tags: [],
-      content: {}
-    };
+    component.exerciseFragment = {id: 0, collectionId: 0, toolId: 'sql', title: '', text: ''};
     fixture.detectChanges();
   });
 

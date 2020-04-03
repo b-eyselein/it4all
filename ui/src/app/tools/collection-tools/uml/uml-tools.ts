@@ -1,10 +1,7 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
 import {distinctStringArray} from '../../../helpers';
-import {
-  ExerciseSolveFieldsFragment,
-  KeyValueObject,
-  UmlExerciseContentSolveFieldsFragment
-} from "../../../_services/apollo_services";
+import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from "../../../_services/apollo_services";
+import {KeyValueObject} from "../../../_interfaces/graphql-types";
 
 export const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
 

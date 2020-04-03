@@ -17,12 +17,10 @@ import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
 import {
   ExerciseSolveFieldsFragment,
-  UmlClassDiagram,
-  UmlClassDiagramInput,
   UmlExerciseContentSolveFieldsFragment,
-  UmlExPart
 } from '../../../../_services/apollo_services';
 import {UmlCorrectionGQL, UmlCorrectionMutation} from '../uml-apollo-service';
+import {UmlClassDiagram, UmlClassDiagramInput, UmlExPart} from "../../../../_interfaces/graphql-types";
 
 import * as joint from 'jointjs';
 

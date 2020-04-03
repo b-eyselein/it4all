@@ -46,6 +46,7 @@
     "@angular/language-service": "~9.1.0",
     "@graphql-codegen/cli": "^1.13.1",
     "@graphql-codegen/fragment-matcher": "^1.13.1",
+    "@graphql-codegen/import-types-preset": "^1.13.1",
     "@graphql-codegen/introspection": "1.13.1",
     "@graphql-codegen/typescript": "^1.13.1",
     "@graphql-codegen/typescript-apollo-angular": "1.13.1",

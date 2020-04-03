@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MyJointClass} from '../../_model/joint-class-diag-elements';
-import {UmlAttribute} from "../../uml-apollo-service";
+import {UmlAttribute} from "../../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-uml-class-edit',

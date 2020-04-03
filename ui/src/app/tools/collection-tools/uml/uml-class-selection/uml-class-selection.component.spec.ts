@@ -15,12 +15,7 @@ describe('UmlClassSelectionComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(UmlClassSelectionComponent);
     component = fixture.componentInstance;
-    component.exercise = {
-      id: 0, collectionId: 0, toolId: 'uml', text: '', authors: [], title: '',
-      semanticVersion: {major: 0, minor: 1, patch: 0},
-      tags: [],
-      content: {}
-    };
+    component.exerciseFragment = {id: 0, collectionId: 0, toolId: 'uml', text: '', title: ''};
     fixture.detectChanges();
   });
 

@@ -4,21 +4,17 @@ import {ApiService} from '../../_services/api.service';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 import {
-  ExerciseFile,
   ExerciseSolveFieldsFragment,
   XmlExerciseContentSolveFieldsFragment
 } from "../../../../_services/apollo_services";
-
 import {
   XmlCompleteResultFragment,
   XmlCorrectionGQL,
   XmlCorrectionMutation,
   XmlErrorFragment,
-  XmlExPart,
   XmlGrammarResultFragment,
-  XmlSolution,
-  XmlSolutionInput
 } from "../xml-apollo-service";
+import {ExerciseFile, XmlExPart, XmlSolution, XmlSolutionInput} from "../../../../_interfaces/graphql-types";
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';

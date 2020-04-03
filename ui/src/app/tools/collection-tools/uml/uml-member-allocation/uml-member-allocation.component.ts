@@ -2,12 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {distinctObjectArray, flatMapArray} from '../../../../helpers';
 import {
   ExerciseSolveFieldsFragment,
-  UmlAttribute,
-  UmlClassDiagram,
   UmlExerciseContentSolveFieldsFragment,
-  UmlMethod
 } from "../../../../_services/apollo_services";
-import {UmlVisibility} from "../uml-apollo-service";
+import {UmlAttribute, UmlClassDiagram, UmlMethod, UmlVisibility} from "../../../../_interfaces/graphql-types";
 
 function printVisibility(v: UmlVisibility): string {
   switch (v) {

@@ -10,7 +10,6 @@ import {
   ExerciseSolveFieldsFragment,
   SqlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
-import {SqlExPart} from '../../../../_services/apollo-mutation.service';
 import {
   SqlCorrectionGQL,
   SqlCorrectionMutation,
@@ -18,7 +17,7 @@ import {
   SqlResultFragment,
   SqlWrongQueryTypeResultFragment
 } from '../sql-apollo-service';
-
+import {SqlExPart} from "../../../../_interfaces/graphql-types";
 
 import 'codemirror/mode/sql/sql';
 

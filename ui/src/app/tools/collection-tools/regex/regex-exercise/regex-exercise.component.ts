@@ -11,11 +11,11 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {
   RegexCorrectionGQL,
   RegexCorrectionMutation,
-  RegexExPart,
   RegexExtractionResultFragment,
   RegexIllegalRegexResultFragment,
   RegexMatchingResultFragment
 } from '../../../../_services/apollo-mutation.service';
+import {RegexExPart} from "../../../../_interfaces/graphql-types";
 
 
 @Component({

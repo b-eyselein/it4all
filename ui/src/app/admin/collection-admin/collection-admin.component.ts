@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
-import {CollectionAdminGQL, CollectionAdminQuery, Exercise} from "../../_services/apollo_services";
+import {CollectionAdminGQL, CollectionAdminQuery} from "../../_services/apollo_services";
+import {Exercise} from '../../_interfaces/graphql-types';
 
 @Component({templateUrl: './collection-admin.component.html'})
 export class CollectionAdminComponent extends ComponentWithCollectionTool implements OnInit {

@@ -5,7 +5,7 @@ import {
   UmlCompleteResult,
   UmlImplementationMatch,
   UmlImplementationMatchingResult
-} from "../../../../../_services/apollo_services";
+} from "../../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-uml-diag-drawing-correction',

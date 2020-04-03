@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 
 import {calcRectHeight, COLORS, fontSize, STD_ELEMENT_WIDTH, STD_PADDING} from './uml-consts';
 import {buildAttributeString, buildMethodString, CLASS_TYPES, ExportedUmlClass} from './my-uml-interfaces';
-import {UmlAttribute, UmlClassType, UmlMethod} from "../uml-apollo-service";
+import {UmlAttribute, UmlClassType, UmlMethod} from "../../../../_interfaces/graphql-types";
 
 export const STD_CLASS_HEIGHT = 160;
 export const STD_CLASS_WIDTH = 200;

@@ -2,6 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {RegexMatchingResultComponent} from './regex-matching-result.component';
 import {FormsModule} from '@angular/forms';
+import {BinaryClassificationResultType} from "../../../../_interfaces/graphql-types";
 
 describe('RegexMatchingResultComponent', () => {
   let component: RegexMatchingResultComponent;
@@ -19,9 +20,8 @@ describe('RegexMatchingResultComponent', () => {
     fixture = TestBed.createComponent(RegexMatchingResultComponent);
     component = fixture.componentInstance;
     component.matchingResult = {
-      resultType: 'TruePositive',
+      resultType: BinaryClassificationResultType.TruePositive,
       matchData: 'md',
-      isIncluded: true,
     };
     fixture.detectChanges();
   });

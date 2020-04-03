@@ -1,6 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {RegexExtractionMatchComponent} from './regex-extraction-match.component';
+import {MatchType} from "../../../../../_interfaces/graphql-types";
 
 describe('RegexExtractionMatchComponent', () => {
   let component: RegexExtractionMatchComponent;
@@ -18,8 +19,8 @@ describe('RegexExtractionMatchComponent', () => {
     component = fixture.componentInstance;
     component.match = {
       userArg: null,
-      sampleArg: {content: '', start: 0, end: 0},
-      analysisResult: null
+      sampleArg: '',
+      matchType: MatchType.OnlySample
     };
     fixture.detectChanges();
   });

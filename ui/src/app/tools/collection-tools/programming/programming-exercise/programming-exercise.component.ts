@@ -10,13 +10,11 @@ import {IExerciseFile, IProgSolution} from '../programming-interfaces';
 import {
   ExerciseSolveFieldsFragment,
   ProgExerciseContentSolveFieldsFragment,
-  ProgSolution,
-  ProgSolutionInput
 } from "../../../../_services/apollo_services";
 import {ProgCorrectionGQL, ProgCorrectionMutation} from '../../../../_services/apollo-mutation.service';
+import {ProgExPart, ProgSolution, ProgSolutionInput} from "../../../../_interfaces/graphql-types";
 
 import 'codemirror/mode/python/python';
-import {ProgExPart} from "../../sql/sql-apollo-service";
 
 @Component({
   selector: 'it4all-programming-exercise',

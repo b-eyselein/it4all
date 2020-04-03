@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ElementLineMatch} from "../../xml-apollo-service";
+import {ElementLineMatch} from "../../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-xml-element-line-match',

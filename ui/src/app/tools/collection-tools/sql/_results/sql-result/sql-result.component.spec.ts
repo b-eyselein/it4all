@@ -20,6 +20,8 @@ describe('SqlResultComponent', () => {
     component = fixture.componentInstance;
     component.result = {
       solutionSaved: true,
+      points: 0,
+      maxPoints: 0,
       staticComparison: {
         whereComparison: {
           maxPoints: -1, points: -1, allMatches: [], matchSingularName: '', matchName: ''

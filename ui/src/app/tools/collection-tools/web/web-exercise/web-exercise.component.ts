@@ -6,16 +6,13 @@ import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
 import {IWebCompleteResult} from '../web-interfaces';
 import {
-  ExerciseFile,
   ExerciseSolveFieldsFragment,
   WebExerciseContentSolveFieldsFragment,
-  WebExPart,
-  WebSolution,
-  WebSolutionInput
 } from '../../../../_services/apollo_services';
 import {WebCorrectionGQL, WebCorrectionMutation} from '../../../../_services/apollo-mutation.service';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
+import {ExerciseFile, WebExPart, WebSolution, WebSolutionInput} from "../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-web-exercise',

@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
-import {ExerciseFile} from "../../../../_services/apollo_services";
+import {ExerciseFile} from "../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-exercise-files-editor',
@@ -73,7 +73,7 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     const fileName: string = ($event.target as HTMLElement).textContent;
 
     // disable other files...
-    this.exerciseFiles.forEach((ef) =>  {
+    this.exerciseFiles.forEach((ef) => {
       // @ts-ignore
       ef.active = false;
     });
