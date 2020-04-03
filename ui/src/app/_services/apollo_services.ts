@@ -310,6 +310,7 @@ export type ProgExerciseContentSolveFieldsFragment = (
   { __typename?: 'ProgExerciseContent' }
   & { unitTestPart: (
     { __typename?: 'UnitTestPart' }
+    & Pick<Types.UnitTestPart, 'unitTestType'>
     & { unitTestFiles: Array<(
       { __typename?: 'ExerciseFile' }
       & ExFileAllFragment
@@ -496,6 +497,7 @@ export const ExFileAllFragmentDoc = gql`
 export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
     fragment ProgExerciseContentSolveFields on ProgExerciseContent {
   unitTestPart {
+    unitTestType
     unitTestFiles {
       ...ExFileAll
     }

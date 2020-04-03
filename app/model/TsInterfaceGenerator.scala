@@ -2,7 +2,6 @@ package model
 
 import better.files.File
 import model.tools.collectionTools.BasicTSTypes
-import model.tools.collectionTools.programming.ProgrammingTSTypes
 import model.tools.collectionTools.sql.SqlTSTypes
 import nl.codestar.scalatsi.DefaultTSTypes
 import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
@@ -22,8 +21,7 @@ object TsInterfaceGenerator extends DefaultTSTypes {
 
   private val tsTypesFiles = Seq(
     TsTypesFile(BasicTSTypes.exported, clientBaseDir / "_interfaces" / "models.ts"),
-    TsTypesFile(ProgrammingTSTypes.exported, collToolInterfacesFile("programming")),
-    TsTypesFile(SqlTSTypes.exported, collToolInterfacesFile("sql")),
+    TsTypesFile(SqlTSTypes.exported, collToolInterfacesFile("sql"))
   )
 
   def main(args: Array[String]): Unit = tsTypesFiles.foreach {

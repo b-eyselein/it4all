@@ -1,5 +1,6 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
-import {IProgExerciseContent} from "./programming-interfaces";
+import {ProgExerciseContentSolveFieldsFragment} from "../../../_services/apollo_services";
+import {UnitTestType} from "../../../_interfaces/graphql-types";
 
 // Exercise Parts
 
@@ -14,10 +15,10 @@ export const ProgrammingTool: CollectionTool = new class ProgrammingToolClass ex
     super('programming', 'Programmierung', [ProgrammingTestCreationPart, ProgrammingImplementationToolPart], 'beta', true);
   }
 
-  exerciseHasPart(exerciseContent: IProgExerciseContent, part: ToolPart): boolean {
+  exerciseHasPart(exerciseContent: ProgExerciseContentSolveFieldsFragment, part: ToolPart): boolean {
     if (part === ProgrammingTestCreationPart) {
       // FIXME: simplified test execution is disabled...
-      return exerciseContent.unitTestPart.unitTestType === 'Normal';
+      return exerciseContent.unitTestPart.unitTestType === UnitTestType.Normal;
     } else {
       return true;
     }

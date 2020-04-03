@@ -199,6 +199,7 @@ fragment ExerciseSolveFields on Exercise {
 
 fragment ProgExerciseContentSolveFields on ProgExerciseContent {
   unitTestPart {
+    unitTestType
     unitTestFiles {
       ...ExFileAll
     }

@@ -6,13 +6,12 @@ import {ProgrammingImplementationToolPart} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {IExercise} from '../../../../_interfaces/models';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-import {IExerciseFile, IProgSolution} from '../programming-interfaces';
 import {
   ExerciseSolveFieldsFragment,
   ProgExerciseContentSolveFieldsFragment,
 } from "../../../../_services/apollo_services";
 import {ProgCorrectionGQL, ProgCorrectionMutation} from '../programming-apollo-mutations.service';
-import {ProgExPart, ProgSolution, ProgSolutionInput} from "../../../../_interfaces/graphql-types";
+import {ExerciseFile, ProgExPart, ProgSolution, ProgSolutionInput} from "../../../../_interfaces/graphql-types";
 
 import 'codemirror/mode/python/python';
 
@@ -31,13 +30,13 @@ export class ProgrammingExerciseComponent
   @Input() exercise: IExercise;
   @Input() oldPart: ToolPart;
 
-  exerciseFiles: IExerciseFile[] = [];
+  exerciseFiles: ExerciseFile[] = [];
 
   constructor(progCorrectionGQL: ProgCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
     super(progCorrectionGQL, apiService, dexieService);
   }
 
-  get sampleSolutionFilesList(): IExerciseFile[][] {
+  get sampleSolutionFilesList(): ExerciseFile[][] {
     return this.exercise ? this.exercise.content.sampleSolutions.map((s) => s.sample.files) : [];
   }
 
@@ -61,14 +60,14 @@ export class ProgrammingExerciseComponent
     //   });
   }
 
-  protected getSolution(): IProgSolution {
+  protected getSolution(): ProgSolution {
     return {
       files: this.exerciseFiles,
-      testData: []
+//      testData: []
     };
   }
 
-  get sampleSolutions(): IProgSolution[] {
+  get sampleSolutions(): ProgSolution[] {
     return [];
   }
 

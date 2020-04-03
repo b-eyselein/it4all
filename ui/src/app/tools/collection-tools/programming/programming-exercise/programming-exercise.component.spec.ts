@@ -12,40 +12,12 @@ import {FormsModule} from '@angular/forms';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {ApiService} from '../../_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {IProgExerciseContent} from '../programming-interfaces';
 
 
 describe('ProgrammingExerciseComponent', () => {
 
   let component: ProgrammingExerciseComponent;
   let fixture: ComponentFixture<ProgrammingExerciseComponent>;
-
-  const exerciseContent: IProgExerciseContent = {
-    inputTypes: [],
-    maybeClassDiagramPart: undefined,
-    outputType: {},
-    sampleSolutions: [],
-    sampleTestData: [],
-    unitTestPart: {
-      sampleSolFileNames: [],
-      simplifiedTestMainFile: undefined,
-      testFileName: '',
-      unitTestFiles: [],
-      unitTestsDescription: '',
-      unitTestTestConfigs: [],
-      unitTestType: 'Normal'
-    },
-    baseData: [],
-    filename: '',
-    foldername: '',
-    functionName: '',
-    implementationPart: {
-      base: '',
-      files: [],
-      implFileName: '',
-      sampleSolFileNames: []
-    }
-  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -64,9 +36,8 @@ describe('ProgrammingExerciseComponent', () => {
     fixture = TestBed.createComponent(ProgrammingExerciseComponent);
     component = fixture.componentInstance;
     component.exerciseFiles = [];
-    component.exercise = {
-      id: 0, collectionId: 0, toolId: 'programming', semanticVersion: {major: 0, minor: 0, patch: 0},
-      title: '', authors: [], text: '', tags: [], content: exerciseContent
+    component.exerciseFragment = {
+      id: 0, collectionId: 0, toolId: 'programming', title: '', text: ''
     };
     fixture.detectChanges();
   });
