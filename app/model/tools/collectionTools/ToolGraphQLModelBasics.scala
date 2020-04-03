@@ -31,14 +31,13 @@ trait ToolGraphQLModelBasics[
   protected def sampleSolutionType[ASolType](
     name: String,
     SolTypeType: OutputType[ASolType]
-  ): ObjectType[Unit, SampleSolution[ASolType]] =
-    ObjectType(
-      s"${name}SampleSolution",
-      fields[Unit, SampleSolution[ASolType]](
-        Field("id", IntType, resolve = _.value.id),
-        Field("sample", SolTypeType, resolve = _.value.sample)
-      )
+  ): ObjectType[Unit, SampleSolution[ASolType]] = ObjectType(
+    s"${name}SampleSolution",
+    fields[Unit, SampleSolution[ASolType]](
+      Field("id", IntType, resolve = _.value.id),
+      Field("sample", SolTypeType, resolve = _.value.sample)
     )
+  )
 
   protected val stringSampleSolutionType: ObjectType[Unit, SampleSolution[String]] =
     sampleSolutionType("String", StringType)
@@ -82,16 +81,12 @@ trait ToolGraphQLModelBasics[
   protected def matchingResultType[T, M <: Match[T]](
     name: String,
     mType: OutputType[M]
-  ): ObjectType[Unit, MatchingResult[T, M]] = {
-    implicit val pt: ObjectType[Unit, Points] = pointsType
-
-    deriveObjectType(
-      ObjectTypeName(s"${name}MatchingResult"),
-      Interfaces(matchingResultInterface[T, M]),
-      ExcludeFields("points", "maxPoints"),
-      ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches))
-    )
-  }
+  ): ObjectType[Unit, MatchingResult[T, M]] = deriveObjectType(
+    ObjectTypeName(s"${name}MatchingResult"),
+    Interfaces(matchingResultInterface[T, M]),
+    ExcludeFields("points", "maxPoints"),
+    ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches))
+  )
 
   protected val abstractResultTypeType: InterfaceType[Unit, AbstractCorrectionResult] = InterfaceType(
     "AbstractCorrectionResult",

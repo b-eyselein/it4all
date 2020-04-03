@@ -1,11 +1,10 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {MatchType, UmlAssociationMatch, UmlImplementationMatch} from "../../../../../_interfaces/graphql-types";
 import {
-  UmlAssociationMatch,
-  UmlAssociationMatchingResult,
-  UmlCompleteResult,
-  UmlImplementationMatch,
-  UmlImplementationMatchingResult
-} from "../../../../../_interfaces/graphql-types";
+  UmlAssociationMatchingResultFragment,
+  UmlCompleteResultFragment,
+  UmlImplementationMatchingResultFragment
+} from "../../uml-apollo-mutations.service";
 
 @Component({
   selector: 'it4all-uml-diag-drawing-correction',
@@ -13,7 +12,7 @@ import {
 })
 export class UmlDiagDrawingCorrectionComponent implements OnChanges {
 
-  @Input() result: UmlCompleteResult;
+  @Input() result: UmlCompleteResultFragment;
 
   assocResultSuccessful = false;
   implResultSuccessful = false;
@@ -28,12 +27,11 @@ export class UmlDiagDrawingCorrectionComponent implements OnChanges {
     }
   }
 
-
   assocMatchIsCorrect(m: UmlAssociationMatch): boolean {
-    return m.matchType === 'SUCCESSFUL_MATCH';
+    return m.matchType === MatchType.SuccessfulMatch;
   }
 
-  associationResultSuccessful(assocResult: UmlAssociationMatchingResult): boolean {
+  associationResultSuccessful(assocResult: UmlAssociationMatchingResultFragment): boolean {
     return assocResult.allMatches.every(this.assocMatchIsCorrect);
   }
 
@@ -42,7 +40,7 @@ export class UmlDiagDrawingCorrectionComponent implements OnChanges {
     return m.matchType === 'SUCCESSFUL_MATCH';
   }
 
-  implementationResultSuccessful(implResult: UmlImplementationMatchingResult): boolean {
+  implementationResultSuccessful(implResult: UmlImplementationMatchingResultFragment): boolean {
     return implResult.allMatches.every(this.implMatchIsCorrect);
   }
 

@@ -24,7 +24,6 @@ export abstract class Tool {
 }
 
 export abstract class RandomTool extends Tool {
-
 }
 
 export abstract class CollectionTool extends Tool {

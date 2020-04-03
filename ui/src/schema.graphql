@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Fri Apr 03 2020 10:22:05 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Fri Apr 03 2020 13:49:22 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -104,6 +104,26 @@ type ExTag {
   title: String!
 }
 
+type GradedHtmlTaskResult {
+  id: Int!
+  success: SuccessType!
+  elementFound: Boolean!
+  textContentResult: GradedTextResult
+  attributeResults: [GradedTextResult!]!
+  isSuccessful: Boolean!
+  points: Float!
+  maxPoints: Float!
+}
+
+type GradedTextResult {
+  keyName: String!
+  awaitedContent: String!
+  maybeFoundContent: String
+  isSuccessful: Boolean!
+  points: Float!
+  maxPoints: Float!
+}
+
 type HtmlTask {
   text: String!
 }
@@ -136,9 +156,9 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_SAMPLE
-  PARTIAL_MATCH
   ONLY_USER
+  PARTIAL_MATCH
+  ONLY_SAMPLE
   SUCCESSFUL_MATCH
   UNSUCCESSFUL_MATCH
 }
@@ -349,9 +369,9 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  UPDATE
   CREATE
   SELECT
+  UPDATE
   DELETE
   INSERT
 }
@@ -816,6 +836,7 @@ enum UnitTestType {
 }
 
 type WebCompleteResult implements AbstractCorrectionResult {
+  gradedHtmlTaskResults: [GradedHtmlTaskResult!]!
   solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!

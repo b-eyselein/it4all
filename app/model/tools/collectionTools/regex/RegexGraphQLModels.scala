@@ -49,18 +49,13 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, S
     deriveObjectType()
   }
 
-  private val regexIllegalRegexResultType: ObjectType[Unit, RegexIllegalRegexResult] = {
-    implicit val pt: ObjectType[Unit, Points] = pointsType
-
-    deriveObjectType(
-      Interfaces(abstractResultTypeType),
-      ExcludeFields("solutionSaved", /*"points",*/ "maxPoints")
-    )
-  }
+  private val regexIllegalRegexResultType: ObjectType[Unit, RegexIllegalRegexResult] = deriveObjectType(
+    Interfaces(abstractResultTypeType),
+    ExcludeFields("solutionSaved", "maxPoints")
+  )
 
   private val regexMatchingResultType: ObjectType[Unit, RegexMatchingResult] = {
     implicit val rmert: ObjectType[Unit, RegexMatchingSingleResult] = regexMatchingEvaluationResultType
-    implicit val pt: ObjectType[Unit, Points]                       = pointsType
 
     deriveObjectType(
       Interfaces(abstractResultTypeType),
@@ -70,7 +65,6 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, S
 
   private val regexExtractionResultType: ObjectType[Unit, RegexExtractionResult] = {
     implicit val reert: ObjectType[Unit, RegexExtractionSingleResult] = regexExtractionEvaluationResultType
-    implicit val pt: ObjectType[Unit, Points]                         = pointsType
 
     deriveObjectType(
       Interfaces(abstractResultTypeType),

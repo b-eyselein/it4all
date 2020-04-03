@@ -40,20 +40,20 @@
 
         <it4all-tab [title]="'Korrektur'">
 
-          <ng-container *ngIf="result">
+          <ng-container *ngIf="resultQuery">
 
-            <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
+            <it4all-solution-saved [saved]="resultQuery.correctWeb.solutionSaved"></it4all-solution-saved>
 
             <br>
 
-            <it4all-points-notification [points]="result.points" [maxPoints]="result.maxPoints">
+            <it4all-points-notification [points]="resultQuery.correctWeb.points" [maxPoints]="result.maxPoints">
             </it4all-points-notification>
 
             <br>
 
             <div class="content">
               <ul>
-                <li *ngFor="let htmlResult of result.gradedHtmlTaskResults">
+                <li *ngFor="let htmlResult of resultQuery.correctWeb.gradedHtmlTaskResults">
                   <span [ngClass]="htmlResult.isSuccessful ? 'has-text-success' : 'has-text-danger'">
                     ({{htmlResult.points}} / {{htmlResult.maxPoints}})
                     Teilaufgabe {{htmlResult.id}} ist {{htmlResult.isSuccessful ? '' : 'nicht'}} korrekt:
@@ -84,7 +84,7 @@
                   </ul>
                 </li>
 
-                <li *ngFor="let jsResult of result.gradedJsTaskResults">
+                <li *ngFor="let jsResult of resultQuery.correctWeb.gradedJsTaskResults">
                   <span [ngClass]="jsResult.success === 'COMPLETE' ? 'has-text-success' : 'has-text-danger'">
                    ({{jsResult.points}} / {{jsResult.maxPoints}})
                     Test {{jsResult.id}} ist {{jsResult.success === 'COMPLETE' ? '' : 'nicht'}} korrekt:

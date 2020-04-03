@@ -127,6 +127,28 @@ export type ExTag = {
   title: Scalars['String'];
 };
 
+export type GradedHtmlTaskResult = {
+   __typename?: 'GradedHtmlTaskResult';
+  id: Scalars['Int'];
+  success: SuccessType;
+  elementFound: Scalars['Boolean'];
+  textContentResult?: Maybe<GradedTextResult>;
+  attributeResults: Array<GradedTextResult>;
+  isSuccessful: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
+export type GradedTextResult = {
+   __typename?: 'GradedTextResult';
+  keyName: Scalars['String'];
+  awaitedContent: Scalars['String'];
+  maybeFoundContent?: Maybe<Scalars['String']>;
+  isSuccessful: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
 export type HtmlTask = {
    __typename?: 'HtmlTask';
   text: Scalars['String'];
@@ -163,9 +185,9 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlySample = 'ONLY_SAMPLE',
-  PartialMatch = 'PARTIAL_MATCH',
   OnlyUser = 'ONLY_USER',
+  PartialMatch = 'PARTIAL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
@@ -462,9 +484,9 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
-  Update = 'UPDATE',
   Create = 'CREATE',
   Select = 'SELECT',
+  Update = 'UPDATE',
   Delete = 'DELETE',
   Insert = 'INSERT'
 }
@@ -1011,6 +1033,7 @@ export enum UnitTestType {
 
 export type WebCompleteResult = AbstractCorrectionResult & {
    __typename?: 'WebCompleteResult';
+  gradedHtmlTaskResults: Array<GradedHtmlTaskResult>;
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];

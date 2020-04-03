@@ -1,7 +1,7 @@
 package model.tools.collectionTools.web
 
-import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
-import model.points
+import de.uniwue.webtester.sitespec.{HtmlTask, JsAction, JsActionType, SiteSpec}
+import model.core.result.SuccessType
 import model.tools.collectionTools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
@@ -14,6 +14,14 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, WebSo
       Field("text", StringType, resolve = _.value.text)
     )
   )
+
+  private val jsActionTypeType: EnumType[JsActionType] = deriveEnumType()
+
+  private val jsActionType: ObjectType[Unit, JsAction] = {
+    implicit val jatt: EnumType[JsActionType] = jsActionTypeType
+
+    deriveObjectType()
+  }
 
   private val siteSpecType: ObjectType[Unit, SiteSpec] = {
     implicit val htt: ObjectType[Unit, HtmlTask] = HtmlTaskType
@@ -57,18 +65,64 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebExerciseContent, WebSo
 
   // Result types
 
+  private val gradedTextResultType: ObjectType[Unit, GradedTextResult] = deriveObjectType(
+    ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
+    ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
+  )
+
+  private val gradedHtmlTaskResultType: ObjectType[Unit, GradedHtmlTaskResult] = {
+    implicit val stt: EnumType[SuccessType]               = successTypeType
+    implicit val gtrt: ObjectType[Unit, GradedTextResult] = gradedTextResultType
+
+    deriveObjectType(
+      ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
+      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
+    )
+  }
+
+  implicit val gradedJsActionResultType: ObjectType[Unit, GradedJsActionResult] = {
+    implicit val jat: ObjectType[Unit, JsAction] = jsActionType
+
+    deriveObjectType(
+      ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
+      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
+    )
+  }
+
+  private val gradedJsHtmlElementSpecResultType: ObjectType[Unit, GradedJsHtmlElementSpecResult] = {
+    implicit val stt: EnumType[SuccessType]               = successTypeType
+    implicit val gtrt: ObjectType[Unit, GradedTextResult] = gradedTextResultType
+
+    deriveObjectType(
+      ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
+      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
+    )
+  }
+
+  private val gradedJsTaskResultType: ObjectType[Unit, GradedJsTaskResult] = {
+    implicit val stt: EnumType[SuccessType]                               = successTypeType
+    implicit val gjtesrt: ObjectType[Unit, GradedJsHtmlElementSpecResult] = gradedJsHtmlElementSpecResultType
+    implicit val gjart: ObjectType[Unit, GradedJsActionResult]            = gradedJsActionResultType
+
+    deriveObjectType(
+      ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
+      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
+    )
+  }
+
   private val webCompleteResultType: ObjectType[Unit, WebCompleteResult] = {
-    implicit val pt: ObjectType[Unit, points.Points] = pointsType
+    implicit val ghtrt: ObjectType[Unit, GradedHtmlTaskResult] = gradedHtmlTaskResultType
+    implicit val gjtrt: ObjectType[Unit, GradedJsTaskResult]   = gradedJsTaskResultType
 
     deriveObjectType(
       Interfaces(abstractResultTypeType),
-      ExcludeFields( /*"solutionSaved",*/ "points", "maxPoints"),
-      // TODO: include fields!
-      ExcludeFields("gradedHtmlTaskResults", "gradedJsTaskResults")
+      ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }
 
   override val AbstractResultTypeType: OutputType[Any] = webCompleteResultType
+
+  // Part type
 
   override val PartTypeInputType: EnumType[WebExPart] = EnumType(
     "WebExPart",

@@ -69,7 +69,28 @@ export type WebCorrectionMutation = (
 
 export type WebCompleteResultFragment = (
   { __typename?: 'WebCompleteResult' }
+  & { gradedHtmlTaskResults: Array<(
+    { __typename?: 'GradedHtmlTaskResult' }
+    & GradedHtmlTaskResultFragment
+  )> }
   & AbstractCorrectionResult_WebCompleteResult_Fragment
+);
+
+export type GradedHtmlTaskResultFragment = (
+  { __typename?: 'GradedHtmlTaskResult' }
+  & Pick<Types.GradedHtmlTaskResult, 'id' | 'success' | 'elementFound' | 'isSuccessful' | 'points' | 'maxPoints'>
+  & { textContentResult?: Types.Maybe<(
+    { __typename?: 'GradedTextResult' }
+    & GradedTextContentResultFragment
+  )>, attributeResults: Array<(
+    { __typename?: 'GradedTextResult' }
+    & GradedTextContentResultFragment
+  )> }
+);
+
+export type GradedTextContentResultFragment = (
+  { __typename?: 'GradedTextResult' }
+  & Pick<Types.GradedTextResult, 'keyName' | 'awaitedContent' | 'maybeFoundContent' | 'isSuccessful' | 'points' | 'maxPoints'>
 );
 
 export const AbstractCorrectionResultFragmentDoc = gql`
@@ -79,11 +100,41 @@ export const AbstractCorrectionResultFragmentDoc = gql`
   maxPoints
 }
     `;
+export const GradedTextContentResultFragmentDoc = gql`
+    fragment GradedTextContentResult on GradedTextResult {
+  keyName
+  awaitedContent
+  maybeFoundContent
+  isSuccessful
+  points
+  maxPoints
+}
+    `;
+export const GradedHtmlTaskResultFragmentDoc = gql`
+    fragment GradedHtmlTaskResult on GradedHtmlTaskResult {
+  id
+  success
+  elementFound
+  textContentResult {
+    ...GradedTextContentResult
+  }
+  attributeResults {
+    ...GradedTextContentResult
+  }
+  isSuccessful
+  points
+  maxPoints
+}
+    ${GradedTextContentResultFragmentDoc}`;
 export const WebCompleteResultFragmentDoc = gql`
     fragment WebCompleteResult on WebCompleteResult {
   ...AbstractCorrectionResult
+  gradedHtmlTaskResults {
+    ...GradedHtmlTaskResult
+  }
 }
-    ${AbstractCorrectionResultFragmentDoc}`;
+    ${AbstractCorrectionResultFragmentDoc}
+${GradedHtmlTaskResultFragmentDoc}`;
 export const WebCorrectionDocument = gql`
     mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
   correctWeb(collId: $collId, exId: $exId, part: $part, solution: $solution) {

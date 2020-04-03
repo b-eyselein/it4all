@@ -12,4 +12,31 @@ mutation WebCorrection($collId: Int!, $exId: Int!,$part: WebExPart!, $solution: 
 
 fragment WebCompleteResult on WebCompleteResult {
   ...AbstractCorrectionResult
+  gradedHtmlTaskResults {
+    ...GradedHtmlTaskResult
+  }
+}
+
+fragment GradedHtmlTaskResult on GradedHtmlTaskResult {
+  id
+  success
+  elementFound
+  textContentResult {
+    ...GradedTextContentResult
+  }
+  attributeResults {
+    ...GradedTextContentResult
+  }
+  isSuccessful
+  points
+  maxPoints
+}
+
+fragment GradedTextContentResult on GradedTextResult {
+  keyName
+  awaitedContent
+  maybeFoundContent
+  isSuccessful
+  points
+  maxPoints
 }

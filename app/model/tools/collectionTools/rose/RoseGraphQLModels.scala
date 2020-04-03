@@ -1,6 +1,5 @@
 package model.tools.collectionTools.rose
 
-import model.points
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{ExcludeFields, deriveObjectType}
 import sangria.schema._
@@ -16,10 +15,9 @@ object RoseGraphQLModels extends ToolGraphQLModelBasics[RoseExerciseContent, Str
   override val SolTypeInputType: InputType[String] = StringType
 
   override val AbstractResultTypeType: OutputType[Any] = {
-    implicit val pt: ObjectType[Unit, points.Points] = pointsType
 
     deriveObjectType[Unit, RoseCompleteResult](
-      ExcludeFields("result")
+      ExcludeFields("points", "maxPoints", "result")
     )
   }
 

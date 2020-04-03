@@ -1,7 +1,6 @@
 package model.tools.collectionTools.sql
 
 import model.core.matching.MatchType
-import model.points.Points
 import model.tools.collectionTools.sql.SqlToolMain._
 import model.tools.collectionTools.sql.matcher._
 import model.tools.collectionTools.{SampleSolution, ToolGraphQLModelBasics}
@@ -111,23 +110,15 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
     deriveObjectType()
   }
 
-  private val sqlIllegalQueryResultType: ObjectType[Unit, SqlIllegalQueryResult] = {
-    implicit val pt: ObjectType[Unit, Points] = pointsType
+  private val sqlIllegalQueryResultType: ObjectType[Unit, SqlIllegalQueryResult] = deriveObjectType(
+    Interfaces(abstractResultTypeType),
+    ExcludeFields("solutionSaved", "maxPoints")
+  )
 
-    deriveObjectType(
-      Interfaces(abstractResultTypeType),
-      ExcludeFields("solutionSaved", /* "points",*/ "maxPoints")
-    )
-  }
-
-  private val sqlWrongQueryTypeResult: ObjectType[Unit, SqlWrongQueryTypeResult] = {
-    implicit val pt: ObjectType[Unit, Points] = pointsType
-
-    deriveObjectType(
-      Interfaces(abstractResultTypeType),
-      ExcludeFields("solutionSaved", /*"points",*/ "maxPoints")
-    )
-  }
+  private val sqlWrongQueryTypeResult: ObjectType[Unit, SqlWrongQueryTypeResult] = deriveObjectType(
+    Interfaces(abstractResultTypeType),
+    ExcludeFields("solutionSaved", "maxPoints")
+  )
 
   private val sqlResultType: ObjectType[Unit, SqlResult] = {
     implicit val sqsct: ObjectType[Unit, SqlQueriesStaticComparison] = sqlQueriesStaticComparisonType
