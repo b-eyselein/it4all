@@ -1,13 +1,9 @@
 package model.tools.collectionTools.sql
 
-import model.core.matching.MatchType
-import model.tools.collectionTools.ToolTSInterfaceTypes
 import nl.codestar.scalatsi.TypescriptType.TypescriptNamedType
-import nl.codestar.scalatsi.{TSIType, TSType}
+import nl.codestar.scalatsi.{DefaultTSTypes, TSIType, TSType}
 
-object SqlTSTypes extends ToolTSInterfaceTypes {
-
-  private implicit val matchTypeTsType: TSType[MatchType] = matchTypeTS
+object SqlTSTypes extends DefaultTSTypes {
 
   private val sqlQueryResultTSI: TSIType[SqlQueryResult] = {
     implicit val sct: TSType[SqlCell] = TSType.fromCaseClass

@@ -8,7 +8,6 @@ import {ISqlQueryResult} from '../sql/sql-interfaces';
 
 type ILesson = Lesson;
 
-
 @Injectable()
 export class ApiService {
 
@@ -25,24 +24,6 @@ export class ApiService {
 
   private readonly baseUrl = '/api/tools';
 
-  // Loading
-
-  getExercise(toolId: string, collId: number, exId: number): Observable<IExercise | undefined> {
-    const url = `${this.baseUrl}/${toolId}/collections/${collId}/exercises/${exId}`;
-
-    // TODO: send current version of exercise if known to only get if different!
-    return this.http.get<IExercise>(url)
-      .pipe(catchError(() => of(undefined)));
-  }
-
-  // Correction
-
-  correctSolution<S, R>(exId: number, collId: number, toolId: string, part: string, solution: S): Observable<R | undefined> {
-    const url = `${this.baseUrl}/${toolId}/collections/${collId}/exercises/${exId}/${part}`;
-
-    return this.http.put<R>(url, JSON.stringify(solution), ApiService.putHttpOptions)
-      .pipe(catchError(() => of(undefined)));
-  }
 
   // Admin
 
