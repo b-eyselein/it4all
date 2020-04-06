@@ -12,7 +12,6 @@ import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '
 import {ExportedUmlClassDiagram, umlAssocfromConnection, umlImplfromConnection} from '../_model/my-uml-interfaces';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
 import {
@@ -80,8 +79,8 @@ export class UmlDiagramDrawingComponent
 
   readonly debug = !environment.production;
 
-  constructor(umlCorrectionGQL: UmlCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
-    super(umlCorrectionGQL, apiService, dexieService);
+  constructor(umlCorrectionGQL: UmlCorrectionGQL, dexieService: DexieService) {
+    super(umlCorrectionGQL, dexieService);
   }
 
   ngOnInit(): void {

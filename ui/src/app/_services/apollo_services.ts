@@ -141,6 +141,7 @@ export type ExerciseQuery = (
     { __typename?: 'Tool' }
     & { collection?: Types.Maybe<(
       { __typename?: 'Collection' }
+      & Pick<Types.Collection, 'shortName'>
       & { exercise?: Types.Maybe<(
         { __typename?: 'Exercise' }
         & ExerciseSolveFieldsFragment
@@ -785,6 +786,7 @@ export const ExerciseDocument = gql`
     query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
+      shortName
       exercise(exId: $exId) {
         ...ExerciseSolveFields
       }

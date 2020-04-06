@@ -2,14 +2,21 @@ package model
 
 import model.persistence.ExerciseTableDefs
 import model.tools.collectionTools._
+import model.tools.collectionTools.sql.{SelectDAO, SqlGraphQLModels}
 import model.tools.randomTools.RandomExerciseToolMain
 import model.tools.{ToolList, ToolState}
-import play.api.libs.json.Format
+import play.api.libs.json.{Format, JsObject, Json}
 import sangria.macros.derive._
 import sangria.marshalling.playJson._
 import sangria.schema._
 
 import scala.concurrent.{ExecutionContext, Future}
+
+final case class GraphQLRequest(
+  query: String,
+  operationName: Option[String],
+  variables: Option[JsObject]
+)
 
 final case class GraphQLContext(
   tables: ExerciseTableDefs,
@@ -18,6 +25,8 @@ final case class GraphQLContext(
 )
 
 object GraphQLModel {
+
+  val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
 
   // Values
 
@@ -35,6 +44,8 @@ object GraphQLModel {
   private val collIdArgument = Argument("collId", IntType)
 
   private val exIdArgument = Argument("exId", IntType)
+
+  private val schemaNameArgument = Argument("schemaName", StringType)
 
   // Types
 
@@ -152,6 +163,12 @@ object GraphQLModel {
         OptionType(ToolType),
         arguments = toolIdArgument :: Nil,
         resolve = ctx => toolValues.find(_.id == ctx.arg(toolIdArgument))
+      ),
+      Field(
+        "sqlDbContents",
+        ListType(SqlGraphQLModels.sqlQueryResultType),
+        arguments = schemaNameArgument :: Nil,
+        resolve = context => SelectDAO.tableContents(context.arg(schemaNameArgument))
       )
     )
   )

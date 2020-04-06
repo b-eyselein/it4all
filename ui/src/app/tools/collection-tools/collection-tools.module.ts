@@ -39,6 +39,7 @@ import {XmlElementLineMatchComponent} from './xml/_components/xml-element-line-m
 import {XmlDocumentCorrectionComponent} from './xml/_components/xml-document-correction/xml-document-correction.component';
 import {SqlTableContentsComponent} from './sql/_components/sql-table-contents/sql-table-contents.component';
 import {StringSampleSolComponent} from './_components/string-sample-sol/string-sample-sol.component';
+import { QueryResultTableComponent } from './sql/_components/query-result-table/query-result-table.component';
 
 
 @NgModule({
@@ -69,7 +70,7 @@ import {StringSampleSolComponent} from './_components/string-sample-sol/string-s
 
     WebExerciseComponent,
 
-    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent
+    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent, QueryResultTableComponent
   ],
   providers: [ApiService],
   imports: [

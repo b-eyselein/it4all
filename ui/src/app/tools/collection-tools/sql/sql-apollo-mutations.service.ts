@@ -4,6 +4,19 @@ import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
+export type DbContentsQueryVariables = {
+  schemaName: Types.Scalars['String'];
+};
+
+
+export type DbContentsQuery = (
+  { __typename?: 'Query' }
+  & { sqlDbContents: Array<(
+    { __typename?: 'SqlQueryResult' }
+    & SqlQueryResultFragment
+  )> }
+);
+
 type AbstractCorrectionResult_RegexIllegalRegexResult_Fragment = (
   { __typename?: 'RegexIllegalRegexResult' }
   & Pick<Types.RegexIllegalRegexResult, 'solutionSaved' | 'points' | 'maxPoints'>
@@ -247,85 +260,95 @@ export type SqlQueryResultFragment = (
   & Pick<Types.SqlQueryResult, 'tableName' | 'columnNames'>
   & { rows: Array<(
     { __typename?: 'SqlRow' }
-    & { cells: Array<(
-      { __typename?: 'SqlKeyCellValueObject' }
-      & Pick<Types.SqlKeyCellValueObject, 'key'>
-      & { value: (
-        { __typename?: 'SqlCell' }
-        & Pick<Types.SqlCell, 'colName' | 'content'>
-      ) }
-    )> }
+    & SqlRowFragment
   )> }
+);
+
+export type SqlRowFragment = (
+  { __typename?: 'SqlRow' }
+  & { cells: Array<(
+    { __typename?: 'SqlKeyCellValueObject' }
+    & Pick<Types.SqlKeyCellValueObject, 'key'>
+    & { value: (
+      { __typename?: 'SqlCell' }
+      & SqlCellFragment
+    ) }
+  )> }
+);
+
+export type SqlCellFragment = (
+  { __typename?: 'SqlCell' }
+  & Pick<Types.SqlCell, 'colName' | 'content' | 'different'>
 );
 
 type Mr_RegexExtractedValuesComparisonMatchingResult_Fragment = (
   { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
-  & Pick<Types.RegexExtractedValuesComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_SqlColumnComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlColumnComparisonMatchingResult' }
-  & Pick<Types.SqlColumnComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.SqlColumnComparisonMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_SqlTableComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlTableComparisonMatchingResult' }
-  & Pick<Types.SqlTableComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.SqlTableComparisonMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-  & Pick<Types.SqlBinaryExpressionComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.SqlBinaryExpressionComparisonMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_SqlGroupByComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlGroupByComparisonMatchingResult' }
-  & Pick<Types.SqlGroupByComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.SqlGroupByComparisonMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_SqlOrderByComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlOrderByComparisonMatchingResult' }
-  & Pick<Types.SqlOrderByComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.SqlOrderByComparisonMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_SqlLimitComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlLimitComparisonMatchingResult' }
-  & Pick<Types.SqlLimitComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.SqlLimitComparisonMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_SqlInsertComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlInsertComparisonMatchingResult' }
-  & Pick<Types.SqlInsertComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.SqlInsertComparisonMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_UmlClassMatchingResult_Fragment = (
   { __typename?: 'UmlClassMatchingResult' }
-  & Pick<Types.UmlClassMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.UmlClassMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_UmlAttributeMatchingResult_Fragment = (
   { __typename?: 'UmlAttributeMatchingResult' }
-  & Pick<Types.UmlAttributeMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.UmlAttributeMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_UmlMethodMatchingResult_Fragment = (
   { __typename?: 'UmlMethodMatchingResult' }
-  & Pick<Types.UmlMethodMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.UmlMethodMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_UmlAssociationMatchingResult_Fragment = (
   { __typename?: 'UmlAssociationMatchingResult' }
-  & Pick<Types.UmlAssociationMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.UmlAssociationMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_UmlImplementationMatchingResult_Fragment = (
   { __typename?: 'UmlImplementationMatchingResult' }
-  & Pick<Types.UmlImplementationMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.UmlImplementationMatchingResult, 'points' | 'maxPoints'>
 );
 
 type Mr_XmlElementLineComparisonMatchingResult_Fragment = (
   { __typename?: 'XmlElementLineComparisonMatchingResult' }
-  & Pick<Types.XmlElementLineComparisonMatchingResult, 'matchName' | 'matchSingularName' | 'points' | 'maxPoints'>
+  & Pick<Types.XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints'>
 );
 
 export type MrFragment = Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_UmlClassMatchingResult_Fragment | Mr_UmlAttributeMatchingResult_Fragment | Mr_UmlMethodMatchingResult_Fragment | Mr_UmlAssociationMatchingResult_Fragment | Mr_UmlImplementationMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
@@ -351,8 +374,6 @@ export const SqlWrongQueryTypeResultFragmentDoc = gql`
     ${AbstractCorrectionResultFragmentDoc}`;
 export const MrFragmentDoc = gql`
     fragment MR on MatchingResult {
-  matchName
-  matchSingularName
   points
   maxPoints
 }
@@ -484,21 +505,32 @@ export const InsertComparisonFragmentDoc = gql`
 }
     ${MrFragmentDoc}
 ${InsertMatchFragmentDoc}`;
+export const SqlCellFragmentDoc = gql`
+    fragment SqlCell on SqlCell {
+  colName
+  content
+  different
+}
+    `;
+export const SqlRowFragmentDoc = gql`
+    fragment SqlRow on SqlRow {
+  cells {
+    key
+    value {
+      ...SqlCell
+    }
+  }
+}
+    ${SqlCellFragmentDoc}`;
 export const SqlQueryResultFragmentDoc = gql`
     fragment SqlQueryResult on SqlQueryResult {
   tableName
   columnNames
   rows {
-    cells {
-      key
-      value {
-        colName
-        content
-      }
-    }
+    ...SqlRow
   }
 }
-    `;
+    ${SqlRowFragmentDoc}`;
 export const SqlExecutionResultFragmentDoc = gql`
     fragment SqlExecutionResult on SqlExecutionResult {
   userResultTry {
@@ -547,6 +579,21 @@ ${BinaryExpressionComparisonFragmentDoc}
 ${SelectAdditionalComparisonFragmentDoc}
 ${InsertComparisonFragmentDoc}
 ${SqlExecutionResultFragmentDoc}`;
+export const DbContentsDocument = gql`
+    query DbContents($schemaName: String!) {
+  sqlDbContents(schemaName: $schemaName) {
+    ...SqlQueryResult
+  }
+}
+    ${SqlQueryResultFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DbContentsGQL extends Apollo.Query<DbContentsQuery, DbContentsQueryVariables> {
+    document = DbContentsDocument;
+    
+  }
 export const SqlCorrectionDocument = gql`
     mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
   correctSql(collId: $collId, exId: $exId, part: $part, solution: $solution) {

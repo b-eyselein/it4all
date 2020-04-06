@@ -2,7 +2,6 @@ import {TabsComponent} from '../../../shared/tabs/tabs.component';
 import {Directive, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {TabComponent} from '../../../shared/tab/tab.component';
 import {DexieService} from '../../../_services/dexie.service';
-import {ApiService} from '../_services/api.service';
 import {ToolPart} from '../../../_interfaces/tool';
 import * as Apollo from 'apollo-angular';
 
@@ -34,7 +33,7 @@ export abstract class ComponentWithExercise<SolutionType,
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
 
-  protected constructor(protected mutationGQL: MutationGQL, protected apiService: ApiService, protected dexieService: DexieService) {
+  protected constructor(protected mutationGQL: MutationGQL, protected dexieService: DexieService) {
   }
 
   toggleSampleSolutions(): void {

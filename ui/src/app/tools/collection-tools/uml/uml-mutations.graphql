@@ -35,17 +35,17 @@ fragment UmlClassMatchingResult on UmlClassMatchingResult {
 fragment UmlClassMatch on UmlClassMatch {
   matchType
   userArg {
-    ...UmlClass
+    ...UmlSolutionClass
   }
   sampleArg {
-    ...UmlClass
+    ...UmlSolutionClass
   }
   analysisResult {
     __typename
   }
 }
 
-fragment UmlClass on UmlClass  {
+fragment UmlSolutionClass on UmlClass  {
   classType
   name
   attributes {

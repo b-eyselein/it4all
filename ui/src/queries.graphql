@@ -80,6 +80,7 @@ query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
 query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId){
+      shortName
       exercise(exId: $exId){
         ...ExerciseSolveFields
       }

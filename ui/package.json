@@ -44,6 +44,7 @@
     "@angular/cli": "^9.0.7",
     "@angular/compiler-cli": "~9.1.0",
     "@angular/language-service": "~9.1.0",
+    "@graphql-codegen/add": "^1.13.1",
     "@graphql-codegen/cli": "^1.13.1",
     "@graphql-codegen/fragment-matcher": "^1.13.1",
     "@graphql-codegen/import-types-preset": "^1.13.1",

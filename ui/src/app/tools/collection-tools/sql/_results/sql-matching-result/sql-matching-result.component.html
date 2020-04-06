@@ -1,6 +1,6 @@
 <span [ngClass]="successful ? 'has-text-success' : 'has-text-danger'">
   ({{matchingResult.points.toFixed(1)}} / {{matchingResult.maxPoints.toFixed(1)}} P)
-  Der Vergleich der {{matchingResult.matchName}} war <ng-container *ngIf="!successful">nicht</ng-container> erfolgreich.
+  Der Vergleich der {{matchName}} war <ng-container *ngIf="!successful">nicht</ng-container> erfolgreich.
 </span>
 
 <div class="content">
@@ -9,19 +9,19 @@
       <ng-container [ngSwitch]="match.matchType">
 
         <span *ngSwitchCase="'SUCCESSFUL_MATCH'" class="has-text-success">
-          Die Angabe {{matchingResult.matchSingularName}} <code>{{match.userArg}}</code> war korrekt.
+          Die Angabe {{matchSingularName}} <code>{{match.userArgDescription}}</code> war korrekt.
         </span>
 
         <span *ngSwitchCase="'ONLY_SAMPLE'" class="has-text-danger">
-         Die Angabe {{matchingResult.matchSingularName}} <code>{{match.sampleArg}}</code> fehlt!
+         Die Angabe {{matchSingularName}} <code>{{match.sampleArgDescription}}</code> fehlt!
         </span>
 
         <span *ngSwitchCase="'ONLY_USER'" class="has-text-danger">
-         Die Angabe {{matchingResult.matchSingularName}} <code>{{match.userArg}}</code> ist falsch!
+         Die Angabe {{matchSingularName}} <code>{{match.userArgDescription}}</code> ist falsch!
         </span>
 
         <span *ngSwitchDefault class="has-text-danger">
-         Die Angabe {{matchingResult.matchSingularName}} <code>{{match.userArg}}</code> war nicht komplett richtig.
+         Die Angabe {{matchSingularName}} <code>{{match.userArgDescription}}</code> war nicht komplett richtig.
         </span>
 
       </ng-container>

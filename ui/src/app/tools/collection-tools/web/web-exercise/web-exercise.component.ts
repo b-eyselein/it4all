@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {ApiService} from '../../_services/api.service';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
@@ -29,8 +28,8 @@ export class WebExerciseComponent
 
   exerciseFiles: ExerciseFile[] = [];
 
-  constructor(webCorrectionGQL: WebCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
-    super(webCorrectionGQL, apiService, dexieService);
+  constructor(webCorrectionGQL: WebCorrectionGQL, dexieService: DexieService) {
+    super(webCorrectionGQL, dexieService);
   }
 
   ngOnInit(): void {

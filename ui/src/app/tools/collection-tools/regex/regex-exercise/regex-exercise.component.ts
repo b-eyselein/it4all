@@ -1,5 +1,4 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
-import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {RegexExercisePart} from '../regex-tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
@@ -34,8 +33,8 @@ export class RegexExerciseComponent
 
   showInfo = false;
 
-  constructor(regexCorrectionGQL: RegexCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
-    super(regexCorrectionGQL, apiService, dexieService);
+  constructor(regexCorrectionGQL: RegexCorrectionGQL, dexieService: DexieService) {
+    super(regexCorrectionGQL, dexieService);
   }
 
   ngOnInit(): void {

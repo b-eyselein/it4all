@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ProgrammingCorrectionResult} from '../my-programming-interfaces';
-import {ApiService} from '../../_services/api.service';
 import {DexieService} from '../../../../_services/dexie.service';
 import {ProgrammingImplementationToolPart} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
@@ -31,8 +30,8 @@ export class ProgrammingExerciseComponent
 
   exerciseFiles: ExerciseFile[] = [];
 
-  constructor(progCorrectionGQL: ProgCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
-    super(progCorrectionGQL, apiService, dexieService);
+  constructor(progCorrectionGQL: ProgCorrectionGQL, dexieService: DexieService) {
+    super(progCorrectionGQL, dexieService);
   }
 
   get sampleSolutionFilesList(): ExerciseFile[][] {

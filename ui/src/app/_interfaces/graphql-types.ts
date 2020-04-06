@@ -229,10 +229,10 @@ export type MatchingResult = {
 
 export enum MatchType {
   OnlyUser = 'ONLY_USER',
-  OnlySample = 'ONLY_SAMPLE',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH'
+  OnlySample = 'ONLY_SAMPLE'
 }
 
 export type Mutation = {
@@ -347,11 +347,17 @@ export type Query = {
    __typename?: 'Query';
   tools: Array<Tool>;
   tool?: Maybe<Tool>;
+  sqlDbContents: Array<SqlQueryResult>;
 };
 
 
 export type QueryToolArgs = {
   toolId: Scalars['String'];
+};
+
+
+export type QuerySqlDbContentsArgs = {
+  schemaName: Scalars['String'];
 };
 
 export enum RegexCorrectionType {
@@ -491,6 +497,7 @@ export type SqlCell = {
    __typename?: 'SqlCell';
   colName: Scalars['String'];
   content: Scalars['String'];
+  different: Scalars['Boolean'];
 };
 
 export type SqlColumnComparisonMatchingResult = MatchingResult & {
@@ -527,10 +534,10 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
-  Delete = 'DELETE',
-  Select = 'SELECT',
-  Update = 'UPDATE',
   Insert = 'INSERT',
+  Update = 'UPDATE',
+  Select = 'SELECT',
+  Delete = 'DELETE',
   Create = 'CREATE'
 }
 

@@ -67,7 +67,6 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
   }
 
   private val sqlQueriesStaticComparisonType: ObjectType[Unit, SqlQueriesStaticComparison] = {
-
     implicit val cct: ObjectType[Unit, ColumnComparison] =
       matchingResultType("SqlColumnComparison", columnMatchType)
     implicit val tct: ObjectType[Unit, TableComparison] =
@@ -80,7 +79,11 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
     deriveObjectType()
   }
 
-  private val sqlCellType: ObjectType[Unit, SqlCell] = deriveObjectType()
+  private val sqlCellType: ObjectType[Unit, SqlCell] = deriveObjectType(
+    AddFields(
+      Field("different", BooleanType, resolve = _.value.different)
+    )
+  )
 
   private val KeyCellValueObjectType = ObjectType(
     "SqlKeyCellValueObject",
@@ -95,7 +98,7 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, Strin
       ReplaceField("cells", Field("cells", ListType(KeyCellValueObjectType), resolve = _.value.cells.toSeq))
     )
 
-  private val sqlQueryResultType: ObjectType[Unit, SqlQueryResult] = {
+  val sqlQueryResultType: ObjectType[Unit, SqlQueryResult] = {
     implicit val srt: ObjectType[Unit, SqlRow] = sqlRowType
 
     deriveObjectType()

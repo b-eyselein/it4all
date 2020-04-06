@@ -4,7 +4,6 @@ import {Observable, of} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {IExercise, IExerciseCollection} from '../../../_interfaces/models';
 import {Lesson} from '../../../_interfaces/lesson';
-import {ISqlQueryResult} from '../sql/sql-interfaces';
 
 type ILesson = Lesson;
 
@@ -67,15 +66,6 @@ export class ApiService {
 
     return this.http.put<boolean>(url, lesson)
       .pipe(catchError(() => of(false)));
-  }
-
-  // Special methods for certain tools
-
-  getSqlDbSchema(collId: number): Observable<ISqlQueryResult[]> {
-    const url = `${this.baseUrl}/sql/${collId}/dbContent`;
-
-    return this.http.get<ISqlQueryResult[]>(url)
-      .pipe(catchError(() => of([])));
   }
 
 }

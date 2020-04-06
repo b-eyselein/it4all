@@ -7,6 +7,9 @@ import {MatchingResult} from "../../../../../_interfaces/graphql-types";
 })
 export class SqlMatchingResultComponent implements OnChanges {
 
+  @Input() matchName: string;
+  @Input() matchSingularName: string;
+
   @Input() matchingResult: MatchingResult;
 
   successful: boolean;

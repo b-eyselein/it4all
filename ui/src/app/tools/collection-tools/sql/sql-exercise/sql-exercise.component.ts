@@ -1,16 +1,16 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {ApiService} from '../../_services/api.service';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-import {ISqlQueryResult} from '../sql-interfaces';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {
   ExerciseSolveFieldsFragment,
   SqlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {
+  DbContentsGQL,
+  DbContentsQuery,
   SqlCorrectionGQL,
   SqlCorrectionMutation,
   SqlIllegalQueryResultFragment,
@@ -35,20 +35,23 @@ export class SqlExerciseComponent
   readonly editorOptions = getDefaultEditorOptions('sql');
 
   @Input() oldPart: ToolPart;
+  @Input() schemaName: string;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() sqlExerciseContent: SqlExerciseContentSolveFieldsFragment;
 
-  dbContents: ISqlQueryResult[] = [];
+  dbContentsQuery: DbContentsQuery;
 
   solution = '';
 
-  constructor(sqlCorrectionGQL: SqlCorrectionGQL, apiService: ApiService, dexieService: DexieService) {
-    super(sqlCorrectionGQL, apiService, dexieService);
+  constructor(sqlCorrectionGQL: SqlCorrectionGQL, dexieService: DexieService, private dbContentsGQL: DbContentsGQL) {
+    super(sqlCorrectionGQL, dexieService);
   }
 
   ngOnInit() {
-    this.apiService.getSqlDbSchema(this.exerciseFragment.collectionId)
-      .subscribe((dbContents) => this.dbContents = dbContents);
+    this.dbContentsGQL
+      .watch({schemaName: this.schemaName})
+      .valueChanges
+      .subscribe(({data}) => this.dbContentsQuery = data);
 
     this.dexieService.getSolution(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.oldPart.id)
       .then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');

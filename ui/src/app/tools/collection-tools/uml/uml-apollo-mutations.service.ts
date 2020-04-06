@@ -96,14 +96,14 @@ export type UmlClassMatchFragment = (
   & Pick<Types.UmlClassMatch, 'matchType'>
   & { userArg?: Types.Maybe<(
     { __typename?: 'UmlClass' }
-    & UmlClassFragment
+    & UmlSolutionClassFragment
   )>, sampleArg?: Types.Maybe<(
     { __typename?: 'UmlClass' }
-    & UmlClassFragment
+    & UmlSolutionClassFragment
   )>, analysisResult?: Types.Maybe<{ __typename: 'UmlClassMatchAnalysisResult' }> }
 );
 
-export type UmlClassFragment = (
+export type UmlSolutionClassFragment = (
   { __typename?: 'UmlClass' }
   & Pick<Types.UmlClass, 'classType' | 'name'>
   & { attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }
@@ -168,8 +168,8 @@ export const AbstractCorrectionResultFragmentDoc = gql`
   maxPoints
 }
     `;
-export const UmlClassFragmentDoc = gql`
-    fragment UmlClass on UmlClass {
+export const UmlSolutionClassFragmentDoc = gql`
+    fragment UmlSolutionClass on UmlClass {
   classType
   name
   attributes {
@@ -184,16 +184,16 @@ export const UmlClassMatchFragmentDoc = gql`
     fragment UmlClassMatch on UmlClassMatch {
   matchType
   userArg {
-    ...UmlClass
+    ...UmlSolutionClass
   }
   sampleArg {
-    ...UmlClass
+    ...UmlSolutionClass
   }
   analysisResult {
     __typename
   }
 }
-    ${UmlClassFragmentDoc}`;
+    ${UmlSolutionClassFragmentDoc}`;
 export const UmlClassMatchingResultFragmentDoc = gql`
     fragment UmlClassMatchingResult on UmlClassMatchingResult {
   allMatches {

@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Fri Apr 03 2020 14:10:32 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon Apr 06 2020 11:15:30 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -196,10 +196,10 @@ interface MatchingResult {
 
 enum MatchType {
   ONLY_USER
-  ONLY_SAMPLE
   UNSUCCESSFUL_MATCH
-  PARTIAL_MATCH
   SUCCESSFUL_MATCH
+  PARTIAL_MATCH
+  ONLY_SAMPLE
 }
 
 type Mutation {
@@ -259,6 +259,7 @@ input ProgSolutionInput {
 type Query {
   tools: [Tool!]!
   tool(toolId: String!): Tool
+  sqlDbContents(schemaName: String!): [SqlQueryResult!]!
 }
 
 enum RegexCorrectionType {
@@ -378,6 +379,7 @@ type SqlBinaryExpressionMatch implements NewMatch {
 type SqlCell {
   colName: String!
   content: String!
+  different: Boolean!
 }
 
 type SqlColumnComparisonMatchingResult implements MatchingResult {
@@ -408,10 +410,10 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  DELETE
-  SELECT
-  UPDATE
   INSERT
+  UPDATE
+  SELECT
+  DELETE
   CREATE
 }
 

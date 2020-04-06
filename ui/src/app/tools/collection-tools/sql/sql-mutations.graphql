@@ -1,3 +1,13 @@
+# Db Contents
+
+query DbContents($schemaName: String!) {
+  sqlDbContents(schemaName: $schemaName) {
+    ...SqlQueryResult
+  }
+}
+
+# Result fragments
+
 fragment AbstractCorrectionResult on AbstractCorrectionResult {
   solutionSaved
   points
@@ -186,22 +196,29 @@ fragment SqlQueryResult on SqlQueryResult {
   tableName
   columnNames
   rows {
-    cells {
-      key
-      value {
-        colName
-        content
-      }
+    ...SqlRow
+  }
+}
+
+fragment SqlRow on SqlRow {
+  cells {
+    key
+    value {
+      ...SqlCell
     }
   }
 }
 
+fragment SqlCell on SqlCell {
+  colName
+  content
+  different
+}
 
 # other fragments
 
+
 fragment MR on MatchingResult  {
-  matchName
-  matchSingularName
   points
   maxPoints
 }
