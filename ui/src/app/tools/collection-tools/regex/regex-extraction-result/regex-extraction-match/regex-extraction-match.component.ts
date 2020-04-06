@@ -6,7 +6,7 @@ import {MatchType} from "../../../../../_interfaces/graphql-types";
   selector: 'it4all-regex-extraction-match',
   template: `
     <div class="notification" [ngClass]="isCorrect() ? 'is-success' : 'is-danger'">
-      <span *ngIf="isCorrect()">{{isCorrect() ? '&#10004;' : '&#10008;'}}}</span>
+      <span *ngIf="isCorrect()">{{isCorrect() ? '&#10004;' : '&#10008;'}}</span>
       <span *ngIf="match.sampleArg">Erwartet: <code>{{match.sampleArg}}</code></span>,
       <span *ngIf="match.userArg">Bekommen: <code>{{match.userArg}}</code></span>
     </div>

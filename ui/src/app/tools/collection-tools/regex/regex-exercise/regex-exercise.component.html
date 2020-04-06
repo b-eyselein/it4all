@@ -39,7 +39,12 @@
 
             <it4all-solution-saved [saved]="resultQuery.correctRegex.solutionSaved"></it4all-solution-saved>
 
-            <!--     <it4all-points-notification [result]="result"></it4all-points-notification> -->
+            <br>
+
+            <it4all-points-notification
+              [points]="resultQuery.correctRegex.points"
+              [maxPoints]="resultQuery.correctRegex.maxPoints">
+            </it4all-points-notification>
 
             <br>
 

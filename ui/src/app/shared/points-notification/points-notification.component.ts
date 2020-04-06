@@ -3,12 +3,12 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 @Component({
   selector: 'it4all-points-notification',
   template: `
-    <div class="notification has-text-{{textColor}}">
+    <div class="notification is-light-grey {{textColor}}">
       <p class="has-text-centered">Sie haben {{points}} von maximal {{maxPoints}} Punkten erreicht.</p>
 
       <br>
 
-      <progress class="progress is-{{textColor}}" value="{{percentage}}" max="100">{{percentage}}%</progress>
+      <progress class="progress" value="{{percentage}}" max="100">{{percentage}}%</progress>
     </div>`,
 })
 export class PointsNotificationComponent implements OnInit, OnChanges {
@@ -17,7 +17,9 @@ export class PointsNotificationComponent implements OnInit, OnChanges {
   @Input() maxPoints: number;
 
   percentage: number;
-  textColor = 'danger';
+
+  textColor = 'has-text-danger';
+  backgroundColor = 'is-danger';
 
   constructor() {
   }
@@ -32,15 +34,16 @@ export class PointsNotificationComponent implements OnInit, OnChanges {
 
   updatePercentage(): void {
     if (isNaN(this.points) || isNaN(this.maxPoints)) {
-      console.error(this.points + " :: " + this.maxPoints);
       this.percentage = 0;
     } else {
       this.percentage = this.points / this.maxPoints * 100;
 
       if (this.percentage >= 90) {
-        this.textColor = 'success';
+        this.textColor = 'has-text-dark-success';
       } else if (this.percentage >= 75) {
-        this.textColor = 'warning';
+        this.textColor = 'has-text-warning';
+      } else {
+        this.textColor = 'has-text-danger';
       }
     }
   }

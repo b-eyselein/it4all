@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {RegexMatchingSingleResultFragment} from '../regex-apollo-mutations.service';
+import {BinaryClassificationResultType} from "../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-regex-matching-result',
@@ -18,8 +19,11 @@ export class RegexMatchingResultComponent implements OnInit {
   wasMatched: boolean;
 
   ngOnInit(): void {
-    this.correct = ['TruePositive', 'TrueNegative'].includes(this.matchingResult.resultType);
-    this.wasMatched = ['FalsePositive' || 'TruePositive'].includes(this.matchingResult.resultType);
+    this.correct = [BinaryClassificationResultType.TruePositive, BinaryClassificationResultType.TrueNegative]
+      .includes(this.matchingResult.resultType);
+
+    this.wasMatched = [BinaryClassificationResultType.FalsePositive, BinaryClassificationResultType.TruePositive]
+      .includes(this.matchingResult.resultType);
   }
 
 }
