@@ -1,9 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {getUmlExerciseTextParts, SelectableClass, UmlDiagramDrawingHelpPart, UmlExerciseTextPart} from '../uml-tools';
-import {
-  ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment
-} from "../../../../_services/apollo_services";
+import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
 
 @Component({
   selector: 'it4all-uml-class-selection',

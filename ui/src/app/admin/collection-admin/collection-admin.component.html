@@ -1,5 +1,5 @@
 <div class="container">
-  <ng-container *ngIf="collectionAdminQuery">
+  <ng-container *ngIf="collectionAdminQuery; else loadingExercisesBlock">
 
     <h1 class="title is-3 has-text-centered">Administration Sammlung {{collectionAdminQuery.tool.collection.title}}</h1>
 
@@ -9,11 +9,23 @@
 
     <h2 class="subtitle is-3">Vorhandene Aufgaben</h2>
 
-    <ng-container *ngIf="queryExercises && queryExercises.length > 0; else noExercisesBlock">
+    <ng-container *ngIf="queryExercises.length > 0; else noExercisesBlock">
       <div class="columns is-multiline">
-        <div class="column is-half-desktop" *ngFor="let exercise of queryExercises">
-          <a class="button is-link is-fullwidth">{{exercise.title}}</a>
+
+        <div class="column is-one-third" *ngFor="let exercise of queryExercises">
+
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">{{exercise.id}}. {{exercise.title}}</p>
+            </header>
+            <div class="card-content"></div>
+            <footer class="card-footer">
+              <a class="card-footer-item" [routerLink]="[exercise.id, 'editForm']">Aufgabe editieren</a>
+            </footer>
+          </div>
+
         </div>
+
       </div>
     </ng-container>
 
@@ -26,6 +38,10 @@
   </ng-container>
 
 </div>
+
+<ng-template #loadingExercisesBlock>
+  <div class="notification is-primary has-text-centered">Lade Daten...</div>
+</ng-template>
 
 <ng-template #noExercisesBlock>
   <div class="notification is-danger has-text-centered">Es konnten keine Aufgaben gefunden werden!</div>

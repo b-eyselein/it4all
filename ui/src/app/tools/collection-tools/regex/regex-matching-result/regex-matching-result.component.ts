@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {RegexMatchingSingleResultFragment} from '../regex-apollo-mutations.service';
-import {BinaryClassificationResultType} from "../../../../_interfaces/graphql-types";
+import {BinaryClassificationResultType} from '../../../../_interfaces/graphql-types';
 
 @Component({
   selector: 'it4all-regex-matching-result',

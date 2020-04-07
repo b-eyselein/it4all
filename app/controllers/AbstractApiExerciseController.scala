@@ -1,8 +1,7 @@
 package controllers
 
 import model.User
-import model.tools.ToolList
-import model.tools.collectionTools.{CollectionToolMain, Exercise}
+import model.tools.{CollectionToolMain, Exercise, ToolList}
 import play.api.mvc.Security.AuthenticatedRequest
 import play.api.mvc._
 

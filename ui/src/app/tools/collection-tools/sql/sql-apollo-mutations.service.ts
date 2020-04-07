@@ -105,10 +105,6 @@ export type ColumnMatchFragment = (
 
 export type ColumnComparisonFragment = (
   { __typename?: 'SqlColumnComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlColumnMatch' }
-    & ColumnMatchFragment
-  )> }
   & Mr_SqlColumnComparisonMatchingResult_Fragment
 );
 
@@ -119,10 +115,6 @@ export type TableMatchFragment = (
 
 export type TableComparisonFragment = (
   { __typename?: 'SqlTableComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlTableMatch' }
-    & TableMatchFragment
-  )> }
   & Mr_SqlTableComparisonMatchingResult_Fragment
 );
 
@@ -133,10 +125,6 @@ export type BinaryExpressionMatchFragment = (
 
 export type BinaryExpressionComparisonFragment = (
   { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlBinaryExpressionMatch' }
-    & BinaryExpressionMatchFragment
-  )> }
   & Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment
 );
 
@@ -147,10 +135,6 @@ export type InsertMatchFragment = (
 
 export type InsertComparisonFragment = (
   { __typename?: 'SqlInsertComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlInsertMatch' }
-    & InsertMatchFragment
-  )> }
   & Mr_SqlInsertComparisonMatchingResult_Fragment
 );
 
@@ -161,10 +145,6 @@ export type GroupByMatchFragment = (
 
 export type GroupByComparisonFragment = (
   { __typename?: 'SqlGroupByComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlGroupByMatch' }
-    & GroupByMatchFragment
-  )> }
   & Mr_SqlGroupByComparisonMatchingResult_Fragment
 );
 
@@ -175,10 +155,6 @@ export type OrderByMatchFragment = (
 
 export type OrderByComparisonFragment = (
   { __typename?: 'SqlOrderByComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlOrderByMatch' }
-    & OrderByMatchFragment
-  )> }
   & Mr_SqlOrderByComparisonMatchingResult_Fragment
 );
 
@@ -189,10 +165,6 @@ export type LimitMatchFragment = (
 
 export type LimitComparisonFragment = (
   { __typename?: 'SqlLimitComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'SqlLimitMatch' }
-    & LimitMatchFragment
-  )> }
   & Mr_SqlLimitComparisonMatchingResult_Fragment
 );
 
@@ -281,74 +253,202 @@ export type SqlCellFragment = (
   & Pick<Types.SqlCell, 'colName' | 'content' | 'different'>
 );
 
+type NewMatch_RegexMatchMatch_Fragment = (
+  { __typename?: 'RegexMatchMatch' }
+  & Pick<Types.RegexMatchMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlColumnMatch_Fragment = (
+  { __typename?: 'SqlColumnMatch' }
+  & Pick<Types.SqlColumnMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlTableMatch_Fragment = (
+  { __typename?: 'SqlTableMatch' }
+  & Pick<Types.SqlTableMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlBinaryExpressionMatch_Fragment = (
+  { __typename?: 'SqlBinaryExpressionMatch' }
+  & Pick<Types.SqlBinaryExpressionMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlGroupByMatch_Fragment = (
+  { __typename?: 'SqlGroupByMatch' }
+  & Pick<Types.SqlGroupByMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlOrderByMatch_Fragment = (
+  { __typename?: 'SqlOrderByMatch' }
+  & Pick<Types.SqlOrderByMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlLimitMatch_Fragment = (
+  { __typename?: 'SqlLimitMatch' }
+  & Pick<Types.SqlLimitMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlInsertMatch_Fragment = (
+  { __typename?: 'SqlInsertMatch' }
+  & Pick<Types.SqlInsertMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlClassMatch_Fragment = (
+  { __typename?: 'UmlClassMatch' }
+  & Pick<Types.UmlClassMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlAttributeMatch_Fragment = (
+  { __typename?: 'UmlAttributeMatch' }
+  & Pick<Types.UmlAttributeMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlMethodMatch_Fragment = (
+  { __typename?: 'UmlMethodMatch' }
+  & Pick<Types.UmlMethodMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlAssociationMatch_Fragment = (
+  { __typename?: 'UmlAssociationMatch' }
+  & Pick<Types.UmlAssociationMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlImplementationMatch_Fragment = (
+  { __typename?: 'UmlImplementationMatch' }
+  & Pick<Types.UmlImplementationMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_ElementLineMatch_Fragment = (
+  { __typename?: 'ElementLineMatch' }
+  & Pick<Types.ElementLineMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+export type NewMatchFragment = NewMatch_RegexMatchMatch_Fragment | NewMatch_SqlColumnMatch_Fragment | NewMatch_SqlTableMatch_Fragment | NewMatch_SqlBinaryExpressionMatch_Fragment | NewMatch_SqlGroupByMatch_Fragment | NewMatch_SqlOrderByMatch_Fragment | NewMatch_SqlLimitMatch_Fragment | NewMatch_SqlInsertMatch_Fragment | NewMatch_UmlClassMatch_Fragment | NewMatch_UmlAttributeMatch_Fragment | NewMatch_UmlMethodMatch_Fragment | NewMatch_UmlAssociationMatch_Fragment | NewMatch_UmlImplementationMatch_Fragment | NewMatch_ElementLineMatch_Fragment;
+
 type Mr_RegexExtractedValuesComparisonMatchingResult_Fragment = (
   { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
   & Pick<Types.RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'RegexMatchMatch' }
+    & NewMatch_RegexMatchMatch_Fragment
+  )> }
 );
 
 type Mr_SqlColumnComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlColumnComparisonMatchingResult' }
   & Pick<Types.SqlColumnComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlColumnMatch' }
+    & NewMatch_SqlColumnMatch_Fragment
+  )> }
 );
 
 type Mr_SqlTableComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlTableComparisonMatchingResult' }
   & Pick<Types.SqlTableComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlTableMatch' }
+    & NewMatch_SqlTableMatch_Fragment
+  )> }
 );
 
 type Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
   & Pick<Types.SqlBinaryExpressionComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlBinaryExpressionMatch' }
+    & NewMatch_SqlBinaryExpressionMatch_Fragment
+  )> }
 );
 
 type Mr_SqlGroupByComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlGroupByComparisonMatchingResult' }
   & Pick<Types.SqlGroupByComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlGroupByMatch' }
+    & NewMatch_SqlGroupByMatch_Fragment
+  )> }
 );
 
 type Mr_SqlOrderByComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlOrderByComparisonMatchingResult' }
   & Pick<Types.SqlOrderByComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlOrderByMatch' }
+    & NewMatch_SqlOrderByMatch_Fragment
+  )> }
 );
 
 type Mr_SqlLimitComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlLimitComparisonMatchingResult' }
   & Pick<Types.SqlLimitComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlLimitMatch' }
+    & NewMatch_SqlLimitMatch_Fragment
+  )> }
 );
 
 type Mr_SqlInsertComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlInsertComparisonMatchingResult' }
   & Pick<Types.SqlInsertComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlInsertMatch' }
+    & NewMatch_SqlInsertMatch_Fragment
+  )> }
 );
 
 type Mr_UmlClassMatchingResult_Fragment = (
   { __typename?: 'UmlClassMatchingResult' }
   & Pick<Types.UmlClassMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlClassMatch' }
+    & NewMatch_UmlClassMatch_Fragment
+  )> }
 );
 
 type Mr_UmlAttributeMatchingResult_Fragment = (
   { __typename?: 'UmlAttributeMatchingResult' }
   & Pick<Types.UmlAttributeMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlAttributeMatch' }
+    & NewMatch_UmlAttributeMatch_Fragment
+  )> }
 );
 
 type Mr_UmlMethodMatchingResult_Fragment = (
   { __typename?: 'UmlMethodMatchingResult' }
   & Pick<Types.UmlMethodMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlMethodMatch' }
+    & NewMatch_UmlMethodMatch_Fragment
+  )> }
 );
 
 type Mr_UmlAssociationMatchingResult_Fragment = (
   { __typename?: 'UmlAssociationMatchingResult' }
   & Pick<Types.UmlAssociationMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlAssociationMatch' }
+    & NewMatch_UmlAssociationMatch_Fragment
+  )> }
 );
 
 type Mr_UmlImplementationMatchingResult_Fragment = (
   { __typename?: 'UmlImplementationMatchingResult' }
   & Pick<Types.UmlImplementationMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlImplementationMatch' }
+    & NewMatch_UmlImplementationMatch_Fragment
+  )> }
 );
 
 type Mr_XmlElementLineComparisonMatchingResult_Fragment = (
   { __typename?: 'XmlElementLineComparisonMatchingResult' }
   & Pick<Types.XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'ElementLineMatch' }
+    & NewMatch_ElementLineMatch_Fragment
+  )> }
 );
 
 export type MrFragment = Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_UmlClassMatchingResult_Fragment | Mr_UmlAttributeMatchingResult_Fragment | Mr_UmlMethodMatchingResult_Fragment | Mr_UmlAssociationMatchingResult_Fragment | Mr_UmlImplementationMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
@@ -372,12 +472,6 @@ export const SqlWrongQueryTypeResultFragmentDoc = gql`
   message
 }
     ${AbstractCorrectionResultFragmentDoc}`;
-export const MrFragmentDoc = gql`
-    fragment MR on MatchingResult {
-  points
-  maxPoints
-}
-    `;
 export const ColumnMatchFragmentDoc = gql`
     fragment ColumnMatch on SqlColumnMatch {
   matchType
@@ -385,15 +479,6 @@ export const ColumnMatchFragmentDoc = gql`
   sampleArg
 }
     `;
-export const ColumnComparisonFragmentDoc = gql`
-    fragment ColumnComparison on SqlColumnComparisonMatchingResult {
-  ...MR
-  allMatches {
-    ...ColumnMatch
-  }
-}
-    ${MrFragmentDoc}
-${ColumnMatchFragmentDoc}`;
 export const TableMatchFragmentDoc = gql`
     fragment TableMatch on SqlTableMatch {
   matchType
@@ -401,15 +486,6 @@ export const TableMatchFragmentDoc = gql`
   sampleArg
 }
     `;
-export const TableComparisonFragmentDoc = gql`
-    fragment TableComparison on SqlTableComparisonMatchingResult {
-  ...MR
-  allMatches {
-    ...TableMatch
-  }
-}
-    ${MrFragmentDoc}
-${TableMatchFragmentDoc}`;
 export const BinaryExpressionMatchFragmentDoc = gql`
     fragment BinaryExpressionMatch on SqlBinaryExpressionMatch {
   matchType
@@ -417,15 +493,13 @@ export const BinaryExpressionMatchFragmentDoc = gql`
   sampleArg
 }
     `;
-export const BinaryExpressionComparisonFragmentDoc = gql`
-    fragment BinaryExpressionComparison on SqlBinaryExpressionComparisonMatchingResult {
-  ...MR
-  allMatches {
-    ...BinaryExpressionMatch
-  }
+export const InsertMatchFragmentDoc = gql`
+    fragment InsertMatch on SqlInsertMatch {
+  matchType
+  userArg
+  sampleArg
 }
-    ${MrFragmentDoc}
-${BinaryExpressionMatchFragmentDoc}`;
+    `;
 export const GroupByMatchFragmentDoc = gql`
     fragment GroupByMatch on SqlGroupByMatch {
   matchType
@@ -433,15 +507,6 @@ export const GroupByMatchFragmentDoc = gql`
   userArg
 }
     `;
-export const GroupByComparisonFragmentDoc = gql`
-    fragment GroupByComparison on SqlGroupByComparisonMatchingResult {
-  ...MR
-  allMatches {
-    ...GroupByMatch
-  }
-}
-    ${MrFragmentDoc}
-${GroupByMatchFragmentDoc}`;
 export const OrderByMatchFragmentDoc = gql`
     fragment OrderByMatch on SqlOrderByMatch {
   matchType
@@ -449,15 +514,6 @@ export const OrderByMatchFragmentDoc = gql`
   userArg
 }
     `;
-export const OrderByComparisonFragmentDoc = gql`
-    fragment OrderByComparison on SqlOrderByComparisonMatchingResult {
-  ...MR
-  allMatches {
-    ...OrderByMatch
-  }
-}
-    ${MrFragmentDoc}
-${OrderByMatchFragmentDoc}`;
 export const LimitMatchFragmentDoc = gql`
     fragment LimitMatch on SqlLimitMatch {
   matchType
@@ -465,15 +521,52 @@ export const LimitMatchFragmentDoc = gql`
   userArg
 }
     `;
+export const NewMatchFragmentDoc = gql`
+    fragment NewMatch on NewMatch {
+  matchType
+  sampleArgDescription
+  userArgDescription
+}
+    `;
+export const MrFragmentDoc = gql`
+    fragment MR on MatchingResult {
+  points
+  maxPoints
+  allMatches {
+    ...NewMatch
+  }
+}
+    ${NewMatchFragmentDoc}`;
+export const ColumnComparisonFragmentDoc = gql`
+    fragment ColumnComparison on SqlColumnComparisonMatchingResult {
+  ...MR
+}
+    ${MrFragmentDoc}`;
+export const TableComparisonFragmentDoc = gql`
+    fragment TableComparison on SqlTableComparisonMatchingResult {
+  ...MR
+}
+    ${MrFragmentDoc}`;
+export const BinaryExpressionComparisonFragmentDoc = gql`
+    fragment BinaryExpressionComparison on SqlBinaryExpressionComparisonMatchingResult {
+  ...MR
+}
+    ${MrFragmentDoc}`;
+export const GroupByComparisonFragmentDoc = gql`
+    fragment GroupByComparison on SqlGroupByComparisonMatchingResult {
+  ...MR
+}
+    ${MrFragmentDoc}`;
+export const OrderByComparisonFragmentDoc = gql`
+    fragment OrderByComparison on SqlOrderByComparisonMatchingResult {
+  ...MR
+}
+    ${MrFragmentDoc}`;
 export const LimitComparisonFragmentDoc = gql`
     fragment LimitComparison on SqlLimitComparisonMatchingResult {
   ...MR
-  allMatches {
-    ...LimitMatch
-  }
 }
-    ${MrFragmentDoc}
-${LimitMatchFragmentDoc}`;
+    ${MrFragmentDoc}`;
 export const SelectAdditionalComparisonFragmentDoc = gql`
     fragment SelectAdditionalComparison on SelectAdditionalComparisons {
   groupByComparison {
@@ -489,22 +582,11 @@ export const SelectAdditionalComparisonFragmentDoc = gql`
     ${GroupByComparisonFragmentDoc}
 ${OrderByComparisonFragmentDoc}
 ${LimitComparisonFragmentDoc}`;
-export const InsertMatchFragmentDoc = gql`
-    fragment InsertMatch on SqlInsertMatch {
-  matchType
-  userArg
-  sampleArg
-}
-    `;
 export const InsertComparisonFragmentDoc = gql`
     fragment InsertComparison on SqlInsertComparisonMatchingResult {
   ...MR
-  allMatches {
-    ...InsertMatch
-  }
 }
-    ${MrFragmentDoc}
-${InsertMatchFragmentDoc}`;
+    ${MrFragmentDoc}`;
 export const SqlCellFragmentDoc = gql`
     fragment SqlCell on SqlCell {
   colName

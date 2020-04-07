@@ -1,7 +1,7 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
 import {distinctStringArray} from '../../../helpers';
-import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from "../../../_services/apollo_services";
-import {KeyValueObject} from "../../../_interfaces/graphql-types";
+import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../_services/apollo_services';
+import {KeyValueObject} from '../../../_interfaces/graphql-types';
 
 export const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
 
@@ -11,7 +11,7 @@ export const UmlDiagramDrawingHelpPart: ToolPart = {
   disabled: true
 };
 
-const UmlDiagramDrawingPart: ToolPart = {name: 'Diagramm zeichnen', id: 'diagramDrawing', disabled: true};
+export const UmlDiagramDrawingPart: ToolPart = {name: 'Diagramm zeichnen', id: 'diagramDrawing', disabled: true};
 
 export const UmlMemberAllocationPart: ToolPart = {
   name: 'Zuordnung der Attribute und Methoden',
@@ -19,9 +19,11 @@ export const UmlMemberAllocationPart: ToolPart = {
   disabled: true
 };
 
+const umlToolParts: ToolPart[] = [UmlClassSelectionPart, UmlDiagramDrawingPart, UmlDiagramDrawingHelpPart, UmlMemberAllocationPart];
+
 export const UmlTool: CollectionTool = new class UmlToolClass extends CollectionTool {
   constructor() {
-    super('uml', 'UML-Klassendiagramme', [UmlClassSelectionPart, UmlDiagramDrawingPart, UmlDiagramDrawingHelpPart, UmlMemberAllocationPart], 'beta');
+    super('uml', 'UML-Klassendiagramme', umlToolParts, 'beta');
   }
 }();
 

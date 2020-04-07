@@ -3,11 +3,11 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import model.lesson.Lesson
 import model.persistence.ExerciseTableDefs
-import model.tools.collectionTools.{Exercise, ExerciseCollection, ToolJsonProtocol}
+import model.tools.{Exercise, ExerciseCollection, ToolJsonProtocol}
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
 import play.api.mvc._
-import play.api.{Configuration, Environment, Logger, Mode}
+import play.api.{Configuration, Environment, Logger}
 
 import scala.concurrent.ExecutionContext
 
@@ -38,7 +38,7 @@ class ApiAdminController @Inject() (
 
   def readCollections(toolId: String): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolId).async {
     implicit request =>
-      ws.url(s"$resourcesServerBaseUrl/${request.toolMain.urlPart}/collections")
+      ws.url(s"$resourcesServerBaseUrl/${request.toolMain.id}/collections")
         .get()
         .map { request =>
           (request.json \ "collections").validate[Seq[ExerciseCollection]](Reads.seq(cf))
@@ -53,7 +53,7 @@ class ApiAdminController @Inject() (
 
   def readExercises(toolId: String, collId: Int): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolId).async {
     request =>
-      ws.url(s"$resourcesServerBaseUrl/${request.toolMain.urlPart}/collections/${String.valueOf(collId)}/exercises")
+      ws.url(s"$resourcesServerBaseUrl/${request.toolMain.id}/collections/${String.valueOf(collId)}/exercises")
         .get()
         .map { request =>
           (request.json \ "exercises").validate[Seq[Exercise]](Reads.seq(ef))
@@ -83,7 +83,7 @@ class ApiAdminController @Inject() (
 
   def readLessons(toolId: String): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolId).async {
     implicit request =>
-      ws.url(s"$resourcesServerBaseUrl/${request.toolMain.urlPart}/lessons")
+      ws.url(s"$resourcesServerBaseUrl/${request.toolMain.id}/lessons")
         .get()
         .map { request =>
           (request.json \ "lessons").validate[Seq[Lesson]](Reads.seq(lf))

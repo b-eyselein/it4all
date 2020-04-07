@@ -3,8 +3,8 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import model.lesson.Lesson
 import model.persistence.ExerciseTableDefs
-import model.tools.collectionTools.ToolJsonProtocol
-import model.tools.collectionTools.sql._
+import model.tools.ToolJsonProtocol
+import model.tools.sql._
 import model.{GraphQLContext, GraphQLModel, GraphQLRequest, User}
 import play.api.Configuration
 import play.api.libs.json._
@@ -16,6 +16,7 @@ import sangria.parser.QueryParser
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
+
 @Singleton
 class ApiController @Inject() (
   cc: ControllerComponents,
@@ -73,21 +74,21 @@ class ApiController @Inject() (
 
   def apiLessonCount(toolType: String): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolType).async {
     implicit request =>
-      tables.futureLessonCount(request.toolMain.urlPart).map { lessonCount =>
+      tables.futureLessonCount(request.toolMain.id).map { lessonCount =>
         Ok(Json.toJson(lessonCount))
       }
   }
 
   def apiAllLessons(toolType: String): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolType).async {
     implicit request =>
-      tables.futureAllLessons(request.toolMain.urlPart).map { lessons =>
+      tables.futureAllLessons(request.toolMain.id).map { lessons =>
         Ok(Json.toJson(lessons))
       }
   }
 
   def apiLesson(toolType: String, lessonId: Int): Action[AnyContent] = JwtAuthenticatedToolMainAction(toolType).async {
     implicit request =>
-      tables.futureLessonById(request.toolMain.urlPart, lessonId).map {
+      tables.futureLessonById(request.toolMain.id, lessonId).map {
         case None         => NotFound("No such lesson found!")
         case Some(lesson) => Ok(Json.toJson(lesson))
       }
@@ -104,7 +105,7 @@ class ApiController @Inject() (
       Json.writes
     }
 
-    tables.futureCollById(SqlToolMain.urlPart, collId).map {
+    tables.futureCollById(SqlToolMain.id, collId).map {
       case None             => ???
       case Some(collection) => Ok(Json.toJson(SelectDAO.tableContents(collection.shortName)))
     }

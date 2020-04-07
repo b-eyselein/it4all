@@ -2,10 +2,7 @@ import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {DexieService} from '../../../../_services/dexie.service';
 import {RegexExercisePart} from '../regex-tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-import {
-  ExerciseSolveFieldsFragment,
-  RegexExerciseContentSolveFieldsFragment
-} from '../../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, RegexExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {
   RegexCorrectionGQL,
@@ -14,7 +11,7 @@ import {
   RegexIllegalRegexResultFragment,
   RegexMatchingResultFragment
 } from '../regex-apollo-mutations.service';
-import {RegexExPart} from "../../../../_interfaces/graphql-types";
+import {RegexExPart} from '../../../../_interfaces/graphql-types';
 
 
 @Component({
@@ -68,7 +65,7 @@ export class RegexExerciseComponent
       return;
     }
 
-    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, RegexExPart.RegexSingleExPart, this.oldPart);
+    this.correctAbstract(this.exerciseFragment, RegexExPart.RegexSingleExPart, this.oldPart);
   }
 
   // FIXME: make directive?

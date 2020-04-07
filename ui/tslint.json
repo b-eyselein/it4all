@@ -87,5 +87,12 @@
   },
   "rulesDirectory": [
     "codelyzer"
-  ]
+  ],
+  "linterOptions": {
+    "exclude": [
+      // Ignore generated files
+      "src/introspection-result.ts",
+      "src/app/tools/collection-tools/*/*-apollo-mutations.service.ts"
+    ]
+  }
 }

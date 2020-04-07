@@ -1,8 +1,12 @@
 <div class="container">
 
-  <form *ngIf="adminEditCollectionQuery">
+  <h1 class="title is-3 has-text-centered">Editieren einer Sammlung</h1>
 
+  <a class="button is-primary is-fullwidth" routerLink="../..">Zurück zur Sammlungsadministration</a>
 
-  </form>
+  <br>
+
+  <textarea class="textarea" rows="30" *ngIf="adminEditCollectionQuery"
+            title="Todo...">{{collectionAsJson | json}}</textarea>
 
 </div>

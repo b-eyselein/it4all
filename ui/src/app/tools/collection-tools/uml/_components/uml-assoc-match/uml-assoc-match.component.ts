@@ -1,14 +1,12 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {UmlAssociation, UmlAssociationMatch, UmlMultiplicity} from "../../../../../_interfaces/graphql-types";
+import {UmlAssociationMatch, UmlMultiplicity} from '../../../../../_interfaces/graphql-types';
 
 function printCardinality(c: UmlMultiplicity): string {
   switch (c) {
-    case 'UNBOUND':
+    case UmlMultiplicity.Unbound:
       return '*';
-    case 'SINGLE':
+    case UmlMultiplicity.Single:
       return '1';
-    default:
-      return 'ERROR!';
   }
 }
 
@@ -38,7 +36,7 @@ export class UmlAssocMatchComponent implements OnChanges {
 
       this.assocTypeCorrect = this.assocMatch.maybeAnalysisResult.assocTypeEqual;
 
-      this.cardsCorrect = this.cardinalitiesCorrect(this.assocMatch.userArg, this.assocMatch.sampleArg);
+      this.cardsCorrect = this.assocMatch.maybeAnalysisResult.multiplicitiesEqual;
     }
   }
 
@@ -62,11 +60,6 @@ export class UmlAssocMatchComponent implements OnChanges {
       case 'ONLY_USER':
         return 'ist falsch.';
     }
-  }
-
-
-  cardinalitiesCorrect(userAssoc: UmlAssociation, sampleAssoc: UmlAssociation): boolean {
-    return this.assocMatch.maybeAnalysisResult.multiplicitiesEqual;
   }
 
   get correctCardinalities(): string {

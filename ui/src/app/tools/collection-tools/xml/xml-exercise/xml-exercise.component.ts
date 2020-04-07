@@ -2,18 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
-import {
-  ExerciseSolveFieldsFragment,
-  XmlExerciseContentSolveFieldsFragment
-} from "../../../../_services/apollo_services";
-import {
-  XmlCompleteResultFragment,
-  XmlCorrectionGQL,
-  XmlCorrectionMutation,
-  XmlErrorFragment,
-  XmlGrammarResultFragment,
-} from "../xml-apollo-mutations.service";
-import {ExerciseFile, XmlExPart, XmlSolution, XmlSolutionInput} from "../../../../_interfaces/graphql-types";
+import {ExerciseSolveFieldsFragment, XmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {XmlCorrectionGQL, XmlCorrectionMutation, XmlErrorFragment, XmlGrammarResultFragment} from '../xml-apollo-mutations.service';
+import {ExerciseFile, XmlExPart, XmlSolution, XmlSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
@@ -35,7 +26,7 @@ function getXmlDocumentContent(rootNode: string): string {
   templateUrl: './xml-exercise.component.html'
 })
 export class XmlExerciseComponent
-  extends ComponentWithExercise<XmlSolution, XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionGQL, XmlCompleteResultFragment>
+  extends ComponentWithExercise<XmlSolution, XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionGQL, any>
   implements OnInit {
 
   @Input() oldPart: ToolPart;
@@ -93,7 +84,7 @@ export class XmlExerciseComponent
   correct(): void {
     const part: XmlExPart = this.isGrammarPart ? XmlExPart.GrammarCreationXmlPart : XmlExPart.DocumentCreationXmlPart;
 
-    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, part, this.oldPart);
+    this.correctAbstract(this.exerciseFragment, part, this.oldPart);
   }
 
   protected getSolution(): XmlSolutionInput {

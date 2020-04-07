@@ -4,6 +4,7 @@ import {
   getUmlExerciseTextParts,
   SelectableClass,
   UmlDiagramDrawingHelpPart,
+  UmlDiagramDrawingPart,
   UmlExerciseTextPart,
   UmlMemberAllocationPart
 } from '../uml-tools';
@@ -14,12 +15,9 @@ import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
-import {
-  ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment,
-} from '../../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
 import {UmlCorrectionGQL, UmlCorrectionMutation} from '../uml-apollo-mutations.service';
-import {UmlClassDiagram, UmlClassDiagramInput, UmlExPart} from "../../../../_interfaces/graphql-types";
+import {UmlClassDiagram, UmlClassDiagramInput, UmlExPart} from '../../../../_interfaces/graphql-types';
 
 import * as joint from 'jointjs';
 
@@ -30,10 +28,6 @@ enum CreatableClassDiagramObject {
   Implementation
 }
 
-
-/**
- * @deprecated
- */
 interface SelectableClassDiagramObject {
   name: string;
   key: CreatableClassDiagramObject;
@@ -57,7 +51,7 @@ export class UmlDiagramDrawingComponent
 
   readonly nextPart = UmlMemberAllocationPart;
 
-  @Input() part: ToolPart;
+  @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() exerciseContent: UmlExerciseContentSolveFieldsFragment;
 
@@ -84,7 +78,7 @@ export class UmlDiagramDrawingComponent
   }
 
   ngOnInit(): void {
-    this.withHelp = this.part == UmlDiagramDrawingHelpPart;
+    this.withHelp = this.oldPart === UmlDiagramDrawingHelpPart;
 
     this.creatableClassDiagramObjects = [
       {name: 'Klasse', key: CreatableClassDiagramObject.Class, selected: false, disabled: this.withHelp},
@@ -109,7 +103,7 @@ export class UmlDiagramDrawingComponent
 
     // load classes
 
-    this.loadOldSolutionAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part)
+    this.loadOldSolutionAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.oldPart)
       .then((oldSol) => {
         if (oldSol) {
           this.loadClassDiagram(oldSol);
@@ -225,7 +219,7 @@ export class UmlDiagramDrawingComponent
     const fileReader = new FileReader();
 
     fileReader.onload = ((pe) => {
-      const read: string = pe.target['result'] as string;
+      const read: string = pe.target.result as string;
 
       const loaded: ExportedUmlClassDiagram = JSON.parse(read);
 
@@ -260,7 +254,15 @@ export class UmlDiagramDrawingComponent
   }
 
   correct(): void {
-    super.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, null, this.part);
+    let part: UmlExPart;
+
+    if (this.oldPart === UmlDiagramDrawingHelpPart) {
+      part = UmlExPart.DiagramDrawingHelp;
+    } else if (this.oldPart === UmlDiagramDrawingPart) {
+      part = UmlExPart.DiagramDrawing;
+    }
+
+    super.correctAbstract(this.exerciseFragment, part, this.oldPart);
     this.corrected = true;
   }
 

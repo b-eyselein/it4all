@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {UmlImplementationMatchFragment} from "../../uml-apollo-mutations.service";
+import {UmlImplementationMatchFragment} from '../../uml-apollo-mutations.service';
 
 @Component({
   selector: 'it4all-uml-impl-match',

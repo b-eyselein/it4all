@@ -15,8 +15,8 @@ export type CollectionListQuery = (
     { __typename?: 'Tool' }
     & Pick<Types.Tool, 'name'>
     & { collections: Array<(
-      { __typename?: 'Collection' }
-      & Pick<Types.Collection, 'id' | 'title' | 'exerciseCount'>
+      { __typename?: 'ExerciseCollection' }
+      & Pick<Types.ExerciseCollection, 'id' | 'title' | 'exerciseCount'>
     )> }
   )> }
 );
@@ -32,7 +32,7 @@ export type ExercisesQuery = (
   & { tool?: Types.Maybe<(
     { __typename?: 'Tool' }
     & { collection?: Types.Maybe<(
-      { __typename?: 'Collection' }
+      { __typename?: 'ExerciseCollection' }
       & { exercises: Array<(
         { __typename?: 'Exercise' }
         & Pick<Types.Exercise, 'id' | 'title'>
@@ -65,8 +65,8 @@ export type CollectionOverviewQuery = (
   & { tool?: Types.Maybe<(
     { __typename?: 'Tool' }
     & { collection?: Types.Maybe<(
-      { __typename?: 'Collection' }
-      & Pick<Types.Collection, 'title'>
+      { __typename?: 'ExerciseCollection' }
+      & Pick<Types.ExerciseCollection, 'title'>
       & { exercises: Array<(
         { __typename?: 'Exercise' }
         & FieldsForLinkFragment
@@ -107,7 +107,7 @@ export type ExerciseOverviewQuery = (
   & { tool?: Types.Maybe<(
     { __typename?: 'Tool' }
     & { collection?: Types.Maybe<(
-      { __typename?: 'Collection' }
+      { __typename?: 'ExerciseCollection' }
       & { exercise?: Types.Maybe<(
         { __typename?: 'Exercise' }
         & Pick<Types.Exercise, 'id' | 'title' | 'text'>
@@ -140,8 +140,8 @@ export type ExerciseQuery = (
   & { tool?: Types.Maybe<(
     { __typename?: 'Tool' }
     & { collection?: Types.Maybe<(
-      { __typename?: 'Collection' }
-      & Pick<Types.Collection, 'shortName'>
+      { __typename?: 'ExerciseCollection' }
+      & Pick<Types.ExerciseCollection, 'shortName'>
       & { exercise?: Types.Maybe<(
         { __typename?: 'Exercise' }
         & ExerciseSolveFieldsFragment
@@ -244,11 +244,11 @@ export type CollectionAdminQuery = (
   & { tool?: Types.Maybe<(
     { __typename?: 'Tool' }
     & { collection?: Types.Maybe<(
-      { __typename?: 'Collection' }
-      & Pick<Types.Collection, 'title'>
+      { __typename?: 'ExerciseCollection' }
+      & Pick<Types.ExerciseCollection, 'title'>
       & { exercises: Array<(
         { __typename?: 'Exercise' }
-        & Pick<Types.Exercise, 'id' | 'title'>
+        & FieldsForLinkFragment
       )> }
     )> }
   )> }
@@ -265,8 +265,8 @@ export type AdminCollectionsIndexQuery = (
     { __typename?: 'Tool' }
     & Pick<Types.Tool, 'name'>
     & { collections: Array<(
-      { __typename?: 'Collection' }
-      & Pick<Types.Collection, 'id' | 'title' | 'exerciseCount'>
+      { __typename?: 'ExerciseCollection' }
+      & Pick<Types.ExerciseCollection, 'id' | 'title' | 'exerciseCount'>
     )> }
   )> }
 );
@@ -281,9 +281,24 @@ export type AdminEditCollectionQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
     { __typename?: 'Tool' }
+    & Pick<Types.Tool, 'collectionAsJson'>
+  )> }
+);
+
+export type AdminEditExerciseQueryVariables = {
+  toolId: Types.Scalars['String'];
+  collId: Types.Scalars['Int'];
+  exId: Types.Scalars['Int'];
+};
+
+
+export type AdminEditExerciseQuery = (
+  { __typename?: 'Query' }
+  & { tool?: Types.Maybe<(
+    { __typename?: 'Tool' }
     & { collection?: Types.Maybe<(
-      { __typename?: 'Collection' }
-      & Pick<Types.Collection, 'id' | 'title'>
+      { __typename?: 'ExerciseCollection' }
+      & Pick<Types.ExerciseCollection, 'exerciseAsJson'>
     )> }
   )> }
 );
@@ -465,7 +480,7 @@ export const TagFragmentDoc = gql`
 }
     `;
 export const FieldsForLinkFragmentDoc = gql`
-    fragment fieldsForLink on Exercise {
+    fragment FieldsForLink on Exercise {
   id
   collectionId
   toolId
@@ -712,7 +727,7 @@ export const CollectionOverviewDocument = gql`
     collection(collId: $collId) {
       title
       exercises {
-        ...fieldsForLink
+        ...FieldsForLink
       }
     }
   }
@@ -733,7 +748,7 @@ export const AllExercisesOverviewDocument = gql`
       tags {
         ...Tag
       }
-      ...fieldsForLink
+      ...FieldsForLink
     }
   }
 }
@@ -898,13 +913,12 @@ export const CollectionAdminDocument = gql`
     collection(collId: $collId) {
       title
       exercises {
-        id
-        title
+        ...FieldsForLink
       }
     }
   }
 }
-    `;
+    ${FieldsForLinkFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -936,10 +950,7 @@ export const AdminCollectionsIndexDocument = gql`
 export const AdminEditCollectionDocument = gql`
     query AdminEditCollection($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      id
-      title
-    }
+    collectionAsJson(collId: $collId)
   }
 }
     `;
@@ -949,5 +960,22 @@ export const AdminEditCollectionDocument = gql`
   })
   export class AdminEditCollectionGQL extends Apollo.Query<AdminEditCollectionQuery, AdminEditCollectionQueryVariables> {
     document = AdminEditCollectionDocument;
+    
+  }
+export const AdminEditExerciseDocument = gql`
+    query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
+  tool(toolId: $toolId) {
+    collection(collId: $collId) {
+      exerciseAsJson(exId: $exId)
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AdminEditExerciseGQL extends Apollo.Query<AdminEditExerciseQuery, AdminEditExerciseQueryVariables> {
+    document = AdminEditExerciseDocument;
     
   }

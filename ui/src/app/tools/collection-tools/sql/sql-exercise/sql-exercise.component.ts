@@ -4,10 +4,7 @@ import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {
-  ExerciseSolveFieldsFragment,
-  SqlExerciseContentSolveFieldsFragment
-} from '../../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, SqlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
 import {
   DbContentsGQL,
   DbContentsQuery,
@@ -17,7 +14,7 @@ import {
   SqlResultFragment,
   SqlWrongQueryTypeResultFragment
 } from '../sql-apollo-mutations.service';
-import {SqlExPart} from "../../../../_interfaces/graphql-types";
+import {SqlExPart} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/sql/sql';
 
@@ -53,8 +50,9 @@ export class SqlExerciseComponent
       .valueChanges
       .subscribe(({data}) => this.dbContentsQuery = data);
 
-    this.dexieService.getSolution(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.oldPart.id)
-      .then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');
+    this.dexieService.getSolution(
+      this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.oldPart.id
+    ).then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');
   }
 
   protected getSolution(): string | undefined {
@@ -82,7 +80,7 @@ export class SqlExerciseComponent
   // Correction
 
   correct(): void {
-    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, SqlExPart.SqlSingleExPart, this.oldPart);
+    this.correctAbstract(this.exerciseFragment, SqlExPart.SqlSingleExPart, this.oldPart);
   }
 
 }

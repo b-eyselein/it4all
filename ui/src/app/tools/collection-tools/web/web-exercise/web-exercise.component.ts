@@ -3,12 +3,9 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
-import {
-  ExerciseSolveFieldsFragment,
-  WebExerciseContentSolveFieldsFragment,
-} from '../../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, WebExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
 import {WebCorrectionGQL, WebCorrectionMutation} from '../web-apollo-mutations.service';
-import {ExerciseFile, WebExPart, WebSolution, WebSolutionInput} from "../../../../_interfaces/graphql-types";
+import {ExerciseFile, WebExPart, WebSolution, WebSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
@@ -35,14 +32,15 @@ export class WebExerciseComponent
   ngOnInit(): void {
     this.exerciseFiles = this.webExerciseContent.files;
 
-    this.dexieService.getSolution<ExerciseFile[]>(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part.id)
-      .then((oldSolution: DbSolution<ExerciseFile[]> | undefined) => this.exerciseFiles = oldSolution ? oldSolution.solution : []);
+    this.dexieService.getSolution<ExerciseFile[]>(
+      this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part.id
+    ).then((oldSolution: DbSolution<ExerciseFile[]> | undefined) => this.exerciseFiles = oldSolution ? oldSolution.solution : []);
   }
 
   correct(): void {
     const exPart = this.part.id === 'html' ? WebExPart.HtmlPart : WebExPart.JsPart;
 
-    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, exPart, this.part);
+    this.correctAbstract(this.exerciseFragment, exPart, this.part);
   }
 
   protected getSolution(): WebSolution {

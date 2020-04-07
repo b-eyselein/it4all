@@ -11,6 +11,7 @@ import {AdminLessonsIndexComponent} from './admin-lessons-index/admin-lessons-in
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AdminReadLessonsComponent} from './admin-read-lessons/admin-read-lessons.component';
+import {AdminEditExerciseComponent} from './admin-edit-exercise/admin-edit-exercise.component';
 
 const adminRoutes: Routes = [
   {
@@ -25,6 +26,8 @@ const adminRoutes: Routes = [
 
       {path: ':toolId/collections/:collId/exercises', component: CollectionAdminComponent},
       {path: ':toolId/collections/:collId/exercises/read', component: AdminReadExercisesComponent},
+
+      {path: ':toolId/collections/:collId/exercises/:exId/editForm', component: AdminEditExerciseComponent},
 
       {path: ':toolId/lessons', component: AdminLessonsIndexComponent},
       {path: ':toolId/lessons/read', component: AdminReadLessonsComponent}

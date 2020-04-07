@@ -34,7 +34,7 @@ query CollectionOverview($toolId: String!, $collId: Int!) {
     collection(collId: $collId) {
       title
       exercises {
-        ...fieldsForLink
+        ...FieldsForLink
       }
     }
   }
@@ -46,7 +46,7 @@ query AllExercisesOverview($toolId: String!) {
       tags{
         ...Tag
       }
-      ...fieldsForLink
+      ...FieldsForLink
     }
   }
 }
@@ -143,8 +143,7 @@ query CollectionAdmin($toolId: String!, $collId: Int!) {
     collection(collId: $collId) {
       title
       exercises {
-        id
-        title
+        ...FieldsForLink
       }
     }
   }
@@ -163,10 +162,14 @@ query AdminCollectionsIndex($toolId: String!) {
 
 query AdminEditCollection($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
+    collectionAsJson(collId: $collId)
+  }
+}
+
+query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
+  tool(toolId: $toolId) {
     collection(collId: $collId) {
-      id
-      title
-      # TODO: all fields...
+      exerciseAsJson(exId: $exId)
     }
   }
 }
@@ -178,7 +181,7 @@ fragment Tag on ExTag {
   title
 }
 
-fragment fieldsForLink on Exercise {
+fragment FieldsForLink on Exercise {
   id
   collectionId
   toolId

@@ -35,23 +35,6 @@ export enum BinaryClassificationResultType {
   TrueNegative = 'TrueNegative'
 }
 
-export type Collection = {
-   __typename?: 'Collection';
-  id: Scalars['Int'];
-  title: Scalars['String'];
-  authors: Array<Scalars['String']>;
-  text: Scalars['String'];
-  shortName: Scalars['String'];
-  exerciseCount: Scalars['Int'];
-  exercises: Array<Exercise>;
-  exercise?: Maybe<Exercise>;
-};
-
-
-export type CollectionExerciseArgs = {
-  exId: Scalars['Int'];
-};
-
 export type DtdParseException = {
    __typename?: 'DTDParseException';
   msg: Scalars['String'];
@@ -102,6 +85,30 @@ export type Exercise = {
   text: Scalars['String'];
   tags: Array<ExTag>;
   difficulty?: Maybe<Scalars['Int']>;
+};
+
+export type ExerciseCollection = {
+   __typename?: 'ExerciseCollection';
+  id: Scalars['Int'];
+  toolId: Scalars['String'];
+  title: Scalars['String'];
+  authors: Array<Scalars['String']>;
+  text: Scalars['String'];
+  shortName: Scalars['String'];
+  exerciseCount: Scalars['Int'];
+  exercises: Array<Exercise>;
+  exercise?: Maybe<Exercise>;
+  exerciseAsJson?: Maybe<Scalars['String']>;
+};
+
+
+export type ExerciseCollectionExerciseArgs = {
+  exId: Scalars['Int'];
+};
+
+
+export type ExerciseCollectionExerciseAsJsonArgs = {
+  exId: Scalars['Int'];
 };
 
 export type ExerciseFile = {
@@ -220,19 +227,17 @@ export type Lesson = {
 };
 
 export type MatchingResult = {
-  matchName: Scalars['String'];
-  matchSingularName: Scalars['String'];
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
   allMatches: Array<NewMatch>;
 };
 
 export enum MatchType {
+  OnlySample = 'ONLY_SAMPLE',
   OnlyUser = 'ONLY_USER',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
-  OnlySample = 'ONLY_SAMPLE'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -380,10 +385,6 @@ export enum RegexExPart {
 
 export type RegexExtractedValuesComparisonMatchingResult = MatchingResult & {
    __typename?: 'RegexExtractedValuesComparisonMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<RegexMatchMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -475,10 +476,6 @@ export type SqlAbstractResult = SqlIllegalQueryResult | SqlWrongQueryTypeResult 
 
 export type SqlBinaryExpressionComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlBinaryExpressionComparisonMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<SqlBinaryExpressionMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -502,10 +499,6 @@ export type SqlCell = {
 
 export type SqlColumnComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlColumnComparisonMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<SqlColumnMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -534,11 +527,11 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
-  Insert = 'INSERT',
-  Update = 'UPDATE',
   Select = 'SELECT',
+  Create = 'CREATE',
+  Update = 'UPDATE',
   Delete = 'DELETE',
-  Create = 'CREATE'
+  Insert = 'INSERT'
 }
 
 export enum SqlExPart {
@@ -547,10 +540,6 @@ export enum SqlExPart {
 
 export type SqlGroupByComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlGroupByComparisonMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<SqlGroupByMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -575,10 +564,6 @@ export type SqlIllegalQueryResult = AbstractCorrectionResult & {
 
 export type SqlInsertComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlInsertComparisonMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<SqlInsertMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -601,10 +586,6 @@ export type SqlKeyCellValueObject = {
 
 export type SqlLimitComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlLimitComparisonMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<SqlLimitMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -621,10 +602,6 @@ export type SqlLimitMatch = NewMatch & {
 
 export type SqlOrderByComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlOrderByComparisonMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<SqlOrderByMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -671,10 +648,6 @@ export type SqlRow = {
 
 export type SqlTableComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlTableComparisonMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<SqlTableMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -719,8 +692,9 @@ export type Tool = {
   lessons: Array<Lesson>;
   lesson?: Maybe<Lesson>;
   collectionCount: Scalars['Int'];
-  collections: Array<Collection>;
-  collection?: Maybe<Collection>;
+  collections: Array<ExerciseCollection>;
+  collection?: Maybe<ExerciseCollection>;
+  collectionAsJson?: Maybe<Scalars['String']>;
   exerciseCount: Scalars['Int'];
   allExerciseMetaData: Array<Exercise>;
   exerciseContent?: Maybe<ExContent>;
@@ -737,15 +711,21 @@ export type ToolCollectionArgs = {
 };
 
 
+export type ToolCollectionAsJsonArgs = {
+  collId: Scalars['Int'];
+};
+
+
 export type ToolExerciseContentArgs = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
 };
 
 export enum ToolState {
-  Live = 'LIVE',
   Alpha = 'ALPHA',
-  Beta = 'BETA'
+  Beta = 'BETA',
+  Live = 'LIVE',
+  PreAlpha = 'PRE_ALPHA'
 }
 
 export type UmlAssociation = {
@@ -787,10 +767,6 @@ export type UmlAssociationMatch = NewMatch & {
 
 export type UmlAssociationMatchingResult = MatchingResult & {
    __typename?: 'UmlAssociationMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<UmlAssociationMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -847,10 +823,6 @@ export type UmlAttributeMatch = NewMatch & {
 
 export type UmlAttributeMatchingResult = MatchingResult & {
    __typename?: 'UmlAttributeMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<UmlAttributeMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -905,10 +877,6 @@ export type UmlClassMatchAnalysisResult = {
 
 export type UmlClassMatchingResult = MatchingResult & {
    __typename?: 'UmlClassMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<UmlClassMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -966,10 +934,6 @@ export type UmlImplementationMatch = NewMatch & {
 
 export type UmlImplementationMatchingResult = MatchingResult & {
    __typename?: 'UmlImplementationMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<UmlImplementationMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -1020,10 +984,6 @@ export type UmlMethodMatch = NewMatch & {
 
 export type UmlMethodMatchingResult = MatchingResult & {
    __typename?: 'UmlMethodMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<UmlMethodMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -1131,10 +1091,6 @@ export type XmlCompleteResult = AbstractCorrectionResult & {
 
 export type XmlElementLineComparisonMatchingResult = MatchingResult & {
    __typename?: 'XmlElementLineComparisonMatchingResult';
-  /** @deprecated Will be deleted */
-  matchName: Scalars['String'];
-  /** @deprecated Will be deleted */
-  matchSingularName: Scalars['String'];
   allMatches: Array<ElementLineMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];

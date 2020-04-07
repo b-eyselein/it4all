@@ -9,7 +9,7 @@ import {
   UmlImplementationInput,
   UmlMethod,
   UmlMultiplicity
-} from "../../../../_interfaces/graphql-types";
+} from '../../../../_interfaces/graphql-types';
 
 export const CLASS_TYPES = ['CLASS', 'ABSTRACT', 'INTERFACE'];
 

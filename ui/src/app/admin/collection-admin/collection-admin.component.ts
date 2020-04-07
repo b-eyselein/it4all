@@ -1,32 +1,39 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
-import {CollectionAdminGQL, CollectionAdminQuery} from "../../_services/apollo_services";
-import {Exercise} from '../../_interfaces/graphql-types';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {CollectionAdminGQL, CollectionAdminQuery, FieldsForLinkFragment} from '../../_services/apollo_services';
+import {Subscription} from 'rxjs';
 
 @Component({templateUrl: './collection-admin.component.html'})
-export class CollectionAdminComponent extends ComponentWithCollectionTool implements OnInit {
+export class CollectionAdminComponent implements OnInit, OnDestroy {
+
+  sub: Subscription;
 
   collectionAdminQuery: CollectionAdminQuery;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private collectionAdminGQL: CollectionAdminGQL,
   ) {
-    super(route);
   }
 
   ngOnInit() {
-    const collId: number = parseInt(this.route.snapshot.paramMap.get('collId'), 10);
+    this.sub = this.route.paramMap.subscribe((paramMap) => {
+      const toolId = paramMap.get('toolId');
+      const collId: number = parseInt(paramMap.get('collId'), 10);
 
-    this.collectionAdminGQL
-      .watch({toolId: this.tool.id, collId})
-      .valueChanges
-      .subscribe(({data}) => this.collectionAdminQuery = data);
+      this.collectionAdminGQL
+        .watch({toolId, collId})
+        .valueChanges
+        .subscribe(({data}) => this.collectionAdminQuery = data);
+    });
   }
 
-  get queryExercises(): Array<({ __typename?: 'Exercise' } & Pick<Exercise, 'id' | 'title'>)> {
-    return (this.collectionAdminQuery) ? this.collectionAdminQuery.tool.collection.exercises : [];
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
+
+  get queryExercises(): FieldsForLinkFragment[] {
+    return this.collectionAdminQuery.tool.collection.exercises;
+  }
+
 }

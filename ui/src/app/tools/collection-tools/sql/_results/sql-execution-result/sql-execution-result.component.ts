@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {SqlExecutionResultFragment} from "../../sql-apollo-mutations.service";
+import {SqlExecutionResultFragment} from '../../sql-apollo-mutations.service';
 
 @Component({
   selector: 'it4all-sql-execution-result',

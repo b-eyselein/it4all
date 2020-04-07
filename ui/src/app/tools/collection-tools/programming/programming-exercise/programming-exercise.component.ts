@@ -1,15 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ProgrammingCorrectionResult} from '../my-programming-interfaces';
 import {DexieService} from '../../../../_services/dexie.service';
-import {ProgrammingImplementationToolPart} from '../programming-tool';
+import {ProgrammingImplementationToolPart, ProgrammingTestCreationPart} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-import {
-  ExerciseSolveFieldsFragment,
-  ProgExerciseContentSolveFieldsFragment,
-} from "../../../../_services/apollo_services";
+import {ExerciseSolveFieldsFragment, ProgExerciseContentSolveFieldsFragment,} from '../../../../_services/apollo_services';
 import {ProgCorrectionGQL, ProgCorrectionMutation} from '../programming-apollo-mutations.service';
-import {ExerciseFile, ProgExPart, ProgSolution, ProgSolutionInput} from "../../../../_interfaces/graphql-types";
+import {ExerciseFile, ProgExPart, ProgSolution, ProgSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/python/python';
 
@@ -70,8 +67,17 @@ export class ProgrammingExerciseComponent
   }
 
   correct(): void {
-    const part: ProgExPart = false ? null : null;
-    this.correctAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, part, this.oldPart);
+    let part: ProgExPart;
+
+    if (this.oldPart === ProgrammingTestCreationPart) {
+      part = ProgExPart.TestCreation;
+    } else if (this.oldPart === ProgrammingImplementationToolPart) {
+      part = ProgExPart.Implementation;
+    } else {
+      throw new Error('Part not recognized!');
+    }
+
+    this.correctAbstract(this.exerciseFragment, part, this.oldPart);
   }
 
 }

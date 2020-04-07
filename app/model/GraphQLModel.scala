@@ -1,10 +1,8 @@
 package model
 
 import model.persistence.ExerciseTableDefs
-import model.tools.collectionTools._
-import model.tools.collectionTools.sql.{SelectDAO, SqlGraphQLModels}
-import model.tools.randomTools.RandomExerciseToolMain
-import model.tools.{ToolList, ToolState}
+import model.tools._
+import model.tools.sql.SqlGraphQLModels
 import play.api.libs.json.{Format, JsObject, Json}
 import sangria.macros.derive._
 import sangria.marshalling.playJson._
@@ -28,13 +26,6 @@ object GraphQLModel {
 
   val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
 
-  // Values
-
-  private val toolValues: List[CollectionToolMain] = ToolList.toolMains.flatMap {
-    case _: RandomExerciseToolMain => None
-    case x: CollectionToolMain     => Some(x)
-  }.toList
-
   // Arguments
 
   private val toolIdArgument = Argument("toolId", StringType)
@@ -44,8 +35,6 @@ object GraphQLModel {
   private val collIdArgument = Argument("collId", IntType)
 
   private val exIdArgument = Argument("exId", IntType)
-
-  private val schemaNameArgument = Argument("schemaName", StringType)
 
   // Types
 
@@ -57,21 +46,15 @@ object GraphQLModel {
 
   private val ExContentType: UnionType[Unit] = UnionType(
     "ExContent",
-    types = toolValues.map(_.graphQlModels.ExContentTypeType)
+    types = ToolList.collectionToolMains.map(_.graphQlModels.ExContentTypeType)
   )
 
   private val ExerciseType: ObjectType[Unit, Exercise] = deriveObjectType(
     ExcludeFields("content")
   )
 
-  private val CollectionType = ObjectType(
-    "Collection",
-    fields[GraphQLContext, ExerciseCollection](
-      Field("id", IntType, resolve = _.value.id),
-      Field("title", StringType, resolve = _.value.title),
-      Field("authors", ListType(StringType), resolve = _.value.authors),
-      Field("text", StringType, resolve = _.value.text),
-      Field("shortName", StringType, resolve = _.value.shortName),
+  private val CollectionType: ObjectType[GraphQLContext, ExerciseCollection] = deriveObjectType(
+    AddFields(
       Field(
         "exerciseCount",
         IntType,
@@ -88,6 +71,18 @@ object GraphQLModel {
         arguments = exIdArgument :: Nil,
         resolve = context =>
           context.ctx.tables.futureExerciseById(context.value.toolId, context.value.id, context.arg(exIdArgument))
+      ),
+      Field(
+        "exerciseAsJson",
+        OptionType(StringType),
+        arguments = exIdArgument :: Nil,
+        resolve = context =>
+          context.ctx.tables
+            .futureExerciseById(context.value.toolId, context.value.id, context.arg(exIdArgument))
+            .map {
+              case None           => None
+              case Some(exercise) => Some(ToolJsonProtocol.exerciseFormat.writes(exercise).toString())
+            }(context.ctx.ec)
       )
     )
   )
@@ -96,7 +91,7 @@ object GraphQLModel {
     "Tool",
     fields[GraphQLContext, CollectionToolMain](
       Field("id", StringType, resolve = _.value.id),
-      Field("name", StringType, resolve = _.value.toolName),
+      Field("name", StringType, resolve = _.value.name),
       Field("state", ToolStateType, resolve = _.value.toolState),
       // Fields for lessons
       Field("lessonCount", IntType, resolve = context => context.ctx.tables.futureLessonCount(context.value.id)),
@@ -128,6 +123,18 @@ object GraphQLModel {
         arguments = collIdArgument :: Nil,
         resolve = context => context.ctx.tables.futureCollById(context.value.id, context.arg(collIdArgument))
       ),
+      Field(
+        "collectionAsJson",
+        OptionType(StringType),
+        arguments = collIdArgument :: Nil,
+        resolve = context =>
+          context.ctx.tables
+            .futureCollById(context.value.id, context.arg(collIdArgument))
+            .map {
+              case None       => None
+              case Some(coll) => Some(ToolJsonProtocol.collectionFormat.writes(coll).toString())
+            }(context.ctx.ec)
+      ),
       // Special fields for exercises
       Field(
         "exerciseCount",
@@ -157,25 +164,20 @@ object GraphQLModel {
   private val QueryType: ObjectType[GraphQLContext, Unit] = ObjectType(
     "Query",
     fields[GraphQLContext, Unit](
-      Field("tools", ListType(ToolType), resolve = _ => toolValues),
+      Field("tools", ListType(ToolType), resolve = _ => ToolList.collectionToolMains),
       Field(
         "tool",
         OptionType(ToolType),
         arguments = toolIdArgument :: Nil,
-        resolve = ctx => toolValues.find(_.id == ctx.arg(toolIdArgument))
+        resolve = ctx => ToolList.collectionToolMains.find(_.id == ctx.arg(toolIdArgument))
       ),
-      Field(
-        "sqlDbContents",
-        ListType(SqlGraphQLModels.sqlQueryResultType),
-        arguments = schemaNameArgument :: Nil,
-        resolve = context => SelectDAO.tableContents(context.arg(schemaNameArgument))
-      )
+      SqlGraphQLModels.dbContentQueryField
     )
   )
 
   private val MutationType = ObjectType(
     "Mutation",
-    fields = toolValues.map[Field[GraphQLContext, Unit]] { toolMain =>
+    fields = ToolList.collectionToolMains.map[Field[GraphQLContext, Unit]] { toolMain =>
       implicit val solTypeFormat: Format[toolMain.SolType]   = toolMain.toolJsonProtocol.solutionFormat
       implicit val partTypeFormat: Format[toolMain.PartType] = toolMain.toolJsonProtocol.partTypeFormat
 

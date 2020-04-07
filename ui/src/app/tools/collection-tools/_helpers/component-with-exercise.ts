@@ -4,6 +4,7 @@ import {TabComponent} from '../../../shared/tab/tab.component';
 import {DexieService} from '../../../_services/dexie.service';
 import {ToolPart} from '../../../_interfaces/tool';
 import * as Apollo from 'apollo-angular';
+import {ExerciseSolveFieldsFragment} from '../../../_services/apollo_services';
 
 @Directive()
 export abstract class ComponentWithExercise<SolutionType,
@@ -16,7 +17,6 @@ export abstract class ComponentWithExercise<SolutionType,
   readonly exerciseTextTabTitle = 'Aufgabenstellung';
   readonly correctionTabTitle = 'Korrektur';
   readonly sampleSolutionsTabTitle = 'Musterlösungen';
-
 
   isCorrecting = false;
 
@@ -48,7 +48,7 @@ export abstract class ComponentWithExercise<SolutionType,
     }
   }
 
-  protected correctAbstract(exId: number, collId: number, toolId: string, part: PartType, oldPart: ToolPart): void {
+  protected correctAbstract(exerciseFragment: ExerciseSolveFieldsFragment, part: PartType, oldPart: ToolPart): void {
     this.isCorrecting = true;
 
     const solution: SolutionInputType | undefined = this.getSolution();
@@ -58,10 +58,14 @@ export abstract class ComponentWithExercise<SolutionType,
       return;
     }
 
-    const mutationQueryVars = {exId, collId, part, solution};
+    const mutationQueryVars = {
+      exId: exerciseFragment.id, collId: exerciseFragment.collectionId, part, solution
+    };
 
     // noinspection JSIgnoredPromiseFromCall
-    this.dexieService.upsertSolution<SolutionInputType>(exId, collId, toolId, oldPart.id, solution);
+    this.dexieService.upsertSolution<SolutionInputType>(
+      exerciseFragment.id, exerciseFragment.collectionId, exerciseFragment.toolId, oldPart.id, solution
+    );
 
 
     this.mutationGQL

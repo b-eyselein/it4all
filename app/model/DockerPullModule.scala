@@ -2,8 +2,8 @@ package model
 
 import com.google.inject.AbstractModule
 import model.core.{DockerConnector, ScalaDockerImage}
-import model.tools.collectionTools.programming.ProgCorrector
-import model.tools.collectionTools.rose.RoseCorrector
+import model.tools.programming.ProgCorrector
+import model.tools.rose.RoseCorrector
 import play.api.Logger
 
 import scala.concurrent.ExecutionContext

@@ -1,10 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {distinctObjectArray, flatMapArray} from '../../../../helpers';
-import {
-  ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment,
-} from "../../../../_services/apollo_services";
-import {UmlAttribute, UmlClassDiagram, UmlMethod, UmlVisibility} from "../../../../_interfaces/graphql-types";
+import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {UmlAttribute, UmlClassDiagram, UmlMethod, UmlVisibility} from '../../../../_interfaces/graphql-types';
 
 function printVisibility(v: UmlVisibility): string {
   switch (v) {
@@ -35,8 +32,8 @@ interface MemberAllocMember {
 
 interface MemberAllocClass {
   name: string;
-  attributes: MemberAllocMember[]
-  methods: MemberAllocMember[]
+  attributes: MemberAllocMember[];
+  methods: MemberAllocMember[];
 }
 
 @Component({

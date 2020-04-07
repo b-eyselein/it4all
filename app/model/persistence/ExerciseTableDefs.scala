@@ -3,7 +3,7 @@ package model.persistence
 import javax.inject.Inject
 import model._
 import model.learningPath.LearningPathTableDefs
-import model.tools.collectionTools._
+import model.tools._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
 import slick.jdbc.JdbcProfile

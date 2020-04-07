@@ -1,5 +1,6 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {MatchingResult} from "../../../../../_interfaces/graphql-types";
+import {MrFragment} from '../../sql-apollo-mutations.service';
+import {MatchType} from '../../../../../_interfaces/graphql-types';
 
 @Component({
   selector: 'it4all-sql-matching-result',
@@ -10,12 +11,12 @@ export class SqlMatchingResultComponent implements OnChanges {
   @Input() matchName: string;
   @Input() matchSingularName: string;
 
-  @Input() matchingResult: MatchingResult;
+  @Input() matchingResult: MrFragment;
 
   successful: boolean;
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.successful = this.matchingResult.allMatches.every((m) => m.matchType === 'SUCCESSFUL_MATCH');
+    this.successful = this.matchingResult.allMatches.every((m) => m.matchType === MatchType.SuccessfulMatch);
   }
 
 }

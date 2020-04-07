@@ -5,6 +5,7 @@ import {AdminCollectionsIndexComponent} from './admin-collections-index/admin-co
 import {AdminLessonsIndexComponent} from './admin-lessons-index/admin-lessons-index.component';
 import {AdminReadLessonsComponent} from './admin-read-lessons/admin-read-lessons.component';
 import {ReadObjectComponent} from './_components/read-object/read-object.component';
+import { AdminEditExerciseComponent } from './admin-edit-exercise/admin-edit-exercise.component';
 
 
 @NgModule({
@@ -17,7 +18,9 @@ import {ReadObjectComponent} from './_components/read-object/read-object.compone
 
     AdminReadLessonsComponent,
 
-    ReadObjectComponent
+    ReadObjectComponent,
+
+    AdminEditExerciseComponent
   ],
   imports: [
     CommonModule,

@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Apr 06 2020 11:15:30 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Tue Apr 07 2020 11:15:47 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -24,17 +24,6 @@ enum BinaryClassificationResultType {
   FalsePositive
   FalseNegative
   TrueNegative
-}
-
-type Collection {
-  id: Int!
-  title: String!
-  authors: [String!]!
-  text: String!
-  shortName: String!
-  exerciseCount: Int!
-  exercises: [Exercise!]!
-  exercise(exId: Int!): Exercise
 }
 
 type DTDParseException {
@@ -81,6 +70,19 @@ type Exercise {
   text: String!
   tags: [ExTag!]!
   difficulty: Int
+}
+
+type ExerciseCollection {
+  id: Int!
+  toolId: String!
+  title: String!
+  authors: [String!]!
+  text: String!
+  shortName: String!
+  exerciseCount: Int!
+  exercises: [Exercise!]!
+  exercise(exId: Int!): Exercise
+  exerciseAsJson(exId: Int!): String
 }
 
 type ExerciseFile {
@@ -187,19 +189,17 @@ type Lesson {
 }
 
 interface MatchingResult {
-  matchName: String!
-  matchSingularName: String!
   points: Float!
   maxPoints: Float!
   allMatches: [NewMatch!]!
 }
 
 enum MatchType {
+  ONLY_SAMPLE
   ONLY_USER
+  PARTIAL_MATCH
   UNSUCCESSFUL_MATCH
   SUCCESSFUL_MATCH
-  PARTIAL_MATCH
-  ONLY_SAMPLE
 }
 
 type Mutation {
@@ -280,8 +280,6 @@ enum RegexExPart {
 }
 
 type RegexExtractedValuesComparisonMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [RegexMatchMatch!]!
   points: Float!
   maxPoints: Float!
@@ -361,8 +359,6 @@ type SiteSpec {
 union SqlAbstractResult = SqlIllegalQueryResult | SqlWrongQueryTypeResult | SqlResult
 
 type SqlBinaryExpressionComparisonMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [SqlBinaryExpressionMatch!]!
   points: Float!
   maxPoints: Float!
@@ -383,8 +379,6 @@ type SqlCell {
 }
 
 type SqlColumnComparisonMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [SqlColumnMatch!]!
   points: Float!
   maxPoints: Float!
@@ -410,11 +404,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  INSERT
-  UPDATE
   SELECT
-  DELETE
   CREATE
+  UPDATE
+  DELETE
+  INSERT
 }
 
 enum SqlExPart {
@@ -422,8 +416,6 @@ enum SqlExPart {
 }
 
 type SqlGroupByComparisonMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [SqlGroupByMatch!]!
   points: Float!
   maxPoints: Float!
@@ -445,8 +437,6 @@ type SqlIllegalQueryResult implements AbstractCorrectionResult {
 }
 
 type SqlInsertComparisonMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [SqlInsertMatch!]!
   points: Float!
   maxPoints: Float!
@@ -466,8 +456,6 @@ type SqlKeyCellValueObject {
 }
 
 type SqlLimitComparisonMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [SqlLimitMatch!]!
   points: Float!
   maxPoints: Float!
@@ -482,8 +470,6 @@ type SqlLimitMatch implements NewMatch {
 }
 
 type SqlOrderByComparisonMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [SqlOrderByMatch!]!
   points: Float!
   maxPoints: Float!
@@ -524,8 +510,6 @@ type SqlRow {
 }
 
 type SqlTableComparisonMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [SqlTableMatch!]!
   points: Float!
   maxPoints: Float!
@@ -566,17 +550,19 @@ type Tool {
   lessons: [Lesson!]!
   lesson(lessonId: Int!): Lesson
   collectionCount: Int!
-  collections: [Collection!]!
-  collection(collId: Int!): Collection
+  collections: [ExerciseCollection!]!
+  collection(collId: Int!): ExerciseCollection
+  collectionAsJson(collId: Int!): String
   exerciseCount: Int!
   allExerciseMetaData: [Exercise!]!
   exerciseContent(collId: Int!, exId: Int!): ExContent
 }
 
 enum ToolState {
-  LIVE
   ALPHA
   BETA
+  LIVE
+  PRE_ALPHA
 }
 
 type UmlAssociation {
@@ -614,8 +600,6 @@ type UmlAssociationMatch implements NewMatch {
 }
 
 type UmlAssociationMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [UmlAssociationMatch!]!
   points: Float!
   maxPoints: Float!
@@ -668,8 +652,6 @@ type UmlAttributeMatch implements NewMatch {
 }
 
 type UmlAttributeMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [UmlAttributeMatch!]!
   points: Float!
   maxPoints: Float!
@@ -719,8 +701,6 @@ type UmlClassMatchAnalysisResult {
 }
 
 type UmlClassMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [UmlClassMatch!]!
   points: Float!
   maxPoints: Float!
@@ -773,8 +753,6 @@ type UmlImplementationMatch implements NewMatch {
 }
 
 type UmlImplementationMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [UmlImplementationMatch!]!
   points: Float!
   maxPoints: Float!
@@ -821,8 +799,6 @@ type UmlMethodMatch implements NewMatch {
 }
 
 type UmlMethodMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [UmlMethodMatch!]!
   points: Float!
   maxPoints: Float!
@@ -920,8 +896,6 @@ type XmlCompleteResult implements AbstractCorrectionResult {
 }
 
 type XmlElementLineComparisonMatchingResult implements MatchingResult {
-  matchName: String! @deprecated(reason: "Will be deleted")
-  matchSingularName: String! @deprecated(reason: "Will be deleted")
   allMatches: [ElementLineMatch!]!
   points: Float!
   maxPoints: Float!

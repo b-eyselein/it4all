@@ -1,9 +1,5 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {
-  InsertComparisonFragment,
-  SelectAdditionalComparisonFragment,
-  SqlResultFragment
-} from '../../sql-apollo-mutations.service';
+import {InsertComparisonFragment, SelectAdditionalComparisonFragment, SqlResultFragment} from '../../sql-apollo-mutations.service';
 
 @Component({
   selector: 'it4all-sql-result',

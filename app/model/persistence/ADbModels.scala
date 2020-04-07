@@ -1,6 +1,6 @@
 package model.persistence
 
-import model.tools.collectionTools.{ExPart, SemanticVersion}
+import model.tools.{ExPart, SemanticVersion}
 import play.api.libs.json.JsValue
 
 final case class DbUserSolution(

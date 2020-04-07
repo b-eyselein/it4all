@@ -1,7 +1,7 @@
 package model.persistence
 
 import model.lesson.{Lesson, LessonContent}
-import model.tools.collectionTools._
+import model.tools._
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.json.{Format, JsValue, Reads, Writes}
 import slick.jdbc.JdbcProfile
@@ -103,29 +103,6 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
     exercisesTQ
       .filter(_.toolId === toolId)
       .result
-  )
-
-  @deprecated
-  def futureExerciseMetaDataForTool(toolId: String): Future[Seq[ExerciseMetaData]] = db.run(
-    exercisesTQ
-      .filter { ex =>
-        ex.toolId === toolId
-      }
-      .result
-      .map { exes =>
-        exes.map(ExerciseMetaData.forExercise)
-      }
-  )
-
-  def futureExerciseMetaDataForCollection(toolId: String, collId: Int): Future[Seq[ExerciseMetaData]] = db.run(
-    exercisesTQ
-      .filter { ex =>
-        ex.toolId === toolId && ex.collectionId === collId
-      }
-      .result
-      .map { exes =>
-        exes.map(ExerciseMetaData.forExercise)
-      }
   )
 
   def futureExerciseCountInColl(toolId: String, collId: Int): Future[Int] = db.run(
