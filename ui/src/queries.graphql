@@ -336,7 +336,6 @@ fragment XmlExerciseContentSolveFields on XmlExerciseContent {
 
 fragment ExFileAll on ExerciseFile {
   name
-  resourcePath
   fileType
   content
   editable

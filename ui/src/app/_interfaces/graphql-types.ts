@@ -114,7 +114,6 @@ export type ExerciseCollectionExerciseAsJsonArgs = {
 export type ExerciseFile = {
    __typename?: 'ExerciseFile';
   name: Scalars['String'];
-  resourcePath: Scalars['String'];
   fileType: Scalars['String'];
   editable: Scalars['Boolean'];
   content: Scalars['String'];
@@ -122,7 +121,6 @@ export type ExerciseFile = {
 
 export type ExerciseFileInput = {
   name: Scalars['String'];
-  resourcePath: Scalars['String'];
   fileType: Scalars['String'];
   editable: Scalars['Boolean'];
   content: Scalars['String'];
@@ -233,11 +231,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlySample = 'ONLY_SAMPLE',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   OnlyUser = 'ONLY_USER',
+  OnlySample = 'ONLY_SAMPLE',
   PartialMatch = 'PARTIAL_MATCH',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -677,10 +675,10 @@ export type StringSampleSolution = {
 };
 
 export enum SuccessType {
+  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY',
-  Complete = 'COMPLETE'
+  Partially = 'PARTIALLY'
 }
 
 export type Tool = {
@@ -1037,8 +1035,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Simplified = 'Simplified',
-  Normal = 'Normal'
+  Normal = 'Normal',
+  Simplified = 'Simplified'
 }
 
 export type WebCompleteResult = AbstractCorrectionResult & {

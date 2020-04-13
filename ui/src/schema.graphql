@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue Apr 07 2020 11:15:47 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Apr 08 2020 14:55:45 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -87,7 +87,6 @@ type ExerciseCollection {
 
 type ExerciseFile {
   name: String!
-  resourcePath: String!
   fileType: String!
   editable: Boolean!
   content: String!
@@ -95,7 +94,6 @@ type ExerciseFile {
 
 input ExerciseFileInput {
   name: String!
-  resourcePath: String!
   fileType: String!
   editable: Boolean!
   content: String!
@@ -195,11 +193,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_SAMPLE
+  SUCCESSFUL_MATCH
   ONLY_USER
+  ONLY_SAMPLE
   PARTIAL_MATCH
   UNSUCCESSFUL_MATCH
-  SUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -536,10 +534,10 @@ type StringSampleSolution {
 }
 
 enum SuccessType {
+  COMPLETE
   ERROR
   NONE
   PARTIALLY
-  COMPLETE
 }
 
 type Tool {
@@ -848,8 +846,8 @@ type UnitTestTestConfig {
 }
 
 enum UnitTestType {
-  Simplified
   Normal
+  Simplified
 }
 
 type WebCompleteResult implements AbstractCorrectionResult {

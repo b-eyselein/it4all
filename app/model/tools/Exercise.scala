@@ -39,7 +39,6 @@ trait ExerciseContent {
 
 final case class ExerciseFile(
   name: String,
-  resourcePath: String,
   fileType: String,
   editable: Boolean,
   content: String

@@ -4,7 +4,7 @@ import {DexieService} from '../../../../_services/dexie.service';
 import {ProgrammingImplementationToolPart, ProgrammingTestCreationPart} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-import {ExerciseSolveFieldsFragment, ProgExerciseContentSolveFieldsFragment,} from '../../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, ProgExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
 import {ProgCorrectionGQL, ProgCorrectionMutation} from '../programming-apollo-mutations.service';
 import {ExerciseFile, ProgExPart, ProgSolution, ProgSolutionInput} from '../../../../_interfaces/graphql-types';
 

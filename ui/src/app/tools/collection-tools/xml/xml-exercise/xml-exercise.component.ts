@@ -55,7 +55,6 @@ export class XmlExerciseComponent
       content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : (this.xmlExerciseContent.xmlSampleSolutions[0].sample).grammar,
       fileType: 'dtd',
       editable: this.isGrammarPart,
-      resourcePath: grammarFileName
     };
 
     const documentFileName = `${rootNode}.xml`;
@@ -64,7 +63,6 @@ export class XmlExerciseComponent
       content: getXmlDocumentContent(rootNode),
       fileType: 'xml',
       editable: !this.isGrammarPart,
-      resourcePath: documentFileName
     };
 
     this.exerciseFiles = [this.grammarFile, this.documentFile];

@@ -465,7 +465,7 @@ export type XmlExerciseContentSolveFieldsFragment = (
 
 export type ExFileAllFragment = (
   { __typename?: 'ExerciseFile' }
-  & Pick<Types.ExerciseFile, 'name' | 'resourcePath' | 'fileType' | 'content' | 'editable'>
+  & Pick<Types.ExerciseFile, 'name' | 'fileType' | 'content' | 'editable'>
 );
 
 export type LessonFragmentFragment = (
@@ -504,7 +504,6 @@ export const ExerciseSolveFieldsFragmentDoc = gql`
 export const ExFileAllFragmentDoc = gql`
     fragment ExFileAll on ExerciseFile {
   name
-  resourcePath
   fileType
   content
   editable

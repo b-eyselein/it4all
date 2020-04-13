@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {DbContentsQuery, SqlQueryResultFragment} from "../../sql-apollo-mutations.service";
+import {DbContentsQuery, SqlQueryResultFragment} from '../../sql-apollo-mutations.service';
 
 @Component({
   selector: 'it4all-sql-table-contents',
