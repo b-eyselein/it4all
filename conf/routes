@@ -1,50 +1,18 @@
-GET         /                                                                   controllers.FrontendController.index
+GET         /                                  controllers.FrontendController.index
 
 # User managemente
 # TODO: registration of users ?!?
 #PUT          /api/register                                                                controllers.ApiLoginController.register
 
-PUT         /api/users/authenticate                                             controllers.ApiLoginController.apiAuthenticate
+PUT         /api/users/authenticate            controllers.ApiLoginController.apiAuthenticate
 
-POST        /api/lti                                                            controllers.ApiLoginController.ltiHoneypot
-GET         /api/claimWebToken/:uuidStr                                         controllers.ApiLoginController.claimJsonWebToken(uuidStr: String)
-
-# Collection management
-
-#PUT           /tools/:toolType/admin/collections                                       controllers.coll.CollectionAdminController.adminCreateCollection(toolType: String)
-#PUT           /tools/:toolType/admin/collections/:collId                               controllers.coll.CollectionAdminController.adminEditCollection(toolType: String, collId: Int)
-#DELETE        /tools/:toolType/admin/collections/:collId                               controllers.coll.CollectionAdminController.adminDeleteCollection(toolType: String, collId: Int)
-
-# Exercise management
-
-#PUT           /tools/:toolType/admin/:collId/exercises                                 controllers.coll.CollectionAdminController.adminCreateExercise(toolType: String, collId: Int)
-#PUT           /tools/:toolType/admin/:collId/exercises/:exId                           controllers.coll.CollectionAdminController.adminEditExercise(toolType: String, collId: Int, exId:Int)
-#DELETE        /tools/:toolType/admin/:collId/exercises/:exId                           controllers.coll.CollectionAdminController.adminDeleteExercise(toolType: String, collId: Int, exId: Int)
-
+POST        /api/lti                           controllers.ApiLoginController.ltiHoneypot
+GET         /api/claimWebToken/:uuidStr        controllers.ApiLoginController.claimJsonWebToken(uuidStr: String)
 
 # GraphQL
-
-GET         /graphiql                                                           controllers.FrontendController.graphiql
-
-POST        /api/graphql                                                        controllers.ApiController.graphql
-
-# API
-
-GET         /api/tools/:toolType/lessonCount                                    controllers.ApiController.apiLessonCount(toolType: String)
-GET         /api/tools/:toolType/lessons                                        controllers.ApiController.apiAllLessons(toolType: String)
-GET         /api/tools/:toolType/lessons/:lessonId                              controllers.ApiController.apiLesson(toolType: String, lessonId: Int)
-
-# Admin API
-
-GET         /api/admin/tools/:toolId/readCollections                            controllers.ApiAdminController.readCollections(toolId: String)
-GET         /api/admin/tools/:toolId/collections/:collId/readExercises          controllers.ApiAdminController.readExercises(toolId: String, collId: Int)
-GET         /api/admin/tools/:toolId/readLessons                                controllers.ApiAdminController.readLessons(toolId: String)
-
-PUT         /api/admin/tools/:toolId/collections/:collId                        controllers.ApiAdminController.upsertCollection(toolId: String, collId: Int)
-PUT         /api/admin/tools/:toolId/collections/:collId/exercises/:exId        controllers.ApiAdminController.upsertExercise(toolId: String, collId: Int, exId: Int)
-PUT         /api/admin/tools/:toolId/lessons/:lessonId                          controllers.ApiAdminController.upsertLesson(toolId: String, lessonId: Int)
-
+GET         /graphiql                          controllers.FrontendController.graphiql
+POST        /api/graphql                       controllers.ApiController.graphql
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /*file                                                              controllers.FrontendController.assetOrDefault(file)
-GET         /assets/*file                                                       controllers.Assets.versioned(path="/public", file: Asset)
+GET         /*file                             controllers.FrontendController.assetOrDefault(file)
+GET         /assets/*file                      controllers.Assets.versioned(path="/public", file: Asset)

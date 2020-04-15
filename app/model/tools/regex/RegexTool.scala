@@ -9,49 +9,46 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex.{Match => RegexMatch}
 import scala.util.{Failure, Success, Try}
 
-object RegexToolMain extends CollectionToolMain("regex", "Reguläre Ausdrücke") {
+object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
 
+  override type ExerciseType   = RegexExercise
   override type PartType       = RegexExPart
-  override type ExContentType  = RegexExerciseContent
   override type SolType        = String
   override type CompResultType = AbstractRegexResult
 
   type ExtractedValuesComparison = MatchingResult[RegexMatch, RegexMatchMatch]
 
-  // Members
-
-  override val exParts: Seq[RegexExPart] = RegexExParts.values
-
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] =
+  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExercise, RegexExPart] =
     RegexToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[RegexExerciseContent, String, RegexExPart] = RegexGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[RegexExercise, String, RegexExPart] =
+    RegexGraphQLModels
 
   // Correction
 
-  override protected def correctEx(
+  override def correctAbstract(
     user: User,
     sol: String,
     coll: ExerciseCollection,
-    exercise: Exercise,
-    content: RegexExerciseContent,
+    exercise: RegexExercise,
     part: RegexExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[AbstractRegexResult]] = Future.successful {
 
     Try(sol.r) match {
-      case Failure(error) => Success(RegexIllegalRegexResult(solutionSaved, error.getMessage, content.maxPoints.points))
+      case Failure(error) =>
+        Success(RegexIllegalRegexResult(solutionSaved, error.getMessage, exercise.maxPoints.points))
 
       case Success(userRegex) =>
-        content.correctionType match {
+        exercise.correctionType match {
 
           case RegexCorrectionTypes.MATCHING =>
-            Success(RegexMatchingCorrector.correctMatching(content, userRegex, solutionSaved))
+            Success(RegexMatchingCorrector.correctMatching(exercise, userRegex, solutionSaved))
 
           case RegexCorrectionTypes.EXTRACTION =>
-            Success(RegexExtractionCorrector.correctExtraction(content, userRegex, solutionSaved))
+            Success(RegexExtractionCorrector.correctExtraction(exercise, userRegex, solutionSaved))
         }
 
     }

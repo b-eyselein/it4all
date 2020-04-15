@@ -1,8 +1,39 @@
 package model.tools.programming
 
+import model.tools._
 import model.tools.uml.UmlClassDiagram
-import model.tools.{ExerciseContent, ExerciseFile, SampleSolution}
 import play.api.libs.json.JsValue
+
+final case class ProgrammingExercise(
+  id: Int,
+  collectionId: Int,
+  toolId: String,
+  semanticVersion: SemanticVersion,
+  title: String,
+  authors: Seq[String],
+  text: String,
+  tags: Seq[ProgrammingExerciseTag],
+  difficulty: Option[Int],
+  sampleSolutions: Seq[SampleSolution[ProgSolution]],
+  functionName: String,
+  foldername: String,
+  filename: String,
+  inputTypes: Seq[ProgInput],
+  outputType: ProgDataType,
+  baseData: Option[JsValue],
+  unitTestPart: UnitTestPart,
+  implementationPart: ImplementationPart,
+  sampleTestData: Seq[ProgTestData],
+  maybeClassDiagramPart: Option[UmlClassDiagram]
+) extends Exercise {
+
+  override type ET      = ProgrammingExerciseTag
+  override type SolType = ProgSolution
+
+  def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
+    ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this.baseData, completeTestData)
+
+}
 
 final case class ProgExerciseContent(
   functionName: String,
@@ -21,7 +52,7 @@ final case class ProgExerciseContent(
   override type SolType = ProgSolution
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
-    ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this, completeTestData)
+    ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this.baseData, completeTestData)
 
 }
 
@@ -46,11 +77,6 @@ final case class ImplementationPart(
 
 final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 
-final case class ProgSolution(files: Seq[ExerciseFile], testData: Seq[ProgTestData]) {
-
-  @deprecated(since = "1.0.0")
-  def unitTest: ExerciseFile = files.find(_.name == "test.py").getOrElse(???)
-
-}
+final case class ProgSolution(files: Seq[ExerciseFile], testData: Seq[ProgTestData])
 
 final case class ProgTestData(id: Int, input: JsValue, output: JsValue)

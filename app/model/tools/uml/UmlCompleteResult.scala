@@ -2,7 +2,7 @@ package model.tools.uml
 
 import model.core.result.AbstractCorrectionResult
 import model.points._
-import model.tools.uml.UmlToolMain.{AssociationComparison, ClassComparison, ImplementationComparison}
+import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 
 final case class UmlCompleteResult(
   classResult: Option[ClassComparison],

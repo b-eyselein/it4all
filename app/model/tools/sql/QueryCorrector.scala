@@ -56,14 +56,14 @@ abstract class QueryCorrector(val queryType: String) {
   def correct(
     database: SqlExecutionDAO,
     learnerSolution: String,
-    exercise: SqlExerciseContent,
+    exercise: SqlExercise,
     scenario: ExerciseCollection,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Try[AbstractSqlResult] = parseStatement(learnerSolution) match {
     case Failure(exception) => Success(SqlIllegalQueryResult(solutionSaved, exception.getMessage, (-1).points))
     case Success(userQ) =>
       checkStatement(userQ) match {
-        case Failure(exception) => ???
+        case Failure(_) => ???
         case Success(userQ) =>
           val userColumns         = getColumnWrappers(userQ)
           val userTables          = getTables(userQ)
@@ -89,7 +89,7 @@ abstract class QueryCorrector(val queryType: String) {
           maybeStaticComparison match {
             case None => ???
             case Some(QueryAndStaticComp(sampleQ, sc)) =>
-              Success(SqlResult(sc, database.executeQueries(scenario, exercise, userQ, sampleQ), solutionSaved))
+              Success(SqlResult(sc, database.executeQueries(scenario, userQ, sampleQ), solutionSaved))
           }
 
       }

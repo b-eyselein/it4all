@@ -1,17 +1,23 @@
-
+/**
+ * @deprecated
+ */
 export interface IExTag {
   abbreviation: string;
   title: string;
 }
 
-
+/**
+ * @deprecated
+ */
 export interface ISemanticVersion {
   major: number;
   minor: number;
   patch: number;
 }
 
-
+/**
+ * @deprecated
+ */
 export interface IExercise {
   id: number;
   collectionId: number;
@@ -25,7 +31,9 @@ export interface IExercise {
   content: any;
 }
 
-
+/**
+ * @deprecated
+ */
 export interface IExerciseCollection {
   id: number;
   toolId: string;

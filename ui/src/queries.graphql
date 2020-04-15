@@ -43,9 +43,9 @@ query CollectionOverview($toolId: String!, $collId: Int!) {
 query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
     allExerciseMetaData {
-      tags{
-        ...Tag
-      }
+      #tags {
+      #  ...Tag
+      #}
       ...FieldsForLink
     }
   }
@@ -58,19 +58,16 @@ query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
         id
         title
         text
-      }
-    }
-    exerciseContent(collId: $collId, exId: $exId) {
-      __typename
-      ... on ProgExerciseContent {
-        unitTestPart {
-          unitTestType
+        ... on ProgrammingExercise {
+          unitTestPart {
+            unitTestType
+          }
         }
-      }
-      ... on WebExerciseContent{
-        siteSpec {
-          htmlTaskCount
-          jsTaskCount
+        ... on WebExercise{
+          siteSpec {
+            htmlTaskCount
+            jsTaskCount
+          }
         }
       }
     }
@@ -83,16 +80,13 @@ query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
       shortName
       exercise(exId: $exId){
         ...ExerciseSolveFields
+        ...ProgExerciseContentSolveFields
+        ...RegexExerciseContentSolveFields
+        ...SqlExerciseContentSolveFields
+        ...UmlExerciseContentSolveFields
+        ...WebExerciseContentSolveFields
+        ...XmlExerciseContentSolveFields
       }
-    }
-    exerciseContent(collId: $collId,exId: $exId) {
-      __typename
-      ...ProgExerciseContentSolveFields
-      ...RegexExerciseContentSolveFields
-      ...SqlExerciseContentSolveFields
-      ...UmlExerciseContentSolveFields
-      ...WebExerciseContentSolveFields
-      ...XmlExerciseContentSolveFields
     }
   }
 }
@@ -108,7 +102,7 @@ query LessonsForTool($toolId: String!) {
   }
 }
 
-query Lesson ($toolId: String!, $lessonId: Int!) {
+query Lesson($toolId: String!, $lessonId: Int!) {
   tool(toolId: $toolId) {
     name
     lesson(lessonId: $lessonId){
@@ -162,15 +156,32 @@ query AdminCollectionsIndex($toolId: String!) {
 
 query AdminEditCollection($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
-    collectionAsJson(collId: $collId)
+    collection(collId: $collId) {
+      asJson
+    }
   }
 }
 
 query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
-      exerciseAsJson(exId: $exId)
+      exercise(exId: $exId) {
+        asJson
+      }
     }
+  }
+}
+
+query AdminReadCollections($toolId: String!) {
+  tool(toolId: $toolId) {
+    name
+    readCollections
+  }
+}
+
+mutation AdminUpsertCollection($toolId: String!, $collId: Int!, $content: String!) {
+  upsertCollection(toolId: $toolId, collId: $collId,content: $content) {
+    asJson
   }
 }
 
@@ -181,7 +192,7 @@ fragment Tag on ExTag {
   title
 }
 
-fragment FieldsForLink on Exercise {
+fragment FieldsForLink on ExerciseInterface {
   id
   collectionId
   toolId
@@ -193,7 +204,7 @@ fragment FieldsForLink on Exercise {
   }
 }
 
-fragment ExerciseSolveFields on Exercise {
+fragment ExerciseSolveFields on ExerciseInterface {
   id
   collectionId
   toolId
@@ -201,7 +212,7 @@ fragment ExerciseSolveFields on Exercise {
   text
 }
 
-fragment ProgExerciseContentSolveFields on ProgExerciseContent {
+fragment ProgExerciseContentSolveFields on ProgrammingExercise {
   unitTestPart {
     unitTestType
     unitTestFiles {
@@ -222,20 +233,20 @@ fragment ProgExerciseContentSolveFields on ProgExerciseContent {
   }
 }
 
-fragment RegexExerciseContentSolveFields on RegexExerciseContent {
+fragment RegexExerciseContentSolveFields on RegexExercise {
   regexSampleSolutions: sampleSolutions {
     sample
   }
 }
 
-fragment SqlExerciseContentSolveFields on SqlExerciseContent {
+fragment SqlExerciseContentSolveFields on SqlExercise {
   hint
   sqlSampleSolutions: sampleSolutions{
     sample
   }
 }
 
-fragment UmlExerciseContentSolveFields on UmlExerciseContent {
+fragment UmlExerciseContentSolveFields on UmlExercise {
   toIgnore
   mappings {
     key
@@ -303,7 +314,7 @@ fragment UmlImplementation on UmlImplementation {
   superClass
 }
 
-fragment WebExerciseContentSolveFields on WebExerciseContent {
+fragment WebExerciseContentSolveFields on WebExercise {
   files {
     ...ExFileAll
   }
@@ -322,7 +333,7 @@ fragment WebExerciseContentSolveFields on WebExerciseContent {
   }
 }
 
-fragment XmlExerciseContentSolveFields on XmlExerciseContent {
+fragment XmlExerciseContentSolveFields on XmlExercise {
   rootNode
   grammarDescription
   xmlSampleSolutions: sampleSolutions {

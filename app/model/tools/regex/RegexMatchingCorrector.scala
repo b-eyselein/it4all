@@ -34,7 +34,7 @@ object RegexMatchMatcher extends Matcher[RegexMatch, RegexMatchMatch] {
 object RegexMatchingCorrector {
 
   def correctMatching(
-    exercise: RegexExerciseContent,
+    exercise: RegexExercise,
     userRegex: Regex,
     solutionSaved: Boolean
   ): RegexMatchingResult = {

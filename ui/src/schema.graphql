@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Apr 08 2020 14:55:45 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Apr 15 2020 16:04:05 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -20,10 +20,25 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  TruePositive
-  FalsePositive
   FalseNegative
+  FalsePositive
   TrueNegative
+  TruePositive
+}
+
+type CollectionTol {
+  id: String!
+  name: String!
+  state: ToolState!
+  lessonCount: Int!
+  lessons: [Lesson!]!
+  lesson(lessonId: Int!): Lesson
+  collectionCount: Int!
+  collections: [ExerciseCollection!]!
+  collection(collId: Int!): ExerciseCollection
+  readCollections: [String!]!
+  exerciseCount: Int!
+  allExerciseMetaData: [ExerciseInterface!]!
 }
 
 type DTDParseException {
@@ -58,20 +73,6 @@ type ElementLineMatch implements NewMatch {
   sampleArgDescription: String
 }
 
-union ExContent = ProgExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
-
-type Exercise {
-  id: Int!
-  collectionId: Int!
-  toolId: String!
-  semanticVersion: SemanticVersion!
-  title: String!
-  authors: [String!]!
-  text: String!
-  tags: [ExTag!]!
-  difficulty: Int
-}
-
 type ExerciseCollection {
   id: Int!
   toolId: String!
@@ -79,10 +80,10 @@ type ExerciseCollection {
   authors: [String!]!
   text: String!
   shortName: String!
+  asJson: String!
   exerciseCount: Int!
-  exercises: [Exercise!]!
-  exercise(exId: Int!): Exercise
-  exerciseAsJson(exId: Int!): String
+  exercises: [ExerciseInterface!]!
+  exercise(exId: Int!): ExerciseInterface
 }
 
 type ExerciseFile {
@@ -99,9 +100,15 @@ input ExerciseFileInput {
   content: String!
 }
 
-type ExTag {
-  abbreviation: String!
+interface ExerciseInterface {
+  id: Int!
+  collectionId: Int!
+  toolId: String!
+  semanticVersion: SemanticVersion!
   title: String!
+  authors: [String!]!
+  text: String!
+  difficulty: Int
 }
 
 type GradedHtmlTaskResult {
@@ -193,14 +200,15 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  SUCCESSFUL_MATCH
   ONLY_USER
   ONLY_SAMPLE
-  PARTIAL_MATCH
+  SUCCESSFUL_MATCH
   UNSUCCESSFUL_MATCH
+  PARTIAL_MATCH
 }
 
 type Mutation {
+  upsertCollection(toolId: String!, collId: Int!, content: String!): ExerciseCollection
   correctProgramming(collId: Int!, exId: Int!, part: ProgExPart!, solution: ProgSolutionInput!): ProgCompleteResult
   correctRegex(collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): AbstractRegexResult
   correctSql(collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlAbstractResult
@@ -226,19 +234,43 @@ type ProgCompleteResult {
   unitTestResults: [UnitTestCorrectionResult!]!
 }
 
-type ProgExerciseContent {
+enum ProgExPart {
+  TestCreation
+  Implementation
+  ActivityDiagram
+}
+
+type ProgrammingExercise implements ExerciseInterface {
+  id: Int!
+  collectionId: Int!
+  toolId: String!
+  semanticVersion: SemanticVersion!
+  title: String!
+  authors: [String!]!
+  text: String!
+  tags: [ProgrammingExerciseTag!]!
+  difficulty: Int
+  sampleSolutions: [ProgSampleSolution!]!
   functionName: String!
   foldername: String!
   filename: String!
   unitTestPart: UnitTestPart!
   implementationPart: ImplementationPart!
-  sampleSolutions: [ProgSampleSolution!]!
 }
 
-enum ProgExPart {
-  TestCreation
-  Implementation
-  ActivityDiagram
+enum ProgrammingExerciseTag {
+  Slicing
+  WhileLoops
+  Tuples
+  Lists
+  Recursion
+  Exceptions
+  Classes
+  Math
+  Conditions
+  Strings
+  Dictionaries
+  ForLoops
 }
 
 type ProgSampleSolution {
@@ -255,26 +287,39 @@ input ProgSolutionInput {
 }
 
 type Query {
-  tools: [Tool!]!
-  tool(toolId: String!): Tool
+  tools: [CollectionTol!]!
+  tool(toolId: String!): CollectionTol
   sqlDbContents(schemaName: String!): [SqlQueryResult!]!
 }
 
 enum RegexCorrectionType {
-  MATCHING
   EXTRACTION
+  MATCHING
 }
 
-type RegexExerciseContent {
+type RegexExercise implements ExerciseInterface {
+  id: Int!
+  collectionId: Int!
+  toolId: String!
+  semanticVersion: SemanticVersion!
+  title: String!
+  authors: [String!]!
+  text: String!
+  tags: [RegexExTag!]!
+  difficulty: Int
+  sampleSolutions: [StringSampleSolution!]!
   maxPoints: Int!
   correctionType: RegexCorrectionType!
-  sampleSolutions: [StringSampleSolution!]!
   matchTestData: [RegexMatchTestData!]!
   extractionTestData: [RegexExtractionTestData!]!
 }
 
 enum RegexExPart {
   RegexSingleExPart
+}
+
+enum RegexExTag {
+  RegexExTagTodo
 }
 
 type RegexExtractedValuesComparisonMatchingResult implements MatchingResult {
@@ -395,22 +440,43 @@ type SqlExecutionResult {
   sampleResultTry: SqlQueryResult
 }
 
-type SqlExerciseContent {
+type SqlExercise implements ExerciseInterface {
+  id: Int!
+  collectionId: Int!
+  toolId: String!
+  semanticVersion: SemanticVersion!
+  title: String!
+  authors: [String!]!
+  text: String!
+  tags: [SqlExTag!]!
+  difficulty: Int
+  sampleSolutions: [StringSampleSolution!]!
   exerciseType: SqlExerciseType!
   hint: String
-  sampleSolutions: [StringSampleSolution!]!
 }
 
 enum SqlExerciseType {
+  DELETE
   SELECT
   CREATE
   UPDATE
-  DELETE
   INSERT
 }
 
 enum SqlExPart {
   SqlSingleExPart
+}
+
+enum SqlExTag {
+  SQL_ORDER_BY
+  SQL_JOIN
+  SQL_TRIPLE_JOIN
+  SQL_DOUBLE_JOIN
+  SQL_LIMIT
+  SQL_SUBSELECT
+  SQL_GROUP_BY
+  SQL_FUNCTION
+  SQL_ALIAS
 }
 
 type SqlGroupByComparisonMatchingResult implements MatchingResult {
@@ -540,22 +606,6 @@ enum SuccessType {
   PARTIALLY
 }
 
-type Tool {
-  id: String!
-  name: String!
-  state: ToolState!
-  lessonCount: Int!
-  lessons: [Lesson!]!
-  lesson(lessonId: Int!): Lesson
-  collectionCount: Int!
-  collections: [ExerciseCollection!]!
-  collection(collId: Int!): ExerciseCollection
-  collectionAsJson(collId: Int!): String
-  exerciseCount: Int!
-  allExerciseMetaData: [Exercise!]!
-  exerciseContent(collId: Int!, exId: Int!): ExContent
-}
-
 enum ToolState {
   ALPHA
   BETA
@@ -604,8 +654,8 @@ type UmlAssociationMatchingResult implements MatchingResult {
 }
 
 enum UmlAssociationType {
-  ASSOCIATION
   AGGREGATION
+  ASSOCIATION
   COMPOSITION
 }
 
@@ -705,9 +755,9 @@ type UmlClassMatchingResult implements MatchingResult {
 }
 
 enum UmlClassType {
+  ABSTRACT
   CLASS
   INTERFACE
-  ABSTRACT
 }
 
 type UmlCompleteResult implements AbstractCorrectionResult {
@@ -719,9 +769,18 @@ type UmlCompleteResult implements AbstractCorrectionResult {
   maxPoints: Float!
 }
 
-type UmlExerciseContent {
-  toIgnore: [String!]!
+type UmlExercise implements ExerciseInterface {
+  id: Int!
+  collectionId: Int!
+  toolId: String!
+  semanticVersion: SemanticVersion!
+  title: String!
+  authors: [String!]!
+  text: String!
+  tags: [UmlExTag!]!
+  difficulty: Int
   sampleSolutions: [UmlSampleSolution!]!
+  toIgnore: [String!]!
   mappings: [KeyValueObject!]!
 }
 
@@ -730,6 +789,10 @@ enum UmlExPart {
   DiagramDrawingHelp
   DiagramDrawing
   MemberAllocation
+}
+
+enum UmlExTag {
+  UmlExTagTodo
 }
 
 type UmlImplementation {
@@ -813,10 +876,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PUBLIC
   PACKAGE
-  PROTECTED
   PRIVATE
+  PROTECTED
+  PUBLIC
 }
 
 type UnitTestCorrectionResult {
@@ -858,17 +921,30 @@ type WebCompleteResult implements AbstractCorrectionResult {
   maxPoints: Float!
 }
 
-type WebExerciseContent {
+type WebExercise implements ExerciseInterface {
+  id: Int!
+  collectionId: Int!
+  toolId: String!
+  semanticVersion: SemanticVersion!
+  title: String!
+  authors: [String!]!
+  text: String!
+  tags: [WebExTag!]!
+  difficulty: Int
+  sampleSolutions: [WebSampleSolution!]!
   htmlText: String
   jsText: String
   siteSpec: SiteSpec!
   files: [ExerciseFile!]!
-  sampleSolutions: [WebSampleSolution!]!
 }
 
 enum WebExPart {
   HtmlPart
   JsPart
+}
+
+enum WebExTag {
+  WebExTagTodo
 }
 
 type WebSampleSolution {
@@ -912,7 +988,16 @@ enum XmlErrorType {
   WARNING
 }
 
-type XmlExerciseContent {
+type XmlExercise implements ExerciseInterface {
+  id: Int!
+  collectionId: Int!
+  toolId: String!
+  semanticVersion: SemanticVersion!
+  title: String!
+  authors: [String!]!
+  text: String!
+  tags: [XmlExTag!]!
+  difficulty: Int
   grammarDescription: String!
   rootNode: String!
   sampleSolutions: [XmlSampleSolution!]!
@@ -921,6 +1006,10 @@ type XmlExerciseContent {
 enum XmlExPart {
   GrammarCreationXmlPart
   DocumentCreationXmlPart
+}
+
+enum XmlExTag {
+  XmlExTagTodo
 }
 
 type XmlGrammarResult {

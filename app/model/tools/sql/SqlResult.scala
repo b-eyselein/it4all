@@ -2,7 +2,7 @@ package model.tools.sql
 
 import model.core.result.AbstractCorrectionResult
 import model.points._
-import model.tools.sql.SqlToolMain._
+import model.tools.sql.SqlTool._
 
 final case class WrongStatementTypeException(awaited: String, gotten: String)
     extends Exception(s"Wrong type of statement! Expected '$awaited', bot got '$gotten'")

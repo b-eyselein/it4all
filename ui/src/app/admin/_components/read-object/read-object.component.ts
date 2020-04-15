@@ -3,12 +3,31 @@ import {Saveable} from '../../../_interfaces/saveable';
 
 @Component({
   selector: 'it4all-read-object',
-  templateUrl: './read-object.component.html',
+  template: `
+    <ng-container *ngIf="!loaded.saved; else exerciseSavedBlock">
+      <div class="card">
+        <header class="card-header">
+          <p class="card-header-title">{{loaded.id}}. {{loaded.title}}</p>
+        </header>
+        <div class="card-content">
+          <pre class="loadedJson">{{loaded | json}}</pre>
+        </div>
+        <footer class="card-footer">
+          <a class="card-footer-item" (click)="save.emit()">{{name}} speichern</a>
+        </footer>
+      </div>
+    </ng-container>
+
+    <ng-template #exerciseSavedBlock>
+      <div class="notification is-success has-text-centered">{{name}} {{loaded.id}} wurde gespeichert.</div>
+    </ng-template>
+  `,
   styles: [`
     .loadedJson {
       max-height: 400px;
       overflow: auto;
-    }`]
+    }`
+  ]
 })
 export class ReadObjectComponent<T extends Saveable> {
 

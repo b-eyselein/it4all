@@ -1,15 +1,22 @@
 package model.tools.rose
 
-import model.tools.{SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.{ExcludeFields, deriveObjectType}
+import model.tools.{SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
+import sangria.macros.derive.{ExcludeFields, Interfaces, deriveEnumType, deriveObjectType}
 import sangria.schema._
 
-object RoseGraphQLModels extends ToolGraphQLModelBasics[RoseExerciseContent, String, RoseExPart] {
+object RoseGraphQLModels extends ToolGraphQLModelBasics[RoseExercise, String, RoseExPart] {
 
-  override val ExContentTypeType: ObjectType[Unit, RoseExerciseContent] = {
+  private val roseExTagType: EnumType[RoseExTag] = deriveEnumType()
+
+  override val ExerciseType: ObjectType[Unit, RoseExercise] = {
+    implicit val rett: EnumType[RoseExTag]                                    = roseExTagType
+    implicit val svt: ObjectType[Unit, SemanticVersion]                       = semanticVersionType
     implicit val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
 
-    deriveObjectType(ExcludeFields("inputTypes"))
+    deriveObjectType(
+      Interfaces(exerciseInterfaceType),
+      ExcludeFields("inputTypes")
+    )
   }
 
   override val SolTypeInputType: InputType[String] = StringType
@@ -23,7 +30,7 @@ object RoseGraphQLModels extends ToolGraphQLModelBasics[RoseExerciseContent, Str
 
   override val PartTypeInputType: EnumType[RoseExPart] = EnumType(
     "RoseExPart",
-    values = RoseExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+    values = RoseExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )
 
 }

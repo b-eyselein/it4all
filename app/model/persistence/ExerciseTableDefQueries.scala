@@ -3,7 +3,7 @@ package model.persistence
 import model.lesson.{Lesson, LessonContent}
 import model.tools._
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.json.{Format, JsValue, Reads, Writes}
+import play.api.libs.json.{JsValue, Reads, Writes}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
@@ -99,7 +99,7 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
       .result
   )
 
-  def futureExercisesForTool(toolId: String): Future[Seq[Exercise]] = db.run(
+  def futureExercisesForTool(toolId: String): Future[Seq[DbExercise]] = db.run(
     exercisesTQ
       .filter(_.toolId === toolId)
       .result
@@ -114,13 +114,13 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
       .result
   )
 
-  def futureExercisesInColl(toolId: String, collId: Int): Future[Seq[Exercise]] = db.run(
+  def futureExercisesInColl(toolId: String, collId: Int): Future[Seq[DbExercise]] = db.run(
     exercisesTQ.filter { ex =>
       ex.toolId === toolId && ex.collectionId === collId
     }.result
   )
 
-  def futureExerciseById(toolId: String, collId: Int, id: Int): Future[Option[Exercise]] = db.run(
+  def futureExerciseById(toolId: String, collId: Int, id: Int): Future[Option[DbExercise]] = db.run(
     exercisesTQ
       .filter { ex =>
         ex.toolId === toolId && ex.collectionId === collId && ex.id === id
@@ -129,31 +129,12 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
       .headOption
   )
 
-  def futureExerciseContentById[EC <: ExerciseContent](
-    toolId: String,
-    collId: Int,
-    exId: Int,
-    exerciseContentFormat: Format[EC]
-  ): Future[Option[EC]] = futureExerciseById(toolId, collId, exId).map(
-    _.flatMap(ex => exerciseContentFormat.reads(ex.content).asOpt)
-  )
-
-  def futureCollectionAndExercise(
-    toolId: String,
-    collectionId: Int,
-    exerciseId: Int
-  ): Future[Option[(ExerciseCollection, Exercise)]] =
-    for {
-      collection <- futureCollById(toolId, collectionId)
-      exercise   <- futureExerciseById(toolId, collectionId, exerciseId)
-    } yield collection zip exercise
-
   // Saving
 
   def futureUpsertCollection(collection: ExerciseCollection): Future[Boolean] =
     db.run(collectionsTQ.insertOrUpdate(collection)).transform(_ == 1, identity)
 
-  def futureUpsertExercise(exercise: Exercise): Future[Boolean] =
+  def futureUpsertExercise(exercise: DbExercise): Future[Boolean] =
     db.run(exercisesTQ.insertOrUpdate(exercise)).transform(_ == 1, identity)
 
   def futureUpsertLesson(lesson: Lesson): Future[Boolean] = {

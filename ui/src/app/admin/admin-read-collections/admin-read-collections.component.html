@@ -1,16 +1,24 @@
 <div class="container">
-  <h1 class="title is-3 has-text-centered">Sammlungen für Tool {{tool.name}} einlesen</h1>
 
-  <div class="buttons">
-    <a class="button is-primary is-fullwidth" routerLink="..">Zurück zur Tooladministration</a>
-    <button class="button is-link is-fullwidth" (click)="saveAll()">Alle Sammlungen speichern</button>
-  </div>
+  <ng-container *ngIf="adminReadCollectionsQuery; else loadingDataBlock">
+    <h1 class="title is-3 has-text-centered">Sammlungen für Tool {{adminReadCollectionsQuery.tool.name}} einlesen</h1>
 
-  <br>
-
-  <div class="columns is-multiline">
-    <div class="column is-half-desktop" *ngFor="let collection of loadedCollections">
-      <it4all-read-object [loaded]="collection" name="Die Sammlung" (save)="save(collection)"></it4all-read-object>
+    <div class="buttons">
+      <a class="button is-primary is-fullwidth" routerLink="..">Zurück zur Tooladministration</a>
+      <button class="button is-link is-fullwidth" (click)="saveAll()">Alle Sammlungen speichern</button>
     </div>
-  </div>
+
+    <br>
+
+    <div class="columns is-multiline">
+      <div class="column is-half-desktop" *ngFor="let collection of adminReadCollectionsQuery.tool.readCollections">
+        <it4all-read-object [loaded]="collection" name="Die Sammlung" (save)="save(collection)"></it4all-read-object>
+      </div>
+    </div>
+  </ng-container>
+
 </div>
+
+<ng-template #loadingDataBlock>
+  <div class="notification is-primary has-text-centered">Lade Daten...</div>
+</ng-template>

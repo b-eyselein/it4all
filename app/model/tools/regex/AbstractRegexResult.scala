@@ -2,7 +2,7 @@ package model.tools.regex
 
 import model.core.result.AbstractCorrectionResult
 import model.points._
-import model.tools.regex.RegexToolMain.ExtractedValuesComparison
+import model.tools.regex.RegexTool.ExtractedValuesComparison
 
 // single matching result
 

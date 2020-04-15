@@ -1,7 +1,7 @@
 package model.tools.sql
 
 import model.tools.sql.ColumnWrapper.wrapColumn
-import model.tools.sql.SqlToolMain.LimitComparison
+import model.tools.sql.SqlTool.LimitComparison
 import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table

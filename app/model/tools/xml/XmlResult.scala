@@ -3,7 +3,7 @@ package model.tools.xml
 import de.uniwue.dtd.parser.DTDParseException
 import model.core.result.{AbstractCorrectionResult, SuccessType}
 import model.points._
-import model.tools.xml.XmlToolMain.ElementLineComparison
+import model.tools.xml.XmlTool.ElementLineComparison
 
 final case class XmlCompleteResult(
   successType: SuccessType,

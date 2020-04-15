@@ -48,7 +48,6 @@ abstract class SqlExecutionDAO(mainDbName: String) {
 
   def executeQueries(
     scenario: ExerciseCollection,
-    exercise: SqlExerciseContent,
     userStatement: Statement,
     sampleStatement: Statement
   ): SqlExecutionResult = {

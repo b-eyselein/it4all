@@ -7,7 +7,7 @@ import model.core.Levenshtein
 import model.core.result.SuccessType
 import model.points._
 import model.tools.SampleSolution
-import model.tools.xml.XmlToolMain.ElementLineComparison
+import model.tools.xml.XmlTool.ElementLineComparison
 import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
 
 import scala.collection.mutable
@@ -53,7 +53,7 @@ object XmlCorrector {
   def correctDocument(
     solution: XmlSolution,
     solutionBaseDir: File,
-    exercise: XmlExerciseContent,
+    exercise: XmlExercise,
     solutionSaved: Boolean
   ): Try[XmlCompleteResult] = exercise.sampleSolutions.headOption match {
     case None            => Failure(new Exception("There is no sample solution!"))
@@ -100,7 +100,7 @@ object XmlCorrector {
 
   def correctGrammar(
     solution: XmlSolution,
-    exercise: XmlExerciseContent,
+    exercise: XmlExercise,
     solutionSaved: Boolean
   ): Try[XmlCompleteResult] = findNearestGrammarSample(solution.grammar, exercise.sampleSolutions) match {
     case None => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))

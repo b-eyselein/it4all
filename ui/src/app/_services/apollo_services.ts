@@ -281,7 +281,10 @@ export type AdminEditCollectionQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
     { __typename?: 'Tool' }
-    & Pick<Types.Tool, 'collectionAsJson'>
+    & { collection?: Types.Maybe<(
+      { __typename?: 'ExerciseCollection' }
+      & Pick<Types.ExerciseCollection, 'asJson'>
+    )> }
   )> }
 );
 
@@ -298,8 +301,39 @@ export type AdminEditExerciseQuery = (
     { __typename?: 'Tool' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
-      & Pick<Types.ExerciseCollection, 'exerciseAsJson'>
+      & { exercise?: Types.Maybe<(
+        { __typename?: 'Exercise' }
+        & Pick<Types.Exercise, 'asJson'>
+      )> }
     )> }
+  )> }
+);
+
+export type AdminReadCollectionsQueryVariables = {
+  toolId: Types.Scalars['String'];
+};
+
+
+export type AdminReadCollectionsQuery = (
+  { __typename?: 'Query' }
+  & { tool?: Types.Maybe<(
+    { __typename?: 'Tool' }
+    & Pick<Types.Tool, 'name' | 'readCollections'>
+  )> }
+);
+
+export type AdminUpsertCollectionMutationVariables = {
+  toolId: Types.Scalars['String'];
+  collId: Types.Scalars['Int'];
+  content: Types.Scalars['String'];
+};
+
+
+export type AdminUpsertCollectionMutation = (
+  { __typename?: 'Mutation' }
+  & { upsertCollection?: Types.Maybe<(
+    { __typename?: 'ExerciseCollection' }
+    & Pick<Types.ExerciseCollection, 'asJson'>
   )> }
 );
 
@@ -949,7 +983,9 @@ export const AdminCollectionsIndexDocument = gql`
 export const AdminEditCollectionDocument = gql`
     query AdminEditCollection($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
-    collectionAsJson(collId: $collId)
+    collection(collId: $collId) {
+      asJson
+    }
   }
 }
     `;
@@ -965,7 +1001,9 @@ export const AdminEditExerciseDocument = gql`
     query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
-      exerciseAsJson(exId: $exId)
+      exercise(exId: $exId) {
+        asJson
+      }
     }
   }
 }
@@ -976,5 +1014,36 @@ export const AdminEditExerciseDocument = gql`
   })
   export class AdminEditExerciseGQL extends Apollo.Query<AdminEditExerciseQuery, AdminEditExerciseQueryVariables> {
     document = AdminEditExerciseDocument;
+    
+  }
+export const AdminReadCollectionsDocument = gql`
+    query AdminReadCollections($toolId: String!) {
+  tool(toolId: $toolId) {
+    name
+    readCollections
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AdminReadCollectionsGQL extends Apollo.Query<AdminReadCollectionsQuery, AdminReadCollectionsQueryVariables> {
+    document = AdminReadCollectionsDocument;
+    
+  }
+export const AdminUpsertCollectionDocument = gql`
+    mutation AdminUpsertCollection($toolId: String!, $collId: Int!, $content: String!) {
+  upsertCollection(toolId: $toolId, collId: $collId, content: $content) {
+    asJson
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AdminUpsertCollectionGQL extends Apollo.Mutation<AdminUpsertCollectionMutation, AdminUpsertCollectionMutationVariables> {
+    document = AdminUpsertCollectionDocument;
     
   }

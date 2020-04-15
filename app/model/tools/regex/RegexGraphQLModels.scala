@@ -1,13 +1,13 @@
 package model.tools.regex
 
-import model.tools.regex.RegexToolMain.ExtractedValuesComparison
-import model.tools.{SampleSolution, ToolGraphQLModelBasics}
+import model.tools.regex.RegexTool.ExtractedValuesComparison
+import model.tools.{SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
 import sangria.macros.derive.{ExcludeFields, Interfaces, deriveEnumType, deriveObjectType}
 import sangria.schema._
 
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, String, RegexExPart] {
+object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExercise, String, RegexExPart] {
 
   // Enum types
 
@@ -15,15 +15,21 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExerciseContent, S
 
   private val binaryClassificationResultTypeType: EnumType[BinaryClassificationResultType] = deriveEnumType()
 
+  private val regexExTagType: EnumType[RegexExTag] = deriveEnumType()
+
   // Exercise content types
 
-  override val ExContentTypeType: ObjectType[Unit, RegexExerciseContent] = {
+  override val ExerciseType: ObjectType[Unit, RegexExercise] = {
+    implicit val rett: EnumType[RegexExTag]                                   = regexExTagType
     implicit val rctt: EnumType[RegexCorrectionType]                          = regexCorrectionTypeType
+    implicit val svt: ObjectType[Unit, SemanticVersion]                       = semanticVersionType
     implicit val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
     implicit val rmtdt: ObjectType[Unit, RegexMatchTestData]                  = deriveObjectType()
     implicit val retdt: ObjectType[Unit, RegexExtractionTestData]             = deriveObjectType()
 
-    deriveObjectType()
+    deriveObjectType(
+      Interfaces(exerciseInterfaceType)
+    )
   }
 
   // Solution types

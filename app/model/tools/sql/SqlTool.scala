@@ -9,11 +9,10 @@ import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 
-import scala.collection.immutable.IndexedSeq
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-object SqlToolMain extends CollectionToolMain("sql", "Sql") {
+object SqlTool extends CollectionTool("sql", "Sql") {
 
   private val correctorsAndDaos: Map[SqlExerciseType, (QueryCorrector, SqlExecutionDAO)] = Map(
     SqlExerciseType.SELECT -> ((SelectCorrector, SelectDAO)),
@@ -25,8 +24,8 @@ object SqlToolMain extends CollectionToolMain("sql", "Sql") {
 
   // Abstract types
 
+  override type ExerciseType   = SqlExercise
   override type PartType       = SqlExPart
-  override type ExContentType  = SqlExerciseContent
   override type SolType        = String
   override type CompResultType = AbstractSqlResult
 
@@ -40,35 +39,30 @@ object SqlToolMain extends CollectionToolMain("sql", "Sql") {
 
   type InsertComparison = MatchingResult[ExpressionList, ExpressionListMatch]
 
-  // Members
-
-  override val exParts: IndexedSeq[SqlExPart] = SqlExParts.values
-
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] =
+  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExercise, SqlExPart] =
     SqlJsonProtocols
 
-  override val graphQlModels: ToolGraphQLModelBasics[SqlExerciseContent, String, SqlExPart] =
+  override val graphQlModels: ToolGraphQLModelBasics[SqlExercise, String, SqlExPart] =
     SqlGraphQLModels
 
   // Correction
 
-  override protected def correctEx(
+  override def correctAbstract(
     user: User,
     learnerSolution: SolType,
     sqlScenario: ExerciseCollection,
-    exercise: Exercise,
-    content: SqlExerciseContent,
+    exercise: SqlExercise,
     part: SqlExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[AbstractSqlResult]] =
-    correctorsAndDaos.get(content.exerciseType) match {
+    correctorsAndDaos.get(exercise.exerciseType) match {
       case None =>
-        Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${content.exerciseType}")))
+        Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${exercise.exerciseType}")))
       case Some((corrector, dao)) =>
         Future {
-          corrector.correct(dao, learnerSolution, content, sqlScenario, solutionSaved)
+          corrector.correct(dao, learnerSolution, exercise, sqlScenario, solutionSaved)
         }
     }
 

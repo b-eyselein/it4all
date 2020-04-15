@@ -6,7 +6,7 @@ import model.User
 import model.core.result.SuccessType
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.tools.programming.ProgrammingToolJsonProtocol.UnitTestTestData
-import model.tools.{Exercise, ExerciseFile, SampleSolution}
+import model.tools.{ExerciseFile, SampleSolution}
 import play.api.libs.json.Json
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,7 +51,7 @@ object ProgCorrector {
   private def correctImplementation(
     solTargetDir: File,
     programmingSolution: ProgSolution,
-    exerciseContent: ProgExerciseContent,
+    exerciseContent: ProgrammingExercise,
     resultFile: File,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
@@ -76,7 +76,7 @@ object ProgCorrector {
 
   private def correctNormalImplementation(
     solTargetDir: File,
-    exercise: ProgExerciseContent,
+    exercise: ProgrammingExercise,
     progSolutionFilesMounts: Seq[DockerBind],
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
@@ -114,7 +114,7 @@ object ProgCorrector {
 
   private def correctSimplifiedImplementation(
     solTargetDir: File,
-    exercise: ProgExerciseContent,
+    exercise: ProgrammingExercise,
     progSolutionFilesMounts: Seq[DockerBind],
     resultFile: File,
     solutionSaved: Boolean
@@ -147,7 +147,7 @@ object ProgCorrector {
   private def correctUnittest(
     solTargetDir: File,
     progSolution: ProgSolution,
-    exercise: ProgExerciseContent,
+    exercise: ProgrammingExercise,
     resultFile: File,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
@@ -215,14 +215,13 @@ object ProgCorrector {
   def correct(
     user: User,
     progSolution: ProgSolution,
-    exercise: Exercise,
-    content: ProgExerciseContent,
+    exercise: ProgrammingExercise,
     part: ProgExPart,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
-    val solutionTargetDir
-      : File = ProgToolMain.solutionDirForExercise(user.username, exercise.collectionId, exercise.id) / part.urlName
+    val solutionTargetDir: File =
+      ProgTool.solutionDirForExercise(user.username, exercise.collectionId, exercise.id) / part.urlName
 
     // Create or truncate result file
     val resultFile = solutionTargetDir / resultFileName
@@ -231,8 +230,8 @@ object ProgCorrector {
 
     part match {
       case ProgExPart.TestCreation =>
-        correctUnittest(solutionTargetDir, progSolution, content, resultFile, solutionSaved)
-      case _ => correctImplementation(solutionTargetDir, progSolution, content, resultFile, solutionSaved)
+        correctUnittest(solutionTargetDir, progSolution, exercise, resultFile, solutionSaved)
+      case _ => correctImplementation(solutionTargetDir, progSolution, exercise, resultFile, solutionSaved)
     }
   }
 

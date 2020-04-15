@@ -1,9 +1,9 @@
 package model.tools.sql
 
 import model.GraphQLContext
-import model.tools.sql.SqlToolMain._
+import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
-import model.tools.{SampleSolution, ToolGraphQLModelBasics}
+import model.tools.{SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
@@ -11,14 +11,21 @@ import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 import sangria.macros.derive._
 import sangria.schema._
 
-object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExerciseContent, String, SqlExPart] {
+object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExercise, String, SqlExPart] {
 
-  override val ExContentTypeType: ObjectType[Unit, SqlExerciseContent] = {
-    implicit val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
+  private val sqlExerciseTagType: EnumType[SqlExTag] = deriveEnumType()
 
+  private val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
+
+  override val ExerciseType: ObjectType[Unit, SqlExercise] = {
+    implicit val seTagT: EnumType[SqlExTag]                                      = sqlExerciseTagType
+    implicit val seTypeT: EnumType[SqlExerciseType]                              = sqlExerciseTypeType
+    implicit val svt: ObjectType[Unit, SemanticVersion]                          = semanticVersionType
     implicit val sqlSampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
 
-    deriveObjectType()
+    deriveObjectType(
+      Interfaces(exerciseInterfaceType)
+    )
   }
 
   // Solution types

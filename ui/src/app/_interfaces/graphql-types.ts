@@ -85,6 +85,7 @@ export type Exercise = {
   text: Scalars['String'];
   tags: Array<ExTag>;
   difficulty?: Maybe<Scalars['Int']>;
+  asJson: Scalars['String'];
 };
 
 export type ExerciseCollection = {
@@ -95,19 +96,14 @@ export type ExerciseCollection = {
   authors: Array<Scalars['String']>;
   text: Scalars['String'];
   shortName: Scalars['String'];
+  asJson: Scalars['String'];
   exerciseCount: Scalars['Int'];
   exercises: Array<Exercise>;
   exercise?: Maybe<Exercise>;
-  exerciseAsJson?: Maybe<Scalars['String']>;
 };
 
 
 export type ExerciseCollectionExerciseArgs = {
-  exId: Scalars['Int'];
-};
-
-
-export type ExerciseCollectionExerciseAsJsonArgs = {
   exId: Scalars['Int'];
 };
 
@@ -231,21 +227,29 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlyUser = 'ONLY_USER',
-  OnlySample = 'ONLY_SAMPLE',
   PartialMatch = 'PARTIAL_MATCH',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  OnlyUser = 'ONLY_USER'
 }
 
 export type Mutation = {
    __typename?: 'Mutation';
+  upsertCollection?: Maybe<ExerciseCollection>;
   correctProgramming?: Maybe<ProgCompleteResult>;
   correctRegex?: Maybe<AbstractRegexResult>;
   correctSql?: Maybe<SqlAbstractResult>;
   correctUml?: Maybe<UmlCompleteResult>;
   correctWeb?: Maybe<WebCompleteResult>;
   correctXml?: Maybe<XmlCompleteResult>;
+};
+
+
+export type MutationUpsertCollectionArgs = {
+  toolId: Scalars['String'];
+  collId: Scalars['Int'];
+  content: Scalars['String'];
 };
 
 
@@ -525,10 +529,10 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
   Create = 'CREATE',
-  Update = 'UPDATE',
+  Select = 'SELECT',
   Delete = 'DELETE',
+  Update = 'UPDATE',
   Insert = 'INSERT'
 }
 
@@ -675,10 +679,10 @@ export type StringSampleSolution = {
 };
 
 export enum SuccessType {
-  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY'
+  Partially = 'PARTIALLY',
+  Complete = 'COMPLETE'
 }
 
 export type Tool = {
@@ -692,7 +696,7 @@ export type Tool = {
   collectionCount: Scalars['Int'];
   collections: Array<ExerciseCollection>;
   collection?: Maybe<ExerciseCollection>;
-  collectionAsJson?: Maybe<Scalars['String']>;
+  readCollections: Array<Scalars['String']>;
   exerciseCount: Scalars['Int'];
   allExerciseMetaData: Array<Exercise>;
   exerciseContent?: Maybe<ExContent>;
@@ -705,11 +709,6 @@ export type ToolLessonArgs = {
 
 
 export type ToolCollectionArgs = {
-  collId: Scalars['Int'];
-};
-
-
-export type ToolCollectionAsJsonArgs = {
   collId: Scalars['Int'];
 };
 
@@ -1035,8 +1034,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Normal = 'Normal',
-  Simplified = 'Simplified'
+  Simplified = 'Simplified',
+  Normal = 'Normal'
 }
 
 export type WebCompleteResult = AbstractCorrectionResult & {

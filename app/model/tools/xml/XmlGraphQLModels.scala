@@ -4,18 +4,24 @@ import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
 import model.core.matching.MatchType
 import model.core.result.SuccessType
-import model.tools.{SampleSolution, ToolGraphQLModelBasics}
+import model.tools.{SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSolution, XmlExPart] {
+object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExercise, XmlSolution, XmlExPart] {
 
   private val xmlSolutionType: ObjectType[Unit, XmlSolution] = deriveObjectType()
 
-  override val ExContentTypeType: ObjectType[Unit, XmlExerciseContent] = {
+  private val xmlExerciseTagType: EnumType[XmlExTag] = deriveEnumType()
+
+  override val ExerciseType: ObjectType[Unit, XmlExercise] = {
+    implicit val xett: EnumType[XmlExTag]                           = xmlExerciseTagType
+    implicit val svt: ObjectType[Unit, SemanticVersion]             = semanticVersionType
     implicit val sst: ObjectType[Unit, SampleSolution[XmlSolution]] = sampleSolutionType("Xml", xmlSolutionType)
 
-    deriveObjectType()
+    deriveObjectType(
+      Interfaces(exerciseInterfaceType)
+    )
   }
 
   // Solution types
@@ -66,7 +72,7 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExerciseContent, XmlSo
 
   private val xmlGrammarResultType: ObjectType[Unit, XmlGrammarResult] = {
     implicit val dpet: ObjectType[Unit, DTDParseException] = dtdParseExceptionType
-    implicit val elct: ObjectType[Unit, XmlToolMain.ElementLineComparison] =
+    implicit val elct: ObjectType[Unit, XmlTool.ElementLineComparison] =
       matchingResultType[ElementLine, ElementLineMatch]("XmlElementLineComparison", elementLineMatchType)
 
     deriveObjectType()

@@ -84,7 +84,7 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
 
   }
 
-  protected final class ExercisesTable(tag: Tag) extends Table[Exercise](tag, "exercises") {
+  protected final class ExercisesTable(tag: Tag) extends Table[DbExercise](tag, "exercises") {
 
     private implicit val svct: BaseColumnType[SemanticVersion] = semanticVersionColumnType
     private implicit val jvct: BaseColumnType[JsValue]         = jsonValueColumnType
@@ -120,7 +120,7 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
         collectionsTQ
       )(c => (c.id, c.toolId))
 
-    override def * : ProvenShape[Exercise] =
+    override def * : ProvenShape[DbExercise] =
       (
         id,
         collectionId,
@@ -132,7 +132,7 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
         tags,
         difficulty,
         content
-      ) <> (Exercise.tupled, Exercise.unapply)
+      ) <> (DbExercise.tupled, DbExercise.unapply)
 
   }
 
@@ -160,7 +160,7 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
 
     def pk = primaryKey("user_solutions_fk", (id, exerciseId, collectionId, toolId, exSemVer, part, username))
 
-    def exerciseFk: ForeignKeyQuery[ExercisesTable, Exercise] =
+    def exerciseFk: ForeignKeyQuery[ExercisesTable, DbExercise] =
       foreignKey(
         "exercise_fk",
         (exerciseId, collectionId, toolId, exSemVer),

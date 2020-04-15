@@ -34,7 +34,7 @@ export class AdminEditExerciseComponent implements OnInit, OnDestroy {
   }
 
   get exerciseAsJson(): object | undefined {
-    return JSON.parse(this.adminEditExerciseQuery.tool.collection.exerciseAsJson);
+    return JSON.parse(this.adminEditExerciseQuery.tool.collection.exercise.asJson);
   }
 
 }

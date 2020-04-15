@@ -30,7 +30,7 @@ export class AdminEditCollectionComponent implements OnInit, OnDestroy {
   }
 
   get collectionAsJson(): object | undefined {
-    return JSON.parse(this.adminEditCollectionQuery.tool.collectionAsJson);
+    return JSON.parse(this.adminEditCollectionQuery.tool.collection.asJson);
   }
 
 }

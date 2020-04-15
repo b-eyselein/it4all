@@ -1,17 +1,22 @@
 import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {ApiService} from '../../tools/collection-tools/_services/api.service';
-import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
 import {IExerciseCollection} from '../../_interfaces/models';
 import {Saveable} from '../../_interfaces/saveable';
 import {ReadObjectComponent} from '../_components/read-object/read-object.component';
+import {Subscription} from 'rxjs';
+import {AdminReadCollectionsGQL, AdminReadCollectionsQuery, AdminUpsertCollectionGQL} from '../../_services/apollo_services';
 
 interface SaveableExerciseCollection extends IExerciseCollection, Saveable {
 }
 
 @Component({templateUrl: './admin-read-collections.component.html'})
-export class AdminReadCollectionsComponent extends ComponentWithCollectionTool implements OnInit {
+export class AdminReadCollectionsComponent implements OnInit {
 
+
+  sub: Subscription;
+
+  adminReadCollectionsQuery: AdminReadCollectionsQuery;
   loadedCollections: SaveableExerciseCollection[];
 
   @ViewChildren(ReadObjectComponent) readCollectionComponents: QueryList<ReadObjectComponent<SaveableExerciseCollection>>;
@@ -19,18 +24,23 @@ export class AdminReadCollectionsComponent extends ComponentWithCollectionTool i
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private router: Router
+    private adminReadCollectionsGQL: AdminReadCollectionsGQL,
+    private adminUpsertCollectionGQL: AdminUpsertCollectionGQL
   ) {
-    super(route);
-
-    if (!this.tool) {
-      this.router.navigate(['/admin']);
-    }
   }
 
   ngOnInit() {
-    this.apiService.adminReadCollections(this.tool.id)
-      .subscribe((loadedCollections) => this.loadedCollections = loadedCollections);
+    this.route.paramMap.subscribe((paramMap) => {
+      const toolId = paramMap.get('toolId');
+
+      this.adminReadCollectionsGQL
+        .watch({toolId})
+        .valueChanges
+        .subscribe(({data}) => this.adminReadCollectionsQuery = data);
+
+      this.apiService.adminReadCollections(toolId)
+        .subscribe((loadedCollections) => this.loadedCollections = loadedCollections);
+    });
   }
 
   save(collection: SaveableExerciseCollection): void {

@@ -1,15 +1,15 @@
 package model.tools.xml
 
-import model.tools.{SampleSolution, ToolJsonProtocol}
+import model.tools.{SampleSolution, SemanticVersion, ToolJsonProtocol}
 import play.api.libs.json._
 
-object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExerciseContent, XmlSolution, XmlExPart] {
+object XmlToolJsonProtocol extends ToolJsonProtocol[XmlExercise, XmlSolution, XmlExPart] {
 
   override val solutionFormat: Format[XmlSolution] = Json.format[XmlSolution]
 
-  override val exerciseContentFormat: Format[XmlExerciseContent] = {
-    implicit val xsf: Format[XmlSolution] = solutionFormat
-
+  override val exerciseFormat: Format[XmlExercise] = {
+    implicit val scf: Format[SemanticVersion]              = ToolJsonProtocol.semanticVersionFormat
+    implicit val xsf: Format[XmlSolution]                  = solutionFormat
     implicit val xssf: Format[SampleSolution[XmlSolution]] = Json.format
 
     Json.format

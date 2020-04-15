@@ -22,7 +22,7 @@ object RoseCorrector {
 
   def correct(
     user: User,
-    exercise: RoseExerciseContent,
+    exercise: RoseExercise,
     learnerSolution: String,
     sampleSolution: String,
     language: ProgLanguage,
@@ -100,7 +100,7 @@ object RoseCorrector {
     baseDeclaration + indent(sampleSolution, 2)
   }
 
-  private def buildOptionFileContent(exercise: RoseExerciseContent): String =
+  private def buildOptionFileContent(exercise: RoseExercise): String =
     """|{
        |  "start": {
        |    "x": 0,

@@ -3,7 +3,7 @@ package model.tools.programming
 import model.tools.programming.ProgConsts._
 import model.tools.programming.ProgDataTypes.{GenericProgDataType, NonGenericProgDataType}
 import model.tools.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
-import model.tools.{ExerciseFile, SampleSolution, ToolJsonProtocol}
+import model.tools.{ExerciseFile, SampleSolution, SemanticVersion, ToolJsonProtocol}
 import play.api.libs.json._
 
 object ProgConsts {
@@ -13,7 +13,7 @@ object ProgConsts {
 
 }
 
-object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent, ProgSolution, ProgExPart] {
+object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgrammingExercise, ProgSolution, ProgExPart] {
 
   private val progTestDataFormat: Format[ProgTestData] = Json.format[ProgTestData]
 
@@ -21,13 +21,13 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
     implicit val eff: Format[ExerciseFile]   = ToolJsonProtocol.exerciseFileFormat
     implicit val putdf: Format[ProgTestData] = progTestDataFormat
 
-    Json.format[ProgSolution]
+    Json.format
   }
 
   private val sampleSolutionFormat: Format[SampleSolution[ProgSolution]] = {
     implicit val psf: Format[ProgSolution] = solutionFormat
 
-    Json.format[SampleSolution[ProgSolution]]
+    Json.format
   }
 
   lazy val progDataTypeFormat: Format[ProgDataType] = {
@@ -36,22 +36,22 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
       implicit lazy val lf: Format[ProgDataTypes.LIST] = {
         implicit lazy val pdtf: Format[ProgDataType] = progDataTypeFormat
 
-        Json.format[ProgDataTypes.LIST]
+        Json.format
       }
 
       implicit lazy val tf: Format[ProgDataTypes.TUPLE] = {
         implicit lazy val pdtf: Format[ProgDataType] = progDataTypeFormat
 
-        Json.format[ProgDataTypes.TUPLE]
+        Json.format
       }
 
       implicit lazy val df: Format[ProgDataTypes.DICTIONARY] = {
         implicit lazy val pdtf: Format[ProgDataType] = progDataTypeFormat
 
-        Json.format[ProgDataTypes.DICTIONARY]
+        Json.format
       }
 
-      Json.format[GenericProgDataType]
+      Json.format
     }
 
     val reads: Reads[ProgDataType] = {
@@ -74,13 +74,13 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
   private val unitTestTestConfigFormat: Format[UnitTestTestConfig] = {
     implicit val eff: Format[ExerciseFile] = ToolJsonProtocol.exerciseFileFormat
 
-    Json.format[UnitTestTestConfig]
+    Json.format
   }
 
   val progInputFormat: Format[ProgInput] = {
     implicit val pdtf: Format[ProgDataType] = progDataTypeFormat
 
-    Json.format[ProgInput]
+    Json.format
   }
 
   val unitTestPartFormat: Format[UnitTestPart] = {
@@ -90,16 +90,17 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
 
     implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
 
-    Json.format[UnitTestPart]
+    Json.format
   }
 
   val implementationPartFormat: Format[ImplementationPart] = {
     implicit val eff: Format[ExerciseFile] = ToolJsonProtocol.exerciseFileFormat
 
-    Json.format[ImplementationPart]
+    Json.format
   }
 
-  override val exerciseContentFormat: Format[ProgExerciseContent] = {
+  override val exerciseFormat: Format[ProgrammingExercise] = {
+    implicit val svf: Format[SemanticVersion]               = ToolJsonProtocol.semanticVersionFormat
     implicit val pif: Format[ProgInput]                     = progInputFormat
     implicit val pdtf: Format[ProgDataType]                 = progDataTypeFormat
     implicit val utf: Format[UnitTestPart]                  = unitTestPartFormat
@@ -108,7 +109,7 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
     implicit val pstdf: Format[ProgTestData]                = progTestDataFormat
     implicit val ucdf: Format[UmlClassDiagram]              = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
 
-    Json.format[ProgExerciseContent]
+    Json.format
   }
 
   // Result
@@ -129,19 +130,19 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
   val unitTestDataWrites: Writes[UnitTestTestData] = {
     implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
 
-    Json.writes[UnitTestTestData]
+    Json.writes
   }
 
   private val unitTestCorrectionResultFormat: Format[UnitTestCorrectionResult] = {
     implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
 
-    Json.format[UnitTestCorrectionResult]
+    Json.format
   }
 
   val unitTestCorrectionResultsFileJsonReads: Reads[UnitTestCorrectionResultFileContent] = {
     implicit val utcrf: Format[UnitTestCorrectionResult] = unitTestCorrectionResultFormat
 
-    Json.reads[UnitTestCorrectionResultFileContent]
+    Json.reads
   }
 
   /*
@@ -156,9 +157,9 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgExerciseContent,
 
   // Simplified ProgUserTestData
 
-  def dumpCompleteTestDataToJson(exercise: ProgExerciseContent, testData: Seq[ProgTestData]): JsValue = Json.obj(
+  def dumpCompleteTestDataToJson(baseData: Option[JsValue], testData: Seq[ProgTestData]): JsValue = Json.obj(
     testDataName -> JsArray(testData.map(progTestDataFormat.writes)),
-    baseDataName -> exercise.baseData
+    baseDataName -> baseData
   )
 
   override val partTypeFormat: Format[ProgExPart] = ProgExPart.jsonFormat

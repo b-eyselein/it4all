@@ -20,7 +20,7 @@ object RegexExParts extends ExParts[RegexExPart] {
 object RegexExtractionCorrector {
 
   def correctExtraction(
-    regexExerciseContent: RegexExerciseContent,
+    regexExerciseContent: RegexExercise,
     userRegex: Regex,
     solutionSaved: Boolean
   ): RegexExtractionResult = {

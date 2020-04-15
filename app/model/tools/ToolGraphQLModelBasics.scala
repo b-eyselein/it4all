@@ -4,19 +4,32 @@ import model.core.matching.{Match, MatchType, MatchingResult}
 import model.core.result.{AbstractCorrectionResult, SuccessType}
 import model.points.Points
 import sangria.macros.derive._
-import sangria.schema.{BooleanType, EnumType, Field, FloatType, InputObjectType, InputType, IntType, InterfaceType, ListType, ObjectType, OptionType, OutputType, StringType, fields, interfaces}
+import sangria.schema._
 
 import scala.reflect.ClassTag
 
-trait ToolGraphQLModelBasics[
-  ExContentType <: ExerciseContent,
-  SolType,
-  PartType <: ExPart
-] {
+trait ToolGraphQLModels {
 
-  protected val ExerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
+  protected val semanticVersionType: ObjectType[Unit, SemanticVersion] = deriveObjectType()
 
-  protected val ExerciseFileInputType: InputObjectType[ExerciseFile] = deriveInputObjectType(
+  protected val exerciseInterfaceType: InterfaceType[Unit, Exercise] = InterfaceType(
+    "ExerciseInterface",
+    () =>
+      fields[Unit, Exercise](
+        Field("id", IntType, resolve = _.value.id),
+        Field("collectionId", IntType, resolve = _.value.collectionId),
+        Field("toolId", StringType, resolve = _.value.toolId),
+        Field("semanticVersion", semanticVersionType, resolve = _.value.semanticVersion),
+        Field("title", StringType, resolve = _.value.title),
+        Field("authors", ListType(StringType), resolve = _.value.authors),
+        Field("text", StringType, resolve = _.value.text),
+        Field("difficulty", OptionType(IntType), resolve = _.value.difficulty)
+      )
+  ).withPossibleTypes(() => ToolList.tools.map(t => t.graphQlModels.ExerciseType))
+
+  protected val exerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
+
+  protected val exerciseFileInputType: InputObjectType[ExerciseFile] = deriveInputObjectType(
     InputObjectTypeName("ExerciseFileInput")
   )
 
@@ -25,6 +38,10 @@ trait ToolGraphQLModelBasics[
   protected val successTypeType: EnumType[SuccessType] = deriveEnumType()
 
   protected val pointsType: ObjectType[Unit, Points] = deriveObjectType()
+
+}
+
+trait ToolGraphQLModelBasics[ExerciseType <: Exercise, SolType, PartType <: ExPart] extends ToolGraphQLModels {
 
   // Sample solution types
 
@@ -95,7 +112,7 @@ trait ToolGraphQLModelBasics[
     )
   )
 
-  val ExContentTypeType: ObjectType[Unit, ExContentType]
+  val ExerciseType: ObjectType[Unit, ExerciseType]
 
   val AbstractResultTypeType: OutputType[Any]
 

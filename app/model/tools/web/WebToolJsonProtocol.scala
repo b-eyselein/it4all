@@ -1,10 +1,10 @@
 package model.tools.web
 
 import de.uniwue.webtester.sitespec._
-import model.tools.{ExerciseFile, SampleSolution, ToolJsonProtocol}
+import model.tools.{ExerciseFile, SampleSolution, SemanticVersion, ToolJsonProtocol}
 import play.api.libs.json.{Format, Json}
 
-object WebToolJsonProtocol extends ToolJsonProtocol[WebExerciseContent, WebSolution, WebExPart] {
+object WebToolJsonProtocol extends ToolJsonProtocol[WebExercise, WebSolution, WebExPart] {
 
   // solution format
 
@@ -25,41 +25,42 @@ object WebToolJsonProtocol extends ToolJsonProtocol[WebExerciseContent, WebSolut
   private val jsActionFormat: Format[JsAction] = {
     implicit val jatf: Format[JsActionType] = JsActionType.jsonFormat
 
-    Json.format[JsAction]
+    Json.format
   }
 
-  private val jsHtmlElementSpecFormat = {
+  private val jsHtmlElementSpecFormat: Format[JsHtmlElementSpec] = {
     implicit val af: Format[Map[String, String]] = keyValueObjectMapFormat
 
-    Json.format[JsHtmlElementSpec]
+    Json.format
   }
 
   private val jsTaskFormat: Format[JsTask] = {
     implicit val hesf: Format[JsHtmlElementSpec] = jsHtmlElementSpecFormat
     implicit val jsf: Format[JsAction]           = jsActionFormat
 
-    Json.format[JsTask]
+    Json.format
   }
 
   private val htmlTaskFormat: Format[HtmlTask] = {
     implicit val af: Format[Map[String, String]] = keyValueObjectMapFormat
 
-    Json.format[HtmlTask]
+    Json.format
   }
 
   private val siteSpecFormat: Format[SiteSpec] = {
     implicit val htf: Format[HtmlTask] = htmlTaskFormat
     implicit val jtf: Format[JsTask]   = jsTaskFormat
 
-    Json.format[SiteSpec]
+    Json.format
   }
 
-  override val exerciseContentFormat: Format[WebExerciseContent] = {
+  override val exerciseFormat: Format[WebExercise] = {
+    implicit val svf: Format[SemanticVersion]              = ToolJsonProtocol.semanticVersionFormat
     implicit val ssf: Format[SiteSpec]                     = siteSpecFormat
     implicit val eff: Format[ExerciseFile]                 = ToolJsonProtocol.exerciseFileFormat
     implicit val fssf: Format[SampleSolution[WebSolution]] = sampleSolutionFormat
 
-    Json.format[WebExerciseContent]
+    Json.format
   }
 
   override val partTypeFormat: Format[WebExPart] = WebExParts.jsonFormat

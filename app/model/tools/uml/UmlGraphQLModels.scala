@@ -1,13 +1,13 @@
 package model.tools.uml
 
 import model.core.matching.{MatchType, MatchingResult}
-import model.tools.uml.UmlToolMain.{AssociationComparison, ClassComparison, ImplementationComparison}
+import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
-import model.tools.{KeyValueObject, SampleSolution, ToolGraphQLModelBasics}
+import model.tools.{KeyValueObject, SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlClassDiagram, UmlExPart] {
+object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExercise, UmlClassDiagram, UmlExPart] {
 
   private val umlVisibilityType: EnumType[UmlVisibility] = deriveEnumType()
   private val umlClassTypeType: EnumType[UmlClassType]   = deriveEnumType()
@@ -75,11 +75,16 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExerciseContent, UmlCl
     deriveObjectType()
   }
 
-  override val ExContentTypeType: ObjectType[Unit, UmlExerciseContent] = {
+  private val umlExTagType: EnumType[UmlExTag] = deriveEnumType()
+
+  override val ExerciseType: ObjectType[Unit, UmlExercise] = {
+    implicit val uett: EnumType[UmlExTag]               = umlExTagType
+    implicit val svt: ObjectType[Unit, SemanticVersion] = semanticVersionType
     implicit val sampleSolType: ObjectType[Unit, SampleSolution[UmlClassDiagram]] =
       sampleSolutionType("Uml", umlClassDiagramType)
 
     deriveObjectType(
+      Interfaces(exerciseInterfaceType),
       ReplaceField(
         "mappings",
         Field(

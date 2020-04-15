@@ -1,7 +1,7 @@
 package model.tools.uml.matcher
 
 import model.core.matching._
-import model.tools.uml.UmlToolMain.{AttributeComparison, MethodComparison}
+import model.tools.uml.UmlTool.{AttributeComparison, MethodComparison}
 import model.tools.uml.{UmlClass, UmlClassType}
 
 final case class UmlClassMatchAnalysisResult(

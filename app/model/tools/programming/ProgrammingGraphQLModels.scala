@@ -1,14 +1,14 @@
 package model.tools.programming
 
 import model.core.result.SuccessType
-import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
+import model.tools.{ExerciseFile, SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgExerciseContent, ProgSolution, ProgExPart] {
+object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgrammingExercise, ProgSolution, ProgExPart] {
 
   private val unitTestTestConfigType: ObjectType[Unit, UnitTestTestConfig] = {
-    implicit val exFileType: ObjectType[Unit, ExerciseFile] = ExerciseFileType
+    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
 
     deriveObjectType()
   }
@@ -18,19 +18,19 @@ object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgExerciseConte
 
     implicit val uttct: ObjectType[Unit, UnitTestTestConfig] = unitTestTestConfigType
 
-    implicit val exFileType: ObjectType[Unit, ExerciseFile] = ExerciseFileType
+    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
 
     deriveObjectType()
   }
 
   private val implementationPartType: ObjectType[Unit, ImplementationPart] = {
-    implicit val exFileType: ObjectType[Unit, ExerciseFile] = ExerciseFileType
+    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
 
     deriveObjectType()
   }
 
   private val progSolutionType: ObjectType[Unit, ProgSolution] = {
-    implicit val exFileType: ObjectType[Unit, ExerciseFile] = ExerciseFileType
+    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
 
     //  implicit val progTestDataType: ObjectType[Unit, ProgTestData] = deriveObjectType(
     //     ExcludeFields("input", "output")
@@ -39,17 +39,20 @@ object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgExerciseConte
     deriveObjectType(ExcludeFields("testData"))
   }
 
-  override val ExContentTypeType: ObjectType[Unit, ProgExerciseContent] = {
+  private val programmingExerciseTagType: EnumType[ProgrammingExerciseTag] = deriveEnumType()
+
+  override val ExerciseType: ObjectType[Unit, ProgrammingExercise] = {
     //    implicit val progInputType: ObjectType[Unit, ProgInput] = deriveObjectType()
     //    implicit val progDataType: ObjectType[Unit, ProgDataType] = deriveObjectType()
 
-    implicit val utpt: ObjectType[Unit, UnitTestPart] = unitTestPartType
-
-    implicit val ipt: ObjectType[Unit, ImplementationPart] = implementationPartType
-
+    implicit val pett: EnumType[ProgrammingExerciseTag]              = programmingExerciseTagType
+    implicit val svt: ObjectType[Unit, SemanticVersion]              = semanticVersionType
+    implicit val utpt: ObjectType[Unit, UnitTestPart]                = unitTestPartType
+    implicit val ipt: ObjectType[Unit, ImplementationPart]           = implementationPartType
     implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType("Prog", progSolutionType)
 
     deriveObjectType(
+      Interfaces(exerciseInterfaceType),
       // TODO: include fields !?!
       ExcludeFields("inputTypes", "outputType", "baseData", "sampleTestData", "maybeClassDiagramPart")
     )
@@ -58,7 +61,7 @@ object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgExerciseConte
   // Solution types
 
   override val SolTypeInputType: InputObjectType[ProgSolution] = {
-    implicit val efit: InputObjectType[ExerciseFile] = ExerciseFileInputType
+    implicit val efit: InputObjectType[ExerciseFile] = exerciseFileInputType
 
     deriveInputObjectType(
       InputObjectTypeName("ProgSolutionInput"),

@@ -1,27 +1,25 @@
 package model.tools
 
-import play.api.libs.json.JsValue
-
 final case class SemanticVersion(major: Int, minor: Int, patch: Int)
 
 final case class ExTag(abbreviation: String, title: String)
 
-final case class Exercise(
-  id: Int,
-  collectionId: Int,
-  toolId: String,
-  semanticVersion: SemanticVersion,
-  title: String,
-  authors: Seq[String],
-  text: String,
-  tags: Seq[ExTag],
-  difficulty: Option[Int],
-  // FIXME: use generic ExerciseContent?
-  content: JsValue
-) {
+trait Exercise {
+  type ET
+  type SolType
 
-  def parts: Seq[ExPart] = Seq()
+  val id: Int
+  val collectionId: Int
+  val toolId: String
+  val semanticVersion: SemanticVersion
 
+  val title: String
+  val authors: Seq[String]
+  val text: String
+  val tags: Seq[ET]
+  val difficulty: Option[Int]
+
+  val sampleSolutions: Seq[SampleSolution[SolType]]
 }
 
 final case class SampleSolution[SolType](

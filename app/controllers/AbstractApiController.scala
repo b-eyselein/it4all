@@ -16,22 +16,21 @@ trait AbstractApiController {
   self: AbstractController =>
 
   private val bearerHeaderRegex: Regex = "Bearer (.*)".r
+  private val clock: Clock             = Clock.systemDefaultZone()
 
-  private implicit val clock: Clock             = Clock.systemDefaultZone()
-  private implicit val ec: ExecutionContext     = self.defaultExecutionContext
   private implicit val userFormat: Format[User] = JsonProtocol.userFormat
+  private implicit val ec: ExecutionContext     = self.defaultExecutionContext
 
-  protected implicit val configuration: Configuration
-
+  protected val configuration: Configuration
   protected val adminRightsRequired: Boolean
 
   protected def createJwtSession(user: User): JwtSession = {
-    JwtSession() + ("user", user)
+    JwtSession()(configuration, clock) + ("user", user)
   }
 
   def userFromHeader(request: RequestHeader): Option[User] = request.headers.get("Authorization").flatMap {
     case bearerHeaderRegex(serializedJwtToken) =>
-      JwtSession.deserialize(serializedJwtToken).getAs[User]("user").flatMap { user =>
+      JwtSession.deserialize(serializedJwtToken)(configuration, clock).getAs[User]("user").flatMap { user =>
         if (adminRightsRequired && !user.isAdmin) {
           None
         } else {

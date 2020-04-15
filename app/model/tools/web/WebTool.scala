@@ -16,25 +16,18 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
-object WebToolMain extends CollectionToolMain("web", "Web") {
+object WebTool extends CollectionTool("web", "Web") {
 
+  override type ExerciseType   = WebExercise
   override type PartType       = WebExPart
-  override type ExContentType  = WebExerciseContent
   override type SolType        = WebSolution
   override type CompResultType = WebCompleteResult
 
-  // Other members
-
-  override val hasPlayground: Boolean  = true
-  override val exParts: Seq[WebExPart] = WebExParts.values
-
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: ToolJsonProtocol[WebExerciseContent, WebSolution, WebExPart] =
-    WebToolJsonProtocol
+  override val toolJsonProtocol: ToolJsonProtocol[WebExercise, WebSolution, WebExPart] = WebToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[WebExerciseContent, WebSolution, WebExPart] =
-    WebGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[WebExercise, WebSolution, WebExPart] = WebGraphQLModels
 
   // DB
 
@@ -71,7 +64,7 @@ object WebToolMain extends CollectionToolMain("web", "Web") {
   }
 
   private def onDriverGetSuccess(
-    exercise: WebExerciseContent,
+    exercise: WebExercise,
     part: WebExPart,
     driver: HtmlUnitDriver,
     solutionSaved: Boolean
@@ -98,27 +91,26 @@ object WebToolMain extends CollectionToolMain("web", "Web") {
     }
   }
 
-  def getSolutionUrl(user: User, exercise: Exercise, fileName: String): String =
-    s"http://localhost:9080/${user.username}/${String.valueOf(exercise.collectionId)}/${String.valueOf(exercise.id)}/${fileName}"
+  private def getSolutionUrl(user: User, exercise: WebExercise, fileName: String): String =
+    s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.id}/$fileName"
 
-  override def correctEx(
+  override def correctAbstract(
     user: User,
     learnerSolution: WebSolution,
     collection: ExerciseCollection,
-    exercise: Exercise,
-    content: WebExerciseContent,
+    exercise: WebExercise,
     part: WebExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[WebCompleteResult]] = Future {
     writeWebSolutionFiles(user.username, collection.id, exercise.id, learnerSolution)
       .flatMap { _ =>
         val driver              = new HtmlUnitDriver(true)
-        val solutionUrl: String = getSolutionUrl(user, exercise, content.siteSpec.fileName)
+        val solutionUrl: String = getSolutionUrl(user, exercise, exercise.siteSpec.fileName)
 
         Try(driver.get(solutionUrl))
           .fold(
             onDriverGetError,
-            (_: Unit) => onDriverGetSuccess(content, part, driver, solutionSaved)
+            (_: Unit) => onDriverGetSuccess(exercise, part, driver, solutionSaved)
           )
       }
   }

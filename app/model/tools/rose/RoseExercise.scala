@@ -1,15 +1,48 @@
 package model.tools.rose
 
+import enumeratum.{EnumEntry, PlayEnum}
+import model.tools._
 import model.tools.programming.ProgDataType
-import model.tools.{ExPart, ExParts, ExerciseContent, SampleSolution}
 
 abstract sealed class RoseExPart(val partName: String, val urlName: String) extends ExPart
 
-object RoseExParts extends ExParts[RoseExPart] {
+object RoseExPart extends ExParts[RoseExPart] {
 
   val values: IndexedSeq[RoseExPart] = findValues
 
   case object RoseSingleExPart extends RoseExPart("Robotersimulation", "robot_sim")
+
+}
+
+sealed trait RoseExTag extends EnumEntry
+
+case object RoseExTag extends PlayEnum[RoseExTag] {
+
+  override val values: IndexedSeq[RoseExTag] = findValues
+
+  case object RoseExTagTodo extends RoseExTag
+
+}
+
+final case class RoseExercise(
+  id: Int,
+  collectionId: Int,
+  toolId: String,
+  semanticVersion: SemanticVersion,
+  title: String,
+  authors: Seq[String],
+  text: String,
+  tags: Seq[RoseExTag],
+  difficulty: Option[Int],
+  sampleSolutions: Seq[SampleSolution[String]],
+  fieldWidth: Int,
+  fieldHeight: Int,
+  isMultiplayer: Boolean,
+  inputTypes: Seq[RoseInputType]
+) extends Exercise {
+
+  override type ET      = RoseExTag
+  override type SolType = String
 
 }
 
