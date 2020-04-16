@@ -15,25 +15,14 @@ case object RegexCorrectionTypes extends PlayEnum[RegexCorrectionType] {
 
 }
 
-sealed trait RegexExTag extends EnumEntry
-
-case object RegexExTag extends PlayEnum[RegexExTag] {
-
-  override val values: IndexedSeq[RegexExTag] = findValues
-
-  case object RegexExTagTodo extends RegexExTag
-
-}
-
 final case class RegexExercise(
   id: Int,
   collectionId: Int,
   toolId: String,
-  semanticVersion: SemanticVersion,
   title: String,
   authors: Seq[String],
   text: String,
-  tags: Seq[RegexExTag],
+  topics: Seq[Topic],
   difficulty: Option[Int],
   sampleSolutions: Seq[SampleSolution[String]],
   maxPoints: Int,
@@ -42,7 +31,6 @@ final case class RegexExercise(
   extractionTestData: Seq[RegexExtractionTestData] = Seq.empty
 ) extends Exercise {
 
-  override type ET      = RegexExTag
   override type SolType = String
 
 }

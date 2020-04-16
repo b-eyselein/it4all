@@ -1,55 +1,62 @@
-import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ApiService} from '../../tools/collection-tools/_services/api.service';
-import {IExerciseCollection} from '../../_interfaces/models';
-import {Saveable} from '../../_interfaces/saveable';
-import {ReadObjectComponent} from '../_components/read-object/read-object.component';
 import {Subscription} from 'rxjs';
-import {AdminReadCollectionsGQL, AdminReadCollectionsQuery, AdminUpsertCollectionGQL} from '../../_services/apollo_services';
-
-interface SaveableExerciseCollection extends IExerciseCollection, Saveable {
-}
+import {AdminReadCollectionsGQL, AdminUpsertCollectionGQL} from '../../_services/apollo_services';
+import {Saveable} from "../../_interfaces/saveable";
+import {ExerciseCollection} from "../../_interfaces/graphql-types";
 
 @Component({templateUrl: './admin-read-collections.component.html'})
-export class AdminReadCollectionsComponent implements OnInit {
+export class AdminReadCollectionsComponent implements OnInit, OnDestroy {
 
+  private toolId: string;
+  private sub: Subscription;
 
-  sub: Subscription;
-
-  adminReadCollectionsQuery: AdminReadCollectionsQuery;
-  loadedCollections: SaveableExerciseCollection[];
-
-  @ViewChildren(ReadObjectComponent) readCollectionComponents: QueryList<ReadObjectComponent<SaveableExerciseCollection>>;
+  toolName: string;
+  savableCollections: Saveable<ExerciseCollection>[];
 
   constructor(
     private route: ActivatedRoute,
-    private apiService: ApiService,
     private adminReadCollectionsGQL: AdminReadCollectionsGQL,
     private adminUpsertCollectionGQL: AdminUpsertCollectionGQL
   ) {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe((paramMap) => {
-      const toolId = paramMap.get('toolId');
+    this.sub = this.route.paramMap.subscribe((paramMap) => {
+      this.toolId = paramMap.get('toolId');
 
       this.adminReadCollectionsGQL
-        .watch({toolId})
+        .watch({toolId: this.toolId})
         .valueChanges
-        .subscribe(({data}) => this.adminReadCollectionsQuery = data);
+        .subscribe(({data}) => {
+            this.toolName = data.tool.name;
 
-      this.apiService.adminReadCollections(toolId)
-        .subscribe((loadedCollections) => this.loadedCollections = loadedCollections);
+            this.savableCollections = data.tool.readCollections.map((ccf) => {
+              const collection: ExerciseCollection = JSON.parse(ccf);
+              return {saved: false, title: `${collection.id}. ${collection.title}`, value: collection, stringified: ccf}
+            });
+          }
+        );
     });
   }
 
-  save(collection: SaveableExerciseCollection): void {
-    this.apiService.adminUpsertCollection(collection)
-      .subscribe((wasUpserted) => collection.saved = wasUpserted);
+  ngOnDestroy(): void {
+    this.sub.unsubscribe()
+  }
+
+  save(savableCollection: Saveable<ExerciseCollection>): void {
+    this.adminUpsertCollectionGQL
+      .mutate({
+        toolId: this.toolId,
+        content: savableCollection.stringified
+      })
+      .subscribe(({data}) => savableCollection.saved = data.upsertCollection)
   }
 
   saveAll(): void {
-    this.readCollectionComponents.forEach((readCollectionComponent) => readCollectionComponent.save.emit());
+    this.savableCollections
+      .filter((sc) => !sc.saved)
+      .forEach((sc) => this.save(sc));
   }
 
 }

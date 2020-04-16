@@ -16,7 +16,7 @@ describe('TagComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TagComponent);
     component = fixture.componentInstance;
-    component.tag = {title: 'Title', abbreviation: 'L'};
+    component.topic = {title: 'Title', abbreviation: 'L'};
     fixture.detectChanges();
   });
 

@@ -3,7 +3,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {CollectionAdminComponent} from './collection-admin.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
-import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {ActivatedRoute} from '@angular/router';
 
@@ -16,7 +15,6 @@ describe('CollectionAdminComponent', () => {
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
       declarations: [CollectionAdminComponent],
       providers: [
-        ApiService,
         {
           provide: ActivatedRoute,
           useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'web']])}}

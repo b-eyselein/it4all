@@ -3,7 +3,7 @@ package model.tools.sql
 import model.GraphQLContext
 import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
-import model.tools.{SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
+import model.tools.{SampleSolution, ToolGraphQLModelBasics}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
@@ -20,11 +20,11 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExercise, String, SqlE
   override val ExerciseType: ObjectType[Unit, SqlExercise] = {
     implicit val seTagT: EnumType[SqlExTag]                                      = sqlExerciseTagType
     implicit val seTypeT: EnumType[SqlExerciseType]                              = sqlExerciseTypeType
-    implicit val svt: ObjectType[Unit, SemanticVersion]                          = semanticVersionType
     implicit val sqlSampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
 
     deriveObjectType(
-      Interfaces(exerciseInterfaceType)
+      Interfaces(exerciseInterfaceType),
+      ExcludeFields("topics")
     )
   }
 

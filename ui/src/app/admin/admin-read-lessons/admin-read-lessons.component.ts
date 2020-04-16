@@ -1,37 +1,56 @@
-import {Component, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ApiService} from '../../tools/collection-tools/_services/api.service';
-import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
 import {Saveable} from '../../_interfaces/saveable';
 import {ReadObjectComponent} from '../_components/read-object/read-object.component';
-import {Lesson} from '../../_interfaces/lesson';
+import {Subscription} from "rxjs";
+import {AdminReadLessonsGQL, AdminReadLessonsQuery, CompleteLessonFragment} from 'src/app/_services/apollo_services';
 
-interface LoadedLesson extends Lesson, Saveable {
-}
 
 @Component({templateUrl: './admin-read-lessons.component.html'})
-export class AdminReadLessonsComponent extends ComponentWithCollectionTool implements OnInit {
+export class AdminReadLessonsComponent implements OnInit, OnDestroy {
 
-  loadedLessons: LoadedLesson[];
+  private toolId: string;
+  private sub: Subscription;
 
-  @ViewChildren(ReadObjectComponent) readLessons: QueryList<ReadObjectComponent<LoadedLesson>>;
+  readLessonsQuery: AdminReadLessonsQuery;
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService) {
-    super(route);
+  @ViewChildren(ReadObjectComponent) readLessonsComponents: QueryList<ReadObjectComponent<CompleteLessonFragment>>;
+
+
+  constructor(
+    private route: ActivatedRoute,
+    private adminReadLessonsGQL: AdminReadLessonsGQL,
+  ) {
   }
 
   ngOnInit() {
-    this.apiService.adminReadLessons(this.tool.id)
-      .subscribe((loadedLessons) => this.loadedLessons = loadedLessons);
+    this.sub = this.route.paramMap.subscribe((paramMap) => {
+      this.toolId = paramMap.get('toolId');
+
+      this.adminReadLessonsGQL
+        .watch({toolId: this.toolId})
+        .valueChanges
+        .subscribe(({data}) => this.readLessonsQuery = data);
+    })
   }
 
-  save(lesson: LoadedLesson): void {
-    this.apiService.adminUpsertLesson(lesson)
-      .subscribe((saved) => lesson.saved = saved);
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
+
+  get readLessons(): Saveable<CompleteLessonFragment>[] | undefined {
+    return this.readLessonsQuery.tool.readLessons.map((rl) => {
+      return {saved: false, title: '', value: rl, stringified: ''}
+    });
+  }
+
+  save(lesson: Saveable<CompleteLessonFragment>): void {
+//    this.apiService.adminUpsertLesson(lesson.value)
+    //     .subscribe((saved) => lesson.saved = saved);
   }
 
   saveAll(): void {
-    this.readLessons.forEach((readLesson) => readLesson.save.emit());
+    this.readLessonsComponents.forEach((readLesson) => readLesson.save.emit());
   }
 
 }

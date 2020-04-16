@@ -2,7 +2,7 @@ package model.tools.sql
 
 import model.User
 import model.core.matching.MatchingResult
-import model.tools._
+import model.tools.{StringSampleSolutionToolJsonProtocol, _}
 import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}

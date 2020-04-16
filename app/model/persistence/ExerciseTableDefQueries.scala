@@ -1,5 +1,6 @@
 package model.persistence
 
+import model.json.JsonProtocols
 import model.lesson.{Lesson, LessonContent}
 import model.tools._
 import play.api.db.slick.HasDatabaseConfigProvider
@@ -45,7 +46,7 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
   }
 
   private def lessonFromDbLesson(dbLesson: DbLesson): Lesson = {
-    val lessonContentSeqReads = Reads.seq(ToolJsonProtocol.lessonContentFormat)
+    val lessonContentSeqReads = Reads.seq(JsonProtocols.lessonContentFormat)
 
     dbLesson match {
       case DbLesson(id, toolId, title, description, contentJson) =>
@@ -138,7 +139,7 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
     db.run(exercisesTQ.insertOrUpdate(exercise)).transform(_ == 1, identity)
 
   def futureUpsertLesson(lesson: Lesson): Future[Boolean] = {
-    val lessonContentWrites: Writes[Seq[LessonContent]] = Writes.seq(ToolJsonProtocol.lessonContentFormat)
+    val lessonContentWrites: Writes[Seq[LessonContent]] = Writes.seq(JsonProtocols.lessonContentFormat)
 
     val dbLesson = DbLesson(
       lesson.id,
@@ -154,7 +155,6 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
   def futureInsertSolution(
     username: String,
     exerciseId: Int,
-    semanticVersion: SemanticVersion,
     collectionId: Int,
     toolId: String,
     part: ExPart,
@@ -168,7 +168,6 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
         exerciseId,
         collectionId,
         toolId,
-        semanticVersion,
         part,
         username,
         solution

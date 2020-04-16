@@ -1,15 +1,16 @@
 package model.tools.web
 
 import de.uniwue.webtester.sitespec._
-import model.tools.{ExerciseFile, SampleSolution, SemanticVersion, ToolJsonProtocol}
-import play.api.libs.json.{Format, Json}
+import model.json.JsonProtocols
+import model.tools._
+import play.api.libs.json.{Format, Json, Reads}
 
 object WebToolJsonProtocol extends ToolJsonProtocol[WebExercise, WebSolution, WebExPart] {
 
   // solution format
 
   override val solutionFormat: Format[WebSolution] = {
-    implicit val eff: Format[ExerciseFile] = ToolJsonProtocol.exerciseFileFormat
+    implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
 
     Json.format
   }
@@ -55,14 +56,21 @@ object WebToolJsonProtocol extends ToolJsonProtocol[WebExercise, WebSolution, We
   }
 
   override val exerciseFormat: Format[WebExercise] = {
-    implicit val svf: Format[SemanticVersion]              = ToolJsonProtocol.semanticVersionFormat
+    implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
+    implicit val tf: Format[Topic]         = JsonProtocols.topicFormat
+
     implicit val ssf: Format[SiteSpec]                     = siteSpecFormat
-    implicit val eff: Format[ExerciseFile]                 = ToolJsonProtocol.exerciseFileFormat
     implicit val fssf: Format[SampleSolution[WebSolution]] = sampleSolutionFormat
 
     Json.format
   }
 
   override val partTypeFormat: Format[WebExPart] = WebExParts.jsonFormat
+
+  override val readExercisesMessageReads: Reads[ReadExercisesMessage[WebExercise]] = {
+    implicit val ef: Format[WebExercise] = exerciseFormat
+
+    Json.reads
+  }
 
 }

@@ -12,8 +12,8 @@ export type CollectionListQueryVariables = {
 export type CollectionListQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
-    & Pick<Types.Tool, 'name'>
+    { __typename?: 'CollectionTol' }
+    & Pick<Types.CollectionTol, 'name'>
     & { collections: Array<(
       { __typename?: 'ExerciseCollection' }
       & Pick<Types.ExerciseCollection, 'id' | 'title' | 'exerciseCount'>
@@ -30,12 +30,27 @@ export type ExercisesQueryVariables = {
 export type ExercisesQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
+    { __typename?: 'CollectionTol' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & { exercises: Array<(
-        { __typename?: 'Exercise' }
-        & Pick<Types.Exercise, 'id' | 'title'>
+        { __typename?: 'ProgrammingExercise' }
+        & Pick<Types.ProgrammingExercise, 'id' | 'title'>
+      ) | (
+        { __typename?: 'RegexExercise' }
+        & Pick<Types.RegexExercise, 'id' | 'title'>
+      ) | (
+        { __typename?: 'SqlExercise' }
+        & Pick<Types.SqlExercise, 'id' | 'title'>
+      ) | (
+        { __typename?: 'UmlExercise' }
+        & Pick<Types.UmlExercise, 'id' | 'title'>
+      ) | (
+        { __typename?: 'WebExercise' }
+        & Pick<Types.WebExercise, 'id' | 'title'>
+      ) | (
+        { __typename?: 'XmlExercise' }
+        & Pick<Types.XmlExercise, 'id' | 'title'>
       )> }
     )> }
   )> }
@@ -49,8 +64,8 @@ export type CollectionToolOverviewQueryVariables = {
 export type CollectionToolOverviewQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
-    & Pick<Types.Tool, 'name' | 'exerciseCount' | 'collectionCount' | 'lessonCount'>
+    { __typename?: 'CollectionTol' }
+    & Pick<Types.CollectionTol, 'name' | 'exerciseCount' | 'collectionCount' | 'lessonCount'>
   )> }
 );
 
@@ -63,13 +78,28 @@ export type CollectionOverviewQueryVariables = {
 export type CollectionOverviewQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
+    { __typename?: 'CollectionTol' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & Pick<Types.ExerciseCollection, 'title'>
       & { exercises: Array<(
-        { __typename?: 'Exercise' }
-        & FieldsForLinkFragment
+        { __typename?: 'ProgrammingExercise' }
+        & FieldsForLink_ProgrammingExercise_Fragment
+      ) | (
+        { __typename?: 'RegexExercise' }
+        & FieldsForLink_RegexExercise_Fragment
+      ) | (
+        { __typename?: 'SqlExercise' }
+        & FieldsForLink_SqlExercise_Fragment
+      ) | (
+        { __typename?: 'UmlExercise' }
+        & FieldsForLink_UmlExercise_Fragment
+      ) | (
+        { __typename?: 'WebExercise' }
+        & FieldsForLink_WebExercise_Fragment
+      ) | (
+        { __typename?: 'XmlExercise' }
+        & FieldsForLink_XmlExercise_Fragment
       )> }
     )> }
   )> }
@@ -83,14 +113,49 @@ export type AllExercisesOverviewQueryVariables = {
 export type AllExercisesOverviewQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
-    & { allExerciseMetaData: Array<(
-      { __typename?: 'Exercise' }
-      & { tags: Array<(
-        { __typename?: 'ExTag' }
-        & TagFragment
+    { __typename?: 'CollectionTol' }
+    & { allExercises: Array<(
+      { __typename?: 'ProgrammingExercise' }
+      & { topics: Array<(
+        { __typename?: 'Topic' }
+        & TopicFragment
       )> }
-      & FieldsForLinkFragment
+      & FieldsForLink_ProgrammingExercise_Fragment
+    ) | (
+      { __typename?: 'RegexExercise' }
+      & { topics: Array<(
+        { __typename?: 'Topic' }
+        & TopicFragment
+      )> }
+      & FieldsForLink_RegexExercise_Fragment
+    ) | (
+      { __typename?: 'SqlExercise' }
+      & { topics: Array<(
+        { __typename?: 'Topic' }
+        & TopicFragment
+      )> }
+      & FieldsForLink_SqlExercise_Fragment
+    ) | (
+      { __typename?: 'UmlExercise' }
+      & { topics: Array<(
+        { __typename?: 'Topic' }
+        & TopicFragment
+      )> }
+      & FieldsForLink_UmlExercise_Fragment
+    ) | (
+      { __typename?: 'WebExercise' }
+      & { topics: Array<(
+        { __typename?: 'Topic' }
+        & TopicFragment
+      )> }
+      & FieldsForLink_WebExercise_Fragment
+    ) | (
+      { __typename?: 'XmlExercise' }
+      & { topics: Array<(
+        { __typename?: 'Topic' }
+        & TopicFragment
+      )> }
+      & FieldsForLink_XmlExercise_Fragment
     )> }
   )> }
 );
@@ -105,26 +170,37 @@ export type ExerciseOverviewQueryVariables = {
 export type ExerciseOverviewQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
+    { __typename?: 'CollectionTol' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & { exercise?: Types.Maybe<(
-        { __typename?: 'Exercise' }
-        & Pick<Types.Exercise, 'id' | 'title' | 'text'>
+        { __typename?: 'ProgrammingExercise' }
+        & Pick<Types.ProgrammingExercise, 'id' | 'title' | 'text'>
+        & { unitTestPart: (
+          { __typename?: 'UnitTestPart' }
+          & Pick<Types.UnitTestPart, 'unitTestType'>
+        ) }
+      ) | (
+        { __typename?: 'RegexExercise' }
+        & Pick<Types.RegexExercise, 'id' | 'title' | 'text'>
+      ) | (
+        { __typename?: 'SqlExercise' }
+        & Pick<Types.SqlExercise, 'id' | 'title' | 'text'>
+      ) | (
+        { __typename?: 'UmlExercise' }
+        & Pick<Types.UmlExercise, 'id' | 'title' | 'text'>
+      ) | (
+        { __typename?: 'WebExercise' }
+        & Pick<Types.WebExercise, 'id' | 'title' | 'text'>
+        & { siteSpec: (
+          { __typename?: 'SiteSpec' }
+          & Pick<Types.SiteSpec, 'htmlTaskCount' | 'jsTaskCount'>
+        ) }
+      ) | (
+        { __typename?: 'XmlExercise' }
+        & Pick<Types.XmlExercise, 'id' | 'title' | 'text'>
       )> }
-    )>, exerciseContent?: Types.Maybe<(
-      { __typename: 'ProgExerciseContent' }
-      & { unitTestPart: (
-        { __typename?: 'UnitTestPart' }
-        & Pick<Types.UnitTestPart, 'unitTestType'>
-      ) }
-    ) | { __typename: 'RegexExerciseContent' } | { __typename: 'SqlExerciseContent' } | { __typename: 'UmlExerciseContent' } | (
-      { __typename: 'WebExerciseContent' }
-      & { siteSpec: (
-        { __typename?: 'SiteSpec' }
-        & Pick<Types.SiteSpec, 'htmlTaskCount' | 'jsTaskCount'>
-      ) }
-    ) | { __typename: 'XmlExerciseContent' }> }
+    )> }
   )> }
 );
 
@@ -138,32 +214,35 @@ export type ExerciseQueryVariables = {
 export type ExerciseQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
+    { __typename?: 'CollectionTol' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & Pick<Types.ExerciseCollection, 'shortName'>
       & { exercise?: Types.Maybe<(
-        { __typename?: 'Exercise' }
-        & ExerciseSolveFieldsFragment
+        { __typename?: 'ProgrammingExercise' }
+        & ExerciseSolveFields_ProgrammingExercise_Fragment
+        & ProgExerciseContentSolveFieldsFragment
+      ) | (
+        { __typename?: 'RegexExercise' }
+        & ExerciseSolveFields_RegexExercise_Fragment
+        & RegexExerciseContentSolveFieldsFragment
+      ) | (
+        { __typename?: 'SqlExercise' }
+        & ExerciseSolveFields_SqlExercise_Fragment
+        & SqlExerciseContentSolveFieldsFragment
+      ) | (
+        { __typename?: 'UmlExercise' }
+        & ExerciseSolveFields_UmlExercise_Fragment
+        & UmlExerciseContentSolveFieldsFragment
+      ) | (
+        { __typename?: 'WebExercise' }
+        & ExerciseSolveFields_WebExercise_Fragment
+        & WebExerciseContentSolveFieldsFragment
+      ) | (
+        { __typename?: 'XmlExercise' }
+        & ExerciseSolveFields_XmlExercise_Fragment
+        & XmlExerciseContentSolveFieldsFragment
       )> }
-    )>, exerciseContent?: Types.Maybe<(
-      { __typename: 'ProgExerciseContent' }
-      & ProgExerciseContentSolveFieldsFragment
-    ) | (
-      { __typename: 'RegexExerciseContent' }
-      & RegexExerciseContentSolveFieldsFragment
-    ) | (
-      { __typename: 'SqlExerciseContent' }
-      & SqlExerciseContentSolveFieldsFragment
-    ) | (
-      { __typename: 'UmlExerciseContent' }
-      & UmlExerciseContentSolveFieldsFragment
-    ) | (
-      { __typename: 'WebExerciseContent' }
-      & WebExerciseContentSolveFieldsFragment
-    ) | (
-      { __typename: 'XmlExerciseContent' }
-      & XmlExerciseContentSolveFieldsFragment
     )> }
   )> }
 );
@@ -176,8 +255,8 @@ export type LessonsForToolQueryVariables = {
 export type LessonsForToolQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
-    & Pick<Types.Tool, 'name'>
+    { __typename?: 'CollectionTol' }
+    & Pick<Types.CollectionTol, 'name'>
     & { lessons: Array<(
       { __typename?: 'Lesson' }
       & Pick<Types.Lesson, 'id' | 'title' | 'description'>
@@ -194,8 +273,8 @@ export type LessonQueryVariables = {
 export type LessonQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
-    & Pick<Types.Tool, 'name'>
+    { __typename?: 'CollectionTol' }
+    & Pick<Types.CollectionTol, 'name'>
     & { lesson?: Types.Maybe<(
       { __typename?: 'Lesson' }
       & Pick<Types.Lesson, 'id' | 'title' | 'description'>
@@ -211,8 +290,8 @@ export type CollectionToolAdminQueryVariables = {
 export type CollectionToolAdminQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
-    & Pick<Types.Tool, 'name' | 'collectionCount' | 'lessonCount'>
+    { __typename?: 'CollectionTol' }
+    & Pick<Types.CollectionTol, 'name' | 'collectionCount' | 'lessonCount'>
   )> }
 );
 
@@ -224,8 +303,8 @@ export type AdminLessonIndexQueryVariables = {
 export type AdminLessonIndexQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
-    & Pick<Types.Tool, 'name'>
+    { __typename?: 'CollectionTol' }
+    & Pick<Types.CollectionTol, 'name'>
     & { lessons: Array<(
       { __typename?: 'Lesson' }
       & LessonFragmentFragment
@@ -242,13 +321,28 @@ export type CollectionAdminQueryVariables = {
 export type CollectionAdminQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
+    { __typename?: 'CollectionTol' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & Pick<Types.ExerciseCollection, 'title'>
       & { exercises: Array<(
-        { __typename?: 'Exercise' }
-        & FieldsForLinkFragment
+        { __typename?: 'ProgrammingExercise' }
+        & FieldsForLink_ProgrammingExercise_Fragment
+      ) | (
+        { __typename?: 'RegexExercise' }
+        & FieldsForLink_RegexExercise_Fragment
+      ) | (
+        { __typename?: 'SqlExercise' }
+        & FieldsForLink_SqlExercise_Fragment
+      ) | (
+        { __typename?: 'UmlExercise' }
+        & FieldsForLink_UmlExercise_Fragment
+      ) | (
+        { __typename?: 'WebExercise' }
+        & FieldsForLink_WebExercise_Fragment
+      ) | (
+        { __typename?: 'XmlExercise' }
+        & FieldsForLink_XmlExercise_Fragment
       )> }
     )> }
   )> }
@@ -262,8 +356,8 @@ export type AdminCollectionsIndexQueryVariables = {
 export type AdminCollectionsIndexQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
-    & Pick<Types.Tool, 'name'>
+    { __typename?: 'CollectionTol' }
+    & Pick<Types.CollectionTol, 'name'>
     & { collections: Array<(
       { __typename?: 'ExerciseCollection' }
       & Pick<Types.ExerciseCollection, 'id' | 'title' | 'exerciseCount'>
@@ -280,10 +374,58 @@ export type AdminEditCollectionQueryVariables = {
 export type AdminEditCollectionQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
+    { __typename?: 'CollectionTol' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
-      & Pick<Types.ExerciseCollection, 'asJson'>
+      & CompleteCollectionFragment
+    )> }
+  )> }
+);
+
+export type AdminReadCollectionsQueryVariables = {
+  toolId: Types.Scalars['String'];
+};
+
+
+export type AdminReadCollectionsQuery = (
+  { __typename?: 'Query' }
+  & { tool?: Types.Maybe<(
+    { __typename?: 'CollectionTol' }
+    & Pick<Types.CollectionTol, 'name' | 'readCollections'>
+  )> }
+);
+
+export type CompleteCollectionFragment = (
+  { __typename?: 'ExerciseCollection' }
+  & Pick<Types.ExerciseCollection, 'id' | 'toolId' | 'title' | 'authors' | 'text' | 'shortName'>
+);
+
+export type AdminUpsertCollectionMutationVariables = {
+  toolId: Types.Scalars['String'];
+  content: Types.Scalars['String'];
+};
+
+
+export type AdminUpsertCollectionMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Types.Mutation, 'upsertCollection'>
+);
+
+export type CompleteLessonFragment = { __typename: 'Lesson' };
+
+export type AdminReadLessonsQueryVariables = {
+  toolId: Types.Scalars['String'];
+};
+
+
+export type AdminReadLessonsQuery = (
+  { __typename?: 'Query' }
+  & { tool?: Types.Maybe<(
+    { __typename?: 'CollectionTol' }
+    & Pick<Types.CollectionTol, 'name'>
+    & { readLessons: Array<(
+      { __typename?: 'Lesson' }
+      & CompleteLessonFragment
     )> }
   )> }
 );
@@ -298,66 +440,169 @@ export type AdminEditExerciseQueryVariables = {
 export type AdminEditExerciseQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
+    { __typename?: 'CollectionTol' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
-      & { exercise?: Types.Maybe<(
-        { __typename?: 'Exercise' }
-        & Pick<Types.Exercise, 'asJson'>
-      )> }
+      & { exercise?: Types.Maybe<{ __typename: 'ProgrammingExercise' } | { __typename: 'RegexExercise' } | { __typename: 'SqlExercise' } | { __typename: 'UmlExercise' } | { __typename: 'WebExercise' } | { __typename: 'XmlExercise' }> }
     )> }
   )> }
 );
 
-export type AdminReadCollectionsQueryVariables = {
+export type AdminReadExercisesQueryVariables = {
   toolId: Types.Scalars['String'];
+  collId: Types.Scalars['Int'];
 };
 
 
-export type AdminReadCollectionsQuery = (
+export type AdminReadExercisesQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'Tool' }
-    & Pick<Types.Tool, 'name' | 'readCollections'>
+    { __typename?: 'CollectionTol' }
+    & { collection?: Types.Maybe<(
+      { __typename?: 'ExerciseCollection' }
+      & Pick<Types.ExerciseCollection, 'readExercises'>
+    )> }
   )> }
 );
 
-export type AdminUpsertCollectionMutationVariables = {
+export type AdminUpsertExerciseMutationVariables = {
   toolId: Types.Scalars['String'];
-  collId: Types.Scalars['Int'];
   content: Types.Scalars['String'];
 };
 
 
-export type AdminUpsertCollectionMutation = (
+export type AdminUpsertExerciseMutation = (
   { __typename?: 'Mutation' }
-  & { upsertCollection?: Types.Maybe<(
-    { __typename?: 'ExerciseCollection' }
-    & Pick<Types.ExerciseCollection, 'asJson'>
+  & Pick<Types.Mutation, 'upsertExercise'>
+);
+
+type CompleteExercise_ProgrammingExercise_Fragment = (
+  { __typename: 'ProgrammingExercise' }
+  & Pick<Types.ProgrammingExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'authors' | 'text'>
+);
+
+type CompleteExercise_RegexExercise_Fragment = (
+  { __typename: 'RegexExercise' }
+  & Pick<Types.RegexExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'authors' | 'text'>
+);
+
+type CompleteExercise_SqlExercise_Fragment = (
+  { __typename: 'SqlExercise' }
+  & Pick<Types.SqlExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'authors' | 'text'>
+);
+
+type CompleteExercise_UmlExercise_Fragment = (
+  { __typename: 'UmlExercise' }
+  & Pick<Types.UmlExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'authors' | 'text'>
+);
+
+type CompleteExercise_WebExercise_Fragment = (
+  { __typename: 'WebExercise' }
+  & Pick<Types.WebExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'authors' | 'text'>
+);
+
+type CompleteExercise_XmlExercise_Fragment = (
+  { __typename: 'XmlExercise' }
+  & Pick<Types.XmlExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'authors' | 'text'>
+);
+
+export type CompleteExerciseFragment = CompleteExercise_ProgrammingExercise_Fragment | CompleteExercise_RegexExercise_Fragment | CompleteExercise_SqlExercise_Fragment | CompleteExercise_UmlExercise_Fragment | CompleteExercise_WebExercise_Fragment | CompleteExercise_XmlExercise_Fragment;
+
+export type TopicFragment = (
+  { __typename?: 'Topic' }
+  & Pick<Types.Topic, 'abbreviation' | 'title'>
+);
+
+type FieldsForLink_ProgrammingExercise_Fragment = (
+  { __typename?: 'ProgrammingExercise' }
+  & Pick<Types.ProgrammingExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
+  & { topics: Array<(
+    { __typename?: 'Topic' }
+    & Pick<Types.Topic, 'abbreviation' | 'title'>
   )> }
 );
 
-export type TagFragment = (
-  { __typename?: 'ExTag' }
-  & Pick<Types.ExTag, 'abbreviation' | 'title'>
-);
-
-export type FieldsForLinkFragment = (
-  { __typename?: 'Exercise' }
-  & Pick<Types.Exercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
-  & { tags: Array<(
-    { __typename?: 'ExTag' }
-    & Pick<Types.ExTag, 'abbreviation' | 'title'>
+type FieldsForLink_RegexExercise_Fragment = (
+  { __typename?: 'RegexExercise' }
+  & Pick<Types.RegexExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
+  & { topics: Array<(
+    { __typename?: 'Topic' }
+    & Pick<Types.Topic, 'abbreviation' | 'title'>
   )> }
 );
 
-export type ExerciseSolveFieldsFragment = (
-  { __typename?: 'Exercise' }
-  & Pick<Types.Exercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'text'>
+type FieldsForLink_SqlExercise_Fragment = (
+  { __typename?: 'SqlExercise' }
+  & Pick<Types.SqlExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
+  & { topics: Array<(
+    { __typename?: 'Topic' }
+    & Pick<Types.Topic, 'abbreviation' | 'title'>
+  )> }
 );
+
+type FieldsForLink_UmlExercise_Fragment = (
+  { __typename?: 'UmlExercise' }
+  & Pick<Types.UmlExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
+  & { topics: Array<(
+    { __typename?: 'Topic' }
+    & Pick<Types.Topic, 'abbreviation' | 'title'>
+  )> }
+);
+
+type FieldsForLink_WebExercise_Fragment = (
+  { __typename?: 'WebExercise' }
+  & Pick<Types.WebExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
+  & { topics: Array<(
+    { __typename?: 'Topic' }
+    & Pick<Types.Topic, 'abbreviation' | 'title'>
+  )> }
+);
+
+type FieldsForLink_XmlExercise_Fragment = (
+  { __typename?: 'XmlExercise' }
+  & Pick<Types.XmlExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
+  & { topics: Array<(
+    { __typename?: 'Topic' }
+    & Pick<Types.Topic, 'abbreviation' | 'title'>
+  )> }
+);
+
+export type FieldsForLinkFragment = FieldsForLink_ProgrammingExercise_Fragment | FieldsForLink_RegexExercise_Fragment | FieldsForLink_SqlExercise_Fragment | FieldsForLink_UmlExercise_Fragment | FieldsForLink_WebExercise_Fragment | FieldsForLink_XmlExercise_Fragment;
+
+type ExerciseSolveFields_ProgrammingExercise_Fragment = (
+  { __typename?: 'ProgrammingExercise' }
+  & Pick<Types.ProgrammingExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'text'>
+);
+
+type ExerciseSolveFields_RegexExercise_Fragment = (
+  { __typename?: 'RegexExercise' }
+  & Pick<Types.RegexExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'text'>
+);
+
+type ExerciseSolveFields_SqlExercise_Fragment = (
+  { __typename?: 'SqlExercise' }
+  & Pick<Types.SqlExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'text'>
+);
+
+type ExerciseSolveFields_UmlExercise_Fragment = (
+  { __typename?: 'UmlExercise' }
+  & Pick<Types.UmlExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'text'>
+);
+
+type ExerciseSolveFields_WebExercise_Fragment = (
+  { __typename?: 'WebExercise' }
+  & Pick<Types.WebExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'text'>
+);
+
+type ExerciseSolveFields_XmlExercise_Fragment = (
+  { __typename?: 'XmlExercise' }
+  & Pick<Types.XmlExercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'text'>
+);
+
+export type ExerciseSolveFieldsFragment = ExerciseSolveFields_ProgrammingExercise_Fragment | ExerciseSolveFields_RegexExercise_Fragment | ExerciseSolveFields_SqlExercise_Fragment | ExerciseSolveFields_UmlExercise_Fragment | ExerciseSolveFields_WebExercise_Fragment | ExerciseSolveFields_XmlExercise_Fragment;
 
 export type ProgExerciseContentSolveFieldsFragment = (
-  { __typename?: 'ProgExerciseContent' }
+  { __typename?: 'ProgrammingExercise' }
   & { unitTestPart: (
     { __typename?: 'UnitTestPart' }
     & Pick<Types.UnitTestPart, 'unitTestType'>
@@ -384,7 +629,7 @@ export type ProgExerciseContentSolveFieldsFragment = (
 );
 
 export type RegexExerciseContentSolveFieldsFragment = (
-  { __typename?: 'RegexExerciseContent' }
+  { __typename?: 'RegexExercise' }
   & { regexSampleSolutions: Array<(
     { __typename?: 'StringSampleSolution' }
     & Pick<Types.StringSampleSolution, 'sample'>
@@ -392,8 +637,8 @@ export type RegexExerciseContentSolveFieldsFragment = (
 );
 
 export type SqlExerciseContentSolveFieldsFragment = (
-  { __typename?: 'SqlExerciseContent' }
-  & Pick<Types.SqlExerciseContent, 'hint'>
+  { __typename?: 'SqlExercise' }
+  & Pick<Types.SqlExercise, 'hint'>
   & { sqlSampleSolutions: Array<(
     { __typename?: 'StringSampleSolution' }
     & Pick<Types.StringSampleSolution, 'sample'>
@@ -401,8 +646,8 @@ export type SqlExerciseContentSolveFieldsFragment = (
 );
 
 export type UmlExerciseContentSolveFieldsFragment = (
-  { __typename?: 'UmlExerciseContent' }
-  & Pick<Types.UmlExerciseContent, 'toIgnore'>
+  { __typename?: 'UmlExercise' }
+  & Pick<Types.UmlExercise, 'toIgnore'>
   & { mappings: Array<(
     { __typename?: 'KeyValueObject' }
     & Pick<Types.KeyValueObject, 'key' | 'value'>
@@ -462,7 +707,7 @@ export type UmlImplementationFragment = (
 );
 
 export type WebExerciseContentSolveFieldsFragment = (
-  { __typename?: 'WebExerciseContent' }
+  { __typename?: 'WebExercise' }
   & { files: Array<(
     { __typename?: 'ExerciseFile' }
     & ExFileAllFragment
@@ -486,8 +731,8 @@ export type WebExerciseContentSolveFieldsFragment = (
 );
 
 export type XmlExerciseContentSolveFieldsFragment = (
-  { __typename?: 'XmlExerciseContent' }
-  & Pick<Types.XmlExerciseContent, 'rootNode' | 'grammarDescription'>
+  { __typename?: 'XmlExercise' }
+  & Pick<Types.XmlExercise, 'rootNode' | 'grammarDescription'>
   & { xmlSampleSolutions: Array<(
     { __typename?: 'XmlSampleSolution' }
     & { sample: (
@@ -507,27 +752,53 @@ export type LessonFragmentFragment = (
   & Pick<Types.Lesson, 'id' | 'title'>
 );
 
-export const TagFragmentDoc = gql`
-    fragment Tag on ExTag {
+export const CompleteCollectionFragmentDoc = gql`
+    fragment CompleteCollection on ExerciseCollection {
+  id
+  toolId
+  title
+  authors
+  text
+  shortName
+}
+    `;
+export const CompleteLessonFragmentDoc = gql`
+    fragment CompleteLesson on Lesson {
+  __typename
+}
+    `;
+export const CompleteExerciseFragmentDoc = gql`
+    fragment CompleteExercise on ExerciseInterface {
+  id
+  collectionId
+  toolId
+  title
+  authors
+  text
+  __typename
+}
+    `;
+export const TopicFragmentDoc = gql`
+    fragment Topic on Topic {
   abbreviation
   title
 }
     `;
 export const FieldsForLinkFragmentDoc = gql`
-    fragment FieldsForLink on Exercise {
+    fragment FieldsForLink on ExerciseInterface {
   id
   collectionId
   toolId
   title
   difficulty
-  tags {
+  topics {
     abbreviation
     title
   }
 }
     `;
 export const ExerciseSolveFieldsFragmentDoc = gql`
-    fragment ExerciseSolveFields on Exercise {
+    fragment ExerciseSolveFields on ExerciseInterface {
   id
   collectionId
   toolId
@@ -544,7 +815,7 @@ export const ExFileAllFragmentDoc = gql`
 }
     `;
 export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
-    fragment ProgExerciseContentSolveFields on ProgExerciseContent {
+    fragment ProgExerciseContentSolveFields on ProgrammingExercise {
   unitTestPart {
     unitTestType
     unitTestFiles {
@@ -566,14 +837,14 @@ export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
 }
     ${ExFileAllFragmentDoc}`;
 export const RegexExerciseContentSolveFieldsFragmentDoc = gql`
-    fragment RegexExerciseContentSolveFields on RegexExerciseContent {
+    fragment RegexExerciseContentSolveFields on RegexExercise {
   regexSampleSolutions: sampleSolutions {
     sample
   }
 }
     `;
 export const SqlExerciseContentSolveFieldsFragmentDoc = gql`
-    fragment SqlExerciseContentSolveFields on SqlExerciseContent {
+    fragment SqlExerciseContentSolveFields on SqlExercise {
   hint
   sqlSampleSolutions: sampleSolutions {
     sample
@@ -645,7 +916,7 @@ export const UmlClassDiagramFragmentDoc = gql`
 ${UmlAssociationFragmentDoc}
 ${UmlImplementationFragmentDoc}`;
 export const UmlExerciseContentSolveFieldsFragmentDoc = gql`
-    fragment UmlExerciseContentSolveFields on UmlExerciseContent {
+    fragment UmlExerciseContentSolveFields on UmlExercise {
   toIgnore
   mappings {
     key
@@ -659,7 +930,7 @@ export const UmlExerciseContentSolveFieldsFragmentDoc = gql`
 }
     ${UmlClassDiagramFragmentDoc}`;
 export const WebExerciseContentSolveFieldsFragmentDoc = gql`
-    fragment WebExerciseContentSolveFields on WebExerciseContent {
+    fragment WebExerciseContentSolveFields on WebExercise {
   files {
     ...ExFileAll
   }
@@ -679,7 +950,7 @@ export const WebExerciseContentSolveFieldsFragmentDoc = gql`
 }
     ${ExFileAllFragmentDoc}`;
 export const XmlExerciseContentSolveFieldsFragmentDoc = gql`
-    fragment XmlExerciseContentSolveFields on XmlExerciseContent {
+    fragment XmlExerciseContentSolveFields on XmlExercise {
   rootNode
   grammarDescription
   xmlSampleSolutions: sampleSolutions {
@@ -777,15 +1048,15 @@ export const CollectionOverviewDocument = gql`
 export const AllExercisesOverviewDocument = gql`
     query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
-    allExerciseMetaData {
-      tags {
-        ...Tag
+    allExercises {
+      topics {
+        ...Topic
       }
       ...FieldsForLink
     }
   }
 }
-    ${TagFragmentDoc}
+    ${TopicFragmentDoc}
 ${FieldsForLinkFragmentDoc}`;
 
   @Injectable({
@@ -803,19 +1074,16 @@ export const ExerciseOverviewDocument = gql`
         id
         title
         text
-      }
-    }
-    exerciseContent(collId: $collId, exId: $exId) {
-      __typename
-      ... on ProgExerciseContent {
-        unitTestPart {
-          unitTestType
+        ... on ProgrammingExercise {
+          unitTestPart {
+            unitTestType
+          }
         }
-      }
-      ... on WebExerciseContent {
-        siteSpec {
-          htmlTaskCount
-          jsTaskCount
+        ... on WebExercise {
+          siteSpec {
+            htmlTaskCount
+            jsTaskCount
+          }
         }
       }
     }
@@ -837,16 +1105,13 @@ export const ExerciseDocument = gql`
       shortName
       exercise(exId: $exId) {
         ...ExerciseSolveFields
+        ...ProgExerciseContentSolveFields
+        ...RegexExerciseContentSolveFields
+        ...SqlExerciseContentSolveFields
+        ...UmlExerciseContentSolveFields
+        ...WebExerciseContentSolveFields
+        ...XmlExerciseContentSolveFields
       }
-    }
-    exerciseContent(collId: $collId, exId: $exId) {
-      __typename
-      ...ProgExerciseContentSolveFields
-      ...RegexExerciseContentSolveFields
-      ...SqlExerciseContentSolveFields
-      ...UmlExerciseContentSolveFields
-      ...WebExerciseContentSolveFields
-      ...XmlExerciseContentSolveFields
     }
   }
 }
@@ -984,36 +1249,17 @@ export const AdminEditCollectionDocument = gql`
     query AdminEditCollection($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
-      asJson
+      ...CompleteCollection
     }
   }
 }
-    `;
+    ${CompleteCollectionFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
   })
   export class AdminEditCollectionGQL extends Apollo.Query<AdminEditCollectionQuery, AdminEditCollectionQueryVariables> {
     document = AdminEditCollectionDocument;
-    
-  }
-export const AdminEditExerciseDocument = gql`
-    query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      exercise(exId: $exId) {
-        asJson
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class AdminEditExerciseGQL extends Apollo.Query<AdminEditExerciseQuery, AdminEditExerciseQueryVariables> {
-    document = AdminEditExerciseDocument;
     
   }
 export const AdminReadCollectionsDocument = gql`
@@ -1033,10 +1279,8 @@ export const AdminReadCollectionsDocument = gql`
     
   }
 export const AdminUpsertCollectionDocument = gql`
-    mutation AdminUpsertCollection($toolId: String!, $collId: Int!, $content: String!) {
-  upsertCollection(toolId: $toolId, collId: $collId, content: $content) {
-    asJson
-  }
+    mutation AdminUpsertCollection($toolId: String!, $content: String!) {
+  upsertCollection(toolId: $toolId, content: $content)
 }
     `;
 
@@ -1045,5 +1289,72 @@ export const AdminUpsertCollectionDocument = gql`
   })
   export class AdminUpsertCollectionGQL extends Apollo.Mutation<AdminUpsertCollectionMutation, AdminUpsertCollectionMutationVariables> {
     document = AdminUpsertCollectionDocument;
+    
+  }
+export const AdminReadLessonsDocument = gql`
+    query AdminReadLessons($toolId: String!) {
+  tool(toolId: $toolId) {
+    name
+    readLessons {
+      ...CompleteLesson
+    }
+  }
+}
+    ${CompleteLessonFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AdminReadLessonsGQL extends Apollo.Query<AdminReadLessonsQuery, AdminReadLessonsQueryVariables> {
+    document = AdminReadLessonsDocument;
+    
+  }
+export const AdminEditExerciseDocument = gql`
+    query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
+  tool(toolId: $toolId) {
+    collection(collId: $collId) {
+      exercise(exId: $exId) {
+        __typename
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AdminEditExerciseGQL extends Apollo.Query<AdminEditExerciseQuery, AdminEditExerciseQueryVariables> {
+    document = AdminEditExerciseDocument;
+    
+  }
+export const AdminReadExercisesDocument = gql`
+    query AdminReadExercises($toolId: String!, $collId: Int!) {
+  tool(toolId: $toolId) {
+    collection(collId: $collId) {
+      readExercises
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AdminReadExercisesGQL extends Apollo.Query<AdminReadExercisesQuery, AdminReadExercisesQueryVariables> {
+    document = AdminReadExercisesDocument;
+    
+  }
+export const AdminUpsertExerciseDocument = gql`
+    mutation AdminUpsertExercise($toolId: String!, $content: String!) {
+  upsertExercise(toolId: $toolId, content: $content)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class AdminUpsertExerciseGQL extends Apollo.Mutation<AdminUpsertExerciseMutation, AdminUpsertExerciseMutationVariables> {
+    document = AdminUpsertExerciseDocument;
     
   }

@@ -20,7 +20,6 @@ import {RegexExtractionMatchComponent} from '../regex/regex-extraction-result/re
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UmlClassSelectionComponent} from '../uml/uml-class-selection/uml-class-selection.component';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
-import {ApiService} from '../_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {ActivatedRoute} from '@angular/router';
 
@@ -40,7 +39,6 @@ describe('ExerciseComponent', () => {
         UmlClassSelectionComponent
       ],
       providers: [
-        ApiService,
         {
           provide: ActivatedRoute,
           useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'web'], ['collId', '0'], ['exId', '0'], ['partId', 'html']])}}

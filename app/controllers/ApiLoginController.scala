@@ -5,6 +5,7 @@ import java.util.UUID
 import com.github.t3hnar.bcrypt._
 import javax.inject.{Inject, Singleton}
 import model._
+import model.json.JsonProtocols
 import model.lti.BasicLtiLaunchRequest
 import model.persistence.ExerciseTableDefs
 import pdi.jwt.JwtSession
@@ -39,7 +40,7 @@ class ApiLoginController @Inject() (
   }
 
   private def writeJsonWebToken(user: User, serializedSession: String): JsValue =
-    JsonProtocol.userFormat.writes(user).as[JsObject].+("token" -> JsString(serializedSession))
+    JsonProtocols.userFormat.writes(user).as[JsObject].+("token" -> JsString(serializedSession))
 
   def ltiHoneypot: Action[AnyContent] = Action.async { request =>
     request.body.asFormUrlEncoded match {

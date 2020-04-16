@@ -1,14 +1,17 @@
 package model
 
+import javax.inject.{Inject, Singleton}
+import model.json.JsonProtocols
 import model.persistence.ExerciseTableDefs
 import model.tools._
 import model.tools.sql.SqlGraphQLModels
-import play.api.libs.json.{Format, JsObject, Json}
+import play.api.libs.json._
+import play.api.libs.ws.WSClient
+import play.api.{Environment, Mode}
 import sangria.macros.derive._
-import sangria.marshalling.playJson._
 import sangria.schema._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 final case class GraphQLRequest(
   query: String,
@@ -18,46 +21,26 @@ final case class GraphQLRequest(
 
 final case class GraphQLContext(
   tables: ExerciseTableDefs,
-  ec: ExecutionContext,
   user: Option[User]
 )
 
-object GraphQLModel extends ToolGraphQLModels {
+@Singleton
+class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit val ec: ExecutionContext)
+    extends ToolGraphQLModels
+    with GraphQLMutations {
+
+  private val resourcesServerBaseUrl = {
+    val port = if (environment.mode == Mode.Dev) 5000 else 5050
+
+    s"http://localhost:$port/tools"
+  }
 
   val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
 
-  // Arguments
-
-  private val toolIdArgument = Argument("toolId", StringType)
-
-  private val lessonIdArgument = Argument("lessonId", IntType)
-
-  private val collIdArgument = Argument("collId", IntType)
-
-  private val exIdArgument = Argument("exId", IntType)
-
-  private val contentArgument = Argument("content", StringType)
-
   // Types
-
-  private val toolStateType: EnumType[ToolState] = deriveEnumType()
-
-  /*
-  private val exerciseUnionType: ObjectType[Unit, Exercise[_]] = deriveObjectType(
-    ExcludeFields("content"),
-    AddFields(
-      Field("asJson", StringType, resolve = context => ToolJsonProtocol.exerciseFormat.writes(context.value).toString())
-    )
-  )
-   */
 
   private val CollectionType: ObjectType[GraphQLContext, ExerciseCollection] = deriveObjectType(
     AddFields(
-      Field(
-        "asJson",
-        StringType,
-        resolve = context => ToolJsonProtocol.collectionFormat.writes(context.value).toString()
-      ),
       Field(
         "exerciseCount",
         IntType,
@@ -69,7 +52,7 @@ object GraphQLModel extends ToolGraphQLModels {
         resolve = context =>
           ToolList.tools.find(_.id == context.value.toolId) match {
             case None       => ???
-            case Some(tool) => tool.futureExercisesInCollection(context.ctx.tables, context.value.id)(context.ctx.ec)
+            case Some(tool) => tool.futureExercisesInCollection(context.ctx.tables, context.value.id)
           }
       ),
       Field(
@@ -80,12 +63,23 @@ object GraphQLModel extends ToolGraphQLModels {
           ToolList.tools.find(_.id == context.value.toolId) match {
             case None => ???
             case Some(tool) =>
-              implicit val ec: ExecutionContext = context.ctx.ec
-
               tool
                 .futureExerciseById(context.ctx.tables, context.value.id, context.arg(exIdArgument))
                 .map(_.asInstanceOf[Exercise])
           }
+      ),
+      Field(
+        "readExercises",
+        ListType(StringType),
+        resolve = context => {
+          ToolList.tools.find(_.id == context.value.toolId) match {
+            case None => ???
+            case Some(tool) =>
+              ws.url(s"$resourcesServerBaseUrl/${context.value.toolId}/collections/${context.value.id}/exercises")
+                .get()
+                .map(request => tool.toolJsonProtocol.validateAndWriteReadExerciseMessage(request.json))
+          }
+        }
       )
     )
   )
@@ -109,6 +103,7 @@ object GraphQLModel extends ToolGraphQLModels {
         arguments = lessonIdArgument :: Nil,
         resolve = context => context.ctx.tables.futureLessonById(context.value.id, context.arg(lessonIdArgument))
       ),
+      Field("readLessons", ListType(LessonGraphQLModel.LessonType), resolve = _ => List()),
       // Fields for collections
       Field(
         "collectionCount",
@@ -129,7 +124,17 @@ object GraphQLModel extends ToolGraphQLModels {
       Field(
         "readCollections",
         ListType(StringType),
-        resolve = _ => List()
+        resolve = context =>
+          ws.url(s"$resourcesServerBaseUrl/${context.value.id}/collections")
+            .get()
+            .map { request =>
+              JsonProtocols.readCollectionsMessageReads
+                .reads(request.json)
+                .map(_.collections)
+                .getOrElse(Seq.empty)
+                .map(JsonProtocols.collectionFormat.writes)
+                .map(Json.stringify)
+            }
       ),
       // Special fields for exercises
       Field(
@@ -138,27 +143,14 @@ object GraphQLModel extends ToolGraphQLModels {
         resolve = context => context.ctx.tables.futureExerciseCountForTool(context.value.id)
       ),
       Field(
-        "allExerciseMetaData",
+        "allExercises",
         ListType(exerciseInterfaceType),
         resolve = context =>
           ToolList.tools.find(_.id == context.value.id) match {
             case None       => ???
-            case Some(tool) => tool.futureAllExercises(context.ctx.tables)(context.ctx.ec)
+            case Some(tool) => tool.futureAllExercises(context.ctx.tables)
           }
-      ) /*,
-      Field(
-        "exerciseContent",
-        OptionType(ExContentType),
-        arguments = collIdArgument :: exIdArgument :: Nil,
-        resolve = context =>
-          context.ctx.tables.futureExerciseContentById(
-            context.value.id,
-            context.arg(collIdArgument),
-            context.arg(exIdArgument),
-            context.value.toolJsonProtocol.exerciseContentFormat
-          )
       )
-     */
     )
   )
 
@@ -174,70 +166,6 @@ object GraphQLModel extends ToolGraphQLModels {
       ),
       SqlGraphQLModels.dbContentQueryField
     )
-  )
-
-  private val correctionFields = ToolList.tools.map[Field[GraphQLContext, Unit]] { toolMain =>
-    implicit val solTypeFormat: Format[toolMain.SolType]   = toolMain.toolJsonProtocol.solutionFormat
-    implicit val partTypeFormat: Format[toolMain.PartType] = toolMain.toolJsonProtocol.partTypeFormat
-
-    val SolTypeInputArg  = Argument("solution", toolMain.graphQlModels.SolTypeInputType)
-    val PartTypeInputArg = Argument("part", toolMain.graphQlModels.PartTypeInputType)
-
-    Field(
-      s"correct${toolMain.id.capitalize}",
-      OptionType(toolMain.graphQlModels.AbstractResultTypeType),
-      arguments = collIdArgument :: exIdArgument :: PartTypeInputArg :: SolTypeInputArg :: Nil,
-      resolve = context =>
-        context.ctx.user match {
-          case None => Future.successful(None)
-          case Some(user) =>
-            implicit val executionContext: ExecutionContext = context.ctx.ec
-
-            val collId   = context.arg(collIdArgument)
-            val exId     = context.arg(exIdArgument)
-            val part     = context.arg(PartTypeInputArg)
-            val solution = context.arg(SolTypeInputArg)
-
-            val correctionDbValues: Future[Option[(ExerciseCollection, toolMain.ExerciseType)]] = for {
-              maybeCollection <- context.ctx.tables.futureCollById(toolMain.id, collId)
-              maybeExercise   <- toolMain.futureExerciseTypeById(context.ctx.tables, collId, exId)
-            } yield maybeCollection zip maybeExercise
-
-            correctionDbValues.flatMap {
-              case Some((collection, exercise)) =>
-                for {
-                  solutionSaved <- context.ctx.tables.futureInsertSolution(
-                    user.username,
-                    exId,
-                    exercise.semanticVersion,
-                    collId,
-                    toolMain.id,
-                    part,
-                    toolMain.toolJsonProtocol.solutionFormat.writes(solution)
-                  )
-
-                  result <- toolMain
-                    .correctAbstract(user, solution, collection, exercise, part, solutionSaved)
-                    .map(_.toOption)
-                } yield result
-
-              case _ => ???
-            }
-
-        }
-    )
-  }
-
-  private val MutationType = ObjectType(
-    "Mutation",
-    fields = fields[GraphQLContext, Unit](
-      Field(
-        "upsertCollection",
-        OptionType(CollectionType),
-        arguments = toolIdArgument :: collIdArgument :: contentArgument :: Nil,
-        resolve = _ => None
-      )
-    ) ++ correctionFields
   )
 
   val schema: Schema[GraphQLContext, Unit] = Schema(QueryType, mutation = Some(MutationType))

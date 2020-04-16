@@ -1,21 +1,17 @@
 package model.tools.rose
 
-import model.tools.{SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
-import sangria.macros.derive.{ExcludeFields, Interfaces, deriveEnumType, deriveObjectType}
+import model.tools.{SampleSolution, ToolGraphQLModelBasics}
+import sangria.macros.derive.{ExcludeFields, Interfaces, deriveObjectType}
 import sangria.schema._
 
 object RoseGraphQLModels extends ToolGraphQLModelBasics[RoseExercise, String, RoseExPart] {
 
-  private val roseExTagType: EnumType[RoseExTag] = deriveEnumType()
-
   override val ExerciseType: ObjectType[Unit, RoseExercise] = {
-    implicit val rett: EnumType[RoseExTag]                                    = roseExTagType
-    implicit val svt: ObjectType[Unit, SemanticVersion]                       = semanticVersionType
     implicit val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
 
     deriveObjectType(
       Interfaces(exerciseInterfaceType),
-      ExcludeFields("inputTypes")
+      ExcludeFields("topics", "inputTypes")
     )
   }
 

@@ -18,6 +18,7 @@ import scala.util.{Failure, Success}
 class ApiController @Inject() (
   cc: ControllerComponents,
   tables: ExerciseTableDefs,
+  graphQLModel: GraphQLModel,
   override protected val configuration: Configuration
 )(implicit val ec: ExecutionContext)
     extends AbstractController(cc)
@@ -25,22 +26,16 @@ class ApiController @Inject() (
 
   override protected val adminRightsRequired: Boolean = false
 
-  private val graphQLSchema = GraphQLModel.schema
-
   private def executeGraphQLQuery(
     query: Document,
     user: Option[User],
     operationName: Option[String],
     variables: JsObject
-  ): Future[Result] =
+  ): Future[Result] = {
+    val userContext = GraphQLContext(tables, user)
+
     Executor
-      .execute(
-        graphQLSchema,
-        query,
-        userContext = GraphQLContext(tables, ec, user),
-        operationName = operationName,
-        variables = variables
-      )
+      .execute(graphQLModel.schema, query, userContext, operationName = operationName, variables = variables)
       .map(Ok(_))
       .recover {
         case error: QueryAnalysisError =>
@@ -50,8 +45,9 @@ class ApiController @Inject() (
           println(error)
           InternalServerError(error.resolveError)
       }
+  }
 
-  def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest](GraphQLModel.graphQLRequestFormat)) {
+  def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest](graphQLModel.graphQLRequestFormat)) {
     implicit request =>
       QueryParser.parse(request.body.query) match {
         case Success(queryAst) =>

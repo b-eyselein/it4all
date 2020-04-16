@@ -1,13 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ComponentWithCollectionTool} from '../_helpers/ComponentWithCollectionTool';
 import {ExerciseOverviewGQL, ExerciseOverviewQuery} from "../../../_services/apollo_services";
+import {Tool} from "../../../_interfaces/tool";
+import {collectionTools} from "../collection-tools-list";
 
 @Component({templateUrl: './exercise-overview.component.html'})
-export class ExerciseOverviewComponent extends ComponentWithCollectionTool implements OnInit {
+export class ExerciseOverviewComponent implements OnInit {
 
-  collectionId: number;
-  exerciseId: number;
+  private toolId: string;
+  private collectionId: number;
+  private exerciseId: number;
+
+  tool: Tool;
 
   exerciseOverviewQuery: ExerciseOverviewQuery;
 
@@ -16,21 +20,21 @@ export class ExerciseOverviewComponent extends ComponentWithCollectionTool imple
     private router: Router,
     private exerciseOverviewGQL: ExerciseOverviewGQL,
   ) {
-    super(route);
-
-    if (!this.tool) {
-      this.router.navigate(['../..']);
-    }
-
-    this.collectionId = parseInt(this.route.snapshot.paramMap.get('collId'), 10);
-    this.exerciseId = parseInt(this.route.snapshot.paramMap.get('exId'), 10);
   }
 
   ngOnInit() {
-    this.exerciseOverviewGQL
-      .watch({toolId: this.tool.id, collId: this.collectionId, exId: this.exerciseId})
-      .valueChanges
-      .subscribe(({data}) => this.exerciseOverviewQuery = data);
+    this.route.paramMap.subscribe((paramMap) => {
+      this.toolId = paramMap.get('toolId');
+      this.collectionId = parseInt(paramMap.get('collId'), 10);
+      this.exerciseId = parseInt(paramMap.get('exId'), 10);
+
+      this.tool = collectionTools.find((t) => t.id === this.toolId);
+
+      this.exerciseOverviewGQL
+        .watch({toolId: this.tool.id, collId: this.collectionId, exId: this.exerciseId})
+        .valueChanges
+        .subscribe(({data}) => this.exerciseOverviewQuery = data);
+    })
   }
 
 }

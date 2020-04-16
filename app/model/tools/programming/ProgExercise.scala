@@ -8,11 +8,10 @@ final case class ProgrammingExercise(
   id: Int,
   collectionId: Int,
   toolId: String,
-  semanticVersion: SemanticVersion,
   title: String,
   authors: Seq[String],
   text: String,
-  tags: Seq[ProgrammingExerciseTag],
+  topics: Seq[Topic],
   difficulty: Option[Int],
   sampleSolutions: Seq[SampleSolution[ProgSolution]],
   functionName: String,
@@ -27,7 +26,6 @@ final case class ProgrammingExercise(
   maybeClassDiagramPart: Option[UmlClassDiagram]
 ) extends Exercise {
 
-  override type ET      = ProgrammingExerciseTag
   override type SolType = ProgSolution
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =

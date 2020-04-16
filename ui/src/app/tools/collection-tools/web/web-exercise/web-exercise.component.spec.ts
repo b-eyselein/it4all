@@ -9,7 +9,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {SolutionSavedComponent} from '../../../../shared/solution-saved/solution-saved.component';
 import {PointsNotificationComponent} from '../../../../shared/points-notification/points-notification.component';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
-import {ApiService} from '../../_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {HtmlPart} from '../web-tool';
 
@@ -28,7 +27,6 @@ describe('WebExerciseComponent', () => {
         ExerciseFilesEditorComponent,
         SolutionSavedComponent, PointsNotificationComponent
       ],
-      providers: [ApiService]
     }).compileComponents();
   }));
 

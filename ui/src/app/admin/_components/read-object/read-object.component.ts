@@ -7,7 +7,7 @@ import {Saveable} from '../../../_interfaces/saveable';
     <ng-container *ngIf="!loaded.saved; else exerciseSavedBlock">
       <div class="card">
         <header class="card-header">
-          <p class="card-header-title">{{loaded.id}}. {{loaded.title}}</p>
+          <p class="card-header-title">{{loaded.title}}</p>
         </header>
         <div class="card-content">
           <pre class="loadedJson">{{loaded | json}}</pre>
@@ -19,7 +19,7 @@ import {Saveable} from '../../../_interfaces/saveable';
     </ng-container>
 
     <ng-template #exerciseSavedBlock>
-      <div class="notification is-success has-text-centered">{{name}} {{loaded.id}} wurde gespeichert.</div>
+      <div class="notification is-success has-text-centered">{{name}} {{loaded.title}} wurde gespeichert.</div>
     </ng-template>
   `,
   styles: [`
@@ -29,10 +29,10 @@ import {Saveable} from '../../../_interfaces/saveable';
     }`
   ]
 })
-export class ReadObjectComponent<T extends Saveable> {
+export class ReadObjectComponent<T> {
 
   @Input() name: string;
-  @Input() loaded: T;
+  @Input() loaded: Saveable<T>;
 
   @Output() save = new EventEmitter<void>();
 

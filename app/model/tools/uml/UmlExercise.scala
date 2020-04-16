@@ -33,18 +33,16 @@ final case class UmlExercise(
   id: Int,
   collectionId: Int,
   toolId: String,
-  semanticVersion: SemanticVersion,
   title: String,
   authors: Seq[String],
   text: String,
-  tags: Seq[UmlExTag],
+  topics: Seq[Topic],
   difficulty: Option[Int],
   sampleSolutions: Seq[SampleSolution[UmlClassDiagram]],
   toIgnore: Seq[String],
   mappings: Map[String, String]
 ) extends Exercise {
 
-  override type ET      = UmlExTag
   override type SolType = UmlClassDiagram
 
 }

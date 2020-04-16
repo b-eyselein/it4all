@@ -29,11 +29,38 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  TruePositive = 'TruePositive',
-  FalsePositive = 'FalsePositive',
   FalseNegative = 'FalseNegative',
-  TrueNegative = 'TrueNegative'
+  FalsePositive = 'FalsePositive',
+  TrueNegative = 'TrueNegative',
+  TruePositive = 'TruePositive'
 }
+
+export type CollectionTol = {
+   __typename?: 'CollectionTol';
+  id: Scalars['String'];
+  name: Scalars['String'];
+  state: ToolState;
+  lessonCount: Scalars['Int'];
+  lessons: Array<Lesson>;
+  lesson?: Maybe<Lesson>;
+  readLessons: Array<Lesson>;
+  collectionCount: Scalars['Int'];
+  collections: Array<ExerciseCollection>;
+  collection?: Maybe<ExerciseCollection>;
+  readCollections: Array<Scalars['String']>;
+  exerciseCount: Scalars['Int'];
+  allExercises: Array<ExerciseInterface>;
+};
+
+
+export type CollectionTolLessonArgs = {
+  lessonId: Scalars['Int'];
+};
+
+
+export type CollectionTolCollectionArgs = {
+  collId: Scalars['Int'];
+};
 
 export type DtdParseException = {
    __typename?: 'DTDParseException';
@@ -72,22 +99,6 @@ export type ElementLineMatch = NewMatch & {
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
-export type ExContent = ProgExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent;
-
-export type Exercise = {
-   __typename?: 'Exercise';
-  id: Scalars['Int'];
-  collectionId: Scalars['Int'];
-  toolId: Scalars['String'];
-  semanticVersion: SemanticVersion;
-  title: Scalars['String'];
-  authors: Array<Scalars['String']>;
-  text: Scalars['String'];
-  tags: Array<ExTag>;
-  difficulty?: Maybe<Scalars['Int']>;
-  asJson: Scalars['String'];
-};
-
 export type ExerciseCollection = {
    __typename?: 'ExerciseCollection';
   id: Scalars['Int'];
@@ -96,10 +107,10 @@ export type ExerciseCollection = {
   authors: Array<Scalars['String']>;
   text: Scalars['String'];
   shortName: Scalars['String'];
-  asJson: Scalars['String'];
   exerciseCount: Scalars['Int'];
-  exercises: Array<Exercise>;
-  exercise?: Maybe<Exercise>;
+  exercises: Array<ExerciseInterface>;
+  exercise?: Maybe<ExerciseInterface>;
+  readExercises: Array<Scalars['String']>;
 };
 
 
@@ -122,10 +133,15 @@ export type ExerciseFileInput = {
   content: Scalars['String'];
 };
 
-export type ExTag = {
-   __typename?: 'ExTag';
-  abbreviation: Scalars['String'];
+export type ExerciseInterface = {
+  id: Scalars['Int'];
+  collectionId: Scalars['Int'];
+  toolId: Scalars['String'];
   title: Scalars['String'];
+  authors: Array<Scalars['String']>;
+  text: Scalars['String'];
+  difficulty?: Maybe<Scalars['Int']>;
+  topics: Array<Topic>;
 };
 
 export type GradedHtmlTaskResult = {
@@ -227,16 +243,17 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  PartialMatch = 'PARTIAL_MATCH',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   OnlySample = 'ONLY_SAMPLE',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlyUser = 'ONLY_USER'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlyUser = 'ONLY_USER',
+  PartialMatch = 'PARTIAL_MATCH',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
    __typename?: 'Mutation';
-  upsertCollection?: Maybe<ExerciseCollection>;
+  upsertCollection: Scalars['Boolean'];
+  upsertExercise: Scalars['Boolean'];
   correctProgramming?: Maybe<ProgCompleteResult>;
   correctRegex?: Maybe<AbstractRegexResult>;
   correctSql?: Maybe<SqlAbstractResult>;
@@ -248,7 +265,12 @@ export type Mutation = {
 
 export type MutationUpsertCollectionArgs = {
   toolId: Scalars['String'];
-  collId: Scalars['Int'];
+  content: Scalars['String'];
+};
+
+
+export type MutationUpsertExerciseArgs = {
+  toolId: Scalars['String'];
   content: Scalars['String'];
 };
 
@@ -319,21 +341,29 @@ export type ProgCompleteResult = {
   unitTestResults: Array<UnitTestCorrectionResult>;
 };
 
-export type ProgExerciseContent = {
-   __typename?: 'ProgExerciseContent';
-  functionName: Scalars['String'];
-  foldername: Scalars['String'];
-  filename: Scalars['String'];
-  unitTestPart: UnitTestPart;
-  implementationPart: ImplementationPart;
-  sampleSolutions: Array<ProgSampleSolution>;
-};
-
 export enum ProgExPart {
   TestCreation = 'TestCreation',
   Implementation = 'Implementation',
   ActivityDiagram = 'ActivityDiagram'
 }
+
+export type ProgrammingExercise = ExerciseInterface & {
+   __typename?: 'ProgrammingExercise';
+  id: Scalars['Int'];
+  collectionId: Scalars['Int'];
+  toolId: Scalars['String'];
+  title: Scalars['String'];
+  authors: Array<Scalars['String']>;
+  text: Scalars['String'];
+  difficulty?: Maybe<Scalars['Int']>;
+  sampleSolutions: Array<ProgSampleSolution>;
+  functionName: Scalars['String'];
+  foldername: Scalars['String'];
+  filename: Scalars['String'];
+  unitTestPart: UnitTestPart;
+  implementationPart: ImplementationPart;
+  topics: Array<Topic>;
+};
 
 export type ProgSampleSolution = {
    __typename?: 'ProgSampleSolution';
@@ -352,8 +382,8 @@ export type ProgSolutionInput = {
 
 export type Query = {
    __typename?: 'Query';
-  tools: Array<Tool>;
-  tool?: Maybe<Tool>;
+  tools: Array<CollectionTol>;
+  tool?: Maybe<CollectionTol>;
   sqlDbContents: Array<SqlQueryResult>;
 };
 
@@ -368,17 +398,25 @@ export type QuerySqlDbContentsArgs = {
 };
 
 export enum RegexCorrectionType {
-  Matching = 'MATCHING',
-  Extraction = 'EXTRACTION'
+  Extraction = 'EXTRACTION',
+  Matching = 'MATCHING'
 }
 
-export type RegexExerciseContent = {
-   __typename?: 'RegexExerciseContent';
+export type RegexExercise = ExerciseInterface & {
+   __typename?: 'RegexExercise';
+  id: Scalars['Int'];
+  collectionId: Scalars['Int'];
+  toolId: Scalars['String'];
+  title: Scalars['String'];
+  authors: Array<Scalars['String']>;
+  text: Scalars['String'];
+  difficulty?: Maybe<Scalars['Int']>;
+  sampleSolutions: Array<StringSampleSolution>;
   maxPoints: Scalars['Int'];
   correctionType: RegexCorrectionType;
-  sampleSolutions: Array<StringSampleSolution>;
   matchTestData: Array<RegexMatchTestData>;
   extractionTestData: Array<RegexExtractionTestData>;
+  topics: Array<Topic>;
 };
 
 export enum RegexExPart {
@@ -459,13 +497,6 @@ export type SelectAdditionalComparisons = {
   limitComparison: SqlLimitComparisonMatchingResult;
 };
 
-export type SemanticVersion = {
-   __typename?: 'SemanticVersion';
-  major: Scalars['Int'];
-  minor: Scalars['Int'];
-  patch: Scalars['Int'];
-};
-
 export type SiteSpec = {
    __typename?: 'SiteSpec';
   fileName: Scalars['String'];
@@ -521,17 +552,25 @@ export type SqlExecutionResult = {
   sampleResultTry?: Maybe<SqlQueryResult>;
 };
 
-export type SqlExerciseContent = {
-   __typename?: 'SqlExerciseContent';
+export type SqlExercise = ExerciseInterface & {
+   __typename?: 'SqlExercise';
+  id: Scalars['Int'];
+  collectionId: Scalars['Int'];
+  toolId: Scalars['String'];
+  title: Scalars['String'];
+  authors: Array<Scalars['String']>;
+  text: Scalars['String'];
+  difficulty?: Maybe<Scalars['Int']>;
+  sampleSolutions: Array<StringSampleSolution>;
   exerciseType: SqlExerciseType;
   hint?: Maybe<Scalars['String']>;
-  sampleSolutions: Array<StringSampleSolution>;
+  topics: Array<Topic>;
 };
 
 export enum SqlExerciseType {
-  Create = 'CREATE',
   Select = 'SELECT',
   Delete = 'DELETE',
+  Create = 'CREATE',
   Update = 'UPDATE',
   Insert = 'INSERT'
 }
@@ -679,44 +718,11 @@ export type StringSampleSolution = {
 };
 
 export enum SuccessType {
+  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY',
-  Complete = 'COMPLETE'
+  Partially = 'PARTIALLY'
 }
-
-export type Tool = {
-   __typename?: 'Tool';
-  id: Scalars['String'];
-  name: Scalars['String'];
-  state: ToolState;
-  lessonCount: Scalars['Int'];
-  lessons: Array<Lesson>;
-  lesson?: Maybe<Lesson>;
-  collectionCount: Scalars['Int'];
-  collections: Array<ExerciseCollection>;
-  collection?: Maybe<ExerciseCollection>;
-  readCollections: Array<Scalars['String']>;
-  exerciseCount: Scalars['Int'];
-  allExerciseMetaData: Array<Exercise>;
-  exerciseContent?: Maybe<ExContent>;
-};
-
-
-export type ToolLessonArgs = {
-  lessonId: Scalars['Int'];
-};
-
-
-export type ToolCollectionArgs = {
-  collId: Scalars['Int'];
-};
-
-
-export type ToolExerciseContentArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
 
 export enum ToolState {
   Alpha = 'ALPHA',
@@ -724,6 +730,14 @@ export enum ToolState {
   Live = 'LIVE',
   PreAlpha = 'PRE_ALPHA'
 }
+
+export type Topic = {
+   __typename?: 'Topic';
+  id: Scalars['Int'];
+  toolId: Scalars['String'];
+  abbreviation: Scalars['String'];
+  title: Scalars['String'];
+};
 
 export type UmlAssociation = {
    __typename?: 'UmlAssociation';
@@ -770,8 +784,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
 };
 
 export enum UmlAssociationType {
-  Association = 'ASSOCIATION',
   Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
   Composition = 'COMPOSITION'
 }
 
@@ -880,9 +894,9 @@ export type UmlClassMatchingResult = MatchingResult & {
 };
 
 export enum UmlClassType {
+  Abstract = 'ABSTRACT',
   Class = 'CLASS',
-  Interface = 'INTERFACE',
-  Abstract = 'ABSTRACT'
+  Interface = 'INTERFACE'
 }
 
 export type UmlCompleteResult = AbstractCorrectionResult & {
@@ -895,11 +909,19 @@ export type UmlCompleteResult = AbstractCorrectionResult & {
   maxPoints: Scalars['Float'];
 };
 
-export type UmlExerciseContent = {
-   __typename?: 'UmlExerciseContent';
-  toIgnore: Array<Scalars['String']>;
+export type UmlExercise = ExerciseInterface & {
+   __typename?: 'UmlExercise';
+  id: Scalars['Int'];
+  collectionId: Scalars['Int'];
+  toolId: Scalars['String'];
+  title: Scalars['String'];
+  authors: Array<Scalars['String']>;
+  text: Scalars['String'];
+  difficulty?: Maybe<Scalars['Int']>;
   sampleSolutions: Array<UmlSampleSolution>;
+  toIgnore: Array<Scalars['String']>;
   mappings: Array<KeyValueObject>;
+  topics: Array<Topic>;
 };
 
 export enum UmlExPart {
@@ -998,10 +1020,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
-  Public = 'PUBLIC',
   Package = 'PACKAGE',
+  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Private = 'PRIVATE'
+  Public = 'PUBLIC'
 }
 
 export type UnitTestCorrectionResult = {
@@ -1034,8 +1056,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Simplified = 'Simplified',
-  Normal = 'Normal'
+  Normal = 'Normal',
+  Simplified = 'Simplified'
 }
 
 export type WebCompleteResult = AbstractCorrectionResult & {
@@ -1047,13 +1069,21 @@ export type WebCompleteResult = AbstractCorrectionResult & {
   maxPoints: Scalars['Float'];
 };
 
-export type WebExerciseContent = {
-   __typename?: 'WebExerciseContent';
+export type WebExercise = ExerciseInterface & {
+   __typename?: 'WebExercise';
+  id: Scalars['Int'];
+  collectionId: Scalars['Int'];
+  toolId: Scalars['String'];
+  title: Scalars['String'];
+  authors: Array<Scalars['String']>;
+  text: Scalars['String'];
+  difficulty?: Maybe<Scalars['Int']>;
+  sampleSolutions: Array<WebSampleSolution>;
   htmlText?: Maybe<Scalars['String']>;
   jsText?: Maybe<Scalars['String']>;
   siteSpec: SiteSpec;
   files: Array<ExerciseFile>;
-  sampleSolutions: Array<WebSampleSolution>;
+  topics: Array<Topic>;
 };
 
 export enum WebExPart {
@@ -1107,11 +1137,19 @@ export enum XmlErrorType {
   Warning = 'WARNING'
 }
 
-export type XmlExerciseContent = {
-   __typename?: 'XmlExerciseContent';
+export type XmlExercise = ExerciseInterface & {
+   __typename?: 'XmlExercise';
+  id: Scalars['Int'];
+  collectionId: Scalars['Int'];
+  toolId: Scalars['String'];
+  title: Scalars['String'];
+  authors: Array<Scalars['String']>;
+  text: Scalars['String'];
+  difficulty?: Maybe<Scalars['Int']>;
   grammarDescription: Scalars['String'];
   rootNode: Scalars['String'];
   sampleSolutions: Array<XmlSampleSolution>;
+  topics: Array<Topic>;
 };
 
 export enum XmlExPart {

@@ -1,9 +1,10 @@
 package model.tools.uml
 
 import model.core.matching.{MatchType, MatchingResult}
+import model.json.KeyValueObject
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
-import model.tools.{KeyValueObject, SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
+import model.tools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -78,13 +79,13 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlExercise, UmlClassDiag
   private val umlExTagType: EnumType[UmlExTag] = deriveEnumType()
 
   override val ExerciseType: ObjectType[Unit, UmlExercise] = {
-    implicit val uett: EnumType[UmlExTag]               = umlExTagType
-    implicit val svt: ObjectType[Unit, SemanticVersion] = semanticVersionType
+    implicit val uett: EnumType[UmlExTag] = umlExTagType
     implicit val sampleSolType: ObjectType[Unit, SampleSolution[UmlClassDiagram]] =
       sampleSolutionType("Uml", umlClassDiagramType)
 
     deriveObjectType(
       Interfaces(exerciseInterfaceType),
+      ExcludeFields("topics"),
       ReplaceField(
         "mappings",
         Field(

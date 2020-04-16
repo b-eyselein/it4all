@@ -7,7 +7,6 @@ import {SqlResultComponent} from '../_results/sql-result/sql-result.component';
 import {SqlMatchingResultComponent} from '../_results/sql-matching-result/sql-matching-result.component';
 import {SolutionSavedComponent} from '../../../../shared/solution-saved/solution-saved.component';
 import {PointsNotificationComponent} from '../../../../shared/points-notification/points-notification.component';
-import {ApiService} from '../../_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('SqlExerciseComponent', () => {
@@ -22,7 +21,6 @@ describe('SqlExerciseComponent', () => {
         SqlResultComponent, SqlMatchingResultComponent,
         SolutionSavedComponent, PointsNotificationComponent
       ],
-      providers: [ApiService]
     }).compileComponents();
   }));
 

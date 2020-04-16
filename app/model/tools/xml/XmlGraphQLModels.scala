@@ -4,7 +4,7 @@ import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
 import model.core.matching.MatchType
 import model.core.result.SuccessType
-import model.tools.{SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
+import model.tools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -16,11 +16,11 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlExercise, XmlSolution,
 
   override val ExerciseType: ObjectType[Unit, XmlExercise] = {
     implicit val xett: EnumType[XmlExTag]                           = xmlExerciseTagType
-    implicit val svt: ObjectType[Unit, SemanticVersion]             = semanticVersionType
     implicit val sst: ObjectType[Unit, SampleSolution[XmlSolution]] = sampleSolutionType("Xml", xmlSolutionType)
 
     deriveObjectType(
-      Interfaces(exerciseInterfaceType)
+      Interfaces(exerciseInterfaceType),
+      ExcludeFields("topics")
     )
   }
 

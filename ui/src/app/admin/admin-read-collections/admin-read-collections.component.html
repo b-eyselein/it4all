@@ -1,7 +1,7 @@
 <div class="container">
 
-  <ng-container *ngIf="adminReadCollectionsQuery; else loadingDataBlock">
-    <h1 class="title is-3 has-text-centered">Sammlungen für Tool {{adminReadCollectionsQuery.tool.name}} einlesen</h1>
+  <ng-container *ngIf="savableCollections; else loadingDataBlock">
+    <h1 class="title is-3 has-text-centered">Sammlungen für Tool {{toolName}} einlesen</h1>
 
     <div class="buttons">
       <a class="button is-primary is-fullwidth" routerLink="..">Zurück zur Tooladministration</a>
@@ -11,7 +11,7 @@
     <br>
 
     <div class="columns is-multiline">
-      <div class="column is-half-desktop" *ngFor="let collection of adminReadCollectionsQuery.tool.readCollections">
+      <div class="column is-half-desktop" *ngFor="let collection of savableCollections">
         <it4all-read-object [loaded]="collection" name="Die Sammlung" (save)="save(collection)"></it4all-read-object>
       </div>
     </div>

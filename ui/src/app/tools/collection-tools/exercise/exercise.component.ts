@@ -42,31 +42,31 @@ export class ExerciseComponent implements OnInit {
   }
 
   private get exContent() {
-    return this.exerciseQuery.tool.exerciseContent;
+    return this.exerciseQuery.tool.collection.exercise;
   }
 
   get progExerciseContent(): ProgExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === "ProgExerciseContent") ? this.exContent : undefined;
+    return (this.exContent.__typename === "ProgrammingExercise") ? this.exContent : undefined;
   }
 
   get regexExerciseContent(): RegexExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'RegexExerciseContent') ? this.exContent : undefined;
+    return (this.exContent.__typename === 'RegexExercise') ? this.exContent : undefined;
   }
 
   get sqlExerciseContent(): SqlExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'SqlExerciseContent') ? this.exContent : undefined;
+    return (this.exContent.__typename === 'SqlExercise') ? this.exContent : undefined;
   }
 
   get umlExerciseContent(): UmlExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'UmlExerciseContent') ? this.exContent : undefined;
+    return (this.exContent.__typename === 'UmlExercise') ? this.exContent : undefined;
   }
 
   get webExerciseContent(): WebExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === "WebExerciseContent") ? this.exContent : undefined;
+    return (this.exContent.__typename === "WebExercise") ? this.exContent : undefined;
   }
 
   get xmlExerciseContent(): XmlExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'XmlExerciseContent') ? this.exContent : undefined;
+    return (this.exContent.__typename === 'XmlExercise') ? this.exContent : undefined;
   }
 
 }

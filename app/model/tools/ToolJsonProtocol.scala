@@ -1,79 +1,11 @@
 package model.tools
 
-import model.adaption.{Proficiencies, ToolProficiency, TopicProficiency}
-import model.core.matching.{Match, MatchingResult}
-import model.lesson._
-import model.points.Points
+import model.json.KeyValueObject
 import play.api.libs.json._
 
-object ToolJsonProtocol {
-
-  val proficienciesFormat: Format[Proficiencies] = {
-    implicit val toolProficiencyFormat: Format[ToolProficiency]   = Json.format
-    implicit val topicProficiencyFormat: Format[TopicProficiency] = Json.format
-
-    Json.format
-  }
-
-  val semanticVersionFormat: Format[SemanticVersion] = Json.format
-
-  val collectionFormat: Format[ExerciseCollection] = Json.format
-
-  val lessonContentFormat: Format[LessonContent] = {
-
-    implicit val cfg: JsonConfiguration = JsonConfiguration(
-      typeNaming = JsonNaming { fullName =>
-        // FIXME: match complete string!?!
-        fullName.split("\\.").lastOption match {
-          case Some("LessonTextContent")      => "Text"
-          case Some("LessonQuestionsContent") => "Questions"
-          case _                              => fullName
-        }
-      }
-    )
-
-    implicit val ltcf: Format[LessonTextContent] = Json.format
-    implicit val lqcf: Format[LessonQuestionsContent] = {
-      implicit val quf: Format[QuestionAnswer] = Json.format
-      implicit val qf: Format[Question]        = Json.format
-
-      Json.format
-    }
-
-    Json.format
-  }
-
-  val exTagFormat: Format[ExTag] = Json.format
-
-  /*
-    val exerciseFormat: Format[Exercise] = {
-      implicit val scf: Format[SemanticVersion] = semanticVersionFormat
-      implicit val etf: Format[ExTag]           = exTagFormat
-
-      Json.format
-    }
-   */
-
-  val pointsFormat: Format[Points] = Format(
-    (jsValue: JsValue) => Reads.DoubleReads.reads(jsValue).map(p => Points((p * 4).floor.toInt)),
-    (points: Points) => Writes.DoubleWrites.writes(points.asDouble)
-  )
-
-  val exerciseFileFormat: Format[ExerciseFile] = Json.format
-
-}
-
-final case class KeyValueObject(key: String, value: String)
+final case class ReadExercisesMessage[E <: Exercise](exercises: Seq[E])
 
 trait ToolJsonProtocol[EC <: Exercise, ST, PartType <: ExPart] {
-
-  val exerciseFormat: Format[EC]
-
-  val solutionFormat: Format[ST]
-
-//  val completeResultWrites: Writes[CR]
-
-  val partTypeFormat: Format[PartType]
 
   protected val keyValueObjectMapFormat: Format[Map[String, String]] = {
 
@@ -85,11 +17,25 @@ trait ToolJsonProtocol[EC <: Exercise, ST, PartType <: ExPart] {
     )
   }
 
-  protected def matchingResultWrites[T, M <: Match[T]](matchWrites: Writes[M]): Writes[MatchingResult[T, M]] = {
-    implicit val pointsWrites: Writes[Points] = ToolJsonProtocol.pointsFormat
-    implicit val mw: Writes[M]                = matchWrites
+  val exerciseFormat: Format[EC]
 
-    Json.writes
+  val solutionFormat: Format[ST]
+
+  val partTypeFormat: Format[PartType]
+
+  val readExercisesMessageReads: Reads[ReadExercisesMessage[EC]]
+
+  def validateAndWriteReadExerciseMessage(message: JsValue): Seq[String] = {
+    val readExercises: Seq[EC] = readExercisesMessageReads.reads(message) match {
+      case JsSuccess(readExercisesMessage, _) => readExercisesMessage.exercises
+      case JsError(errors) =>
+        errors.foreach(println)
+        Seq.empty
+    }
+
+    readExercises
+      .map(exerciseFormat.writes)
+      .map(Json.stringify)
   }
 
 }

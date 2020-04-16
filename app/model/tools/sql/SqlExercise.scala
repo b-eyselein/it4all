@@ -61,18 +61,16 @@ final case class SqlExercise(
   id: Int,
   collectionId: Int,
   toolId: String,
-  semanticVersion: SemanticVersion,
   title: String,
   authors: Seq[String],
   text: String,
-  tags: Seq[SqlExTag],
+  topics: Seq[Topic],
   difficulty: Option[Int],
   sampleSolutions: Seq[SampleSolution[String]],
   exerciseType: SqlExerciseType,
   hint: Option[String]
 ) extends Exercise {
 
-  override type ET      = SqlExTag
   override type SolType = String
 
 }

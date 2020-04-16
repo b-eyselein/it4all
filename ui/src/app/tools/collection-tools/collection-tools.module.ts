@@ -15,7 +15,6 @@ import {ExerciseFileCardComponent} from './_components/exercise-file-card/exerci
 import {SharedModule} from '../../shared/shared.module';
 import {TagComponent} from './_components/tag/tag.component';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
-import {ApiService} from './_services/api.service';
 import {ExerciseOverviewComponent} from './exercise-overview/exercise-overview.component';
 import {ExerciseComponent} from './exercise/exercise.component';
 import {RegexExerciseComponent} from './regex/regex-exercise/regex-exercise.component';
@@ -39,7 +38,7 @@ import {XmlElementLineMatchComponent} from './xml/_components/xml-element-line-m
 import {XmlDocumentCorrectionComponent} from './xml/_components/xml-document-correction/xml-document-correction.component';
 import {SqlTableContentsComponent} from './sql/_components/sql-table-contents/sql-table-contents.component';
 import {StringSampleSolComponent} from './_components/string-sample-sol/string-sample-sol.component';
-import { QueryResultTableComponent } from './sql/_components/query-result-table/query-result-table.component';
+import {QueryResultTableComponent} from './sql/_components/query-result-table/query-result-table.component';
 
 
 @NgModule({
@@ -72,7 +71,7 @@ import { QueryResultTableComponent } from './sql/_components/query-result-table/
 
     XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent, QueryResultTableComponent
   ],
-  providers: [ApiService],
+  providers: [],
   imports: [
     CommonModule,
     FormsModule,

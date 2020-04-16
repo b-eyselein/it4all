@@ -1,7 +1,8 @@
 package model.tools.rose
 
+import model.json.JsonProtocols
 import model.tools.programming.{ProgDataType, ProgrammingToolJsonProtocol}
-import model.tools.{SampleSolution, SemanticVersion, StringSampleSolutionToolJsonProtocol, ToolJsonProtocol}
+import model.tools.{ReadExercisesMessage, SampleSolution, StringSampleSolutionToolJsonProtocol, Topic}
 import play.api.libs.json.{Format, Json, Reads, Writes}
 
 object RoseToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RoseExercise, RoseExPart] {
@@ -15,9 +16,10 @@ object RoseToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RoseExe
   }
 
   override val exerciseFormat: Format[RoseExercise] = {
-    implicit val svf: Format[SemanticVersion]         = ToolJsonProtocol.semanticVersionFormat
+    implicit val tf: Format[Topic] = JsonProtocols.topicFormat
+
     implicit val ritf: Format[RoseInputType]          = roseInputTypeFormat
-    implicit val rssf: Format[SampleSolution[String]] = Json.format[SampleSolution[String]]
+    implicit val rssf: Format[SampleSolution[String]] = sampleSolutionFormat
 
     Json.format
   }
@@ -31,15 +33,12 @@ object RoseToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RoseExe
     Json.format[RoseExecutionResult]
   }
 
-  /*
-  override val completeResultWrites: Writes[RoseCompleteResult] = {
-    implicit val pointsWrites: Writes[Points]      = ToolJsonProtocol.pointsFormat
-    implicit val rerw: Writes[RoseExecutionResult] = roseExecutionResultFormat
-
-    Json.writes[RoseCompleteResult]
-  }
-   */
-
   override val partTypeFormat: Format[RoseExPart] = RoseExPart.jsonFormat
+
+  override val readExercisesMessageReads: Reads[ReadExercisesMessage[RoseExercise]] = {
+    implicit val ef: Format[RoseExercise] = exerciseFormat
+
+    Json.reads
+  }
 
 }

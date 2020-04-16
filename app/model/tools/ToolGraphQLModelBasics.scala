@@ -2,6 +2,7 @@ package model.tools
 
 import model.core.matching.{Match, MatchType, MatchingResult}
 import model.core.result.{AbstractCorrectionResult, SuccessType}
+import model.json.KeyValueObject
 import model.points.Points
 import sangria.macros.derive._
 import sangria.schema._
@@ -10,7 +11,9 @@ import scala.reflect.ClassTag
 
 trait ToolGraphQLModels {
 
-  protected val semanticVersionType: ObjectType[Unit, SemanticVersion] = deriveObjectType()
+  protected val toolStateType: EnumType[ToolState] = deriveEnumType()
+
+  private val topicsType: ObjectType[Unit, Topic] = deriveObjectType()
 
   protected val exerciseInterfaceType: InterfaceType[Unit, Exercise] = InterfaceType(
     "ExerciseInterface",
@@ -19,11 +22,11 @@ trait ToolGraphQLModels {
         Field("id", IntType, resolve = _.value.id),
         Field("collectionId", IntType, resolve = _.value.collectionId),
         Field("toolId", StringType, resolve = _.value.toolId),
-        Field("semanticVersion", semanticVersionType, resolve = _.value.semanticVersion),
         Field("title", StringType, resolve = _.value.title),
         Field("authors", ListType(StringType), resolve = _.value.authors),
         Field("text", StringType, resolve = _.value.text),
-        Field("difficulty", OptionType(IntType), resolve = _.value.difficulty)
+        Field("difficulty", OptionType(IntType), resolve = _.value.difficulty),
+        Field("topics", ListType(topicsType), resolve = _.value.topics)
       )
   ).withPossibleTypes(() => ToolList.tools.map(t => t.graphQlModels.ExerciseType))
 

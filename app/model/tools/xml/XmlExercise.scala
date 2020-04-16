@@ -31,18 +31,16 @@ final case class XmlExercise(
   id: Int,
   collectionId: Int,
   toolId: String,
-  semanticVersion: SemanticVersion,
   title: String,
   authors: Seq[String],
   text: String,
-  tags: Seq[XmlExTag],
+  topics: Seq[Topic],
   difficulty: Option[Int],
   grammarDescription: String,
   rootNode: String,
   sampleSolutions: Seq[SampleSolution[XmlSolution]]
 ) extends Exercise {
 
-  override type ET      = XmlExTag
   override type SolType = XmlSolution
 
 }

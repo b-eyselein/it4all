@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Apr 15 2020 16:04:05 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Thu Apr 16 2020 16:44:17 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -33,12 +33,13 @@ type CollectionTol {
   lessonCount: Int!
   lessons: [Lesson!]!
   lesson(lessonId: Int!): Lesson
+  readLessons: [Lesson!]!
   collectionCount: Int!
   collections: [ExerciseCollection!]!
   collection(collId: Int!): ExerciseCollection
   readCollections: [String!]!
   exerciseCount: Int!
-  allExerciseMetaData: [ExerciseInterface!]!
+  allExercises: [ExerciseInterface!]!
 }
 
 type DTDParseException {
@@ -80,10 +81,10 @@ type ExerciseCollection {
   authors: [String!]!
   text: String!
   shortName: String!
-  asJson: String!
   exerciseCount: Int!
   exercises: [ExerciseInterface!]!
   exercise(exId: Int!): ExerciseInterface
+  readExercises: [String!]!
 }
 
 type ExerciseFile {
@@ -104,11 +105,11 @@ interface ExerciseInterface {
   id: Int!
   collectionId: Int!
   toolId: String!
-  semanticVersion: SemanticVersion!
   title: String!
   authors: [String!]!
   text: String!
   difficulty: Int
+  topics: [Topic!]!
 }
 
 type GradedHtmlTaskResult {
@@ -200,15 +201,16 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_USER
   ONLY_SAMPLE
-  SUCCESSFUL_MATCH
   UNSUCCESSFUL_MATCH
+  ONLY_USER
   PARTIAL_MATCH
+  SUCCESSFUL_MATCH
 }
 
 type Mutation {
-  upsertCollection(toolId: String!, collId: Int!, content: String!): ExerciseCollection
+  upsertCollection(toolId: String!, content: String!): Boolean!
+  upsertExercise(toolId: String!, content: String!): Boolean!
   correctProgramming(collId: Int!, exId: Int!, part: ProgExPart!, solution: ProgSolutionInput!): ProgCompleteResult
   correctRegex(collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): AbstractRegexResult
   correctSql(collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlAbstractResult
@@ -244,11 +246,9 @@ type ProgrammingExercise implements ExerciseInterface {
   id: Int!
   collectionId: Int!
   toolId: String!
-  semanticVersion: SemanticVersion!
   title: String!
   authors: [String!]!
   text: String!
-  tags: [ProgrammingExerciseTag!]!
   difficulty: Int
   sampleSolutions: [ProgSampleSolution!]!
   functionName: String!
@@ -256,21 +256,7 @@ type ProgrammingExercise implements ExerciseInterface {
   filename: String!
   unitTestPart: UnitTestPart!
   implementationPart: ImplementationPart!
-}
-
-enum ProgrammingExerciseTag {
-  Slicing
-  WhileLoops
-  Tuples
-  Lists
-  Recursion
-  Exceptions
-  Classes
-  Math
-  Conditions
-  Strings
-  Dictionaries
-  ForLoops
+  topics: [Topic!]!
 }
 
 type ProgSampleSolution {
@@ -301,25 +287,20 @@ type RegexExercise implements ExerciseInterface {
   id: Int!
   collectionId: Int!
   toolId: String!
-  semanticVersion: SemanticVersion!
   title: String!
   authors: [String!]!
   text: String!
-  tags: [RegexExTag!]!
   difficulty: Int
   sampleSolutions: [StringSampleSolution!]!
   maxPoints: Int!
   correctionType: RegexCorrectionType!
   matchTestData: [RegexMatchTestData!]!
   extractionTestData: [RegexExtractionTestData!]!
+  topics: [Topic!]!
 }
 
 enum RegexExPart {
   RegexSingleExPart
-}
-
-enum RegexExTag {
-  RegexExTagTodo
 }
 
 type RegexExtractedValuesComparisonMatchingResult implements MatchingResult {
@@ -386,12 +367,6 @@ type SelectAdditionalComparisons {
   limitComparison: SqlLimitComparisonMatchingResult!
 }
 
-type SemanticVersion {
-  major: Int!
-  minor: Int!
-  patch: Int!
-}
-
 type SiteSpec {
   fileName: String!
   htmlTasks: [HtmlTask!]!
@@ -444,20 +419,19 @@ type SqlExercise implements ExerciseInterface {
   id: Int!
   collectionId: Int!
   toolId: String!
-  semanticVersion: SemanticVersion!
   title: String!
   authors: [String!]!
   text: String!
-  tags: [SqlExTag!]!
   difficulty: Int
   sampleSolutions: [StringSampleSolution!]!
   exerciseType: SqlExerciseType!
   hint: String
+  topics: [Topic!]!
 }
 
 enum SqlExerciseType {
-  DELETE
   SELECT
+  DELETE
   CREATE
   UPDATE
   INSERT
@@ -465,18 +439,6 @@ enum SqlExerciseType {
 
 enum SqlExPart {
   SqlSingleExPart
-}
-
-enum SqlExTag {
-  SQL_ORDER_BY
-  SQL_JOIN
-  SQL_TRIPLE_JOIN
-  SQL_DOUBLE_JOIN
-  SQL_LIMIT
-  SQL_SUBSELECT
-  SQL_GROUP_BY
-  SQL_FUNCTION
-  SQL_ALIAS
 }
 
 type SqlGroupByComparisonMatchingResult implements MatchingResult {
@@ -611,6 +573,13 @@ enum ToolState {
   BETA
   LIVE
   PRE_ALPHA
+}
+
+type Topic {
+  id: Int!
+  toolId: String!
+  abbreviation: String!
+  title: String!
 }
 
 type UmlAssociation {
@@ -773,15 +742,14 @@ type UmlExercise implements ExerciseInterface {
   id: Int!
   collectionId: Int!
   toolId: String!
-  semanticVersion: SemanticVersion!
   title: String!
   authors: [String!]!
   text: String!
-  tags: [UmlExTag!]!
   difficulty: Int
   sampleSolutions: [UmlSampleSolution!]!
   toIgnore: [String!]!
   mappings: [KeyValueObject!]!
+  topics: [Topic!]!
 }
 
 enum UmlExPart {
@@ -789,10 +757,6 @@ enum UmlExPart {
   DiagramDrawingHelp
   DiagramDrawing
   MemberAllocation
-}
-
-enum UmlExTag {
-  UmlExTagTodo
 }
 
 type UmlImplementation {
@@ -925,26 +889,21 @@ type WebExercise implements ExerciseInterface {
   id: Int!
   collectionId: Int!
   toolId: String!
-  semanticVersion: SemanticVersion!
   title: String!
   authors: [String!]!
   text: String!
-  tags: [WebExTag!]!
   difficulty: Int
   sampleSolutions: [WebSampleSolution!]!
   htmlText: String
   jsText: String
   siteSpec: SiteSpec!
   files: [ExerciseFile!]!
+  topics: [Topic!]!
 }
 
 enum WebExPart {
   HtmlPart
   JsPart
-}
-
-enum WebExTag {
-  WebExTagTodo
 }
 
 type WebSampleSolution {
@@ -992,24 +951,19 @@ type XmlExercise implements ExerciseInterface {
   id: Int!
   collectionId: Int!
   toolId: String!
-  semanticVersion: SemanticVersion!
   title: String!
   authors: [String!]!
   text: String!
-  tags: [XmlExTag!]!
   difficulty: Int
   grammarDescription: String!
   rootNode: String!
   sampleSolutions: [XmlSampleSolution!]!
+  topics: [Topic!]!
 }
 
 enum XmlExPart {
   GrammarCreationXmlPart
   DocumentCreationXmlPart
-}
-
-enum XmlExTag {
-  XmlExTagTodo
 }
 
 type XmlGrammarResult {

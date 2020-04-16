@@ -1,5 +1,7 @@
-export interface Saveable {
-  id: number;
+export interface Saveable<T> {
+  stringified: string;
+  value: T;
   title: string;
-  saved?: boolean;
+  saved: boolean;
 }
+

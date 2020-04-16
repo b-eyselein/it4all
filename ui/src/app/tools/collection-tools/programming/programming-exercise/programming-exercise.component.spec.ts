@@ -10,7 +10,6 @@ import {ExerciseFileCardComponent} from '../../_components/exercise-file-card/ex
 import {TabsComponent} from '../../../../shared/tabs/tabs.component';
 import {FormsModule} from '@angular/forms';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
-import {ApiService} from '../../_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 
@@ -28,7 +27,6 @@ describe('ProgrammingExerciseComponent', () => {
         SolutionSavedComponent, ProgrammingSimplifiedResultComponent, ProgrammingUnittestResultComponent,
         ExerciseFileCardComponent, ExerciseFilesEditorComponent
       ],
-      providers: [ApiService]
     }).compileComponents();
   }));
 

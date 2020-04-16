@@ -40,7 +40,7 @@ abstract class CollectionTool(
   def futureAllExercises(tableDefs: ExerciseTableDefs)(implicit ec: ExecutionContext): Future[Seq[Exercise]] =
     tableDefs
       .futureExercisesForTool(this.id)
-      .map(_.map(convertExercise))
+      .map(_.map(convertExerciseFromDb))
 
   def futureExercisesInCollection(
     tableDefs: ExerciseTableDefs,
@@ -48,7 +48,7 @@ abstract class CollectionTool(
   )(implicit ec: ExecutionContext): Future[Seq[Exercise]] =
     tableDefs
       .futureExercisesInColl(this.id, collId)
-      .map(_.map(convertExercise))
+      .map(_.map(convertExerciseFromDb))
 
   def futureExerciseById(
     tableDefs: ExerciseTableDefs,
@@ -64,9 +64,16 @@ abstract class CollectionTool(
   )(implicit ec: ExecutionContext): Future[Option[ExerciseType]] =
     tableDefs
       .futureExerciseById(this.id, collId, exId)
-      .map(_.map(convertExercise))
+      .map(_.map(convertExerciseFromDb))
 
-  protected def convertExercise(dbExercise: DbExercise): ExerciseType = ???
+  def futureUpsertExercise(
+    tableDefs: ExerciseTableDefs,
+    exercise: ExerciseType
+  )(implicit ec: ExecutionContext): Future[Boolean] = tableDefs.futureUpsertExercise(convertExerciseToDb(exercise))
+
+  protected def convertExerciseFromDb(dbExercise: DbExercise): ExerciseType = ???
+
+  protected def convertExerciseToDb(exercise: ExerciseType): DbExercise = ???
 
   // Other helper methods
 

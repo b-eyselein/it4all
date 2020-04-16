@@ -14,26 +14,26 @@
   "__schema": {
     "types": [
       {
-        "kind": "UNION",
-        "name": "ExContent",
+        "kind": "INTERFACE",
+        "name": "ExerciseInterface",
         "possibleTypes": [
           {
-            "name": "ProgExerciseContent"
+            "name": "ProgrammingExercise"
           },
           {
-            "name": "RegexExerciseContent"
+            "name": "RegexExercise"
           },
           {
-            "name": "SqlExerciseContent"
+            "name": "SqlExercise"
           },
           {
-            "name": "UmlExerciseContent"
+            "name": "UmlExercise"
           },
           {
-            "name": "WebExerciseContent"
+            "name": "WebExercise"
           },
           {
-            "name": "XmlExerciseContent"
+            "name": "XmlExercise"
           }
         ]
       },

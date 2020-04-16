@@ -1,6 +1,5 @@
 package model.tools.rose
 
-import enumeratum.{EnumEntry, PlayEnum}
 import model.tools._
 import model.tools.programming.ProgDataType
 
@@ -14,25 +13,14 @@ object RoseExPart extends ExParts[RoseExPart] {
 
 }
 
-sealed trait RoseExTag extends EnumEntry
-
-case object RoseExTag extends PlayEnum[RoseExTag] {
-
-  override val values: IndexedSeq[RoseExTag] = findValues
-
-  case object RoseExTagTodo extends RoseExTag
-
-}
-
 final case class RoseExercise(
   id: Int,
   collectionId: Int,
   toolId: String,
-  semanticVersion: SemanticVersion,
   title: String,
   authors: Seq[String],
   text: String,
-  tags: Seq[RoseExTag],
+  topics: Seq[Topic],
   difficulty: Option[Int],
   sampleSolutions: Seq[SampleSolution[String]],
   fieldWidth: Int,
@@ -41,7 +29,6 @@ final case class RoseExercise(
   inputTypes: Seq[RoseInputType]
 ) extends Exercise {
 
-  override type ET      = RoseExTag
   override type SolType = String
 
 }

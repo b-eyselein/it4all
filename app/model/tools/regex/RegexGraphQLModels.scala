@@ -1,7 +1,7 @@
 package model.tools.regex
 
 import model.tools.regex.RegexTool.ExtractedValuesComparison
-import model.tools.{SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
+import model.tools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{ExcludeFields, Interfaces, deriveEnumType, deriveObjectType}
 import sangria.schema._
 
@@ -15,20 +15,17 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExercise, String, 
 
   private val binaryClassificationResultTypeType: EnumType[BinaryClassificationResultType] = deriveEnumType()
 
-  private val regexExTagType: EnumType[RegexExTag] = deriveEnumType()
-
   // Exercise content types
 
   override val ExerciseType: ObjectType[Unit, RegexExercise] = {
-    implicit val rett: EnumType[RegexExTag]                                   = regexExTagType
     implicit val rctt: EnumType[RegexCorrectionType]                          = regexCorrectionTypeType
-    implicit val svt: ObjectType[Unit, SemanticVersion]                       = semanticVersionType
     implicit val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
     implicit val rmtdt: ObjectType[Unit, RegexMatchTestData]                  = deriveObjectType()
     implicit val retdt: ObjectType[Unit, RegexExtractionTestData]             = deriveObjectType()
 
     deriveObjectType(
-      Interfaces(exerciseInterfaceType)
+      Interfaces(exerciseInterfaceType),
+      ExcludeFields("topics")
     )
   }
 

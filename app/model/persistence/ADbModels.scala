@@ -1,20 +1,18 @@
 package model.persistence
 
-import model.tools.{ExPart, ExTag, SemanticVersion}
+import model.tools.ExPart
 import play.api.libs.json.JsValue
 
 final case class DbExercise(
   id: Int,
   collectionId: Int,
   toolId: String,
-  semanticVersion: SemanticVersion,
   title: String,
   authors: Seq[String],
   text: String,
-  @deprecated
-  tags: Seq[ExTag],
-  difficulty: Option[Int],
-  content: JsValue
+  difficulty: Int,
+  sampleSolutionsJson: JsValue,
+  contentJson: JsValue
 )
 
 final case class DbUserSolution(
@@ -22,7 +20,6 @@ final case class DbUserSolution(
   exerciseId: Int,
   collectionId: Int,
   toolId: String,
-  semanticVersion: SemanticVersion,
   part: ExPart,
   username: String,
   solution: JsValue

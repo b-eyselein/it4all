@@ -1,7 +1,7 @@
 package model.tools.programming
 
 import model.core.result.SuccessType
-import model.tools.{ExerciseFile, SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
+import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -46,13 +46,13 @@ object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgrammingExerci
     //    implicit val progDataType: ObjectType[Unit, ProgDataType] = deriveObjectType()
 
     implicit val pett: EnumType[ProgrammingExerciseTag]              = programmingExerciseTagType
-    implicit val svt: ObjectType[Unit, SemanticVersion]              = semanticVersionType
     implicit val utpt: ObjectType[Unit, UnitTestPart]                = unitTestPartType
     implicit val ipt: ObjectType[Unit, ImplementationPart]           = implementationPartType
     implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType("Prog", progSolutionType)
 
     deriveObjectType(
       Interfaces(exerciseInterfaceType),
+      ExcludeFields("topics"),
       // TODO: include fields !?!
       ExcludeFields("inputTypes", "outputType", "baseData", "sampleTestData", "maybeClassDiagramPart")
     )

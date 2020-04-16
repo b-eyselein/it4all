@@ -1,7 +1,6 @@
 package model.tools.web
 
 import de.uniwue.webtester.sitespec.SiteSpec
-import enumeratum.{EnumEntry, PlayEnum}
 import model.tools._
 
 sealed abstract class WebExPart(val partName: String, val urlName: String) extends ExPart
@@ -20,25 +19,14 @@ final case class WebSolution(
   files: Seq[ExerciseFile]
 )
 
-sealed trait WebExTag extends EnumEntry
-
-case object WebExTag extends PlayEnum[WebExTag] {
-
-  override val values: IndexedSeq[WebExTag] = findValues
-
-  case object WebExTagTodo extends WebExTag
-
-}
-
 final case class WebExercise(
   id: Int,
   collectionId: Int,
   toolId: String,
-  semanticVersion: SemanticVersion,
   title: String,
   authors: Seq[String],
   text: String,
-  tags: Seq[WebExTag],
+  topics: Seq[Topic],
   difficulty: Option[Int],
   sampleSolutions: Seq[SampleSolution[WebSolution]],
   htmlText: Option[String],
@@ -47,7 +35,6 @@ final case class WebExercise(
   files: Seq[ExerciseFile]
 ) extends Exercise {
 
-  override type ET      = WebExTag
   override type SolType = WebSolution
 
 }

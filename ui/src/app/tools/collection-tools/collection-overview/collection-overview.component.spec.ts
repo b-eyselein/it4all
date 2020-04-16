@@ -5,7 +5,6 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {RouterTestingModule} from '@angular/router/testing';
 import {TagComponent} from '../_components/tag/tag.component';
-import {ApiService} from '../_services/api.service';
 import {ActivatedRoute} from '@angular/router';
 
 describe('CollectionOverviewComponent', () => {
@@ -17,7 +16,6 @@ describe('CollectionOverviewComponent', () => {
       imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([]), CodemirrorModule],
       declarations: [CollectionOverviewComponent, TagComponent],
       providers: [
-        ApiService,
         {
           provide: ActivatedRoute,
           useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'web']])}}

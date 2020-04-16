@@ -2,7 +2,8 @@ package controllers
 
 import java.time.Clock
 
-import model.{JsonProtocol, User}
+import model.User
+import model.json.JsonProtocols
 import pdi.jwt.JwtSession
 import play.api.Configuration
 import play.api.libs.json.Format
@@ -18,7 +19,7 @@ trait AbstractApiController {
   private val bearerHeaderRegex: Regex = "Bearer (.*)".r
   private val clock: Clock             = Clock.systemDefaultZone()
 
-  private implicit val userFormat: Format[User] = JsonProtocol.userFormat
+  private implicit val userFormat: Format[User] = JsonProtocols.userFormat
   private implicit val ec: ExecutionContext     = self.defaultExecutionContext
 
   protected val configuration: Configuration

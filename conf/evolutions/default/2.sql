@@ -5,3 +5,7 @@ values ('developer', '$2a$10$SIC4CoGDP8DLZnoHiWDi2ePtUOrsBKBzUdxVGhxjEIg2gWcQ3Pn
 on duplicate key update std_role = values(std_role);
 
 # --- !Downs
+
+# noinspection SqlWithoutWhere
+delete
+from users;

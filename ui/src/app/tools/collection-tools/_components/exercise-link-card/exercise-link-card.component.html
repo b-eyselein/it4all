@@ -11,9 +11,9 @@
     </div>
 
     <!-- Tags -->
-    <div class="buttons" *ngIf="exercise.tags">
-      <span *ngIf="exercise.tags.length === 0">&nbsp;</span>
-      <it4all-tag *ngFor="let tag of exercise.tags" [tag]="tag"></it4all-tag>
+    <div class="buttons" *ngIf="exercise.topics">
+      <span *ngIf="exercise.topics.length === 0">&nbsp;</span>
+      <it4all-tag *ngFor="let tag of exercise.topics" [topic]="tag"></it4all-tag>
     </div>
 
   </div>

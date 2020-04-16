@@ -7,7 +7,7 @@ import {
   AllExercisesOverviewGQL,
   AllExercisesOverviewQuery,
   FieldsForLinkFragment,
-  TagFragment
+  TopicFragment
 } from "../../../_services/apollo_services";
 
 @Component({templateUrl: './all-exercises-overview.component.html'})
@@ -17,9 +17,9 @@ export class AllExercisesOverviewComponent implements OnInit {
 
   allExercisesOverviewQuery: AllExercisesOverviewQuery;
 
-  distinctTags: TagFragment[];
-  filteredExerciseMetaData: FieldsForLinkFragment[];
-  filtersActivated: Map<TagFragment, boolean> = new Map();
+  distinctTags: TopicFragment[];
+  filteredExercises: FieldsForLinkFragment[];
+  filtersActivated: Map<TopicFragment, boolean> = new Map();
 
   constructor(private route: ActivatedRoute, private allExercisesOverviewGQL: AllExercisesOverviewGQL) {
   }
@@ -36,10 +36,10 @@ export class AllExercisesOverviewComponent implements OnInit {
         .subscribe(({data}) => {
           this.allExercisesOverviewQuery = data;
 
-          this.filteredExerciseMetaData = this.allExercisesOverviewQuery.tool.allExerciseMetaData;
+          this.filteredExercises = this.allExercisesOverviewQuery.tool.allExercises;
 
           this.distinctTags = distinctObjectArray(
-            flatMapArray(this.allExercisesOverviewQuery.tool.allExerciseMetaData, (exerciseMetaData) => exerciseMetaData.tags),
+            flatMapArray(this.allExercisesOverviewQuery.tool.allExercises, (exercises) => exercises.topics),
             (t) => t.abbreviation
           );
         });
@@ -47,23 +47,23 @@ export class AllExercisesOverviewComponent implements OnInit {
   }
 
 
-  toggleFilter(tag: TagFragment): void {
+  toggleFilter(tag: TopicFragment): void {
     this.filtersActivated.set(tag, !this.filtersActivated.get(tag));
 
-    const activatedFilters: TagFragment[] = Array.from(this.filtersActivated.entries())
+    const activatedFilters: TopicFragment[] = Array.from(this.filtersActivated.entries())
       .filter(([_, activated]) => activated)
       .map(([t, _]) => t);
 
     if (activatedFilters.length > 0) {
-      this.filteredExerciseMetaData = this.allExercisesOverviewQuery.tool.allExerciseMetaData
+      this.filteredExercises = this.allExercisesOverviewQuery.tool.allExercises
         .filter((metaData) => activatedFilters.every((t) => this.exerciseHasTag(metaData, t)));
     } else {
-      this.filteredExerciseMetaData = this.allExercisesOverviewQuery.tool.allExerciseMetaData;
+      this.filteredExercises = this.allExercisesOverviewQuery.tool.allExercises;
     }
   }
 
-  exerciseHasTag(exercise: FieldsForLinkFragment, tag: TagFragment): boolean {
-    return exercise.tags
+  exerciseHasTag(exercise: FieldsForLinkFragment, tag: TopicFragment): boolean {
+    return exercise.topics
       .map((t) => t.abbreviation)
       .includes(tag.abbreviation);
   }

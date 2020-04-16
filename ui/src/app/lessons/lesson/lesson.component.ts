@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Tool} from '../../_interfaces/tool';
 import {ActivatedRoute} from '@angular/router';
-import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {Lesson, LessonContentBase} from '../../_interfaces/lesson';
 import {LessonGQL, LessonQuery} from "../../_services/apollo_services";
 
@@ -21,7 +20,7 @@ export class LessonComponent implements OnInit {
 
   currentIndex = 0;
 
-  constructor(private route: ActivatedRoute, private lessonGQL: LessonGQL, private apiService: ApiService) {
+  constructor(private route: ActivatedRoute, private lessonGQL: LessonGQL) {
   }
 
   ngOnInit() {

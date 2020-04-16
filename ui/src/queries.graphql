@@ -42,10 +42,10 @@ query CollectionOverview($toolId: String!, $collId: Int!) {
 
 query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
-    allExerciseMetaData {
-      #tags {
-      #  ...Tag
-      #}
+    allExercises {
+      topics {
+        ...Topic
+      }
       ...FieldsForLink
     }
   }
@@ -157,17 +157,7 @@ query AdminCollectionsIndex($toolId: String!) {
 query AdminEditCollection($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
-      asJson
-    }
-  }
-}
-
-query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      exercise(exId: $exId) {
-        asJson
-      }
+      ...CompleteCollection
     }
   }
 }
@@ -179,15 +169,70 @@ query AdminReadCollections($toolId: String!) {
   }
 }
 
-mutation AdminUpsertCollection($toolId: String!, $collId: Int!, $content: String!) {
-  upsertCollection(toolId: $toolId, collId: $collId,content: $content) {
-    asJson
+fragment CompleteCollection on ExerciseCollection {
+  id
+  toolId
+  title
+  authors
+  text
+  shortName
+}
+
+mutation AdminUpsertCollection($toolId: String!, $content: String!) {
+  upsertCollection(toolId: $toolId, content: $content)
+}
+
+
+fragment CompleteLesson on Lesson {
+  __typename
+}
+
+query AdminReadLessons($toolId: String!) {
+  tool(toolId: $toolId) {
+    name
+    readLessons {
+      ...CompleteLesson
+    }
   }
+}
+
+
+query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
+  tool(toolId: $toolId) {
+    collection(collId: $collId) {
+      exercise(exId: $exId) {
+        __typename
+        # asJson
+      }
+    }
+  }
+}
+
+query AdminReadExercises($toolId: String!, $collId: Int!) {
+  tool(toolId: $toolId) {
+    collection(collId: $collId) {
+      readExercises
+    }
+  }
+}
+
+mutation AdminUpsertExercise($toolId: String!, $content: String!) {
+  upsertExercise(toolId: $toolId, content: $content)
+}
+
+fragment CompleteExercise on ExerciseInterface {
+  id
+  collectionId
+  toolId
+  title
+  authors
+  text
+  __typename
 }
 
 # Fragments
 
-fragment Tag on ExTag {
+fragment Topic on Topic {
   abbreviation
   title
 }
@@ -198,7 +243,7 @@ fragment FieldsForLink on ExerciseInterface {
   toolId
   title
   difficulty
-  tags {
+  topics {
     abbreviation
     title
   }

@@ -5,7 +5,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {ActivatedRoute} from '@angular/router';
-import {ApiService} from '../../tools/collection-tools/_services/api.service';
 
 describe('LessonsForToolOverviewComponent', () => {
   let component: LessonsForToolOverviewComponent;
@@ -16,7 +15,6 @@ describe('LessonsForToolOverviewComponent', () => {
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
       declarations: [LessonsForToolOverviewComponent],
       providers: [
-        ApiService,
         {
           provide: ActivatedRoute,
           useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'web']])}}

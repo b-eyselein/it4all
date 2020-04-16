@@ -2,7 +2,7 @@ package model.tools.web
 
 import de.uniwue.webtester.sitespec.{HtmlTask, JsAction, JsActionType, SiteSpec}
 import model.core.result.SuccessType
-import model.tools.{ExerciseFile, SampleSolution, SemanticVersion, ToolGraphQLModelBasics}
+import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -42,18 +42,15 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebExercise, WebSolution,
     deriveObjectType()
   }
 
-  private val webExTagType: EnumType[WebExTag] = deriveEnumType()
-
   override val ExerciseType: ObjectType[Unit, WebExercise] = {
-    implicit val svt: ObjectType[Unit, SemanticVersion] = semanticVersionType
-    implicit val wett: EnumType[WebExTag]               = webExTagType
-    implicit val siteSpecT: ObjectType[Unit, SiteSpec]  = siteSpecType
-    implicit val eft: ObjectType[Unit, ExerciseFile]    = exerciseFileType
+    implicit val siteSpecT: ObjectType[Unit, SiteSpec] = siteSpecType
+    implicit val eft: ObjectType[Unit, ExerciseFile]   = exerciseFileType
     implicit val sampleSolType: ObjectType[Unit, SampleSolution[WebSolution]] =
       sampleSolutionType("Web", webSolutionType)
 
     deriveObjectType(
-      Interfaces(exerciseInterfaceType)
+      Interfaces(exerciseInterfaceType),
+      ExcludeFields("topics")
     )
   }
 

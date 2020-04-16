@@ -3,7 +3,6 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {AdminReadCollectionsComponent} from './admin-read-collections.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
-import {ApiService} from '../../tools/collection-tools/_services/api.service';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {ActivatedRoute} from '@angular/router';
 import {ReadObjectComponent} from '../_components/read-object/read-object.component';
@@ -17,7 +16,6 @@ describe('AdminReadCollectionsComponent', () => {
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
       declarations: [AdminReadCollectionsComponent, ReadObjectComponent],
       providers: [
-        ApiService,
         {
           provide: ActivatedRoute,
           useValue: {snapshot: {paramMap: new Map<string, string>([['toolId', 'web']])}}

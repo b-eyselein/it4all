@@ -29,8 +29,4 @@ export class AdminEditCollectionComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  get collectionAsJson(): object | undefined {
-    return JSON.parse(this.adminEditCollectionQuery.tool.collection.asJson);
-  }
-
 }
