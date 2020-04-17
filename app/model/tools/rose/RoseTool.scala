@@ -4,6 +4,7 @@ import model.User
 import model.persistence.DbExercise
 import model.tools._
 import model.tools.programming.ProgLanguages
+import play.api.libs.json.Reads
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -48,8 +49,24 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
         )
     }
 
-  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[RoseExercise] = ???
-
-  override protected def convertExerciseToDb(exercise: RoseExercise): DbExercise = ???
+  override protected def convertExerciseFromDb(dbExercise: DbExercise, topics: Seq[Topic]): Option[RoseExercise] =
+    dbExercise match {
+      case DbExercise(id, collectionId, toolId, title, authors, text, difficulty, sampleSolutionsJson, contentJson) =>
+        for {
+          sampleSolutions <- Reads.seq(toolJsonProtocol.sampleSolutionFormat).reads(sampleSolutionsJson).asOpt
+          content         <- toolJsonProtocol.exerciseContentFormat.reads(contentJson).asOpt
+        } yield RoseExercise(
+          id,
+          collectionId,
+          toolId,
+          title,
+          authors,
+          text,
+          topics,
+          difficulty,
+          sampleSolutions,
+          content
+        )
+    }
 
 }

@@ -3,7 +3,7 @@ package model.tools.programming
 import model.User
 import model.persistence.DbExercise
 import model.tools._
-import play.api.libs.json.{Reads, Writes}
+import play.api.libs.json.Reads
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -37,10 +37,11 @@ object ProgTool extends CollectionTool("programming", "Programmierung", ToolStat
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] =
     ProgCorrector.correct(user, sol, exercise, part, solutionSaved)
 
-  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[ProgrammingExercise] = dbExercise match {
+  override protected def convertExerciseFromDb(
+    dbExercise: DbExercise,
+    topics: Seq[Topic]
+  ): Option[ProgrammingExercise] = dbExercise match {
     case DbExercise(id, collectionId, toolId, title, authors, text, difficulty, sampleSolutionsJson, contentJson) =>
-      val topics: Seq[Topic] = ???
-
       for {
         sampleSolutions              <- Reads.seq(toolJsonProtocol.sampleSolutionFormat).reads(sampleSolutionsJson).asOpt
         content: ProgExerciseContent <- toolJsonProtocol.exerciseContentFormat.reads(contentJson).asOpt
@@ -55,32 +56,6 @@ object ProgTool extends CollectionTool("programming", "Programmierung", ToolStat
         difficulty,
         sampleSolutions,
         content
-      )
-  }
-
-  override protected def convertExerciseToDb(exercise: ProgrammingExercise): DbExercise = exercise match {
-    case ProgrammingExercise(
-        id,
-        collectionId,
-        toolId,
-        title,
-        authors,
-        text,
-        topics,
-        difficulty,
-        sampleSolutions,
-        content
-        ) =>
-      DbExercise(
-        id,
-        collectionId,
-        toolId,
-        title,
-        authors,
-        text,
-        difficulty,
-        Writes.seq(toolJsonProtocol.sampleSolutionFormat).writes(sampleSolutions),
-        toolJsonProtocol.exerciseContentFormat.writes(content)
       )
   }
 

@@ -23,8 +23,10 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
 
   // Table Queries
 
+  protected final val topicsTQ: TableQuery[TopicsTable]                   = TableQuery[TopicsTable]
   protected final val collectionsTQ: TableQuery[ExerciseCollectionsTable] = TableQuery[ExerciseCollectionsTable]
   protected final val exercisesTQ: TableQuery[ExercisesTable]             = TableQuery[ExercisesTable]
+  protected final val exerciseTopicsTQ: TableQuery[ExerciseTopicsTable]   = TableQuery[ExerciseTopicsTable]
   protected final val userSolutionsTQ: TableQuery[UserSolutionsTable]     = TableQuery[UserSolutionsTable]
   protected final val lessonsTQ: TableQuery[LessonsTable]                 = TableQuery[LessonsTable]
 
@@ -49,6 +51,22 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
   protected val exPartColumnType: BaseColumnType[ExPart] = MappedColumnType.base[ExPart, String](_.entryName, _ => ???)
 
   // Table classes
+
+  protected class TopicsTable(tag: Tag) extends Table[Topic](tag, "topics") {
+
+    def id: Rep[Int] = column[Int]("id")
+
+    def toolId: Rep[String] = column[String]("tool_id")
+
+    def abbreviation: Rep[String] = column[String]("abbrevitation")
+
+    def title: Rep[String] = column[String]("title")
+
+    def pk = primaryKey("topics_pk", (id, toolId))
+
+    override def * : ProvenShape[Topic] = (id, toolId, abbreviation, title) <> (Topic.tupled, Topic.unapply)
+
+  }
 
   protected class ExerciseCollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
 
@@ -120,6 +138,28 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
         sampleSolutionsJson,
         contentJson
       ) <> (DbExercise.tupled, DbExercise.unapply)
+
+  }
+
+  protected final class ExerciseTopicsTable(tag: Tag) extends Table[DbExerciseTopic](tag, "exercise_topics") {
+
+    def topicId: Rep[Int] = column[Int]("topic_id")
+
+    def exerciseId: Rep[Int] = column[Int]("exercise_id")
+
+    def collectionId: Rep[Int] = column[Int]("collection_id")
+
+    def toolId: Rep[String] = column[String]("tool_id")
+
+    def pk: PrimaryKey = primaryKey("exercise_topics_fk", (topicId, exerciseId, collectionId, toolId))
+
+    def exerciseFk: ForeignKeyQuery[ExercisesTable, DbExercise] =
+      foreignKey("exercise_topics_exercise_fk", (exerciseId, collectionId, toolId), exercisesTQ)(
+        ex => (ex.id, ex.collectionId, ex.toolId)
+      )
+
+    override def * : ProvenShape[DbExerciseTopic] =
+      (topicId, exerciseId, collectionId, toolId) <> (DbExerciseTopic.tupled, DbExerciseTopic.unapply)
 
   }
 

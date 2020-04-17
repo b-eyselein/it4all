@@ -5,6 +5,7 @@ import model.core.matching.MatchingResult
 import model.persistence.DbExercise
 import model.tools._
 import model.tools.uml.matcher._
+import play.api.libs.json.Reads
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
@@ -49,8 +50,24 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
     }
   }
 
-  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[UmlExercise] = ???
-
-  override protected def convertExerciseToDb(exercise: UmlExercise): DbExercise = ???
+  override protected def convertExerciseFromDb(dbExercise: DbExercise, topics: Seq[Topic]): Option[UmlExercise] =
+    dbExercise match {
+      case DbExercise(id, collectionId, toolId, title, authors, text, difficulty, sampleSolutionsJson, contentJson) =>
+        for {
+          sampleSolutions <- Reads.seq(toolJsonProtocol.sampleSolutionFormat).reads(sampleSolutionsJson).asOpt
+          content         <- toolJsonProtocol.exerciseContentFormat.reads(contentJson).asOpt
+        } yield UmlExercise(
+          id,
+          collectionId,
+          toolId,
+          title,
+          authors,
+          text,
+          topics,
+          difficulty,
+          sampleSolutions,
+          content
+        )
+    }
 
 }

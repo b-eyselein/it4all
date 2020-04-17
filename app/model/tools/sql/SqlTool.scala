@@ -9,6 +9,7 @@ import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
+import play.api.libs.json.Reads
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -70,8 +71,24 @@ object SqlTool extends CollectionTool("sql", "Sql") {
         }
     }
 
-  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[SqlExercise] = ???
-
-  override protected def convertExerciseToDb(exercise: SqlExercise): DbExercise = ???
+  override protected def convertExerciseFromDb(dbExercise: DbExercise, topics: Seq[Topic]): Option[SqlExercise] =
+    dbExercise match {
+      case DbExercise(id, collectionId, toolId, title, authors, text, difficulty, sampleSolutionsJson, contentJson) =>
+        for {
+          sampleSolutions <- Reads.seq(toolJsonProtocol.sampleSolutionFormat).reads(sampleSolutionsJson).asOpt
+          content         <- toolJsonProtocol.exerciseContentFormat.reads(contentJson).asOpt
+        } yield SqlExercise(
+          id,
+          collectionId,
+          toolId,
+          title,
+          authors,
+          text,
+          topics,
+          difficulty,
+          sampleSolutions,
+          content
+        )
+    }
 
 }

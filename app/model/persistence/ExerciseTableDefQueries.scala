@@ -100,9 +100,17 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
       .result
   )
 
-  def futureExercisesForTool(toolId: String): Future[Seq[DbExercise]] = db.run(
+  def futureAllExercisesForTool(toolId: String): Future[Seq[DbExercise]] = db.run(
     exercisesTQ
       .filter(_.toolId === toolId)
+      .result
+  )
+
+  def futureTopicsForAllExercisesForTool(toolId: String): Future[Seq[(DbExerciseTopic, Topic)]] = db.run(
+    exerciseTopicsTQ
+      .filter(_.toolId === toolId)
+      .join(topicsTQ)
+      .on { case (et, t) => et.topicId === t.id && et.toolId === t.toolId }
       .result
   )
 
@@ -115,10 +123,20 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
       .result
   )
 
-  def futureExercisesInColl(toolId: String, collId: Int): Future[Seq[DbExercise]] = db.run(
+  def futureAllExercisesInColl(toolId: String, collId: Int): Future[Seq[DbExercise]] = db.run(
     exercisesTQ.filter { ex =>
       ex.toolId === toolId && ex.collectionId === collId
     }.result
+  )
+
+  def futureTopicsForAllExercisesInColl(toolId: String, collId: Int): Future[Seq[(DbExerciseTopic, Topic)]] = db.run(
+    exerciseTopicsTQ
+      .filter { et =>
+        et.toolId === toolId && et.collectionId === collId
+      }
+      .join(topicsTQ)
+      .on { case (et, t) => et.topicId === t.id && et.toolId === t.toolId }
+      .result
   )
 
   def futureExerciseById(toolId: String, collId: Int, id: Int): Future[Option[DbExercise]] = db.run(
@@ -130,6 +148,17 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
       .headOption
   )
 
+  def futureTopicsForExerciseById(toolId: String, collId: Int, id: Int): Future[Seq[Topic]] = db.run(
+    exerciseTopicsTQ
+      .filter { et =>
+        et.toolId === toolId && et.collectionId === collId && et.exerciseId === id
+      }
+      .join(topicsTQ)
+      .on { case (et, t) => et.topicId === t.id && et.toolId === t.toolId }
+      .map(_._2)
+      .result
+  )
+
   // Saving
 
   def futureUpsertCollection(collection: ExerciseCollection): Future[Boolean] =
@@ -137,6 +166,8 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
 
   def futureUpsertExercise(exercise: DbExercise): Future[Boolean] =
     db.run(exercisesTQ.insertOrUpdate(exercise)).transform(_ == 1, identity)
+
+  def futureUpsertTopicsForExercise(exercise: Seq[DbExerciseTopic]): Future[Boolean] = ???
 
   def futureUpsertLesson(lesson: Lesson): Future[Boolean] = {
     val lessonContentWrites: Writes[Seq[LessonContent]] = Writes.seq(JsonProtocols.lessonContentFormat)

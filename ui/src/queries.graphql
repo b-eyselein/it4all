@@ -58,15 +58,17 @@ query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
         id
         title
         text
-        ... on ProgrammingExercise {
-          unitTestPart {
-            unitTestType
+        content{
+          ... on ProgrammingExercise {
+            unitTestPart {
+              unitTestType
+            }
           }
-        }
-        ... on WebExercise{
-          siteSpec {
-            htmlTaskCount
-            jsTaskCount
+          ... on WebExercise{
+            siteSpec {
+              htmlTaskCount
+              jsTaskCount
+            }
           }
         }
       }

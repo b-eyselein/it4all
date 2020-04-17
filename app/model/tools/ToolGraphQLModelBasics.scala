@@ -15,6 +15,16 @@ trait ToolGraphQLModels {
 
   private val topicsType: ObjectType[Unit, Topic] = deriveObjectType()
 
+  protected val exerciseContentUnionType: UnionType[Unit] = UnionType(
+    "ExerciseContent",
+    types = () =>
+      ToolList.tools.map(t => {
+        println(t.graphQlModels)
+        println(t.graphQlModels.exerciseContentType)
+        t.graphQlModels.exerciseContentType
+      })
+  )
+
   protected val exerciseInterfaceType: InterfaceType[Unit, Exercise[_, _]] = InterfaceType(
     "ExerciseInterface",
     () =>
@@ -26,9 +36,10 @@ trait ToolGraphQLModels {
         Field("authors", ListType(StringType), resolve = _.value.authors),
         Field("text", StringType, resolve = _.value.text),
         Field("difficulty", OptionType(IntType), resolve = _.value.difficulty),
-        Field("topics", ListType(topicsType), resolve = _.value.topics)
+        Field("topics", ListType(topicsType), resolve = _.value.topics),
+        Field("content", exerciseContentUnionType, resolve = _.value.content)
       )
-  ).withPossibleTypes(() => ToolList.tools.map(t => t.graphQlModels.exerciseType))
+  ).withPossibleTypes(() => ToolList.tools.map(_.graphQlModels.exerciseType))
 
   protected val exerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
 

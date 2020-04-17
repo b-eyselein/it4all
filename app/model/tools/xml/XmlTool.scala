@@ -5,6 +5,7 @@ import model.User
 import model.core.matching.MatchingResult
 import model.persistence.DbExercise
 import model.tools._
+import play.api.libs.json.Reads
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -51,8 +52,24 @@ object XmlTool extends CollectionTool("xml", "Xml") {
     }
   )
 
-  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[XmlExercise] = ???
-
-  override protected def convertExerciseToDb(exercise: XmlExercise): DbExercise = ???
+  override protected def convertExerciseFromDb(dbExercise: DbExercise, topics: Seq[Topic]): Option[XmlExercise] =
+    dbExercise match {
+      case DbExercise(id, collectionId, toolId, title, authors, text, difficulty, sampleSolutionsJson, contentJson) =>
+        for {
+          sampleSolutions <- Reads.seq(toolJsonProtocol.sampleSolutionFormat).reads(sampleSolutionsJson).asOpt
+          content         <- toolJsonProtocol.exerciseContentFormat.reads(contentJson).asOpt
+        } yield XmlExercise(
+          id,
+          collectionId,
+          toolId,
+          title,
+          authors,
+          text,
+          topics,
+          difficulty,
+          sampleSolutions,
+          content
+        )
+    }
 
 }

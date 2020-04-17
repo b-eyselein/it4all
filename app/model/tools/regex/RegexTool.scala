@@ -5,6 +5,7 @@ import model.core.matching.MatchingResult
 import model.persistence.DbExercise
 import model.points._
 import model.tools._
+import play.api.libs.json.Reads
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex.{Match => RegexMatch}
@@ -57,8 +58,24 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
     }
   }
 
-  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[RegexExercise] = ???
-
-  override protected def convertExerciseToDb(exercise: RegexExercise): DbExercise = ???
+  override protected def convertExerciseFromDb(dbExercise: DbExercise, topics: Seq[Topic]): Option[RegexExercise] =
+    dbExercise match {
+      case DbExercise(id, collectionId, toolId, title, authors, text, difficulty, sampleSolutionsJson, contentJson) =>
+        for {
+          sampleSolutions <- Reads.seq(toolJsonProtocol.sampleSolutionFormat).reads(sampleSolutionsJson).asOpt
+          content         <- toolJsonProtocol.exerciseContentFormat.reads(contentJson).asOpt
+        } yield RegexExercise(
+          id,
+          collectionId,
+          toolId,
+          title,
+          authors,
+          text,
+          topics,
+          difficulty,
+          sampleSolutions,
+          content
+        )
+    }
 
 }

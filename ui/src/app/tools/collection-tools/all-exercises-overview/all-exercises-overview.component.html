@@ -18,7 +18,7 @@
     <h1 class="title is-3 has-text-centered">Alle Aufgaben</h1>
 
     <div class="columns is-multiline">
-      <div class="column is-one-quarter-desktop" *ngFor="let metaData of filteredExerciseMetaData">
+      <div class="column is-one-quarter-desktop" *ngFor="let metaData of filteredExercises">
         <it4all-exercise-link-card [exercise]="metaData"></it4all-exercise-link-card>
       </div>
     </div>

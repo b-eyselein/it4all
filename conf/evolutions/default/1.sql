@@ -80,7 +80,7 @@ create table if not exists exercise_topics (
     topic_id      int,
     exercise_id   int,
     collection_id int,
-    tool_id       int,
+    tool_id       varchar(20),
 
     primary key (topic_id, exercise_id, collection_id, tool_id),
     foreign key (exercise_id, collection_id, tool_id) references exercises (id, collection_id, tool_id) on update cascade on delete cascade,

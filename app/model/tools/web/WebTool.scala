@@ -13,6 +13,7 @@ import model.points.addUp
 import model.tools._
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import play.api.libs.json.Reads
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -120,8 +121,24 @@ object WebTool extends CollectionTool("web", "Web") {
       }
   }
 
-  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[WebExercise] = ???
-
-  override protected def convertExerciseToDb(exercise: WebExercise): DbExercise = ???
+  override protected def convertExerciseFromDb(dbExercise: DbExercise, topics: Seq[Topic]): Option[WebExercise] =
+    dbExercise match {
+      case DbExercise(id, collectionId, toolId, title, authors, text, difficulty, sampleSolutionsJson, contentJson) =>
+        for {
+          sampleSolutions <- Reads.seq(toolJsonProtocol.sampleSolutionFormat).reads(sampleSolutionsJson).asOpt
+          content         <- toolJsonProtocol.exerciseContentFormat.reads(contentJson).asOpt
+        } yield WebExercise(
+          id,
+          collectionId,
+          toolId,
+          title,
+          authors,
+          text,
+          topics,
+          difficulty,
+          sampleSolutions,
+          content
+        )
+    }
 
 }

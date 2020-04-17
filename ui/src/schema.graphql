@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Apr 16 2020 16:44:17 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Fri Apr 17 2020 13:51:30 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -201,11 +201,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_SAMPLE
   UNSUCCESSFUL_MATCH
-  ONLY_USER
-  PARTIAL_MATCH
   SUCCESSFUL_MATCH
+  PARTIAL_MATCH
+  ONLY_SAMPLE
+  ONLY_USER
 }
 
 type Mutation {
@@ -236,6 +236,14 @@ type ProgCompleteResult {
   unitTestResults: [UnitTestCorrectionResult!]!
 }
 
+type ProgExerciseContent {
+  functionName: String!
+  foldername: String!
+  filename: String!
+  unitTestPart: UnitTestPart!
+  implementationPart: ImplementationPart!
+}
+
 enum ProgExPart {
   TestCreation
   Implementation
@@ -249,13 +257,9 @@ type ProgrammingExercise implements ExerciseInterface {
   title: String!
   authors: [String!]!
   text: String!
-  difficulty: Int
+  difficulty: Int!
   sampleSolutions: [ProgSampleSolution!]!
-  functionName: String!
-  foldername: String!
-  filename: String!
-  unitTestPart: UnitTestPart!
-  implementationPart: ImplementationPart!
+  content: ProgExerciseContent!
   topics: [Topic!]!
 }
 
@@ -290,13 +294,17 @@ type RegexExercise implements ExerciseInterface {
   title: String!
   authors: [String!]!
   text: String!
-  difficulty: Int
+  difficulty: Int!
   sampleSolutions: [StringSampleSolution!]!
+  content: RegexExerciseContent!
+  topics: [Topic!]!
+}
+
+type RegexExerciseContent {
   maxPoints: Int!
   correctionType: RegexCorrectionType!
   matchTestData: [RegexMatchTestData!]!
   extractionTestData: [RegexExtractionTestData!]!
-  topics: [Topic!]!
 }
 
 enum RegexExPart {
@@ -422,19 +430,23 @@ type SqlExercise implements ExerciseInterface {
   title: String!
   authors: [String!]!
   text: String!
-  difficulty: Int
+  difficulty: Int!
   sampleSolutions: [StringSampleSolution!]!
-  exerciseType: SqlExerciseType!
-  hint: String
+  content: SqlExerciseContent!
   topics: [Topic!]!
 }
 
+type SqlExerciseContent {
+  exerciseType: SqlExerciseType!
+  hint: String
+}
+
 enum SqlExerciseType {
-  SELECT
-  DELETE
-  CREATE
   UPDATE
+  SELECT
   INSERT
+  CREATE
+  DELETE
 }
 
 enum SqlExPart {
@@ -745,11 +757,15 @@ type UmlExercise implements ExerciseInterface {
   title: String!
   authors: [String!]!
   text: String!
-  difficulty: Int
+  difficulty: Int!
   sampleSolutions: [UmlSampleSolution!]!
+  content: UmlExerciseContent!
+  topics: [Topic!]!
+}
+
+type UmlExerciseContent {
   toIgnore: [String!]!
   mappings: [KeyValueObject!]!
-  topics: [Topic!]!
 }
 
 enum UmlExPart {
@@ -892,13 +908,17 @@ type WebExercise implements ExerciseInterface {
   title: String!
   authors: [String!]!
   text: String!
-  difficulty: Int
+  difficulty: Int!
   sampleSolutions: [WebSampleSolution!]!
+  content: WebExerciseContent!
+  topics: [Topic!]!
+}
+
+type WebExerciseContent {
   htmlText: String
   jsText: String
   siteSpec: SiteSpec!
   files: [ExerciseFile!]!
-  topics: [Topic!]!
 }
 
 enum WebExPart {
@@ -954,11 +974,15 @@ type XmlExercise implements ExerciseInterface {
   title: String!
   authors: [String!]!
   text: String!
-  difficulty: Int
+  difficulty: Int!
+  sampleSolutions: [XmlSampleSolution!]!
+  content: XmlExerciseContent!
+  topics: [Topic!]!
+}
+
+type XmlExerciseContent {
   grammarDescription: String!
   rootNode: String!
-  sampleSolutions: [XmlSampleSolution!]!
-  topics: [Topic!]!
 }
 
 enum XmlExPart {

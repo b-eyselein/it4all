@@ -15,6 +15,13 @@ final case class DbExercise(
   contentJson: JsValue
 )
 
+final case class DbExerciseTopic(
+  topicId: Int,
+  exerciseId: Int,
+  collectionId: Int,
+  toolId: String
+)
+
 final case class DbUserSolution(
   id: Int,
   exerciseId: Int,
