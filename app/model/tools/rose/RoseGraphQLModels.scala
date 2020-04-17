@@ -4,14 +4,21 @@ import model.tools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{ExcludeFields, Interfaces, deriveObjectType}
 import sangria.schema._
 
-object RoseGraphQLModels extends ToolGraphQLModelBasics[RoseExercise, String, RoseExPart] {
+object RoseGraphQLModels extends ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExercise, RoseExPart] {
 
-  override val ExerciseType: ObjectType[Unit, RoseExercise] = {
-    implicit val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
+  override val exerciseContentType: ObjectType[Unit, RoseExerciseContent] = {
+    deriveObjectType(
+      ExcludeFields("inputTypes")
+    )
+  }
+
+  override val exerciseType: ObjectType[Unit, RoseExercise] = {
+    implicit val ect: ObjectType[Unit, RoseExerciseContent]    = exerciseContentType
+    implicit val sst: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
 
     deriveObjectType(
       Interfaces(exerciseInterfaceType),
-      ExcludeFields("topics", "inputTypes")
+      ExcludeFields("topics")
     )
   }
 

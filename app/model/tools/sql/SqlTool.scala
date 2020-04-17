@@ -2,8 +2,9 @@ package model.tools.sql
 
 import model.User
 import model.core.matching.MatchingResult
-import model.tools.{StringSampleSolutionToolJsonProtocol, _}
+import model.persistence.DbExercise
 import model.tools.sql.matcher._
+import model.tools.{StringSampleSolutionToolJsonProtocol, _}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
@@ -24,9 +25,10 @@ object SqlTool extends CollectionTool("sql", "Sql") {
 
   // Abstract types
 
+  override type SolType        = String
+  override type ExContentType  = SqlExerciseContent
   override type ExerciseType   = SqlExercise
   override type PartType       = SqlExPart
-  override type SolType        = String
   override type CompResultType = AbstractSqlResult
 
   type ColumnComparison           = MatchingResult[ColumnWrapper, ColumnMatch]
@@ -41,10 +43,10 @@ object SqlTool extends CollectionTool("sql", "Sql") {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExercise, SqlExPart] =
+  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlExercise, SqlExPart] =
     SqlJsonProtocols
 
-  override val graphQlModels: ToolGraphQLModelBasics[SqlExercise, String, SqlExPart] =
+  override val graphQlModels: ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExercise, SqlExPart] =
     SqlGraphQLModels
 
   // Correction
@@ -57,13 +59,19 @@ object SqlTool extends CollectionTool("sql", "Sql") {
     part: SqlExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[AbstractSqlResult]] =
-    correctorsAndDaos.get(exercise.exerciseType) match {
+    correctorsAndDaos.get(exercise.content.exerciseType) match {
       case None =>
-        Future.successful(Failure(new Exception(s"There is no corrector or sql dao for ${exercise.exerciseType}")))
+        Future.successful(
+          Failure(new Exception(s"There is no corrector or sql dao for ${exercise.content.exerciseType}"))
+        )
       case Some((corrector, dao)) =>
         Future {
           corrector.correct(dao, learnerSolution, exercise, sqlScenario, solutionSaved)
         }
     }
+
+  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[SqlExercise] = ???
+
+  override protected def convertExerciseToDb(exercise: SqlExercise): DbExercise = ???
 
 }

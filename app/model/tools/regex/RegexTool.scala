@@ -2,6 +2,7 @@ package model.tools.regex
 
 import model.User
 import model.core.matching.MatchingResult
+import model.persistence.DbExercise
 import model.points._
 import model.tools._
 
@@ -11,19 +12,21 @@ import scala.util.{Failure, Success, Try}
 
 object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
 
+  override type SolType        = String
+  override type ExContentType  = RegexExerciseContent
   override type ExerciseType   = RegexExercise
   override type PartType       = RegexExPart
-  override type SolType        = String
   override type CompResultType = AbstractRegexResult
 
   type ExtractedValuesComparison = MatchingResult[RegexMatch, RegexMatchMatch]
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExercise, RegexExPart] =
+  override val toolJsonProtocol
+    : StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExercise, RegexExPart] =
     RegexToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[RegexExercise, String, RegexExPart] =
+  override val graphQlModels: ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExercise, RegexExPart] =
     RegexGraphQLModels
 
   // Correction
@@ -39,10 +42,10 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
 
     Try(sol.r) match {
       case Failure(error) =>
-        Success(RegexIllegalRegexResult(solutionSaved, error.getMessage, exercise.maxPoints.points))
+        Success(RegexIllegalRegexResult(solutionSaved, error.getMessage, exercise.content.maxPoints.points))
 
       case Success(userRegex) =>
-        exercise.correctionType match {
+        exercise.content.correctionType match {
 
           case RegexCorrectionTypes.MATCHING =>
             Success(RegexMatchingCorrector.correctMatching(exercise, userRegex, solutionSaved))
@@ -53,5 +56,9 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
 
     }
   }
+
+  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[RegexExercise] = ???
+
+  override protected def convertExerciseToDb(exercise: RegexExercise): DbExercise = ???
 
 }

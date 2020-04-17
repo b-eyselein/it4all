@@ -7,7 +7,7 @@ import sangria.schema._
 
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExercise, String, RegexExPart] {
+object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExercise, RegexExPart] {
 
   // Enum types
 
@@ -17,11 +17,17 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[RegexExercise, String, 
 
   // Exercise content types
 
-  override val ExerciseType: ObjectType[Unit, RegexExercise] = {
-    implicit val rctt: EnumType[RegexCorrectionType]                          = regexCorrectionTypeType
-    implicit val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
-    implicit val rmtdt: ObjectType[Unit, RegexMatchTestData]                  = deriveObjectType()
-    implicit val retdt: ObjectType[Unit, RegexExtractionTestData]             = deriveObjectType()
+  override val exerciseContentType: ObjectType[Unit, RegexExerciseContent] = {
+    implicit val rctt: EnumType[RegexCorrectionType]              = regexCorrectionTypeType
+    implicit val rmtdt: ObjectType[Unit, RegexMatchTestData]      = deriveObjectType()
+    implicit val retdt: ObjectType[Unit, RegexExtractionTestData] = deriveObjectType()
+
+    deriveObjectType()
+  }
+
+  override val exerciseType: ObjectType[Unit, RegexExercise] = {
+    implicit val ect: ObjectType[Unit, RegexExerciseContent]   = exerciseContentType
+    implicit val sst: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
 
     deriveObjectType(
       Interfaces(exerciseInterfaceType),

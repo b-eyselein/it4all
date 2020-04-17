@@ -21,40 +21,42 @@ abstract class CollectionTool(
 
   // Abstract types
 
-  type ExerciseType <: Exercise
+  type SolType
+
+  type ExContentType
+
+  type ExerciseType <: Exercise[SolType, ExContentType]
 
   type PartType <: ExPart
-
-  type SolType
 
   type CompResultType <: AbstractCorrectionResult
 
   // Yaml, Html forms, Json, GraphQL
 
-  val toolJsonProtocol: ToolJsonProtocol[ExerciseType, SolType, PartType]
+  val toolJsonProtocol: ToolJsonProtocol[SolType, ExContentType, ExerciseType, PartType]
 
-  val graphQlModels: ToolGraphQLModelBasics[ExerciseType, SolType, PartType]
+  val graphQlModels: ToolGraphQLModelBasics[SolType, ExContentType, ExerciseType, PartType]
 
   // Db
 
-  def futureAllExercises(tableDefs: ExerciseTableDefs)(implicit ec: ExecutionContext): Future[Seq[Exercise]] =
+  def futureAllExercises(tableDefs: ExerciseTableDefs)(implicit ec: ExecutionContext): Future[Seq[Exercise[_, _]]] =
     tableDefs
       .futureExercisesForTool(this.id)
-      .map(_.map(convertExerciseFromDb))
+      .map(_.flatMap(convertExerciseFromDb))
 
   def futureExercisesInCollection(
     tableDefs: ExerciseTableDefs,
     collId: Int
-  )(implicit ec: ExecutionContext): Future[Seq[Exercise]] =
+  )(implicit ec: ExecutionContext): Future[Seq[Exercise[_, _]]] =
     tableDefs
       .futureExercisesInColl(this.id, collId)
-      .map(_.map(convertExerciseFromDb))
+      .map(_.flatMap(convertExerciseFromDb))
 
   def futureExerciseById(
     tableDefs: ExerciseTableDefs,
     collId: Int,
     exId: Int
-  )(implicit ec: ExecutionContext): Future[Option[Exercise]] =
+  )(implicit ec: ExecutionContext): Future[Option[Exercise[_, _]]] =
     futureExerciseTypeById(tableDefs, collId, exId)
 
   def futureExerciseTypeById(
@@ -64,16 +66,16 @@ abstract class CollectionTool(
   )(implicit ec: ExecutionContext): Future[Option[ExerciseType]] =
     tableDefs
       .futureExerciseById(this.id, collId, exId)
-      .map(_.map(convertExerciseFromDb))
+      .map(_.flatMap(convertExerciseFromDb))
 
   def futureUpsertExercise(
     tableDefs: ExerciseTableDefs,
     exercise: ExerciseType
   )(implicit ec: ExecutionContext): Future[Boolean] = tableDefs.futureUpsertExercise(convertExerciseToDb(exercise))
 
-  protected def convertExerciseFromDb(dbExercise: DbExercise): ExerciseType = ???
+  protected def convertExerciseFromDb(dbExercise: DbExercise): Option[ExerciseType]
 
-  protected def convertExerciseToDb(exercise: ExerciseType): DbExercise = ???
+  protected def convertExerciseToDb(exercise: ExerciseType): DbExercise
 
   // Other helper methods
 

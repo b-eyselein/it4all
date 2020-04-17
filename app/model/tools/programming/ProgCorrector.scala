@@ -60,7 +60,7 @@ object ProgCorrector {
       writeExerciseFileAndMount(exerciseFile, solTargetDir)
     }
 
-    exerciseContent.unitTestPart.unitTestType match {
+    exerciseContent.content.unitTestPart.unitTestType match {
       case UnitTestTypes.Simplified =>
         correctSimplifiedImplementation(
           solTargetDir,
@@ -84,10 +84,13 @@ object ProgCorrector {
     val unitTestFileContent: String = exercise.sampleSolutions.headOption match {
       case None => ???
       case Some(SampleSolution(_, ProgSolution(files, _))) =>
-        files.find(_.name == exercise.unitTestPart.testFileName).map(_.content).getOrElse(???) // unitTest.content
+        files
+          .find(_.name == exercise.content.unitTestPart.testFileName)
+          .map(_.content)
+          .getOrElse(???) // unitTest.content
     }
 
-    val unitTestFileName = s"${exercise.filename}_test.py"
+    val unitTestFileName = s"${exercise.content.filename}_test.py"
     val unitTestFile     = solTargetDir / unitTestFileName
     createFileAndWrite(unitTestFile, unitTestFileContent)
 
@@ -121,10 +124,13 @@ object ProgCorrector {
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     val testMainFile = solTargetDir / testMainFileName
-    createFileAndWrite(testMainFile, exercise.unitTestPart.simplifiedTestMainFile.map(_.content).getOrElse(???))
+    createFileAndWrite(testMainFile, exercise.content.unitTestPart.simplifiedTestMainFile.map(_.content).getOrElse(???))
 
     val testDataFile = solTargetDir / testDataFileName
-    createFileAndWrite(testDataFile, Json.prettyPrint(exercise.buildSimpleTestDataFileContent(exercise.sampleTestData)))
+    createFileAndWrite(
+      testDataFile,
+      Json.prettyPrint(exercise.content.buildSimpleTestDataFileContent(exercise.content.sampleTestData))
+    )
 
     DockerConnector
       .runContainer(
@@ -153,7 +159,7 @@ object ProgCorrector {
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     // write unit test file
-    val testFileName = exercise.unitTestPart.testFileName
+    val testFileName = exercise.content.unitTestPart.testFileName
     val testFile     = solTargetDir / testFileName
     createFileAndWrite(testFile, progSolution.files.find(_.name == testFileName).map(_.content).getOrElse(???))
 
@@ -161,33 +167,37 @@ object ProgCorrector {
     val testDataFile = solTargetDir / testDataFileName
     // remove ending '.py'
     val testFileNameForTestData =
-      exercise.unitTestPart.testFileName.substring(0, exercise.unitTestPart.testFileName.length - 3)
+      exercise.content.unitTestPart.testFileName.substring(0, exercise.content.unitTestPart.testFileName.length - 3)
     createFileAndWrite(
       testDataFile,
       Json.prettyPrint(
         ProgrammingToolJsonProtocol.unitTestDataWrites.writes(
           UnitTestTestData(
-            exercise.foldername,
-            exercise.filename,
+            exercise.content.foldername,
+            exercise.content.filename,
             testFileNameForTestData,
-            exercise.unitTestPart.unitTestTestConfigs
+            exercise.content.unitTestPart.unitTestTestConfigs
           )
         )
       )
     )
 
     // find mounts for implementation files
-    val unitTestSolFilesDockerBinds: Seq[DockerBind] = exercise.unitTestPart.unitTestTestConfigs
+    val unitTestSolFilesDockerBinds: Seq[DockerBind] = exercise.content.unitTestPart.unitTestTestConfigs
       .filter(tc => implFileRegex.matches(tc.file.name))
       .map { tc =>
-        writeExerciseFileAndMount(tc.file, solTargetDir, DockerConnector.DefaultWorkingDir / exercise.foldername)
+        writeExerciseFileAndMount(
+          tc.file,
+          solTargetDir,
+          DockerConnector.DefaultWorkingDir / exercise.content.foldername
+        )
       }
 
     // find mounts for exercise files
-    val exFilesMounts = exercise.unitTestPart.unitTestFiles
-      .filter(f => f.name != testFileName && f.name != exercise.implementationPart.implFileName)
+    val exFilesMounts = exercise.content.unitTestPart.unitTestFiles
+      .filter(f => f.name != testFileName && f.name != exercise.content.implementationPart.implFileName)
       .map { exFile =>
-        writeExerciseFileAndMount(exFile, solTargetDir, DockerConnector.DefaultWorkingDir / exercise.foldername)
+        writeExerciseFileAndMount(exFile, solTargetDir, DockerConnector.DefaultWorkingDir / exercise.content.foldername)
       }
 
     DockerConnector
@@ -196,7 +206,7 @@ object ProgCorrector {
         maybeDockerBinds = unitTestSolFilesDockerBinds ++ exFilesMounts ++ Seq(
           DockerBind(
             testFile,
-            DockerConnector.DefaultWorkingDir / exercise.foldername / testFileName,
+            DockerConnector.DefaultWorkingDir / exercise.content.foldername / testFileName,
             isReadOnly = true
           ),
           DockerBind(testDataFile, DockerConnector.DefaultWorkingDir / testDataFileName, isReadOnly = true),

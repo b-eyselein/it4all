@@ -3,9 +3,9 @@ package model.tools
 import model.json.KeyValueObject
 import play.api.libs.json._
 
-final case class ReadExercisesMessage[E <: Exercise](exercises: Seq[E])
+final case class ReadExercisesMessage[S, C, E <: Exercise[S, C]](exercises: Seq[E])
 
-trait ToolJsonProtocol[EC <: Exercise, ST, PartType <: ExPart] {
+trait ToolJsonProtocol[S, C, E <: Exercise[S, C], PartType <: ExPart] {
 
   protected val keyValueObjectMapFormat: Format[Map[String, String]] = {
 
@@ -17,16 +17,28 @@ trait ToolJsonProtocol[EC <: Exercise, ST, PartType <: ExPart] {
     )
   }
 
-  val exerciseFormat: Format[EC]
+  val solutionFormat: Format[S]
 
-  val solutionFormat: Format[ST]
+  lazy val sampleSolutionFormat: Format[SampleSolution[S]] = {
+    implicit val sf: Format[S] = solutionFormat
+
+    Json.format
+  }
+
+  val exerciseContentFormat: Format[C]
+
+  val exerciseFormat: Format[E]
 
   val partTypeFormat: Format[PartType]
 
-  val readExercisesMessageReads: Reads[ReadExercisesMessage[EC]]
+  lazy val readExercisesMessageReads: Reads[ReadExercisesMessage[S, C, E]] = {
+    implicit val ef: Format[E] = exerciseFormat
+
+    Json.reads
+  }
 
   def validateAndWriteReadExerciseMessage(message: JsValue): Seq[String] = {
-    val readExercises: Seq[EC] = readExercisesMessageReads.reads(message) match {
+    val readExercises: Seq[E] = readExercisesMessageReads.reads(message) match {
       case JsSuccess(readExercisesMessage, _) => readExercisesMessage.exercises
       case JsError(errors) =>
         errors.foreach(println)
@@ -40,11 +52,9 @@ trait ToolJsonProtocol[EC <: Exercise, ST, PartType <: ExPart] {
 
 }
 
-abstract class StringSampleSolutionToolJsonProtocol[E <: Exercise, PartType <: ExPart]
-    extends ToolJsonProtocol[E, String, PartType] {
+abstract class StringSampleSolutionToolJsonProtocol[C, E <: Exercise[String, C], PartType <: ExPart]
+    extends ToolJsonProtocol[String, C, E, PartType] {
 
   override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)
-
-  protected val sampleSolutionFormat: Format[SampleSolution[String]] = Json.format[SampleSolution[String]]
 
 }

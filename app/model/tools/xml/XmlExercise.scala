@@ -35,22 +35,12 @@ final case class XmlExercise(
   authors: Seq[String],
   text: String,
   topics: Seq[Topic],
-  difficulty: Option[Int],
-  grammarDescription: String,
-  rootNode: String,
-  sampleSolutions: Seq[SampleSolution[XmlSolution]]
-) extends Exercise {
-
-  override type SolType = XmlSolution
-
-}
+  difficulty: Int,
+  sampleSolutions: Seq[SampleSolution[XmlSolution]],
+  content: XmlExerciseContent
+) extends Exercise[XmlSolution, XmlExerciseContent]
 
 final case class XmlExerciseContent(
   grammarDescription: String,
-  rootNode: String,
-  sampleSolutions: Seq[SampleSolution[XmlSolution]]
-) extends ExerciseContent {
-
-  override type SolType = XmlSolution
-
-}
+  rootNode: String
+)

@@ -25,7 +25,7 @@ object RegexExtractionCorrector {
     solutionSaved: Boolean
   ): RegexExtractionResult = {
 
-    val extractionResults = regexExerciseContent.extractionTestData.map { extractionTestData =>
+    val extractionResults = regexExerciseContent.content.extractionTestData.map { extractionTestData =>
       // FIXME: build sample regex in calling function!
       val sampleRegex = regexExerciseContent.sampleSolutions.headOption.map(_.sample).getOrElse(???).r
 
@@ -43,13 +43,13 @@ object RegexExtractionCorrector {
     val correctResultsCount: Int = extractionResults.count(_.correct)
 
     val points: Points =
-      (correctResultsCount.toDouble / regexExerciseContent.extractionTestData.size.toDouble * regexExerciseContent.maxPoints * 4).toInt.quarterPoints
+      (correctResultsCount.toDouble / regexExerciseContent.content.extractionTestData.size.toDouble * regexExerciseContent.content.maxPoints * 4).toInt.quarterPoints
 
     RegexExtractionResult(
       solutionSaved,
       extractionResults,
       points,
-      regexExerciseContent.maxPoints.points
+      regexExerciseContent.content.maxPoints.points
     )
   }
 

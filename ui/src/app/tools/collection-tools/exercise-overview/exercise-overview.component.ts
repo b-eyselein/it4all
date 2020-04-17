@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ExerciseOverviewGQL, ExerciseOverviewQuery} from "../../../_services/apollo_services";
-import {Tool} from "../../../_interfaces/tool";
+import {CollectionTool} from "../../../_interfaces/tool";
 import {collectionTools} from "../collection-tools-list";
 
 @Component({templateUrl: './exercise-overview.component.html'})
@@ -11,7 +11,7 @@ export class ExerciseOverviewComponent implements OnInit {
   private collectionId: number;
   private exerciseId: number;
 
-  tool: Tool;
+  tool: CollectionTool;
 
   exerciseOverviewQuery: ExerciseOverviewQuery;
 

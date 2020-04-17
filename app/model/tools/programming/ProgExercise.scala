@@ -12,26 +12,10 @@ final case class ProgrammingExercise(
   authors: Seq[String],
   text: String,
   topics: Seq[Topic],
-  difficulty: Option[Int],
+  difficulty: Int,
   sampleSolutions: Seq[SampleSolution[ProgSolution]],
-  functionName: String,
-  foldername: String,
-  filename: String,
-  inputTypes: Seq[ProgInput],
-  outputType: ProgDataType,
-  baseData: Option[JsValue],
-  unitTestPart: UnitTestPart,
-  implementationPart: ImplementationPart,
-  sampleTestData: Seq[ProgTestData],
-  maybeClassDiagramPart: Option[UmlClassDiagram]
-) extends Exercise {
-
-  override type SolType = ProgSolution
-
-  def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
-    ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this.baseData, completeTestData)
-
-}
+  content: ProgExerciseContent
+) extends Exercise[ProgSolution, ProgExerciseContent]
 
 final case class ProgExerciseContent(
   functionName: String,
@@ -42,12 +26,9 @@ final case class ProgExerciseContent(
   baseData: Option[JsValue],
   unitTestPart: UnitTestPart,
   implementationPart: ImplementationPart,
-  sampleSolutions: Seq[SampleSolution[ProgSolution]],
   sampleTestData: Seq[ProgTestData],
   maybeClassDiagramPart: Option[UmlClassDiagram]
-) extends ExerciseContent {
-
-  override type SolType = ProgSolution
+) {
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
     ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this.baseData, completeTestData)

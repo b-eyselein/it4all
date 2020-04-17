@@ -27,26 +27,14 @@ final case class WebExercise(
   authors: Seq[String],
   text: String,
   topics: Seq[Topic],
-  difficulty: Option[Int],
+  difficulty: Int,
   sampleSolutions: Seq[SampleSolution[WebSolution]],
-  htmlText: Option[String],
-  jsText: Option[String],
-  siteSpec: SiteSpec,
-  files: Seq[ExerciseFile]
-) extends Exercise {
-
-  override type SolType = WebSolution
-
-}
+  content: WebExerciseContent
+) extends Exercise[WebSolution, WebExerciseContent]
 
 final case class WebExerciseContent(
   htmlText: Option[String],
   jsText: Option[String],
   siteSpec: SiteSpec,
-  files: Seq[ExerciseFile],
-  sampleSolutions: Seq[SampleSolution[WebSolution]]
-) extends ExerciseContent {
-
-  override type SolType = WebSolution
-
-}
+  files: Seq[ExerciseFile]
+)

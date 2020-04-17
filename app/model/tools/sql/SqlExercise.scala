@@ -65,18 +65,12 @@ final case class SqlExercise(
   authors: Seq[String],
   text: String,
   topics: Seq[Topic],
-  difficulty: Option[Int],
+  difficulty: Int,
   sampleSolutions: Seq[SampleSolution[String]],
-  exerciseType: SqlExerciseType,
-  hint: Option[String]
-) extends Exercise {
-
-  override type SolType = String
-
-}
+  content: SqlExerciseContent
+) extends Exercise[String, SqlExerciseContent]
 
 final case class SqlExerciseContent(
   exerciseType: SqlExerciseType,
-  hint: Option[String],
-  sampleSolutions: Seq[SampleSolution[String]]
-) extends StringExerciseContent
+  hint: Option[String]
+)

@@ -16,9 +16,7 @@ final case class ExerciseCollection(
   shortName: String
 )
 
-trait Exercise {
-  type SolType
-
+trait Exercise[SolType, ContentType] {
   val id: Int
   val collectionId: Int
   val toolId: String
@@ -27,9 +25,10 @@ trait Exercise {
   val authors: Seq[String]
   val text: String
   val topics: Seq[Topic]
-  val difficulty: Option[Int]
+  val difficulty: Int
 
   val sampleSolutions: Seq[SampleSolution[SolType]]
+  val content: ContentType
 }
 
 final case class SampleSolution[SolType](
@@ -37,23 +36,9 @@ final case class SampleSolution[SolType](
   sample: SolType
 )
 
-trait ExerciseContent {
-
-  type SolType
-
-  val sampleSolutions: Seq[SampleSolution[SolType]]
-
-}
-
 final case class ExerciseFile(
   name: String,
   fileType: String,
   editable: Boolean,
   content: String
 )
-
-trait StringExerciseContent extends ExerciseContent {
-
-  override type SolType = String
-
-}

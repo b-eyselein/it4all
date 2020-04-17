@@ -59,11 +59,11 @@ object XmlCorrector {
     case None            => Failure(new Exception("There is no sample solution!"))
     case Some(xmlSample) =>
       // Write grammar
-      val grammarPath: File = solutionBaseDir / s"${exercise.rootNode}.dtd"
+      val grammarPath: File = solutionBaseDir / s"${exercise.content.rootNode}.dtd"
       grammarPath.createFileIfNotExists(createParents = true).write(xmlSample.sample.grammar)
 
       // Write document
-      val documentPath: File = solutionBaseDir / s"${exercise.rootNode}.xml"
+      val documentPath: File = solutionBaseDir / s"${exercise.content.rootNode}.xml"
       documentPath.createFileIfNotExists(createParents = true).write(solution.document)
 
       val xmlErrors = XmlCorrector.correctAgainstMentionedDTD(documentPath)

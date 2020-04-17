@@ -1,32 +1,32 @@
 package model.tools.regex
 
 import model.json.JsonProtocols
-import model.tools.{ReadExercisesMessage, SampleSolution, StringSampleSolutionToolJsonProtocol, Topic}
-import play.api.libs.json.{Format, Json, Reads}
+import model.tools.{SampleSolution, StringSampleSolutionToolJsonProtocol, Topic}
+import play.api.libs.json.{Format, Json}
 
-object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExercise, RegexExPart] {
+object RegexToolJsonProtocol
+    extends StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExercise, RegexExPart] {
 
   private val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
 
   private val regexExtractionTestDataFormat: Format[RegexExtractionTestData] = Json.format[RegexExtractionTestData]
 
-  override val exerciseFormat: Format[RegexExercise] = {
-    implicit val tf: Format[Topic]                 = JsonProtocols.topicFormat
-    implicit val rctf: Format[RegexCorrectionType] = RegexCorrectionTypes.jsonFormat
-
-    implicit val sssf: Format[SampleSolution[String]]   = sampleSolutionFormat
+  override val exerciseContentFormat: Format[RegexExerciseContent] = {
+    implicit val rgtf: Format[RegexCorrectionType]      = RegexCorrectionTypes.jsonFormat
     implicit val rmtdf: Format[RegexMatchTestData]      = regexMatchTestDataFormat
     implicit val retdf: Format[RegexExtractionTestData] = regexExtractionTestDataFormat
 
     Json.format
   }
 
-  override val partTypeFormat: Format[RegexExPart] = RegexExParts.jsonFormat
+  override val exerciseFormat: Format[RegexExercise] = {
+    implicit val tf: Format[Topic]                   = JsonProtocols.topicFormat
+    implicit val ssf: Format[SampleSolution[String]] = sampleSolutionFormat
+    implicit val ecf: Format[RegexExerciseContent]   = exerciseContentFormat
 
-  override val readExercisesMessageReads: Reads[ReadExercisesMessage[RegexExercise]] = {
-    implicit val ef: Format[RegexExercise] = exerciseFormat
-
-    Json.reads
+    Json.format
   }
+
+  override val partTypeFormat: Format[RegexExPart] = RegexExParts.jsonFormat
 
 }

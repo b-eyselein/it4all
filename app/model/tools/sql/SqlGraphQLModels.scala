@@ -11,15 +11,21 @@ import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 import sangria.macros.derive._
 import sangria.schema._
 
-object SqlGraphQLModels extends ToolGraphQLModelBasics[SqlExercise, String, SqlExPart] {
+object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExercise, SqlExPart] {
 
   private val sqlExerciseTagType: EnumType[SqlExTag] = deriveEnumType()
 
   private val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
 
-  override val ExerciseType: ObjectType[Unit, SqlExercise] = {
-    implicit val seTagT: EnumType[SqlExTag]                                      = sqlExerciseTagType
-    implicit val seTypeT: EnumType[SqlExerciseType]                              = sqlExerciseTypeType
+  override val exerciseContentType: ObjectType[Unit, SqlExerciseContent] = {
+    implicit val seTagT: EnumType[SqlExTag]         = sqlExerciseTagType
+    implicit val seTypeT: EnumType[SqlExerciseType] = sqlExerciseTypeType
+
+    deriveObjectType()
+  }
+
+  override val exerciseType: ObjectType[Unit, SqlExercise] = {
+    implicit val ect                  : ObjectType[Unit, SqlExerciseContent]     = exerciseContentType
     implicit val sqlSampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
 
     deriveObjectType(

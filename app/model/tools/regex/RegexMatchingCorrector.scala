@@ -39,7 +39,7 @@ object RegexMatchingCorrector {
     solutionSaved: Boolean
   ): RegexMatchingResult = {
 
-    val matchResults = exercise.matchTestData.map { matchTestData =>
+    val matchResults = exercise.content.matchTestData.map { matchTestData =>
       val classificationResultType: BinaryClassificationResultType = matchTestData.data match {
         case userRegex(_*) =>
           if (matchTestData.isIncluded) BinaryClassificationResultTypes.TruePositive
@@ -55,13 +55,13 @@ object RegexMatchingCorrector {
     val correctResultsCount: Int = matchResults.count(_.resultType.correct)
 
     val points: Points =
-      (correctResultsCount.toDouble / exercise.matchTestData.size.toDouble * exercise.maxPoints * 4).toInt.quarterPoints
+      (correctResultsCount.toDouble / exercise.content.matchTestData.size.toDouble * exercise.content.maxPoints * 4).toInt.quarterPoints
 
     RegexMatchingResult(
       solutionSaved,
       matchResults,
       points,
-      exercise.maxPoints.points
+      exercise.content.maxPoints.points
     )
   }
 }

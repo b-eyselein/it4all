@@ -6,7 +6,7 @@ import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object WebGraphQLModels extends ToolGraphQLModelBasics[WebExercise, WebSolution, WebExPart] {
+object WebGraphQLModels extends ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExercise, WebExPart] {
 
   private val HtmlTaskType: ObjectType[Unit, HtmlTask] = ObjectType(
     "HtmlTask",
@@ -42,11 +42,16 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebExercise, WebSolution,
     deriveObjectType()
   }
 
-  override val ExerciseType: ObjectType[Unit, WebExercise] = {
+  override val exerciseContentType: ObjectType[Unit, WebExerciseContent] = {
     implicit val siteSpecT: ObjectType[Unit, SiteSpec] = siteSpecType
     implicit val eft: ObjectType[Unit, ExerciseFile]   = exerciseFileType
-    implicit val sampleSolType: ObjectType[Unit, SampleSolution[WebSolution]] =
-      sampleSolutionType("Web", webSolutionType)
+
+    deriveObjectType()
+  }
+
+  override val exerciseType: ObjectType[Unit, WebExercise] = {
+    implicit val ect: ObjectType[Unit, WebExerciseContent]          = exerciseContentType
+    implicit val sst: ObjectType[Unit, SampleSolution[WebSolution]] = sampleSolutionType("Web", webSolutionType)
 
     deriveObjectType(
       Interfaces(exerciseInterfaceType),

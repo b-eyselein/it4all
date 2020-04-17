@@ -15,10 +15,10 @@ trait ToolGraphQLModels {
 
   private val topicsType: ObjectType[Unit, Topic] = deriveObjectType()
 
-  protected val exerciseInterfaceType: InterfaceType[Unit, Exercise] = InterfaceType(
+  protected val exerciseInterfaceType: InterfaceType[Unit, Exercise[_, _]] = InterfaceType(
     "ExerciseInterface",
     () =>
-      fields[Unit, Exercise](
+      fields[Unit, Exercise[_, _]](
         Field("id", IntType, resolve = _.value.id),
         Field("collectionId", IntType, resolve = _.value.collectionId),
         Field("toolId", StringType, resolve = _.value.toolId),
@@ -28,7 +28,7 @@ trait ToolGraphQLModels {
         Field("difficulty", OptionType(IntType), resolve = _.value.difficulty),
         Field("topics", ListType(topicsType), resolve = _.value.topics)
       )
-  ).withPossibleTypes(() => ToolList.tools.map(t => t.graphQlModels.ExerciseType))
+  ).withPossibleTypes(() => ToolList.tools.map(t => t.graphQlModels.exerciseType))
 
   protected val exerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
 
@@ -44,7 +44,8 @@ trait ToolGraphQLModels {
 
 }
 
-trait ToolGraphQLModelBasics[ExerciseType <: Exercise, SolType, PartType <: ExPart] extends ToolGraphQLModels {
+trait ToolGraphQLModelBasics[SolType, ContentType, ExType <: Exercise[SolType, ContentType], PartType <: ExPart]
+    extends ToolGraphQLModels {
 
   // Sample solution types
 
@@ -115,7 +116,9 @@ trait ToolGraphQLModelBasics[ExerciseType <: Exercise, SolType, PartType <: ExPa
     )
   )
 
-  val ExerciseType: ObjectType[Unit, ExerciseType]
+  val exerciseContentType: ObjectType[Unit, ContentType]
+
+  val exerciseType: ObjectType[Unit, ExType]
 
   val AbstractResultTypeType: OutputType[Any]
 

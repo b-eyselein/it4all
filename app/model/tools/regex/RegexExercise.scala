@@ -23,25 +23,17 @@ final case class RegexExercise(
   authors: Seq[String],
   text: String,
   topics: Seq[Topic],
-  difficulty: Option[Int],
+  difficulty: Int,
   sampleSolutions: Seq[SampleSolution[String]],
-  maxPoints: Int,
-  correctionType: RegexCorrectionType,
-  matchTestData: Seq[RegexMatchTestData],
-  extractionTestData: Seq[RegexExtractionTestData] = Seq.empty
-) extends Exercise {
-
-  override type SolType = String
-
-}
+  content: RegexExerciseContent
+) extends Exercise[String, RegexExerciseContent]
 
 final case class RegexExerciseContent(
   maxPoints: Int,
   correctionType: RegexCorrectionType,
-  sampleSolutions: Seq[SampleSolution[String]],
   matchTestData: Seq[RegexMatchTestData],
   extractionTestData: Seq[RegexExtractionTestData] = Seq.empty
-) extends StringExerciseContent
+)
 
 final case class RegexMatchTestData(id: Int, data: String, isIncluded: Boolean)
 

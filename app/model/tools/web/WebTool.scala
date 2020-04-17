@@ -8,6 +8,7 @@ import com.gargoylesoftware.htmlunit.ScriptException
 import de.uniwue.webtester.WebCorrector
 import de.uniwue.webtester.result._
 import model.User
+import model.persistence.DbExercise
 import model.points.addUp
 import model.tools._
 import org.openqa.selenium.WebDriverException
@@ -18,16 +19,19 @@ import scala.util.{Failure, Try}
 
 object WebTool extends CollectionTool("web", "Web") {
 
+  override type SolType        = WebSolution
+  override type ExContentType  = WebExerciseContent
   override type ExerciseType   = WebExercise
   override type PartType       = WebExPart
-  override type SolType        = WebSolution
   override type CompResultType = WebCompleteResult
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: ToolJsonProtocol[WebExercise, WebSolution, WebExPart] = WebToolJsonProtocol
+  override val toolJsonProtocol: ToolJsonProtocol[WebSolution, WebExerciseContent, WebExercise, WebExPart] =
+    WebToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[WebExercise, WebSolution, WebExPart] = WebGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExercise, WebExPart] =
+    WebGraphQLModels
 
   // DB
 
@@ -72,7 +76,7 @@ object WebTool extends CollectionTool("web", "Web") {
     part match {
       case WebExParts.HtmlPart =>
         val htmlTaskResults: Seq[HtmlTaskResult] =
-          exercise.siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
+          exercise.content.siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
         val gradedHtmlTaskResults: Seq[GradedHtmlTaskResult] = htmlTaskResults.map(WebGrader.gradeHtmlTaskResult)
 
         val points    = addUp(gradedHtmlTaskResults.map(_.points))
@@ -81,7 +85,8 @@ object WebTool extends CollectionTool("web", "Web") {
         WebCompleteResult(gradedHtmlTaskResults, Seq[GradedJsTaskResult](), points, maxPoints, solutionSaved)
 
       case WebExParts.JsPart =>
-        val jsTaskResults: Seq[JsTaskResult]             = exercise.siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
+        val jsTaskResults: Seq[JsTaskResult] =
+          exercise.content.siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
         val gradedJsTaskResults: Seq[GradedJsTaskResult] = jsTaskResults.map(WebGrader.gradeJsTaskResult)
 
         val points    = addUp(gradedJsTaskResults.map(_.points))
@@ -105,7 +110,7 @@ object WebTool extends CollectionTool("web", "Web") {
     writeWebSolutionFiles(user.username, collection.id, exercise.id, learnerSolution)
       .flatMap { _ =>
         val driver              = new HtmlUnitDriver(true)
-        val solutionUrl: String = getSolutionUrl(user, exercise, exercise.siteSpec.fileName)
+        val solutionUrl: String = getSolutionUrl(user, exercise, exercise.content.siteSpec.fileName)
 
         Try(driver.get(solutionUrl))
           .fold(
@@ -114,5 +119,9 @@ object WebTool extends CollectionTool("web", "Web") {
           )
       }
   }
+
+  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[WebExercise] = ???
+
+  override protected def convertExerciseToDb(exercise: WebExercise): DbExercise = ???
 
 }

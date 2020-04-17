@@ -65,7 +65,7 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
             case Some(tool) =>
               tool
                 .futureExerciseById(context.ctx.tables, context.value.id, context.arg(exIdArgument))
-                .map(_.asInstanceOf[Exercise])
+                .map(_.asInstanceOf[Exercise[_, _]])
           }
       ),
       Field(

@@ -5,7 +5,8 @@ import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgrammingExercise, ProgSolution, ProgExPart] {
+object ProgrammingGraphQLModels
+    extends ToolGraphQLModelBasics[ProgSolution, ProgExerciseContent, ProgrammingExercise, ProgExPart] {
 
   private val unitTestTestConfigType: ObjectType[Unit, UnitTestTestConfig] = {
     implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
@@ -41,20 +42,27 @@ object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgrammingExerci
 
   private val programmingExerciseTagType: EnumType[ProgrammingExerciseTag] = deriveEnumType()
 
-  override val ExerciseType: ObjectType[Unit, ProgrammingExercise] = {
+  override val exerciseContentType: ObjectType[Unit, ProgExerciseContent] = {
     //    implicit val progInputType: ObjectType[Unit, ProgInput] = deriveObjectType()
     //    implicit val progDataType: ObjectType[Unit, ProgDataType] = deriveObjectType()
 
-    implicit val pett: EnumType[ProgrammingExerciseTag]              = programmingExerciseTagType
-    implicit val utpt: ObjectType[Unit, UnitTestPart]                = unitTestPartType
-    implicit val ipt: ObjectType[Unit, ImplementationPart]           = implementationPartType
+    implicit val pett: EnumType[ProgrammingExerciseTag]    = programmingExerciseTagType
+    implicit val utpt: ObjectType[Unit, UnitTestPart]      = unitTestPartType
+    implicit val ipt: ObjectType[Unit, ImplementationPart] = implementationPartType
+
+    deriveObjectType(
+      // TODO: include fields !?!
+      ExcludeFields("inputTypes", "outputType", "baseData", "sampleTestData", "maybeClassDiagramPart")
+    )
+  }
+
+  override val exerciseType: ObjectType[Unit, ProgrammingExercise] = {
     implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType("Prog", progSolutionType)
+    implicit val ext: ObjectType[Unit, ProgExerciseContent]          = exerciseContentType
 
     deriveObjectType(
       Interfaces(exerciseInterfaceType),
-      ExcludeFields("topics"),
-      // TODO: include fields !?!
-      ExcludeFields("inputTypes", "outputType", "baseData", "sampleTestData", "maybeClassDiagramPart")
+      ExcludeFields("topics")
     )
   }
 

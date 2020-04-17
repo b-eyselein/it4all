@@ -1,5 +1,6 @@
-<ng-container *ngIf="exerciseOverviewQuery">
-  <div class="container">
+<div class="container">
+  <ng-container *ngIf="exerciseOverviewQuery; else loadingDataBlock">
+
     <h1 class="title is-3 has-text-centered">Aufgabe &quot;{{exerciseOverviewQuery.tool.collection.exercise.title}}&quot;</h1>
 
     <div class="buttons">
@@ -12,7 +13,8 @@
 
     <div class="columns">
       <ng-container *ngFor="let part of tool.parts">
-        <div class="column" *ngIf="!part.disabled && tool.exerciseHasPart(exerciseOverviewQuery.tool.collection.exercise, part)">
+        <div class="column"
+             *ngIf="!part.disabled && tool.exerciseHasPart(exerciseOverviewQuery.tool.collection.exercise, part)">
           <a class="button is-link is-fullwidth"
              [routerLink]="['/tools', toolId, 'collections', collectionId, 'exercises', exerciseId, 'parts', part.id]">
             {{part.name}}
@@ -21,5 +23,9 @@
       </ng-container>
     </div>
 
-  </div>
-</ng-container>
+  </ng-container>
+</div>
+
+<ng-template #loadingDataBlock>
+  <div class="notification is-primary has-text-centered">Lade Daten...</div>
+</ng-template>

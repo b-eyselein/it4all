@@ -1,6 +1,7 @@
 package model.tools.rose
 
 import model.User
+import model.persistence.DbExercise
 import model.tools._
 import model.tools.programming.ProgLanguages
 
@@ -9,22 +10,23 @@ import scala.util.{Failure, Try}
 
 object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
 
+  override type SolType        = String
+  override type ExContentType  = RoseExerciseContent
   override type ExerciseType   = RoseExercise
   override type PartType       = RoseExPart
-  override type SolType        = String
   override type CompResultType = RoseCompleteResult
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: ToolJsonProtocol[RoseExercise, String, RoseExPart] =
+  override val toolJsonProtocol: ToolJsonProtocol[String, RoseExerciseContent, RoseExercise, RoseExPart] =
     RoseToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[RoseExercise, String, RoseExPart] =
+  override val graphQlModels: ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExercise, RoseExPart] =
     RoseGraphQLModels
 
   // Correction
 
-  override  def correctAbstract(
+  override def correctAbstract(
     user: User,
     sol: String,
     collection: ExerciseCollection,
@@ -45,4 +47,9 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
           solutionSaved
         )
     }
+
+  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[RoseExercise] = ???
+
+  override protected def convertExerciseToDb(exercise: RoseExercise): DbExercise = ???
+
 }

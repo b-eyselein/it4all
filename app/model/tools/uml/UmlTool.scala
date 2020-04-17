@@ -2,6 +2,7 @@ package model.tools.uml
 
 import model.User
 import model.core.matching.MatchingResult
+import model.persistence.DbExercise
 import model.tools._
 import model.tools.uml.matcher._
 
@@ -10,9 +11,10 @@ import scala.util.{Failure, Success, Try}
 
 object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
 
+  override type SolType        = UmlClassDiagram
+  override type ExContentType  = UmlExerciseContent
   override type ExerciseType   = UmlExercise
   override type PartType       = UmlExPart
-  override type SolType        = UmlClassDiagram
   override type CompResultType = UmlCompleteResult
 
   type ClassComparison          = MatchingResult[UmlClass, UmlClassMatch]
@@ -23,10 +25,10 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: ToolJsonProtocol[UmlExercise, UmlClassDiagram, UmlExPart] =
+  override val toolJsonProtocol: ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExercise, UmlExPart] =
     UmlToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[UmlExercise, UmlClassDiagram, UmlExPart] =
+  override val graphQlModels: ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExercise, UmlExPart] =
     UmlGraphQLModels
 
   // Correction
@@ -46,5 +48,9 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
         Success(UmlCorrector.correct(classDiagram, sampleSolution.sample, part, solutionSaved))
     }
   }
+
+  override protected def convertExerciseFromDb(dbExercise: DbExercise): Option[UmlExercise] = ???
+
+  override protected def convertExerciseToDb(exercise: UmlExercise): DbExercise = ???
 
 }
