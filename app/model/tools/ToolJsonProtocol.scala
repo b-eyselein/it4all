@@ -3,11 +3,11 @@ package model.tools
 import model.json.{JsonProtocols, KeyValueObject}
 import play.api.libs.json._
 
-final case class ReadExercisesMessage[S, C](
-  exercises: Seq[Exercise[C, S]]
+final case class ReadExercisesMessage[S, C <: ExerciseContent[S]](
+  exercises: Seq[Exercise[S, C]]
 )
 
-trait ToolJsonProtocol[S, C, PartType <: ExPart] {
+trait ToolJsonProtocol[S, C <: ExerciseContent[S], PartType <: ExPart] {
 
   protected val keyValueObjectMapFormat: Format[Map[String, String]] = {
 
@@ -29,7 +29,7 @@ trait ToolJsonProtocol[S, C, PartType <: ExPart] {
 
   val exerciseContentFormat: Format[C]
 
-  final lazy val exerciseFormat: Format[Exercise[C, S]] = {
+  final lazy val exerciseFormat: Format[Exercise[S, C]] = {
     implicit val tf: Format[Topic]              = JsonProtocols.topicFormat
     implicit val fc: Format[C]                  = exerciseContentFormat
     implicit val ssf: Format[SampleSolution[S]] = sampleSolutionFormat
@@ -50,14 +50,13 @@ trait ToolJsonProtocol[S, C, PartType <: ExPart] {
    */
 
   lazy val readExercisesMessageReads: Reads[ReadExercisesMessage[S, C]] = {
-
-    implicit val ef: Format[Exercise[C, S]] = exerciseFormat
+    implicit val ef: Format[Exercise[S, C]] = exerciseFormat
 
     Json.reads
   }
 
   def validateAndWriteReadExerciseMessage(message: JsValue): Seq[String] = {
-    val readExercises: Seq[Exercise[C, S]] = readExercisesMessageReads.reads(message) match {
+    val readExercises: Seq[Exercise[S, C]] = readExercisesMessageReads.reads(message) match {
       case JsSuccess(readExercisesMessage, _) => readExercisesMessage.exercises
       case JsError(errors) =>
         errors.foreach(println)
@@ -71,7 +70,7 @@ trait ToolJsonProtocol[S, C, PartType <: ExPart] {
 
 }
 
-abstract class StringSampleSolutionToolJsonProtocol[C, PartType <: ExPart]
+abstract class StringSampleSolutionToolJsonProtocol[C <: ExerciseContent[String], PartType <: ExPart]
     extends ToolJsonProtocol[String, C, PartType] {
 
   override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)

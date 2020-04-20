@@ -65,7 +65,6 @@ export function isSelectable(toIgnore: string[], s: string): boolean {
 export function getUmlExerciseTextParts(
   exercise: ExerciseSolveFieldsFragment,
   exerciseContent: UmlExerciseContentSolveFieldsFragment,
-  sampleSolutionFragments: UmlSampleSolutionFragment[]
 ): { selectableClasses: SelectableClass[], textParts: UmlExerciseTextPart[] } {
 
   const splitText = splitExerciseText(exercise.text);
@@ -76,7 +75,7 @@ export function getUmlExerciseTextParts(
       .map((s) => replaceWithMapping(exerciseContent.mappings, s))
   );
 
-  const sampleSolution = sampleSolutionFragments[0].umlSampleSolution;
+  const sampleSolution = exerciseContent.umlSampleSolutions[0].umlSampleSolution;
 
   const selectableClasses = allBaseForms.map<SelectableClass>((name) => {
       return {

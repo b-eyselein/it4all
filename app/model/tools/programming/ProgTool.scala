@@ -27,10 +27,15 @@ object ProgTool extends CollectionTool("programming", "Programmierung", ToolStat
     user: User,
     sol: ProgSolution,
     collection: ExerciseCollection,
-    exercise: Exercise[ProgrammingExerciseContent, ProgSolution],
+    exercise: Exercise[ProgSolution, ProgrammingExerciseContent],
     part: ProgExPart,
     solutionSaved: Boolean
-  )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] =
-    ProgCorrector.correct(user, sol, exercise, part, solutionSaved)
+  )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = ProgCorrector.correct(
+    user,
+    sol,
+    exercise,
+    part,
+    solutionSaved
+  )
 
 }

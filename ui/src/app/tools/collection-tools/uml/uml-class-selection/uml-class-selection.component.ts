@@ -2,8 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {getUmlExerciseTextParts, SelectableClass, UmlDiagramDrawingHelpPart, UmlExerciseTextPart} from '../uml-tools';
 import {
   ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment,
-  UmlSampleSolutionFragment
+  UmlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 
 @Component({
@@ -16,7 +15,6 @@ export class UmlClassSelectionComponent implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() exerciseContent: UmlExerciseContentSolveFieldsFragment;
-  @Input() sampleSolutionFragments: UmlSampleSolutionFragment[];
 
   selectableClasses: SelectableClass[];
   umlExerciseTextParts: UmlExerciseTextPart[];
@@ -24,7 +22,7 @@ export class UmlClassSelectionComponent implements OnInit {
   corrected = false;
 
   ngOnInit() {
-    const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exerciseFragment, this.exerciseContent, this.sampleSolutionFragments);
+    const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exerciseFragment, this.exerciseContent);
 
     this.selectableClasses = selectableClasses;
     this.umlExerciseTextParts = textParts;

@@ -96,7 +96,7 @@ object WebTool extends CollectionTool("web", "Web") {
 
   private def getSolutionUrl(
     user: User,
-    exercise: Exercise[WebExerciseContent, WebSolution],
+    exercise: Exercise[WebSolution, WebExerciseContent],
     fileName: String
   ): String = s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.id}/$fileName"
 
@@ -104,7 +104,7 @@ object WebTool extends CollectionTool("web", "Web") {
     user: User,
     learnerSolution: WebSolution,
     collection: ExerciseCollection,
-    exercise: Exercise[WebExerciseContent, WebSolution],
+    exercise: Exercise[WebSolution, WebExerciseContent],
     part: WebExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[WebCompleteResult]] = Future {

@@ -110,7 +110,6 @@ export type Exercise = {
   topics: Array<Topic>;
   difficulty: Scalars['Int'];
   content?: Maybe<ExerciseContent>;
-  sampleSolutions: Array<SampleSolution>;
 };
 
 export type ExerciseCollection = {
@@ -359,6 +358,7 @@ export type ProgrammingExerciseContent = {
   filename: Scalars['String'];
   unitTestPart: UnitTestPart;
   implementationPart: ImplementationPart;
+  sampleSolutions: Array<ProgrammingSampleSolution>;
 };
 
 export type ProgrammingSampleSolution = {
@@ -394,8 +394,8 @@ export type QuerySqlDbContentsArgs = {
 };
 
 export enum RegexCorrectionType {
-  Extraction = 'EXTRACTION',
-  Matching = 'MATCHING'
+  Matching = 'MATCHING',
+  Extraction = 'EXTRACTION'
 }
 
 export type RegexExerciseContent = {
@@ -404,6 +404,7 @@ export type RegexExerciseContent = {
   correctionType: RegexCorrectionType;
   matchTestData: Array<RegexMatchTestData>;
   extractionTestData: Array<RegexExtractionTestData>;
+  sampleSolutions: Array<RegexSampleSolution>;
 };
 
 export enum RegexExPart {
@@ -483,8 +484,6 @@ export type RegexSampleSolution = {
   sample: Scalars['String'];
 };
 
-export type SampleSolution = ProgrammingSampleSolution | RegexSampleSolution | SqlSampleSolution | UmlSampleSolution | WebSampleSolution | XmlSampleSolution;
-
 export type SelectAdditionalComparisons = {
    __typename?: 'SelectAdditionalComparisons';
   groupByComparison: SqlGroupByComparisonMatchingResult;
@@ -551,14 +550,15 @@ export type SqlExerciseContent = {
    __typename?: 'SqlExerciseContent';
   exerciseType: SqlExerciseType;
   hint?: Maybe<Scalars['String']>;
+  sampleSolutions: Array<SqlSampleSolution>;
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
-  Create = 'CREATE',
-  Delete = 'DELETE',
+  Update = 'UPDATE',
   Insert = 'INSERT',
-  Update = 'UPDATE'
+  Create = 'CREATE',
+  Select = 'SELECT',
+  Delete = 'DELETE'
 }
 
 export enum SqlExPart {
@@ -898,6 +898,7 @@ export type UmlCompleteResult = AbstractCorrectionResult & {
 export type UmlExerciseContent = {
    __typename?: 'UmlExerciseContent';
   toIgnore: Array<Scalars['String']>;
+  sampleSolutions: Array<UmlSampleSolution>;
   mappings: Array<KeyValueObject>;
 };
 
@@ -1052,6 +1053,7 @@ export type WebExerciseContent = {
   jsText?: Maybe<Scalars['String']>;
   siteSpec: SiteSpec;
   files: Array<ExerciseFile>;
+  sampleSolutions: Array<WebSampleSolution>;
 };
 
 export enum WebExPart {
@@ -1109,6 +1111,7 @@ export type XmlExerciseContent = {
    __typename?: 'XmlExerciseContent';
   grammarDescription: Scalars['String'];
   rootNode: Scalars['String'];
+  sampleSolutions: Array<XmlSampleSolution>;
 };
 
 export enum XmlExPart {

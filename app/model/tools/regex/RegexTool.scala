@@ -31,7 +31,7 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
     user: User,
     sol: String,
     coll: ExerciseCollection,
-    exercise: Exercise[RegexExerciseContent, String],
+    exercise: Exercise[String, RegexExerciseContent],
     part: RegexExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[AbstractRegexResult]] = Future.successful {
@@ -47,14 +47,7 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
             Success(RegexMatchingCorrector.correctMatching(exercise.content, userRegex, solutionSaved))
 
           case RegexCorrectionTypes.EXTRACTION =>
-            Success(
-              RegexExtractionCorrector.correctExtraction(
-                exercise.content,
-                exercise.sampleSolutions,
-                userRegex,
-                solutionSaved
-              )
-            )
+            Success(RegexExtractionCorrector.correctExtraction(exercise.content, userRegex, solutionSaved))
         }
 
     }

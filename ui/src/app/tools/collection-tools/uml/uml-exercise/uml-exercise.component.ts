@@ -2,8 +2,7 @@ import {Component, Input} from '@angular/core';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {
   ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment,
-  UmlSampleSolutionFragment
+  UmlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 
 @Component({
@@ -14,7 +13,6 @@ export class UmlExerciseComponent {
 
   @Input() part: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() umlExerciseContent: UmlExerciseContentSolveFieldsFragment;
-  @Input() sampleSolutionFragments: UmlSampleSolutionFragment[];
+  @Input() contentFragment: UmlExerciseContentSolveFieldsFragment;
 
 }

@@ -17,7 +17,8 @@ final case class RoseExerciseContent(
   fieldWidth: Int,
   fieldHeight: Int,
   isMultiplayer: Boolean,
-  inputTypes: Seq[RoseInputType]
-)
+  inputTypes: Seq[RoseInputType],
+  sampleSolutions: Seq[SampleSolution[String]]
+) extends ExerciseContent[String]
 
 final case class RoseInputType(id: Int, name: String, inputType: ProgDataType)

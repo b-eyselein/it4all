@@ -61,7 +61,7 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
           // FIXME: do not delete this cast...: .asInstanceOf[Any]
           resolve = context => context.value.content.asInstanceOf[Any]
         )
-      ),
+      )/*,
       ReplaceField(
         "sampleSolutions",
         Field(
@@ -70,6 +70,7 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
           resolve = context => context.value.graphQLSampleSolutions
         )
       )
+     */
     )
   }
 

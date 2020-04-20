@@ -46,8 +46,9 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebSolution, WebExerciseC
     buildSampleSolutionType("Web", webSolutionType)
 
   override val exerciseContentType: ObjectType[Unit, WebExerciseContent] = {
-    implicit val siteSpecT: ObjectType[Unit, SiteSpec] = siteSpecType
-    implicit val eft: ObjectType[Unit, ExerciseFile]   = exerciseFileType
+    implicit val siteSpecT: ObjectType[Unit, SiteSpec]              = siteSpecType
+    implicit val eft: ObjectType[Unit, ExerciseFile]                = exerciseFileType
+    implicit val sst: ObjectType[Unit, SampleSolution[WebSolution]] = sampleSolutionType
 
     deriveObjectType()
   }

@@ -6,50 +6,13 @@ import {
   ExerciseGQL,
   ExerciseQuery,
   ProgExerciseContentSolveFieldsFragment,
-  ProgrammingSampleSolutionFragment,
-  RegexSampleSolutionFragment,
+  RegexExerciseContentSolveFieldsFragment,
   SqlExerciseContentSolveFieldsFragment,
-  SqlSampleSolutionFragment,
   UmlExerciseContentSolveFieldsFragment,
-  UmlSampleSolutionFragment,
   WebExerciseContentSolveFieldsFragment,
-  WebSampleSolutionFragment,
-  XmlExerciseContentSolveFieldsFragment,
-  XmlSampleSolutionFragment
+  XmlExerciseContentSolveFieldsFragment
 } from "../../../_services/apollo_services";
 
-type SampleSolutionFragment =
-  ProgrammingSampleSolutionFragment
-  | RegexSampleSolutionFragment
-  | SqlSampleSolutionFragment
-  | UmlSampleSolutionFragment
-  | WebSampleSolutionFragment
-  | XmlSampleSolutionFragment;
-
-
-function isProgrammingSampleSolutionFragment(x: SampleSolutionFragment): x is ProgrammingSampleSolutionFragment {
-  return x.__typename === 'ProgrammingSampleSolution';
-}
-
-function isRegexSampleSolutionFragment(x: SampleSolutionFragment): x is RegexSampleSolutionFragment {
-  return x.__typename === 'RegexSampleSolution';
-}
-
-function isSqlSampleSolutionFragment(x: SampleSolutionFragment): x is SqlSampleSolutionFragment {
-  return x.__typename === 'SqlSampleSolution';
-}
-
-function isUmlSampleSolutionFragment(x: SampleSolutionFragment): x is UmlSampleSolutionFragment {
-  return x.__typename === 'UmlSampleSolution';
-}
-
-function isWebSampleSolutionFragment(x: WebSampleSolutionFragment): x is WebSampleSolutionFragment {
-  return x.__typename === 'WebSampleSolution';
-}
-
-function isXmlSampleSolutionFragment(x: XmlSampleSolutionFragment): x is XmlSampleSolutionFragment {
-  return x.__typename === 'XmlSampleSolution';
-}
 
 @Component({templateUrl: './exercise.component.html'})
 export class ExerciseComponent implements OnInit {
@@ -89,8 +52,8 @@ export class ExerciseComponent implements OnInit {
     return (this.exContent.__typename === 'ProgrammingExerciseContent') ? this.exContent : undefined;
   }
 
-  isRegexExerciseContent(): boolean {
-    return this.exContent.__typename === 'RegexExerciseContent';
+  get regexExerciseContent(): RegexExerciseContentSolveFieldsFragment | undefined {
+    return (this.exContent.__typename === 'RegexExerciseContent') ? this.exContent : undefined;
   }
 
   get sqlExerciseContent(): SqlExerciseContentSolveFieldsFragment | undefined {
@@ -105,39 +68,8 @@ export class ExerciseComponent implements OnInit {
     return (this.exContent.__typename === 'WebExerciseContent') ? this.exContent : undefined;
   }
 
-
   get xmlExerciseContent(): XmlExerciseContentSolveFieldsFragment | undefined {
     return (this.exContent.__typename === 'XmlExerciseContent') ? this.exContent : undefined;
-  }
-
-  // Sample solutions
-
-  private get sampleSolutions(): SampleSolutionFragment[] {
-    return this.exerciseQuery.tool.collection.exercise.sampleSolutions;
-  }
-
-  get programmingSampleSolutionFragments(): ProgrammingSampleSolutionFragment[] {
-    return this.sampleSolutions.filter(isProgrammingSampleSolutionFragment);
-  }
-
-  get regexSampleSolutionFragments(): RegexSampleSolutionFragment[] {
-    return this.sampleSolutions.filter(isRegexSampleSolutionFragment);
-  }
-
-  get sqlSampleSolutionFragments(): SqlSampleSolutionFragment[] {
-    return this.sampleSolutions.filter(isSqlSampleSolutionFragment);
-  }
-
-  get umlSampleSolutionFragments(): UmlSampleSolutionFragment[] {
-    return this.sampleSolutions.filter(isUmlSampleSolutionFragment);
-  }
-
-  get webSampleSolutionFragments(): WebSampleSolutionFragment[] {
-    return this.sampleSolutions.filter(isWebSampleSolutionFragment);
-  }
-
-  get xmlSampleSolutionFragments(): XmlSampleSolutionFragment[] {
-    return this.sampleSolutions.filter(isXmlSampleSolutionFragment);
   }
 
 }

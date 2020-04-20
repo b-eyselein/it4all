@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Apr 20 2020 15:43:30 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon Apr 20 2020 16:22:44 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -84,7 +84,6 @@ type Exercise {
   topics: [Topic!]!
   difficulty: Int!
   content: ExerciseContent
-  sampleSolutions: [SampleSolution!]!
 }
 
 type ExerciseCollection {
@@ -252,6 +251,7 @@ type ProgrammingExerciseContent {
   filename: String!
   unitTestPart: UnitTestPart!
   implementationPart: ImplementationPart!
+  sampleSolutions: [ProgrammingSampleSolution!]!
 }
 
 type ProgrammingSampleSolution {
@@ -274,8 +274,8 @@ type Query {
 }
 
 enum RegexCorrectionType {
-  EXTRACTION
   MATCHING
+  EXTRACTION
 }
 
 type RegexExerciseContent {
@@ -283,6 +283,7 @@ type RegexExerciseContent {
   correctionType: RegexCorrectionType!
   matchTestData: [RegexMatchTestData!]!
   extractionTestData: [RegexExtractionTestData!]!
+  sampleSolutions: [RegexSampleSolution!]!
 }
 
 enum RegexExPart {
@@ -352,8 +353,6 @@ type RegexSampleSolution {
   sample: String!
 }
 
-union SampleSolution = ProgrammingSampleSolution | RegexSampleSolution | SqlSampleSolution | UmlSampleSolution | WebSampleSolution | XmlSampleSolution
-
 type SelectAdditionalComparisons {
   groupByComparison: SqlGroupByComparisonMatchingResult!
   orderByComparison: SqlOrderByComparisonMatchingResult!
@@ -411,14 +410,15 @@ type SqlExecutionResult {
 type SqlExerciseContent {
   exerciseType: SqlExerciseType!
   hint: String
+  sampleSolutions: [SqlSampleSolution!]!
 }
 
 enum SqlExerciseType {
-  SELECT
-  CREATE
-  DELETE
-  INSERT
   UPDATE
+  INSERT
+  CREATE
+  SELECT
+  DELETE
 }
 
 enum SqlExPart {
@@ -724,6 +724,7 @@ type UmlCompleteResult implements AbstractCorrectionResult {
 
 type UmlExerciseContent {
   toIgnore: [String!]!
+  sampleSolutions: [UmlSampleSolution!]!
   mappings: [KeyValueObject!]!
 }
 
@@ -865,6 +866,7 @@ type WebExerciseContent {
   jsText: String
   siteSpec: SiteSpec!
   files: [ExerciseFile!]!
+  sampleSolutions: [WebSampleSolution!]!
 }
 
 enum WebExPart {
@@ -916,6 +918,7 @@ enum XmlErrorType {
 type XmlExerciseContent {
   grammarDescription: String!
   rootNode: String!
+  sampleSolutions: [XmlSampleSolution!]!
 }
 
 enum XmlExPart {

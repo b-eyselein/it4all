@@ -16,12 +16,12 @@
             <div class="content">
               <p>{{exerciseFragment.text}}</p>
               <ol *ngIf="part.id === 'html'">
-                <li *ngFor="let task of webExerciseContent.siteSpec.htmlTasks">
+                <li *ngFor="let task of contentFragment.siteSpec.htmlTasks">
                   {{task.text}}
                 </li>
               </ol>
               <p *ngIf="part.id === 'js'">
-                Es gibt insgesamt {{webExerciseContent.siteSpec.jsTaskCount}} Testfälle.
+                Es gibt insgesamt {{contentFragment.siteSpec.jsTaskCount}} Testfälle.
               </p>
             </div>
           </div>

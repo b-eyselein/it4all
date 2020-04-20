@@ -1,6 +1,6 @@
 package model.tools.uml
 
-import model.tools.ToolJsonProtocol
+import model.tools.{SampleSolution, ToolJsonProtocol}
 import play.api.libs.json._
 
 object UmlToolJsonProtocol extends ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] {
@@ -8,7 +8,8 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlClassDiagram, UmlExercise
   override val solutionFormat: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
 
   override val exerciseContentFormat: Format[UmlExerciseContent] = {
-    implicit val mf: Format[Map[String, String]] = keyValueObjectMapFormat
+    implicit val mf: Format[Map[String, String]]              = keyValueObjectMapFormat
+    implicit val ssf: Format[SampleSolution[UmlClassDiagram]] = sampleSolutionFormat
 
     Json.format
   }

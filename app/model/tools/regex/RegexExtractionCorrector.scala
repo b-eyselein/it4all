@@ -2,7 +2,7 @@ package model.tools.regex
 
 import model.core.matching.MatchType
 import model.points._
-import model.tools.{ExPart, ExParts, SampleSolution}
+import model.tools.{ExPart, ExParts}
 
 import scala.util.matching.Regex
 import scala.util.matching.Regex.{Match => RegexMatch}
@@ -21,14 +21,13 @@ object RegexExtractionCorrector {
 
   def correctExtraction(
     exerciseContent: RegexExerciseContent,
-    sampleSolutions: Seq[SampleSolution[String]],
     userRegex: Regex,
     solutionSaved: Boolean
   ): RegexExtractionResult = {
 
     val extractionResults = exerciseContent.extractionTestData.map { extractionTestData =>
       // FIXME: build sample regex in calling function!
-      val sampleRegex = sampleSolutions.headOption.map(_.sample).getOrElse(???).r
+      val sampleRegex = exerciseContent.sampleSolutions.headOption.map(_.sample).getOrElse(???).r
 
       val sampleExtracted: Seq[RegexMatch] = sampleRegex.findAllMatchIn(extractionTestData.base).toList
 

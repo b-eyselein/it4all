@@ -4,8 +4,7 @@ import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 import {
   ExerciseSolveFieldsFragment,
-  XmlExerciseContentSolveFieldsFragment,
-  XmlSampleSolutionFragment
+  XmlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {
   XmlCorrectionGQL,
@@ -40,8 +39,7 @@ export class XmlExerciseComponent
 
   @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() xmlExerciseContent: XmlExerciseContentSolveFieldsFragment;
-  @Input() sampleSolutionFragments: XmlSampleSolutionFragment[];
+  @Input() contentFragment: XmlExerciseContentSolveFieldsFragment;
 
   isGrammarPart: boolean;
 
@@ -55,14 +53,14 @@ export class XmlExerciseComponent
   }
 
   ngOnInit() {
-    const rootNode = this.xmlExerciseContent.rootNode;
+    const rootNode = this.contentFragment.rootNode;
 
     this.isGrammarPart = this.oldPart.id === 'grammar';
 
     const grammarFileName = `${rootNode}.dtd`;
     this.grammarFile = {
       name: grammarFileName,
-      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : this.sampleSolutionFragments[0].xmlSampleSolution.grammar,
+      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : this.contentFragment.xmlSampleSolutions[0].xmlSampleSolution.grammar,
       fileType: 'dtd',
       editable: this.isGrammarPart,
     };
@@ -103,11 +101,11 @@ export class XmlExerciseComponent
   }
 
   get sampleSolutions(): XmlSolution[] {
-    return this.sampleSolutionFragments.map((sample) => sample.xmlSampleSolution);
+    return this.contentFragment.xmlSampleSolutions.map((sample) => sample.xmlSampleSolution);
   }
 
   get grammarDescription(): string {
-    return this.xmlExerciseContent.grammarDescription;
+    return this.contentFragment.grammarDescription;
   }
 
   get grammarResult(): XmlGrammarResultFragment | null {

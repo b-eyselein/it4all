@@ -38,8 +38,7 @@ export class SqlExerciseComponent
   @Input() oldPart: ToolPart;
   @Input() schemaName: string;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() exerciseContent: SqlExerciseContentSolveFieldsFragment;
-  @Input() sampleSolutionFragments: SqlSampleSolutionFragment[];
+  @Input() contentFragment: SqlExerciseContentSolveFieldsFragment;
 
   dbContentsQuery: DbContentsQuery;
 
@@ -65,7 +64,7 @@ export class SqlExerciseComponent
   }
 
   get sampleSolutions(): string[] {
-    return this.sampleSolutionFragments.map((s) => s.sqlSampleSolution);
+    return this.contentFragment.sqlSampleSolutions.map((s) => s.sqlSampleSolution);
   }
 
   // Result types

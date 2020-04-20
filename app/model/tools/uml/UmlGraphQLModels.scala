@@ -76,10 +76,14 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerc
     deriveObjectType()
   }
 
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[UmlClassDiagram]] =
+    buildSampleSolutionType("Uml", umlClassDiagramType)
+
   private val umlExTagType: EnumType[UmlExTag] = deriveEnumType()
 
   override val exerciseContentType: ObjectType[Unit, UmlExerciseContent] = {
-    implicit val uett: EnumType[UmlExTag] = umlExTagType
+    implicit val uett: EnumType[UmlExTag]                               = umlExTagType
+    implicit val sst: ObjectType[Unit, SampleSolution[UmlClassDiagram]] = sampleSolutionType
 
     deriveObjectType(
       ReplaceField(
@@ -205,6 +209,5 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerc
     "UmlExPart",
     values = UmlExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[UmlClassDiagram]] =
-    buildSampleSolutionType("Uml", umlClassDiagramType)
+
 }

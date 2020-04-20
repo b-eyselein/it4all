@@ -16,7 +16,11 @@ final case class ExerciseCollection(
   shortName: String
 )
 
-final case class Exercise[C, S](
+trait ExerciseContent[S] {
+  val sampleSolutions: Seq[SampleSolution[S]]
+}
+
+final case class Exercise[S, C <: ExerciseContent[S]](
   id: Int,
   collectionId: Int,
   toolId: String,
@@ -25,13 +29,8 @@ final case class Exercise[C, S](
   text: String,
   topics: Seq[Topic],
   difficulty: Int,
-  content: C,
-  sampleSolutions: Seq[SampleSolution[S]]
-) {
-
- def graphQLSampleSolutions: Seq[SampleSolution[Any]] = sampleSolutions.map(_.asInstanceOf[SampleSolution[Any]])
-
-}
+  content: C
+)
 
 final case class SampleSolution[SolType](
   id: Int,

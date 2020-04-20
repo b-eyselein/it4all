@@ -39,30 +39,6 @@
       },
       {
         "kind": "UNION",
-        "name": "SampleSolution",
-        "possibleTypes": [
-          {
-            "name": "ProgrammingSampleSolution"
-          },
-          {
-            "name": "RegexSampleSolution"
-          },
-          {
-            "name": "SqlSampleSolution"
-          },
-          {
-            "name": "UmlSampleSolution"
-          },
-          {
-            "name": "WebSampleSolution"
-          },
-          {
-            "name": "XmlSampleSolution"
-          }
-        ]
-      },
-      {
-        "kind": "UNION",
         "name": "AbstractRegexResult",
         "possibleTypes": [
           {

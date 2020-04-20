@@ -23,5 +23,6 @@ final case class WebExerciseContent(
   htmlText: Option[String],
   jsText: Option[String],
   siteSpec: SiteSpec,
-  files: Seq[ExerciseFile]
-)
+  files: Seq[ExerciseFile],
+  sampleSolutions: Seq[SampleSolution[WebSolution]]
+) extends ExerciseContent[WebSolution]

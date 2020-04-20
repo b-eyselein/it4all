@@ -9,6 +9,9 @@ import scala.util.matching.Regex.{Match => RegexMatch}
 
 object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart] {
 
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] =
+    buildSampleSolutionType("Regex", StringType)
+
   // Enum types
 
   private val regexCorrectionTypeType: EnumType[RegexCorrectionType] = deriveEnumType()
@@ -21,6 +24,7 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseCo
     implicit val rctt: EnumType[RegexCorrectionType]              = regexCorrectionTypeType
     implicit val rmtdt: ObjectType[Unit, RegexMatchTestData]      = deriveObjectType()
     implicit val retdt: ObjectType[Unit, RegexExtractionTestData] = deriveObjectType()
+    implicit val sst: ObjectType[Unit, SampleSolution[String]]    = sampleSolutionType
 
     deriveObjectType()
   }
@@ -83,7 +87,5 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseCo
     "RegexExPart",
     values = RegexExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )
-
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = buildSampleSolutionType("Regex", StringType)
 
 }

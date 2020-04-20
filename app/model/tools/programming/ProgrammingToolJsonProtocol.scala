@@ -95,12 +95,13 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
   }
 
   val exerciseContentFormat: Format[ProgrammingExerciseContent] = {
-    implicit val pif: Format[ProgInput]          = progInputFormat
-    implicit val pdtf: Format[ProgDataType]      = progDataTypeFormat
-    implicit val utf: Format[UnitTestPart]       = unitTestPartFormat
-    implicit val ipf: Format[ImplementationPart] = implementationPartFormat
-    implicit val pstdf: Format[ProgTestData]     = progTestDataFormat
-    implicit val ucdf: Format[UmlClassDiagram]   = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
+    implicit val pif: Format[ProgInput]                    = progInputFormat
+    implicit val pdtf: Format[ProgDataType]                = progDataTypeFormat
+    implicit val utf: Format[UnitTestPart]                 = unitTestPartFormat
+    implicit val ipf: Format[ImplementationPart]           = implementationPartFormat
+    implicit val pstdf: Format[ProgTestData]               = progTestDataFormat
+    implicit val ucdf: Format[UmlClassDiagram]             = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
+    implicit val ssf: Format[SampleSolution[ProgSolution]] = sampleSolutionFormat
 
     Json.format
   }

@@ -35,12 +35,12 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
     user: User,
     classDiagram: UmlClassDiagram,
     collection: ExerciseCollection,
-    exercise: Exercise[UmlExerciseContent, UmlClassDiagram],
+    exercise: Exercise[UmlClassDiagram, UmlExerciseContent],
     part: UmlExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[UmlCompleteResult]] = Future.successful {
     // FIXME: compare against every sample solution, take best?
-    exercise.sampleSolutions.headOption match {
+    exercise.content.sampleSolutions.headOption match {
       case None => Failure(new Exception("There is no sample solution!"))
       case Some(sampleSolution) =>
         Success(UmlCorrector.correct(classDiagram, sampleSolution.sample, part, solutionSaved))

@@ -32,9 +32,9 @@ trait GraphQLMutations extends GraphQLBasics {
             val solution = context.arg(SolTypeInputArg)
 
             val correctionDbValues
-              : Future[Option[(ExerciseCollection, Exercise[toolMain.ExContentType, toolMain.SolType])]] = for {
+              : Future[Option[(ExerciseCollection, Exercise[toolMain.SolType, toolMain.ExContentType])]] = for {
               maybeCollection: Option[ExerciseCollection] <- context.ctx.tables.futureCollById(toolMain.id, collId)
-              maybeExercise: Option[Exercise[toolMain.ExContentType, toolMain.SolType]] <- toolMain
+              maybeExercise: Option[Exercise[toolMain.SolType, toolMain.ExContentType]] <- toolMain
                 .futureExerciseTypeById(context.ctx.tables, collId, exId)
             } yield (maybeCollection zip maybeExercise)
 

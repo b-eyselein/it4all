@@ -47,8 +47,7 @@ interface MemberAllocClass {
 export class UmlMemberAllocationComponent implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() exerciseContent: UmlExerciseContentSolveFieldsFragment;
-  @Input() sampleSolutionFragments: UmlSampleSolutionFragment[];
+  @Input() contentFragment: UmlExerciseContentSolveFieldsFragment;
 
   data: MemberAllocClass[];
 
@@ -59,7 +58,7 @@ export class UmlMemberAllocationComponent implements OnInit {
   corrected = false;
 
   ngOnInit() {
-    this.sample = this.sampleSolutionFragments[0].umlSampleSolution;
+    this.sample = this.contentFragment.umlSampleSolutions[0].umlSampleSolution;
 
     this.allAttributes = distinctObjectArray(
       flatMapArray(this.sample.classes, (clazz) => clazz.attributes), (a) => a.memberName

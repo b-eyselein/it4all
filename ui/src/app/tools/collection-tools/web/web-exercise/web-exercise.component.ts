@@ -5,8 +5,7 @@ import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
 import {
   ExerciseSolveFieldsFragment,
-  WebExerciseContentSolveFieldsFragment,
-  WebSampleSolutionFragment
+  WebExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {WebCorrectionGQL, WebCorrectionMutation} from '../web-apollo-mutations.service';
 import {ExerciseFile, WebExPart, WebSolution, WebSolutionInput} from '../../../../_interfaces/graphql-types';
@@ -23,8 +22,7 @@ export class WebExerciseComponent
 
   @Input() part: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() webExerciseContent: WebExerciseContentSolveFieldsFragment;
-  @Input() sampleSolutionFragments: WebSampleSolutionFragment[];
+  @Input() contentFragment: WebExerciseContentSolveFieldsFragment;
 
 
   exerciseFiles: ExerciseFile[] = [];
@@ -34,7 +32,7 @@ export class WebExerciseComponent
   }
 
   ngOnInit(): void {
-    this.exerciseFiles = this.webExerciseContent.files;
+    this.exerciseFiles = this.contentFragment.files;
 
     this.dexieService.getSolution<ExerciseFile[]>(
       this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part.id
@@ -54,7 +52,7 @@ export class WebExerciseComponent
   }
 
   get sampleSolutions(): WebSolution[] {
-    return this.sampleSolutionFragments.map((s) => s.webSampleSolution);
+    return this.contentFragment.webSampleSolution.map((s) => s.webSampleSolutions);
   }
 
 }

@@ -29,5 +29,6 @@ final case class XmlSolution(document: String, grammar: String)
 
 final case class XmlExerciseContent(
   grammarDescription: String,
-  rootNode: String
-)
+  rootNode: String,
+  sampleSolutions: Seq[SampleSolution[XmlSolution]]
+) extends ExerciseContent[XmlSolution]

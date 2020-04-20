@@ -31,20 +31,19 @@ object XmlTool extends CollectionTool("xml", "Xml") {
     user: User,
     solution: XmlSolution,
     collection: ExerciseCollection,
-    exercise: Exercise[XmlExerciseContent, XmlSolution],
+    exercise: Exercise[XmlSolution, XmlExerciseContent],
     part: XmlExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[XmlCompleteResult]] = Future.successful(
     part match {
       case XmlExParts.GrammarCreationXmlPart =>
-        XmlCorrector.correctGrammar(solution, exercise.sampleSolutions, solutionSaved)
+        XmlCorrector.correctGrammar(solution, exercise.content.sampleSolutions, solutionSaved)
 
       case XmlExParts.DocumentCreationXmlPart =>
         XmlCorrector.correctDocument(
           solution,
           solutionDirForExercise(user.username, collection.id, exercise.id).createDirectories(),
           exercise.content,
-          exercise.sampleSolutions,
           solutionSaved
         )
     }

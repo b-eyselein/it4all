@@ -52,7 +52,6 @@ object ProgCorrector {
     solTargetDir: File,
     programmingSolution: ProgSolution,
     exerciseContent: ProgrammingExerciseContent,
-    sampleSolutions: Seq[SampleSolution[ProgSolution]],
     resultFile: File,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
@@ -74,7 +73,7 @@ object ProgCorrector {
         correctNormalImplementation(
           solTargetDir,
           exerciseContent,
-          sampleSolutions,
+          exerciseContent.sampleSolutions,
           programmingSolutionFilesMounts,
           solutionSaved
         )
@@ -233,7 +232,7 @@ object ProgCorrector {
   def correct(
     user: User,
     progSolution: ProgSolution,
-    exercise: Exercise[ProgrammingExerciseContent, ProgSolution],
+    exercise: Exercise[ProgSolution, ProgrammingExerciseContent],
     part: ProgExPart,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
@@ -260,7 +259,6 @@ object ProgCorrector {
           solutionTargetDir,
           progSolution,
           exercise.content,
-          exercise.sampleSolutions,
           resultFile,
           solutionSaved
         )

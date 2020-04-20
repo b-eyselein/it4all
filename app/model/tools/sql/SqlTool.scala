@@ -42,7 +42,7 @@ object SqlTool extends CollectionTool("sql", "Sql") {
   // Yaml, Html forms, Json
 
   override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] =
-    SqlJsonProtocols
+    SqlToolJsonProtocols
 
   override val graphQlModels: ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart] =
     SqlGraphQLModels
@@ -53,7 +53,7 @@ object SqlTool extends CollectionTool("sql", "Sql") {
     user: User,
     learnerSolution: SolType,
     collection: ExerciseCollection,
-    exercise: Exercise[SqlExerciseContent, String],
+    exercise: Exercise[String, SqlExerciseContent],
     part: SqlExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[AbstractSqlResult]] = Future {
@@ -64,7 +64,7 @@ object SqlTool extends CollectionTool("sql", "Sql") {
           dao,
           learnerSolution,
           collection,
-          exercise.sampleSolutions,
+          exercise.content.sampleSolutions,
           solutionSaved
         )
     }

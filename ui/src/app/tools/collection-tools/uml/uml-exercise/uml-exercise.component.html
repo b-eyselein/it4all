@@ -3,31 +3,27 @@
   <it4all-uml-class-selection
     *ngSwitchCase="'classSelection'"
     [exerciseFragment]="exerciseFragment"
-    [exerciseContent]="umlExerciseContent"
-    [sampleSolutionFragments]="sampleSolutionFragments">
+    [exerciseContent]="contentFragment">
   </it4all-uml-class-selection>
 
   <it4all-uml-diagram-drawing
     *ngSwitchCase="'diagramDrawing'"
     [oldPart]="part"
     [exerciseFragment]="exerciseFragment"
-    [exerciseContent]="umlExerciseContent"
-    [sampleSolutionFragments]="sampleSolutionFragments">
+    [contentFragment]="contentFragment">
   </it4all-uml-diagram-drawing>
 
   <it4all-uml-diagram-drawing
     *ngSwitchCase="'diagramDrawingHelp'"
     [oldPart]="part"
     [exerciseFragment]="exerciseFragment"
-    [exerciseContent]="umlExerciseContent"
-    [sampleSolutionFragments]="sampleSolutionFragments">
+    [contentFragment]="contentFragment">
   </it4all-uml-diagram-drawing>
 
   <it4all-uml-member-allocation
     *ngSwitchCase="'memberAllocation'"
     [exerciseFragment]="exerciseFragment"
-    [exerciseContent]="umlExerciseContent"
-    [sampleSolutionFragments]="sampleSolutionFragments">
+    [contentFragment]="contentFragment">
   </it4all-uml-member-allocation>
 
   <p *ngSwitchDefault>{{part}}</p>

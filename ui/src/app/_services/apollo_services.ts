@@ -148,7 +148,10 @@ export type ExerciseQuery = (
         & { content?: Types.Maybe<(
           { __typename: 'ProgrammingExerciseContent' }
           & ProgExerciseContentSolveFieldsFragment
-        ) | { __typename: 'RegexExerciseContent' } | (
+        ) | (
+          { __typename: 'RegexExerciseContent' }
+          & RegexExerciseContentSolveFieldsFragment
+        ) | (
           { __typename: 'SqlExerciseContent' }
           & SqlExerciseContentSolveFieldsFragment
         ) | (
@@ -160,24 +163,6 @@ export type ExerciseQuery = (
         ) | (
           { __typename: 'XmlExerciseContent' }
           & XmlExerciseContentSolveFieldsFragment
-        )>, sampleSolutions: Array<(
-          { __typename?: 'ProgrammingSampleSolution' }
-          & ProgrammingSampleSolutionFragment
-        ) | (
-          { __typename?: 'RegexSampleSolution' }
-          & RegexSampleSolutionFragment
-        ) | (
-          { __typename?: 'SqlSampleSolution' }
-          & SqlSampleSolutionFragment
-        ) | (
-          { __typename?: 'UmlSampleSolution' }
-          & UmlSampleSolutionFragment
-        ) | (
-          { __typename?: 'WebSampleSolution' }
-          & WebSampleSolutionFragment
-        ) | (
-          { __typename?: 'XmlSampleSolution' }
-          & XmlSampleSolutionFragment
         )> }
         & ExerciseSolveFieldsFragment
       )> }
@@ -433,7 +418,10 @@ export type ProgExerciseContentSolveFieldsFragment = (
       { __typename?: 'ExerciseFile' }
       & ExFileAllFragment
     )> }
-  ) }
+  ), progSampleSolutions: Array<(
+    { __typename?: 'ProgrammingSampleSolution' }
+    & ProgrammingSampleSolutionFragment
+  )> }
 );
 
 export type ProgrammingSampleSolutionFragment = (
@@ -447,6 +435,14 @@ export type ProgrammingSampleSolutionFragment = (
   ) }
 );
 
+export type RegexExerciseContentSolveFieldsFragment = (
+  { __typename?: 'RegexExerciseContent' }
+  & { regexSampleSolutions: Array<(
+    { __typename?: 'RegexSampleSolution' }
+    & RegexSampleSolutionFragment
+  )> }
+);
+
 export type RegexSampleSolutionFragment = (
   { __typename: 'RegexSampleSolution' }
   & { regexSampleSolution: Types.RegexSampleSolution['sample'] }
@@ -455,6 +451,10 @@ export type RegexSampleSolutionFragment = (
 export type SqlExerciseContentSolveFieldsFragment = (
   { __typename?: 'SqlExerciseContent' }
   & Pick<Types.SqlExerciseContent, 'hint'>
+  & { sqlSampleSolutions: Array<(
+    { __typename?: 'SqlSampleSolution' }
+    & SqlSampleSolutionFragment
+  )> }
 );
 
 export type SqlSampleSolutionFragment = (
@@ -468,6 +468,9 @@ export type UmlExerciseContentSolveFieldsFragment = (
   & { mappings: Array<(
     { __typename?: 'KeyValueObject' }
     & Pick<Types.KeyValueObject, 'key' | 'value'>
+  )>, umlSampleSolutions: Array<(
+    { __typename?: 'UmlSampleSolution' }
+    & UmlSampleSolutionFragment
   )> }
 );
 
@@ -537,12 +540,15 @@ export type WebExerciseContentSolveFieldsFragment = (
       { __typename?: 'HtmlTask' }
       & Pick<Types.HtmlTask, 'text'>
     )> }
-  ) }
+  ), webSampleSolution: Array<(
+    { __typename?: 'WebSampleSolution' }
+    & WebSampleSolutionFragment
+  )> }
 );
 
 export type WebSampleSolutionFragment = (
   { __typename: 'WebSampleSolution' }
-  & { webSampleSolution: (
+  & { webSampleSolutions: (
     { __typename?: 'WebSolution' }
     & { files: Array<(
       { __typename?: 'ExerciseFile' }
@@ -554,6 +560,10 @@ export type WebSampleSolutionFragment = (
 export type XmlExerciseContentSolveFieldsFragment = (
   { __typename?: 'XmlExerciseContent' }
   & Pick<Types.XmlExerciseContent, 'rootNode' | 'grammarDescription'>
+  & { xmlSampleSolutions: Array<(
+    { __typename?: 'XmlSampleSolution' }
+    & XmlSampleSolutionFragment
+  )> }
 );
 
 export type XmlSampleSolutionFragment = (
@@ -625,6 +635,16 @@ export const ExFileAllFragmentDoc = gql`
   editable
 }
     `;
+export const ProgrammingSampleSolutionFragmentDoc = gql`
+    fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
+  __typename
+  progSampleSolution: sample {
+    files {
+      ...ExFileAll
+    }
+  }
+}
+    ${ExFileAllFragmentDoc}`;
 export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
     fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {
   unitTestPart {
@@ -638,44 +658,39 @@ export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
       ...ExFileAll
     }
   }
-}
-    ${ExFileAllFragmentDoc}`;
-export const ProgrammingSampleSolutionFragmentDoc = gql`
-    fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
-  __typename
-  progSampleSolution: sample {
-    files {
-      ...ExFileAll
-    }
+  progSampleSolutions: sampleSolutions {
+    ...ProgrammingSampleSolution
   }
 }
-    ${ExFileAllFragmentDoc}`;
+    ${ExFileAllFragmentDoc}
+${ProgrammingSampleSolutionFragmentDoc}`;
 export const RegexSampleSolutionFragmentDoc = gql`
     fragment RegexSampleSolution on RegexSampleSolution {
   __typename
   regexSampleSolution: sample
 }
     `;
-export const SqlExerciseContentSolveFieldsFragmentDoc = gql`
-    fragment SqlExerciseContentSolveFields on SqlExerciseContent {
-  hint
+export const RegexExerciseContentSolveFieldsFragmentDoc = gql`
+    fragment RegexExerciseContentSolveFields on RegexExerciseContent {
+  regexSampleSolutions: sampleSolutions {
+    ...RegexSampleSolution
+  }
 }
-    `;
+    ${RegexSampleSolutionFragmentDoc}`;
 export const SqlSampleSolutionFragmentDoc = gql`
     fragment SqlSampleSolution on SqlSampleSolution {
   __typename
   sqlSampleSolution: sample
 }
     `;
-export const UmlExerciseContentSolveFieldsFragmentDoc = gql`
-    fragment UmlExerciseContentSolveFields on UmlExerciseContent {
-  toIgnore
-  mappings {
-    key
-    value
+export const SqlExerciseContentSolveFieldsFragmentDoc = gql`
+    fragment SqlExerciseContentSolveFields on SqlExerciseContent {
+  hint
+  sqlSampleSolutions: sampleSolutions {
+    ...SqlSampleSolution
   }
 }
-    `;
+    ${SqlSampleSolutionFragmentDoc}`;
 export const UmlAttributeFragmentDoc = gql`
     fragment UmlAttribute on UmlAttribute {
   isAbstract
@@ -748,6 +763,28 @@ export const UmlSampleSolutionFragmentDoc = gql`
   }
 }
     ${UmlClassDiagramFragmentDoc}`;
+export const UmlExerciseContentSolveFieldsFragmentDoc = gql`
+    fragment UmlExerciseContentSolveFields on UmlExerciseContent {
+  toIgnore
+  mappings {
+    key
+    value
+  }
+  umlSampleSolutions: sampleSolutions {
+    ...UmlSampleSolution
+  }
+}
+    ${UmlSampleSolutionFragmentDoc}`;
+export const WebSampleSolutionFragmentDoc = gql`
+    fragment WebSampleSolution on WebSampleSolution {
+  __typename
+  webSampleSolutions: sample {
+    files {
+      ...ExFileAll
+    }
+  }
+}
+    ${ExFileAllFragmentDoc}`;
 export const WebExerciseContentSolveFieldsFragmentDoc = gql`
     fragment WebExerciseContentSolveFields on WebExerciseContent {
   files {
@@ -759,24 +796,12 @@ export const WebExerciseContentSolveFieldsFragmentDoc = gql`
     }
     jsTaskCount
   }
-}
-    ${ExFileAllFragmentDoc}`;
-export const WebSampleSolutionFragmentDoc = gql`
-    fragment WebSampleSolution on WebSampleSolution {
-  __typename
-  webSampleSolution: sample {
-    files {
-      ...ExFileAll
-    }
+  webSampleSolution: sampleSolutions {
+    ...WebSampleSolution
   }
 }
-    ${ExFileAllFragmentDoc}`;
-export const XmlExerciseContentSolveFieldsFragmentDoc = gql`
-    fragment XmlExerciseContentSolveFields on XmlExerciseContent {
-  rootNode
-  grammarDescription
-}
-    `;
+    ${ExFileAllFragmentDoc}
+${WebSampleSolutionFragmentDoc}`;
 export const XmlSampleSolutionFragmentDoc = gql`
     fragment XmlSampleSolution on XmlSampleSolution {
   __typename
@@ -786,6 +811,15 @@ export const XmlSampleSolutionFragmentDoc = gql`
   }
 }
     `;
+export const XmlExerciseContentSolveFieldsFragmentDoc = gql`
+    fragment XmlExerciseContentSolveFields on XmlExerciseContent {
+  rootNode
+  grammarDescription
+  xmlSampleSolutions: sampleSolutions {
+    ...XmlSampleSolution
+  }
+}
+    ${XmlSampleSolutionFragmentDoc}`;
 export const LessonFragmentFragmentDoc = gql`
     fragment LessonFragment on Lesson {
   id
@@ -935,18 +969,11 @@ export const ExerciseDocument = gql`
         content {
           __typename
           ...ProgExerciseContentSolveFields
+          ...RegexExerciseContentSolveFields
           ...SqlExerciseContentSolveFields
           ...UmlExerciseContentSolveFields
           ...WebExerciseContentSolveFields
           ...XmlExerciseContentSolveFields
-        }
-        sampleSolutions {
-          ...ProgrammingSampleSolution
-          ...RegexSampleSolution
-          ...SqlSampleSolution
-          ...UmlSampleSolution
-          ...WebSampleSolution
-          ...XmlSampleSolution
         }
       }
     }
@@ -954,16 +981,11 @@ export const ExerciseDocument = gql`
 }
     ${ExerciseSolveFieldsFragmentDoc}
 ${ProgExerciseContentSolveFieldsFragmentDoc}
+${RegexExerciseContentSolveFieldsFragmentDoc}
 ${SqlExerciseContentSolveFieldsFragmentDoc}
 ${UmlExerciseContentSolveFieldsFragmentDoc}
 ${WebExerciseContentSolveFieldsFragmentDoc}
-${XmlExerciseContentSolveFieldsFragmentDoc}
-${ProgrammingSampleSolutionFragmentDoc}
-${RegexSampleSolutionFragmentDoc}
-${SqlSampleSolutionFragmentDoc}
-${UmlSampleSolutionFragmentDoc}
-${WebSampleSolutionFragmentDoc}
-${XmlSampleSolutionFragmentDoc}`;
+${XmlExerciseContentSolveFieldsFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

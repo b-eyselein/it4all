@@ -50,8 +50,9 @@ object WebToolJsonProtocol extends ToolJsonProtocol[WebSolution, WebExerciseCont
   }
 
   override val exerciseContentFormat: Format[WebExerciseContent] = {
-    implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
-    implicit val ssf: Format[SiteSpec]     = siteSpecFormat
+    implicit val eff: Format[ExerciseFile]                  = JsonProtocols.exerciseFileFormat
+    implicit val ssf: Format[SiteSpec]                      = siteSpecFormat
+    implicit val sasof: Format[SampleSolution[WebSolution]] = sampleSolutionFormat
 
     Json.format
   }

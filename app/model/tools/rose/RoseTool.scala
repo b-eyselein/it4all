@@ -28,11 +28,11 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
     user: User,
     sol: String,
     collection: ExerciseCollection,
-    exercise: Exercise[RoseExerciseContent, String],
+    exercise: Exercise[String, RoseExerciseContent],
     part: RoseExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[RoseCompleteResult]] =
-    exercise.sampleSolutions.headOption match {
+    exercise.content.sampleSolutions.headOption match {
       case None => Future.successful(Failure(new Exception("No sample solution could be found!")))
       case Some(sampleSolution) =>
         RoseCorrector.correct(

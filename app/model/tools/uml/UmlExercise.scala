@@ -31,5 +31,6 @@ case object UmlExTag extends PlayEnum[UmlExTag] {
 
 final case class UmlExerciseContent(
   toIgnore: Seq[String],
-  mappings: Map[String, String]
-)
+  mappings: Map[String, String],
+  sampleSolutions: Seq[SampleSolution[UmlClassDiagram]]
+) extends ExerciseContent[UmlClassDiagram]

@@ -85,18 +85,11 @@ query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
         content {
           __typename
           ...ProgExerciseContentSolveFields
+          ...RegexExerciseContentSolveFields
           ...SqlExerciseContentSolveFields
           ...UmlExerciseContentSolveFields
           ...WebExerciseContentSolveFields
           ...XmlExerciseContentSolveFields
-        }
-        sampleSolutions {
-          ...ProgrammingSampleSolution
-          ...RegexSampleSolution
-          ...SqlSampleSolution
-          ...UmlSampleSolution
-          ...WebSampleSolution
-          ...XmlSampleSolution
         }
       }
     }
@@ -271,6 +264,9 @@ fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {
       ...ExFileAll
     }
   }
+  progSampleSolutions:  sampleSolutions {
+    ...ProgrammingSampleSolution
+  }
 }
 fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
   __typename
@@ -281,6 +277,12 @@ fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
   }
 }
 
+fragment RegexExerciseContentSolveFields on RegexExerciseContent {
+  regexSampleSolutions: sampleSolutions{
+    ...RegexSampleSolution
+  }
+}
+
 fragment RegexSampleSolution on RegexSampleSolution {
   __typename
   regexSampleSolution: sample
@@ -288,7 +290,12 @@ fragment RegexSampleSolution on RegexSampleSolution {
 
 fragment SqlExerciseContentSolveFields on SqlExerciseContent {
   hint
+  sqlSampleSolutions: sampleSolutions {
+    ...SqlSampleSolution
+  }
 }
+
+
 fragment SqlSampleSolution on SqlSampleSolution {
   __typename
   sqlSampleSolution: sample
@@ -299,6 +306,9 @@ fragment UmlExerciseContentSolveFields on UmlExerciseContent {
   mappings {
     key
     value
+  }
+  umlSampleSolutions: sampleSolutions {
+    ...UmlSampleSolution
   }
 }
 
@@ -374,11 +384,14 @@ fragment WebExerciseContentSolveFields on WebExerciseContent {
     }
     jsTaskCount
   }
+  webSampleSolution: sampleSolutions {
+    ...WebSampleSolution
+  }
 }
 
 fragment WebSampleSolution on WebSampleSolution {
   __typename
-  webSampleSolution: sample {
+  webSampleSolutions: sample {
     files {
       ...ExFileAll
     }
@@ -388,6 +401,9 @@ fragment WebSampleSolution on WebSampleSolution {
 fragment XmlExerciseContentSolveFields on XmlExerciseContent {
   rootNode
   grammarDescription
+  xmlSampleSolutions: sampleSolutions {
+    ...XmlSampleSolution
+  }
 }
 
 fragment XmlSampleSolution on XmlSampleSolution {

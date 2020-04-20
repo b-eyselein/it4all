@@ -6,8 +6,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 import model.core.Levenshtein
 import model.core.result.SuccessType
 import model.points._
+import model.tools.SampleSolution
 import model.tools.xml.XmlTool.ElementLineComparison
-import model.tools.{Exercise, SampleSolution}
 import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
 
 import scala.collection.mutable
@@ -54,9 +54,8 @@ object XmlCorrector {
     solution: XmlSolution,
     solutionBaseDir: File,
     exerciseContent: XmlExerciseContent,
-    sampleSolutions: Seq[SampleSolution[XmlSolution]],
     solutionSaved: Boolean
-  ): Try[XmlCompleteResult] = sampleSolutions.headOption match {
+  ): Try[XmlCompleteResult] = exerciseContent.sampleSolutions.headOption match {
     case None            => Failure(new Exception("There is no sample solution!"))
     case Some(xmlSample) =>
       // Write grammar

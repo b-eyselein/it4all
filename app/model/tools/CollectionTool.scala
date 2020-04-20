@@ -22,7 +22,7 @@ abstract class CollectionTool(
   // Abstract types
 
   type SolType
-  type ExContentType
+  type ExContentType <: ExerciseContent[SolType]
   type PartType <: ExPart
   type CompResultType <: AbstractCorrectionResult
 
@@ -38,7 +38,7 @@ abstract class CollectionTool(
     dbExercise: DbExercise,
     topics: Seq[Topic],
     dbSampleSolutions: Seq[DbSampleSolution]
-  ): Option[Exercise[ExContentType, SolType]] = dbExercise match {
+  ): Option[Exercise[SolType, ExContentType]] = dbExercise match {
     case DbExercise(id, collectionId, toolId, title, authors, text, difficulty, contentJson) =>
       val sampleSolutions: Seq[SampleSolution[SolType]] = dbSampleSolutions.flatMap {
         case DbSampleSolution(id, _, _, _, solutionJson) =>
@@ -50,20 +50,20 @@ abstract class CollectionTool(
 
       for {
         content <- toolJsonProtocol.exerciseContentFormat.reads(contentJson).asOpt
-      } yield Exercise(id, collectionId, toolId, title, authors, text, topics, difficulty, content, sampleSolutions)
+      } yield Exercise(id, collectionId, toolId, title, authors, text, topics, difficulty, content)
   }
 
   private def exerciseToDbExercise(
-    exercise: Exercise[ExContentType, SolType]
+    exercise: Exercise[SolType, ExContentType]
   ): (DbExercise, Seq[DbExerciseTopic], Seq[DbSampleSolution]) =
     exercise match {
-      case Exercise(id, collectionId, toolId, title, authors, text, topics, difficulty, content, sampleSolutions) =>
+      case Exercise(id, collectionId, toolId, title, authors, text, topics, difficulty, content) =>
         val contentJson = toolJsonProtocol.exerciseContentFormat.writes(content)
         val dbEx        = DbExercise(id, collectionId, toolId, title, authors, text, difficulty, contentJson)
 
         val dbTopics = topics.map(t => DbExerciseTopic(t.id, id, collectionId, toolId))
 
-        val dbSampleSolutions = sampleSolutions.map { ss =>
+        val dbSampleSolutions = content.sampleSolutions.map { ss =>
           DbSampleSolution(ss.id, id, collectionId, toolId, toolJsonProtocol.solutionFormat.writes(ss.sample))
         }
 
@@ -74,7 +74,7 @@ abstract class CollectionTool(
     exercises: Seq[DbExercise],
     topicsForExercises: Seq[(DbExerciseTopic, Topic)],
     sampleSolutions: Seq[DbSampleSolution]
-  ): Seq[Exercise[ExContentType, SolType]] = exercises.flatMap { ex =>
+  ): Seq[Exercise[SolType, ExContentType]] = exercises.flatMap { ex =>
     dbExerciseToExercise(
       ex,
       topicsForExercises
@@ -87,7 +87,7 @@ abstract class CollectionTool(
 
   def futureAllExercises(
     tableDefs: ExerciseTableDefs
-  )(implicit ec: ExecutionContext): Future[Seq[Exercise[ExContentType, SolType]]] =
+  )(implicit ec: ExecutionContext): Future[Seq[Exercise[SolType, ExContentType]]] =
     for {
       dbExercises          <- tableDefs.futureAllExercisesForTool(this.id)
       topicsForDbExercises <- tableDefs.futureTopicsForAllExercisesForTool(this.id)
@@ -114,7 +114,7 @@ abstract class CollectionTool(
     tableDefs: ExerciseTableDefs,
     collId: Int,
     exId: Int
-  )(implicit ec: ExecutionContext): Future[Option[Exercise[ExContentType, SolType]]] =
+  )(implicit ec: ExecutionContext): Future[Option[Exercise[SolType, ExContentType]]] =
     for {
       maybeExercise   <- tableDefs.futureExerciseById(this.id, collId, exId)
       topics          <- tableDefs.futureTopicsForExerciseById(this.id, collId, exId)
@@ -123,7 +123,7 @@ abstract class CollectionTool(
 
   def futureUpsertExercise(
     tableDefs: ExerciseTableDefs,
-    exercise: Exercise[ExContentType, SolType]
+    exercise: Exercise[SolType, ExContentType]
   )(implicit ec: ExecutionContext): Future[Boolean] = {
     val (dbExercise, dbExerciseTopics, dbSampleSolution) = exerciseToDbExercise(exercise)
 
@@ -140,7 +140,7 @@ abstract class CollectionTool(
     user: User,
     sol: SolType,
     coll: ExerciseCollection,
-    exercise: Exercise[ExContentType, SolType],
+    exercise: Exercise[SolType, ExContentType],
     part: PartType,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[CompResultType]]

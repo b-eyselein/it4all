@@ -14,8 +14,9 @@ final case class ProgrammingExerciseContent(
   unitTestPart: UnitTestPart,
   implementationPart: ImplementationPart,
   sampleTestData: Seq[ProgTestData],
-  maybeClassDiagramPart: Option[UmlClassDiagram]
-) {
+  maybeClassDiagramPart: Option[UmlClassDiagram],
+  sampleSolutions: Seq[SampleSolution[ProgSolution]]
+) extends ExerciseContent[ProgSolution] {
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
     ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this.baseData, completeTestData)

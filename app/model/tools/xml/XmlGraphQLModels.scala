@@ -18,7 +18,8 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseC
   private val xmlExerciseTagType: EnumType[XmlExTag] = deriveEnumType()
 
   override val exerciseContentType: ObjectType[Unit, XmlExerciseContent] = {
-    implicit val xett: EnumType[XmlExTag] = xmlExerciseTagType
+    implicit val xett: EnumType[XmlExTag]                           = xmlExerciseTagType
+    implicit val sst: ObjectType[Unit, SampleSolution[XmlSolution]] = sampleSolutionType
 
     deriveObjectType()
   }

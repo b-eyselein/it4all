@@ -17,8 +17,7 @@ import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
 import {
   ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment,
-  UmlSampleSolutionFragment
+  UmlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {UmlCorrectionGQL, UmlCorrectionMutation} from '../uml-apollo-mutations.service';
 import {UmlClassDiagram, UmlClassDiagramInput, UmlExPart} from '../../../../_interfaces/graphql-types';
@@ -57,8 +56,7 @@ export class UmlDiagramDrawingComponent
 
   @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() exerciseContent: UmlExerciseContentSolveFieldsFragment;
-  @Input() sampleSolutionFragments: UmlSampleSolutionFragment[];
+  @Input() contentFragment: UmlExerciseContentSolveFieldsFragment;
 
   withHelp: boolean;
 
@@ -91,7 +89,7 @@ export class UmlDiagramDrawingComponent
       {name: 'Vererbung', key: CreatableClassDiagramObject.Implementation, selected: false}
     ];
 
-    const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exerciseFragment, this.exerciseContent, this.sampleSolutionFragments);
+    const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exerciseFragment, this.contentFragment);
 
     this.selectableClasses = selectableClasses;
     this.umlExerciseTextParts = textParts;
@@ -113,7 +111,7 @@ export class UmlDiagramDrawingComponent
         if (oldSol) {
           this.loadClassDiagram(oldSol);
         } else {
-          this.loadClassDiagram(this.sampleSolutionFragments[0].umlSampleSolution as ExportedUmlClassDiagram);
+          this.loadClassDiagram(this.contentFragment.umlSampleSolutions[0].umlSampleSolution as ExportedUmlClassDiagram);
         }
       });
   }
@@ -255,7 +253,7 @@ export class UmlDiagramDrawingComponent
   }
 
   get sampleSolutions(): UmlClassDiagram[] {
-    return this.sampleSolutionFragments.map((sample) => sample.umlSampleSolution);
+    return this.contentFragment.umlSampleSolutions.map((sample) => sample.umlSampleSolution);
   }
 
   correct(): void {

@@ -13,13 +13,16 @@ import sangria.schema._
 
 object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart] {
 
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = buildSampleSolutionType("Sql", StringType)
+
   private val sqlExerciseTagType: EnumType[SqlExTag] = deriveEnumType()
 
   private val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
 
   override val exerciseContentType: ObjectType[Unit, SqlExerciseContent] = {
-    implicit val seTagT: EnumType[SqlExTag]         = sqlExerciseTagType
-    implicit val seTypeT: EnumType[SqlExerciseType] = sqlExerciseTypeType
+    implicit val seTagT: EnumType[SqlExTag]                    = sqlExerciseTagType
+    implicit val seTypeT: EnumType[SqlExerciseType]            = sqlExerciseTypeType
+    implicit val sst: ObjectType[Unit, SampleSolution[String]] = sampleSolutionType
 
     deriveObjectType()
   }
@@ -153,7 +156,5 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     arguments = schemaNameArgument :: Nil,
     resolve = context => SelectDAO.tableContents(context.arg(schemaNameArgument))
   )
-
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = buildSampleSolutionType("Sql", StringType)
 
 }
