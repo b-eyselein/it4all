@@ -4,20 +4,7 @@ import model.tools._
 import model.tools.uml.UmlClassDiagram
 import play.api.libs.json.JsValue
 
-final case class ProgrammingExercise(
-  id: Int,
-  collectionId: Int,
-  toolId: String,
-  title: String,
-  authors: Seq[String],
-  text: String,
-  topics: Seq[Topic],
-  difficulty: Int,
-  sampleSolutions: Seq[SampleSolution[ProgSolution]],
-  content: ProgExerciseContent
-) extends Exercise[ProgSolution, ProgExerciseContent]
-
-final case class ProgExerciseContent(
+final case class ProgrammingExerciseContent(
   functionName: String,
   foldername: String,
   filename: String,

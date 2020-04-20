@@ -5,7 +5,7 @@ import model.json.JsonProtocols
 import model.tools._
 import play.api.libs.json.{Format, Json}
 
-object WebToolJsonProtocol extends ToolJsonProtocol[WebSolution, WebExerciseContent, WebExercise, WebExPart] {
+object WebToolJsonProtocol extends ToolJsonProtocol[WebSolution, WebExerciseContent, WebExPart] {
 
   // solution format
 
@@ -52,14 +52,6 @@ object WebToolJsonProtocol extends ToolJsonProtocol[WebSolution, WebExerciseCont
   override val exerciseContentFormat: Format[WebExerciseContent] = {
     implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
     implicit val ssf: Format[SiteSpec]     = siteSpecFormat
-
-    Json.format
-  }
-
-  override val exerciseFormat: Format[WebExercise] = {
-    implicit val tf: Format[Topic]                         = JsonProtocols.topicFormat
-    implicit val fssf: Format[SampleSolution[WebSolution]] = sampleSolutionFormat
-    implicit val cf: Format[WebExerciseContent]            = exerciseContentFormat
 
     Json.format
   }

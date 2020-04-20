@@ -8,7 +8,7 @@ import model.tools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExercise, UmlExPart] {
+object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart] {
 
   private val umlVisibilityType: EnumType[UmlVisibility] = deriveEnumType()
   private val umlClassTypeType: EnumType[UmlClassType]   = deriveEnumType()
@@ -90,16 +90,6 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerc
           resolve = context => context.value.mappings.map { case (key, value) => KeyValueObject(key, value) }.toList
         )
       )
-    )
-  }
-
-  override val exerciseType: ObjectType[Unit, UmlExercise] = {
-    implicit val ect: ObjectType[Unit, UmlExerciseContent]              = exerciseContentType
-    implicit val sst: ObjectType[Unit, SampleSolution[UmlClassDiagram]] = sampleSolutionType("Uml", umlClassDiagramType)
-
-    deriveObjectType(
-      Interfaces(exerciseInterfaceType),
-      ExcludeFields("topics")
     )
   }
 
@@ -204,7 +194,7 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerc
       matchingResultType("UmlImplementation", umlImplementationMatchType)
 
     deriveObjectType[Unit, UmlCompleteResult](
-      Interfaces(abstractResultTypeType),
+      Interfaces(abstractResultInterfaceType),
       ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }
@@ -215,5 +205,6 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerc
     "UmlExPart",
     values = UmlExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )
-
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[UmlClassDiagram]] =
+    buildSampleSolutionType("Uml", umlClassDiagramType)
 }

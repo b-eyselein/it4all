@@ -1,10 +1,9 @@
-import {Component, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ReadObjectComponent} from '../_components/read-object/read-object.component';
-import {AdminReadExercisesGQL, AdminUpsertExerciseGQL, CompleteExerciseFragment} from "../../_services/apollo_services";
+import {AdminReadExercisesGQL, AdminUpsertExerciseGQL} from "../../_services/apollo_services";
 import {Saveable} from "../../_interfaces/saveable";
 import {Subscription} from "rxjs";
-import {ExerciseInterface} from "../../_interfaces/graphql-types";
+import {Exercise} from "../../_interfaces/graphql-types";
 
 @Component({templateUrl: './admin-read-exercises.component.html'})
 export class AdminReadExercisesComponent implements OnInit, OnDestroy {
@@ -13,10 +12,7 @@ export class AdminReadExercisesComponent implements OnInit, OnDestroy {
   private sub: Subscription;
   private toolId: string;
 
-  savableExercises: Saveable<ExerciseInterface>[];
-
-  @ViewChildren(ReadObjectComponent) readExerciseComponents: QueryList<ReadObjectComponent<CompleteExerciseFragment>>;
-
+  savableExercises: Saveable<Exercise>[];
 
   constructor(
     private route: ActivatedRoute,
@@ -36,7 +32,7 @@ export class AdminReadExercisesComponent implements OnInit, OnDestroy {
         .subscribe(({data}) => {
           this.savableExercises = data.tool.collection.readExercises
             .map((res) => {
-              const exercise: ExerciseInterface = JSON.parse(res);
+              const exercise: Exercise = JSON.parse(res);
               return {saved: false, stringified: res, value: exercise, title: `${exercise.id}. ${exercise.title}`}
             });
 
@@ -49,7 +45,7 @@ export class AdminReadExercisesComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  save(exercise: Saveable<ExerciseInterface>): void {
+  save(exercise: Saveable<Exercise>): void {
     this.adminUpsertExerciseGQL
       .mutate({
         toolId: this.toolId,
@@ -59,7 +55,7 @@ export class AdminReadExercisesComponent implements OnInit, OnDestroy {
   }
 
   saveAll(): void {
-    this.readExerciseComponents.forEach((readExerciseComponent) => readExerciseComponent.save.emit());
+    this.savableExercises.forEach(this.save);
   }
 
 }

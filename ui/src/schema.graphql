@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Fri Apr 17 2020 13:51:30 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon Apr 20 2020 13:46:35 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -39,7 +39,7 @@ type CollectionTol {
   collection(collId: Int!): ExerciseCollection
   readCollections: [String!]!
   exerciseCount: Int!
-  allExercises: [ExerciseInterface!]!
+  allExercises: [Exercise!]!
 }
 
 type DTDParseException {
@@ -74,6 +74,19 @@ type ElementLineMatch implements NewMatch {
   sampleArgDescription: String
 }
 
+type Exercise {
+  id: Int!
+  collectionId: Int!
+  toolId: String!
+  title: String!
+  authors: [String!]!
+  text: String!
+  topics: [Topic!]!
+  difficulty: Int!
+  content: ExerciseContent
+  sampleSolutions: [SampleSolution!]!
+}
+
 type ExerciseCollection {
   id: Int!
   toolId: String!
@@ -82,10 +95,12 @@ type ExerciseCollection {
   text: String!
   shortName: String!
   exerciseCount: Int!
-  exercises: [ExerciseInterface!]!
-  exercise(exId: Int!): ExerciseInterface
+  exercises: [Exercise!]!
+  exercise(exId: Int!): Exercise
   readExercises: [String!]!
 }
+
+union ExerciseContent = ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
 
 type ExerciseFile {
   name: String!
@@ -99,17 +114,6 @@ input ExerciseFileInput {
   fileType: String!
   editable: Boolean!
   content: String!
-}
-
-interface ExerciseInterface {
-  id: Int!
-  collectionId: Int!
-  toolId: String!
-  title: String!
-  authors: [String!]!
-  text: String!
-  difficulty: Int
-  topics: [Topic!]!
 }
 
 type GradedHtmlTaskResult {
@@ -201,11 +205,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
+  PARTIAL_MATCH
+  ONLY_USER
   UNSUCCESSFUL_MATCH
   SUCCESSFUL_MATCH
-  PARTIAL_MATCH
   ONLY_SAMPLE
-  ONLY_USER
 }
 
 type Mutation {
@@ -236,7 +240,13 @@ type ProgCompleteResult {
   unitTestResults: [UnitTestCorrectionResult!]!
 }
 
-type ProgExerciseContent {
+enum ProgExPart {
+  TestCreation
+  Implementation
+  ActivityDiagram
+}
+
+type ProgrammingExerciseContent {
   functionName: String!
   foldername: String!
   filename: String!
@@ -244,27 +254,11 @@ type ProgExerciseContent {
   implementationPart: ImplementationPart!
 }
 
-enum ProgExPart {
-  TestCreation
-  Implementation
-  ActivityDiagram
-}
-
-type ProgrammingExercise implements ExerciseInterface {
+type ProgrammingSampleSolution {
   id: Int!
+  exerciseId: Int!
   collectionId: Int!
   toolId: String!
-  title: String!
-  authors: [String!]!
-  text: String!
-  difficulty: Int!
-  sampleSolutions: [ProgSampleSolution!]!
-  content: ProgExerciseContent!
-  topics: [Topic!]!
-}
-
-type ProgSampleSolution {
-  id: Int!
   sample: ProgSolution!
 }
 
@@ -285,19 +279,6 @@ type Query {
 enum RegexCorrectionType {
   EXTRACTION
   MATCHING
-}
-
-type RegexExercise implements ExerciseInterface {
-  id: Int!
-  collectionId: Int!
-  toolId: String!
-  title: String!
-  authors: [String!]!
-  text: String!
-  difficulty: Int!
-  sampleSolutions: [StringSampleSolution!]!
-  content: RegexExerciseContent!
-  topics: [Topic!]!
 }
 
 type RegexExerciseContent {
@@ -369,6 +350,8 @@ type RegexMatchTestData {
   isIncluded: Boolean!
 }
 
+union SampleSolution = ProgrammingSampleSolution | StringSampleSolution | UmlSampleSolution | WebSampleSolution | XmlSampleSolution
+
 type SelectAdditionalComparisons {
   groupByComparison: SqlGroupByComparisonMatchingResult!
   orderByComparison: SqlOrderByComparisonMatchingResult!
@@ -423,30 +406,17 @@ type SqlExecutionResult {
   sampleResultTry: SqlQueryResult
 }
 
-type SqlExercise implements ExerciseInterface {
-  id: Int!
-  collectionId: Int!
-  toolId: String!
-  title: String!
-  authors: [String!]!
-  text: String!
-  difficulty: Int!
-  sampleSolutions: [StringSampleSolution!]!
-  content: SqlExerciseContent!
-  topics: [Topic!]!
-}
-
 type SqlExerciseContent {
   exerciseType: SqlExerciseType!
   hint: String
 }
 
 enum SqlExerciseType {
-  UPDATE
-  SELECT
   INSERT
-  CREATE
+  SELECT
+  UPDATE
   DELETE
+  CREATE
 }
 
 enum SqlExPart {
@@ -570,6 +540,9 @@ type SqlWrongQueryTypeResult implements AbstractCorrectionResult {
 
 type StringSampleSolution {
   id: Int!
+  exerciseId: Int!
+  collectionId: Int!
+  toolId: String!
   sample: String!
 }
 
@@ -750,19 +723,6 @@ type UmlCompleteResult implements AbstractCorrectionResult {
   maxPoints: Float!
 }
 
-type UmlExercise implements ExerciseInterface {
-  id: Int!
-  collectionId: Int!
-  toolId: String!
-  title: String!
-  authors: [String!]!
-  text: String!
-  difficulty: Int!
-  sampleSolutions: [UmlSampleSolution!]!
-  content: UmlExerciseContent!
-  topics: [Topic!]!
-}
-
 type UmlExerciseContent {
   toIgnore: [String!]!
   mappings: [KeyValueObject!]!
@@ -852,6 +812,9 @@ enum UmlMultiplicity {
 
 type UmlSampleSolution {
   id: Int!
+  exerciseId: Int!
+  collectionId: Int!
+  toolId: String!
   sample: UmlClassDiagram!
 }
 
@@ -901,19 +864,6 @@ type WebCompleteResult implements AbstractCorrectionResult {
   maxPoints: Float!
 }
 
-type WebExercise implements ExerciseInterface {
-  id: Int!
-  collectionId: Int!
-  toolId: String!
-  title: String!
-  authors: [String!]!
-  text: String!
-  difficulty: Int!
-  sampleSolutions: [WebSampleSolution!]!
-  content: WebExerciseContent!
-  topics: [Topic!]!
-}
-
 type WebExerciseContent {
   htmlText: String
   jsText: String
@@ -928,6 +878,9 @@ enum WebExPart {
 
 type WebSampleSolution {
   id: Int!
+  exerciseId: Int!
+  collectionId: Int!
+  toolId: String!
   sample: WebSolution!
 }
 
@@ -967,19 +920,6 @@ enum XmlErrorType {
   WARNING
 }
 
-type XmlExercise implements ExerciseInterface {
-  id: Int!
-  collectionId: Int!
-  toolId: String!
-  title: String!
-  authors: [String!]!
-  text: String!
-  difficulty: Int!
-  sampleSolutions: [XmlSampleSolution!]!
-  content: XmlExerciseContent!
-  topics: [Topic!]!
-}
-
 type XmlExerciseContent {
   grammarDescription: String!
   rootNode: String!
@@ -997,6 +937,9 @@ type XmlGrammarResult {
 
 type XmlSampleSolution {
   id: Int!
+  exerciseId: Int!
+  collectionId: Int!
+  toolId: String!
   sample: XmlSolution!
 }
 

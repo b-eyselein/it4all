@@ -39,6 +39,35 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
 
   // Types
 
+  protected val exerciseContentUnionType: UnionType[Unit] = UnionType(
+    "ExerciseContent",
+    types = ToolList.tools.map(t => t.graphQlModels.exerciseContentType)
+  )
+
+  protected val sampleSolutionUnionType: UnionType[Unit] = UnionType(
+    "SampleSolution",
+    types = ToolList.tools.map(t => t.graphQlModels.sampleSolutionType).distinctBy(_.name)
+  )
+
+  final val exerciseType: ObjectType[GraphQLContext, Exercise] = {
+    implicit val tt: ObjectType[Unit, Topic] = topicsType
+
+    deriveObjectType(
+      AddFields(
+        Field(
+          "content",
+          OptionType(exerciseContentUnionType),
+          resolve = context => ???
+        ),
+        Field(
+          "sampleSolutions",
+          ListType(sampleSolutionUnionType),
+          resolve = context => ???
+        )
+      )
+    )
+  }
+
   private val CollectionType: ObjectType[GraphQLContext, ExerciseCollection] = deriveObjectType(
     AddFields(
       Field(
@@ -48,7 +77,7 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
       ),
       Field(
         "exercises",
-        ListType(exerciseInterfaceType),
+        ListType(exerciseType),
         resolve = context =>
           ToolList.tools.find(_.id == context.value.toolId) match {
             case None       => ???
@@ -57,15 +86,12 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
       ),
       Field(
         "exercise",
-        OptionType(exerciseInterfaceType),
+        OptionType(exerciseType),
         arguments = exIdArgument :: Nil,
         resolve = context =>
           ToolList.tools.find(_.id == context.value.toolId) match {
-            case None => ???
-            case Some(tool) =>
-              tool
-                .futureExerciseById(context.ctx.tables, context.value.id, context.arg(exIdArgument))
-                .map(_.asInstanceOf[Exercise[_, _]])
+            case None       => ???
+            case Some(tool) => tool.futureExerciseById(context.ctx.tables, context.value.id, context.arg(exIdArgument))
           }
       ),
       Field(
@@ -144,7 +170,7 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
       ),
       Field(
         "allExercises",
-        ListType(exerciseInterfaceType),
+        ListType(exerciseType),
         resolve = context =>
           ToolList.tools.find(_.id == context.value.id) match {
             case None       => ???

@@ -58,7 +58,7 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
 
     def toolId: Rep[String] = column[String]("tool_id")
 
-    def abbreviation: Rep[String] = column[String]("abbrevitation")
+    def abbreviation: Rep[String] = column[String]("abbreviation")
 
     def title: Rep[String] = column[String]("title")
 
@@ -117,27 +117,13 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
 
     def difficulty: Rep[Int] = column[Int]("difficulty")
 
-    def sampleSolutionsJson: Rep[JsValue] = column[JsValue]("sample_solutions_json")
-
-    def contentJson: Rep[JsValue] = column[JsValue]("content_json")
-
     def pk: PrimaryKey = primaryKey("pk", (id, collectionId, toolId))
 
     def collectionFk: ForeignKeyQuery[ExerciseCollectionsTable, ExerciseCollection] =
       foreignKey("collection_fk", (collectionId, toolId), collectionsTQ)(c => (c.id, c.toolId))
 
     override def * : ProvenShape[DbExercise] =
-      (
-        id,
-        collectionId,
-        toolId,
-        title,
-        authors,
-        text,
-        difficulty,
-        sampleSolutionsJson,
-        contentJson
-      ) <> (DbExercise.tupled, DbExercise.unapply)
+      (id, collectionId, toolId, title, authors, text, difficulty) <> (DbExercise.tupled, DbExercise.unapply)
 
   }
 

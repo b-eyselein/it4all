@@ -1,11 +1,9 @@
 package model.tools.regex
 
-import model.json.JsonProtocols
-import model.tools.{SampleSolution, StringSampleSolutionToolJsonProtocol, Topic}
+import model.tools.StringSampleSolutionToolJsonProtocol
 import play.api.libs.json.{Format, Json}
 
-object RegexToolJsonProtocol
-    extends StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExercise, RegexExPart] {
+object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] {
 
   private val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
 
@@ -19,6 +17,7 @@ object RegexToolJsonProtocol
     Json.format
   }
 
+  /*
   override val exerciseFormat: Format[RegexExercise] = {
     implicit val tf: Format[Topic]                   = JsonProtocols.topicFormat
     implicit val ssf: Format[SampleSolution[String]] = sampleSolutionFormat
@@ -26,6 +25,7 @@ object RegexToolJsonProtocol
 
     Json.format
   }
+   */
 
   override val partTypeFormat: Format[RegexExPart] = RegexExParts.jsonFormat
 

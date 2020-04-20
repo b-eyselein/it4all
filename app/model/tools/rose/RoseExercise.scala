@@ -13,19 +13,6 @@ object RoseExPart extends ExParts[RoseExPart] {
 
 }
 
-final case class RoseExercise(
-  id: Int,
-  collectionId: Int,
-  toolId: String,
-  title: String,
-  authors: Seq[String],
-  text: String,
-  topics: Seq[Topic],
-  difficulty: Int,
-  sampleSolutions: Seq[SampleSolution[String]],
-  content: RoseExerciseContent
-) extends Exercise[String, RoseExerciseContent]
-
 final case class RoseExerciseContent(
   fieldWidth: Int,
   fieldHeight: Int,

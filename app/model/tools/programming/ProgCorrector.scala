@@ -6,7 +6,7 @@ import model.User
 import model.core.result.SuccessType
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.tools.programming.ProgrammingToolJsonProtocol.UnitTestTestData
-import model.tools.{ExerciseFile, SampleSolution}
+import model.tools.{Exercise, ExerciseFile, SampleSolution}
 import play.api.libs.json.Json
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,7 +51,8 @@ object ProgCorrector {
   private def correctImplementation(
     solTargetDir: File,
     programmingSolution: ProgSolution,
-    exerciseContent: ProgrammingExercise,
+    exerciseContent: ProgrammingExerciseContent,
+    sampleSolutions: Seq[SampleSolution[ProgSolution]],
     resultFile: File,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
@@ -60,7 +61,7 @@ object ProgCorrector {
       writeExerciseFileAndMount(exerciseFile, solTargetDir)
     }
 
-    exerciseContent.content.unitTestPart.unitTestType match {
+    exerciseContent.unitTestPart.unitTestType match {
       case UnitTestTypes.Simplified =>
         correctSimplifiedImplementation(
           solTargetDir,
@@ -70,27 +71,34 @@ object ProgCorrector {
           solutionSaved
         )
       case UnitTestTypes.Normal =>
-        correctNormalImplementation(solTargetDir, exerciseContent, programmingSolutionFilesMounts, solutionSaved)
+        correctNormalImplementation(
+          solTargetDir,
+          exerciseContent,
+          sampleSolutions,
+          programmingSolutionFilesMounts,
+          solutionSaved
+        )
     }
   }
 
   private def correctNormalImplementation(
     solTargetDir: File,
-    exercise: ProgrammingExercise,
+    exerciseContent: ProgrammingExerciseContent,
+    sampleSolutions: Seq[SampleSolution[ProgSolution]],
     progSolutionFilesMounts: Seq[DockerBind],
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
-    val unitTestFileContent: String = exercise.sampleSolutions.headOption match {
+    val unitTestFileContent: String = sampleSolutions.headOption match {
       case None => ???
-      case Some(SampleSolution(_, ProgSolution(files, _))) =>
+      case Some(SampleSolution(_, _, _, _, ProgSolution(files, _))) =>
         files
-          .find(_.name == exercise.content.unitTestPart.testFileName)
+          .find(_.name == exerciseContent.unitTestPart.testFileName)
           .map(_.content)
           .getOrElse(???) // unitTest.content
     }
 
-    val unitTestFileName = s"${exercise.content.filename}_test.py"
+    val unitTestFileName = s"${exerciseContent.filename}_test.py"
     val unitTestFile     = solTargetDir / unitTestFileName
     createFileAndWrite(unitTestFile, unitTestFileContent)
 
@@ -117,19 +125,19 @@ object ProgCorrector {
 
   private def correctSimplifiedImplementation(
     solTargetDir: File,
-    exercise: ProgrammingExercise,
+    exerciseContent: ProgrammingExerciseContent,
     progSolutionFilesMounts: Seq[DockerBind],
     resultFile: File,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     val testMainFile = solTargetDir / testMainFileName
-    createFileAndWrite(testMainFile, exercise.content.unitTestPart.simplifiedTestMainFile.map(_.content).getOrElse(???))
+    createFileAndWrite(testMainFile, exerciseContent.unitTestPart.simplifiedTestMainFile.map(_.content).getOrElse(???))
 
     val testDataFile = solTargetDir / testDataFileName
     createFileAndWrite(
       testDataFile,
-      Json.prettyPrint(exercise.content.buildSimpleTestDataFileContent(exercise.content.sampleTestData))
+      Json.prettyPrint(exerciseContent.buildSimpleTestDataFileContent(exerciseContent.sampleTestData))
     )
 
     DockerConnector
@@ -153,13 +161,13 @@ object ProgCorrector {
   private def correctUnittest(
     solTargetDir: File,
     progSolution: ProgSolution,
-    exercise: ProgrammingExercise,
+    exerciseContent: ProgrammingExerciseContent,
     resultFile: File,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     // write unit test file
-    val testFileName = exercise.content.unitTestPart.testFileName
+    val testFileName = exerciseContent.unitTestPart.testFileName
     val testFile     = solTargetDir / testFileName
     createFileAndWrite(testFile, progSolution.files.find(_.name == testFileName).map(_.content).getOrElse(???))
 
@@ -167,37 +175,37 @@ object ProgCorrector {
     val testDataFile = solTargetDir / testDataFileName
     // remove ending '.py'
     val testFileNameForTestData =
-      exercise.content.unitTestPart.testFileName.substring(0, exercise.content.unitTestPart.testFileName.length - 3)
+      exerciseContent.unitTestPart.testFileName.substring(0, exerciseContent.unitTestPart.testFileName.length - 3)
     createFileAndWrite(
       testDataFile,
       Json.prettyPrint(
         ProgrammingToolJsonProtocol.unitTestDataWrites.writes(
           UnitTestTestData(
-            exercise.content.foldername,
-            exercise.content.filename,
+            exerciseContent.foldername,
+            exerciseContent.filename,
             testFileNameForTestData,
-            exercise.content.unitTestPart.unitTestTestConfigs
+            exerciseContent.unitTestPart.unitTestTestConfigs
           )
         )
       )
     )
 
     // find mounts for implementation files
-    val unitTestSolFilesDockerBinds: Seq[DockerBind] = exercise.content.unitTestPart.unitTestTestConfigs
+    val unitTestSolFilesDockerBinds: Seq[DockerBind] = exerciseContent.unitTestPart.unitTestTestConfigs
       .filter(tc => implFileRegex.matches(tc.file.name))
       .map { tc =>
         writeExerciseFileAndMount(
           tc.file,
           solTargetDir,
-          DockerConnector.DefaultWorkingDir / exercise.content.foldername
+          DockerConnector.DefaultWorkingDir / exerciseContent.foldername
         )
       }
 
     // find mounts for exercise files
-    val exFilesMounts = exercise.content.unitTestPart.unitTestFiles
-      .filter(f => f.name != testFileName && f.name != exercise.content.implementationPart.implFileName)
+    val exFilesMounts = exerciseContent.unitTestPart.unitTestFiles
+      .filter(f => f.name != testFileName && f.name != exerciseContent.implementationPart.implFileName)
       .map { exFile =>
-        writeExerciseFileAndMount(exFile, solTargetDir, DockerConnector.DefaultWorkingDir / exercise.content.foldername)
+        writeExerciseFileAndMount(exFile, solTargetDir, DockerConnector.DefaultWorkingDir / exerciseContent.foldername)
       }
 
     DockerConnector
@@ -206,7 +214,7 @@ object ProgCorrector {
         maybeDockerBinds = unitTestSolFilesDockerBinds ++ exFilesMounts ++ Seq(
           DockerBind(
             testFile,
-            DockerConnector.DefaultWorkingDir / exercise.content.foldername / testFileName,
+            DockerConnector.DefaultWorkingDir / exerciseContent.foldername / testFileName,
             isReadOnly = true
           ),
           DockerBind(testDataFile, DockerConnector.DefaultWorkingDir / testDataFileName, isReadOnly = true),
@@ -225,7 +233,9 @@ object ProgCorrector {
   def correct(
     user: User,
     progSolution: ProgSolution,
-    exercise: ProgrammingExercise,
+    exercise: Exercise,
+    exerciseContent: ProgrammingExerciseContent,
+    sampleSolutions: Seq[SampleSolution[ProgSolution]],
     part: ProgExPart,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
@@ -240,8 +250,22 @@ object ProgCorrector {
 
     part match {
       case ProgExPart.TestCreation =>
-        correctUnittest(solutionTargetDir, progSolution, exercise, resultFile, solutionSaved)
-      case _ => correctImplementation(solutionTargetDir, progSolution, exercise, resultFile, solutionSaved)
+        correctUnittest(
+          solutionTargetDir,
+          progSolution,
+          exerciseContent,
+          resultFile,
+          solutionSaved
+        )
+      case _ =>
+        correctImplementation(
+          solutionTargetDir,
+          progSolution,
+          exerciseContent,
+          sampleSolutions,
+          resultFile,
+          solutionSaved
+        )
     }
   }
 

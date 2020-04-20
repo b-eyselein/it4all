@@ -4,7 +4,11 @@ import {DexieService} from '../../../../_services/dexie.service';
 import {ProgrammingImplementationToolPart, ProgrammingTestCreationPart} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-import {ExerciseSolveFieldsFragment, ProgExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {
+  ExerciseSolveFieldsFragment,
+  ProgExerciseContentSolveFieldsFragment,
+  ProgrammingSampleSolutionFragment
+} from '../../../../_services/apollo_services';
 import {ProgCorrectionGQL, ProgCorrectionMutation} from '../programming-apollo-mutations.service';
 import {ExerciseFile, ProgExPart, ProgSolution, ProgSolutionInput} from '../../../../_interfaces/graphql-types';
 
@@ -23,7 +27,7 @@ export class ProgrammingExerciseComponent
   @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: ProgExerciseContentSolveFieldsFragment;
-
+  @Input() sampleSolutionFragments: ProgrammingSampleSolutionFragment[];
 
   exerciseFiles: ExerciseFile[] = [];
 
@@ -32,7 +36,7 @@ export class ProgrammingExerciseComponent
   }
 
   get sampleSolutionFilesList(): ExerciseFile[][] {
-    return this.contentFragment.progSampleSolutions.map((s) => s.sample.files);
+    return this.sampleSolutionFragments.map((s) => s.progSampleSolution.files);
   }
 
   ngOnInit(): void {

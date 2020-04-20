@@ -1,11 +1,19 @@
 package model.tools
 
-import model.json.KeyValueObject
+import model.json.{JsonProtocols, KeyValueObject}
 import play.api.libs.json._
 
-final case class ReadExercisesMessage[S, C, E <: Exercise[S, C]](exercises: Seq[E])
+final case class ReadExercise[S, C](
+  exercise: Exercise,
+  sampleSolutions: Seq[SampleSolution[S]],
+  content: C
+)
 
-trait ToolJsonProtocol[S, C, E <: Exercise[S, C], PartType <: ExPart] {
+final case class ReadExercisesMessage[S, C](
+  exercises: Seq[ReadExercise[S, C]]
+)
+
+trait ToolJsonProtocol[S, C, PartType <: ExPart] {
 
   protected val keyValueObjectMapFormat: Format[Map[String, String]] = {
 
@@ -27,18 +35,30 @@ trait ToolJsonProtocol[S, C, E <: Exercise[S, C], PartType <: ExPart] {
 
   val exerciseContentFormat: Format[C]
 
-  val exerciseFormat: Format[E]
+  final val exerciseFormat: Format[Exercise] = {
+    implicit val tf: Format[Topic] = JsonProtocols.topicFormat
+
+    Json.format
+  }
 
   val partTypeFormat: Format[PartType]
 
-  lazy val readExercisesMessageReads: Reads[ReadExercisesMessage[S, C, E]] = {
-    implicit val ef: Format[E] = exerciseFormat
+  lazy val readExerciseFormat: Format[ReadExercise[S, C]] = {
+    implicit val ef: Format[Exercise]          = exerciseFormat
+    implicit val sf: Format[SampleSolution[S]] = sampleSolutionFormat
+    implicit val cf: Format[C]                 = exerciseContentFormat
+
+    Json.format
+  }
+
+  lazy val readExercisesMessageReads: Reads[ReadExercisesMessage[S, C]] = {
+    implicit val rer: Reads[ReadExercise[S, C]] = readExerciseFormat
 
     Json.reads
   }
 
   def validateAndWriteReadExerciseMessage(message: JsValue): Seq[String] = {
-    val readExercises: Seq[E] = readExercisesMessageReads.reads(message) match {
+    val readExercises: Seq[ReadExercise[S, C]] = readExercisesMessageReads.reads(message) match {
       case JsSuccess(readExercisesMessage, _) => readExercisesMessage.exercises
       case JsError(errors) =>
         errors.foreach(println)
@@ -46,14 +66,14 @@ trait ToolJsonProtocol[S, C, E <: Exercise[S, C], PartType <: ExPart] {
     }
 
     readExercises
-      .map(exerciseFormat.writes)
+      .map(readExerciseFormat.writes)
       .map(Json.stringify)
   }
 
 }
 
-abstract class StringSampleSolutionToolJsonProtocol[C, E <: Exercise[String, C], PartType <: ExPart]
-    extends ToolJsonProtocol[String, C, E, PartType] {
+abstract class StringSampleSolutionToolJsonProtocol[C, PartType <: ExPart]
+    extends ToolJsonProtocol[String, C, PartType] {
 
   override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)
 

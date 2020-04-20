@@ -3,8 +3,7 @@ package model.tools
 import better.files.File
 import model._
 import model.core.result.AbstractCorrectionResult
-import model.persistence.{DbExercise, DbExerciseTopic, ExerciseTableDefs}
-import play.api.libs.json.Writes
+import model.persistence.{ADbModels, DbExercise, DbExerciseTopic, ExerciseTableDefs}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -23,35 +22,33 @@ abstract class CollectionTool(
   // Abstract types
 
   type SolType
-
   type ExContentType
-
-  type ExerciseType <: Exercise[SolType, ExContentType]
-
   type PartType <: ExPart
-
   type CompResultType <: AbstractCorrectionResult
 
   // Yaml, Html forms, Json, GraphQL
 
-  val toolJsonProtocol: ToolJsonProtocol[SolType, ExContentType, ExerciseType, PartType]
+  val toolJsonProtocol: ToolJsonProtocol[SolType, ExContentType, PartType]
 
-  val graphQlModels: ToolGraphQLModelBasics[SolType, ExContentType, ExerciseType, PartType]
+  val graphQlModels: ToolGraphQLModelBasics[SolType, ExContentType, PartType]
 
   // Db
 
   private def matchExercisesAndTopics(
-    dbExercises: Seq[DbExercise],
-    topicsForDbExercises: Seq[(DbExerciseTopic, Topic)]
-  ): Seq[Exercise[_, _]] = dbExercises.flatMap { ex =>
-    val topicsForExercise = topicsForDbExercises
-      .filter { case (et, _) => et.exerciseId == ex.id && et.collectionId == ex.collectionId }
-      .map(_._2)
-
-    convertExerciseFromDb(ex, topicsForExercise)
+    exercises: Seq[DbExercise],
+    topicsForExercises: Seq[(DbExerciseTopic, Topic)]
+  ): Seq[Exercise] = exercises.map { ex =>
+    ADbModels.dbExercisetoExercise(
+      ex,
+      topicsForExercises
+        .filter { case (et, _) => et.exerciseId == ex.id && et.collectionId == ex.collectionId }
+        .map(_._2)
+    )
   }
 
-  def futureAllExercises(tableDefs: ExerciseTableDefs)(implicit ec: ExecutionContext): Future[Seq[Exercise[_, _]]] =
+  def futureAllExercises(
+    tableDefs: ExerciseTableDefs
+  )(implicit ec: ExecutionContext): Future[Seq[Exercise]] =
     for {
       dbExercises          <- tableDefs.futureAllExercisesForTool(this.id)
       topicsForDbExercises <- tableDefs.futureTopicsForAllExercisesForTool(this.id)
@@ -60,61 +57,32 @@ abstract class CollectionTool(
   def futureExercisesInCollection(
     tableDefs: ExerciseTableDefs,
     collId: Int
-  )(implicit ec: ExecutionContext): Future[Seq[Exercise[_, _]]] =
+  )(implicit ec: ExecutionContext): Future[Seq[Exercise]] =
     for {
-      dbExercises          <- tableDefs.futureAllExercisesInColl(this.id, collId)
+      exercises            <- tableDefs.futureAllExercisesInColl(this.id, collId)
       topicsForDbExercises <- tableDefs.futureTopicsForAllExercisesInColl(this.id, collId)
-    } yield matchExercisesAndTopics(dbExercises, topicsForDbExercises)
+    } yield matchExercisesAndTopics(exercises, topicsForDbExercises)
 
   def futureExerciseById(
     tableDefs: ExerciseTableDefs,
     collId: Int,
     exId: Int
-  )(implicit ec: ExecutionContext): Future[Option[Exercise[_, _]]] =
-    futureExerciseTypeById(tableDefs, collId, exId)
-
-  def futureExerciseTypeById(
-    tableDefs: ExerciseTableDefs,
-    collId: Int,
-    exId: Int
-  )(implicit ec: ExecutionContext): Future[Option[ExerciseType]] =
+  )(implicit ec: ExecutionContext): Future[Option[Exercise]] =
     for {
-      maybeDbExercise     <- tableDefs.futureExerciseById(this.id, collId, exId)
-      topicsForDbExercise <- tableDefs.futureTopicsForExerciseById(this.id, collId, exId)
-    } yield maybeDbExercise.flatMap(dbExercise => convertExerciseFromDb(dbExercise, topicsForDbExercise))
+      maybeExercise <- tableDefs.futureExerciseById(this.id, collId, exId)
+      topics        <- tableDefs.futureTopicsForExerciseById(this.id, collId, exId)
+    } yield maybeExercise.map(ex => ADbModels.dbExercisetoExercise(ex, topics))
 
   def futureUpsertExercise(
     tableDefs: ExerciseTableDefs,
-    exercise: ExerciseType
+    exercise: Exercise
   )(implicit ec: ExecutionContext): Future[Boolean] = {
-    val (dbExercise, dbExerciseTopics) = convertExerciseToDb(exercise)
+    val (dbExercise, dbExerciseTopics) = ADbModels.exerciseToDbExercise(exercise)
 
     for {
       exInserted     <- tableDefs.futureUpsertExercise(dbExercise)
       topicsInserted <- tableDefs.futureUpsertTopicsForExercise(dbExerciseTopics)
     } yield exInserted && topicsInserted
-  }
-
-  protected def convertExerciseFromDb(dbExercise: DbExercise, topics: Seq[Topic]): Option[ExerciseType]
-
-  private def convertExerciseToDb(ex: ExerciseType): (DbExercise, Seq[DbExerciseTopic]) = {
-    val dbEx = DbExercise(
-      ex.id,
-      ex.collectionId,
-      ex.toolId,
-      ex.title,
-      ex.authors,
-      ex.text,
-      ex.difficulty,
-      Writes.seq(toolJsonProtocol.sampleSolutionFormat).writes(ex.sampleSolutions),
-      toolJsonProtocol.exerciseContentFormat.writes(ex.content)
-    )
-
-    val dbExerciseTopics = ex.topics.map { topic =>
-      DbExerciseTopic(topic.id, ex.id, ex.collectionId, ex.toolId)
-    }
-
-    (dbEx, dbExerciseTopics)
   }
 
   // Other helper methods
@@ -123,7 +91,9 @@ abstract class CollectionTool(
     user: User,
     sol: SolType,
     coll: ExerciseCollection,
-    exercise: ExerciseType,
+    exercise: Exercise,
+    exerciseContent: ExContentType,
+    sampleSolutions: Seq[SampleSolution[SolType]],
     part: PartType,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[CompResultType]]

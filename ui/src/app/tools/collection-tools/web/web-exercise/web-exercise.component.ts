@@ -3,7 +3,11 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
-import {ExerciseSolveFieldsFragment, WebExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {
+  ExerciseSolveFieldsFragment,
+  WebExerciseContentSolveFieldsFragment,
+  WebSampleSolutionFragment
+} from '../../../../_services/apollo_services';
 import {WebCorrectionGQL, WebCorrectionMutation} from '../web-apollo-mutations.service';
 import {ExerciseFile, WebExPart, WebSolution, WebSolutionInput} from '../../../../_interfaces/graphql-types';
 
@@ -17,10 +21,10 @@ export class WebExerciseComponent
   extends ComponentWithExercise<WebSolution, WebSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionGQL, any>
   implements OnInit {
 
-
   @Input() part: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() webExerciseContent: WebExerciseContentSolveFieldsFragment;
+  @Input() sampleSolutionFragments: WebSampleSolutionFragment[];
 
 
   exerciseFiles: ExerciseFile[] = [];
@@ -50,7 +54,7 @@ export class WebExerciseComponent
   }
 
   get sampleSolutions(): WebSolution[] {
-    return this.webExerciseContent.webSampleSolutions.map((s) => s.sample);
+    return this.sampleSolutionFragments.map((s) => s.webSampleSolution);
   }
 
 }

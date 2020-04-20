@@ -10,7 +10,7 @@ import {Saveable} from '../../../_interfaces/saveable';
           <p class="card-header-title">{{loaded.title}}</p>
         </header>
         <div class="card-content">
-          <pre class="loadedJson">{{loaded | json}}</pre>
+          <pre class="loadedJson">{{loaded.value | json}}</pre>
         </div>
         <footer class="card-footer">
           <a class="card-footer-item" (click)="save.emit()">{{name}} speichern</a>

@@ -1,7 +1,7 @@
 package model
 
 import model.json.JsonProtocols
-import model.tools.{ExerciseCollection, ToolList}
+import model.tools.{Exercise, ExerciseCollection, SampleSolution, ToolList}
 import play.api.libs.json._
 import sangria.marshalling.playJson._
 import sangria.schema.{Argument, BooleanType, Field, ObjectType, OptionType, fields}
@@ -31,13 +31,29 @@ trait GraphQLMutations extends GraphQLBasics {
             val part     = context.arg(PartTypeInputArg)
             val solution = context.arg(SolTypeInputArg)
 
-            val correctionDbValues: Future[Option[(ExerciseCollection, toolMain.ExerciseType)]] = for {
-              maybeCollection <- context.ctx.tables.futureCollById(toolMain.id, collId)
-              maybeExercise   <- toolMain.futureExerciseTypeById(context.ctx.tables, collId, exId)
-            } yield maybeCollection zip maybeExercise
+            val correctionDbValues: Future[
+              (
+                Option[(ExerciseCollection, Exercise, toolMain.ExContentType)],
+                Seq[SampleSolution[toolMain.SolType]]
+              )
+            ] = for {
+              maybeCollection: Option[ExerciseCollection]            <- context.ctx.tables.futureCollById(toolMain.id, collId)
+              maybeExercise: Option[Exercise]                        <- toolMain.futureExerciseById(context.ctx.tables, collId, exId)
+              maybeExerciseContent: Option[toolMain.ExContentType]   <- Future(???)
+              sampleSolutions: Seq[SampleSolution[toolMain.SolType]] <- Future(???)
+            } yield {
+
+              val x = for {
+                collection: ExerciseCollection          <- maybeCollection
+                exercise: Exercise                      <- maybeExercise
+                exerciseContent: toolMain.ExContentType <- maybeExerciseContent
+              } yield (collection, exercise, exerciseContent)
+
+              (x, sampleSolutions)
+            }
 
             correctionDbValues.flatMap {
-              case Some((collection, exercise)) =>
+              case (Some((collection, exercise, exerciseContent)), sampleSolutions) =>
                 for {
                   solutionSaved <- context.ctx.tables.futureInsertSolution(
                     user.username,
@@ -49,7 +65,16 @@ trait GraphQLMutations extends GraphQLBasics {
                   )
 
                   result <- toolMain
-                    .correctAbstract(user, solution, collection, exercise, part, solutionSaved)
+                    .correctAbstract(
+                      user,
+                      solution,
+                      collection,
+                      exercise,
+                      exerciseContent,
+                      sampleSolutions,
+                      part,
+                      solutionSaved
+                    )
                     .map(_.toOption)
                 } yield result
 

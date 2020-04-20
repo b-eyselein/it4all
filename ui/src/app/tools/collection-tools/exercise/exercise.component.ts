@@ -6,12 +6,43 @@ import {
   ExerciseGQL,
   ExerciseQuery,
   ProgExerciseContentSolveFieldsFragment,
-  RegexExerciseContentSolveFieldsFragment,
+  ProgrammingSampleSolutionFragment,
   SqlExerciseContentSolveFieldsFragment,
+  StringSampleSolutionFragment,
   UmlExerciseContentSolveFieldsFragment,
+  UmlSampleSolutionFragment,
   WebExerciseContentSolveFieldsFragment,
-  XmlExerciseContentSolveFieldsFragment
+  WebSampleSolutionFragment,
+  XmlExerciseContentSolveFieldsFragment,
+  XmlSampleSolutionFragment
 } from "../../../_services/apollo_services";
+
+type SampleSolutionFragment =
+  ProgrammingSampleSolutionFragment
+  | StringSampleSolutionFragment
+  | UmlSampleSolutionFragment
+  | WebSampleSolutionFragment
+  | XmlSampleSolutionFragment;
+
+function isStringSampleSolution(x: SampleSolutionFragment): x is StringSampleSolutionFragment {
+  return x.__typename === 'StringSampleSolution';
+}
+
+function isProgrammingSampleSolutionFragment(x: SampleSolutionFragment): x is ProgrammingSampleSolutionFragment {
+  return x.__typename === 'ProgrammingSampleSolution';
+}
+
+function isUmlSampleSolutionFragment(x: SampleSolutionFragment): x is UmlSampleSolutionFragment {
+  return x.__typename === 'UmlSampleSolution';
+}
+
+function isWebSampleSolutionFragment(x: WebSampleSolutionFragment): x is WebSampleSolutionFragment {
+  return x.__typename === 'WebSampleSolution';
+}
+
+function isXmlSampleSolutionFragment(x: XmlSampleSolutionFragment): x is XmlSampleSolutionFragment {
+  return x.__typename === 'XmlSampleSolution';
+}
 
 @Component({templateUrl: './exercise.component.html'})
 export class ExerciseComponent implements OnInit {
@@ -42,31 +73,51 @@ export class ExerciseComponent implements OnInit {
   }
 
   private get exContent() {
-    return this.exerciseQuery.tool.collection.exercise;
+    return this.exerciseQuery.tool.collection.exerciseContent;
   }
 
   get progExerciseContent(): ProgExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === "ProgrammingExercise") ? this.exContent : undefined;
+    return (this.exContent.__typename === 'ProgrammingExerciseContent') ? this.exContent : undefined;
   }
 
-  get regexExerciseContent(): RegexExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'RegexExercise') ? this.exContent : undefined;
+  get programmingSampleSolutionFragments(): ProgrammingSampleSolutionFragment[] {
+    return this.exerciseQuery.tool.collection.sampleSolutions.filter(isProgrammingSampleSolutionFragment);
+  }
+
+  isRegexExerciseContent(): boolean {
+    return this.exContent.__typename === 'RegexExerciseContent';
   }
 
   get sqlExerciseContent(): SqlExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'SqlExercise') ? this.exContent : undefined;
+    return (this.exContent.__typename === 'SqlExerciseContent') ? this.exContent : undefined;
+  }
+
+  get stringSampleSolutionFragments(): StringSampleSolutionFragment[] {
+    return this.exerciseQuery.tool.collection.sampleSolutions.filter(isStringSampleSolution);
   }
 
   get umlExerciseContent(): UmlExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'UmlExercise') ? this.exContent : undefined;
+    return (this.exContent.__typename === 'UmlExerciseContent') ? this.exContent : undefined;
+  }
+
+  get umlSampleSolutionFragments(): UmlSampleSolutionFragment[] {
+    return this.exerciseQuery.tool.collection.sampleSolutions.filter(isUmlSampleSolutionFragment);
   }
 
   get webExerciseContent(): WebExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === "WebExercise") ? this.exContent : undefined;
+    return (this.exContent.__typename === 'WebExerciseContent') ? this.exContent : undefined;
+  }
+
+  get webSampleSolutionFragments(): WebSampleSolutionFragment[] {
+    return this.exerciseQuery.tool.collection.sampleSolutions.filter(isWebSampleSolutionFragment);
   }
 
   get xmlExerciseContent(): XmlExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'XmlExercise') ? this.exContent : undefined;
+    return (this.exContent.__typename === 'XmlExerciseContent') ? this.exContent : undefined;
+  }
+
+  get xmlSampleSolutionFragments(): XmlSampleSolutionFragment[] {
+    return this.exerciseQuery.tool.collection.sampleSolutions.filter(isXmlSampleSolutionFragment);
   }
 
 }

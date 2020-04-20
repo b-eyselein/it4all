@@ -19,19 +19,6 @@ final case class WebSolution(
   files: Seq[ExerciseFile]
 )
 
-final case class WebExercise(
-  id: Int,
-  collectionId: Int,
-  toolId: String,
-  title: String,
-  authors: Seq[String],
-  text: String,
-  topics: Seq[Topic],
-  difficulty: Int,
-  sampleSolutions: Seq[SampleSolution[WebSolution]],
-  content: WebExerciseContent
-) extends Exercise[WebSolution, WebExerciseContent]
-
 final case class WebExerciseContent(
   htmlText: Option[String],
   jsText: Option[String],

@@ -2,7 +2,6 @@ package model.tools.rose
 
 import better.files.File._
 import better.files._
-import model.User
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.points._
 import model.tools.programming.ProgLanguage
@@ -21,8 +20,6 @@ object RoseCorrector {
   private val optionsFileName = "options.json"
 
   def correct(
-    user: User,
-    exercise: RoseExercise,
     learnerSolution: String,
     sampleSolution: String,
     language: ProgLanguage,
@@ -47,7 +44,7 @@ object RoseCorrector {
     sampleFilePath.createFileIfNotExists(createParents = true).write(buildSampleFileContent(sampleSolution))
 
     actionFilePath.createIfNotExists()
-    optionsFilePath.createFileIfNotExists(createParents = true).write(buildOptionFileContent(exercise))
+    optionsFilePath.createFileIfNotExists(createParents = true).write(buildOptionFileContent())
 
     val dockerBinds: Seq[DockerBind] = Seq(
       DockerBind(solutionFilePath, DockerConnector.DefaultWorkingDir / solutionFileName),
@@ -100,7 +97,7 @@ object RoseCorrector {
     baseDeclaration + indent(sampleSolution, 2)
   }
 
-  private def buildOptionFileContent(exercise: RoseExercise): String =
+  private def buildOptionFileContent(): String =
     """|{
        |  "start": {
        |    "x": 0,

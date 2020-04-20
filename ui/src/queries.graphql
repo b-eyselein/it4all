@@ -58,13 +58,13 @@ query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
         id
         title
         text
-        content{
-          ... on ProgrammingExercise {
+        content {
+          ... on ProgrammingExerciseContent {
             unitTestPart {
               unitTestType
             }
           }
-          ... on WebExercise{
+          ... on WebExerciseContent {
             siteSpec {
               htmlTaskCount
               jsTaskCount
@@ -82,12 +82,21 @@ query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
       shortName
       exercise(exId: $exId){
         ...ExerciseSolveFields
-        ...ProgExerciseContentSolveFields
-        ...RegexExerciseContentSolveFields
-        ...SqlExerciseContentSolveFields
-        ...UmlExerciseContentSolveFields
-        ...WebExerciseContentSolveFields
-        ...XmlExerciseContentSolveFields
+        content {
+          __typename
+          ...ProgExerciseContentSolveFields
+          ...SqlExerciseContentSolveFields
+          ...UmlExerciseContentSolveFields
+          ...WebExerciseContentSolveFields
+          ...XmlExerciseContentSolveFields
+        }
+        sampleSolutions {
+          ...ProgrammingSampleSolution
+          ...StringSampleSolution
+          ...UmlSampleSolution
+          ...WebSampleSolution
+          ...XmlSampleSolution
+        }
       }
     }
   }
@@ -222,16 +231,6 @@ mutation AdminUpsertExercise($toolId: String!, $content: String!) {
   upsertExercise(toolId: $toolId, content: $content)
 }
 
-fragment CompleteExercise on ExerciseInterface {
-  id
-  collectionId
-  toolId
-  title
-  authors
-  text
-  __typename
-}
-
 # Fragments
 
 fragment Topic on Topic {
@@ -239,7 +238,7 @@ fragment Topic on Topic {
   title
 }
 
-fragment FieldsForLink on ExerciseInterface {
+fragment FieldsForLink on Exercise {
   id
   collectionId
   toolId
@@ -251,7 +250,7 @@ fragment FieldsForLink on ExerciseInterface {
   }
 }
 
-fragment ExerciseSolveFields on ExerciseInterface {
+fragment ExerciseSolveFields on Exercise {
   id
   collectionId
   toolId
@@ -259,50 +258,49 @@ fragment ExerciseSolveFields on ExerciseInterface {
   text
 }
 
-fragment ProgExerciseContentSolveFields on ProgrammingExercise {
+fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {
   unitTestPart {
     unitTestType
     unitTestFiles {
       ...ExFileAll
     }
   }
-  implementationPart{
+  implementationPart {
     files {
       ...ExFileAll
     }
   }
-  progSampleSolutions: sampleSolutions {
-    sample {
-      files {
-        ...ExFileAll
-      }
+}
+fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
+  __typename
+  progSampleSolution: sample {
+    files {
+      ...ExFileAll
     }
   }
 }
 
-fragment RegexExerciseContentSolveFields on RegexExercise {
-  regexSampleSolutions: sampleSolutions {
-    sample
-  }
+fragment StringSampleSolution on StringSampleSolution {
+  __typename
+  stringSampleSolution: sample
 }
 
-fragment SqlExerciseContentSolveFields on SqlExercise {
+fragment SqlExerciseContentSolveFields on SqlExerciseContent {
   hint
-  sqlSampleSolutions: sampleSolutions{
-    sample
-  }
 }
 
-fragment UmlExerciseContentSolveFields on UmlExercise {
+fragment UmlExerciseContentSolveFields on UmlExerciseContent {
   toIgnore
   mappings {
     key
     value
   }
-  umlSampleSolutions: sampleSolutions {
-    sample {
-      ...UmlClassDiagram
-    }
+}
+
+fragment UmlSampleSolution on UmlSampleSolution {
+  __typename
+  umlSampleSolution: sample {
+    ...UmlClassDiagram
   }
 }
 
@@ -361,7 +359,7 @@ fragment UmlImplementation on UmlImplementation {
   superClass
 }
 
-fragment WebExerciseContentSolveFields on WebExercise {
+fragment WebExerciseContentSolveFields on WebExerciseContent {
   files {
     ...ExFileAll
   }
@@ -371,23 +369,27 @@ fragment WebExerciseContentSolveFields on WebExercise {
     }
     jsTaskCount
   }
-  webSampleSolutions: sampleSolutions {
-    sample {
-      files {
-        ...ExFileAll
-      }
+}
+
+fragment WebSampleSolution on WebSampleSolution {
+  __typename
+  webSampleSolution: sample {
+    files {
+      ...ExFileAll
     }
   }
 }
 
-fragment XmlExerciseContentSolveFields on XmlExercise {
+fragment XmlExerciseContentSolveFields on XmlExerciseContent {
   rootNode
   grammarDescription
-  xmlSampleSolutions: sampleSolutions {
-    sample {
-      document
-      grammar
-    }
+}
+
+fragment XmlSampleSolution on XmlSampleSolution {
+  __typename
+  xmlSampleSolution: sample {
+    document
+    grammar
   }
 }
 

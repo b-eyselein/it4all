@@ -2,10 +2,8 @@ package model.tools.regex
 
 import model.User
 import model.core.matching.MatchingResult
-import model.persistence.DbExercise
 import model.points._
 import model.tools._
-import play.api.libs.json.Reads
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex.{Match => RegexMatch}
@@ -15,7 +13,6 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
 
   override type SolType        = String
   override type ExContentType  = RegexExerciseContent
-  override type ExerciseType   = RegexExercise
   override type PartType       = RegexExPart
   override type CompResultType = AbstractRegexResult
 
@@ -23,12 +20,10 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol
-    : StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExercise, RegexExPart] =
+  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] =
     RegexToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExercise, RegexExPart] =
-    RegexGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart] = RegexGraphQLModels
 
   // Correction
 
@@ -36,46 +31,30 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
     user: User,
     sol: String,
     coll: ExerciseCollection,
-    exercise: RegexExercise,
+    exercise: Exercise,
+    exerciseContent: RegexExerciseContent,
+    sampleSolutions: Seq[SampleSolution[String]],
     part: RegexExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[AbstractRegexResult]] = Future.successful {
 
     Try(sol.r) match {
       case Failure(error) =>
-        Success(RegexIllegalRegexResult(solutionSaved, error.getMessage, exercise.content.maxPoints.points))
+        Success(RegexIllegalRegexResult(solutionSaved, error.getMessage, exerciseContent.maxPoints.points))
 
       case Success(userRegex) =>
-        exercise.content.correctionType match {
+        exerciseContent.correctionType match {
 
           case RegexCorrectionTypes.MATCHING =>
-            Success(RegexMatchingCorrector.correctMatching(exercise, userRegex, solutionSaved))
+            Success(RegexMatchingCorrector.correctMatching(exerciseContent, userRegex, solutionSaved))
 
           case RegexCorrectionTypes.EXTRACTION =>
-            Success(RegexExtractionCorrector.correctExtraction(exercise, userRegex, solutionSaved))
+            Success(
+              RegexExtractionCorrector.correctExtraction(exerciseContent, sampleSolutions, userRegex, solutionSaved)
+            )
         }
 
     }
   }
-
-  override protected def convertExerciseFromDb(dbExercise: DbExercise, topics: Seq[Topic]): Option[RegexExercise] =
-    dbExercise match {
-      case DbExercise(id, collectionId, toolId, title, authors, text, difficulty, sampleSolutionsJson, contentJson) =>
-        for {
-          sampleSolutions <- Reads.seq(toolJsonProtocol.sampleSolutionFormat).reads(sampleSolutionsJson).asOpt
-          content         <- toolJsonProtocol.exerciseContentFormat.reads(contentJson).asOpt
-        } yield RegexExercise(
-          id,
-          collectionId,
-          toolId,
-          title,
-          authors,
-          text,
-          topics,
-          difficulty,
-          sampleSolutions,
-          content
-        )
-    }
 
 }

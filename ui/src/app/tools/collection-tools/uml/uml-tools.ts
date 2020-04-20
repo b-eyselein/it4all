@@ -1,6 +1,10 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
 import {distinctStringArray} from '../../../helpers';
-import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../_services/apollo_services';
+import {
+  ExerciseSolveFieldsFragment,
+  UmlExerciseContentSolveFieldsFragment,
+  UmlSampleSolutionFragment
+} from '../../../_services/apollo_services';
 import {KeyValueObject} from '../../../_interfaces/graphql-types';
 
 export const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
@@ -60,7 +64,8 @@ export function isSelectable(toIgnore: string[], s: string): boolean {
 
 export function getUmlExerciseTextParts(
   exercise: ExerciseSolveFieldsFragment,
-  exerciseContent: UmlExerciseContentSolveFieldsFragment
+  exerciseContent: UmlExerciseContentSolveFieldsFragment,
+  sampleSolutionFragments: UmlSampleSolutionFragment[]
 ): { selectableClasses: SelectableClass[], textParts: UmlExerciseTextPart[] } {
 
   const splitText = splitExerciseText(exercise.text);
@@ -71,7 +76,7 @@ export function getUmlExerciseTextParts(
       .map((s) => replaceWithMapping(exerciseContent.mappings, s))
   );
 
-  const sampleSolution = exerciseContent.umlSampleSolutions[0].sample;
+  const sampleSolution = sampleSolutionFragments[0].umlSampleSolution;
 
   const selectableClasses = allBaseForms.map<SelectableClass>((name) => {
       return {

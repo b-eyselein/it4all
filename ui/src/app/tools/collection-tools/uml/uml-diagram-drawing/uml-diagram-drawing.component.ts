@@ -15,7 +15,11 @@ import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
-import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {
+  ExerciseSolveFieldsFragment,
+  UmlExerciseContentSolveFieldsFragment,
+  UmlSampleSolutionFragment
+} from '../../../../_services/apollo_services';
 import {UmlCorrectionGQL, UmlCorrectionMutation} from '../uml-apollo-mutations.service';
 import {UmlClassDiagram, UmlClassDiagramInput, UmlExPart} from '../../../../_interfaces/graphql-types';
 
@@ -54,6 +58,7 @@ export class UmlDiagramDrawingComponent
   @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() exerciseContent: UmlExerciseContentSolveFieldsFragment;
+  @Input() sampleSolutionFragments: UmlSampleSolutionFragment[];
 
   withHelp: boolean;
 
@@ -86,7 +91,7 @@ export class UmlDiagramDrawingComponent
       {name: 'Vererbung', key: CreatableClassDiagramObject.Implementation, selected: false}
     ];
 
-    const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exerciseFragment, this.exerciseContent);
+    const {selectableClasses, textParts} = getUmlExerciseTextParts(this.exerciseFragment, this.exerciseContent, this.sampleSolutionFragments);
 
     this.selectableClasses = selectableClasses;
     this.umlExerciseTextParts = textParts;
@@ -108,7 +113,7 @@ export class UmlDiagramDrawingComponent
         if (oldSol) {
           this.loadClassDiagram(oldSol);
         } else {
-          this.loadClassDiagram(this.exerciseContent.umlSampleSolutions[0].sample as ExportedUmlClassDiagram);
+          this.loadClassDiagram(this.sampleSolutionFragments[0].umlSampleSolution as ExportedUmlClassDiagram);
         }
       });
   }
@@ -250,7 +255,7 @@ export class UmlDiagramDrawingComponent
   }
 
   get sampleSolutions(): UmlClassDiagram[] {
-    return this.exerciseContent.umlSampleSolutions.map((sample) => sample.sample);
+    return this.sampleSolutionFragments.map((sample) => sample.umlSampleSolution);
   }
 
   correct(): void {

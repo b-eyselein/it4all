@@ -8,9 +8,12 @@ import model.tools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExercise, XmlExPart] {
+object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart] {
 
   private val xmlSolutionType: ObjectType[Unit, XmlSolution] = deriveObjectType()
+
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[XmlSolution]] =
+    buildSampleSolutionType("Xml", xmlSolutionType)
 
   private val xmlExerciseTagType: EnumType[XmlExTag] = deriveEnumType()
 
@@ -18,16 +21,6 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseC
     implicit val xett: EnumType[XmlExTag] = xmlExerciseTagType
 
     deriveObjectType()
-  }
-
-  override val exerciseType: ObjectType[Unit, XmlExercise] = {
-    implicit val ect: ObjectType[Unit, XmlExerciseContent]          = exerciseContentType
-    implicit val sst: ObjectType[Unit, SampleSolution[XmlSolution]] = sampleSolutionType("Xml", xmlSolutionType)
-
-    deriveObjectType(
-      Interfaces(exerciseInterfaceType),
-      ExcludeFields("topics")
-    )
   }
 
   // Solution types
@@ -90,7 +83,7 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseC
     implicit val xgrt: ObjectType[Unit, XmlGrammarResult] = xmlGrammarResultType
 
     deriveObjectType[Unit, XmlCompleteResult](
-      Interfaces(abstractResultTypeType),
+      Interfaces(abstractResultInterfaceType),
       ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }

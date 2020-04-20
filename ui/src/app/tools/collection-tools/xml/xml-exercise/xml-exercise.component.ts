@@ -2,8 +2,17 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
-import {ExerciseSolveFieldsFragment, XmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
-import {XmlCorrectionGQL, XmlCorrectionMutation, XmlErrorFragment, XmlGrammarResultFragment} from '../xml-apollo-mutations.service';
+import {
+  ExerciseSolveFieldsFragment,
+  XmlExerciseContentSolveFieldsFragment,
+  XmlSampleSolutionFragment
+} from '../../../../_services/apollo_services';
+import {
+  XmlCorrectionGQL,
+  XmlCorrectionMutation,
+  XmlErrorFragment,
+  XmlGrammarResultFragment
+} from '../xml-apollo-mutations.service';
 import {ExerciseFile, XmlExPart, XmlSolution, XmlSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/dtd/dtd';
@@ -32,6 +41,7 @@ export class XmlExerciseComponent
   @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() xmlExerciseContent: XmlExerciseContentSolveFieldsFragment;
+  @Input() sampleSolutionFragments: XmlSampleSolutionFragment[];
 
   isGrammarPart: boolean;
 
@@ -52,7 +62,7 @@ export class XmlExerciseComponent
     const grammarFileName = `${rootNode}.dtd`;
     this.grammarFile = {
       name: grammarFileName,
-      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : (this.xmlExerciseContent.xmlSampleSolutions[0].sample).grammar,
+      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : this.sampleSolutionFragments[0].xmlSampleSolution.grammar,
       fileType: 'dtd',
       editable: this.isGrammarPart,
     };
@@ -93,7 +103,7 @@ export class XmlExerciseComponent
   }
 
   get sampleSolutions(): XmlSolution[] {
-    return this.xmlExerciseContent.xmlSampleSolutions.map((sample) => sample.sample);
+    return this.sampleSolutionFragments.map((sample) => sample.xmlSampleSolution);
   }
 
   get grammarDescription(): string {

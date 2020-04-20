@@ -2,7 +2,7 @@ package model.tools.regex
 
 import model.core.matching.MatchType
 import model.points._
-import model.tools.{ExPart, ExParts}
+import model.tools.{ExPart, ExParts, SampleSolution}
 
 import scala.util.matching.Regex
 import scala.util.matching.Regex.{Match => RegexMatch}
@@ -20,14 +20,15 @@ object RegexExParts extends ExParts[RegexExPart] {
 object RegexExtractionCorrector {
 
   def correctExtraction(
-    regexExerciseContent: RegexExercise,
+    exerciseContent: RegexExerciseContent,
+    sampleSolutions: Seq[SampleSolution[String]],
     userRegex: Regex,
     solutionSaved: Boolean
   ): RegexExtractionResult = {
 
-    val extractionResults = regexExerciseContent.content.extractionTestData.map { extractionTestData =>
+    val extractionResults = exerciseContent.extractionTestData.map { extractionTestData =>
       // FIXME: build sample regex in calling function!
-      val sampleRegex = regexExerciseContent.sampleSolutions.headOption.map(_.sample).getOrElse(???).r
+      val sampleRegex = sampleSolutions.headOption.map(_.sample).getOrElse(???).r
 
       val sampleExtracted: Seq[RegexMatch] = sampleRegex.findAllMatchIn(extractionTestData.base).toList
 
@@ -43,13 +44,13 @@ object RegexExtractionCorrector {
     val correctResultsCount: Int = extractionResults.count(_.correct)
 
     val points: Points =
-      (correctResultsCount.toDouble / regexExerciseContent.content.extractionTestData.size.toDouble * regexExerciseContent.content.maxPoints * 4).toInt.quarterPoints
+      (correctResultsCount.toDouble / exerciseContent.extractionTestData.size.toDouble * exerciseContent.maxPoints * 4).toInt.quarterPoints
 
     RegexExtractionResult(
       solutionSaved,
       extractionResults,
       points,
-      regexExerciseContent.content.maxPoints.points
+      exerciseContent.maxPoints.points
     )
   }
 

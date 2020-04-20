@@ -29,19 +29,6 @@ case object UmlExTag extends PlayEnum[UmlExTag] {
 
 }
 
-final case class UmlExercise(
-  id: Int,
-  collectionId: Int,
-  toolId: String,
-  title: String,
-  authors: Seq[String],
-  text: String,
-  topics: Seq[Topic],
-  difficulty: Int,
-  sampleSolutions: Seq[SampleSolution[UmlClassDiagram]],
-  content: UmlExerciseContent
-) extends Exercise[UmlClassDiagram, UmlExerciseContent]
-
 final case class UmlExerciseContent(
   toIgnore: Seq[String],
   mappings: Map[String, String]

@@ -4,7 +4,11 @@ import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {ExerciseSolveFieldsFragment, SqlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {
+  ExerciseSolveFieldsFragment,
+  SqlExerciseContentSolveFieldsFragment,
+  StringSampleSolutionFragment
+} from '../../../../_services/apollo_services';
 import {
   DbContentsGQL,
   DbContentsQuery,
@@ -34,7 +38,8 @@ export class SqlExerciseComponent
   @Input() oldPart: ToolPart;
   @Input() schemaName: string;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() sqlExerciseContent: SqlExerciseContentSolveFieldsFragment;
+  @Input() exerciseContent: SqlExerciseContentSolveFieldsFragment;
+  @Input() sampleSolutionFragments: StringSampleSolutionFragment[];
 
   dbContentsQuery: DbContentsQuery;
 
@@ -60,7 +65,7 @@ export class SqlExerciseComponent
   }
 
   get sampleSolutions(): string[] {
-    return this.sqlExerciseContent.sqlSampleSolutions.map((s) => s.sample);
+    return this.sampleSolutionFragments.map((s) => s.stringSampleSolution);
   }
 
   // Result types

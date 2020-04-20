@@ -6,7 +6,7 @@ import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object WebGraphQLModels extends ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExercise, WebExPart] {
+object WebGraphQLModels extends ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExPart] {
 
   private val HtmlTaskType: ObjectType[Unit, HtmlTask] = ObjectType(
     "HtmlTask",
@@ -42,21 +42,14 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebSolution, WebExerciseC
     deriveObjectType()
   }
 
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[WebSolution]] =
+    buildSampleSolutionType("Web", webSolutionType)
+
   override val exerciseContentType: ObjectType[Unit, WebExerciseContent] = {
     implicit val siteSpecT: ObjectType[Unit, SiteSpec] = siteSpecType
     implicit val eft: ObjectType[Unit, ExerciseFile]   = exerciseFileType
 
     deriveObjectType()
-  }
-
-  override val exerciseType: ObjectType[Unit, WebExercise] = {
-    implicit val ect: ObjectType[Unit, WebExerciseContent]          = exerciseContentType
-    implicit val sst: ObjectType[Unit, SampleSolution[WebSolution]] = sampleSolutionType("Web", webSolutionType)
-
-    deriveObjectType(
-      Interfaces(exerciseInterfaceType),
-      ExcludeFields("topics")
-    )
   }
 
   // Solution types
@@ -125,7 +118,7 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebSolution, WebExerciseC
     implicit val gjtrt: ObjectType[Unit, GradedJsTaskResult]   = gradedJsTaskResultType
 
     deriveObjectType(
-      Interfaces(abstractResultTypeType),
+      Interfaces(abstractResultInterfaceType),
       ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }

@@ -1,13 +1,13 @@
 package model.tools.sql
 
-import model.json.JsonProtocols
-import model.tools.{SampleSolution, StringSampleSolutionToolJsonProtocol, Topic}
+import model.tools.StringSampleSolutionToolJsonProtocol
 import play.api.libs.json._
 
-object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlExercise, SqlExPart] {
+object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] {
 
   override val exerciseContentFormat: Format[SqlExerciseContent] = Json.format
 
+  /*
   override val exerciseFormat: Format[SqlExercise] = {
     implicit val tf: Format[Topic]                   = JsonProtocols.topicFormat
     implicit val ssf: Format[SampleSolution[String]] = sampleSolutionFormat
@@ -15,6 +15,7 @@ object SqlJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExercise
 
     Json.format
   }
+   */
 
   override val partTypeFormat: Format[SqlExPart] = SqlExParts.jsonFormat
 

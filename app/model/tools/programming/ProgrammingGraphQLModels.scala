@@ -5,8 +5,7 @@ import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object ProgrammingGraphQLModels
-    extends ToolGraphQLModelBasics[ProgSolution, ProgExerciseContent, ProgrammingExercise, ProgExPart] {
+object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgSolution, ProgrammingExerciseContent, ProgExPart] {
 
   private val unitTestTestConfigType: ObjectType[Unit, UnitTestTestConfig] = {
     implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
@@ -40,9 +39,12 @@ object ProgrammingGraphQLModels
     deriveObjectType(ExcludeFields("testData"))
   }
 
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[ProgSolution]] =
+    buildSampleSolutionType("Programming", progSolutionType)
+
   private val programmingExerciseTagType: EnumType[ProgrammingExerciseTag] = deriveEnumType()
 
-  override val exerciseContentType: ObjectType[Unit, ProgExerciseContent] = {
+  override val exerciseContentType: ObjectType[Unit, ProgrammingExerciseContent] = {
     //    implicit val progInputType: ObjectType[Unit, ProgInput] = deriveObjectType()
     //    implicit val progDataType: ObjectType[Unit, ProgDataType] = deriveObjectType()
 
@@ -53,16 +55,6 @@ object ProgrammingGraphQLModels
     deriveObjectType(
       // TODO: include fields !?!
       ExcludeFields("inputTypes", "outputType", "baseData", "sampleTestData", "maybeClassDiagramPart")
-    )
-  }
-
-  override val exerciseType: ObjectType[Unit, ProgrammingExercise] = {
-    implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType("Prog", progSolutionType)
-    implicit val ext: ObjectType[Unit, ProgExerciseContent]          = exerciseContentType
-
-    deriveObjectType(
-      Interfaces(exerciseInterfaceType),
-      ExcludeFields("topics")
     )
   }
 

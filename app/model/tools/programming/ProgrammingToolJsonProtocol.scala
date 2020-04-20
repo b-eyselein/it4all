@@ -14,8 +14,7 @@ object ProgConsts {
 
 }
 
-object ProgrammingToolJsonProtocol
-    extends ToolJsonProtocol[ProgSolution, ProgExerciseContent, ProgrammingExercise, ProgExPart] {
+object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, ProgrammingExerciseContent, ProgExPart] {
 
   private val progTestDataFormat: Format[ProgTestData] = Json.format[ProgTestData]
 
@@ -95,21 +94,13 @@ object ProgrammingToolJsonProtocol
     Json.format
   }
 
-  val exerciseContentFormat: Format[ProgExerciseContent] = {
+  val exerciseContentFormat: Format[ProgrammingExerciseContent] = {
     implicit val pif: Format[ProgInput]          = progInputFormat
     implicit val pdtf: Format[ProgDataType]      = progDataTypeFormat
     implicit val utf: Format[UnitTestPart]       = unitTestPartFormat
     implicit val ipf: Format[ImplementationPart] = implementationPartFormat
     implicit val pstdf: Format[ProgTestData]     = progTestDataFormat
     implicit val ucdf: Format[UmlClassDiagram]   = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
-
-    Json.format
-  }
-
-  override val exerciseFormat: Format[ProgrammingExercise] = {
-    implicit val tf: Format[Topic]                         = JsonProtocols.topicFormat
-    implicit val ssf: Format[SampleSolution[ProgSolution]] = sampleSolutionFormat
-    implicit val exf: Format[ProgExerciseContent]          = exerciseContentFormat
 
     Json.format
   }

@@ -6,8 +6,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 import model.core.Levenshtein
 import model.core.result.SuccessType
 import model.points._
-import model.tools.SampleSolution
 import model.tools.xml.XmlTool.ElementLineComparison
+import model.tools.{Exercise, SampleSolution}
 import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
 
 import scala.collection.mutable
@@ -53,17 +53,18 @@ object XmlCorrector {
   def correctDocument(
     solution: XmlSolution,
     solutionBaseDir: File,
-    exercise: XmlExercise,
+    exerciseContent: XmlExerciseContent,
+    sampleSolutions: Seq[SampleSolution[XmlSolution]],
     solutionSaved: Boolean
-  ): Try[XmlCompleteResult] = exercise.sampleSolutions.headOption match {
+  ): Try[XmlCompleteResult] = sampleSolutions.headOption match {
     case None            => Failure(new Exception("There is no sample solution!"))
     case Some(xmlSample) =>
       // Write grammar
-      val grammarPath: File = solutionBaseDir / s"${exercise.content.rootNode}.dtd"
+      val grammarPath: File = solutionBaseDir / s"${exerciseContent.rootNode}.dtd"
       grammarPath.createFileIfNotExists(createParents = true).write(xmlSample.sample.grammar)
 
       // Write document
-      val documentPath: File = solutionBaseDir / s"${exercise.content.rootNode}.xml"
+      val documentPath: File = solutionBaseDir / s"${exerciseContent.rootNode}.xml"
       documentPath.createFileIfNotExists(createParents = true).write(solution.document)
 
       val xmlErrors = XmlCorrector.correctAgainstMentionedDTD(documentPath)
@@ -100,9 +101,9 @@ object XmlCorrector {
 
   def correctGrammar(
     solution: XmlSolution,
-    exercise: XmlExercise,
+    sampleSolutions: Seq[SampleSolution[XmlSolution]],
     solutionSaved: Boolean
-  ): Try[XmlCompleteResult] = findNearestGrammarSample(solution.grammar, exercise.sampleSolutions) match {
+  ): Try[XmlCompleteResult] = findNearestGrammarSample(solution.grammar, sampleSolutions) match {
     case None => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
     case Some(sampleSolution) =>
       DocTypeDefParser.tryParseDTD(sampleSolution.sample.grammar) map { sampleGrammar =>

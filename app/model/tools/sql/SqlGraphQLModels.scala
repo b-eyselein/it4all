@@ -11,7 +11,7 @@ import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 import sangria.macros.derive._
 import sangria.schema._
 
-object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExercise, SqlExPart] {
+object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart] {
 
   private val sqlExerciseTagType: EnumType[SqlExTag] = deriveEnumType()
 
@@ -22,16 +22,6 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     implicit val seTypeT: EnumType[SqlExerciseType] = sqlExerciseTypeType
 
     deriveObjectType()
-  }
-
-  override val exerciseType: ObjectType[Unit, SqlExercise] = {
-    implicit val ect                  : ObjectType[Unit, SqlExerciseContent]     = exerciseContentType
-    implicit val sqlSampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
-
-    deriveObjectType(
-      Interfaces(exerciseInterfaceType),
-      ExcludeFields("topics")
-    )
   }
 
   // Solution types
@@ -125,12 +115,12 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
   }
 
   private val sqlIllegalQueryResultType: ObjectType[Unit, SqlIllegalQueryResult] = deriveObjectType(
-    Interfaces(abstractResultTypeType),
+    Interfaces(abstractResultInterfaceType),
     ExcludeFields("solutionSaved", "maxPoints")
   )
 
   private val sqlWrongQueryTypeResult: ObjectType[Unit, SqlWrongQueryTypeResult] = deriveObjectType(
-    Interfaces(abstractResultTypeType),
+    Interfaces(abstractResultInterfaceType),
     ExcludeFields("solutionSaved", "maxPoints")
   )
 
@@ -138,7 +128,7 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     implicit val sqsct: ObjectType[Unit, SqlQueriesStaticComparison] = sqlQueriesStaticComparisonType
     implicit val sert: ObjectType[Unit, SqlExecutionResult]          = sqlExecutionResultType
 
-    deriveObjectType(Interfaces(abstractResultTypeType))
+    deriveObjectType(Interfaces(abstractResultInterfaceType))
   }
 
   override val AbstractResultTypeType: OutputType[Any] = UnionType(
@@ -163,5 +153,7 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     arguments = schemaNameArgument :: Nil,
     resolve = context => SelectDAO.tableContents(context.arg(schemaNameArgument))
   )
+
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
 
 }

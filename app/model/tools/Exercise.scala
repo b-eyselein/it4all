@@ -16,23 +16,22 @@ final case class ExerciseCollection(
   shortName: String
 )
 
-trait Exercise[SolType, ContentType] {
-  val id: Int
-  val collectionId: Int
-  val toolId: String
-
-  val title: String
-  val authors: Seq[String]
-  val text: String
-  val topics: Seq[Topic]
-  val difficulty: Int
-
-  val sampleSolutions: Seq[SampleSolution[SolType]]
-  val content: ContentType
-}
+final case class Exercise(
+  id: Int,
+  collectionId: Int,
+  toolId: String,
+  title: String,
+  authors: Seq[String],
+  text: String,
+  topics: Seq[Topic],
+  difficulty: Int
+)
 
 final case class SampleSolution[SolType](
   id: Int,
+  exerciseId: Int,
+  collectionId: Int,
+  toolId: String,
   sample: SolType
 )
 

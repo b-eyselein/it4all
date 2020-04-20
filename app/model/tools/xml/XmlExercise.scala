@@ -27,19 +27,6 @@ case object XmlExTag extends PlayEnum[XmlExTag] {
 
 final case class XmlSolution(document: String, grammar: String)
 
-final case class XmlExercise(
-  id: Int,
-  collectionId: Int,
-  toolId: String,
-  title: String,
-  authors: Seq[String],
-  text: String,
-  topics: Seq[Topic],
-  difficulty: Int,
-  sampleSolutions: Seq[SampleSolution[XmlSolution]],
-  content: XmlExerciseContent
-) extends Exercise[XmlSolution, XmlExerciseContent]
-
 final case class XmlExerciseContent(
   grammarDescription: String,
   rootNode: String

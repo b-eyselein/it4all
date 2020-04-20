@@ -13,33 +13,7 @@ trait ToolGraphQLModels {
 
   protected val toolStateType: EnumType[ToolState] = deriveEnumType()
 
-  private val topicsType: ObjectType[Unit, Topic] = deriveObjectType()
-
-  protected val exerciseContentUnionType: UnionType[Unit] = UnionType(
-    "ExerciseContent",
-    types = () =>
-      ToolList.tools.map(t => {
-        println(t.graphQlModels)
-        println(t.graphQlModels.exerciseContentType)
-        t.graphQlModels.exerciseContentType
-      })
-  )
-
-  protected val exerciseInterfaceType: InterfaceType[Unit, Exercise[_, _]] = InterfaceType(
-    "ExerciseInterface",
-    () =>
-      fields[Unit, Exercise[_, _]](
-        Field("id", IntType, resolve = _.value.id),
-        Field("collectionId", IntType, resolve = _.value.collectionId),
-        Field("toolId", StringType, resolve = _.value.toolId),
-        Field("title", StringType, resolve = _.value.title),
-        Field("authors", ListType(StringType), resolve = _.value.authors),
-        Field("text", StringType, resolve = _.value.text),
-        Field("difficulty", OptionType(IntType), resolve = _.value.difficulty),
-        Field("topics", ListType(topicsType), resolve = _.value.topics),
-        Field("content", exerciseContentUnionType, resolve = _.value.content)
-      )
-  ).withPossibleTypes(() => ToolList.tools.map(_.graphQlModels.exerciseType))
+  protected val topicsType: ObjectType[Unit, Topic] = deriveObjectType()
 
   protected val exerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
 
@@ -55,24 +29,18 @@ trait ToolGraphQLModels {
 
 }
 
-trait ToolGraphQLModelBasics[SolType, ContentType, ExType <: Exercise[SolType, ContentType], PartType <: ExPart]
-    extends ToolGraphQLModels {
+trait ToolGraphQLModelBasics[SolType, ContentType, PartType <: ExPart] extends ToolGraphQLModels {
 
-  // Sample solution types
-
-  protected def sampleSolutionType[ASolType](
+  protected def buildSampleSolutionType[S](
     name: String,
-    SolTypeType: OutputType[ASolType]
-  ): ObjectType[Unit, SampleSolution[ASolType]] = ObjectType(
-    s"${name}SampleSolution",
-    fields[Unit, SampleSolution[ASolType]](
-      Field("id", IntType, resolve = _.value.id),
-      Field("sample", SolTypeType, resolve = _.value.sample)
-    )
+    solTypeType: OutputType[S]
+  ): ObjectType[Unit, SampleSolution[S]] = deriveObjectType(
+    ObjectTypeName(s"${name}SampleSolution"),
+    ReplaceField("sample", Field("sample", solTypeType, resolve = _.value.sample))
   )
 
   protected val stringSampleSolutionType: ObjectType[Unit, SampleSolution[String]] =
-    sampleSolutionType("String", StringType)
+    buildSampleSolutionType("String", StringType)
 
   // Matching types
 
@@ -118,7 +86,7 @@ trait ToolGraphQLModelBasics[SolType, ContentType, ExType <: Exercise[SolType, C
     ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches))
   )
 
-  protected val abstractResultTypeType: InterfaceType[Unit, AbstractCorrectionResult] = InterfaceType(
+  protected val abstractResultInterfaceType: InterfaceType[Unit, AbstractCorrectionResult] = InterfaceType(
     "AbstractCorrectionResult",
     fields[Unit, AbstractCorrectionResult](
       Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
@@ -129,12 +97,11 @@ trait ToolGraphQLModelBasics[SolType, ContentType, ExType <: Exercise[SolType, C
 
   val exerciseContentType: ObjectType[Unit, ContentType]
 
-  val exerciseType: ObjectType[Unit, ExType]
-
   val AbstractResultTypeType: OutputType[Any]
 
-  val SolTypeInputType: InputType[SolType]
+  val sampleSolutionType: ObjectType[Unit, SampleSolution[SolType]]
 
+  val SolTypeInputType: InputType[SolType]
   val PartTypeInputType: EnumType[PartType]
 
 }

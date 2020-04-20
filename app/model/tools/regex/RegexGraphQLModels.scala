@@ -7,7 +7,7 @@ import sangria.schema._
 
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExercise, RegexExPart] {
+object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart] {
 
   // Enum types
 
@@ -23,16 +23,6 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseCo
     implicit val retdt: ObjectType[Unit, RegexExtractionTestData] = deriveObjectType()
 
     deriveObjectType()
-  }
-
-  override val exerciseType: ObjectType[Unit, RegexExercise] = {
-    implicit val ect: ObjectType[Unit, RegexExerciseContent]   = exerciseContentType
-    implicit val sst: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
-
-    deriveObjectType(
-      Interfaces(exerciseInterfaceType),
-      ExcludeFields("topics")
-    )
   }
 
   // Solution types
@@ -58,7 +48,7 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseCo
   }
 
   private val regexIllegalRegexResultType: ObjectType[Unit, RegexIllegalRegexResult] = deriveObjectType(
-    Interfaces(abstractResultTypeType),
+    Interfaces(abstractResultInterfaceType),
     ExcludeFields("solutionSaved", "maxPoints")
   )
 
@@ -66,7 +56,7 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseCo
     implicit val rmert: ObjectType[Unit, RegexMatchingSingleResult] = regexMatchingEvaluationResultType
 
     deriveObjectType(
-      Interfaces(abstractResultTypeType),
+      Interfaces(abstractResultInterfaceType),
       ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }
@@ -75,7 +65,7 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseCo
     implicit val reert: ObjectType[Unit, RegexExtractionSingleResult] = regexExtractionEvaluationResultType
 
     deriveObjectType(
-      Interfaces(abstractResultTypeType),
+      Interfaces(abstractResultInterfaceType),
       ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }
@@ -93,5 +83,7 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseCo
     "RegexExPart",
     values = RegexExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )
+
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
 
 }

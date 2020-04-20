@@ -57,19 +57,6 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 
 }
 
-final case class SqlExercise(
-  id: Int,
-  collectionId: Int,
-  toolId: String,
-  title: String,
-  authors: Seq[String],
-  text: String,
-  topics: Seq[Topic],
-  difficulty: Int,
-  sampleSolutions: Seq[SampleSolution[String]],
-  content: SqlExerciseContent
-) extends Exercise[String, SqlExerciseContent]
-
 final case class SqlExerciseContent(
   exerciseType: SqlExerciseType,
   hint: Option[String]

@@ -1,6 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {distinctObjectArray, flatMapArray} from '../../../../helpers';
-import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {
+  ExerciseSolveFieldsFragment,
+  UmlExerciseContentSolveFieldsFragment,
+  UmlSampleSolutionFragment
+} from '../../../../_services/apollo_services';
 import {UmlAttribute, UmlClassDiagram, UmlMethod, UmlVisibility} from '../../../../_interfaces/graphql-types';
 
 function printVisibility(v: UmlVisibility): string {
@@ -44,6 +48,7 @@ export class UmlMemberAllocationComponent implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() exerciseContent: UmlExerciseContentSolveFieldsFragment;
+  @Input() sampleSolutionFragments: UmlSampleSolutionFragment[];
 
   data: MemberAllocClass[];
 
@@ -54,7 +59,7 @@ export class UmlMemberAllocationComponent implements OnInit {
   corrected = false;
 
   ngOnInit() {
-    this.sample = this.exerciseContent.umlSampleSolutions[0].sample;
+    this.sample = this.sampleSolutionFragments[0].umlSampleSolution;
 
     this.allAttributes = distinctObjectArray(
       flatMapArray(this.sample.classes, (clazz) => clazz.attributes), (a) => a.memberName

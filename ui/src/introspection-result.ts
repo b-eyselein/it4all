@@ -14,26 +14,47 @@
   "__schema": {
     "types": [
       {
-        "kind": "INTERFACE",
-        "name": "ExerciseInterface",
+        "kind": "UNION",
+        "name": "ExerciseContent",
         "possibleTypes": [
           {
-            "name": "ProgrammingExercise"
+            "name": "ProgrammingExerciseContent"
           },
           {
-            "name": "RegexExercise"
+            "name": "RegexExerciseContent"
           },
           {
-            "name": "SqlExercise"
+            "name": "SqlExerciseContent"
           },
           {
-            "name": "UmlExercise"
+            "name": "UmlExerciseContent"
           },
           {
-            "name": "WebExercise"
+            "name": "WebExerciseContent"
           },
           {
-            "name": "XmlExercise"
+            "name": "XmlExerciseContent"
+          }
+        ]
+      },
+      {
+        "kind": "UNION",
+        "name": "SampleSolution",
+        "possibleTypes": [
+          {
+            "name": "ProgrammingSampleSolution"
+          },
+          {
+            "name": "StringSampleSolution"
+          },
+          {
+            "name": "UmlSampleSolution"
+          },
+          {
+            "name": "WebSampleSolution"
+          },
+          {
+            "name": "XmlSampleSolution"
           }
         ]
       },

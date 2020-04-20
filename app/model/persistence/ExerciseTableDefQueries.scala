@@ -167,7 +167,8 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
   def futureUpsertExercise(exercise: DbExercise): Future[Boolean] =
     db.run(exercisesTQ.insertOrUpdate(exercise)).transform(_ == 1, identity)
 
-  def futureUpsertTopicsForExercise(exercise: Seq[DbExerciseTopic]): Future[Boolean] = ???
+  def futureUpsertTopicsForExercise(dbExerciseTopics: Seq[DbExerciseTopic]): Future[Boolean] =
+    saveSeq[DbExerciseTopic](dbExerciseTopics, et => db.run(exerciseTopicsTQ.insertOrUpdate(et)))
 
   def futureUpsertLesson(lesson: Lesson): Future[Boolean] = {
     val lessonContentWrites: Writes[Seq[LessonContent]] = Writes.seq(JsonProtocols.lessonContentFormat)
