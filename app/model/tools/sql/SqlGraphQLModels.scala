@@ -154,6 +154,6 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     resolve = context => SelectDAO.tableContents(context.arg(schemaNameArgument))
   )
 
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = buildSampleSolutionType("Sql", StringType)
 
 }

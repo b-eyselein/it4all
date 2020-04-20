@@ -23,6 +23,6 @@ object RoseGraphQLModels extends ToolGraphQLModelBasics[String, RoseExerciseCont
     values = RoseExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )
 
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = buildSampleSolutionType("Rose", StringType)
 
 }

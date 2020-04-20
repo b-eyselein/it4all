@@ -46,23 +46,28 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
 
   protected val sampleSolutionUnionType: UnionType[Unit] = UnionType(
     "SampleSolution",
-    types = ToolList.tools.map(t => t.graphQlModels.sampleSolutionType).distinctBy(_.name)
+    types = ToolList.tools.map(t => t.graphQlModels.sampleSolutionType)
   )
 
-  final val exerciseType: ObjectType[GraphQLContext, Exercise] = {
+  final val exerciseType: ObjectType[GraphQLContext, Exercise[_,_]] = {
     implicit val tt: ObjectType[Unit, Topic] = topicsType
 
     deriveObjectType(
-      AddFields(
+      ReplaceField(
+        "content",
         Field(
           "content",
           OptionType(exerciseContentUnionType),
-          resolve = context => ???
-        ),
+          // FIXME: do not delete this cast...: .asInstanceOf[Any]
+          resolve = context => context.value.content.asInstanceOf[Any]
+        )
+      ),
+      ReplaceField(
+        "sampleSolutions",
         Field(
           "sampleSolutions",
           ListType(sampleSolutionUnionType),
-          resolve = context => ???
+          resolve = context => context.value.graphQLSampleSolutions
         )
       )
     )

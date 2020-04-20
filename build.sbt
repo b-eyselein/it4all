@@ -60,7 +60,7 @@ libraryDependencies ++= Seq(
   "com.spotify"            % "docker-client"          % "8.16.0", // Apache 2.0
 
   // GraphQL
-  "org.sangria-graphql" %% "sangria"           % "2.0.0-M4", // Apache 2.0
+  "org.sangria-graphql" %% "sangria"           % "2.0.0-RC1", // Apache 2.0
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.1",    // Apache 2.0
 
   // Sql

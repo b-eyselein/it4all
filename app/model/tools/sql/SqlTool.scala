@@ -53,20 +53,18 @@ object SqlTool extends CollectionTool("sql", "Sql") {
     user: User,
     learnerSolution: SolType,
     collection: ExerciseCollection,
-    exercise: Exercise,
-    exerciseContent: SqlExerciseContent,
-    sampleSolutions: Seq[SampleSolution[String]],
+    exercise: Exercise[SqlExerciseContent, String],
     part: SqlExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[AbstractSqlResult]] = Future {
-    correctorsAndDaos.get(exerciseContent.exerciseType) match {
-      case None => Failure(new Exception(s"There is no corrector or sql dao for ${exerciseContent.exerciseType}"))
+    correctorsAndDaos.get(exercise.content.exerciseType) match {
+      case None => Failure(new Exception(s"There is no corrector or sql dao for ${exercise.content.exerciseType}"))
       case Some((corrector, dao)) =>
         corrector.correct(
           dao,
           learnerSolution,
           collection,
-          sampleSolutions,
+          exercise.sampleSolutions,
           solutionSaved
         )
     }

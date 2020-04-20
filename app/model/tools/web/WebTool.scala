@@ -96,7 +96,7 @@ object WebTool extends CollectionTool("web", "Web") {
 
   private def getSolutionUrl(
     user: User,
-    exercise: Exercise,
+    exercise: Exercise[WebExerciseContent, WebSolution],
     fileName: String
   ): String = s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.id}/$fileName"
 
@@ -104,20 +104,18 @@ object WebTool extends CollectionTool("web", "Web") {
     user: User,
     learnerSolution: WebSolution,
     collection: ExerciseCollection,
-    exercise: Exercise,
-    exerciseContent: WebExerciseContent,
-    sampleSolutions: Seq[SampleSolution[WebSolution]],
+    exercise: Exercise[WebExerciseContent, WebSolution],
     part: WebExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[WebCompleteResult]] = Future {
     writeWebSolutionFiles(user.username, collection.id, exercise.id, learnerSolution)
       .flatMap { _ =>
         val driver              = new HtmlUnitDriver(true)
-        val solutionUrl: String = getSolutionUrl(user, exercise, exerciseContent.siteSpec.fileName)
+        val solutionUrl: String = getSolutionUrl(user, exercise, exercise.content.siteSpec.fileName)
 
         Try(driver.get(solutionUrl)).fold(
           onDriverGetError,
-          (_: Unit) => onDriverGetSuccess(exerciseContent, part, driver, solutionSaved)
+          (_: Unit) => onDriverGetSuccess(exercise.content, part, driver, solutionSaved)
         )
       }
   }

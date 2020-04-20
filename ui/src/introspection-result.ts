@@ -45,7 +45,10 @@
             "name": "ProgrammingSampleSolution"
           },
           {
-            "name": "StringSampleSolution"
+            "name": "RegexSampleSolution"
+          },
+          {
+            "name": "SqlSampleSolution"
           },
           {
             "name": "UmlSampleSolution"

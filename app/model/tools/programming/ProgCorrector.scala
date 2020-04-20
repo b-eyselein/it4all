@@ -91,7 +91,7 @@ object ProgCorrector {
 
     val unitTestFileContent: String = sampleSolutions.headOption match {
       case None => ???
-      case Some(SampleSolution(_, _, _, _, ProgSolution(files, _))) =>
+      case Some(SampleSolution(_, ProgSolution(files, _))) =>
         files
           .find(_.name == exerciseContent.unitTestPart.testFileName)
           .map(_.content)
@@ -233,9 +233,7 @@ object ProgCorrector {
   def correct(
     user: User,
     progSolution: ProgSolution,
-    exercise: Exercise,
-    exerciseContent: ProgrammingExerciseContent,
-    sampleSolutions: Seq[SampleSolution[ProgSolution]],
+    exercise: Exercise[ProgrammingExerciseContent, ProgSolution],
     part: ProgExPart,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
@@ -253,7 +251,7 @@ object ProgCorrector {
         correctUnittest(
           solutionTargetDir,
           progSolution,
-          exerciseContent,
+          exercise.content,
           resultFile,
           solutionSaved
         )
@@ -261,8 +259,8 @@ object ProgCorrector {
         correctImplementation(
           solutionTargetDir,
           progSolution,
-          exerciseContent,
-          sampleSolutions,
+          exercise.content,
+          exercise.sampleSolutions,
           resultFile,
           solutionSaved
         )

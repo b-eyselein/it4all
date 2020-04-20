@@ -84,6 +84,6 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseCo
     values = RegexExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )
 
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = stringSampleSolutionType
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = buildSampleSolutionType("Regex", StringType)
 
 }

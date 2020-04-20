@@ -248,11 +248,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  PartialMatch = 'PARTIAL_MATCH',
-  OnlyUser = 'ONLY_USER',
+  OnlySample = 'ONLY_SAMPLE',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlyUser = 'ONLY_USER',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlySample = 'ONLY_SAMPLE'
+  PartialMatch = 'PARTIAL_MATCH'
 }
 
 export type Mutation = {
@@ -364,9 +364,6 @@ export type ProgrammingExerciseContent = {
 export type ProgrammingSampleSolution = {
    __typename?: 'ProgrammingSampleSolution';
   id: Scalars['Int'];
-  exerciseId: Scalars['Int'];
-  collectionId: Scalars['Int'];
-  toolId: Scalars['String'];
   sample: ProgSolution;
 };
 
@@ -480,7 +477,13 @@ export type RegexMatchTestData = {
   isIncluded: Scalars['Boolean'];
 };
 
-export type SampleSolution = ProgrammingSampleSolution | StringSampleSolution | UmlSampleSolution | WebSampleSolution | XmlSampleSolution;
+export type RegexSampleSolution = {
+   __typename?: 'RegexSampleSolution';
+  id: Scalars['Int'];
+  sample: Scalars['String'];
+};
+
+export type SampleSolution = ProgrammingSampleSolution | RegexSampleSolution | SqlSampleSolution | UmlSampleSolution | WebSampleSolution | XmlSampleSolution;
 
 export type SelectAdditionalComparisons = {
    __typename?: 'SelectAdditionalComparisons';
@@ -551,11 +554,11 @@ export type SqlExerciseContent = {
 };
 
 export enum SqlExerciseType {
-  Insert = 'INSERT',
   Select = 'SELECT',
-  Update = 'UPDATE',
+  Create = 'CREATE',
   Delete = 'DELETE',
-  Create = 'CREATE'
+  Insert = 'INSERT',
+  Update = 'UPDATE'
 }
 
 export enum SqlExPart {
@@ -670,6 +673,12 @@ export type SqlRow = {
   cells: Array<SqlKeyCellValueObject>;
 };
 
+export type SqlSampleSolution = {
+   __typename?: 'SqlSampleSolution';
+  id: Scalars['Int'];
+  sample: Scalars['String'];
+};
+
 export type SqlTableComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlTableComparisonMatchingResult';
   allMatches: Array<SqlTableMatch>;
@@ -692,15 +701,6 @@ export type SqlWrongQueryTypeResult = AbstractCorrectionResult & {
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
-};
-
-export type StringSampleSolution = {
-   __typename?: 'StringSampleSolution';
-  id: Scalars['Int'];
-  exerciseId: Scalars['Int'];
-  collectionId: Scalars['Int'];
-  toolId: Scalars['String'];
-  sample: Scalars['String'];
 };
 
 export enum SuccessType {
@@ -993,9 +993,6 @@ export enum UmlMultiplicity {
 export type UmlSampleSolution = {
    __typename?: 'UmlSampleSolution';
   id: Scalars['Int'];
-  exerciseId: Scalars['Int'];
-  collectionId: Scalars['Int'];
-  toolId: Scalars['String'];
   sample: UmlClassDiagram;
 };
 
@@ -1065,9 +1062,6 @@ export enum WebExPart {
 export type WebSampleSolution = {
    __typename?: 'WebSampleSolution';
   id: Scalars['Int'];
-  exerciseId: Scalars['Int'];
-  collectionId: Scalars['Int'];
-  toolId: Scalars['String'];
   sample: WebSolution;
 };
 
@@ -1131,9 +1125,6 @@ export type XmlGrammarResult = {
 export type XmlSampleSolution = {
    __typename?: 'XmlSampleSolution';
   id: Scalars['Int'];
-  exerciseId: Scalars['Int'];
-  collectionId: Scalars['Int'];
-  toolId: Scalars['String'];
   sample: XmlSolution;
 };
 

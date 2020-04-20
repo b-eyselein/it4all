@@ -92,7 +92,8 @@ query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
         }
         sampleSolutions {
           ...ProgrammingSampleSolution
-          ...StringSampleSolution
+          ...RegexSampleSolution
+          ...SqlSampleSolution
           ...UmlSampleSolution
           ...WebSampleSolution
           ...XmlSampleSolution
@@ -280,13 +281,17 @@ fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
   }
 }
 
-fragment StringSampleSolution on StringSampleSolution {
+fragment RegexSampleSolution on RegexSampleSolution {
   __typename
-  stringSampleSolution: sample
+  regexSampleSolution: sample
 }
 
 fragment SqlExerciseContentSolveFields on SqlExerciseContent {
   hint
+}
+fragment SqlSampleSolution on SqlSampleSolution {
+  __typename
+  sqlSampleSolution: sample
 }
 
 fragment UmlExerciseContentSolveFields on UmlExerciseContent {

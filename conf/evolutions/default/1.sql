@@ -69,27 +69,18 @@ create table if not exists exercises (
     authors       json        not null,
     ex_text       text        not null,
     difficulty    int         not null,
+    content       json        not null,
 
     primary key (id, collection_id, tool_id),
     foreign key (collection_id, tool_id) references collections (id, tool_id) on update cascade on delete cascade
 );
 
-create table if not exists exercise_contents (
+create table if not exists exercise_sample_solutions (
+    id            int,
     exercise_id   int,
     collection_id int,
     tool_id       varchar(20),
-    content_json  json not null,
-
-    primary key (exercise_id, collection_id, tool_id),
-    foreign key (exercise_id, collection_id, tool_id) references exercises (id, collection_id, tool_id) on update cascade on delete cascade
-);
-
-create table if not exists exercise_sample_solutions (
-    id                   int,
-    exercise_id          int,
-    collection_id        int,
-    tool_id              varchar(20),
-    sample_solution_json json not null,
+    solution_json json not null,
 
     primary key (id, exercise_id, collection_id, tool_id),
     foreign key (exercise_id, collection_id, tool_id) references exercises (id, collection_id, tool_id) on update cascade on delete cascade

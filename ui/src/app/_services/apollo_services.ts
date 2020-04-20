@@ -164,8 +164,11 @@ export type ExerciseQuery = (
           { __typename?: 'ProgrammingSampleSolution' }
           & ProgrammingSampleSolutionFragment
         ) | (
-          { __typename?: 'StringSampleSolution' }
-          & StringSampleSolutionFragment
+          { __typename?: 'RegexSampleSolution' }
+          & RegexSampleSolutionFragment
+        ) | (
+          { __typename?: 'SqlSampleSolution' }
+          & SqlSampleSolutionFragment
         ) | (
           { __typename?: 'UmlSampleSolution' }
           & UmlSampleSolutionFragment
@@ -444,14 +447,19 @@ export type ProgrammingSampleSolutionFragment = (
   ) }
 );
 
-export type StringSampleSolutionFragment = (
-  { __typename: 'StringSampleSolution' }
-  & { stringSampleSolution: Types.StringSampleSolution['sample'] }
+export type RegexSampleSolutionFragment = (
+  { __typename: 'RegexSampleSolution' }
+  & { regexSampleSolution: Types.RegexSampleSolution['sample'] }
 );
 
 export type SqlExerciseContentSolveFieldsFragment = (
   { __typename?: 'SqlExerciseContent' }
   & Pick<Types.SqlExerciseContent, 'hint'>
+);
+
+export type SqlSampleSolutionFragment = (
+  { __typename: 'SqlSampleSolution' }
+  & { sqlSampleSolution: Types.SqlSampleSolution['sample'] }
 );
 
 export type UmlExerciseContentSolveFieldsFragment = (
@@ -642,15 +650,21 @@ export const ProgrammingSampleSolutionFragmentDoc = gql`
   }
 }
     ${ExFileAllFragmentDoc}`;
-export const StringSampleSolutionFragmentDoc = gql`
-    fragment StringSampleSolution on StringSampleSolution {
+export const RegexSampleSolutionFragmentDoc = gql`
+    fragment RegexSampleSolution on RegexSampleSolution {
   __typename
-  stringSampleSolution: sample
+  regexSampleSolution: sample
 }
     `;
 export const SqlExerciseContentSolveFieldsFragmentDoc = gql`
     fragment SqlExerciseContentSolveFields on SqlExerciseContent {
   hint
+}
+    `;
+export const SqlSampleSolutionFragmentDoc = gql`
+    fragment SqlSampleSolution on SqlSampleSolution {
+  __typename
+  sqlSampleSolution: sample
 }
     `;
 export const UmlExerciseContentSolveFieldsFragmentDoc = gql`
@@ -928,7 +942,8 @@ export const ExerciseDocument = gql`
         }
         sampleSolutions {
           ...ProgrammingSampleSolution
-          ...StringSampleSolution
+          ...RegexSampleSolution
+          ...SqlSampleSolution
           ...UmlSampleSolution
           ...WebSampleSolution
           ...XmlSampleSolution
@@ -944,7 +959,8 @@ ${UmlExerciseContentSolveFieldsFragmentDoc}
 ${WebExerciseContentSolveFieldsFragmentDoc}
 ${XmlExerciseContentSolveFieldsFragmentDoc}
 ${ProgrammingSampleSolutionFragmentDoc}
-${StringSampleSolutionFragmentDoc}
+${RegexSampleSolutionFragmentDoc}
+${SqlSampleSolutionFragmentDoc}
 ${UmlSampleSolutionFragmentDoc}
 ${WebSampleSolutionFragmentDoc}
 ${XmlSampleSolutionFragmentDoc}`;

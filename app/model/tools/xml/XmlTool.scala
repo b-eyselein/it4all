@@ -31,22 +31,20 @@ object XmlTool extends CollectionTool("xml", "Xml") {
     user: User,
     solution: XmlSolution,
     collection: ExerciseCollection,
-    exercise: Exercise,
-    exerciseContent: XmlExerciseContent,
-    sampleSolutions: Seq[SampleSolution[XmlSolution]],
+    exercise: Exercise[XmlExerciseContent, XmlSolution],
     part: XmlExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[XmlCompleteResult]] = Future.successful(
     part match {
       case XmlExParts.GrammarCreationXmlPart =>
-        XmlCorrector.correctGrammar(solution, sampleSolutions, solutionSaved)
+        XmlCorrector.correctGrammar(solution, exercise.sampleSolutions, solutionSaved)
 
       case XmlExParts.DocumentCreationXmlPart =>
         XmlCorrector.correctDocument(
           solution,
           solutionDirForExercise(user.username, collection.id, exercise.id).createDirectories(),
-          exerciseContent,
-          sampleSolutions,
+          exercise.content,
+          exercise.sampleSolutions,
           solutionSaved
         )
     }

@@ -11,7 +11,7 @@
   <it4all-regex-exercise
     *ngIf="isRegexExerciseContent"
     [exerciseFragment]="exerciseQuery.tool.collection.exercise"
-    [sampleSolutionFragments]="stringSampleSolutionFragments"
+    [sampleSolutionFragments]="regexSampleSolutionFragments"
     [oldPart]="oldPart">
   </it4all-regex-exercise>
 
@@ -20,7 +20,7 @@
     [schemaName]="exerciseQuery.tool.collection.shortName"
     [exerciseFragment]="exerciseQuery.tool.collection.exercise"
     [exerciseContent]="sqlExerciseContent"
-    [sampleSolutionFragments]="stringSampleSolutionFragments"
+    [sampleSolutionFragments]="sqlSampleSolutionFragments"
     [oldPart]="oldPart">
   </it4all-sql-exercise>
 

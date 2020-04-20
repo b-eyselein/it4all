@@ -2,7 +2,7 @@ import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {DexieService} from '../../../../_services/dexie.service';
 import {RegexExercisePart} from '../regex-tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-import {ExerciseSolveFieldsFragment, StringSampleSolutionFragment} from '../../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, RegexSampleSolutionFragment} from '../../../../_services/apollo_services';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {
   RegexCorrectionGQL,
@@ -24,7 +24,7 @@ export class RegexExerciseComponent
 
   @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() sampleSolutionFragments: StringSampleSolutionFragment[];
+  @Input() sampleSolutionFragments: RegexSampleSolutionFragment[];
 
   solution = '';
 
@@ -44,7 +44,7 @@ export class RegexExerciseComponent
   }
 
   get sampleSolutions(): string[] {
-    return this.sampleSolutionFragments.map((s) => s.stringSampleSolution);
+    return this.sampleSolutionFragments.map((s) => s.regexSampleSolution);
   }
 
   get regexIllegalRegexResult(): RegexIllegalRegexResultFragment | undefined {

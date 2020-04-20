@@ -8,7 +8,6 @@ import {Exercise} from "../../_interfaces/graphql-types";
 @Component({templateUrl: './admin-read-exercises.component.html'})
 export class AdminReadExercisesComponent implements OnInit, OnDestroy {
 
-
   private sub: Subscription;
   private toolId: string;
 
@@ -55,7 +54,9 @@ export class AdminReadExercisesComponent implements OnInit, OnDestroy {
   }
 
   saveAll(): void {
-    this.savableExercises.forEach(this.save);
+    this.savableExercises
+      .filter((s) => !s.saved)
+      .forEach((ex) => this.save(ex));
   }
 
 }

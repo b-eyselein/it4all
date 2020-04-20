@@ -7,8 +7,9 @@ import {
   ExerciseQuery,
   ProgExerciseContentSolveFieldsFragment,
   ProgrammingSampleSolutionFragment,
+  RegexSampleSolutionFragment,
   SqlExerciseContentSolveFieldsFragment,
-  StringSampleSolutionFragment,
+  SqlSampleSolutionFragment,
   UmlExerciseContentSolveFieldsFragment,
   UmlSampleSolutionFragment,
   WebExerciseContentSolveFieldsFragment,
@@ -19,17 +20,23 @@ import {
 
 type SampleSolutionFragment =
   ProgrammingSampleSolutionFragment
-  | StringSampleSolutionFragment
+  | RegexSampleSolutionFragment
+  | SqlSampleSolutionFragment
   | UmlSampleSolutionFragment
   | WebSampleSolutionFragment
   | XmlSampleSolutionFragment;
 
-function isStringSampleSolution(x: SampleSolutionFragment): x is StringSampleSolutionFragment {
-  return x.__typename === 'StringSampleSolution';
-}
 
 function isProgrammingSampleSolutionFragment(x: SampleSolutionFragment): x is ProgrammingSampleSolutionFragment {
   return x.__typename === 'ProgrammingSampleSolution';
+}
+
+function isRegexSampleSolutionFragment(x: SampleSolutionFragment): x is RegexSampleSolutionFragment {
+  return x.__typename === 'RegexSampleSolution';
+}
+
+function isSqlSampleSolutionFragment(x: SampleSolutionFragment): x is SqlSampleSolutionFragment {
+  return x.__typename === 'SqlSampleSolution';
 }
 
 function isUmlSampleSolutionFragment(x: SampleSolutionFragment): x is UmlSampleSolutionFragment {
@@ -72,16 +79,14 @@ export class ExerciseComponent implements OnInit {
       .subscribe(({data}) => this.exerciseQuery = data);
   }
 
+  // Exercise content
+
   private get exContent() {
-    return this.exerciseQuery.tool.collection.exerciseContent;
+    return this.exerciseQuery.tool.collection.exercise.content;
   }
 
   get progExerciseContent(): ProgExerciseContentSolveFieldsFragment | undefined {
     return (this.exContent.__typename === 'ProgrammingExerciseContent') ? this.exContent : undefined;
-  }
-
-  get programmingSampleSolutionFragments(): ProgrammingSampleSolutionFragment[] {
-    return this.exerciseQuery.tool.collection.sampleSolutions.filter(isProgrammingSampleSolutionFragment);
   }
 
   isRegexExerciseContent(): boolean {
@@ -92,32 +97,47 @@ export class ExerciseComponent implements OnInit {
     return (this.exContent.__typename === 'SqlExerciseContent') ? this.exContent : undefined;
   }
 
-  get stringSampleSolutionFragments(): StringSampleSolutionFragment[] {
-    return this.exerciseQuery.tool.collection.sampleSolutions.filter(isStringSampleSolution);
-  }
-
   get umlExerciseContent(): UmlExerciseContentSolveFieldsFragment | undefined {
     return (this.exContent.__typename === 'UmlExerciseContent') ? this.exContent : undefined;
-  }
-
-  get umlSampleSolutionFragments(): UmlSampleSolutionFragment[] {
-    return this.exerciseQuery.tool.collection.sampleSolutions.filter(isUmlSampleSolutionFragment);
   }
 
   get webExerciseContent(): WebExerciseContentSolveFieldsFragment | undefined {
     return (this.exContent.__typename === 'WebExerciseContent') ? this.exContent : undefined;
   }
 
-  get webSampleSolutionFragments(): WebSampleSolutionFragment[] {
-    return this.exerciseQuery.tool.collection.sampleSolutions.filter(isWebSampleSolutionFragment);
-  }
 
   get xmlExerciseContent(): XmlExerciseContentSolveFieldsFragment | undefined {
     return (this.exContent.__typename === 'XmlExerciseContent') ? this.exContent : undefined;
   }
 
+  // Sample solutions
+
+  private get sampleSolutions(): SampleSolutionFragment[] {
+    return this.exerciseQuery.tool.collection.exercise.sampleSolutions;
+  }
+
+  get programmingSampleSolutionFragments(): ProgrammingSampleSolutionFragment[] {
+    return this.sampleSolutions.filter(isProgrammingSampleSolutionFragment);
+  }
+
+  get regexSampleSolutionFragments(): RegexSampleSolutionFragment[] {
+    return this.sampleSolutions.filter(isRegexSampleSolutionFragment);
+  }
+
+  get sqlSampleSolutionFragments(): SqlSampleSolutionFragment[] {
+    return this.sampleSolutions.filter(isSqlSampleSolutionFragment);
+  }
+
+  get umlSampleSolutionFragments(): UmlSampleSolutionFragment[] {
+    return this.sampleSolutions.filter(isUmlSampleSolutionFragment);
+  }
+
+  get webSampleSolutionFragments(): WebSampleSolutionFragment[] {
+    return this.sampleSolutions.filter(isWebSampleSolutionFragment);
+  }
+
   get xmlSampleSolutionFragments(): XmlSampleSolutionFragment[] {
-    return this.exerciseQuery.tool.collection.sampleSolutions.filter(isXmlSampleSolutionFragment);
+    return this.sampleSolutions.filter(isXmlSampleSolutionFragment);
   }
 
 }

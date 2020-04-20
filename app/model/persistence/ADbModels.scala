@@ -1,24 +1,7 @@
 package model.persistence
 
-import model.tools.{ExPart, Exercise, Topic}
+import model.tools.ExPart
 import play.api.libs.json.JsValue
-
-object ADbModels {
-
-  def dbExercisetoExercise(dbExercise: DbExercise, topics: Seq[Topic]): Exercise = dbExercise match {
-    case DbExercise(id, collectionId, toolId, title, authors, text, difficulty) =>
-      Exercise(id, collectionId, toolId, title, authors, text, topics, difficulty)
-  }
-
-  def exerciseToDbExercise(exercise: Exercise): (DbExercise, Seq[DbExerciseTopic]) = exercise match {
-    case Exercise(id, collectionId, toolId, title, authors, text, topics, difficulty) =>
-      val dbEx     = DbExercise(id, collectionId, toolId, title, authors, text, difficulty)
-      val dbTopics = topics.map(t => DbExerciseTopic(t.id, id, collectionId, toolId))
-
-      (dbEx, dbTopics)
-  }
-
-}
 
 final case class DbExercise(
   id: Int,
@@ -27,7 +10,8 @@ final case class DbExercise(
   title: String,
   authors: Seq[String],
   text: String,
-  difficulty: Int
+  difficulty: Int,
+  content: JsValue
 )
 
 final case class DbExerciseTopic(
@@ -35,6 +19,14 @@ final case class DbExerciseTopic(
   exerciseId: Int,
   collectionId: Int,
   toolId: String
+)
+
+final case class DbSampleSolution(
+  id: Int,
+  exerciseId: Int,
+  collectionId: Int,
+  toolId: String,
+  solution: JsValue
 )
 
 final case class DbUserSolution(

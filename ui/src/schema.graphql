@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Apr 20 2020 13:46:35 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon Apr 20 2020 15:43:30 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -205,11 +205,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  PARTIAL_MATCH
-  ONLY_USER
-  UNSUCCESSFUL_MATCH
-  SUCCESSFUL_MATCH
   ONLY_SAMPLE
+  UNSUCCESSFUL_MATCH
+  ONLY_USER
+  SUCCESSFUL_MATCH
+  PARTIAL_MATCH
 }
 
 type Mutation {
@@ -256,9 +256,6 @@ type ProgrammingExerciseContent {
 
 type ProgrammingSampleSolution {
   id: Int!
-  exerciseId: Int!
-  collectionId: Int!
-  toolId: String!
   sample: ProgSolution!
 }
 
@@ -350,7 +347,12 @@ type RegexMatchTestData {
   isIncluded: Boolean!
 }
 
-union SampleSolution = ProgrammingSampleSolution | StringSampleSolution | UmlSampleSolution | WebSampleSolution | XmlSampleSolution
+type RegexSampleSolution {
+  id: Int!
+  sample: String!
+}
+
+union SampleSolution = ProgrammingSampleSolution | RegexSampleSolution | SqlSampleSolution | UmlSampleSolution | WebSampleSolution | XmlSampleSolution
 
 type SelectAdditionalComparisons {
   groupByComparison: SqlGroupByComparisonMatchingResult!
@@ -412,11 +414,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  INSERT
   SELECT
-  UPDATE
-  DELETE
   CREATE
+  DELETE
+  INSERT
+  UPDATE
 }
 
 enum SqlExPart {
@@ -517,6 +519,11 @@ type SqlRow {
   cells: [SqlKeyCellValueObject!]!
 }
 
+type SqlSampleSolution {
+  id: Int!
+  sample: String!
+}
+
 type SqlTableComparisonMatchingResult implements MatchingResult {
   allMatches: [SqlTableMatch!]!
   points: Float!
@@ -536,14 +543,6 @@ type SqlWrongQueryTypeResult implements AbstractCorrectionResult {
   solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
-}
-
-type StringSampleSolution {
-  id: Int!
-  exerciseId: Int!
-  collectionId: Int!
-  toolId: String!
-  sample: String!
 }
 
 enum SuccessType {
@@ -812,9 +811,6 @@ enum UmlMultiplicity {
 
 type UmlSampleSolution {
   id: Int!
-  exerciseId: Int!
-  collectionId: Int!
-  toolId: String!
   sample: UmlClassDiagram!
 }
 
@@ -878,9 +874,6 @@ enum WebExPart {
 
 type WebSampleSolution {
   id: Int!
-  exerciseId: Int!
-  collectionId: Int!
-  toolId: String!
   sample: WebSolution!
 }
 
@@ -937,9 +930,6 @@ type XmlGrammarResult {
 
 type XmlSampleSolution {
   id: Int!
-  exerciseId: Int!
-  collectionId: Int!
-  toolId: String!
   sample: XmlSolution!
 }
 

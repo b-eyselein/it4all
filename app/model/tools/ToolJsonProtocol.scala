@@ -3,14 +3,8 @@ package model.tools
 import model.json.{JsonProtocols, KeyValueObject}
 import play.api.libs.json._
 
-final case class ReadExercise[S, C](
-  exercise: Exercise,
-  sampleSolutions: Seq[SampleSolution[S]],
-  content: C
-)
-
 final case class ReadExercisesMessage[S, C](
-  exercises: Seq[ReadExercise[S, C]]
+  exercises: Seq[Exercise[C, S]]
 )
 
 trait ToolJsonProtocol[S, C, PartType <: ExPart] {
@@ -35,30 +29,35 @@ trait ToolJsonProtocol[S, C, PartType <: ExPart] {
 
   val exerciseContentFormat: Format[C]
 
-  final val exerciseFormat: Format[Exercise] = {
-    implicit val tf: Format[Topic] = JsonProtocols.topicFormat
+  final lazy val exerciseFormat: Format[Exercise[C, S]] = {
+    implicit val tf: Format[Topic]              = JsonProtocols.topicFormat
+    implicit val fc: Format[C]                  = exerciseContentFormat
+    implicit val ssf: Format[SampleSolution[S]] = sampleSolutionFormat
 
     Json.format
   }
 
   val partTypeFormat: Format[PartType]
 
+  /*
   lazy val readExerciseFormat: Format[ReadExercise[S, C]] = {
-    implicit val ef: Format[Exercise]          = exerciseFormat
+
     implicit val sf: Format[SampleSolution[S]] = sampleSolutionFormat
     implicit val cf: Format[C]                 = exerciseContentFormat
 
     Json.format
   }
+   */
 
   lazy val readExercisesMessageReads: Reads[ReadExercisesMessage[S, C]] = {
-    implicit val rer: Reads[ReadExercise[S, C]] = readExerciseFormat
+
+    implicit val ef: Format[Exercise[C, S]] = exerciseFormat
 
     Json.reads
   }
 
   def validateAndWriteReadExerciseMessage(message: JsValue): Seq[String] = {
-    val readExercises: Seq[ReadExercise[S, C]] = readExercisesMessageReads.reads(message) match {
+    val readExercises: Seq[Exercise[C, S]] = readExercisesMessageReads.reads(message) match {
       case JsSuccess(readExercisesMessage, _) => readExercisesMessage.exercises
       case JsError(errors) =>
         errors.foreach(println)
@@ -66,7 +65,7 @@ trait ToolJsonProtocol[S, C, PartType <: ExPart] {
     }
 
     readExercises
-      .map(readExerciseFormat.writes)
+      .map(exerciseFormat.writes)
       .map(Json.stringify)
   }
 

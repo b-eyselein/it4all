@@ -31,26 +31,29 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
     user: User,
     sol: String,
     coll: ExerciseCollection,
-    exercise: Exercise,
-    exerciseContent: RegexExerciseContent,
-    sampleSolutions: Seq[SampleSolution[String]],
+    exercise: Exercise[RegexExerciseContent, String],
     part: RegexExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[AbstractRegexResult]] = Future.successful {
 
     Try(sol.r) match {
       case Failure(error) =>
-        Success(RegexIllegalRegexResult(solutionSaved, error.getMessage, exerciseContent.maxPoints.points))
+        Success(RegexIllegalRegexResult(solutionSaved, error.getMessage, exercise.content.maxPoints.points))
 
       case Success(userRegex) =>
-        exerciseContent.correctionType match {
+        exercise.content.correctionType match {
 
           case RegexCorrectionTypes.MATCHING =>
-            Success(RegexMatchingCorrector.correctMatching(exerciseContent, userRegex, solutionSaved))
+            Success(RegexMatchingCorrector.correctMatching(exercise.content, userRegex, solutionSaved))
 
           case RegexCorrectionTypes.EXTRACTION =>
             Success(
-              RegexExtractionCorrector.correctExtraction(exerciseContent, sampleSolutions, userRegex, solutionSaved)
+              RegexExtractionCorrector.correctExtraction(
+                exercise.content,
+                exercise.sampleSolutions,
+                userRegex,
+                solutionSaved
+              )
             )
         }
 

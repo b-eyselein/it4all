@@ -39,9 +39,6 @@ trait ToolGraphQLModelBasics[SolType, ContentType, PartType <: ExPart] extends T
     ReplaceField("sample", Field("sample", solTypeType, resolve = _.value.sample))
   )
 
-  protected val stringSampleSolutionType: ObjectType[Unit, SampleSolution[String]] =
-    buildSampleSolutionType("String", StringType)
-
   // Matching types
 
   protected val matchTypeType: EnumType[MatchType] = deriveEnumType()

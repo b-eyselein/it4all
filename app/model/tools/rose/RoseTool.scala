@@ -28,21 +28,20 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
     user: User,
     sol: String,
     collection: ExerciseCollection,
-    exercise: Exercise,
-    exerciseContent: RoseExerciseContent,
-    sampleSolutions: Seq[SampleSolution[String]],
+    exercise: Exercise[RoseExerciseContent, String],
     part: RoseExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[RoseCompleteResult]] = sampleSolutions.headOption match {
-    case None => Future.successful(Failure(new Exception("No sample solution could be found!")))
-    case Some(sampleSolution) =>
-      RoseCorrector.correct(
-        sol,
-        sampleSolution.sample,
-        ProgLanguages.StandardLanguage,
-        solutionDirForExercise(user.username, collection.id, exercise.id),
-        solutionSaved
-      )
-  }
+  )(implicit executionContext: ExecutionContext): Future[Try[RoseCompleteResult]] =
+    exercise.sampleSolutions.headOption match {
+      case None => Future.successful(Failure(new Exception("No sample solution could be found!")))
+      case Some(sampleSolution) =>
+        RoseCorrector.correct(
+          sol,
+          sampleSolution.sample,
+          ProgLanguages.StandardLanguage,
+          solutionDirForExercise(user.username, collection.id, exercise.id),
+          solutionSaved
+        )
+    }
 
 }

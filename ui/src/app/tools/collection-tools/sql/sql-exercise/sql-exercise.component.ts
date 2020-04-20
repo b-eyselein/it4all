@@ -7,7 +7,7 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {
   ExerciseSolveFieldsFragment,
   SqlExerciseContentSolveFieldsFragment,
-  StringSampleSolutionFragment
+  SqlSampleSolutionFragment
 } from '../../../../_services/apollo_services';
 import {
   DbContentsGQL,
@@ -39,7 +39,7 @@ export class SqlExerciseComponent
   @Input() schemaName: string;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() exerciseContent: SqlExerciseContentSolveFieldsFragment;
-  @Input() sampleSolutionFragments: StringSampleSolutionFragment[];
+  @Input() sampleSolutionFragments: SqlSampleSolutionFragment[];
 
   dbContentsQuery: DbContentsQuery;
 
@@ -65,7 +65,7 @@ export class SqlExerciseComponent
   }
 
   get sampleSolutions(): string[] {
-    return this.sampleSolutionFragments.map((s) => s.stringSampleSolution);
+    return this.sampleSolutionFragments.map((s) => s.sqlSampleSolution);
   }
 
   // Result types
