@@ -1,9 +1,9 @@
 package model.tools.sql
 
-import model.{GraphQLArguments, GraphQLContext}
 import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
 import model.tools.{SampleSolution, ToolGraphQLModelBasics}
+import model.{GraphQLArguments, GraphQLContext}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
@@ -20,12 +20,9 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     values = SqlExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )
 
-  private val sqlExerciseTagType: EnumType[SqlExTag] = deriveEnumType()
-
   private val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
 
   override val exerciseContentType: ObjectType[Unit, SqlExerciseContent] = {
-    implicit val seTagT: EnumType[SqlExTag]                    = sqlExerciseTagType
     implicit val seTypeT: EnumType[SqlExerciseType]            = sqlExerciseTypeType
     implicit val sst: ObjectType[Unit, SampleSolution[String]] = sampleSolutionType
 

@@ -13,7 +13,7 @@ trait ToolGraphQLModels {
 
   protected val toolStateType: EnumType[ToolState] = deriveEnumType()
 
-  protected val topicsType: ObjectType[Unit, Topic] = deriveObjectType()
+  protected val topicType: ObjectType[Unit, Topic] = deriveObjectType()
 
   protected val exerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
 

@@ -21,6 +21,8 @@ object ProgTool extends CollectionTool("programming", "Programmierung", ToolStat
   override val graphQlModels: ToolGraphQLModelBasics[ProgSolution, ProgrammingExerciseContent, ProgExPart] =
     ProgrammingGraphQLModels
 
+  override val allTopics: Seq[Topic] = ProgrammingTopics.values
+
   // Correction
 
   override def correctAbstract(

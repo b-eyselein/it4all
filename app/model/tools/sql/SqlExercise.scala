@@ -13,30 +13,18 @@ object SqlExPart extends ExParts[SqlExPart] {
 
 }
 
-sealed abstract class SqlExTag(val buttonContent: String, val title: String) extends EnumEntry
-
-object SqlExTag extends PlayEnum[SqlExTag] {
-
-  override def values: IndexedSeq[SqlExTag] = findValues
-
-  case object SQL_JOIN extends SqlExTag("J", "Join")
-
-  case object SQL_DOUBLE_JOIN extends SqlExTag("2J", "Zweifacher Join")
-
-  case object SQL_TRIPLE_JOIN extends SqlExTag("3J", "Dreifacher Join")
-
-  case object SQL_ORDER_BY extends SqlExTag("O", "Reihenfolge")
-
-  case object SQL_GROUP_BY extends SqlExTag("G", "Gruppierung")
-
-  case object SQL_FUNCTION extends SqlExTag("F", "Funktion")
-
-  case object SQL_ALIAS extends SqlExTag("A", "Alias")
-
-  case object SQL_LIMIT extends SqlExTag("L", "Limitierung")
-
-  case object SQL_SUBSELECT extends SqlExTag("S", "Zweites Select innerhalb")
-
+object SqlTopics {
+  val values: Seq[Topic] = Seq(
+    Topic("J", "sql", "Join"),
+    Topic("2J", "sql", "Zweifacher Join"),
+    Topic("3J", "sql", "Dreifacher Join"),
+    Topic("O", "sql", "Reihenfolge"),
+    Topic("G", "sql", "Gruppierung"),
+    Topic("F", "sql", "Funktion"),
+    Topic("A", "sql", "Alias"),
+    Topic("L", "sql", "Limitierung"),
+    Topic("S", "sql", "Zweites Select innerhalb")
+  )
 }
 
 sealed trait SqlExerciseType extends EnumEntry

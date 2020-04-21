@@ -32,10 +32,9 @@ export class AdminReadExercisesComponent implements OnInit, OnDestroy {
           this.savableExercises = data.tool.collection.readExercises
             .map((res) => {
               const exercise: Exercise = JSON.parse(res);
+
               return {saved: false, stringified: res, value: exercise, title: `${exercise.id}. ${exercise.title}`}
             });
-
-          console.info(this.savableExercises.length);
         });
     })
   }

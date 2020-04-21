@@ -47,6 +47,8 @@ object SqlTool extends CollectionTool("sql", "Sql") {
   override val graphQlModels: ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart] =
     SqlGraphQLModels
 
+  override val allTopics: Seq[Topic] = SqlTopics.values
+
   // Correction
 
   override def correctAbstract(

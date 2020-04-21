@@ -61,28 +61,18 @@ create table if not exists collections (
 );
 
 create table if not exists exercises (
-    id            int,
-    collection_id int,
-    tool_id       varchar(20),
-    title         varchar(50) not null,
-    authors       json        not null,
-    ex_text       text        not null,
-    difficulty    int         not null,
-    content       json        not null,
+    id                  int,
+    collection_id       int,
+    tool_id             varchar(20),
+    title               varchar(50) not null,
+    authors             json        not null,
+    ex_text             text        not null,
+    difficulty          int         not null,
+    topic_abbreviations json        not null,
+    content             json        not null,
 
     primary key (id, collection_id, tool_id),
     foreign key (collection_id, tool_id) references collections (id, tool_id) on update cascade on delete cascade
-);
-
-create table if not exists exercise_topics (
-    topic_abbreviation varchar(10),
-    exercise_id        int,
-    collection_id      int,
-    tool_id            varchar(20),
-
-    primary key (topic_abbreviation, exercise_id, collection_id, tool_id),
-    foreign key (exercise_id, collection_id, tool_id) references exercises (id, collection_id, tool_id) on update cascade on delete cascade,
-    foreign key (topic_abbreviation, tool_id) references topics (abbreviation, tool_id) on update cascade on delete cascade
 );
 
 create table if not exists user_solutions (
@@ -104,8 +94,6 @@ create table if not exists user_solutions (
 # --- !Downs
 
 drop table if exists user_solutions;
-
-drop table if exists exercise_topics;
 
 drop table if exists exercise_contents;
 

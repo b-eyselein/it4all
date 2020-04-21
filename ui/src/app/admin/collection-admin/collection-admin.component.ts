@@ -24,10 +24,7 @@ export class CollectionAdminComponent implements OnInit, OnDestroy {
       this.collectionAdminGQL
         .watch({toolId, collId})
         .valueChanges
-        .subscribe(({data}) => {
-          console.info(data.tool.collection.exercises.length);
-          this.collectionAdminQuery = data;
-        });
+        .subscribe(({data}) => this.collectionAdminQuery = data);
     });
   }
 

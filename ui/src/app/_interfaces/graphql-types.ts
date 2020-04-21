@@ -37,7 +37,7 @@ export enum BinaryClassificationResultType {
 
 export type CollectionTol = {
    __typename?: 'CollectionTol';
-  id: Scalars['String'];
+  id: Scalars['ID'];
   name: Scalars['String'];
   state: ToolState;
   lessonCount: Scalars['Int'];
@@ -113,8 +113,9 @@ export type Exercise = {
   title: Scalars['String'];
   authors: Array<Scalars['String']>;
   text: Scalars['String'];
-  topics: Array<Topic>;
+  topicAbbreviations: Array<Scalars['String']>;
   difficulty: Scalars['Int'];
+  topics: Array<Topic>;
   programmingContent?: Maybe<ProgrammingExerciseContent>;
   regexContent?: Maybe<RegexExerciseContent>;
   sqlContent?: Maybe<SqlExerciseContent>;
@@ -266,8 +267,8 @@ export enum MatchType {
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
   OnlyUser = 'ONLY_USER',
-  OnlySample = 'ONLY_SAMPLE',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE'
 }
 
 export type Mutation = {
@@ -588,11 +589,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Update = 'UPDATE',
-  Delete = 'DELETE',
   Insert = 'INSERT',
+  Select = 'SELECT',
+  Update = 'UPDATE',
   Create = 'CREATE',
-  Select = 'SELECT'
+  Delete = 'DELETE'
 }
 
 export enum SqlExPart {

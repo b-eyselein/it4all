@@ -22,7 +22,7 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
         .watch({toolId, collId})
         .valueChanges
         .subscribe(({data}) => this.collectionOverviewQuery = data);
-    })
+    });
   }
 
   ngOnDestroy(): void {

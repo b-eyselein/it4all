@@ -11,14 +11,8 @@ final case class DbExercise(
   authors: Seq[String],
   text: String,
   difficulty: Int,
-  content: JsValue
-)
-
-final case class DbExerciseTopic(
-  topicAbbreviation: String,
-  exerciseId: Int,
-  collectionId: Int,
-  toolId: String
+  topicAbbreviationsJson: JsValue,
+  contentJson: JsValue
 )
 
 final case class DbSampleSolution(

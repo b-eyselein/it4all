@@ -51,12 +51,21 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
     )
   )
 
-  private val exerciseType: ObjectType[Unit, UntypedExercise] = {
-    implicit val tt: ObjectType[Unit, Topic] = topicsType
+  private val exerciseType: ObjectType[GraphQLContext, UntypedExercise] = {
+    implicit val tt: ObjectType[Unit, Topic] = topicType
 
     deriveObjectType(
       ExcludeFields("content"),
       AddFields(
+        Field(
+          "topics",
+          ListType(topicType),
+          resolve = context =>
+            ToolList.tools.find(_.id == context.value.toolId) match {
+              case None       => ???
+              case Some(tool) => tool.allTopics.filter(t => context.value.topicAbbreviations.contains(t.abbreviation))
+            }
+        ),
         Field(
           "programmingContent",
           OptionType(ProgrammingGraphQLModels.exerciseContentType),

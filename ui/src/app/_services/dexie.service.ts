@@ -1,14 +1,11 @@
 import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
 import {DbSolution} from '../_interfaces/exercise';
-import {IExercise, IExerciseCollection} from '../_interfaces/models';
 import {ExerciseSolveFieldsFragment} from "./apollo_services";
 
 @Injectable({providedIn: 'root'})
 export class DexieService extends Dexie {
 
-  collections: Dexie.Table<IExerciseCollection, [string, number]>;
-  exercises: Dexie.Table<IExercise, [string, number, number]>;
   private solutions: Dexie.Table<DbSolution<any>, [string, number, number, string]>;
 
   constructor() {
@@ -61,8 +58,6 @@ export class DexieService extends Dexie {
         xmlSolutions: null,
       });
 
-    this.collections = this.table('collections');
-    this.exercises = this.table('exercises');
     this.solutions = this.table('solutions');
   }
 

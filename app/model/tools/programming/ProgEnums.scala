@@ -1,7 +1,7 @@
 package model.tools.programming
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.tools.{ExPart, ExParts}
+import model.tools.{ExPart, ExParts, Topic}
 
 // Exercise Parts
 
@@ -19,38 +19,23 @@ object ProgExPart extends ExParts[ProgExPart] {
 
 }
 
-// Tags
+// Topics
 
-sealed abstract class ProgrammingExerciseTag(val buttonContent: String, val title: String) extends EnumEntry
-
-object ProgrammingExerciseTag extends PlayEnum[ProgrammingExerciseTag] {
-
-  val values: IndexedSeq[ProgrammingExerciseTag] = findValues
-
-  case object ForLoops extends ProgrammingExerciseTag("FL", "For-Schleifen")
-
-  case object WhileLoops extends ProgrammingExerciseTag("WL", "While-Schleifen")
-
-  case object Conditions extends ProgrammingExerciseTag("C", "Bedingungen")
-
-  case object Lists extends ProgrammingExerciseTag("L", "Listen")
-
-  case object Tuples extends ProgrammingExerciseTag("T", "Tuples")
-
-  case object Dictionaries extends ProgrammingExerciseTag("D", "Dictionaries")
-
-  case object Classes extends ProgrammingExerciseTag("C", "Klassen")
-
-  case object Exceptions extends ProgrammingExerciseTag("E", "Exceptions")
-
-  case object Math extends ProgrammingExerciseTag("M", "Mathematik")
-
-  case object Strings extends ProgrammingExerciseTag("S", "Strings")
-
-  case object Slicing extends ProgrammingExerciseTag("SL", "Slicing")
-
-  case object Recursion extends ProgrammingExerciseTag("R", "Rekursion")
-
+object ProgrammingTopics {
+  val values: Seq[Topic] = Seq(
+    Topic("FL", "programming", "For-Schleifen"),
+    Topic("WL", "programming", "While-Schleifen"),
+    Topic("C", "programming", "Bedingungen"),
+    Topic("L", "programming", "Listen"),
+    Topic("T", "programming", "Tuples"),
+    Topic("D", "programming", "Dictionaries"),
+    Topic("CL", "programming", "Klassen"),
+    Topic("E", "programming", "Exceptions"),
+    Topic("M", "programming", "Mathematik"),
+    Topic("S", "programming", "Strings"),
+    Topic("SL", "programming", "Slicing"),
+    Topic("R", "programming", "Rekursion")
+  )
 }
 
 // Unit Test Types

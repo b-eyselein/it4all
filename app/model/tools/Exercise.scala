@@ -30,7 +30,7 @@ final case class Exercise[S, C <: ExerciseContent[S]](
   title: String,
   authors: Seq[String],
   text: String,
-  topics: Seq[Topic],
+  topicAbbreviations: Seq[String],
   difficulty: Int,
   content: C
 )

@@ -50,13 +50,10 @@ object ProgrammingGraphQLModels
   override val sampleSolutionType: ObjectType[Unit, SampleSolution[ProgSolution]] =
     buildSampleSolutionType("Programming", progSolutionType)
 
-  private val programmingExerciseTagType: EnumType[ProgrammingExerciseTag] = deriveEnumType()
-
   override val exerciseContentType: ObjectType[Unit, ProgrammingExerciseContent] = {
     //    implicit val progInputType: ObjectType[Unit, ProgInput] = deriveObjectType()
     //    implicit val progDataType: ObjectType[Unit, ProgDataType] = deriveObjectType()
 
-    implicit val pett: EnumType[ProgrammingExerciseTag]              = programmingExerciseTagType
     implicit val utpt: ObjectType[Unit, UnitTestPart]                = unitTestPartType
     implicit val ipt: ObjectType[Unit, ImplementationPart]           = implementationPartType
     implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType

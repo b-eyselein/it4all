@@ -26,7 +26,6 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
   protected final val topicsTQ: TableQuery[TopicsTable]                   = TableQuery[TopicsTable]
   protected final val collectionsTQ: TableQuery[ExerciseCollectionsTable] = TableQuery[ExerciseCollectionsTable]
   protected final val exercisesTQ: TableQuery[ExercisesTable]             = TableQuery[ExercisesTable]
-  protected final val exerciseTopicsTQ: TableQuery[ExerciseTopicsTable]   = TableQuery[ExerciseTopicsTable]
   protected final val userSolutionsTQ: TableQuery[UserSolutionsTable]     = TableQuery[UserSolutionsTable]
   protected final val lessonsTQ: TableQuery[LessonsTable]                 = TableQuery[LessonsTable]
 
@@ -101,6 +100,8 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
 
     def difficulty: Rep[Int] = column[Int]("difficulty")
 
+    def topicAbbreviations: Rep[JsValue] = column[JsValue]("topic_abbreviations")
+
     def content: Rep[JsValue] = column[JsValue]("content")
 
     def pk: PrimaryKey = primaryKey("pk", (id, collectionId, toolId))
@@ -109,29 +110,7 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
       foreignKey("collection_fk", (collectionId, toolId), collectionsTQ)(c => (c.id, c.toolId))
 
     override def * : ProvenShape[DbExercise] =
-      (id, collectionId, toolId, title, authors, text, difficulty, content) <> (DbExercise.tupled, DbExercise.unapply)
-
-  }
-
-  protected final class ExerciseTopicsTable(tag: Tag) extends Table[DbExerciseTopic](tag, "exercise_topics") {
-
-    def topicAbbreviation: Rep[String] = column[String]("topic_abbreviation")
-
-    def exerciseId: Rep[Int] = column[Int]("exercise_id")
-
-    def collectionId: Rep[Int] = column[Int]("collection_id")
-
-    def toolId: Rep[String] = column[String]("tool_id")
-
-    def pk: PrimaryKey = primaryKey("exercise_topics_fk", (topicAbbreviation, exerciseId, collectionId, toolId))
-
-    def exerciseFk: ForeignKeyQuery[ExercisesTable, DbExercise] =
-      foreignKey("exercise_topics_exercise_fk", (exerciseId, collectionId, toolId), exercisesTQ)(
-        ex => (ex.id, ex.collectionId, ex.toolId)
-      )
-
-    override def * : ProvenShape[DbExerciseTopic] =
-      (topicAbbreviation, exerciseId, collectionId, toolId) <> (DbExerciseTopic.tupled, DbExerciseTopic.unapply)
+      (id, collectionId, toolId, title, authors, text, difficulty, topicAbbreviations, content) <> (DbExercise.tupled, DbExercise.unapply)
 
   }
 

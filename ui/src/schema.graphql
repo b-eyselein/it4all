@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue Apr 21 2020 14:09:23 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Tue Apr 21 2020 15:10:58 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -27,7 +27,7 @@ enum BinaryClassificationResultType {
 }
 
 type CollectionTol {
-  id: String!
+  id: ID!
   name: String!
   state: ToolState!
   lessonCount: Int!
@@ -82,8 +82,9 @@ type Exercise {
   title: String!
   authors: [String!]!
   text: String!
-  topics: [Topic!]!
+  topicAbbreviations: [String!]!
   difficulty: Int!
+  topics: [Topic!]!
   programmingContent: ProgrammingExerciseContent
   regexContent: RegexExerciseContent
   sqlContent: SqlExerciseContent
@@ -217,8 +218,8 @@ enum MatchType {
   SUCCESSFUL_MATCH
   PARTIAL_MATCH
   ONLY_USER
-  ONLY_SAMPLE
   UNSUCCESSFUL_MATCH
+  ONLY_SAMPLE
 }
 
 type Mutation {
@@ -427,11 +428,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  UPDATE
-  DELETE
   INSERT
-  CREATE
   SELECT
+  UPDATE
+  CREATE
+  DELETE
 }
 
 enum SqlExPart {
