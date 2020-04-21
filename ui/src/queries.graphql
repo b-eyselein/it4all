@@ -1,3 +1,11 @@
+query ToolOverview {
+  tools {
+    id
+    name
+    state
+  }
+}
+
 query CollectionList($toolId: String!) {
   tool(toolId: $toolId) {
     name
@@ -51,6 +59,11 @@ query AllExercisesOverview($toolId: String!) {
   }
 }
 
+fragment Part on ExPart {
+  id
+  name
+}
+
 query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
@@ -58,37 +71,47 @@ query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
         id
         title
         text
-        content {
-          ... on ProgrammingExerciseContent {
-            unitTestPart {
-              unitTestType
-            }
+        programmingContent {
+          unitTestPart {
+            unitTestType
           }
-          ... on WebExerciseContent {
-            siteSpec {
-              htmlTaskCount
-              jsTaskCount
-            }
+        }
+        webContent {
+          siteSpec {
+            htmlTaskCount
+            jsTaskCount
           }
+        }
+        parts {
+          ...Part
         }
       }
     }
   }
 }
 
-query Exercise($toolId: String!, $collId: Int!, $exId: Int!) {
+query Exercise($toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
   tool(toolId: $toolId) {
-    collection(collId: $collId){
+    collection(collId: $collId) {
       shortName
-      exercise(exId: $exId){
+      exercise(exId: $exId) {
         ...ExerciseSolveFields
-        content {
-          __typename
+        programmingContent {
           ...ProgExerciseContentSolveFields
+        }
+        regexContent {
           ...RegexExerciseContentSolveFields
+        }
+        sqlContent {
           ...SqlExerciseContentSolveFields
+        }
+        umlContent {
           ...UmlExerciseContentSolveFields
+        }
+        webContent {
           ...WebExerciseContentSolveFields
+        }
+        xmlContent {
           ...XmlExerciseContentSolveFields
         }
       }
@@ -119,6 +142,16 @@ query Lesson($toolId: String!, $lessonId: Int!) {
 }
 
 # Admin queries
+
+query AdminIndex {
+  tools {
+    id
+    name
+    collectionCount
+    exerciseCount
+    lessonCount
+  }
+}
 
 query CollectionToolAdmin($toolId: String!) {
   tool(toolId: $toolId) {
@@ -207,7 +240,6 @@ query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
     collection(collId: $collId) {
       exercise(exId: $exId) {
         __typename
-        # asJson
       }
     }
   }
@@ -264,13 +296,14 @@ fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {
       ...ExFileAll
     }
   }
-  progSampleSolutions:  sampleSolutions {
+  sampleSolutions {
     ...ProgrammingSampleSolution
   }
+  part(partId: $partId)
 }
 fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
   __typename
-  progSampleSolution: sample {
+  sample {
     files {
       ...ExFileAll
     }
@@ -278,27 +311,29 @@ fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
 }
 
 fragment RegexExerciseContentSolveFields on RegexExerciseContent {
-  regexSampleSolutions: sampleSolutions{
+  sampleSolutions {
     ...RegexSampleSolution
   }
+  part(partId: $partId)
 }
 
 fragment RegexSampleSolution on RegexSampleSolution {
   __typename
-  regexSampleSolution: sample
+  sample
 }
 
 fragment SqlExerciseContentSolveFields on SqlExerciseContent {
   hint
-  sqlSampleSolutions: sampleSolutions {
+  sampleSolutions {
     ...SqlSampleSolution
   }
+  part(partId: $partId)
 }
 
 
 fragment SqlSampleSolution on SqlSampleSolution {
   __typename
-  sqlSampleSolution: sample
+  sample
 }
 
 fragment UmlExerciseContentSolveFields on UmlExerciseContent {
@@ -307,14 +342,15 @@ fragment UmlExerciseContentSolveFields on UmlExerciseContent {
     key
     value
   }
-  umlSampleSolutions: sampleSolutions {
+  sampleSolutions {
     ...UmlSampleSolution
   }
+  part(partId: $partId)
 }
 
 fragment UmlSampleSolution on UmlSampleSolution {
   __typename
-  umlSampleSolution: sample {
+  sample {
     ...UmlClassDiagram
   }
 }
@@ -384,14 +420,15 @@ fragment WebExerciseContentSolveFields on WebExerciseContent {
     }
     jsTaskCount
   }
-  webSampleSolution: sampleSolutions {
+  sampleSolutions {
     ...WebSampleSolution
   }
+  part(partId: $partId)
 }
 
 fragment WebSampleSolution on WebSampleSolution {
   __typename
-  webSampleSolutions: sample {
+  sample {
     files {
       ...ExFileAll
     }
@@ -401,14 +438,15 @@ fragment WebSampleSolution on WebSampleSolution {
 fragment XmlExerciseContentSolveFields on XmlExerciseContent {
   rootNode
   grammarDescription
-  xmlSampleSolutions: sampleSolutions {
+  sampleSolutions {
     ...XmlSampleSolution
   }
+  part(partId: $partId)
 }
 
 fragment XmlSampleSolution on XmlSampleSolution {
   __typename
-  xmlSampleSolution: sample {
+  sample {
     document
     grammar
   }

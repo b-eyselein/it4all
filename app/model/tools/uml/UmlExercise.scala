@@ -3,19 +3,19 @@ package model.tools.uml
 import enumeratum.{EnumEntry, PlayEnum}
 import model.tools._
 
-sealed abstract class UmlExPart(val partName: String, val urlName: String) extends ExPart
+sealed abstract class UmlExPart(val partName: String, val id: String) extends ExPart
 
-object UmlExParts extends ExParts[UmlExPart] {
+object UmlExPart extends ExParts[UmlExPart] {
 
   val values: IndexedSeq[UmlExPart] = findValues
 
-  case object ClassSelection extends UmlExPart(partName = "Klassenwahl", urlName = "classSelection")
+  case object ClassSelection extends UmlExPart(partName = "Klassenwahl", id = "classSelection")
 
-  case object DiagramDrawingHelp extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagramDrawingHelp")
+  case object DiagramDrawingHelp extends UmlExPart(partName = "Zeichnen des Diagramms", id = "diagramDrawingHelp")
 
-  case object DiagramDrawing extends UmlExPart(partName = "Zeichnen des Diagramms", urlName = "diagramDrawing")
+  case object DiagramDrawing extends UmlExPart(partName = "Zeichnen des Diagramms", id = "diagramDrawing")
 
-  case object MemberAllocation extends UmlExPart(partName = "Zuordnung der Member", urlName = "memberAllocation")
+  case object MemberAllocation extends UmlExPart(partName = "Zuordnung der Member", id = "memberAllocation")
 
 }
 
@@ -33,4 +33,8 @@ final case class UmlExerciseContent(
   toIgnore: Seq[String],
   mappings: Map[String, String],
   sampleSolutions: Seq[SampleSolution[UmlClassDiagram]]
-) extends ExerciseContent[UmlClassDiagram]
+) extends ExerciseContent[UmlClassDiagram] {
+
+  override def parts: Seq[ExPart] = UmlExPart.values
+
+}

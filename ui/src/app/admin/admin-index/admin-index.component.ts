@@ -1,13 +1,19 @@
-import {Component} from '@angular/core';
-import {collectionTools} from '../../tools/collection-tools/collection-tools-list';
-import {CollectionTool} from '../../_interfaces/tool';
+import {Component, OnInit} from '@angular/core';
+import {AdminIndexGQL, AdminIndexQuery} from "../../_services/apollo_services";
 
 @Component({templateUrl: './admin-index.component.html'})
-export class AdminIndexComponent {
+export class AdminIndexComponent implements OnInit {
 
-  collTools: CollectionTool[] = collectionTools;
+  adminIndexQuery: AdminIndexQuery;
 
-  constructor() {
+  constructor(private adminIndexGQL: AdminIndexGQL) {
+  }
+
+  ngOnInit(): void {
+    this.adminIndexGQL
+      .watch({})
+      .valueChanges
+      .subscribe(({data}) => this.adminIndexQuery = data);
   }
 
 }

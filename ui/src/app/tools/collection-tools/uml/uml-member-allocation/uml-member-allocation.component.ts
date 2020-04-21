@@ -2,8 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {distinctObjectArray, flatMapArray} from '../../../../helpers';
 import {
   ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment,
-  UmlSampleSolutionFragment
+  UmlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {UmlAttribute, UmlClassDiagram, UmlMethod, UmlVisibility} from '../../../../_interfaces/graphql-types';
 
@@ -58,7 +57,7 @@ export class UmlMemberAllocationComponent implements OnInit {
   corrected = false;
 
   ngOnInit() {
-    this.sample = this.contentFragment.umlSampleSolutions[0].umlSampleSolution;
+    this.sample = this.contentFragment.sampleSolutions[0].sample;
 
     this.allAttributes = distinctObjectArray(
       flatMapArray(this.sample.classes, (clazz) => clazz.attributes), (a) => a.memberName

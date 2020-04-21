@@ -72,7 +72,7 @@ object WebTool extends CollectionTool("web", "Web") {
     solutionSaved: Boolean
   ): Try[WebCompleteResult] = Try {
     part match {
-      case WebExParts.HtmlPart =>
+      case WebExPart.HtmlPart =>
         val htmlTaskResults: Seq[HtmlTaskResult] =
           exerciseContent.siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
         val gradedHtmlTaskResults: Seq[GradedHtmlTaskResult] = htmlTaskResults.map(WebGrader.gradeHtmlTaskResult)
@@ -82,7 +82,7 @@ object WebTool extends CollectionTool("web", "Web") {
 
         WebCompleteResult(gradedHtmlTaskResults, Seq[GradedJsTaskResult](), points, maxPoints, solutionSaved)
 
-      case WebExParts.JsPart =>
+      case WebExPart.JsPart =>
         val jsTaskResults: Seq[JsTaskResult] =
           exerciseContent.siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
         val gradedJsTaskResults: Seq[GradedJsTaskResult] = jsTaskResults.map(WebGrader.gradeJsTaskResult)

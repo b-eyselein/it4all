@@ -6,8 +6,7 @@ import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {
   ExerciseSolveFieldsFragment,
-  SqlExerciseContentSolveFieldsFragment,
-  SqlSampleSolutionFragment
+  SqlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {
   DbContentsGQL,
@@ -21,6 +20,7 @@ import {
 import {SqlExPart} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/sql/sql';
+import {SqlCreateQueryPart} from "../sql-tool";
 
 
 @Component({
@@ -35,7 +35,8 @@ export class SqlExerciseComponent
 
   readonly editorOptions = getDefaultEditorOptions('sql');
 
-  @Input() oldPart: ToolPart;
+  readonly oldPart: ToolPart = SqlCreateQueryPart;
+
   @Input() schemaName: string;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: SqlExerciseContentSolveFieldsFragment;
@@ -54,9 +55,9 @@ export class SqlExerciseComponent
       .valueChanges
       .subscribe(({data}) => this.dbContentsQuery = data);
 
-    this.dexieService.getSolution(
-      this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.oldPart.id
-    ).then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');
+    this.dexieService
+      .getSolution(this.exerciseFragment, this.oldPart.id)
+      .then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');
   }
 
   protected getSolution(): string | undefined {
@@ -64,7 +65,7 @@ export class SqlExerciseComponent
   }
 
   get sampleSolutions(): string[] {
-    return this.contentFragment.sqlSampleSolutions.map((s) => s.sqlSampleSolution);
+    return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 
   // Result types
@@ -84,7 +85,7 @@ export class SqlExerciseComponent
   // Correction
 
   correct(): void {
-    this.correctAbstract(this.exerciseFragment, SqlExPart.SqlSingleExPart, this.oldPart);
+    this.correctAbstract(this.exerciseFragment, SqlExPart.SqlSingleExPart, this.oldPart.id);
   }
 
 }

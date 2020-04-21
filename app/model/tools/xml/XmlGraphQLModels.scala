@@ -2,13 +2,21 @@ package model.tools.xml
 
 import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
+import model.GraphQLArguments
 import model.core.matching.MatchType
 import model.core.result.SuccessType
 import model.tools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart] {
+object XmlGraphQLModels
+    extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart]
+    with GraphQLArguments {
+
+  override val partEnumType: EnumType[XmlExPart] = EnumType(
+    "XmlExPart",
+    values = XmlExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
   private val xmlSolutionType: ObjectType[Unit, XmlSolution] = deriveObjectType()
 
@@ -21,7 +29,16 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseC
     implicit val xett: EnumType[XmlExTag]                           = xmlExerciseTagType
     implicit val sst: ObjectType[Unit, SampleSolution[XmlSolution]] = sampleSolutionType
 
-    deriveObjectType()
+    deriveObjectType(
+      AddFields(
+        Field(
+          "part",
+          OptionType(partEnumType),
+          arguments = partIdArgument :: Nil,
+          resolve = context => XmlExPart.values.find(_.id == context.arg(partIdArgument))
+        )
+      )
+    )
   }
 
   // Solution types
@@ -90,10 +107,5 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseC
   }
 
   override val AbstractResultTypeType: OutputType[Any] = xmlCompleteResultType
-
-  override val PartTypeInputType: EnumType[XmlExPart] = EnumType(
-    "XmlExPart",
-    values = XmlExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
-  )
 
 }

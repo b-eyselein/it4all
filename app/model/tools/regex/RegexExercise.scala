@@ -1,7 +1,7 @@
 package model.tools.regex
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.tools.{ExerciseContent, SampleSolution}
+import model.tools.{ExPart, ExerciseContent, SampleSolution}
 
 sealed trait RegexCorrectionType extends EnumEntry
 
@@ -21,7 +21,11 @@ final case class RegexExerciseContent(
   matchTestData: Seq[RegexMatchTestData],
   extractionTestData: Seq[RegexExtractionTestData] = Seq.empty,
   sampleSolutions: Seq[SampleSolution[String]]
-) extends ExerciseContent[String]
+) extends ExerciseContent[String] {
+
+  override def parts: Seq[ExPart] = RegexExPart.values
+
+}
 
 final case class RegexMatchTestData(id: Int, data: String, isIncluded: Boolean)
 

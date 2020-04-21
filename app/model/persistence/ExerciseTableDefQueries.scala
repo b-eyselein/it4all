@@ -109,13 +109,7 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
     exerciseTopicsTQ
       .filter(_.toolId === toolId)
       .join(topicsTQ)
-      .on { case (et, t) => et.topicId === t.id && et.toolId === t.toolId }
-      .result
-  )
-
-  def futureSampleSolutionsForAllExercisesForTool(toolId: String): Future[Seq[DbSampleSolution]] = db.run(
-    sampleSolutionsTQ
-      .filter(_.toolId === toolId)
+      .on { case (et, t) => et.topicAbbreviation === t.abbreviation && et.toolId === t.toolId }
       .result
   )
 
@@ -140,14 +134,8 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
         et.toolId === toolId && et.collectionId === collId
       }
       .join(topicsTQ)
-      .on { case (et, t) => et.topicId === t.id && et.toolId === t.toolId }
+      .on { case (et, t) => et.topicAbbreviation === t.abbreviation && et.toolId === t.toolId }
       .result
-  )
-
-  def futureSampleSolutionsForAllExercisesInColl(toolId: String, collId: Int): Future[Seq[DbSampleSolution]] = db.run(
-    sampleSolutionsTQ.filter { ss =>
-      ss.toolId === toolId && ss.collectionId === collId
-    }.result
   )
 
   def futureExerciseById(toolId: String, collId: Int, id: Int): Future[Option[DbExercise]] = db.run(
@@ -165,17 +153,10 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
         et.toolId === toolId && et.collectionId === collId && et.exerciseId === id
       }
       .join(topicsTQ)
-      .on { case (et, t) => et.topicId === t.id && et.toolId === t.toolId }
+      .on { case (et, t) => et.topicAbbreviation === t.abbreviation && et.toolId === t.toolId }
       .map(_._2)
       .result
   )
-
-  def futureSampleSolutionsForExerciseById(toolId: String, collId: Int, id: Int): Future[Seq[DbSampleSolution]] =
-    db.run(
-      sampleSolutionsTQ.filter { ss =>
-        ss.toolId === toolId && ss.collectionId === collId && ss.exerciseId === id
-      }.result
-    )
 
   // Saving
 
@@ -187,9 +168,6 @@ trait ExerciseTableDefQueries extends HasDatabaseConfigProvider[JdbcProfile] {
 
   def futureUpsertTopicsForExercise(dbExerciseTopics: Seq[DbExerciseTopic]): Future[Boolean] =
     saveSeq[DbExerciseTopic](dbExerciseTopics, et => db.run(exerciseTopicsTQ.insertOrUpdate(et)))
-
-  def futureUpsertSampleSolutionsForExercise(dbSampleSolutions: Seq[DbSampleSolution]): Future[Boolean] =
-    saveSeq[DbSampleSolution](dbSampleSolutions, ss => db.run(sampleSolutionsTQ.insertOrUpdate(ss)))
 
   def futureUpsertLesson(lesson: Lesson): Future[Boolean] = {
     val lessonContentWrites: Writes[Seq[LessonContent]] = Writes.seq(JsonProtocols.lessonContentFormat)

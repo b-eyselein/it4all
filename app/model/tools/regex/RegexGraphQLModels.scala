@@ -1,13 +1,21 @@
 package model.tools.regex
 
+import model.GraphQLArguments
 import model.tools.regex.RegexTool.ExtractedValuesComparison
 import model.tools.{SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.{ExcludeFields, Interfaces, deriveEnumType, deriveObjectType}
+import sangria.macros.derive._
 import sangria.schema._
 
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart] {
+object RegexGraphQLModels
+    extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart]
+    with GraphQLArguments {
+
+  override val partEnumType: EnumType[RegexExPart] = EnumType(
+    "RegexExPart",
+    values = RegexExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
   override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] =
     buildSampleSolutionType("Regex", StringType)
@@ -26,7 +34,16 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseCo
     implicit val retdt: ObjectType[Unit, RegexExtractionTestData] = deriveObjectType()
     implicit val sst: ObjectType[Unit, SampleSolution[String]]    = sampleSolutionType
 
-    deriveObjectType()
+    deriveObjectType(
+      AddFields(
+        Field(
+          "part",
+          OptionType(partEnumType),
+          arguments = partIdArgument :: Nil,
+          resolve = context => RegexExPart.values.find(_.id == context.arg(partIdArgument))
+        )
+      )
+    )
   }
 
   // Solution types
@@ -80,12 +97,5 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseCo
   )
 
   override val AbstractResultTypeType: OutputType[Any] = abstractRegexResultType
-
-  // Part type
-
-  override val PartTypeInputType: EnumType[RegexExPart] = EnumType(
-    "RegexExPart",
-    values = RegexExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
-  )
 
 }

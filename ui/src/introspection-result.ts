@@ -15,30 +15,6 @@
     "types": [
       {
         "kind": "UNION",
-        "name": "ExerciseContent",
-        "possibleTypes": [
-          {
-            "name": "ProgrammingExerciseContent"
-          },
-          {
-            "name": "RegexExerciseContent"
-          },
-          {
-            "name": "SqlExerciseContent"
-          },
-          {
-            "name": "UmlExerciseContent"
-          },
-          {
-            "name": "WebExerciseContent"
-          },
-          {
-            "name": "XmlExerciseContent"
-          }
-        ]
-      },
-      {
-        "kind": "UNION",
         "name": "AbstractRegexResult",
         "possibleTypes": [
           {

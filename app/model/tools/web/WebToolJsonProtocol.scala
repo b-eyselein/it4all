@@ -57,6 +57,6 @@ object WebToolJsonProtocol extends ToolJsonProtocol[WebSolution, WebExerciseCont
     Json.format
   }
 
-  override val partTypeFormat: Format[WebExPart] = WebExParts.jsonFormat
+  override val partTypeFormat: Format[WebExPart] = WebExPart.jsonFormat
 
 }

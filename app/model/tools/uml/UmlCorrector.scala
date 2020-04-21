@@ -13,21 +13,21 @@ object UmlCorrector {
   ): UmlCompleteResult = {
 
     val classResult = part match {
-      case UmlExParts.DiagramDrawingHelp => None
-      case UmlExParts.ClassSelection =>
+      case UmlExPart.DiagramDrawingHelp => None
+      case UmlExPart.ClassSelection =>
         Some(UmlClassMatcher(false).doMatch(userClassDiagram.classes, sampleClassDiagram.classes))
-      case UmlExParts.DiagramDrawing | UmlExParts.MemberAllocation =>
+      case UmlExPart.DiagramDrawing | UmlExPart.MemberAllocation =>
         Some(UmlClassMatcher(true).doMatch(userClassDiagram.classes, sampleClassDiagram.classes))
     }
 
     val assocResult = part match {
-      case UmlExParts.DiagramDrawingHelp | UmlExParts.DiagramDrawing =>
+      case UmlExPart.DiagramDrawingHelp | UmlExPart.DiagramDrawing =>
         Some(UmlAssociationMatcher.doMatch(userClassDiagram.associations, sampleClassDiagram.associations))
       case _ => None
     }
 
     val implResult = part match {
-      case UmlExParts.DiagramDrawingHelp | UmlExParts.DiagramDrawing =>
+      case UmlExPart.DiagramDrawingHelp | UmlExPart.DiagramDrawing =>
         Some(UmlImplementationMatcher.doMatch(userClassDiagram.implementations, sampleClassDiagram.implementations))
       case _ => None
     }

@@ -54,9 +54,11 @@ export class UmlDiagramDrawingComponent
 
   readonly nextPart = UmlMemberAllocationPart;
 
-  @Input() oldPart: ToolPart;
+
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: UmlExerciseContentSolveFieldsFragment;
+
+  oldPart: ToolPart;
 
   withHelp: boolean;
 
@@ -81,7 +83,16 @@ export class UmlDiagramDrawingComponent
   }
 
   ngOnInit(): void {
-    this.withHelp = this.oldPart === UmlDiagramDrawingHelpPart;
+    switch (this.contentFragment.part) {
+      case UmlExPart.DiagramDrawingHelp:
+        this.oldPart = UmlDiagramDrawingHelpPart;
+        break;
+      case UmlExPart.DiagramDrawing:
+        this.oldPart = UmlDiagramDrawingPart;
+        break;
+    }
+
+    this.withHelp = this.contentFragment.part === UmlExPart.DiagramDrawingHelp;
 
     this.creatableClassDiagramObjects = [
       {name: 'Klasse', key: CreatableClassDiagramObject.Class, selected: false, disabled: this.withHelp},
@@ -106,12 +117,12 @@ export class UmlDiagramDrawingComponent
 
     // load classes
 
-    this.loadOldSolutionAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.oldPart)
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id)
       .then((oldSol) => {
         if (oldSol) {
           this.loadClassDiagram(oldSol);
         } else {
-          this.loadClassDiagram(this.contentFragment.umlSampleSolutions[0].umlSampleSolution as ExportedUmlClassDiagram);
+          this.loadClassDiagram(this.contentFragment.sampleSolutions[0].sample as ExportedUmlClassDiagram);
         }
       });
   }
@@ -253,19 +264,12 @@ export class UmlDiagramDrawingComponent
   }
 
   get sampleSolutions(): UmlClassDiagram[] {
-    return this.contentFragment.umlSampleSolutions.map((sample) => sample.umlSampleSolution);
+    return this.contentFragment.sampleSolutions.map((sample) => sample.sample);
   }
 
   correct(): void {
-    let part: UmlExPart;
+    super.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.oldPart.id);
 
-    if (this.oldPart === UmlDiagramDrawingHelpPart) {
-      part = UmlExPart.DiagramDrawingHelp;
-    } else if (this.oldPart === UmlDiagramDrawingPart) {
-      part = UmlExPart.DiagramDrawing;
-    }
-
-    super.correctAbstract(this.exerciseFragment, part, this.oldPart);
     this.corrected = true;
   }
 

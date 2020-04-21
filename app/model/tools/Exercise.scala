@@ -1,9 +1,8 @@
 package model.tools
 
 final case class Topic(
-  id: Int,
-  toolId: String,
   abbreviation: String,
+  toolId: String,
   title: String
 )
 
@@ -17,7 +16,11 @@ final case class ExerciseCollection(
 )
 
 trait ExerciseContent[S] {
+
   val sampleSolutions: Seq[SampleSolution[S]]
+
+  def parts: Seq[ExPart]
+
 }
 
 final case class Exercise[S, C <: ExerciseContent[S]](

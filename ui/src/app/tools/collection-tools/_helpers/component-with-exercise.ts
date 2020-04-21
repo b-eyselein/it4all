@@ -2,7 +2,6 @@ import {TabsComponent} from '../../../shared/tabs/tabs.component';
 import {Directive, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {TabComponent} from '../../../shared/tab/tab.component';
 import {DexieService} from '../../../_services/dexie.service';
-import {ToolPart} from '../../../_interfaces/tool';
 import * as Apollo from 'apollo-angular';
 import {ExerciseSolveFieldsFragment} from '../../../_services/apollo_services';
 
@@ -48,7 +47,7 @@ export abstract class ComponentWithExercise<SolutionType,
     }
   }
 
-  protected correctAbstract(exerciseFragment: ExerciseSolveFieldsFragment, part: PartType, oldPart: ToolPart): void {
+  protected correctAbstract(exerciseFragment: ExerciseSolveFieldsFragment, part: PartType, partId: string): void {
     this.isCorrecting = true;
 
     const solution: SolutionInputType | undefined = this.getSolution();
@@ -63,10 +62,7 @@ export abstract class ComponentWithExercise<SolutionType,
     };
 
     // noinspection JSIgnoredPromiseFromCall
-    this.dexieService.upsertSolution<SolutionInputType>(
-      exerciseFragment.id, exerciseFragment.collectionId, exerciseFragment.toolId, oldPart.id, solution
-    );
-
+    this.dexieService.upsertSolution<SolutionInputType>(exerciseFragment, partId, solution);
 
     this.mutationGQL
       .mutate(mutationQueryVars)
@@ -77,8 +73,8 @@ export abstract class ComponentWithExercise<SolutionType,
       });
   }
 
-  protected loadOldSolutionAbstract(exId: number, collId: number, toolId: string, part: ToolPart): Promise<SolutionInputType | undefined> {
-    return this.dexieService.getSolution<SolutionInputType>(exId, collId, toolId, part.id)
+  protected loadOldSolutionAbstract(exerciseFragment: ExerciseSolveFieldsFragment, partId: string): Promise<SolutionInputType | undefined> {
+    return this.dexieService.getSolution<SolutionInputType>(exerciseFragment, partId)
       .then((dbSol) => dbSol ? dbSol.solution : undefined);
   }
 

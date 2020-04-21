@@ -21,12 +21,11 @@ create table if not exists lessons (
 # Proficiencies
 
 create table if not exists topics (
-    id           int,
+    abbreviation varchar(10),
     tool_id      varchar(10),
-    abbreviation varchar(10)  not null,
     title        varchar(100) not null,
 
-    primary key (id, tool_id)
+    primary key (abbreviation, tool_id)
 );
 
 create table if not exists tool_proficiencies (
@@ -38,13 +37,13 @@ create table if not exists tool_proficiencies (
 );
 
 create table if not exists topic_proficiencies (
-    username varchar(30) references users (username) on update cascade on delete cascade,
-    topic_id int,
-    tool_id  varchar(10),
-    points   int not null,
+    username           varchar(30) references users (username) on update cascade on delete cascade,
+    topic_abbreviation varchar(10),
+    tool_id            varchar(10),
+    points             int not null,
 
-    primary key (username, topic_id, tool_id),
-    foreign key (topic_id, tool_id) references topics (id, tool_id) on update cascade on delete cascade
+    primary key (username, topic_abbreviation, tool_id),
+    foreign key (topic_abbreviation, tool_id) references topics (abbreviation, tool_id) on update cascade on delete cascade
 );
 
 # Collections and Exercises
@@ -75,26 +74,15 @@ create table if not exists exercises (
     foreign key (collection_id, tool_id) references collections (id, tool_id) on update cascade on delete cascade
 );
 
-create table if not exists exercise_sample_solutions (
-    id            int,
-    exercise_id   int,
-    collection_id int,
-    tool_id       varchar(20),
-    solution_json json not null,
-
-    primary key (id, exercise_id, collection_id, tool_id),
-    foreign key (exercise_id, collection_id, tool_id) references exercises (id, collection_id, tool_id) on update cascade on delete cascade
-);
-
 create table if not exists exercise_topics (
-    topic_id      int,
-    exercise_id   int,
-    collection_id int,
-    tool_id       varchar(20),
+    topic_abbreviation varchar(10),
+    exercise_id        int,
+    collection_id      int,
+    tool_id            varchar(20),
 
-    primary key (topic_id, exercise_id, collection_id, tool_id),
+    primary key (topic_abbreviation, exercise_id, collection_id, tool_id),
     foreign key (exercise_id, collection_id, tool_id) references exercises (id, collection_id, tool_id) on update cascade on delete cascade,
-    foreign key (topic_id, tool_id) references topics (id, tool_id) on update cascade on delete cascade
+    foreign key (topic_abbreviation, tool_id) references topics (abbreviation, tool_id) on update cascade on delete cascade
 );
 
 create table if not exists user_solutions (
@@ -113,15 +101,11 @@ create table if not exists user_solutions (
     foreign key (exercise_id, collection_id, tool_id) references exercises (id, collection_id, tool_id) on update cascade on delete cascade
 );
 
-
 # --- !Downs
-
 
 drop table if exists user_solutions;
 
 drop table if exists exercise_topics;
-
-drop table if exists exercise_sample_solutions;
 
 drop table if exists exercise_contents;
 

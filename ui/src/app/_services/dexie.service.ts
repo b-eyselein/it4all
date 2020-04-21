@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
 import {DbSolution} from '../_interfaces/exercise';
 import {IExercise, IExerciseCollection} from '../_interfaces/models';
+import {ExerciseSolveFieldsFragment} from "./apollo_services";
 
 @Injectable({providedIn: 'root'})
 export class DexieService extends Dexie {
@@ -65,13 +66,17 @@ export class DexieService extends Dexie {
     this.solutions = this.table('solutions');
   }
 
-  getSolution<T>(exId: number, collId: number, toolId: string, partId: string): Dexie.Promise<DbSolution<T> | undefined> {
-    return this.solutions.get([toolId, collId, exId, partId]);
+  getSolution<T>(exerciseFragment: ExerciseSolveFieldsFragment, partId: string): Dexie.Promise<DbSolution<T> | undefined> {
+    return this.solutions.get([exerciseFragment.toolId, exerciseFragment.collectionId, exerciseFragment.id, partId]);
   }
 
-  upsertSolution<T>(exId: number, collId: number, toolId: string, partId: string, solution: T): Dexie.Promise<[string, number, number, string]> {
+  upsertSolution<T>(exerciseFragment: ExerciseSolveFieldsFragment, partId: string, solution: T): Dexie.Promise<[string, number, number, string]> {
     return this.solutions.put({
-      exId, collId, toolId, partId, solution
+      exId: exerciseFragment.id,
+      collId: exerciseFragment.collectionId,
+      toolId: exerciseFragment.toolId,
+      partId,
+      solution
     });
   }
 

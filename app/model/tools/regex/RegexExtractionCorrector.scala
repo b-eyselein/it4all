@@ -7,13 +7,13 @@ import model.tools.{ExPart, ExParts}
 import scala.util.matching.Regex
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-sealed abstract class RegexExPart(val partName: String, val urlName: String) extends ExPart
+sealed abstract class RegexExPart(val partName: String, val id: String) extends ExPart
 
-object RegexExParts extends ExParts[RegexExPart] {
+object RegexExPart extends ExParts[RegexExPart] {
 
   val values: IndexedSeq[RegexExPart] = findValues
 
-  case object RegexSingleExPart extends RegexExPart(partName = "Ausdruck erstellen", urlName = "regex")
+  case object RegexSingleExPart extends RegexExPart(partName = "Ausdruck erstellen", id = "regex")
 
 }
 

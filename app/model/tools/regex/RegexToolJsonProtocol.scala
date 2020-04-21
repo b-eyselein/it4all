@@ -18,6 +18,6 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
     Json.format
   }
 
-  override val partTypeFormat: Format[RegexExPart] = RegexExParts.jsonFormat
+  override val partTypeFormat: Format[RegexExPart] = RegexExPart.jsonFormat
 
 }

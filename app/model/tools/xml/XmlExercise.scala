@@ -3,15 +3,15 @@ package model.tools.xml
 import enumeratum.{EnumEntry, PlayEnum}
 import model.tools._
 
-sealed abstract class XmlExPart(val partName: String, val urlName: String) extends ExPart
+sealed abstract class XmlExPart(val partName: String, val id: String) extends ExPart
 
-object XmlExParts extends ExParts[XmlExPart] {
+object XmlExPart extends ExParts[XmlExPart] {
 
   val values: IndexedSeq[XmlExPart] = findValues
 
-  case object GrammarCreationXmlPart extends XmlExPart("Grammatik", "grammar")
+  case object GrammarCreationXmlPart extends XmlExPart(partName = "Grammatik", id = "grammar")
 
-  case object DocumentCreationXmlPart extends XmlExPart("Dokument", "document")
+  case object DocumentCreationXmlPart extends XmlExPart(partName = "Dokument", id = "document")
 
 }
 
@@ -31,4 +31,8 @@ final case class XmlExerciseContent(
   grammarDescription: String,
   rootNode: String,
   sampleSolutions: Seq[SampleSolution[XmlSolution]]
-) extends ExerciseContent[XmlSolution]
+) extends ExerciseContent[XmlSolution] {
+
+  override def parts: Seq[ExPart] = XmlExPart.values
+
+}

@@ -23,20 +23,24 @@
 
     </div>
 
-    <div class="column is-one-quarter-desktop is-half-tablet" *ngFor="let colTool of collectionTools">
+    <ng-container *ngIf="toolOverviewQuery">
+      <div class="column is-one-quarter-desktop is-half-tablet" *ngFor="let colTool of toolOverviewQuery.tools">
 
-      <div class="card">
-        <header class="card-header">
-          <p class="card-header-title">
-            {{colTool.name}}<sup *ngIf="colTool.status !== 'live'" [innerHTML]="'&nbsp;&' + colTool.status + ';'"></sup>
-          </p>
-        </header>
-        <div class="card-content"></div>
-        <footer class="card-footer">
-          <a [routerLink]="['/tools', colTool.id]" class="card-footer-item">Zum Tool</a>
-        </footer>
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">
+              {{colTool.name}}
+              <sup *ngIf="!isLive(colTool.state)" [innerHTML]="'&nbsp;&' + colTool.state.toLowerCase() + ';'"></sup>
+            </p>
+          </header>
+          <div class="card-content"></div>
+          <footer class="card-footer">
+            <a [routerLink]="['/tools', colTool.id]" class="card-footer-item">Zum Tool</a>
+          </footer>
+        </div>
+
       </div>
+    </ng-container>
 
-    </div>
   </div>
 </div>

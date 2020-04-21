@@ -26,6 +26,8 @@ class ApiController @Inject() (
 
   override protected val adminRightsRequired: Boolean = false
 
+  private val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
+
   private def executeGraphQLQuery(
     query: Document,
     user: Option[User],
@@ -47,7 +49,7 @@ class ApiController @Inject() (
       }
   }
 
-  def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest](graphQLModel.graphQLRequestFormat)) {
+  def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest](graphQLRequestFormat)) {
     implicit request =>
       QueryParser.parse(request.body.query) match {
         case Success(queryAst) =>

@@ -15,7 +15,7 @@ final case class DbExercise(
 )
 
 final case class DbExerciseTopic(
-  topicId: Int,
+  topicAbbreviation: String,
   exerciseId: Int,
   collectionId: Int,
   toolId: String

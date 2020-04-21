@@ -1,7 +1,8 @@
 package model.persistence
 
 import model.User
-import model.adaption.{Proficiencies, ToolProficiency, Topic, TopicProficiency}
+import model.adaption.{Proficiencies, ToolProficiency, TopicProficiency}
+import model.tools.Topic
 import play.api.db.slick.HasDatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.{ForeignKeyQuery, PrimaryKey, ProvenShape}
@@ -41,15 +42,15 @@ trait ProficiencyTableDefs extends HasDatabaseConfigProvider[JdbcProfile] {
 
   protected class TopicsTable(tag: Tag) extends Table[Topic](tag, "topics") {
 
-    def id = column[Int]("id")
+    def abbreviation: Rep[String] = column[String]("abbreviation")
 
-    def toolId = column[String]("tool_id")
+    def toolId: Rep[String] = column[String]("tool_id")
 
-    def name = column[String]("name")
+    def title: Rep[String] = column[String]("title")
 
-    def pk = primaryKey("pk", (id, toolId))
+    def pk: PrimaryKey = primaryKey("pk", (abbreviation, toolId))
 
-    override def * : ProvenShape[Topic] = (id, toolId, name) <> (Topic.tupled, Topic.unapply)
+    override def * : ProvenShape[Topic] = (abbreviation, toolId, title) <> (Topic.tupled, Topic.unapply)
 
   }
 

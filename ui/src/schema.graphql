@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Apr 20 2020 16:22:44 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Tue Apr 21 2020 14:09:23 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -40,6 +40,7 @@ type CollectionTol {
   readCollections: [String!]!
   exerciseCount: Int!
   allExercises: [Exercise!]!
+  part(partId: String!): ExPart
 }
 
 type DTDParseException {
@@ -83,7 +84,13 @@ type Exercise {
   text: String!
   topics: [Topic!]!
   difficulty: Int!
-  content: ExerciseContent
+  programmingContent: ProgrammingExerciseContent
+  regexContent: RegexExerciseContent
+  sqlContent: SqlExerciseContent
+  umlContent: UmlExerciseContent
+  webContent: WebExerciseContent
+  xmlContent: XmlExerciseContent
+  parts: [ExPart!]!
 }
 
 type ExerciseCollection {
@@ -99,8 +106,6 @@ type ExerciseCollection {
   readExercises: [String!]!
 }
 
-union ExerciseContent = ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
-
 type ExerciseFile {
   name: String!
   fileType: String!
@@ -113,6 +118,11 @@ input ExerciseFileInput {
   fileType: String!
   editable: Boolean!
   content: String!
+}
+
+type ExPart {
+  id: String!
+  name: String!
 }
 
 type GradedHtmlTaskResult {
@@ -204,11 +214,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_SAMPLE
-  UNSUCCESSFUL_MATCH
-  ONLY_USER
   SUCCESSFUL_MATCH
   PARTIAL_MATCH
+  ONLY_USER
+  ONLY_SAMPLE
+  UNSUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -252,6 +262,7 @@ type ProgrammingExerciseContent {
   unitTestPart: UnitTestPart!
   implementationPart: ImplementationPart!
   sampleSolutions: [ProgrammingSampleSolution!]!
+  part(partId: String!): ProgExPart
 }
 
 type ProgrammingSampleSolution {
@@ -274,8 +285,8 @@ type Query {
 }
 
 enum RegexCorrectionType {
-  MATCHING
   EXTRACTION
+  MATCHING
 }
 
 type RegexExerciseContent {
@@ -284,6 +295,7 @@ type RegexExerciseContent {
   matchTestData: [RegexMatchTestData!]!
   extractionTestData: [RegexExtractionTestData!]!
   sampleSolutions: [RegexSampleSolution!]!
+  part(partId: String!): RegexExPart
 }
 
 enum RegexExPart {
@@ -411,14 +423,15 @@ type SqlExerciseContent {
   exerciseType: SqlExerciseType!
   hint: String
   sampleSolutions: [SqlSampleSolution!]!
+  part(partId: String!): SqlExPart
 }
 
 enum SqlExerciseType {
   UPDATE
+  DELETE
   INSERT
   CREATE
   SELECT
-  DELETE
 }
 
 enum SqlExPart {
@@ -560,9 +573,8 @@ enum ToolState {
 }
 
 type Topic {
-  id: Int!
-  toolId: String!
   abbreviation: String!
+  toolId: String!
   title: String!
 }
 
@@ -725,6 +737,7 @@ type UmlCompleteResult implements AbstractCorrectionResult {
 type UmlExerciseContent {
   toIgnore: [String!]!
   sampleSolutions: [UmlSampleSolution!]!
+  part(partId: String!): UmlExPart
   mappings: [KeyValueObject!]!
 }
 
@@ -867,6 +880,7 @@ type WebExerciseContent {
   siteSpec: SiteSpec!
   files: [ExerciseFile!]!
   sampleSolutions: [WebSampleSolution!]!
+  part(partId: String!): WebExPart
 }
 
 enum WebExPart {
@@ -919,6 +933,7 @@ type XmlExerciseContent {
   grammarDescription: String!
   rootNode: String!
   sampleSolutions: [XmlSampleSolution!]!
+  part(partId: String!): XmlExPart
 }
 
 enum XmlExPart {

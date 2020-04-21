@@ -23,7 +23,7 @@ object RoseGraphQLModels extends ToolGraphQLModelBasics[String, RoseExerciseCont
     ExcludeFields("points", "maxPoints", "result")
   )
 
-  override val PartTypeInputType: EnumType[RoseExPart] = EnumType(
+  override val partEnumType: EnumType[RoseExPart] = EnumType(
     "RoseExPart",
     values = RoseExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )

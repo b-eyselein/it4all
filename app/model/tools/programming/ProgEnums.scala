@@ -5,17 +5,17 @@ import model.tools.{ExPart, ExParts}
 
 // Exercise Parts
 
-sealed abstract class ProgExPart(val partName: String, val urlName: String) extends ExPart
+sealed abstract class ProgExPart(val partName: String, val id: String) extends ExPart
 
 object ProgExPart extends ExParts[ProgExPart] {
 
   override def values: IndexedSeq[ProgExPart] = findValues
 
-  case object TestCreation extends ProgExPart(partName = "Erstellen der Tests", urlName = "testCreation")
+  case object TestCreation extends ProgExPart(partName = "Erstellen der Tests", id = "testCreation")
 
-  case object Implementation extends ProgExPart(partName = "Implementierung", urlName = "implementation")
+  case object Implementation extends ProgExPart(partName = "Implementierung", id = "implementation")
 
-  case object ActivityDiagram extends ProgExPart(partName = "Als Aktivitätsdiagramm", urlName = "activity")
+  case object ActivityDiagram extends ProgExPart(partName = "Als Aktivitätsdiagramm", id = "activity")
 
 }
 

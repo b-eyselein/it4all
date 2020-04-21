@@ -4,7 +4,12 @@ import javax.inject.{Inject, Singleton}
 import model.json.JsonProtocols
 import model.persistence.ExerciseTableDefs
 import model.tools._
-import model.tools.sql.SqlGraphQLModels
+import model.tools.programming.{ProgrammingExerciseContent, ProgrammingGraphQLModels}
+import model.tools.regex.{RegexExerciseContent, RegexGraphQLModels}
+import model.tools.sql.{SqlExerciseContent, SqlGraphQLModels}
+import model.tools.uml.{UmlExerciseContent, UmlGraphQLModels}
+import model.tools.web.{WebExerciseContent, WebGraphQLModels}
+import model.tools.xml.{XmlExerciseContent, XmlGraphQLModels}
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
 import play.api.{Environment, Mode}
@@ -23,11 +28,12 @@ final case class GraphQLContext(
   tables: ExerciseTableDefs,
   user: Option[User]
 )
-
 @Singleton
 class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit val ec: ExecutionContext)
     extends ToolGraphQLModels
     with GraphQLMutations {
+
+  type UntypedExercise = Exercise[_, _ <: ExerciseContent[_]]
 
   private val resourcesServerBaseUrl = {
     val port = if (environment.mode == Mode.Dev) 5000 else 5050
@@ -35,42 +41,52 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
     s"http://localhost:$port/tools"
   }
 
-  val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
-
   // Types
 
-  protected val exerciseContentUnionType: UnionType[Unit] = UnionType(
-    "ExerciseContent",
-    types = ToolList.tools.map(t => t.graphQlModels.exerciseContentType)
+  private val exPartType: ObjectType[Unit, ExPart] = ObjectType(
+    "ExPart",
+    fields[Unit, ExPart](
+      Field("id", StringType, resolve = _.value.id),
+      Field("name", StringType, resolve = _.value.partName)
+    )
   )
 
-  protected val sampleSolutionUnionType: UnionType[Unit] = UnionType(
-    "SampleSolution",
-    types = ToolList.tools.map(t => t.graphQlModels.sampleSolutionType)
-  )
-
-  final val exerciseType: ObjectType[GraphQLContext, Exercise[_,_]] = {
+  private val exerciseType: ObjectType[Unit, UntypedExercise] = {
     implicit val tt: ObjectType[Unit, Topic] = topicsType
 
     deriveObjectType(
-      ReplaceField(
-        "content",
+      ExcludeFields("content"),
+      AddFields(
         Field(
-          "content",
-          OptionType(exerciseContentUnionType),
-          // FIXME: do not delete this cast...: .asInstanceOf[Any]
-          resolve = context => context.value.content.asInstanceOf[Any]
-        )
-      )/*,
-      ReplaceField(
-        "sampleSolutions",
-        Field(
-          "sampleSolutions",
-          ListType(sampleSolutionUnionType),
-          resolve = context => context.value.graphQLSampleSolutions
-        )
+          "programmingContent",
+          OptionType(ProgrammingGraphQLModels.exerciseContentType),
+          resolve = _.value.content match {
+            case x: ProgrammingExerciseContent => Some(x)
+            case _                             => None
+          }
+        ),
+        Field("regexContent", OptionType(RegexGraphQLModels.exerciseContentType), resolve = _.value.content match {
+          case x: RegexExerciseContent => Some(x)
+          case _                       => None
+        }),
+        Field("sqlContent", OptionType(SqlGraphQLModels.exerciseContentType), resolve = _.value.content match {
+          case x: SqlExerciseContent => Some(x)
+          case _                     => None
+        }),
+        Field("umlContent", OptionType(UmlGraphQLModels.exerciseContentType), resolve = _.value.content match {
+          case x: UmlExerciseContent => Some(x)
+          case _                     => None
+        }),
+        Field("webContent", OptionType(WebGraphQLModels.exerciseContentType), resolve = _.value.content match {
+          case x: WebExerciseContent => Some(x)
+          case _                     => None
+        }),
+        Field("xmlContent", OptionType(XmlGraphQLModels.exerciseContentType), resolve = _.value.content match {
+          case x: XmlExerciseContent => Some(x)
+          case _                     => None
+        }),
+        Field("parts", ListType(exPartType), resolve = context => context.value.content.parts)
       )
-     */
     )
   }
 
@@ -119,7 +135,7 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
   private val ToolType: ObjectType[GraphQLContext, CollectionTool] = ObjectType(
     "CollectionTol",
     fields[GraphQLContext, CollectionTool](
-      Field("id", StringType, resolve = _.value.id),
+      Field("id", IDType, resolve = _.value.id),
       Field("name", StringType, resolve = _.value.name),
       Field("state", toolStateType, resolve = _.value.toolState),
       // Fields for lessons
@@ -182,6 +198,12 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
             case None       => ???
             case Some(tool) => tool.futureAllExercises(context.ctx.tables)
           }
+      ),
+      Field(
+        "part",
+        OptionType(exPartType),
+        arguments = partIdArgument :: Nil,
+        resolve = context => ??? // context.value.parts
       )
     )
   )

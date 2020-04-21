@@ -1,8 +1,8 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
 
-const XmlGrammarCreation: ToolPart = {id: 'grammar', name: 'Grammatik erstellen'};
+export const XmlGrammarCreation: ToolPart = {id: 'grammar', name: 'Grammatik erstellen'};
 
-const XmlDocumentCreation: ToolPart = {id: 'document', name: 'Dokument erstellen'};
+export const XmlDocumentCreation: ToolPart = {id: 'document', name: 'Dokument erstellen'};
 
 
 export const XmlTool: CollectionTool = new class XmlToolClass extends CollectionTool {

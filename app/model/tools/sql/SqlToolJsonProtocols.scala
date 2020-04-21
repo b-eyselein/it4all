@@ -11,6 +11,6 @@ object SqlToolJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExer
     Json.format
   }
 
-  override val partTypeFormat: Format[SqlExPart] = SqlExParts.jsonFormat
+  override val partTypeFormat: Format[SqlExPart] = SqlExPart.jsonFormat
 
 }

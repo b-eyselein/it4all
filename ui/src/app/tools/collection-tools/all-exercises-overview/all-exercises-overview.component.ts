@@ -1,7 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Tool} from '../../../_interfaces/tool';
-import {collectionTools} from '../collection-tools-list';
 import {distinctObjectArray, flatMapArray} from '../../../helpers';
 import {
   AllExercisesOverviewGQL,
@@ -9,29 +7,28 @@ import {
   FieldsForLinkFragment,
   TopicFragment
 } from "../../../_services/apollo_services";
+import {Subscription} from "rxjs";
 
 @Component({templateUrl: './all-exercises-overview.component.html'})
-export class AllExercisesOverviewComponent implements OnInit {
+export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
 
-  tool: Tool;
-
+  private sub: Subscription;
   allExercisesOverviewQuery: AllExercisesOverviewQuery;
 
   distinctTags: TopicFragment[];
   filteredExercises: FieldsForLinkFragment[];
   filtersActivated: Map<TopicFragment, boolean> = new Map();
 
+
   constructor(private route: ActivatedRoute, private allExercisesOverviewGQL: AllExercisesOverviewGQL) {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe((paramMap) => {
+    this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
 
-      this.tool = collectionTools.find((t) => t.id === toolId);
-
       this.allExercisesOverviewGQL
-        .watch({toolId: this.tool.id})
+        .watch({toolId})
         .valueChanges
         .subscribe(({data}) => {
           this.allExercisesOverviewQuery = data;
@@ -46,6 +43,9 @@ export class AllExercisesOverviewComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
 
   toggleFilter(tag: TopicFragment): void {
     this.filtersActivated.set(tag, !this.filtersActivated.get(tag));

@@ -1,5 +1,6 @@
 package model.tools.uml
 
+import model.GraphQLArguments
 import model.core.matching.{MatchType, MatchingResult}
 import model.json.KeyValueObject
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
@@ -8,7 +9,14 @@ import model.tools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart] {
+object UmlGraphQLModels
+    extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart]
+    with GraphQLArguments {
+
+  override val partEnumType: EnumType[UmlExPart] = EnumType(
+    "UmlExPart",
+    values = UmlExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
   private val umlVisibilityType: EnumType[UmlVisibility] = deriveEnumType()
   private val umlClassTypeType: EnumType[UmlClassType]   = deriveEnumType()
@@ -86,6 +94,14 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerc
     implicit val sst: ObjectType[Unit, SampleSolution[UmlClassDiagram]] = sampleSolutionType
 
     deriveObjectType(
+      AddFields(
+        Field(
+          "part",
+          OptionType(partEnumType),
+          arguments = partIdArgument :: Nil,
+          resolve = context => UmlExPart.values.find(_.id == context.arg(partIdArgument))
+        )
+      ),
       ReplaceField(
         "mappings",
         Field(
@@ -204,10 +220,5 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerc
   }
 
   override val AbstractResultTypeType: OutputType[Any] = umlCompleteResultType
-
-  override val PartTypeInputType: EnumType[UmlExPart] = EnumType(
-    "UmlExPart",
-    values = UmlExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
-  )
 
 }

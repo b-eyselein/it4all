@@ -4,7 +4,7 @@ import enumeratum.{EnumEntry, PlayEnum}
 
 trait ExPart extends EnumEntry {
 
-  def urlName: String
+  def id: String
 
   def partName: String
 

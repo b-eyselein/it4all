@@ -25,10 +25,10 @@
             <div class="has-text-warning" *ngIf="collection.exerciseCount === 0">Keine Aufgaben!</div>
           </div>
           <footer class="card-footer">
-            <a [routerLink]="['/admin', tool.id, 'collections', collection.id, 'editForm']" class="card-footer-item">
+            <a [routerLink]="[collection.id, 'editForm']" class="card-footer-item">
               Sammlung editieren
             </a>
-            <a [routerLink]="['/admin', tool.id, 'collections', collection.id, 'exercises']" class="card-footer-item">
+            <a [routerLink]="[ collection.id, 'exercises']" class="card-footer-item">
               Aufgabenadministration
             </a>
           </footer>

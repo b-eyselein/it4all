@@ -21,6 +21,8 @@ final case class ProgrammingExerciseContent(
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
     ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this.baseData, completeTestData)
 
+  def parts: Seq[ProgExPart] = ProgExPart.values
+
 }
 
 final case class UnitTestPart(

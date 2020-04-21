@@ -12,9 +12,8 @@
     <div class="notification is-light-grey" [innerHTML]="exerciseOverviewQuery.tool.collection.exercise.text"></div>
 
     <div class="columns">
-      <ng-container *ngFor="let part of tool.parts">
-        <div class="column"
-             *ngIf="!part.disabled && tool.exerciseHasPart(exerciseOverviewQuery.tool.collection.exercise, part)">
+      <ng-container *ngFor="let part of parts">
+        <div class="column">
           <a class="button is-link is-fullwidth" [routerLink]="['parts', part.id]">
             {{part.name}}
           </a>

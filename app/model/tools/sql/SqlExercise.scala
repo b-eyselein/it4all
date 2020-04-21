@@ -3,13 +3,13 @@ package model.tools.sql
 import enumeratum.{EnumEntry, PlayEnum}
 import model.tools._
 
-sealed abstract class SqlExPart(val partName: String, val urlName: String) extends ExPart
+sealed abstract class SqlExPart(val partName: String, val id: String) extends ExPart
 
-object SqlExParts extends ExParts[SqlExPart] {
+object SqlExPart extends ExParts[SqlExPart] {
 
   val values: IndexedSeq[SqlExPart] = findValues
 
-  case object SqlSingleExPart extends SqlExPart("Bearbeiten", "solve")
+  case object SqlSingleExPart extends SqlExPart(partName = "Bearbeiten", id = "solve")
 
 }
 
@@ -61,4 +61,8 @@ final case class SqlExerciseContent(
   exerciseType: SqlExerciseType,
   hint: Option[String],
   sampleSolutions: Seq[SampleSolution[String]]
-) extends ExerciseContent[String]
+) extends ExerciseContent[String] {
+
+  override def parts: Seq[ExPart] = SqlExPart.values
+
+}

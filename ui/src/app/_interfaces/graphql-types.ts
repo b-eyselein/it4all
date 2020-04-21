@@ -50,6 +50,7 @@ export type CollectionTol = {
   readCollections: Array<Scalars['String']>;
   exerciseCount: Scalars['Int'];
   allExercises: Array<Exercise>;
+  part?: Maybe<ExPart>;
 };
 
 
@@ -60,6 +61,11 @@ export type CollectionTolLessonArgs = {
 
 export type CollectionTolCollectionArgs = {
   collId: Scalars['Int'];
+};
+
+
+export type CollectionTolPartArgs = {
+  partId: Scalars['String'];
 };
 
 export type DtdParseException = {
@@ -109,7 +115,13 @@ export type Exercise = {
   text: Scalars['String'];
   topics: Array<Topic>;
   difficulty: Scalars['Int'];
-  content?: Maybe<ExerciseContent>;
+  programmingContent?: Maybe<ProgrammingExerciseContent>;
+  regexContent?: Maybe<RegexExerciseContent>;
+  sqlContent?: Maybe<SqlExerciseContent>;
+  umlContent?: Maybe<UmlExerciseContent>;
+  webContent?: Maybe<WebExerciseContent>;
+  xmlContent?: Maybe<XmlExerciseContent>;
+  parts: Array<ExPart>;
 };
 
 export type ExerciseCollection = {
@@ -131,8 +143,6 @@ export type ExerciseCollectionExerciseArgs = {
   exId: Scalars['Int'];
 };
 
-export type ExerciseContent = ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent;
-
 export type ExerciseFile = {
    __typename?: 'ExerciseFile';
   name: Scalars['String'];
@@ -146,6 +156,12 @@ export type ExerciseFileInput = {
   fileType: Scalars['String'];
   editable: Scalars['Boolean'];
   content: Scalars['String'];
+};
+
+export type ExPart = {
+   __typename?: 'ExPart';
+  id: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type GradedHtmlTaskResult = {
@@ -247,11 +263,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlySample = 'ONLY_SAMPLE',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  OnlyUser = 'ONLY_USER',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  PartialMatch = 'PARTIAL_MATCH'
+  PartialMatch = 'PARTIAL_MATCH',
+  OnlyUser = 'ONLY_USER',
+  OnlySample = 'ONLY_SAMPLE',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -359,6 +375,12 @@ export type ProgrammingExerciseContent = {
   unitTestPart: UnitTestPart;
   implementationPart: ImplementationPart;
   sampleSolutions: Array<ProgrammingSampleSolution>;
+  part?: Maybe<ProgExPart>;
+};
+
+
+export type ProgrammingExerciseContentPartArgs = {
+  partId: Scalars['String'];
 };
 
 export type ProgrammingSampleSolution = {
@@ -394,8 +416,8 @@ export type QuerySqlDbContentsArgs = {
 };
 
 export enum RegexCorrectionType {
-  Matching = 'MATCHING',
-  Extraction = 'EXTRACTION'
+  Extraction = 'EXTRACTION',
+  Matching = 'MATCHING'
 }
 
 export type RegexExerciseContent = {
@@ -405,6 +427,12 @@ export type RegexExerciseContent = {
   matchTestData: Array<RegexMatchTestData>;
   extractionTestData: Array<RegexExtractionTestData>;
   sampleSolutions: Array<RegexSampleSolution>;
+  part?: Maybe<RegexExPart>;
+};
+
+
+export type RegexExerciseContentPartArgs = {
+  partId: Scalars['String'];
 };
 
 export enum RegexExPart {
@@ -551,14 +579,20 @@ export type SqlExerciseContent = {
   exerciseType: SqlExerciseType;
   hint?: Maybe<Scalars['String']>;
   sampleSolutions: Array<SqlSampleSolution>;
+  part?: Maybe<SqlExPart>;
+};
+
+
+export type SqlExerciseContentPartArgs = {
+  partId: Scalars['String'];
 };
 
 export enum SqlExerciseType {
   Update = 'UPDATE',
+  Delete = 'DELETE',
   Insert = 'INSERT',
   Create = 'CREATE',
-  Select = 'SELECT',
-  Delete = 'DELETE'
+  Select = 'SELECT'
 }
 
 export enum SqlExPart {
@@ -719,9 +753,8 @@ export enum ToolState {
 
 export type Topic = {
    __typename?: 'Topic';
-  id: Scalars['Int'];
-  toolId: Scalars['String'];
   abbreviation: Scalars['String'];
+  toolId: Scalars['String'];
   title: Scalars['String'];
 };
 
@@ -899,7 +932,13 @@ export type UmlExerciseContent = {
    __typename?: 'UmlExerciseContent';
   toIgnore: Array<Scalars['String']>;
   sampleSolutions: Array<UmlSampleSolution>;
+  part?: Maybe<UmlExPart>;
   mappings: Array<KeyValueObject>;
+};
+
+
+export type UmlExerciseContentPartArgs = {
+  partId: Scalars['String'];
 };
 
 export enum UmlExPart {
@@ -1054,6 +1093,12 @@ export type WebExerciseContent = {
   siteSpec: SiteSpec;
   files: Array<ExerciseFile>;
   sampleSolutions: Array<WebSampleSolution>;
+  part?: Maybe<WebExPart>;
+};
+
+
+export type WebExerciseContentPartArgs = {
+  partId: Scalars['String'];
 };
 
 export enum WebExPart {
@@ -1112,6 +1157,12 @@ export type XmlExerciseContent = {
   grammarDescription: Scalars['String'];
   rootNode: Scalars['String'];
   sampleSolutions: Array<XmlSampleSolution>;
+  part?: Maybe<XmlExPart>;
+};
+
+
+export type XmlExerciseContentPartArgs = {
+  partId: Scalars['String'];
 };
 
 export enum XmlExPart {

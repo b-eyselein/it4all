@@ -8,7 +8,7 @@ import sangria.schema.{Argument, BooleanType, Field, ObjectType, OptionType, fie
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait GraphQLMutations extends GraphQLBasics {
+trait GraphQLMutations extends GraphQLArguments {
 
   protected implicit val ec: ExecutionContext
 
@@ -16,7 +16,7 @@ trait GraphQLMutations extends GraphQLBasics {
     implicit val solTypeFormat: Format[toolMain.SolType] = toolMain.toolJsonProtocol.solutionFormat
 
     val SolTypeInputArg  = Argument("solution", toolMain.graphQlModels.SolTypeInputType)
-    val PartTypeInputArg = Argument("part", toolMain.graphQlModels.PartTypeInputType)
+    val PartTypeInputArg = Argument("part", toolMain.graphQlModels.partEnumType)
 
     Field(
       s"correct${toolMain.id.capitalize}",

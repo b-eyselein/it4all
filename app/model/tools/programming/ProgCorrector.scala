@@ -238,7 +238,7 @@ object ProgCorrector {
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
 
     val solutionTargetDir: File =
-      ProgTool.solutionDirForExercise(user.username, exercise.collectionId, exercise.id) / part.urlName
+      ProgTool.solutionDirForExercise(user.username, exercise.collectionId, exercise.id) / part.id
 
     // Create or truncate result file
     val resultFile = solutionTargetDir / resultFileName

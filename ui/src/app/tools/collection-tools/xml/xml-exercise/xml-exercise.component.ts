@@ -16,6 +16,7 @@ import {ExerciseFile, XmlExPart, XmlSolution, XmlSolutionInput} from '../../../.
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
+import {XmlDocumentCreation, XmlGrammarCreation} from "../xml-tool";
 
 function getXmlGrammarContent(rootNode: string): string {
   return `<!ELEMENT ${rootNode} (EMPTY)>`;
@@ -37,9 +38,10 @@ export class XmlExerciseComponent
   extends ComponentWithExercise<XmlSolution, XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionGQL, any>
   implements OnInit {
 
-  @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: XmlExerciseContentSolveFieldsFragment;
+
+  oldPart: ToolPart;
 
   isGrammarPart: boolean;
 
@@ -53,6 +55,15 @@ export class XmlExerciseComponent
   }
 
   ngOnInit() {
+    switch (this.contentFragment.part) {
+      case XmlExPart.DocumentCreationXmlPart:
+        this.oldPart = XmlDocumentCreation;
+        break;
+      case XmlExPart.GrammarCreationXmlPart:
+        this.oldPart = XmlGrammarCreation;
+        break;
+    }
+
     const rootNode = this.contentFragment.rootNode;
 
     this.isGrammarPart = this.oldPart.id === 'grammar';
@@ -60,7 +71,7 @@ export class XmlExerciseComponent
     const grammarFileName = `${rootNode}.dtd`;
     this.grammarFile = {
       name: grammarFileName,
-      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : this.contentFragment.xmlSampleSolutions[0].xmlSampleSolution.grammar,
+      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : this.contentFragment.sampleSolutions[0].sample.grammar,
       fileType: 'dtd',
       editable: this.isGrammarPart,
     };
@@ -75,7 +86,7 @@ export class XmlExerciseComponent
 
     this.exerciseFiles = [this.grammarFile, this.documentFile];
 
-    this.loadOldSolutionAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.oldPart)
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id)
       .then((oldSol) => {
         if (oldSol) {
           this.grammarFile.content = oldSol.grammar;
@@ -88,9 +99,7 @@ export class XmlExerciseComponent
   }
 
   correct(): void {
-    const part: XmlExPart = this.isGrammarPart ? XmlExPart.GrammarCreationXmlPart : XmlExPart.DocumentCreationXmlPart;
-
-    this.correctAbstract(this.exerciseFragment, part, this.oldPart);
+    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.oldPart.id);
   }
 
   protected getSolution(): XmlSolutionInput {
@@ -101,7 +110,7 @@ export class XmlExerciseComponent
   }
 
   get sampleSolutions(): XmlSolution[] {
-    return this.contentFragment.xmlSampleSolutions.map((sample) => sample.xmlSampleSolution);
+    return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 
   get grammarDescription(): string {

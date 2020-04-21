@@ -6,7 +6,6 @@ import {
   ExerciseSolveFieldsFragment,
   RegexExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
-import {ToolPart} from '../../../../_interfaces/tool';
 import {
   RegexCorrectionGQL,
   RegexCorrectionMutation,
@@ -25,7 +24,6 @@ export class RegexExerciseComponent
   extends ComponentWithExercise<string, string, RegexCorrectionMutation, RegexExPart, RegexCorrectionGQL, any>
   implements OnInit {
 
-  @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: RegexExerciseContentSolveFieldsFragment;
 
@@ -38,7 +36,7 @@ export class RegexExerciseComponent
   }
 
   ngOnInit(): void {
-    this.loadOldSolutionAbstract(this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, RegexExercisePart)
+    this.loadOldSolutionAbstract(this.exerciseFragment, RegexExercisePart.id)
       .then((oldSol) => this.solution = oldSol ? oldSol : '');
   }
 
@@ -47,7 +45,7 @@ export class RegexExerciseComponent
   }
 
   get sampleSolutions(): string[] {
-    return this.contentFragment.regexSampleSolutions.map((s) => s.regexSampleSolution);
+    return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 
   get regexIllegalRegexResult(): RegexIllegalRegexResultFragment | undefined {
@@ -68,7 +66,7 @@ export class RegexExerciseComponent
       return;
     }
 
-    this.correctAbstract(this.exerciseFragment, RegexExPart.RegexSingleExPart, this.oldPart);
+    this.correctAbstract(this.exerciseFragment, RegexExPart.RegexSingleExPart, RegexExercisePart.id);
   }
 
   // FIXME: make directive?

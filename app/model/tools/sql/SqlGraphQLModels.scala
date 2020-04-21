@@ -1,6 +1,6 @@
 package model.tools.sql
 
-import model.GraphQLContext
+import model.{GraphQLArguments, GraphQLContext}
 import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
 import model.tools.{SampleSolution, ToolGraphQLModelBasics}
@@ -11,9 +11,14 @@ import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 import sangria.macros.derive._
 import sangria.schema._
 
-object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart] {
+object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart] with GraphQLArguments {
 
   override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = buildSampleSolutionType("Sql", StringType)
+
+  override val partEnumType: EnumType[SqlExPart] = EnumType(
+    "SqlExPart",
+    values = SqlExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
   private val sqlExerciseTagType: EnumType[SqlExTag] = deriveEnumType()
 
@@ -24,7 +29,16 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     implicit val seTypeT: EnumType[SqlExerciseType]            = sqlExerciseTypeType
     implicit val sst: ObjectType[Unit, SampleSolution[String]] = sampleSolutionType
 
-    deriveObjectType()
+    deriveObjectType(
+      AddFields(
+        Field(
+          "part",
+          OptionType(partEnumType),
+          arguments = partIdArgument :: Nil,
+          resolve = context => SqlExPart.values.find(_.id == context.arg(partIdArgument))
+        )
+      )
+    )
   }
 
   // Solution types
@@ -137,13 +151,6 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
   override val AbstractResultTypeType: OutputType[Any] = UnionType(
     "SqlAbstractResult",
     types = sqlIllegalQueryResultType :: sqlWrongQueryTypeResult :: sqlResultType :: Nil
-  )
-
-  // Part type
-
-  override val PartTypeInputType: EnumType[SqlExPart] = EnumType(
-    "SqlExPart",
-    values = SqlExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )
 
   // Fields for query types

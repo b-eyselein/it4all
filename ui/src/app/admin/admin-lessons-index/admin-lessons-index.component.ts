@@ -1,18 +1,15 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ComponentWithCollectionTool} from '../../tools/collection-tools/_helpers/ComponentWithCollectionTool';
 import {AdminLessonIndexGQL, AdminLessonIndexQuery} from "../../_services/apollo_services";
 import {Subscription} from "rxjs";
 
 @Component({templateUrl: './admin-lessons-index.component.html'})
-export class AdminLessonsIndexComponent extends ComponentWithCollectionTool implements OnInit, OnDestroy {
+export class AdminLessonsIndexComponent implements OnInit, OnDestroy {
 
   sub: Subscription;
-
   adminLessonIndexQuery: AdminLessonIndexQuery;
 
   constructor(private route: ActivatedRoute, private adminLessonIndexGQL: AdminLessonIndexGQL) {
-    super(route);
   }
 
   ngOnInit() {

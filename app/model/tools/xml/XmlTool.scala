@@ -36,10 +36,10 @@ object XmlTool extends CollectionTool("xml", "Xml") {
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[XmlCompleteResult]] = Future.successful(
     part match {
-      case XmlExParts.GrammarCreationXmlPart =>
+      case XmlExPart.GrammarCreationXmlPart =>
         XmlCorrector.correctGrammar(solution, exercise.content.sampleSolutions, solutionSaved)
 
-      case XmlExParts.DocumentCreationXmlPart =>
+      case XmlExPart.DocumentCreationXmlPart =>
         XmlCorrector.correctDocument(
           solution,
           solutionDirForExercise(user.username, collection.id, exercise.id).createDirectories(),

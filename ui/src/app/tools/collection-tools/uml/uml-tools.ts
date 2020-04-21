@@ -1,10 +1,6 @@
 import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
 import {distinctStringArray} from '../../../helpers';
-import {
-  ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment,
-  UmlSampleSolutionFragment
-} from '../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../_services/apollo_services';
 import {KeyValueObject} from '../../../_interfaces/graphql-types';
 
 export const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
@@ -75,7 +71,7 @@ export function getUmlExerciseTextParts(
       .map((s) => replaceWithMapping(exerciseContent.mappings, s))
   );
 
-  const sampleSolution = exerciseContent.umlSampleSolutions[0].umlSampleSolution;
+  const sampleSolution = exerciseContent.sampleSolutions[0].sample;
 
   const selectableClasses = allBaseForms.map<SelectableClass>((name) => {
       return {

@@ -92,13 +92,14 @@ trait ToolGraphQLModelBasics[SolType, ContentType, PartType <: ExPart] extends T
     )
   )
 
-  val exerciseContentType: ObjectType[Unit, ContentType]
+  val exerciseContentType: OutputType[ContentType]
 
   val AbstractResultTypeType: OutputType[Any]
 
   val sampleSolutionType: ObjectType[Unit, SampleSolution[SolType]]
 
   val SolTypeInputType: InputType[SolType]
-  val PartTypeInputType: EnumType[PartType]
+
+  val partEnumType: EnumType[PartType]
 
 }

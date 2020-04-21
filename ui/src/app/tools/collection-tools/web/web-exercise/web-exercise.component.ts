@@ -11,6 +11,7 @@ import {WebCorrectionGQL, WebCorrectionMutation} from '../web-apollo-mutations.s
 import {ExerciseFile, WebExPart, WebSolution, WebSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
+import {HtmlPart, JsPart} from "../web-tool";
 
 @Component({
   selector: 'it4all-web-exercise',
@@ -20,10 +21,10 @@ export class WebExerciseComponent
   extends ComponentWithExercise<WebSolution, WebSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionGQL, any>
   implements OnInit {
 
-  @Input() part: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: WebExerciseContentSolveFieldsFragment;
 
+  part: ToolPart;
 
   exerciseFiles: ExerciseFile[] = [];
 
@@ -32,17 +33,23 @@ export class WebExerciseComponent
   }
 
   ngOnInit(): void {
+    switch (this.contentFragment.part) {
+      case WebExPart.HtmlPart:
+        this.part = HtmlPart;
+        break;
+      case WebExPart.JsPart:
+        this.part = JsPart;
+    }
+
     this.exerciseFiles = this.contentFragment.files;
 
-    this.dexieService.getSolution<ExerciseFile[]>(
-      this.exerciseFragment.id, this.exerciseFragment.collectionId, this.exerciseFragment.toolId, this.part.id
-    ).then((oldSolution: DbSolution<ExerciseFile[]> | undefined) => this.exerciseFiles = oldSolution ? oldSolution.solution : []);
+    this.dexieService
+      .getSolution<ExerciseFile[]>(this.exerciseFragment, this.part.id)
+      .then((oldSolution: DbSolution<ExerciseFile[]> | undefined) => this.exerciseFiles = oldSolution ? oldSolution.solution : []);
   }
 
   correct(): void {
-    const exPart = this.part.id === 'html' ? WebExPart.HtmlPart : WebExPart.JsPart;
-
-    this.correctAbstract(this.exerciseFragment, exPart, this.part);
+    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.part.id);
   }
 
   protected getSolution(): WebSolution {
@@ -52,7 +59,7 @@ export class WebExerciseComponent
   }
 
   get sampleSolutions(): WebSolution[] {
-    return this.contentFragment.webSampleSolution.map((s) => s.webSampleSolutions);
+    return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 
 }

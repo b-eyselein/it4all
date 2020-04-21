@@ -2,7 +2,7 @@ package model
 
 import sangria.schema.{Argument, IntType, StringType}
 
-trait GraphQLBasics {
+trait GraphQLArguments {
 
   // Arguments
 
@@ -13,6 +13,8 @@ trait GraphQLBasics {
   protected val collIdArgument: Argument[Int] = Argument("collId", IntType)
 
   protected val exIdArgument: Argument[Int] = Argument("exId", IntType)
+
+  protected val partIdArgument: Argument[String] = Argument("partId", StringType)
 
   protected val contentArgument: Argument[String] = Argument("content", StringType)
 

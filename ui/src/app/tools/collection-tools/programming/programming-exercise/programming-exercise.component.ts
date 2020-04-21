@@ -22,8 +22,6 @@ export class ProgrammingExerciseComponent
   extends ComponentWithExercise<ProgSolution, ProgSolutionInput, ProgCorrectionMutation, ProgExPart, ProgCorrectionGQL, ProgrammingCorrectionResult>
   implements OnInit {
 
-
-  @Input() oldPart: ToolPart;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: ProgExerciseContentSolveFieldsFragment;
 
@@ -34,11 +32,11 @@ export class ProgrammingExerciseComponent
   }
 
   get sampleSolutionFilesList(): ExerciseFile[][] {
-    return this.contentFragment.progSampleSolutions.map((s) => s.progSampleSolution.files);
+    return this.contentFragment.sampleSolutions.map((s) => s.sample.files);
   }
 
   ngOnInit(): void {
-    this.exerciseFiles = (this.oldPart === ProgrammingImplementationToolPart) ?
+    this.exerciseFiles = (this.contentFragment.part === ProgExPart.Implementation) ?
       this.contentFragment.implementationPart.files :
       this.contentFragment.unitTestPart.unitTestFiles;
 
@@ -69,17 +67,19 @@ export class ProgrammingExerciseComponent
   }
 
   correct(): void {
-    let part: ProgExPart;
+    let oldPart: ToolPart;
 
-    if (this.oldPart === ProgrammingTestCreationPart) {
-      part = ProgExPart.TestCreation;
-    } else if (this.oldPart === ProgrammingImplementationToolPart) {
-      part = ProgExPart.Implementation;
-    } else {
-      throw new Error('Part not recognized!');
+    switch (this.contentFragment.part) {
+      case ProgExPart.ActivityDiagram:
+      case ProgExPart.Implementation:
+        oldPart = ProgrammingImplementationToolPart;
+        break;
+      case ProgExPart.TestCreation:
+        oldPart = ProgrammingTestCreationPart;
+        break;
     }
 
-    this.correctAbstract(this.exerciseFragment, part, this.oldPart);
+    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, oldPart.id);
   }
 
 }

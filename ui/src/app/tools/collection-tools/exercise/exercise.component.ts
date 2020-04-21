@@ -1,7 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
-import {collectionTools} from '../collection-tools-list';
 import {
   ExerciseGQL,
   ExerciseQuery,
@@ -12,64 +10,64 @@ import {
   WebExerciseContentSolveFieldsFragment,
   XmlExerciseContentSolveFieldsFragment
 } from "../../../_services/apollo_services";
+import {Subscription} from "rxjs";
 
 
 @Component({templateUrl: './exercise.component.html'})
-export class ExerciseComponent implements OnInit {
+export class ExerciseComponent implements OnInit, OnDestroy {
 
-  tool: CollectionTool;
-  collectionId: number;
-  exerciseId: number;
-
+  private sub: Subscription;
   exerciseQuery: ExerciseQuery;
 
-  oldPart: ToolPart;
-
   constructor(private route: ActivatedRoute, private exerciseGQL: ExerciseGQL) {
-    this.route.paramMap.subscribe((paramMap) => {
-      this.tool = collectionTools.find((t) => t.id === paramMap.get('toolId'));
-      this.oldPart = this.tool.parts.find((p) => p.id === paramMap.get('partId'));
-
-      this.collectionId = parseInt(paramMap.get('collId'), 10);
-      this.exerciseId = parseInt(paramMap.get('exId'), 10);
-    });
   }
 
   ngOnInit() {
-    this.exerciseGQL
-      .watch({toolId: this.tool.id, collId: this.collectionId, exId: this.exerciseId})
-      .valueChanges
-      .subscribe(({data}) => this.exerciseQuery = data);
+    this.sub = this.route.paramMap.subscribe((paramMap) => {
+      const toolId = paramMap.get('toolId');
+      const collId = parseInt(paramMap.get('collId'), 10);
+      const exId = parseInt(paramMap.get('exId'), 10);
+      const partId = paramMap.get('partId');
+
+      this.exerciseGQL
+        .watch({toolId, collId, exId, partId})
+        .valueChanges
+        .subscribe(({data}) => this.exerciseQuery = data);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
   // Exercise content
 
-  private get exContent() {
-    return this.exerciseQuery.tool.collection.exercise.content;
+  private get exercise() {
+    return this.exerciseQuery.tool.collection.exercise;
   }
 
   get progExerciseContent(): ProgExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'ProgrammingExerciseContent') ? this.exContent : undefined;
+    return this.exercise.programmingContent;
   }
 
   get regexExerciseContent(): RegexExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'RegexExerciseContent') ? this.exContent : undefined;
+    return this.exercise.regexContent;
   }
 
   get sqlExerciseContent(): SqlExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'SqlExerciseContent') ? this.exContent : undefined;
+    return this.exercise.sqlContent;
   }
 
   get umlExerciseContent(): UmlExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'UmlExerciseContent') ? this.exContent : undefined;
+    return this.exercise.umlContent;
   }
 
   get webExerciseContent(): WebExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'WebExerciseContent') ? this.exContent : undefined;
+    return this.exercise.webContent;
   }
 
   get xmlExerciseContent(): XmlExerciseContentSolveFieldsFragment | undefined {
-    return (this.exContent.__typename === 'XmlExerciseContent') ? this.exContent : undefined;
+    return this.exercise.xmlContent;
   }
 
 }

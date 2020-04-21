@@ -1,12 +1,20 @@
 package model.tools.web
 
 import de.uniwue.webtester.sitespec.{HtmlTask, JsAction, JsActionType, SiteSpec}
+import model.GraphQLArguments
 import model.core.result.SuccessType
 import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object WebGraphQLModels extends ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExPart] {
+object WebGraphQLModels
+    extends ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExPart]
+    with GraphQLArguments {
+
+  override val partEnumType: EnumType[WebExPart] = EnumType(
+    "WebExPart",
+    values = WebExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
   private val HtmlTaskType: ObjectType[Unit, HtmlTask] = ObjectType(
     "HtmlTask",
@@ -50,7 +58,16 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebSolution, WebExerciseC
     implicit val eft: ObjectType[Unit, ExerciseFile]                = exerciseFileType
     implicit val sst: ObjectType[Unit, SampleSolution[WebSolution]] = sampleSolutionType
 
-    deriveObjectType()
+    deriveObjectType(
+      AddFields(
+        Field(
+          "part",
+          OptionType(partEnumType),
+          arguments = partIdArgument :: Nil,
+          resolve = context => WebExPart.values.find(_.id == context.arg(partIdArgument))
+        )
+      )
+    )
   }
 
   // Solution types
@@ -125,12 +142,5 @@ object WebGraphQLModels extends ToolGraphQLModelBasics[WebSolution, WebExerciseC
   }
 
   override val AbstractResultTypeType: OutputType[Any] = webCompleteResultType
-
-  // Part type
-
-  override val PartTypeInputType: EnumType[WebExPart] = EnumType(
-    "WebExPart",
-    values = WebExParts.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
-  )
 
 }

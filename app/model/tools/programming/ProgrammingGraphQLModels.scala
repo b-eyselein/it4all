@@ -1,11 +1,19 @@
 package model.tools.programming
 
+import model.GraphQLArguments
 import model.core.result.SuccessType
 import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
 
-object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgSolution, ProgrammingExerciseContent, ProgExPart] {
+object ProgrammingGraphQLModels
+    extends ToolGraphQLModelBasics[ProgSolution, ProgrammingExerciseContent, ProgExPart]
+    with GraphQLArguments {
+
+  override val partEnumType: EnumType[ProgExPart] = EnumType(
+    "ProgExPart",
+    values = ProgExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
   private val unitTestTestConfigType: ObjectType[Unit, UnitTestTestConfig] = {
     implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
@@ -54,6 +62,14 @@ object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgSolution, Pro
     implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType
 
     deriveObjectType(
+      AddFields(
+        Field(
+          "part",
+          OptionType(partEnumType),
+          arguments = partIdArgument :: Nil,
+          resolve = context => ProgExPart.values.find(_.id == context.arg(partIdArgument))
+        )
+      ),
       // TODO: include fields !?!
       ExcludeFields("inputTypes", "outputType", "baseData", "sampleTestData", "maybeClassDiagramPart")
     )
@@ -93,12 +109,5 @@ object ProgrammingGraphQLModels extends ToolGraphQLModelBasics[ProgSolution, Pro
       ExcludeFields("simplifiedResults")
     )
   }
-
-  // Parts
-
-  override val PartTypeInputType: EnumType[ProgExPart] = EnumType(
-    "ProgExPart",
-    values = ProgExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
-  )
 
 }
