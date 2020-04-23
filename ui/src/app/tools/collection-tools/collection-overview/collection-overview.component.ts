@@ -1,17 +1,21 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {CollectionOverviewGQL, CollectionOverviewQuery} from "../../../_services/apollo_services";
+import {
+  CollectionOverviewGQL,
+  CollectionOverviewQuery,
+  FieldsForLinkFragment
+} from "../../../_services/apollo_services";
 import {Subscription} from "rxjs";
 
 @Component({templateUrl: './collection-overview.component.html'})
 export class CollectionOverviewComponent implements OnInit, OnDestroy {
 
-  sub: Subscription;
+  private sub: Subscription;
+
   collectionOverviewQuery: CollectionOverviewQuery;
 
   constructor(private route: ActivatedRoute, private collectionOverviewGQL: CollectionOverviewGQL) {
   }
-
 
   ngOnInit() {
     this.sub = this.route.paramMap.subscribe((paramMap) => {
@@ -27,6 +31,10 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub.unsubscribe();
+  }
+
+  get exercises(): FieldsForLinkFragment[] {
+    return this.collectionOverviewQuery.tool.collection.exercises;
   }
 
 }

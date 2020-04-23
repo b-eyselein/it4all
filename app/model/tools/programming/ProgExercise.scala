@@ -21,7 +21,12 @@ final case class ProgrammingExerciseContent(
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
     ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this.baseData, completeTestData)
 
-  def parts: Seq[ProgExPart] = ProgExPart.values
+  def parts: Seq[ProgExPart] =
+    if (unitTestPart.unitTestType == UnitTestTypes.Normal) {
+      Seq(ProgExPart.Implementation, ProgExPart.TestCreation)
+    } else {
+      Seq(ProgExPart.Implementation)
+    }
 
 }
 
@@ -46,6 +51,6 @@ final case class ImplementationPart(
 
 final case class ProgInput(id: Int, inputName: String, inputType: ProgDataType)
 
-final case class ProgSolution(files: Seq[ExerciseFile], testData: Seq[ProgTestData])
+final case class ProgSolution(files: Seq[ExerciseFile])
 
 final case class ProgTestData(id: Int, input: JsValue, output: JsValue)

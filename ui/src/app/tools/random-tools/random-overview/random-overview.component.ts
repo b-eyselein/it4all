@@ -2,18 +2,22 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {RandomTool} from '../../../_interfaces/tool';
 import {randomTools} from '../random-tools-list';
+import {Subscription} from "rxjs";
 
 @Component({templateUrl: './random-overview.component.html'})
 export class RandomOverviewComponent implements OnInit {
 
-   tool: RandomTool;
+  private sub: Subscription;
+
+  tool: RandomTool;
 
   constructor(private route: ActivatedRoute) {
-    const toolId = route.snapshot.paramMap.get('toolId');
-    this.tool = randomTools.find((t) => t.id === toolId);
   }
 
   ngOnInit() {
+    this.sub = this.route.paramMap.subscribe((paramMap) => {
+      this.tool = randomTools.find((t) => t.id === paramMap.get('toolId'));
+    })
   }
 
 }

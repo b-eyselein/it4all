@@ -9,8 +9,6 @@ import {
   SqlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {
-  DbContentsGQL,
-  DbContentsQuery,
   SqlCorrectionGQL,
   SqlCorrectionMutation,
   SqlIllegalQueryResultFragment,
@@ -37,24 +35,16 @@ export class SqlExerciseComponent
 
   readonly oldPart: ToolPart = SqlCreateQueryPart;
 
-  @Input() schemaName: string;
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: SqlExerciseContentSolveFieldsFragment;
 
-  dbContentsQuery: DbContentsQuery;
-
   solution = '';
 
-  constructor(sqlCorrectionGQL: SqlCorrectionGQL, dexieService: DexieService, private dbContentsGQL: DbContentsGQL) {
+  constructor(sqlCorrectionGQL: SqlCorrectionGQL, dexieService: DexieService) {
     super(sqlCorrectionGQL, dexieService);
   }
 
   ngOnInit() {
-    this.dbContentsGQL
-      .watch({schemaName: this.schemaName})
-      .valueChanges
-      .subscribe(({data}) => this.dbContentsQuery = data);
-
     this.dexieService
       .getSolution(this.exerciseFragment, this.oldPart.id)
       .then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');

@@ -1,11 +1,7 @@
 import {BooleanVariable} from './bool-node';
-import {Tool} from '../../../../_interfaces/tool';
-import {BoolTool} from '../../random-tools-list';
 import {BooleanFormula} from './bool-formula';
 
 export abstract class BoolComponentHelper {
-
-  protected readonly tool: Tool = BoolTool;
 
   readonly sampleVariable: BooleanVariable = new BooleanVariable('z');
   readonly learnerVariable: BooleanVariable = new BooleanVariable('y');

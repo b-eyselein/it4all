@@ -1,6 +1,6 @@
 <div class="container">
-  <ng-container *ngIf="readLessonsQuery; else loadingDataBlock">
-    <h1 class="title is-3 has-text-centered">Lektionen für Tool {{readLessonsQuery.tool.name}} einlesen</h1>
+  <ng-container *ngIf="readLessons; else loadingDataBlock">
+    <h1 class="title is-3 has-text-centered">Lektionen für Tool {{toolName}} einlesen</h1>
 
     <div class="buttons">
       <a class="button is-primary is-fullwidth" routerLink="..">Zurück zur Tooladministration</a>

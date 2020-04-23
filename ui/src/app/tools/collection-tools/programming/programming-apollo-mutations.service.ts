@@ -51,7 +51,7 @@ type AbstractCorrectionResult_XmlCompleteResult_Fragment = (
 
 export type AbstractCorrectionResultFragment = AbstractCorrectionResult_RegexIllegalRegexResult_Fragment | AbstractCorrectionResult_RegexMatchingResult_Fragment | AbstractCorrectionResult_RegexExtractionResult_Fragment | AbstractCorrectionResult_SqlIllegalQueryResult_Fragment | AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment | AbstractCorrectionResult_SqlResult_Fragment | AbstractCorrectionResult_UmlCompleteResult_Fragment | AbstractCorrectionResult_WebCompleteResult_Fragment | AbstractCorrectionResult_XmlCompleteResult_Fragment;
 
-export type ProgCorrectionMutationVariables = {
+export type ProgrammingCorrectionMutationVariables = {
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.ProgExPart;
@@ -59,15 +59,15 @@ export type ProgCorrectionMutationVariables = {
 };
 
 
-export type ProgCorrectionMutation = (
+export type ProgrammingCorrectionMutation = (
   { __typename?: 'Mutation' }
   & { correctProgramming?: Types.Maybe<(
     { __typename?: 'ProgCompleteResult' }
-    & ProgCompleteResultFragment
+    & ProgrammingCompleteResultFragment
   )> }
 );
 
-export type ProgCompleteResultFragment = (
+export type ProgrammingCompleteResultFragment = (
   { __typename?: 'ProgCompleteResult' }
   & Pick<Types.ProgCompleteResult, 'solutionSaved'>
   & { normalResult?: Types.Maybe<{ __typename: 'NormalExecutionResult' }>, unitTestResults: Array<{ __typename: 'UnitTestCorrectionResult' }> }
@@ -80,8 +80,8 @@ export const AbstractCorrectionResultFragmentDoc = gql`
   maxPoints
 }
     `;
-export const ProgCompleteResultFragmentDoc = gql`
-    fragment ProgCompleteResult on ProgCompleteResult {
+export const ProgrammingCompleteResultFragmentDoc = gql`
+    fragment ProgrammingCompleteResult on ProgCompleteResult {
   solutionSaved
   normalResult {
     __typename
@@ -91,18 +91,18 @@ export const ProgCompleteResultFragmentDoc = gql`
   }
 }
     `;
-export const ProgCorrectionDocument = gql`
-    mutation ProgCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
+export const ProgrammingCorrectionDocument = gql`
+    mutation ProgrammingCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
   correctProgramming(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...ProgCompleteResult
+    ...ProgrammingCompleteResult
   }
 }
-    ${ProgCompleteResultFragmentDoc}`;
+    ${ProgrammingCompleteResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
   })
-  export class ProgCorrectionGQL extends Apollo.Mutation<ProgCorrectionMutation, ProgCorrectionMutationVariables> {
-    document = ProgCorrectionDocument;
+  export class ProgrammingCorrectionGQL extends Apollo.Mutation<ProgrammingCorrectionMutation, ProgrammingCorrectionMutationVariables> {
+    document = ProgrammingCorrectionDocument;
     
   }

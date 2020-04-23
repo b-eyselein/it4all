@@ -1,12 +1,16 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {CollectionToolOverviewGQL, CollectionToolOverviewQuery} from "../../../_services/apollo_services";
+import {Subscription} from "rxjs";
 
 @Component({templateUrl: './collection-tool-overview.component.html'})
-export class CollectionToolOverviewComponent implements OnInit {
+export class CollectionToolOverviewComponent implements OnInit, OnDestroy {
+
+  private sub: Subscription;
 
   toolId: string;
   collectionToolOverviewQuery: CollectionToolOverviewQuery;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -15,7 +19,7 @@ export class CollectionToolOverviewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe((paramMap) => {
+    this.sub = this.route.paramMap.subscribe((paramMap) => {
       this.toolId = paramMap.get('toolId');
 
       this.collectionToolOverviewGQL
@@ -23,6 +27,10 @@ export class CollectionToolOverviewComponent implements OnInit {
         .valueChanges
         .subscribe(({data}) => this.collectionToolOverviewQuery = data);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 
 }

@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {Tool} from '../../_interfaces/tool';
 import {ActivatedRoute} from '@angular/router';
 import {Lesson, LessonContentBase} from '../../_interfaces/lesson';
 import {LessonGQL, LessonQuery} from "../../_services/apollo_services";
@@ -10,8 +9,6 @@ interface SolvableLessonContent extends LessonContentBase {
 
 @Component({templateUrl: './lesson.component.html'})
 export class LessonComponent implements OnInit {
-
-  tool: Tool;
 
   lesson: Lesson;
   contents: SolvableLessonContent[];

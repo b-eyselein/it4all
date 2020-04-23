@@ -132,7 +132,6 @@ export type ExerciseCollection = {
   title: Scalars['String'];
   authors: Array<Scalars['String']>;
   text: Scalars['String'];
-  shortName: Scalars['String'];
   exerciseCount: Scalars['Int'];
   exercises: Array<Exercise>;
   exercise?: Maybe<Exercise>;
@@ -264,11 +263,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
-  OnlyUser = 'ONLY_USER',
+  OnlySample = 'ONLY_SAMPLE',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  OnlySample = 'ONLY_SAMPLE'
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  OnlyUser = 'ONLY_USER'
 }
 
 export type Mutation = {
@@ -403,7 +402,6 @@ export type Query = {
    __typename?: 'Query';
   tools: Array<CollectionTol>;
   tool?: Maybe<CollectionTol>;
-  sqlDbContents: Array<SqlQueryResult>;
 };
 
 
@@ -411,14 +409,9 @@ export type QueryToolArgs = {
   toolId: Scalars['String'];
 };
 
-
-export type QuerySqlDbContentsArgs = {
-  schemaName: Scalars['String'];
-};
-
 export enum RegexCorrectionType {
-  Extraction = 'EXTRACTION',
-  Matching = 'MATCHING'
+  Matching = 'MATCHING',
+  Extraction = 'EXTRACTION'
 }
 
 export type RegexExerciseContent = {
@@ -578,9 +571,11 @@ export type SqlExecutionResult = {
 export type SqlExerciseContent = {
    __typename?: 'SqlExerciseContent';
   exerciseType: SqlExerciseType;
-  hint?: Maybe<Scalars['String']>;
+  schemaName: Scalars['String'];
   sampleSolutions: Array<SqlSampleSolution>;
+  hint?: Maybe<Scalars['String']>;
   part?: Maybe<SqlExPart>;
+  sqlDbContents: Array<SqlQueryResult>;
 };
 
 
@@ -589,11 +584,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Insert = 'INSERT',
   Select = 'SELECT',
-  Update = 'UPDATE',
+  Insert = 'INSERT',
+  Delete = 'DELETE',
   Create = 'CREATE',
-  Delete = 'DELETE'
+  Update = 'UPDATE'
 }
 
 export enum SqlExPart {

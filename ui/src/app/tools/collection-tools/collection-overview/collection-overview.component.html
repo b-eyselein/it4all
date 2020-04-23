@@ -1,5 +1,5 @@
 <div class="container">
-  <ng-container *ngIf="collectionOverviewQuery; else loadingCollectionBlock">
+  <ng-container *ngIf="collectionOverviewQuery; else loadingDataBlock">
     <h1 class="title is-3 has-text-centered">Sammlung &quot;{{collectionOverviewQuery.tool.collection.title}}&quot;</h1>
 
     <div class="buttons">
@@ -8,36 +8,21 @@
 
     <br>
 
-    <ng-container *ngIf="collectionOverviewQuery.tool.collection">
-      <h2 class="subtitle is-3 has-text-centered">Aufgaben</h2>
+    <h2 class="subtitle is-3 has-text-centered">Aufgaben</h2>
 
-      <ng-container *ngIf="collectionOverviewQuery.tool.collection.exercises; else loadingExercisesBlock">
-        <div class="columns is-multiline"
-             *ngIf="collectionOverviewQuery.tool.collection.exercises.length > 0; else noExercisesFoundBlock">
-          <div *ngFor="let exercise of collectionOverviewQuery.tool.collection.exercises"
-               class="column is-one-quarter-desktop is-half">
-            <it4all-exercise-link-card [exercise]="exercise"></it4all-exercise-link-card>
-          </div>
-        </div>
-      </ng-container>
-    </ng-container>
+    <div class="columns is-multiline" *ngIf="exercises.length > 0; else noExercisesFoundBlock">
+      <div *ngFor="let exercise of exercises" class="column is-one-quarter-desktop is-half">
+        <it4all-exercise-link-card [exercise]="exercise"></it4all-exercise-link-card>
+      </div>
+    </div>
 
   </ng-container>
 </div>
 
-<ng-template #loadingCollectionBlock>
-  <div class="notification is-danger has-text-centered">
-    Lade Sammlung...
-  </div>
+<ng-template #loadingDataBlock>
+  <div class="notification is-primary has-text-centered">Lade Daten...</div>
 </ng-template>
 
-<ng-template #loadingExercisesBlock>
-  <div class="notification">
-    <p class="has-text-centered">Lade Aufgaben...</p>
-    <br>
-    <progress class="progress" max="100">20%</progress>
-  </div>
-</ng-template>
 
 <ng-template #noExercisesFoundBlock>
   <div class="notification is-danger has-text-centered">

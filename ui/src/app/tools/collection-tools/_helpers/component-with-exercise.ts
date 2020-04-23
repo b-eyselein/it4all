@@ -66,11 +66,17 @@ export abstract class ComponentWithExercise<SolutionType,
 
     this.mutationGQL
       .mutate(mutationQueryVars)
-      .subscribe(({data}) => {
-        this.resultQuery = data;
-        this.activateCorrectionTab();
-        this.isCorrecting = false;
-      });
+      .subscribe(
+        ({data}) => {
+          this.resultQuery = data;
+          this.activateCorrectionTab();
+          this.isCorrecting = false;
+        },
+        (error) => {
+          console.error('There has been an graphQL error:', error);
+          this.isCorrecting = false;
+        }
+      );
   }
 
   protected loadOldSolutionAbstract(exerciseFragment: ExerciseSolveFieldsFragment, partId: string): Promise<SolutionInputType | undefined> {

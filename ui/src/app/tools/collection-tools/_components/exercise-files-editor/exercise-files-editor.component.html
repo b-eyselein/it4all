@@ -1,8 +1,8 @@
 <div class="tabs is-centered">
   <ul>
-    <li *ngFor="let file of exerciseFiles" (click)="changeFile($event)" [class.is-active]="file.active">
-      <a [class.has-text-grey-light]="!file.editable"
-         [title]="file.editable ? '' : 'Nicht editierbar'">{{file.name}}</a>
+    <li *ngFor="let file of activatableExerciseFiles" (click)="changeFile($event)" [class.is-active]="file.active">
+      <a [class.has-text-grey-light]="!file.file.editable"
+         [title]="file.file.editable ? '' : 'Nicht editierbar'">{{file.file.name}}</a>
     </li>
   </ul>
 </div>

@@ -49,13 +49,12 @@ create table if not exists topic_proficiencies (
 # Collections and Exercises
 
 create table if not exists collections (
-    id         int,
-    tool_id    varchar(20),
+    id      int,
+    tool_id varchar(20),
 
-    title      varchar(50) not null,
-    authors    json        not null,
-    ex_text    text        not null,
-    short_name varchar(50) not null,
+    title   varchar(50) not null,
+    authors json        not null,
+    ex_text text        not null,
 
     primary key (id, tool_id)
 );
@@ -84,8 +83,6 @@ create table if not exists user_solutions (
     username      varchar(50) references users (username) on update cascade on delete cascade,
 
     solution_json json        not null,
-    points        double      not null,
-    max_points    double      not null,
 
     primary key (id, exercise_id, collection_id, tool_id, part, username),
     foreign key (exercise_id, collection_id, tool_id) references exercises (id, collection_id, tool_id) on update cascade on delete cascade

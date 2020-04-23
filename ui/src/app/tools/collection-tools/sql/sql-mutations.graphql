@@ -1,11 +1,3 @@
-# Db Contents
-
-query DbContents($schemaName: String!) {
-  sqlDbContents(schemaName: $schemaName) {
-    ...SqlQueryResult
-  }
-}
-
 # Result fragments
 
 fragment AbstractCorrectionResult on AbstractCorrectionResult {
@@ -42,9 +34,9 @@ fragment ColumnMatch on SqlColumnMatch {
 
 fragment ColumnComparison on SqlColumnComparisonMatchingResult {
   ...MR
-#  allMatches {
-#    ...ColumnMatch
-#  }
+  #  allMatches {
+  #    ...ColumnMatch
+  #  }
 }
 
 # Table comparison
@@ -57,9 +49,9 @@ fragment TableMatch on SqlTableMatch {
 
 fragment TableComparison on SqlTableComparisonMatchingResult {
   ...MR
-#  allMatches {
-#    ...TableMatch
-#  }
+  #  allMatches {
+  #    ...TableMatch
+  #  }
 }
 
 # JoinExpression / Where Comparison
@@ -72,9 +64,9 @@ fragment BinaryExpressionMatch on SqlBinaryExpressionMatch {
 
 fragment BinaryExpressionComparison on SqlBinaryExpressionComparisonMatchingResult {
   ...MR
-#  allMatches {
-#    ...BinaryExpressionMatch
-#  }
+  #  allMatches {
+  #    ...BinaryExpressionMatch
+  #  }
 }
 
 # Insert comparison
@@ -87,9 +79,9 @@ fragment InsertMatch on SqlInsertMatch {
 
 fragment InsertComparison on SqlInsertComparisonMatchingResult {
   ...MR
-#  allMatches {
-#    ...InsertMatch
-#  }
+  #  allMatches {
+  #    ...InsertMatch
+  #  }
 }
 
 # Group by comparison
@@ -102,9 +94,9 @@ fragment GroupByMatch on SqlGroupByMatch {
 
 fragment  GroupByComparison on SqlGroupByComparisonMatchingResult {
   ...MR
-#  allMatches  {
-#    ...GroupByMatch
-#  }
+  #  allMatches  {
+  #    ...GroupByMatch
+  #  }
 }
 
 # Order By comparison
@@ -117,9 +109,9 @@ fragment OrderByMatch on SqlOrderByMatch {
 
 fragment OrderByComparison on SqlOrderByComparisonMatchingResult {
   ...MR
-#  allMatches {
-#    ...OrderByMatch
-#  }
+  #  allMatches {
+  #    ...OrderByMatch
+  #  }
 }
 
 # Limit comparison
@@ -132,9 +124,9 @@ fragment LimitMatch on SqlLimitMatch {
 
 fragment LimitComparison on SqlLimitComparisonMatchingResult {
   ...MR
-#  allMatches {
-#    ...LimitMatch
-#  }
+  #  allMatches {
+  #    ...LimitMatch
+  #  }
 }
 
 # Select additional comparisons

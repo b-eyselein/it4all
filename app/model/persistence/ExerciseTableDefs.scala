@@ -65,8 +65,6 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
 
     def text: Rep[String] = column[String]("ex_text")
 
-    def shortName: Rep[String] = column[String]("short_name")
-
     def pk = primaryKey("ex_coll_pk", (id, toolId))
 
     override def * : ProvenShape[ExerciseCollection] =
@@ -75,8 +73,7 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
         toolId,
         title,
         authors,
-        text,
-        shortName
+        text
       ) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
 
   }

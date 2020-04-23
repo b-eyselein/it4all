@@ -12,7 +12,10 @@
             {{ranTool.name}}<sup *ngIf="ranTool.status !== 'live'" [innerHTML]="'&nbsp;&' + ranTool.status + ';'"></sup>
           </p>
         </header>
-        <div class="card-content"></div>
+        <div class="card-content">
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+        </div>
         <footer class="card-footer">
           <a [routerLink]="['/randomTools', ranTool.id]" class="card-footer-item">Zum Tool</a>
           <a [routerLink]="['/lessons', ranTool.id]" class="card-footer-item" *ngIf="ranTool.hasLessons">
@@ -33,7 +36,10 @@
               <sup *ngIf="!isLive(colTool.state)" [innerHTML]="'&nbsp;&' + colTool.state.toLowerCase() + ';'"></sup>
             </p>
           </header>
-          <div class="card-content"></div>
+          <div class="card-content">
+            <p>{{colTool.collectionCount}} Sammlungen mit {{colTool.exerciseCount}} Aufgaben</p>
+            <p>{{colTool.lessonCount}} Lektionen</p>
+          </div>
           <footer class="card-footer">
             <a [routerLink]="['/tools', colTool.id]" class="card-footer-item">Zum Tool</a>
           </footer>

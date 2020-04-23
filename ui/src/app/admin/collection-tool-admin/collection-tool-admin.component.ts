@@ -6,7 +6,8 @@ import {Subscription} from "rxjs";
 @Component({templateUrl: './collection-tool-admin.component.html'})
 export class CollectionToolAdminComponent implements OnInit, OnDestroy {
 
-  private sub: Subscription;
+  private paramMapSub: Subscription;
+  private gqSub: Subscription;
 
   collectionToolAdminQuery: CollectionToolAdminQuery;
 
@@ -14,10 +15,10 @@ export class CollectionToolAdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.sub = this.route.paramMap.subscribe((paramMap) => {
+    this.paramMapSub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
 
-      this.collectionToolAdminGQL
+      this.gqSub = this.collectionToolAdminGQL
         .watch({toolId})
         .valueChanges
         .subscribe(({data}) => this.collectionToolAdminQuery = data);
@@ -25,7 +26,8 @@ export class CollectionToolAdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    this.gqSub.unsubscribe();
+    this.paramMapSub.unsubscribe();
   }
 
 }

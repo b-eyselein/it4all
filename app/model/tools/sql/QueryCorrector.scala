@@ -1,8 +1,8 @@
 package model.tools.sql
 
 import model.points._
+import model.tools.SampleSolution
 import model.tools.sql.matcher._
-import model.tools.{ExerciseCollection, SampleSolution}
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
@@ -55,8 +55,8 @@ abstract class QueryCorrector(val queryType: String) {
 
   def correct(
     database: SqlExecutionDAO,
+    schemaName: String,
     learnerSolution: String,
-    collection: ExerciseCollection,
     sampleSolutions: Seq[SampleSolution[String]],
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Try[AbstractSqlResult] = parseStatement(learnerSolution) match {
@@ -89,7 +89,7 @@ abstract class QueryCorrector(val queryType: String) {
           maybeStaticComparison match {
             case None => ???
             case Some(QueryAndStaticComp(sampleQ, sc)) =>
-              Success(SqlResult(sc, database.executeQueries(collection, userQ, sampleQ), solutionSaved))
+              Success(SqlResult(sc, database.executeQueries(schemaName, userQ, sampleQ), solutionSaved))
           }
 
       }

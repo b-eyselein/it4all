@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue Apr 21 2020 15:10:58 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Thu Apr 23 2020 10:51:14 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -100,7 +100,6 @@ type ExerciseCollection {
   title: String!
   authors: [String!]!
   text: String!
-  shortName: String!
   exerciseCount: Int!
   exercises: [Exercise!]!
   exercise(exId: Int!): Exercise
@@ -215,11 +214,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  SUCCESSFUL_MATCH
   PARTIAL_MATCH
-  ONLY_USER
-  UNSUCCESSFUL_MATCH
   ONLY_SAMPLE
+  UNSUCCESSFUL_MATCH
+  SUCCESSFUL_MATCH
+  ONLY_USER
 }
 
 type Mutation {
@@ -282,12 +281,11 @@ input ProgSolutionInput {
 type Query {
   tools: [CollectionTol!]!
   tool(toolId: String!): CollectionTol
-  sqlDbContents(schemaName: String!): [SqlQueryResult!]!
 }
 
 enum RegexCorrectionType {
-  EXTRACTION
   MATCHING
+  EXTRACTION
 }
 
 type RegexExerciseContent {
@@ -422,17 +420,19 @@ type SqlExecutionResult {
 
 type SqlExerciseContent {
   exerciseType: SqlExerciseType!
-  hint: String
+  schemaName: String!
   sampleSolutions: [SqlSampleSolution!]!
+  hint: String
   part(partId: String!): SqlExPart
+  sqlDbContents: [SqlQueryResult!]!
 }
 
 enum SqlExerciseType {
-  INSERT
   SELECT
-  UPDATE
-  CREATE
+  INSERT
   DELETE
+  CREATE
+  UPDATE
 }
 
 enum SqlExPart {

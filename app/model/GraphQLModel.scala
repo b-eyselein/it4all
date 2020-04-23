@@ -226,8 +226,8 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
         OptionType(ToolType),
         arguments = toolIdArgument :: Nil,
         resolve = ctx => ToolList.tools.find(_.id == ctx.arg(toolIdArgument))
-      ),
-      SqlGraphQLModels.dbContentQueryField
+      )
+      // // // // // // // , SqlGraphQLModels.dbContentQueryField
     )
   )
 

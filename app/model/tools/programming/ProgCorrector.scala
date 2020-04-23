@@ -90,7 +90,7 @@ object ProgCorrector {
 
     val unitTestFileContent: String = sampleSolutions.headOption match {
       case None => ???
-      case Some(SampleSolution(_, ProgSolution(files, _))) =>
+      case Some(SampleSolution(_, ProgSolution(files))) =>
         files
           .find(_.name == exerciseContent.unitTestPart.testFileName)
           .map(_.content)

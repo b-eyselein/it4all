@@ -1,6 +1,3 @@
-import {Tool} from '../../../_interfaces/tool';
-import {NaryTool} from '../random-tools-list';
-
 export interface NumberingSystem {
   radix: number;
   name: string;
@@ -11,7 +8,11 @@ export const BINARY_SYSTEM: NumberingSystem = {radix: 2, name: 'Binärsystem', a
 
 export const DECIMAL_SYSTEM: NumberingSystem = {radix: 10, name: 'Dezimalsystem', allowedDigits: '0123456789'};
 
-export const HEXADECIMAL_SYSTEM: NumberingSystem = {radix: 16, name: 'Hexadezimalsystem', allowedDigits: '0123456789ABCDEF'};
+export const HEXADECIMAL_SYSTEM: NumberingSystem = {
+  radix: 16,
+  name: 'Hexadezimalsystem',
+  allowedDigits: '0123456789ABCDEF'
+};
 
 export const NUMBERING_SYSTEMS: NumberingSystem[] = [
   BINARY_SYSTEM,
@@ -29,8 +30,6 @@ export interface NaryReadOnlyNumberInput {
 }
 
 export abstract class NaryComponentBase {
-
-  tool: Tool = NaryTool;
 
   readonly minimalMax = 16;
   readonly maximalMax = Math.pow(2, 32);

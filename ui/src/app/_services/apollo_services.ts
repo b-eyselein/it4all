@@ -11,7 +11,40 @@ export type ToolOverviewQuery = (
   { __typename?: 'Query' }
   & { tools: Array<(
     { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'id' | 'name' | 'state'>
+    & Pick<Types.CollectionTol, 'id' | 'name' | 'state' | 'collectionCount' | 'lessonCount' | 'exerciseCount'>
+  )> }
+);
+
+export type CollectionToolOverviewQueryVariables = {
+  toolId: Types.Scalars['String'];
+};
+
+
+export type CollectionToolOverviewQuery = (
+  { __typename?: 'Query' }
+  & { tool?: Types.Maybe<(
+    { __typename?: 'CollectionTol' }
+    & Pick<Types.CollectionTol, 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
+  )> }
+);
+
+export type AllExercisesOverviewQueryVariables = {
+  toolId: Types.Scalars['String'];
+};
+
+
+export type AllExercisesOverviewQuery = (
+  { __typename?: 'Query' }
+  & { tool?: Types.Maybe<(
+    { __typename?: 'CollectionTol' }
+    & { allExercises: Array<(
+      { __typename?: 'Exercise' }
+      & { topics: Array<(
+        { __typename?: 'Topic' }
+        & TopicFragment
+      )> }
+      & FieldsForLinkFragment
+    )> }
   )> }
 );
 
@@ -29,39 +62,6 @@ export type CollectionListQuery = (
       { __typename?: 'ExerciseCollection' }
       & Pick<Types.ExerciseCollection, 'id' | 'title' | 'exerciseCount'>
     )> }
-  )> }
-);
-
-export type ExercisesQueryVariables = {
-  toolId: Types.Scalars['String'];
-  collId: Types.Scalars['Int'];
-};
-
-
-export type ExercisesQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & { collection?: Types.Maybe<(
-      { __typename?: 'ExerciseCollection' }
-      & { exercises: Array<(
-        { __typename?: 'Exercise' }
-        & Pick<Types.Exercise, 'id' | 'title'>
-      )> }
-    )> }
-  )> }
-);
-
-export type CollectionToolOverviewQueryVariables = {
-  toolId: Types.Scalars['String'];
-};
-
-
-export type CollectionToolOverviewQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'name' | 'exerciseCount' | 'collectionCount' | 'lessonCount'>
   )> }
 );
 
@@ -86,31 +86,6 @@ export type CollectionOverviewQuery = (
   )> }
 );
 
-export type AllExercisesOverviewQueryVariables = {
-  toolId: Types.Scalars['String'];
-};
-
-
-export type AllExercisesOverviewQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & { allExercises: Array<(
-      { __typename?: 'Exercise' }
-      & { topics: Array<(
-        { __typename?: 'Topic' }
-        & TopicFragment
-      )> }
-      & FieldsForLinkFragment
-    )> }
-  )> }
-);
-
-export type PartFragment = (
-  { __typename?: 'ExPart' }
-  & Pick<Types.ExPart, 'id' | 'name'>
-);
-
 export type ExerciseOverviewQueryVariables = {
   toolId: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
@@ -127,19 +102,7 @@ export type ExerciseOverviewQuery = (
       & { exercise?: Types.Maybe<(
         { __typename?: 'Exercise' }
         & Pick<Types.Exercise, 'id' | 'title' | 'text'>
-        & { programmingContent?: Types.Maybe<(
-          { __typename?: 'ProgrammingExerciseContent' }
-          & { unitTestPart: (
-            { __typename?: 'UnitTestPart' }
-            & Pick<Types.UnitTestPart, 'unitTestType'>
-          ) }
-        )>, webContent?: Types.Maybe<(
-          { __typename?: 'WebExerciseContent' }
-          & { siteSpec: (
-            { __typename?: 'SiteSpec' }
-            & Pick<Types.SiteSpec, 'htmlTaskCount' | 'jsTaskCount'>
-          ) }
-        )>, parts: Array<(
+        & { parts: Array<(
           { __typename?: 'ExPart' }
           & PartFragment
         )> }
@@ -162,7 +125,6 @@ export type ExerciseQuery = (
     { __typename?: 'CollectionTol' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
-      & Pick<Types.ExerciseCollection, 'shortName'>
       & { exercise?: Types.Maybe<(
         { __typename?: 'Exercise' }
         & { programmingContent?: Types.Maybe<(
@@ -261,7 +223,7 @@ export type AdminLessonIndexQuery = (
     & Pick<Types.CollectionTol, 'name'>
     & { lessons: Array<(
       { __typename?: 'Lesson' }
-      & LessonFragmentFragment
+      & LessonFragment
     )> }
   )> }
 );
@@ -336,7 +298,7 @@ export type AdminReadCollectionsQuery = (
 
 export type CompleteCollectionFragment = (
   { __typename?: 'ExerciseCollection' }
-  & Pick<Types.ExerciseCollection, 'id' | 'toolId' | 'title' | 'authors' | 'text' | 'shortName'>
+  & Pick<Types.ExerciseCollection, 'id' | 'toolId' | 'title' | 'authors' | 'text'>
 );
 
 export type AdminUpsertCollectionMutationVariables = {
@@ -350,8 +312,6 @@ export type AdminUpsertCollectionMutation = (
   & Pick<Types.Mutation, 'upsertCollection'>
 );
 
-export type CompleteLessonFragment = { __typename: 'Lesson' };
-
 export type AdminReadLessonsQueryVariables = {
   toolId: Types.Scalars['String'];
 };
@@ -364,7 +324,7 @@ export type AdminReadLessonsQuery = (
     & Pick<Types.CollectionTol, 'name'>
     & { readLessons: Array<(
       { __typename?: 'Lesson' }
-      & CompleteLessonFragment
+      & LessonFragment
     )> }
   )> }
 );
@@ -420,12 +380,17 @@ export type TopicFragment = (
   & Pick<Types.Topic, 'abbreviation' | 'title'>
 );
 
+export type PartFragment = (
+  { __typename?: 'ExPart' }
+  & Pick<Types.ExPart, 'id' | 'name'>
+);
+
 export type FieldsForLinkFragment = (
   { __typename?: 'Exercise' }
   & Pick<Types.Exercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
   & { topics: Array<(
     { __typename?: 'Topic' }
-    & Pick<Types.Topic, 'abbreviation' | 'title'>
+    & TopicFragment
   )> }
 );
 
@@ -487,7 +452,36 @@ export type SqlExerciseContentSolveFieldsFragment = (
   & { sampleSolutions: Array<(
     { __typename?: 'SqlSampleSolution' }
     & SqlSampleSolutionFragment
+  )>, sqlDbContents: Array<(
+    { __typename?: 'SqlQueryResult' }
+    & SqlQueryResultFragment
   )> }
+);
+
+export type SqlQueryResultFragment = (
+  { __typename?: 'SqlQueryResult' }
+  & Pick<Types.SqlQueryResult, 'tableName' | 'columnNames'>
+  & { rows: Array<(
+    { __typename?: 'SqlRow' }
+    & SqlRowFragment
+  )> }
+);
+
+export type SqlRowFragment = (
+  { __typename?: 'SqlRow' }
+  & { cells: Array<(
+    { __typename?: 'SqlKeyCellValueObject' }
+    & Pick<Types.SqlKeyCellValueObject, 'key'>
+    & { value: (
+      { __typename?: 'SqlCell' }
+      & SqlCellFragment
+    ) }
+  )> }
+);
+
+export type SqlCellFragment = (
+  { __typename?: 'SqlCell' }
+  & Pick<Types.SqlCell, 'colName' | 'content' | 'different'>
 );
 
 export type SqlSampleSolutionFragment = (
@@ -613,17 +607,11 @@ export type ExFileAllFragment = (
   & Pick<Types.ExerciseFile, 'name' | 'fileType' | 'content' | 'editable'>
 );
 
-export type LessonFragmentFragment = (
+export type LessonFragment = (
   { __typename?: 'Lesson' }
   & Pick<Types.Lesson, 'id' | 'title'>
 );
 
-export const PartFragmentDoc = gql`
-    fragment Part on ExPart {
-  id
-  name
-}
-    `;
 export const CompleteCollectionFragmentDoc = gql`
     fragment CompleteCollection on ExerciseCollection {
   id
@@ -631,12 +619,12 @@ export const CompleteCollectionFragmentDoc = gql`
   title
   authors
   text
-  shortName
 }
     `;
-export const CompleteLessonFragmentDoc = gql`
-    fragment CompleteLesson on Lesson {
-  __typename
+export const PartFragmentDoc = gql`
+    fragment Part on ExPart {
+  id
+  name
 }
     `;
 export const TopicFragmentDoc = gql`
@@ -653,11 +641,10 @@ export const FieldsForLinkFragmentDoc = gql`
   title
   difficulty
   topics {
-    abbreviation
-    title
+    ...Topic
   }
 }
-    `;
+    ${TopicFragmentDoc}`;
 export const ExerciseSolveFieldsFragmentDoc = gql`
     fragment ExerciseSolveFields on Exercise {
   id
@@ -725,6 +712,32 @@ export const SqlSampleSolutionFragmentDoc = gql`
   sample
 }
     `;
+export const SqlCellFragmentDoc = gql`
+    fragment SqlCell on SqlCell {
+  colName
+  content
+  different
+}
+    `;
+export const SqlRowFragmentDoc = gql`
+    fragment SqlRow on SqlRow {
+  cells {
+    key
+    value {
+      ...SqlCell
+    }
+  }
+}
+    ${SqlCellFragmentDoc}`;
+export const SqlQueryResultFragmentDoc = gql`
+    fragment SqlQueryResult on SqlQueryResult {
+  tableName
+  columnNames
+  rows {
+    ...SqlRow
+  }
+}
+    ${SqlRowFragmentDoc}`;
 export const SqlExerciseContentSolveFieldsFragmentDoc = gql`
     fragment SqlExerciseContentSolveFields on SqlExerciseContent {
   hint
@@ -732,8 +745,12 @@ export const SqlExerciseContentSolveFieldsFragmentDoc = gql`
     ...SqlSampleSolution
   }
   part(partId: $partId)
+  sqlDbContents {
+    ...SqlQueryResult
+  }
 }
-    ${SqlSampleSolutionFragmentDoc}`;
+    ${SqlSampleSolutionFragmentDoc}
+${SqlQueryResultFragmentDoc}`;
 export const UmlAttributeFragmentDoc = gql`
     fragment UmlAttribute on UmlAttribute {
   isAbstract
@@ -866,8 +883,8 @@ export const XmlExerciseContentSolveFieldsFragmentDoc = gql`
   part(partId: $partId)
 }
     ${XmlSampleSolutionFragmentDoc}`;
-export const LessonFragmentFragmentDoc = gql`
-    fragment LessonFragment on Lesson {
+export const LessonFragmentDoc = gql`
+    fragment Lesson on Lesson {
   id
   title
 }
@@ -878,6 +895,9 @@ export const ToolOverviewDocument = gql`
     id
     name
     state
+    collectionCount
+    lessonCount
+    exerciseCount
   }
 }
     `;
@@ -889,52 +909,12 @@ export const ToolOverviewDocument = gql`
     document = ToolOverviewDocument;
     
   }
-export const CollectionListDocument = gql`
-    query CollectionList($toolId: String!) {
-  tool(toolId: $toolId) {
-    name
-    collections {
-      id
-      title
-      exerciseCount
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class CollectionListGQL extends Apollo.Query<CollectionListQuery, CollectionListQueryVariables> {
-    document = CollectionListDocument;
-    
-  }
-export const ExercisesDocument = gql`
-    query Exercises($toolId: String!, $collId: Int!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      exercises {
-        id
-        title
-      }
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class ExercisesGQL extends Apollo.Query<ExercisesQuery, ExercisesQueryVariables> {
-    document = ExercisesDocument;
-    
-  }
 export const CollectionToolOverviewDocument = gql`
     query CollectionToolOverview($toolId: String!) {
   tool(toolId: $toolId) {
     name
-    exerciseCount
     collectionCount
+    exerciseCount
     lessonCount
   }
 }
@@ -945,26 +925,6 @@ export const CollectionToolOverviewDocument = gql`
   })
   export class CollectionToolOverviewGQL extends Apollo.Query<CollectionToolOverviewQuery, CollectionToolOverviewQueryVariables> {
     document = CollectionToolOverviewDocument;
-    
-  }
-export const CollectionOverviewDocument = gql`
-    query CollectionOverview($toolId: String!, $collId: Int!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      title
-      exercises {
-        ...FieldsForLink
-      }
-    }
-  }
-}
-    ${FieldsForLinkFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class CollectionOverviewGQL extends Apollo.Query<CollectionOverviewQuery, CollectionOverviewQueryVariables> {
-    document = CollectionOverviewDocument;
     
   }
 export const AllExercisesOverviewDocument = gql`
@@ -988,6 +948,46 @@ ${FieldsForLinkFragmentDoc}`;
     document = AllExercisesOverviewDocument;
     
   }
+export const CollectionListDocument = gql`
+    query CollectionList($toolId: String!) {
+  tool(toolId: $toolId) {
+    name
+    collections {
+      id
+      title
+      exerciseCount
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CollectionListGQL extends Apollo.Query<CollectionListQuery, CollectionListQueryVariables> {
+    document = CollectionListDocument;
+    
+  }
+export const CollectionOverviewDocument = gql`
+    query CollectionOverview($toolId: String!, $collId: Int!) {
+  tool(toolId: $toolId) {
+    collection(collId: $collId) {
+      title
+      exercises {
+        ...FieldsForLink
+      }
+    }
+  }
+}
+    ${FieldsForLinkFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CollectionOverviewGQL extends Apollo.Query<CollectionOverviewQuery, CollectionOverviewQueryVariables> {
+    document = CollectionOverviewDocument;
+    
+  }
 export const ExerciseOverviewDocument = gql`
     query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
@@ -996,17 +996,6 @@ export const ExerciseOverviewDocument = gql`
         id
         title
         text
-        programmingContent {
-          unitTestPart {
-            unitTestType
-          }
-        }
-        webContent {
-          siteSpec {
-            htmlTaskCount
-            jsTaskCount
-          }
-        }
         parts {
           ...Part
         }
@@ -1027,7 +1016,6 @@ export const ExerciseDocument = gql`
     query Exercise($toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
-      shortName
       exercise(exId: $exId) {
         ...ExerciseSolveFields
         programmingContent {
@@ -1148,11 +1136,11 @@ export const AdminLessonIndexDocument = gql`
   tool(toolId: $toolId) {
     name
     lessons {
-      ...LessonFragment
+      ...Lesson
     }
   }
 }
-    ${LessonFragmentFragmentDoc}`;
+    ${LessonFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -1252,11 +1240,11 @@ export const AdminReadLessonsDocument = gql`
   tool(toolId: $toolId) {
     name
     readLessons {
-      ...CompleteLesson
+      ...Lesson
     }
   }
 }
-    ${CompleteLessonFragmentDoc}`;
+    ${LessonFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

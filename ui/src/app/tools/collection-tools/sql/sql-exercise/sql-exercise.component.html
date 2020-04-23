@@ -24,7 +24,7 @@
     <div class="column">
       <it4all-tabs>
         <it4all-tab [title]="'Datenbankinhalt'">
-          <it4all-sql-table-contents *ngIf="dbContentsQuery" [dbContents]="dbContentsQuery"></it4all-sql-table-contents>
+          <it4all-sql-table-contents [dbContents]="contentFragment.sqlDbContents"></it4all-sql-table-contents>
         </it4all-tab>
         <it4all-tab [title]="correctionTabTitle">
           <ng-container *ngIf="resultQuery">

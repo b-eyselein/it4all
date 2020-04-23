@@ -64,8 +64,8 @@ object SqlTool extends CollectionTool("sql", "Sql") {
       case Some((corrector, dao)) =>
         corrector.correct(
           dao,
+          exercise.content.schemaName,
           learnerSolution,
-          collection,
           exercise.content.sampleSolutions,
           solutionSaved
         )

@@ -32,7 +32,10 @@ export class ExerciseComponent implements OnInit, OnDestroy {
       this.exerciseGQL
         .watch({toolId, collId, exId, partId})
         .valueChanges
-        .subscribe(({data}) => this.exerciseQuery = data);
+        .subscribe(({data}) => {
+          console.info(data);
+          this.exerciseQuery = data;
+        });
     });
   }
 

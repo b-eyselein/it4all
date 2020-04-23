@@ -1,9 +1,8 @@
-import {Component, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Saveable} from '../../_interfaces/saveable';
-import {ReadObjectComponent} from '../_components/read-object/read-object.component';
 import {Subscription} from "rxjs";
-import {AdminReadLessonsGQL, AdminReadLessonsQuery, CompleteLessonFragment} from 'src/app/_services/apollo_services';
+import {AdminReadLessonsGQL, LessonFragment} from 'src/app/_services/apollo_services';
 
 
 @Component({templateUrl: './admin-read-lessons.component.html'})
@@ -12,9 +11,8 @@ export class AdminReadLessonsComponent implements OnInit, OnDestroy {
   private toolId: string;
   private sub: Subscription;
 
-  readLessonsQuery: AdminReadLessonsQuery;
-
-  @ViewChildren(ReadObjectComponent) readLessonsComponents: QueryList<ReadObjectComponent<CompleteLessonFragment>>;
+  toolName: string;
+  readLessons: Saveable<LessonFragment>[];
 
 
   constructor(
@@ -30,7 +28,13 @@ export class AdminReadLessonsComponent implements OnInit, OnDestroy {
       this.adminReadLessonsGQL
         .watch({toolId: this.toolId})
         .valueChanges
-        .subscribe(({data}) => this.readLessonsQuery = data);
+        .subscribe(({data}) => {
+            this.toolName = data.tool.name;
+            this.readLessons = data.tool.readLessons.map((rl) => {
+              return {saved: false, title: '', value: rl, stringified: ''}
+            })
+          }
+        );
     })
   }
 
@@ -38,19 +42,15 @@ export class AdminReadLessonsComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  get readLessons(): Saveable<CompleteLessonFragment>[] | undefined {
-    return this.readLessonsQuery.tool.readLessons.map((rl) => {
-      return {saved: false, title: '', value: rl, stringified: ''}
-    });
-  }
-
-  save(lesson: Saveable<CompleteLessonFragment>): void {
+  save(_lesson: Saveable<LessonFragment>): void {
 //    this.apiService.adminUpsertLesson(lesson.value)
     //     .subscribe((saved) => lesson.saved = saved);
   }
 
   saveAll(): void {
-    this.readLessonsComponents.forEach((readLesson) => readLesson.save.emit());
+    this.readLessons
+      .filter((rl) => !rl.saved)
+      .forEach((readLesson) => this.save(readLesson));
   }
 
 }

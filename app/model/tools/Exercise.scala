@@ -12,7 +12,6 @@ final case class ExerciseCollection(
   title: String,
   authors: Seq[String],
   text: String,
-  shortName: String
 )
 
 trait ExerciseContent[S] {

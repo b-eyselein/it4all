@@ -40,11 +40,7 @@ object ProgrammingGraphQLModels
   private val progSolutionType: ObjectType[Unit, ProgSolution] = {
     implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
 
-    //  implicit val progTestDataType: ObjectType[Unit, ProgTestData] = deriveObjectType(
-    //     ExcludeFields("input", "output")
-    //  )
-
-    deriveObjectType(ExcludeFields("testData"))
+    deriveObjectType()
   }
 
   override val sampleSolutionType: ObjectType[Unit, SampleSolution[ProgSolution]] =
@@ -78,8 +74,7 @@ object ProgrammingGraphQLModels
     implicit val efit: InputObjectType[ExerciseFile] = exerciseFileInputType
 
     deriveInputObjectType(
-      InputObjectTypeName("ProgSolutionInput"),
-      ExcludeInputFields("testData")
+      InputObjectTypeName("ProgSolutionInput")
     )
   }
 

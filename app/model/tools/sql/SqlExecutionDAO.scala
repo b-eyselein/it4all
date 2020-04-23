@@ -47,12 +47,12 @@ abstract class SqlExecutionDAO(mainDbName: String) {
   }
 
   def executeQueries(
-    scenario: ExerciseCollection,
+    schemaName: String,
     userStatement: Statement,
     sampleStatement: Statement
   ): SqlExecutionResult = {
-    val userExecutionResult: Try[SqlQueryResult]   = executeQuery(scenario.shortName, userStatement)
-    val sampleExecutionResult: Try[SqlQueryResult] = executeQuery(scenario.shortName, sampleStatement)
+    val userExecutionResult: Try[SqlQueryResult]   = executeQuery(schemaName, userStatement)
+    val sampleExecutionResult: Try[SqlQueryResult] = executeQuery(schemaName, sampleStatement)
     SqlExecutionResult(userExecutionResult.toOption, sampleExecutionResult.toOption)
   }
 

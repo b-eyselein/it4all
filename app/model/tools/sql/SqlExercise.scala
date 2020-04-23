@@ -47,8 +47,9 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 
 final case class SqlExerciseContent(
   exerciseType: SqlExerciseType,
-  hint: Option[String],
-  sampleSolutions: Seq[SampleSolution[String]]
+  schemaName: String,
+  sampleSolutions: Seq[SampleSolution[String]],
+  hint: Option[String] = None
 ) extends ExerciseContent[String] {
 
   override def parts: Seq[ExPart] = SqlExPart.values

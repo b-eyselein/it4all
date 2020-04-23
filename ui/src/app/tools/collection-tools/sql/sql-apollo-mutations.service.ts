@@ -4,19 +4,6 @@ import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
-export type DbContentsQueryVariables = {
-  schemaName: Types.Scalars['String'];
-};
-
-
-export type DbContentsQuery = (
-  { __typename?: 'Query' }
-  & { sqlDbContents: Array<(
-    { __typename?: 'SqlQueryResult' }
-    & SqlQueryResultFragment
-  )> }
-);
-
 type AbstractCorrectionResult_RegexIllegalRegexResult_Fragment = (
   { __typename?: 'RegexIllegalRegexResult' }
   & Pick<Types.RegexIllegalRegexResult, 'solutionSaved' | 'points' | 'maxPoints'>
@@ -661,21 +648,6 @@ ${BinaryExpressionComparisonFragmentDoc}
 ${SelectAdditionalComparisonFragmentDoc}
 ${InsertComparisonFragmentDoc}
 ${SqlExecutionResultFragmentDoc}`;
-export const DbContentsDocument = gql`
-    query DbContents($schemaName: String!) {
-  sqlDbContents(schemaName: $schemaName) {
-    ...SqlQueryResult
-  }
-}
-    ${SqlQueryResultFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class DbContentsGQL extends Apollo.Query<DbContentsQuery, DbContentsQueryVariables> {
-    document = DbContentsDocument;
-    
-  }
 export const SqlCorrectionDocument = gql`
     mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
   correctSql(collId: $collId, exId: $exId, part: $part, solution: $solution) {

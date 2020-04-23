@@ -1,12 +1,13 @@
 import {Component, Input} from '@angular/core';
-import {DbContentsQuery, SqlQueryResultFragment} from '../../sql-apollo-mutations.service';
+import {SqlQueryResultFragment} from '../../sql-apollo-mutations.service';
 
 @Component({
   selector: 'it4all-sql-table-contents',
   template: `
     <div class="columns is-multiline">
-      <div class="column is-one-quarter-desktop" *ngFor="let dbContent of dbContents.sqlDbContents">
-        <button class="button is-fullwidth" (click)="activateModal(dbContent)" [class.is-info]="dbContent === shownDbContent">
+      <div class="column is-one-quarter-desktop" *ngFor="let dbContent of dbContents">
+        <button class="button is-fullwidth" (click)="activateModal(dbContent)"
+                [class.is-info]="dbContent === shownDbContent">
           {{dbContent.tableName}}
         </button>
       </div>
@@ -25,7 +26,7 @@ import {DbContentsQuery, SqlQueryResultFragment} from '../../sql-apollo-mutation
 })
 export class SqlTableContentsComponent {
 
-  @Input() dbContents: DbContentsQuery;
+  @Input() dbContents: SqlQueryResultFragment[];
 
   shownDbContent: SqlQueryResultFragment | undefined;
 

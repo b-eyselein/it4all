@@ -1,4 +1,4 @@
-import {CollectionTool, ToolPart} from '../../../_interfaces/tool';
+import {ToolPart} from '../../../_interfaces/tool';
 import {distinctStringArray} from '../../../helpers';
 import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../_services/apollo_services';
 import {KeyValueObject} from '../../../_interfaces/graphql-types';
@@ -19,13 +19,6 @@ export const UmlMemberAllocationPart: ToolPart = {
   disabled: true
 };
 
-const umlToolParts: ToolPart[] = [UmlClassSelectionPart, UmlDiagramDrawingPart, UmlDiagramDrawingHelpPart, UmlMemberAllocationPart];
-
-export const UmlTool: CollectionTool = new class UmlToolClass extends CollectionTool {
-  constructor() {
-    super('uml', 'UML-Klassendiagramme', umlToolParts, 'beta');
-  }
-}();
 
 // Helper functions
 

@@ -8,7 +8,7 @@ import {
   ExerciseSolveFieldsFragment,
   ProgExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
-import {ProgCorrectionGQL, ProgCorrectionMutation} from '../programming-apollo-mutations.service';
+import {ProgrammingCorrectionGQL, ProgrammingCorrectionMutation} from '../programming-apollo-mutations.service';
 import {ExerciseFile, ProgExPart, ProgSolution, ProgSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/python/python';
@@ -19,16 +19,18 @@ import 'codemirror/mode/python/python';
   styleUrls: ['./programming-exercise.component.sass']
 })
 export class ProgrammingExerciseComponent
-  extends ComponentWithExercise<ProgSolution, ProgSolutionInput, ProgCorrectionMutation, ProgExPart, ProgCorrectionGQL, ProgrammingCorrectionResult>
+  extends ComponentWithExercise<ProgSolution, ProgSolutionInput, ProgrammingCorrectionMutation, ProgExPart, ProgrammingCorrectionGQL, ProgrammingCorrectionResult>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: ProgExerciseContentSolveFieldsFragment;
 
+  private oldPart: ToolPart;
+
   exerciseFiles: ExerciseFile[] = [];
 
-  constructor(progCorrectionGQL: ProgCorrectionGQL, dexieService: DexieService) {
-    super(progCorrectionGQL, dexieService);
+  constructor(programmingCorrectionGQL: ProgrammingCorrectionGQL, dexieService: DexieService) {
+    super(programmingCorrectionGQL, dexieService);
   }
 
   get sampleSolutionFilesList(): ExerciseFile[][] {
@@ -36,6 +38,16 @@ export class ProgrammingExerciseComponent
   }
 
   ngOnInit(): void {
+    switch (this.contentFragment.part) {
+      case ProgExPart.ActivityDiagram:
+      case ProgExPart.Implementation:
+        this.oldPart = ProgrammingImplementationToolPart;
+        break;
+      case ProgExPart.TestCreation:
+        this.oldPart = ProgrammingTestCreationPart;
+        break;
+    }
+
     this.exerciseFiles = (this.contentFragment.part === ProgExPart.Implementation) ?
       this.contentFragment.implementationPart.files :
       this.contentFragment.unitTestPart.unitTestFiles;
@@ -44,22 +56,18 @@ export class ProgrammingExerciseComponent
   }
 
   loadOldSolution(): void {
-    //    const maybeOldSol: Promise<IProgSolution | undefined> = this.loadOldSolutionAbstract(this.exercise, this.part);
-    // TODO: deactivated for now...
-    // this.dexieService.programmingSolutions.get([this.collection.id, this.exercise.id])
-    //   .then((oldSolution: DbProgrammingSolution | undefined) => {
-    //     if (oldSolution) {
-    //       // FIXME: editor does not update...
-    //       this.exerciseFiles = oldSolution.solution.files;
-    //     }
-    //   });
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id)
+      .then((maybeOldSolution: ProgSolutionInput | undefined) => {
+        if (maybeOldSolution) {
+          console.info(JSON.stringify(maybeOldSolution));
+          // TODO: deactivated for now...
+          // this.exerciseFiles = maybeOldSolution.files;
+        }
+      });
   }
 
-  protected getSolution(): ProgSolution {
-    return {
-      files: this.exerciseFiles,
-//      testData: []
-    };
+  protected getSolution(): ProgSolutionInput {
+    return {files: this.exerciseFiles};
   }
 
   get sampleSolutions(): ProgSolution[] {
@@ -67,19 +75,7 @@ export class ProgrammingExerciseComponent
   }
 
   correct(): void {
-    let oldPart: ToolPart;
-
-    switch (this.contentFragment.part) {
-      case ProgExPart.ActivityDiagram:
-      case ProgExPart.Implementation:
-        oldPart = ProgrammingImplementationToolPart;
-        break;
-      case ProgExPart.TestCreation:
-        oldPart = ProgrammingTestCreationPart;
-        break;
-    }
-
-    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, oldPart.id);
+    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.oldPart.id);
   }
 
 }

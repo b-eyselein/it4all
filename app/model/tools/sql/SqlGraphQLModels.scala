@@ -22,22 +22,6 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
 
   private val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
 
-  override val exerciseContentType: ObjectType[Unit, SqlExerciseContent] = {
-    implicit val seTypeT: EnumType[SqlExerciseType]            = sqlExerciseTypeType
-    implicit val sst: ObjectType[Unit, SampleSolution[String]] = sampleSolutionType
-
-    deriveObjectType(
-      AddFields(
-        Field(
-          "part",
-          OptionType(partEnumType),
-          arguments = partIdArgument :: Nil,
-          resolve = context => SqlExPart.values.find(_.id == context.arg(partIdArgument))
-        )
-      )
-    )
-  }
-
   // Solution types
 
   override val SolTypeInputType: InputType[String] = StringType
@@ -116,7 +100,7 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
       ReplaceField("cells", Field("cells", ListType(KeyCellValueObjectType), resolve = _.value.cells.toSeq))
     )
 
-  val sqlQueryResultType: ObjectType[Unit, SqlQueryResult] = {
+  private val sqlQueryResultType: ObjectType[Unit, SqlQueryResult] = {
     implicit val srt: ObjectType[Unit, SqlRow] = sqlRowType
 
     deriveObjectType()
@@ -150,15 +134,29 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     types = sqlIllegalQueryResultType :: sqlWrongQueryTypeResult :: sqlResultType :: Nil
   )
 
-  // Fields for query types
-
-  private val schemaNameArgument = Argument("schemaName", StringType)
-
-  val dbContentQueryField: Field[GraphQLContext, Unit] = Field(
+  private val dbContentQueryField: Field[GraphQLContext, SqlExerciseContent] = Field(
     "sqlDbContents",
     ListType(SqlGraphQLModels.sqlQueryResultType),
-    arguments = schemaNameArgument :: Nil,
-    resolve = context => SelectDAO.tableContents(context.arg(schemaNameArgument))
+    resolve = context => SelectDAO.tableContents(context.value.schemaName)
   )
+
+  private val sqlExerciseContentType: ObjectType[GraphQLContext, SqlExerciseContent] = {
+    implicit val seTypeT: EnumType[SqlExerciseType]            = sqlExerciseTypeType
+    implicit val sst: ObjectType[Unit, SampleSolution[String]] = sampleSolutionType
+
+    deriveObjectType(
+      AddFields(
+        Field(
+          "part",
+          OptionType(partEnumType),
+          arguments = partIdArgument :: Nil,
+          resolve = context => SqlExPart.values.find(_.id == context.arg(partIdArgument))
+        ),
+        dbContentQueryField
+      )
+    )
+  }
+
+  override val exerciseContentType: OutputType[SqlExerciseContent] = sqlExerciseContentType
 
 }

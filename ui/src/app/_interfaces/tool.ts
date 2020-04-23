@@ -8,8 +8,8 @@ export interface ToolPart {
   disabled?: boolean;
 }
 
-export abstract class Tool {
-  constructor(
+export abstract class RandomTool {
+  protected constructor(
     public id: string,
     public name: string,
     public parts: ToolPart[],
@@ -17,19 +17,5 @@ export abstract class Tool {
     public hasLessons: boolean = false
   ) {
   }
-
-  hasPlayground(): boolean {
-    return false;
-  }
 }
 
-export abstract class RandomTool extends Tool {
-}
-
-export abstract class CollectionTool extends Tool {
-
-  exerciseHasPart(exerciseContent: any, part: ToolPart): boolean {
-    return true;
-  }
-
-}
