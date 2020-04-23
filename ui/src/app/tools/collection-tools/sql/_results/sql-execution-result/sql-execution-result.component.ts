@@ -9,15 +9,15 @@ import {SqlExecutionResultFragment} from '../../sql-apollo-mutations.service';
     <div class="columns">
       <div class="column">
         <h4 class="subtitle is-4 has-text-centered">Nutzer</h4>
-        <div class="table-container" *ngIf="result.userResultTry; else noUserResultBlock">
-          <it4all-query-result-table [queryResult]="result.userResultTry"></it4all-query-result-table>
+        <div class="table-container" *ngIf="result.userResult; else noUserResultBlock">
+          <it4all-query-result-table [queryResult]="result.userResult"></it4all-query-result-table>
         </div>
       </div>
 
       <div class="column">
         <h4 class="subtitle is-4 has-text-centered">Muster</h4>
         <div class="table-container">
-          <it4all-query-result-table [queryResult]="result.sampleResultTry"></it4all-query-result-table>
+          <it4all-query-result-table [queryResult]="result.sampleResult"></it4all-query-result-table>
         </div>
       </div>
     </div>

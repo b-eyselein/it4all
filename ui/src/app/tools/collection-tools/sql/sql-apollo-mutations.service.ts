@@ -205,10 +205,10 @@ export type SqlResultFragment = (
 
 export type SqlExecutionResultFragment = (
   { __typename?: 'SqlExecutionResult' }
-  & { userResultTry?: Types.Maybe<(
+  & { userResult?: Types.Maybe<(
     { __typename?: 'SqlQueryResult' }
     & SqlQueryResultFragment
-  )>, sampleResultTry?: Types.Maybe<(
+  )>, sampleResult?: Types.Maybe<(
     { __typename?: 'SqlQueryResult' }
     & SqlQueryResultFragment
   )> }
@@ -602,10 +602,10 @@ export const SqlQueryResultFragmentDoc = gql`
     ${SqlRowFragmentDoc}`;
 export const SqlExecutionResultFragmentDoc = gql`
     fragment SqlExecutionResult on SqlExecutionResult {
-  userResultTry {
+  userResult {
     ...SqlQueryResult
   }
-  sampleResultTry {
+  sampleResult {
     ...SqlQueryResult
   }
 }

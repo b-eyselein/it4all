@@ -176,10 +176,10 @@ fragment SqlResult on SqlResult {
 }
 
 fragment SqlExecutionResult on SqlExecutionResult {
-  userResultTry {
+  userResult {
     ...SqlQueryResult
   }
-  sampleResultTry {
+  sampleResult {
     ...SqlQueryResult
   }
 }

@@ -278,7 +278,7 @@ export type AdminEditCollectionQuery = (
     { __typename?: 'CollectionTol' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
-      & CompleteCollectionFragment
+      & Pick<Types.ExerciseCollection, 'asJsonString'>
     )> }
   )> }
 );
@@ -294,11 +294,6 @@ export type AdminReadCollectionsQuery = (
     { __typename?: 'CollectionTol' }
     & Pick<Types.CollectionTol, 'name' | 'readCollections'>
   )> }
-);
-
-export type CompleteCollectionFragment = (
-  { __typename?: 'ExerciseCollection' }
-  & Pick<Types.ExerciseCollection, 'id' | 'toolId' | 'title' | 'authors' | 'text'>
 );
 
 export type AdminUpsertCollectionMutationVariables = {
@@ -342,7 +337,10 @@ export type AdminEditExerciseQuery = (
     { __typename?: 'CollectionTol' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
-      & { exercise?: Types.Maybe<{ __typename: 'Exercise' }> }
+      & { exercise?: Types.Maybe<(
+        { __typename?: 'Exercise' }
+        & Pick<Types.Exercise, 'asJsonString'>
+      )> }
     )> }
   )> }
 );
@@ -612,15 +610,6 @@ export type LessonFragment = (
   & Pick<Types.Lesson, 'id' | 'title'>
 );
 
-export const CompleteCollectionFragmentDoc = gql`
-    fragment CompleteCollection on ExerciseCollection {
-  id
-  toolId
-  title
-  authors
-  text
-}
-    `;
 export const PartFragmentDoc = gql`
     fragment Part on ExPart {
   id
@@ -1193,11 +1182,11 @@ export const AdminEditCollectionDocument = gql`
     query AdminEditCollection($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
-      ...CompleteCollection
+      asJsonString
     }
   }
 }
-    ${CompleteCollectionFragmentDoc}`;
+    `;
 
   @Injectable({
     providedIn: 'root'
@@ -1258,7 +1247,7 @@ export const AdminEditExerciseDocument = gql`
   tool(toolId: $toolId) {
     collection(collId: $collId) {
       exercise(exId: $exId) {
-        __typename
+        asJsonString
       }
     }
   }

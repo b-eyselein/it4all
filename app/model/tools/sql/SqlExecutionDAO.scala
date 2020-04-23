@@ -2,7 +2,6 @@ package model.tools.sql
 
 import java.sql.Connection
 
-import model.tools.ExerciseCollection
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.insert.Insert
@@ -14,15 +13,13 @@ import slick.jdbc.JdbcBackend.Database
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
-abstract class SqlExecutionDAO(mainDbName: String) {
+abstract class SqlExecutionDAO(port: Int) {
+
+  private val SHOW_TABLES_DUMMY = "SHOW TABLES;"
 
   private val SELECT_ALL_DUMMY = "SELECT * FROM "
 
   private val logger = Logger(classOf[SqlExecutionDAO])
-
-  protected val port: Int
-
-  protected val mainDB = db(None)
 
   protected def using[A <: AutoCloseable, B](resource: A)(f: A => B): Try[B] =
     try {
@@ -37,29 +34,37 @@ abstract class SqlExecutionDAO(mainDbName: String) {
       }
     }
 
-  protected def db(maybeSchemaName: Option[String]): Database = {
-    val url = maybeSchemaName match {
+  protected def db(maybeSchemaName: Option[String]): Database = Database.forURL(
+    url = maybeSchemaName match {
       case None             => s"jdbc:mysql://localhost:$port?useSSL=false"
       case Some(schemaName) => s"jdbc:mysql://localhost:$port/$schemaName?useSSL=false"
-    }
-
-    Database.forURL(url, user = "it4all", password = "sT8aV#k7", driver = "com.mysql.cj.jdbc.Driver")
-  }
+    },
+    user = "it4all",
+    password = "sT8aV#k7",
+    driver = "com.mysql.cj.jdbc.Driver"
+  )
 
   def executeQueries(
     schemaName: String,
     userStatement: Statement,
     sampleStatement: Statement
   ): SqlExecutionResult = {
-    val userExecutionResult: Try[SqlQueryResult]   = executeQuery(schemaName, userStatement)
-    val sampleExecutionResult: Try[SqlQueryResult] = executeQuery(schemaName, sampleStatement)
-    SqlExecutionResult(userExecutionResult.toOption, sampleExecutionResult.toOption)
+    val sampleExecutionResult = executeQuery(schemaName, sampleStatement).toOption
+
+    val userExecutionResult: Option[SqlQueryResult] = executeQuery(schemaName, userStatement).map { userResult =>
+      sampleExecutionResult match {
+        case None               => userResult
+        case Some(sampleResult) => SqlQueryResult.compareAndUpdateUserQueryResult(userResult, sampleResult)
+      }
+    }.toOption
+
+    SqlExecutionResult(userExecutionResult, sampleExecutionResult)
   }
 
   protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult]
 
   private def allTableNames(connection: Connection): Seq[String] =
-    using(connection.prepareStatement("SHOW TABLES;")) { tablesQuery =>
+    using(connection.prepareStatement(SHOW_TABLES_DUMMY)) { tablesQuery =>
       using(tablesQuery.executeQuery()) { resultSet =>
         val tableNames: ListBuffer[String] = ListBuffer.empty
 
@@ -76,13 +81,11 @@ abstract class SqlExecutionDAO(mainDbName: String) {
         val resultSet       = selectStatement.executeQuery()
         SqlQueryResult.fromResultSet(resultSet, tableName)
       }
-    } getOrElse Seq[SqlQueryResult]()
+    }.getOrElse(Seq.empty)
 
 }
 
-object SelectDAO extends SqlExecutionDAO("sqlselect") {
-
-  override protected val port = 3107
+object SelectDAO extends SqlExecutionDAO(3107) {
 
   override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = query match {
     case sel: Select =>
@@ -95,9 +98,7 @@ object SelectDAO extends SqlExecutionDAO("sqlselect") {
   }
 }
 
-object ChangeDAO extends SqlExecutionDAO("sqlchange") {
-
-  override protected val port = 3108
+object ChangeDAO extends SqlExecutionDAO(3108) {
 
   override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = query match {
     case change @ (_: Update | _: Insert | _: Delete) =>
@@ -126,9 +127,7 @@ object ChangeDAO extends SqlExecutionDAO("sqlchange") {
 
 }
 
-object CreateDAO extends SqlExecutionDAO("sqlcreate") {
-
-  override protected val port = 3109
+object CreateDAO extends SqlExecutionDAO(3109) {
 
   override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = Try(???)
 

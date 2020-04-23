@@ -81,11 +81,7 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     deriveObjectType()
   }
 
-  private val sqlCellType: ObjectType[Unit, SqlCell] = deriveObjectType(
-    AddFields(
-      Field("different", BooleanType, resolve = _.value.different)
-    )
-  )
+  private val sqlCellType: ObjectType[Unit, SqlCell] = deriveObjectType()
 
   private val KeyCellValueObjectType = ObjectType(
     "SqlKeyCellValueObject",

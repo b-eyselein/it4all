@@ -6,7 +6,6 @@
 
   <br>
 
-  <textarea class="textarea" rows="30" *ngIf="adminEditCollectionQuery"
-            title="Todo...">{{adminEditCollectionQuery.tool.collection | json}}</textarea>
+  <textarea class="textarea" rows="30" *ngIf="collectionToEdit" title="Todo...">{{collectionToEdit | json}}</textarea>
 
 </div>

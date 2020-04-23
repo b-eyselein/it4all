@@ -190,7 +190,7 @@ query AdminCollectionsIndex($toolId: String!) {
 query AdminEditCollection($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
-      ...CompleteCollection
+      asJsonString
     }
   }
 }
@@ -202,19 +202,9 @@ query AdminReadCollections($toolId: String!) {
   }
 }
 
-fragment CompleteCollection on ExerciseCollection {
-  id
-  toolId
-  title
-  authors
-  text
-}
-
 mutation AdminUpsertCollection($toolId: String!, $content: String!) {
   upsertCollection(toolId: $toolId, content: $content)
 }
-
-
 
 query AdminReadLessons($toolId: String!) {
   tool(toolId: $toolId) {
@@ -230,7 +220,7 @@ query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
       exercise(exId: $exId) {
-        __typename
+        asJsonString
       }
     }
   }

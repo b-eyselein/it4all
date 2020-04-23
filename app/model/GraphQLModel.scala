@@ -94,13 +94,33 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
           case x: XmlExerciseContent => Some(x)
           case _                     => None
         }),
-        Field("parts", ListType(exPartType), resolve = context => context.value.content.parts)
+        Field("parts", ListType(exPartType), resolve = context => context.value.content.parts),
+        Field(
+          "asJsonString",
+          StringType,
+          resolve = context => {
+            ToolList.tools.find(_.id == context.value.toolId) match {
+              case None => ???
+              case Some(tool) =>
+                // FIXME: remove cast!
+                Json.stringify(
+                  tool.toolJsonProtocol.exerciseFormat
+                    .writes(context.value.asInstanceOf[Exercise[tool.SolType, tool.ExContentType]])
+                )
+            }
+          }
+        )
       )
     )
   }
 
   private val CollectionType: ObjectType[GraphQLContext, ExerciseCollection] = deriveObjectType(
     AddFields(
+      Field(
+        "asJsonString",
+        StringType,
+        resolve = context => Json.stringify(JsonProtocols.collectionFormat.writes(context.value))
+      ),
       Field(
         "exerciseCount",
         IntType,
@@ -227,7 +247,6 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
         arguments = toolIdArgument :: Nil,
         resolve = ctx => ToolList.tools.find(_.id == ctx.arg(toolIdArgument))
       )
-      // // // // // // // , SqlGraphQLModels.dbContentQueryField
     )
   )
 

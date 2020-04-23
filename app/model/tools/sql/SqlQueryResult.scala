@@ -2,84 +2,63 @@ package model.tools.sql
 
 import java.sql.{ResultSet, ResultSetMetaData}
 
-import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
-final case class SqlCell(colName: String, content: String) {
+final case class SqlCell(colName: String, content: Option[String], different: Boolean = false)
 
-  // FIXME: remove!
-  var different: Boolean = false
+final case class SqlRow(cells: Map[String, SqlCell])
 
-}
+object SqlQueryResult {
 
-object SqlRow {
+  def fromResultSet(resultSet: ResultSet, tableName: String = ""): SqlQueryResult = {
 
-  def buildFrom(resultSet: ResultSet): (Seq[String], Seq[SqlRow]) = {
+    @annotation.tailrec
+    def go(resultSet: ResultSet, columnNames: Seq[String], acc: Seq[SqlRow]): Seq[SqlRow] =
+      if (!resultSet.next()) acc
+      else {
+        val cells: Map[String, SqlCell] = columnNames.map { colName =>
+          val content = Option(
+            Try(resultSet.getString(colName)).getOrElse("")
+          )
+
+          (colName, SqlCell(colName, content))
+        }.toMap
+
+        go(resultSet, columnNames, acc :+ SqlRow(cells))
+      }
+
     val metaData: ResultSetMetaData = resultSet.getMetaData
 
     val columnNames: Seq[String] =
       (1 to metaData.getColumnCount).map(count => Try(metaData.getColumnLabel(count)).getOrElse(""))
 
-    val pRows: ListBuffer[SqlRow] = ListBuffer.empty
-
-    while (resultSet.next) {
-      val cells: Map[String, SqlCell] = columnNames.map { colName =>
-        (colName, SqlCell(colName, Try(resultSet.getString(colName)).getOrElse("")))
-      }.toMap
-
-      pRows += new SqlRow(cells)
-    }
-
-    (columnNames, pRows.toList)
+    SqlQueryResult(columnNames, go(resultSet, columnNames, Seq.empty), tableName)
   }
 
-}
+  def compareAndUpdateUserQueryResult(userResult: SqlQueryResult, sampleResult: SqlQueryResult): SqlQueryResult = {
+    // FIXME: implement!
 
-final case class SqlRow(cells: Map[String, SqlCell]) {
+    @annotation.tailrec
+    def go(rows: List[(SqlRow, SqlRow)], acc: Seq[SqlRow]): SqlQueryResult = rows match {
+      case Nil => SqlQueryResult(userResult.columnNames, acc, userResult.tableName)
+      case (userRow, sampleRow) :: tail =>
+        val newUserRow = userRow.cells.map {
+          case (userColName, userCell) =>
+            val newCell = userCell.copy(
+              different = !sampleRow.cells
+                .get(userColName)
+                .exists { _.content == userCell.content }
+            )
 
-  def columnNames: Seq[String] = cells.keys.toSeq
+            (userColName, newCell)
+        }
 
-  def apply(colName: String): Option[SqlCell] = cells.get(colName)
+        go(tail, acc :+ SqlRow(newUserRow))
+    }
 
-}
-
-object SqlQueryResult {
-
-  def fromResultSet(resultSet: ResultSet, tableName: String = ""): SqlQueryResult = {
-    val (columnNames, rows): (Seq[String], Seq[SqlRow]) = SqlRow.buildFrom(resultSet)
-
-    SqlQueryResult(columnNames, rows, tableName)
+    go((userResult.rows zip sampleResult.rows).toList, Seq.empty)
   }
 
 }
 
 final case class SqlQueryResult(columnNames: Seq[String], rows: Seq[SqlRow], tableName: String = "")
-    extends Iterable[SqlRow] {
-
-  override def iterator: Iterator[SqlRow] = rows.iterator
-
-  def isIdentic(that: SqlQueryResult): Boolean = checkRows(this, that, (this.columnNames ++ that.columnNames).distinct)
-
-  private def checkRows(userRes: SqlQueryResult, sampleRes: SqlQueryResult, allColNames: Seq[String]): Boolean = {
-    var correct = true
-
-    val zippedRows: Iterable[(SqlRow, SqlRow)] = userRes.zipAll(sampleRes, SqlRow(Map.empty), SqlRow(Map.empty))
-
-    for ((userRow, sampleRow) <- zippedRows; colName <- allColNames) {
-      (userRow(colName), sampleRow(colName)) match {
-
-        case (None, None)             => // Do nothing: one query result has more rows than the other!
-        case (None, Some(sampleCell)) => sampleCell.different = true
-        case (Some(userCell), None)   => userCell.different = true
-
-        case (Some(userCell), Some(sampleCell)) =>
-          val cellCorrect = userCell.content == sampleCell.content
-          userCell.different = !cellCorrect
-          correct &= cellCorrect
-      }
-    }
-
-    correct
-  }
-
-}

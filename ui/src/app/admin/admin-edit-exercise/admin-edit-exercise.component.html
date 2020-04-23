@@ -6,6 +6,6 @@
 
   <br>
 
-  <textarea rows="30" class="textarea" title="Todo" *ngIf="adminEditExerciseQuery">{{exerciseAsJson | json}}</textarea>
+  <textarea rows="30" class="textarea" title="Todo" *ngIf="exerciseToEdit">{{exerciseToEdit | json}}</textarea>
 
 </div>

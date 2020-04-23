@@ -115,6 +115,6 @@ final case class SqlResult(
 }
 
 final case class SqlExecutionResult(
-  userResultTry: Option[SqlQueryResult],
-  sampleResultTry: Option[SqlQueryResult]
+  userResult: Option[SqlQueryResult],
+  sampleResult: Option[SqlQueryResult]
 )

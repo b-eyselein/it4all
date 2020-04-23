@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Subscription} from 'rxjs';
-import {AdminEditExerciseGQL, AdminEditExerciseQuery} from '../../_services/apollo_services';
+import {AdminEditExerciseGQL, AdminUpsertExerciseGQL} from '../../_services/apollo_services';
 
 @Component({
   selector: 'it4all-admin-edit-exercise',
@@ -9,11 +9,17 @@ import {AdminEditExerciseGQL, AdminEditExerciseQuery} from '../../_services/apol
 })
 export class AdminEditExerciseComponent implements OnInit, OnDestroy {
 
-  sub: Subscription;
+  private sub: Subscription;
 
-  adminEditExerciseQuery: AdminEditExerciseQuery;
+  private toolId: string;
 
-  constructor(private route: ActivatedRoute, private adminEditExerciseGQL: AdminEditExerciseGQL) {
+  exerciseToEdit: object;
+
+  constructor(
+    private route: ActivatedRoute,
+    private adminEditExerciseGQL: AdminEditExerciseGQL,
+    private adminUpsertExerciseGQL: AdminUpsertExerciseGQL
+  ) {
   }
 
   ngOnInit(): void {
@@ -25,7 +31,7 @@ export class AdminEditExerciseComponent implements OnInit, OnDestroy {
       this.adminEditExerciseGQL
         .watch({toolId, collId, exId})
         .valueChanges
-        .subscribe(({data}) => this.adminEditExerciseQuery = data);
+        .subscribe(({data}) => this.exerciseToEdit = JSON.parse(data.tool.collection.exercise.asJsonString));
     });
   }
 
@@ -33,8 +39,12 @@ export class AdminEditExerciseComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  get exerciseAsJson(): object | undefined {
-    return this.adminEditExerciseQuery.tool.collection.exercise;
+  save(): void {
+    this.adminUpsertExerciseGQL
+      .mutate({toolId: this.toolId, content: JSON.stringify(this.exerciseToEdit)})
+      .subscribe(({data}) => {
+        console.info(data);
+      });
   }
 
 }

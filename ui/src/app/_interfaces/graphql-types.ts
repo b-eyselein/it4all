@@ -29,10 +29,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  FalseNegative = 'FalseNegative',
+  TruePositive = 'TruePositive',
   FalsePositive = 'FalsePositive',
-  TrueNegative = 'TrueNegative',
-  TruePositive = 'TruePositive'
+  FalseNegative = 'FalseNegative',
+  TrueNegative = 'TrueNegative'
 }
 
 export type CollectionTol = {
@@ -123,6 +123,7 @@ export type Exercise = {
   webContent?: Maybe<WebExerciseContent>;
   xmlContent?: Maybe<XmlExerciseContent>;
   parts: Array<ExPart>;
+  asJsonString: Scalars['String'];
 };
 
 export type ExerciseCollection = {
@@ -132,6 +133,7 @@ export type ExerciseCollection = {
   title: Scalars['String'];
   authors: Array<Scalars['String']>;
   text: Scalars['String'];
+  asJsonString: Scalars['String'];
   exerciseCount: Scalars['Int'];
   exercises: Array<Exercise>;
   exercise?: Maybe<Exercise>;
@@ -263,11 +265,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  PartialMatch = 'PARTIAL_MATCH',
-  OnlySample = 'ONLY_SAMPLE',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlyUser = 'ONLY_USER'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
+  OnlyUser = 'ONLY_USER',
+  PartialMatch = 'PARTIAL_MATCH'
 }
 
 export type Mutation = {
@@ -542,7 +544,7 @@ export type SqlBinaryExpressionMatch = NewMatch & {
 export type SqlCell = {
    __typename?: 'SqlCell';
   colName: Scalars['String'];
-  content: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
   different: Scalars['Boolean'];
 };
 
@@ -564,8 +566,8 @@ export type SqlColumnMatch = NewMatch & {
 
 export type SqlExecutionResult = {
    __typename?: 'SqlExecutionResult';
-  userResultTry?: Maybe<SqlQueryResult>;
-  sampleResultTry?: Maybe<SqlQueryResult>;
+  userResult?: Maybe<SqlQueryResult>;
+  sampleResult?: Maybe<SqlQueryResult>;
 };
 
 export type SqlExerciseContent = {
@@ -584,10 +586,10 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
+  Create = 'CREATE',
+  Delete = 'DELETE',
   Select = 'SELECT',
   Insert = 'INSERT',
-  Delete = 'DELETE',
-  Create = 'CREATE',
   Update = 'UPDATE'
 }
 
@@ -734,17 +736,17 @@ export type SqlWrongQueryTypeResult = AbstractCorrectionResult & {
 };
 
 export enum SuccessType {
-  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY'
+  Partially = 'PARTIALLY',
+  Complete = 'COMPLETE'
 }
 
 export enum ToolState {
-  Alpha = 'ALPHA',
-  Beta = 'BETA',
   Live = 'LIVE',
-  PreAlpha = 'PRE_ALPHA'
+  PreAlpha = 'PRE_ALPHA',
+  Alpha = 'ALPHA',
+  Beta = 'BETA'
 }
 
 export type Topic = {
@@ -799,8 +801,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
 };
 
 export enum UmlAssociationType {
-  Aggregation = 'AGGREGATION',
   Association = 'ASSOCIATION',
+  Aggregation = 'AGGREGATION',
   Composition = 'COMPOSITION'
 }
 
@@ -909,9 +911,9 @@ export type UmlClassMatchingResult = MatchingResult & {
 };
 
 export enum UmlClassType {
-  Abstract = 'ABSTRACT',
   Class = 'CLASS',
-  Interface = 'INTERFACE'
+  Interface = 'INTERFACE',
+  Abstract = 'ABSTRACT'
 }
 
 export type UmlCompleteResult = AbstractCorrectionResult & {
@@ -1033,10 +1035,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
+  Public = 'PUBLIC',
   Package = 'PACKAGE',
-  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Public = 'PUBLIC'
+  Private = 'PRIVATE'
 }
 
 export type UnitTestCorrectionResult = {
@@ -1069,8 +1071,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Normal = 'Normal',
-  Simplified = 'Simplified'
+  Simplified = 'Simplified',
+  Normal = 'Normal'
 }
 
 export type WebCompleteResult = AbstractCorrectionResult & {
