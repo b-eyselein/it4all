@@ -1,5 +1,6 @@
 package model.tools.programming
 
+import better.files.File
 import model.User
 import model.tools._
 
@@ -11,7 +12,7 @@ object ProgTool extends CollectionTool("programming", "Programmierung", ToolStat
   override type SolType        = ProgSolution
   override type ExContentType  = ProgrammingExerciseContent
   override type PartType       = ProgExPart
-  override type CompResultType = ProgCompleteResult
+  override type CompResultType = ProgrammingAbstractResult
 
   // Yaml, Html Forms, Json
 
@@ -31,12 +32,11 @@ object ProgTool extends CollectionTool("programming", "Programmierung", ToolStat
     exercise: Exercise[ProgSolution, ProgrammingExerciseContent],
     part: ProgExPart,
     solutionSaved: Boolean
-  )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = ProgCorrector.correct(
-    user,
-    solution,
-    exercise,
-    part,
-    solutionSaved
-  )
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingAbstractResult]] = {
+
+    val solutionTargetDir: File = solutionDirForExercise(user.username, exercise.collectionId, exercise.id) / part.id
+
+    ProgCorrector.correct(solution, exercise, part, solutionTargetDir, solutionSaved)
+  }
 
 }

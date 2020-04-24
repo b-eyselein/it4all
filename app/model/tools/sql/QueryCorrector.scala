@@ -1,8 +1,9 @@
 package model.tools.sql
 
+import model.core.result.InternalErrorResult
 import model.points._
-import model.tools.SampleSolution
 import model.tools.sql.matcher._
+import model.tools.{AbstractCorrector, SampleSolution}
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
@@ -11,7 +12,15 @@ import net.sf.jsqlparser.statement.Statement
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Try}
 
-abstract class QueryCorrector(val queryType: String) {
+abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
+
+  override type AbstractResult = SqlAbstractResult
+
+  override protected def buildInternalError(
+    msg: String,
+    solutionSaved: Boolean,
+    maxPoints: Points
+  ): SqlAbstractResult with InternalErrorResult = SqlInternalErrorResult(msg, solutionSaved, maxPoints)
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
@@ -24,7 +33,7 @@ abstract class QueryCorrector(val queryType: String) {
     learnerSolution: String,
     sampleSolutions: Seq[SampleSolution[String]],
     solutionSaved: Boolean
-  )(implicit ec: ExecutionContext): Try[AbstractSqlResult] = Try {
+  )(implicit ec: ExecutionContext): SqlAbstractResult = {
     parseStatement(learnerSolution).fold(
       exception => SqlIllegalQueryResult(solutionSaved, exception.getMessage, zeroPoints),
       userQ =>

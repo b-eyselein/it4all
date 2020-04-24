@@ -2,18 +2,20 @@ package model.tools.programming
 
 import better.files.File._
 import better.files._
-import model.User
 import model.core.result.SuccessType
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.tools.programming.ProgrammingToolJsonProtocol.UnitTestTestData
-import model.tools.{Exercise, ExerciseFile, SampleSolution}
+import model.tools.{AbstractCorrector, Exercise, ExerciseFile, SampleSolution}
+import play.api.Logger
 import play.api.libs.json.Json
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex
 import scala.util.{Failure, Success, Try}
 
-object ProgCorrector {
+object ProgCorrector extends AbstractCorrector {
+
+  override protected val logger: Logger = Logger(ProgCorrector.getClass)
 
   val programmingSimplifiedCorrectionDockerImageName: ScalaDockerImage =
     ScalaDockerImage("ls6uniwue", "py_simplified_prog_corrector", "0.2.0")
@@ -159,16 +161,16 @@ object ProgCorrector {
 
   private def correctUnittest(
     solTargetDir: File,
-    progSolution: ProgSolution,
+    solution: ProgSolution,
     exerciseContent: ProgrammingExerciseContent,
     resultFile: File,
     solutionSaved: Boolean
-  )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
+  )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
 
     // write unit test file
     val testFileName = exerciseContent.unitTestPart.testFileName
     val testFile     = solTargetDir / testFileName
-    createFileAndWrite(testFile, progSolution.files.find(_.name == testFileName).map(_.content).getOrElse(???))
+    createFileAndWrite(testFile, solution.files.find(_.name == testFileName).map(_.content).getOrElse(???))
 
     // write test data file
     val testDataFile = solTargetDir / testDataFileName
@@ -207,19 +209,18 @@ object ProgCorrector {
         writeExerciseFileAndMount(exFile, solTargetDir, DockerConnector.DefaultWorkingDir / exerciseContent.foldername)
       }
 
+    val dockerBinds = unitTestSolFilesDockerBinds ++ exFilesMounts ++ Seq(
+      DockerBind(
+        testFile,
+        DockerConnector.DefaultWorkingDir / exerciseContent.foldername / testFileName,
+        isReadOnly = true
+      ),
+      DockerBind(testDataFile, DockerConnector.DefaultWorkingDir / testDataFileName, isReadOnly = true),
+      DockerBind(resultFile, DockerConnector.DefaultWorkingDir / resultFileName)
+    )
+
     DockerConnector
-      .runContainer(
-        imageName = programmingUnitTestCorrectionDockerImageName.name,
-        maybeDockerBinds = unitTestSolFilesDockerBinds ++ exFilesMounts ++ Seq(
-          DockerBind(
-            testFile,
-            DockerConnector.DefaultWorkingDir / exerciseContent.foldername / testFileName,
-            isReadOnly = true
-          ),
-          DockerBind(testDataFile, DockerConnector.DefaultWorkingDir / testDataFileName, isReadOnly = true),
-          DockerBind(resultFile, DockerConnector.DefaultWorkingDir / resultFileName)
-        )
-      )
+      .runContainer(imageName = programmingUnitTestCorrectionDockerImageName.name, maybeDockerBinds = dockerBinds)
       .map {
         case Failure(exception) => Failure(exception)
         case Success(_) =>
@@ -230,15 +231,12 @@ object ProgCorrector {
   }
 
   def correct(
-    user: User,
     progSolution: ProgSolution,
     exercise: Exercise[ProgSolution, ProgrammingExerciseContent],
     part: ProgExPart,
+    solutionTargetDir: File,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = {
-
-    val solutionTargetDir: File =
-      ProgTool.solutionDirForExercise(user.username, exercise.collectionId, exercise.id) / part.id
 
     // Create or truncate result file
     val resultFile = solutionTargetDir / resultFileName
@@ -247,21 +245,8 @@ object ProgCorrector {
 
     part match {
       case ProgExPart.TestCreation =>
-        correctUnittest(
-          solutionTargetDir,
-          progSolution,
-          exercise.content,
-          resultFile,
-          solutionSaved
-        )
-      case _ =>
-        correctImplementation(
-          solutionTargetDir,
-          progSolution,
-          exercise.content,
-          resultFile,
-          solutionSaved
-        )
+        correctUnittest(solutionTargetDir, progSolution, exercise.content, resultFile, solutionSaved)
+      case _ => correctImplementation(solutionTargetDir, progSolution, exercise.content, resultFile, solutionSaved)
     }
   }
 

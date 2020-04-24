@@ -10,12 +10,23 @@ sealed trait ProgEvalResult {
 
 }
 
+trait ProgrammingAbstractResult extends AbstractCorrectionResult
+
+final case class ProgrammingInternalErrorResult(
+  solutionSaved: Boolean,
+  maxPoints: Points
+) extends ProgrammingAbstractResult {
+
+  override def points: Points = zeroPoints
+
+}
+
 final case class ProgCompleteResult(
   solutionSaved: Boolean,
   simplifiedResults: Seq[SimplifiedExecutionResult] = Seq.empty,
   normalResult: Option[NormalExecutionResult] = None,
   unitTestResults: Seq[UnitTestCorrectionResult] = Seq.empty
-) extends AbstractCorrectionResult {
+) extends ProgrammingAbstractResult {
 
   private def results: Seq[ProgEvalResult] = simplifiedResults ++ unitTestResults
 

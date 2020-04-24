@@ -11,3 +11,9 @@ trait AbstractCorrectionResult {
   def maxPoints: Points // = -1 point
 
 }
+
+trait InternalErrorResult {
+
+  val msg: String
+
+}

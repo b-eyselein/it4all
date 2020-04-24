@@ -1,6 +1,6 @@
 package model.tools.sql
 
-import model.core.result.AbstractCorrectionResult
+import model.core.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
 import model.tools.sql.SqlTool._
 
@@ -80,13 +80,22 @@ final case class SqlQueriesStaticComparison(
 
 // Complete result
 
-sealed trait AbstractSqlResult extends AbstractCorrectionResult
+sealed trait SqlAbstractResult extends AbstractCorrectionResult
+
+final case class SqlInternalErrorResult(
+  msg: String,
+  solutionSaved: Boolean,
+  maxPoints: Points
+) extends SqlAbstractResult
+    with InternalErrorResult {
+  override def points: Points = zeroPoints
+}
 
 final case class SqlIllegalQueryResult(
   solutionSaved: Boolean,
   message: String,
   maxPoints: Points
-) extends AbstractSqlResult {
+) extends SqlAbstractResult {
 
   override def points: Points = zeroPoints
 
@@ -96,7 +105,7 @@ final case class SqlWrongQueryTypeResult(
   solutionSaved: Boolean,
   message: String,
   maxPoints: Points
-) extends AbstractSqlResult {
+) extends SqlAbstractResult {
 
   override def points: Points = zeroPoints
 
@@ -106,7 +115,7 @@ final case class SqlResult(
   staticComparison: SqlQueriesStaticComparison,
   executionResult: SqlExecutionResult,
   solutionSaved: Boolean
-) extends AbstractSqlResult {
+) extends SqlAbstractResult {
 
   override def points: Points = staticComparison.points
 

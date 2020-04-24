@@ -1,8 +1,21 @@
 package model.tools.uml
 
-import model.core.result.AbstractCorrectionResult
+import model.core.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
+
+trait UmlAbstractResult extends AbstractCorrectionResult
+
+final case class UmlInternalError(
+  msg: String,
+  solutionSaved: Boolean,
+  maxPoints: Points
+) extends UmlAbstractResult
+    with InternalErrorResult {
+
+  override def points: Points = zeroPoints
+
+}
 
 final case class UmlCompleteResult(
   classResult: Option[ClassComparison],
@@ -11,4 +24,4 @@ final case class UmlCompleteResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends AbstractCorrectionResult
+) extends UmlAbstractResult

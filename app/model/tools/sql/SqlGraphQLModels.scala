@@ -108,6 +108,11 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     deriveObjectType()
   }
 
+  private val sqlInternalErrorResultType: ObjectType[Unit, SqlInternalErrorResult] = deriveObjectType(
+    Interfaces(abstractResultInterfaceType),
+    ExcludeFields("maxPoints")
+  )
+
   private val sqlIllegalQueryResultType: ObjectType[Unit, SqlIllegalQueryResult] = deriveObjectType(
     Interfaces(abstractResultInterfaceType),
     ExcludeFields("solutionSaved", "maxPoints")
@@ -127,7 +132,7 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
 
   override val AbstractResultTypeType: OutputType[Any] = UnionType(
     "SqlAbstractResult",
-    types = sqlIllegalQueryResultType :: sqlWrongQueryTypeResult :: sqlResultType :: Nil
+    types = sqlInternalErrorResultType :: sqlIllegalQueryResultType :: sqlWrongQueryTypeResult :: sqlResultType :: Nil
   )
 
   private val dbContentQueryField: Field[GraphQLContext, SqlExerciseContent] = Field(

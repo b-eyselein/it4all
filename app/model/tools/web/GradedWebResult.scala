@@ -4,13 +4,24 @@ import de.uniwue.webtester.sitespec.{JsAction, JsActionType}
 import model.core.result.{AbstractCorrectionResult, SuccessType}
 import model.points._
 
+sealed trait WebAbstractResult extends AbstractCorrectionResult
+
+final case class WebInternalErrorResult(
+  solutionSaved: Boolean,
+  maxPoints: Points
+) extends WebAbstractResult {
+
+  override def points: Points = zeroPoints
+
+}
+
 final case class WebCompleteResult(
   gradedHtmlTaskResults: Seq[GradedHtmlTaskResult],
   gradedJsTaskResults: Seq[GradedJsTaskResult],
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends AbstractCorrectionResult
+) extends WebAbstractResult
 
 sealed trait GradedWebTaskResult
 

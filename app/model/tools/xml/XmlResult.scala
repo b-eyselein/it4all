@@ -5,6 +5,17 @@ import model.core.result.{AbstractCorrectionResult, SuccessType}
 import model.points._
 import model.tools.xml.XmlTool.ElementLineComparison
 
+trait XmlAbstractResult extends AbstractCorrectionResult
+
+final case class XmlInternalErrorResult(
+  solutionSaved: Boolean,
+  maxPoints: Points
+) extends XmlAbstractResult {
+
+  override def points: Points = (-1).points
+
+}
+
 final case class XmlCompleteResult(
   successType: SuccessType,
   documentResult: Seq[XmlError],
@@ -12,7 +23,7 @@ final case class XmlCompleteResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends AbstractCorrectionResult
+) extends XmlAbstractResult
 
 // Grammar result
 

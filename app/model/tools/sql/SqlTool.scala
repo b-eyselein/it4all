@@ -2,6 +2,7 @@ package model.tools.sql
 
 import model.User
 import model.core.matching.MatchingResult
+import model.points._
 import model.tools.sql.matcher._
 import model.tools.{StringSampleSolutionToolJsonProtocol, _}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
@@ -10,7 +11,7 @@ import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Try}
+import scala.util.{Success, Try}
 
 object SqlTool extends CollectionTool("sql", "Sql") {
 
@@ -27,7 +28,7 @@ object SqlTool extends CollectionTool("sql", "Sql") {
   override type SolType        = String
   override type ExContentType  = SqlExerciseContent
   override type PartType       = SqlExPart
-  override type CompResultType = AbstractSqlResult
+  override type CompResultType = SqlAbstractResult
 
   type ColumnComparison           = MatchingResult[ColumnWrapper, ColumnMatch]
   type TableComparison            = MatchingResult[Table, TableMatch]
@@ -57,17 +58,13 @@ object SqlTool extends CollectionTool("sql", "Sql") {
     exercise: Exercise[String, SqlExerciseContent],
     part: SqlExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[AbstractSqlResult]] = Future {
-    correctorsAndDaos.get(exercise.content.exerciseType) match {
-      case None => Failure(new Exception(s"There is no corrector or sql dao for ${exercise.content.exerciseType}"))
-      case Some((corrector, dao)) =>
-        corrector.correct(
-          dao,
-          exercise.content.schemaName,
-          solution,
-          exercise.content.sampleSolutions,
-          solutionSaved
-        )
+  )(implicit executionContext: ExecutionContext): Future[Try[SqlAbstractResult]] = Future {
+    Success {
+      correctorsAndDaos.get(exercise.content.exerciseType) match {
+        case None => SqlInternalErrorResult(solutionSaved, (-1).points)
+        case Some((corrector, dao)) =>
+          corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions, solutionSaved)
+      }
     }
   }
 

@@ -4,24 +4,24 @@ import java.nio.file.StandardOpenOption
 
 import better.files.File
 import better.files.File.OpenOptions
-import com.gargoylesoftware.htmlunit.ScriptException
 import de.uniwue.webtester.WebCorrector
-import de.uniwue.webtester.result._
 import model.User
-import model.points.addUp
+import model.points._
 import model.tools._
-import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Try}
+import scala.util.{Success, Try}
 
 object WebTool extends CollectionTool("web", "Web") {
+
+  private val logger = Logger(WebTool.getClass)
 
   override type SolType        = WebSolution
   override type ExContentType  = WebExerciseContent
   override type PartType       = WebExPart
-  override type CompResultType = WebCompleteResult
+  override type CompResultType = WebAbstractResult
 
   // Yaml, Html forms, Json
 
@@ -33,72 +33,60 @@ object WebTool extends CollectionTool("web", "Web") {
 
   // DB
 
-  def writeWebSolutionFiles(
-    username: String,
-    collId: Int,
-    exerciseId: Int,
-    webSolution: WebSolution
-  ): Try[Seq[File]] = Try {
+  private val openOptions: OpenOptions = Seq(
+    StandardOpenOption.TRUNCATE_EXISTING,
+    StandardOpenOption.CREATE,
+    StandardOpenOption.WRITE
+  )
 
-    val targetDir: File = solutionDirForExercise(username, collId, exerciseId)
-
-    val openOptions: OpenOptions =
-      Seq(StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
-
+  def writeWebSolutionFiles(targetDir: File, webSolution: WebSolution): Try[Seq[File]] = Try {
     webSolution.files.map { exerciseFile =>
-      val fileTargetPath = targetDir / exerciseFile.name
-
-      fileTargetPath.createFileIfNotExists(createParents = true).write(exerciseFile.content)(openOptions)
+      (targetDir / exerciseFile.name)
+        .createFileIfNotExists(createParents = true)
+        .write(exerciseFile.content)(openOptions)
     }
   }
 
   // Correction
 
-  private def onDriverGetError: Throwable => Try[WebCompleteResult] = {
-    case syntaxError: WebDriverException =>
-      Option(syntaxError.getCause) match {
-        case Some(scriptException: ScriptException) => Failure(scriptException)
-        case _                                      => ???
-      }
-    case otherError =>
-      print(otherError)
-      ???
-  }
-
   private def onDriverGetSuccess(
-    exerciseContent: WebExerciseContent,
+    exContent: WebExerciseContent,
     part: WebExPart,
     driver: HtmlUnitDriver,
     solutionSaved: Boolean
-  ): Try[WebCompleteResult] = Try {
+  ): Unit => WebCompleteResult = _ => {
     part match {
       case WebExPart.HtmlPart =>
-        val htmlTaskResults: Seq[HtmlTaskResult] =
-          exerciseContent.siteSpec.htmlTasks.map(WebCorrector.evaluateHtmlTask(_, driver))
-        val gradedHtmlTaskResults: Seq[GradedHtmlTaskResult] = htmlTaskResults.map(WebGrader.gradeHtmlTaskResult)
+        val gradedHtmlTaskResults: Seq[GradedHtmlTaskResult] = exContent.siteSpec.htmlTasks
+          .map(WebCorrector.evaluateHtmlTask(_, driver))
+          .map(WebGrader.gradeHtmlTaskResult)
 
         val points    = addUp(gradedHtmlTaskResults.map(_.points))
         val maxPoints = addUp(gradedHtmlTaskResults.map(_.maxPoints))
 
-        WebCompleteResult(gradedHtmlTaskResults, Seq[GradedJsTaskResult](), points, maxPoints, solutionSaved)
+        WebCompleteResult(gradedHtmlTaskResults, Seq.empty, points, maxPoints, solutionSaved)
 
       case WebExPart.JsPart =>
-        val jsTaskResults: Seq[JsTaskResult] =
-          exerciseContent.siteSpec.jsTasks.map(WebCorrector.evaluateJsTask(_, driver))
-        val gradedJsTaskResults: Seq[GradedJsTaskResult] = jsTaskResults.map(WebGrader.gradeJsTaskResult)
+        val gradedJsTaskResults: Seq[GradedJsTaskResult] = exContent.siteSpec.jsTasks
+          .map(WebCorrector.evaluateJsTask(_, driver))
+          .map(WebGrader.gradeJsTaskResult)
 
         val points    = addUp(gradedJsTaskResults.map(_.points))
         val maxPoints = addUp(gradedJsTaskResults.map(_.maxPoints))
 
-        WebCompleteResult(Seq[GradedHtmlTaskResult](), gradedJsTaskResults, points, maxPoints, solutionSaved)
+        WebCompleteResult(Seq.empty, gradedJsTaskResults, points, maxPoints, solutionSaved)
     }
   }
 
-  private def getSolutionUrl(
-    user: User,
-    exercise: Exercise[WebSolution, WebExerciseContent],
-    fileName: String
-  ): String = s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.id}/$fileName"
+  def onCorrectionError(
+    msg: String,
+    solutionSaved: Boolean,
+    maxPoints: Points = (-1).points
+  ): Throwable => WebAbstractResult = error => {
+    logger.error(msg, error)
+
+    WebInternalErrorResult(solutionSaved, maxPoints)
+  }
 
   override def correctAbstract(
     user: User,
@@ -106,17 +94,25 @@ object WebTool extends CollectionTool("web", "Web") {
     exercise: Exercise[WebSolution, WebExerciseContent],
     part: WebExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[WebCompleteResult]] = Future {
-    writeWebSolutionFiles(user.username, exercise.collectionId, exercise.id, solution)
-      .flatMap { _ =>
-        val driver              = new HtmlUnitDriver(true)
-        val solutionUrl: String = getSolutionUrl(user, exercise, exercise.content.siteSpec.fileName)
+  )(implicit executionContext: ExecutionContext): Future[Try[WebAbstractResult]] = Future {
+    Success {
+      writeWebSolutionFiles(solutionDirForExercise(user.username, exercise.collectionId, exercise.id), solution)
+        .fold(
+          onCorrectionError("Error while writing user solution", solutionSaved),
+          _ => {
+            val driver = new HtmlUnitDriver(true)
 
-        Try(driver.get(solutionUrl)).fold(
-          onDriverGetError,
-          (_: Unit) => onDriverGetSuccess(exercise.content, part, driver, solutionSaved)
+            val fileName = exercise.content.siteSpec.fileName
+            val solutionUrl =
+              s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.id}/$fileName"
+
+            Try(driver.get(solutionUrl)).fold(
+              onCorrectionError(s"Error while looking up url $solutionUrl", solutionSaved),
+              onDriverGetSuccess(exercise.content, part, driver, solutionSaved)
+            )
+          }
         )
-      }
+    }
   }
 
 }

@@ -6,14 +6,14 @@ import model.tools._
 import model.tools.uml.matcher._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.util.{Success, Try}
 
 object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
 
   override type SolType        = UmlClassDiagram
   override type ExContentType  = UmlExerciseContent
   override type PartType       = UmlExPart
-  override type CompResultType = UmlCompleteResult
+  override type CompResultType = UmlAbstractResult
 
   type ClassComparison          = MatchingResult[UmlClass, UmlClassMatch]
   type AttributeComparison      = MatchingResult[UmlAttribute, UmlAttributeMatch]
@@ -37,12 +37,9 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
     exercise: Exercise[UmlClassDiagram, UmlExerciseContent],
     part: UmlExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[UmlCompleteResult]] = Future.successful {
-    // FIXME: compare against every sample solution, take best?
-    exercise.content.sampleSolutions.headOption match {
-      case None => Failure(new Exception("There is no sample solution!"))
-      case Some(sampleSolution) =>
-        Success(UmlCorrector.correct(solution, sampleSolution.sample, part, solutionSaved))
+  )(implicit executionContext: ExecutionContext): Future[Try[UmlAbstractResult]] = Future.successful {
+    Success {
+      UmlCorrector.correct(solution, exercise, part, solutionSaved)
     }
   }
 

@@ -7,7 +7,7 @@ import model.tools._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex.{Match => RegexMatch}
-import scala.util.{Failure, Success, Try}
+import scala.util.{Success, Try}
 
 object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
 
@@ -34,21 +34,18 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
     part: RegexExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[AbstractRegexResult]] = Future.successful {
+    Success {
+      Try(solution.r).fold(
+        error => RegexIllegalRegexResult(solutionSaved, error.getMessage, exercise.content.maxPoints.points),
+        userRegex =>
+          exercise.content.correctionType match {
+            case RegexCorrectionTypes.MATCHING =>
+              RegexMatchingCorrector.correctMatching(exercise.content, userRegex, solutionSaved)
 
-    Try(solution.r) match {
-      case Failure(error) =>
-        Success(RegexIllegalRegexResult(solutionSaved, error.getMessage, exercise.content.maxPoints.points))
-
-      case Success(userRegex) =>
-        exercise.content.correctionType match {
-
-          case RegexCorrectionTypes.MATCHING =>
-            Success(RegexMatchingCorrector.correctMatching(exercise.content, userRegex, solutionSaved))
-
-          case RegexCorrectionTypes.EXTRACTION =>
-            Success(RegexExtractionCorrector.correctExtraction(exercise.content, userRegex, solutionSaved))
-        }
-
+            case RegexCorrectionTypes.EXTRACTION =>
+              RegexExtractionCorrector.correctExtraction(exercise.content, userRegex, solutionSaved)
+          }
+      )
     }
   }
 

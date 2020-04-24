@@ -9,9 +9,9 @@ import model.points._
 import model.tools.SampleSolution
 import model.tools.xml.XmlTool.ElementLineComparison
 import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
+import play.api.Logger
 
 import scala.collection.mutable
-import scala.util.{Failure, Success, Try}
 
 class CorrectionErrorHandler extends ErrorHandler {
 
@@ -29,6 +29,22 @@ class CorrectionErrorHandler extends ErrorHandler {
 }
 
 object XmlCorrector {
+
+  private val logger = Logger(XmlCorrector.getClass)
+
+  private def onError(
+    msg: String,
+    solutionSaved: Boolean,
+    maybeException: Option[Throwable] = None,
+    maxPoints: Points = (-1).points
+  ): XmlAbstractResult = {
+    maybeException match {
+      case None            => logger.error(msg)
+      case Some(exception) => logger.error(msg, exception)
+    }
+
+    XmlInternalErrorResult(solutionSaved, maxPoints)
+  }
 
   // Document correction
 
@@ -55,12 +71,13 @@ object XmlCorrector {
     solutionBaseDir: File,
     exerciseContent: XmlExerciseContent,
     solutionSaved: Boolean
-  ): Try[XmlCompleteResult] = exerciseContent.sampleSolutions.headOption match {
-    case None            => Failure(new Exception("There is no sample solution!"))
+  ): XmlAbstractResult = exerciseContent.sampleSolutions.headOption match {
+    case None            => onError("There is no sample solution!", solutionSaved)
     case Some(xmlSample) =>
       // Write grammar
-      val grammarPath: File = solutionBaseDir / s"${exerciseContent.rootNode}.dtd"
-      grammarPath.createFileIfNotExists(createParents = true).write(xmlSample.sample.grammar)
+      (solutionBaseDir / s"${exerciseContent.rootNode}.dtd")
+        .createFileIfNotExists(createParents = true)
+        .write(xmlSample.sample.grammar)
 
       // Write document
       val documentPath: File = solutionBaseDir / s"${exerciseContent.rootNode}.xml"
@@ -73,15 +90,13 @@ object XmlCorrector {
       val points    = (-1).points
       val maxPoints = (-1).points
 
-      Success(
-        XmlCompleteResult(
-          successType,
-          documentResult = xmlErrors,
-          grammarResult = None,
-          points,
-          maxPoints,
-          solutionSaved
-        )
+      XmlCompleteResult(
+        successType,
+        documentResult = xmlErrors,
+        grammarResult = None,
+        points,
+        maxPoints,
+        solutionSaved
       )
   }
 
@@ -102,35 +117,40 @@ object XmlCorrector {
     solution: XmlSolution,
     sampleSolutions: Seq[SampleSolution[XmlSolution]],
     solutionSaved: Boolean
-  ): Try[XmlCompleteResult] = findNearestGrammarSample(solution.grammar, sampleSolutions) match {
-    case None => Failure[XmlCompleteResult](new Exception("Could not find a sample grammar!"))
+  ): XmlAbstractResult = findNearestGrammarSample(solution.grammar, sampleSolutions) match {
+    case None => onError("Could not find a sample grammar!", solutionSaved)
     case Some(sampleSolution) =>
-      DocTypeDefParser.tryParseDTD(sampleSolution.sample.grammar) map { sampleGrammar =>
-        val dtdParseResult = DocTypeDefParser.parseDTD(solution.grammar)
+      DocTypeDefParser
+        .tryParseDTD(sampleSolution.sample.grammar)
+        .fold(
+          error => onError("Error while parseing dtd", solutionSaved, Some(error)),
+          sampleGrammar => {
+            val dtdParseResult = DocTypeDefParser.parseDTD(solution.grammar)
 
-        val matchingResult: ElementLineComparison =
-          DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines)
+            val matchingResult: ElementLineComparison =
+              DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines)
 
-        val points = addUp(matchingResult.allMatches.map(_.points))
+            val points = addUp(matchingResult.allMatches.map(_.points))
 
-        val maxPoints = addUp(matchingResult.allMatches.map(_.maxPoints))
+            val maxPoints = addUp(matchingResult.allMatches.map(_.maxPoints))
 
-        val successType: SuccessType = points.quarters.toDouble / maxPoints.quarters match {
-          case it if 0 <= it && it <= 0.5 => SuccessType.NONE
-          case it if 0.5 < it && it < 1   => SuccessType.PARTIALLY
-          case 1                          => SuccessType.COMPLETE
-          case _                          => SuccessType.ERROR
-        }
+            val successType: SuccessType = points.quarters.toDouble / maxPoints.quarters match {
+              case it if 0 <= it && it <= 0.5 => SuccessType.NONE
+              case it if 0.5 < it && it < 1   => SuccessType.PARTIALLY
+              case 1                          => SuccessType.COMPLETE
+              case _                          => SuccessType.ERROR
+            }
 
-        XmlCompleteResult(
-          successType,
-          documentResult = Seq.empty,
-          grammarResult = Some(XmlGrammarResult(dtdParseResult.parseErrors, matchingResult)),
-          points,
-          maxPoints,
-          solutionSaved
+            XmlCompleteResult(
+              successType,
+              documentResult = Seq.empty,
+              grammarResult = Some(XmlGrammarResult(dtdParseResult.parseErrors, matchingResult)),
+              points,
+              maxPoints,
+              solutionSaved
+            )
+          }
         )
-      }
   }
 
 }

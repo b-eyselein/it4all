@@ -5,14 +5,14 @@ import model.tools._
 import model.tools.programming.ProgLanguages
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Try}
+import scala.util.{Success, Try}
 
 object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
 
   override type SolType        = String
   override type ExContentType  = RoseExerciseContent
   override type PartType       = RoseExPart
-  override type CompResultType = RoseCompleteResult
+  override type CompResultType = RoseAbstractResult
 
   // Yaml, Html forms, Json
 
@@ -30,17 +30,13 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
     exercise: Exercise[String, RoseExerciseContent],
     part: RoseExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[RoseCompleteResult]] =
-    exercise.content.sampleSolutions.headOption match {
-      case None => Future.successful(Failure(new Exception("No sample solution could be found!")))
-      case Some(sampleSolution) =>
-        RoseCorrector.correct(
-          solution,
-          sampleSolution.sample,
-          ProgLanguages.StandardLanguage,
-          solutionDirForExercise(user.username, exercise.collectionId, exercise.id),
-          solutionSaved
-        )
-    }
+  )(implicit executionContext: ExecutionContext): Future[Try[RoseAbstractResult]] = {
+
+    val solDir = solutionDirForExercise(user.username, exercise.collectionId, exercise.id)
+
+    RoseCorrector
+      .correct(solution, exercise, ProgLanguages.StandardLanguage, solDir, solutionSaved)
+      .map(Success.apply)
+  }
 
 }
