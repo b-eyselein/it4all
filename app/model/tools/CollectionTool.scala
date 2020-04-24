@@ -107,8 +107,7 @@ abstract class CollectionTool(
 
   def correctAbstract(
     user: User,
-    sol: SolType,
-    coll: ExerciseCollection,
+    solution: SolType,
     exercise: Exercise[SolType, ExContentType],
     part: PartType,
     solutionSaved: Boolean

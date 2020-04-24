@@ -1,21 +1,36 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ProgSingleResult} from '../../my-programming-interfaces';
+import {SimplifiedExecutionResultFragment} from "../../programming-apollo-mutations.service";
+import {SuccessType} from "../../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-programming-simplified-result',
-  templateUrl: './programming-simplified-result.component.html',
+  template: `
+    <div class="card" [class.is-success]="correct" [class.is-danger]="!correct">
+      <header class="card-header">
+        <p class="card-header-title">{{result.id}}. Test war {{correct ? '' : 'nicht'}} erfolgreich.</p>
+      </header>
+      <div class="card-content">
+
+        <p>Eingabe: <code>{{result.input}}</code></p>
+        <p>Erwartet: <code>{{result.awaited}}</code></p>
+
+        <div *ngIf="isError">Fehlerausgabe:
+          <pre>{{result.gotten}}</pre>
+        </div>
+        <p *ngIf="!isError">Bekommen: <code>{{result.gotten}}</code></p>
+      </div>
+    </div>`
 })
 export class ProgrammingSimplifiedResultComponent implements OnInit {
 
-  @Input() result: ProgSingleResult;
+  @Input() result: SimplifiedExecutionResultFragment;
 
   correct = false;
-
-  constructor() {
-  }
+  isError = false;
 
   ngOnInit(): void {
-    this.correct = this.result.success === 'COMPLETE';
+    this.correct = this.result.success === SuccessType.Complete;
+    this.isError = this.result.success === SuccessType.Error;
   }
 
 }

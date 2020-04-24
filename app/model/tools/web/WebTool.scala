@@ -102,13 +102,12 @@ object WebTool extends CollectionTool("web", "Web") {
 
   override def correctAbstract(
     user: User,
-    learnerSolution: WebSolution,
-    collection: ExerciseCollection,
+    solution: WebSolution,
     exercise: Exercise[WebSolution, WebExerciseContent],
     part: WebExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[WebCompleteResult]] = Future {
-    writeWebSolutionFiles(user.username, collection.id, exercise.id, learnerSolution)
+    writeWebSolutionFiles(user.username, exercise.collectionId, exercise.id, solution)
       .flatMap { _ =>
         val driver              = new HtmlUnitDriver(true)
         val solutionUrl: String = getSolutionUrl(user, exercise, exercise.content.siteSpec.fileName)

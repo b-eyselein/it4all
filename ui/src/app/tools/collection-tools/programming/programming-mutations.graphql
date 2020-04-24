@@ -7,17 +7,47 @@ fragment AbstractCorrectionResult on AbstractCorrectionResult {
 # Programming
 
 mutation ProgrammingCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
-  correctProgramming(collId: $collId, exId: $exId, part: $part, solution: $solution)  {
+  correctProgramming(collId: $collId, exId: $exId, part: $part, solution: $solution) {
     ...ProgrammingCompleteResult
   }
 }
 
 fragment ProgrammingCompleteResult on ProgCompleteResult {
   solutionSaved
+  simplifiedResults {
+    ...SimplifiedExecutionResult
+  }
   normalResult {
-    __typename
+    ...NormalExecutionResult
   }
   unitTestResults {
-    __typename
+    ...UnitTestCorrectionResult
+  }
+}
+
+fragment SimplifiedExecutionResult on SimplifiedExecutionResult {
+  id
+  success
+  input
+  awaited
+  gotten
+  # stdout
+}
+
+fragment  NormalExecutionResult on NormalExecutionResult {
+  success
+  logs
+}
+
+fragment UnitTestCorrectionResult on UnitTestCorrectionResult {
+  successful
+  file
+  status
+  stderr
+  stdout
+  testConfig {
+    description
+    id
+    shouldFail
   }
 }

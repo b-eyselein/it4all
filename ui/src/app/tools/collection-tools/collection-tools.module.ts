@@ -5,7 +5,6 @@ import {RegexExtractionResultComponent} from './regex/regex-extraction-result/re
 import {RegexExtractionMatchComponent} from './regex/regex-extraction-result/regex-extraction-match/regex-extraction-match.component';
 import {RegexCheatsheetComponent} from './regex/regex-cheatsheet/regex-cheatsheet.component';
 import {ProgrammingSimplifiedResultComponent} from './programming/_results/programming-simplified-result/programming-simplified-result.component';
-import {ProgrammingUnittestResultComponent} from './programming/_results/programming-unittest-result/programming-unittest-result.component';
 import {SqlResultComponent} from './sql/_results/sql-result/sql-result.component';
 import {SqlMatchingResultComponent} from './sql/_results/sql-matching-result/sql-matching-result.component';
 import {collectionToolRoutingComponents, CollectionToolRoutingModule} from './collection-tools.routing';
@@ -39,6 +38,8 @@ import {XmlDocumentCorrectionComponent} from './xml/_components/xml-document-cor
 import {SqlTableContentsComponent} from './sql/_components/sql-table-contents/sql-table-contents.component';
 import {StringSampleSolComponent} from './_components/string-sample-sol/string-sample-sol.component';
 import {QueryResultTableComponent} from './sql/_components/query-result-table/query-result-table.component';
+import { ProgrammingUnitTestResultComponent } from './programming/_results/programming-unit-test-result/programming-unit-test-result.component';
+import { ProgrammingNormalResultComponent } from './programming/_results/programming-normal-result/programming-normal-result.component';
 
 
 @NgModule({
@@ -60,7 +61,7 @@ import {QueryResultTableComponent} from './sql/_components/query-result-table/qu
     RegexExerciseComponent, RegexMatchingResultComponent, RegexExtractionResultComponent, RegexExtractionMatchComponent,
     RegexCheatsheetComponent,
 
-    ProgrammingExerciseComponent, ProgrammingSimplifiedResultComponent, ProgrammingUnittestResultComponent,
+    ProgrammingExerciseComponent, ProgrammingSimplifiedResultComponent,
 
     SqlExerciseComponent, SqlResultComponent, SqlMatchingResultComponent, SqlExecutionResultComponent, SqlTableContentsComponent,
 
@@ -69,7 +70,7 @@ import {QueryResultTableComponent} from './sql/_components/query-result-table/qu
 
     WebExerciseComponent,
 
-    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent, QueryResultTableComponent
+    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent, QueryResultTableComponent, ProgrammingUnitTestResultComponent, ProgrammingNormalResultComponent
   ],
   providers: [],
   imports: [

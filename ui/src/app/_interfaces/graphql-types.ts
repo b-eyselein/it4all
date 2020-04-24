@@ -360,6 +360,7 @@ export type NormalExecutionResult = {
 export type ProgCompleteResult = {
    __typename?: 'ProgCompleteResult';
   solutionSaved: Scalars['Boolean'];
+  simplifiedResults: Array<SimplifiedExecutionResult>;
   normalResult?: Maybe<NormalExecutionResult>;
   unitTestResults: Array<UnitTestCorrectionResult>;
 };
@@ -514,6 +515,16 @@ export type SelectAdditionalComparisons = {
   groupByComparison: SqlGroupByComparisonMatchingResult;
   orderByComparison: SqlOrderByComparisonMatchingResult;
   limitComparison: SqlLimitComparisonMatchingResult;
+};
+
+export type SimplifiedExecutionResult = {
+   __typename?: 'SimplifiedExecutionResult';
+  success: SuccessType;
+  id: Scalars['Int'];
+  stdout?: Maybe<Scalars['String']>;
+  input: Scalars['String'];
+  awaited: Scalars['String'];
+  gotten: Scalars['String'];
 };
 
 export type SiteSpec = {
@@ -1072,8 +1083,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Simplified = 'Simplified',
-  Normal = 'Normal'
+  Normal = 'Normal',
+  Simplified = 'Simplified'
 }
 
 export type WebCompleteResult = AbstractCorrectionResult & {

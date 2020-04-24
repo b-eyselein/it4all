@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ProgrammingCorrectionResult} from '../my-programming-interfaces';
 import {DexieService} from '../../../../_services/dexie.service';
 import {ProgrammingImplementationToolPart, ProgrammingTestCreationPart} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
@@ -8,7 +7,14 @@ import {
   ExerciseSolveFieldsFragment,
   ProgExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
-import {ProgrammingCorrectionGQL, ProgrammingCorrectionMutation} from '../programming-apollo-mutations.service';
+import {
+  NormalExecutionResultFragment,
+  ProgrammingCompleteResultFragment,
+  ProgrammingCorrectionGQL,
+  ProgrammingCorrectionMutation,
+  SimplifiedExecutionResultFragment,
+  UnitTestCorrectionResultFragment
+} from '../programming-apollo-mutations.service';
 import {ExerciseFile, ProgExPart, ProgSolution, ProgSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/python/python';
@@ -19,7 +25,7 @@ import 'codemirror/mode/python/python';
   styleUrls: ['./programming-exercise.component.sass']
 })
 export class ProgrammingExerciseComponent
-  extends ComponentWithExercise<ProgSolution, ProgSolutionInput, ProgrammingCorrectionMutation, ProgExPart, ProgrammingCorrectionGQL, ProgrammingCorrectionResult>
+  extends ComponentWithExercise<ProgSolution, ProgSolutionInput, ProgrammingCorrectionMutation, ProgExPart, ProgrammingCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
@@ -71,7 +77,31 @@ export class ProgrammingExerciseComponent
   }
 
   get sampleSolutions(): ProgSolution[] {
-    return [];
+    return this.contentFragment.sampleSolutions.map((s) => s.sample);
+  }
+
+  get result(): ProgrammingCompleteResultFragment | null {
+    return this.resultQuery.correctProgramming;
+  }
+
+  get simplifiedResults(): SimplifiedExecutionResultFragment[] {
+    if (this.result) {
+      return this.result.simplifiedResults;
+    } else {
+      return [];
+    }
+  }
+
+  get unitTestResults(): UnitTestCorrectionResultFragment[] {
+    if (this.result) {
+      return this.result.unitTestResults;
+    } else {
+      []
+    }
+  }
+
+  get normalResult(): NormalExecutionResultFragment | null {
+    return this.result?.normalResult;
   }
 
   correct(): void {

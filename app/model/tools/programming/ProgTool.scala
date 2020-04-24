@@ -27,14 +27,13 @@ object ProgTool extends CollectionTool("programming", "Programmierung", ToolStat
 
   override def correctAbstract(
     user: User,
-    sol: ProgSolution,
-    collection: ExerciseCollection,
+    solution: ProgSolution,
     exercise: Exercise[ProgSolution, ProgrammingExerciseContent],
     part: ProgExPart,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[Try[ProgCompleteResult]] = ProgCorrector.correct(
     user,
-    sol,
+    solution,
     exercise,
     part,
     solutionSaved

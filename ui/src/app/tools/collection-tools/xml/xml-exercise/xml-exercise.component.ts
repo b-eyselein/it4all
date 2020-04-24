@@ -35,7 +35,7 @@ function getXmlDocumentContent(rootNode: string): string {
   templateUrl: './xml-exercise.component.html'
 })
 export class XmlExerciseComponent
-  extends ComponentWithExercise<XmlSolution, XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionGQL, any>
+  extends ComponentWithExercise<XmlSolution, XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;

@@ -29,14 +29,13 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
 
   override def correctAbstract(
     user: User,
-    sol: String,
-    coll: ExerciseCollection,
+    solution: String,
     exercise: Exercise[String, RegexExerciseContent],
     part: RegexExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[Try[AbstractRegexResult]] = Future.successful {
 
-    Try(sol.r) match {
+    Try(solution.r) match {
       case Failure(error) =>
         Success(RegexIllegalRegexResult(solutionSaved, error.getMessage, exercise.content.maxPoints.points))
 

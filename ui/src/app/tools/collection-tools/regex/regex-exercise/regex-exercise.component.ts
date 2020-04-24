@@ -21,7 +21,7 @@ import {RegexExPart} from '../../../../_interfaces/graphql-types';
   templateUrl: './regex-exercise.component.html'
 })
 export class RegexExerciseComponent
-  extends ComponentWithExercise<string, string, RegexCorrectionMutation, RegexExPart, RegexCorrectionGQL, any>
+  extends ComponentWithExercise<string, string, RegexCorrectionMutation, RegexExPart, RegexCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;

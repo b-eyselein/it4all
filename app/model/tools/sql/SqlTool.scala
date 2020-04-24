@@ -53,8 +53,7 @@ object SqlTool extends CollectionTool("sql", "Sql") {
 
   override def correctAbstract(
     user: User,
-    learnerSolution: SolType,
-    collection: ExerciseCollection,
+    solution: SolType,
     exercise: Exercise[String, SqlExerciseContent],
     part: SqlExPart,
     solutionSaved: Boolean
@@ -65,7 +64,7 @@ object SqlTool extends CollectionTool("sql", "Sql") {
         corrector.correct(
           dao,
           exercise.content.schemaName,
-          learnerSolution,
+          solution,
           exercise.content.sampleSolutions,
           solutionSaved
         )

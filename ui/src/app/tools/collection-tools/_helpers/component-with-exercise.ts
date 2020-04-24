@@ -7,11 +7,8 @@ import {ExerciseSolveFieldsFragment} from '../../../_services/apollo_services';
 
 @Directive()
 export abstract class ComponentWithExercise<SolutionType,
-  SolutionInputType,
-  MutationQueryType,
-  PartType,
-  MutationGQL extends Apollo.Mutation<MutationQueryType, { exId: number, collId: number, part: PartType, solution: SolutionInputType }>,
-  ResultType> {
+  SolutionInputType, MutationQueryType, PartType,
+  MutationGQL extends Apollo.Mutation<MutationQueryType, { exId: number, collId: number, part: PartType, solution: SolutionInputType }>> {
 
   readonly exerciseTextTabTitle = 'Aufgabenstellung';
   readonly correctionTabTitle = 'Korrektur';
@@ -19,18 +16,12 @@ export abstract class ComponentWithExercise<SolutionType,
 
   isCorrecting = false;
 
-  /**
-   * @deprecated
-   */
-  result: ResultType | undefined;
-
   resultQuery: MutationQueryType;
 
   displaySampleSolutions = false;
 
   @ViewChild(TabsComponent) tabsComponent: TabsComponent;
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
-
 
   protected constructor(protected mutationGQL: MutationGQL, protected dexieService: DexieService) {
   }

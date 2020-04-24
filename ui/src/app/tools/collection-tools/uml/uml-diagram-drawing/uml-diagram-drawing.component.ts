@@ -49,7 +49,7 @@ interface SelectableClassDiagramObject {
   `]
 })
 export class UmlDiagramDrawingComponent
-  extends ComponentWithExercise<UmlClassDiagram, UmlClassDiagramInput, UmlCorrectionMutation, UmlExPart, UmlCorrectionGQL, any>
+  extends ComponentWithExercise<UmlClassDiagram, UmlClassDiagramInput, UmlCorrectionMutation, UmlExPart, UmlCorrectionGQL>
   implements OnInit {
 
   readonly nextPart = UmlMemberAllocationPart;

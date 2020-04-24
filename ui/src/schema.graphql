@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Fri Apr 24 2020 09:42:57 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Fri Apr 24 2020 10:19:52 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -248,6 +248,7 @@ type NormalExecutionResult {
 
 type ProgCompleteResult {
   solutionSaved: Boolean!
+  simplifiedResults: [SimplifiedExecutionResult!]!
   normalResult: NormalExecutionResult
   unitTestResults: [UnitTestCorrectionResult!]!
 }
@@ -371,6 +372,15 @@ type SelectAdditionalComparisons {
   groupByComparison: SqlGroupByComparisonMatchingResult!
   orderByComparison: SqlOrderByComparisonMatchingResult!
   limitComparison: SqlLimitComparisonMatchingResult!
+}
+
+type SimplifiedExecutionResult {
+  success: SuccessType!
+  id: Int!
+  stdout: String
+  input: String!
+  awaited: String!
+  gotten: String!
 }
 
 type SiteSpec {
@@ -866,8 +876,8 @@ type UnitTestTestConfig {
 }
 
 enum UnitTestType {
-  Simplified
   Normal
+  Simplified
 }
 
 type WebCompleteResult implements AbstractCorrectionResult {

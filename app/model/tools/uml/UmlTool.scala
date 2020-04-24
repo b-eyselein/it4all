@@ -33,8 +33,7 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
 
   override def correctAbstract(
     user: User,
-    classDiagram: UmlClassDiagram,
-    collection: ExerciseCollection,
+    solution: UmlClassDiagram,
     exercise: Exercise[UmlClassDiagram, UmlExerciseContent],
     part: UmlExPart,
     solutionSaved: Boolean
@@ -43,7 +42,7 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
     exercise.content.sampleSolutions.headOption match {
       case None => Failure(new Exception("There is no sample solution!"))
       case Some(sampleSolution) =>
-        Success(UmlCorrector.correct(classDiagram, sampleSolution.sample, part, solutionSaved))
+        Success(UmlCorrector.correct(solution, sampleSolution.sample, part, solutionSaved))
     }
   }
 

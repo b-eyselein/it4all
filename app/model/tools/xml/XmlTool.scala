@@ -30,7 +30,6 @@ object XmlTool extends CollectionTool("xml", "Xml") {
   override def correctAbstract(
     user: User,
     solution: XmlSolution,
-    collection: ExerciseCollection,
     exercise: Exercise[XmlSolution, XmlExerciseContent],
     part: XmlExPart,
     solutionSaved: Boolean
@@ -42,7 +41,7 @@ object XmlTool extends CollectionTool("xml", "Xml") {
       case XmlExPart.DocumentCreationXmlPart =>
         XmlCorrector.correctDocument(
           solution,
-          solutionDirForExercise(user.username, collection.id, exercise.id).createDirectories(),
+          solutionDirForExercise(user.username, exercise.collectionId, exercise.id).createDirectories(),
           exercise.content,
           solutionSaved
         )

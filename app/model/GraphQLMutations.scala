@@ -1,7 +1,7 @@
 package model
 
 import model.json.JsonProtocols
-import model.tools.{Exercise, ExerciseCollection, ToolList}
+import model.tools.ToolList
 import play.api.libs.json._
 import sangria.marshalling.playJson._
 import sangria.schema.{Argument, BooleanType, Field, ObjectType, OptionType, fields}
@@ -31,34 +31,16 @@ trait GraphQLMutations extends GraphQLArguments {
             val part     = context.arg(PartTypeInputArg)
             val solution = context.arg(SolTypeInputArg)
 
-            val correctionDbValues
-              : Future[Option[(ExerciseCollection, Exercise[toolMain.SolType, toolMain.ExContentType])]] = for {
-              maybeCollection: Option[ExerciseCollection] <- context.ctx.tables.futureCollById(toolMain.id, collId)
-              maybeExercise: Option[Exercise[toolMain.SolType, toolMain.ExContentType]] <- toolMain
-                .futureExerciseTypeById(context.ctx.tables, collId, exId)
-            } yield (maybeCollection zip maybeExercise)
+            toolMain.futureExerciseTypeById(context.ctx.tables, collId, exId).flatMap {
+              case Some(exercise) =>
+                val solutionJson = toolMain.toolJsonProtocol.solutionFormat.writes(solution)
 
-            correctionDbValues.flatMap {
-              case Some((collection, exercise)) =>
                 for {
-                  solutionSaved <- context.ctx.tables.futureInsertSolution(
-                    user.username,
-                    exId,
-                    collId,
-                    toolMain.id,
-                    part,
-                    toolMain.toolJsonProtocol.solutionFormat.writes(solution)
-                  )
+                  solutionSaved <- context.ctx.tables
+                    .futureInsertSolution(user.username, exId, collId, toolMain.id, part, solutionJson)
 
                   result <- toolMain
-                    .correctAbstract(
-                      user,
-                      solution,
-                      collection,
-                      exercise,
-                      part,
-                      solutionSaved
-                    )
+                    .correctAbstract(user, solution, exercise, part, solutionSaved)
                     .map(_.toOption)
                 } yield result
 

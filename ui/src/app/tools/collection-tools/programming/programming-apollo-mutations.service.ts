@@ -70,7 +70,35 @@ export type ProgrammingCorrectionMutation = (
 export type ProgrammingCompleteResultFragment = (
   { __typename?: 'ProgCompleteResult' }
   & Pick<Types.ProgCompleteResult, 'solutionSaved'>
-  & { normalResult?: Types.Maybe<{ __typename: 'NormalExecutionResult' }>, unitTestResults: Array<{ __typename: 'UnitTestCorrectionResult' }> }
+  & { simplifiedResults: Array<(
+    { __typename?: 'SimplifiedExecutionResult' }
+    & SimplifiedExecutionResultFragment
+  )>, normalResult?: Types.Maybe<(
+    { __typename?: 'NormalExecutionResult' }
+    & NormalExecutionResultFragment
+  )>, unitTestResults: Array<(
+    { __typename?: 'UnitTestCorrectionResult' }
+    & UnitTestCorrectionResultFragment
+  )> }
+);
+
+export type SimplifiedExecutionResultFragment = (
+  { __typename?: 'SimplifiedExecutionResult' }
+  & Pick<Types.SimplifiedExecutionResult, 'id' | 'success' | 'input' | 'awaited' | 'gotten'>
+);
+
+export type NormalExecutionResultFragment = (
+  { __typename?: 'NormalExecutionResult' }
+  & Pick<Types.NormalExecutionResult, 'success' | 'logs'>
+);
+
+export type UnitTestCorrectionResultFragment = (
+  { __typename?: 'UnitTestCorrectionResult' }
+  & Pick<Types.UnitTestCorrectionResult, 'successful' | 'file' | 'status' | 'stderr' | 'stdout'>
+  & { testConfig: (
+    { __typename?: 'UnitTestTestConfig' }
+    & Pick<Types.UnitTestTestConfig, 'description' | 'id' | 'shouldFail'>
+  ) }
 );
 
 export const AbstractCorrectionResultFragmentDoc = gql`
@@ -80,17 +108,51 @@ export const AbstractCorrectionResultFragmentDoc = gql`
   maxPoints
 }
     `;
-export const ProgrammingCompleteResultFragmentDoc = gql`
-    fragment ProgrammingCompleteResult on ProgCompleteResult {
-  solutionSaved
-  normalResult {
-    __typename
-  }
-  unitTestResults {
-    __typename
+export const SimplifiedExecutionResultFragmentDoc = gql`
+    fragment SimplifiedExecutionResult on SimplifiedExecutionResult {
+  id
+  success
+  input
+  awaited
+  gotten
+}
+    `;
+export const NormalExecutionResultFragmentDoc = gql`
+    fragment NormalExecutionResult on NormalExecutionResult {
+  success
+  logs
+}
+    `;
+export const UnitTestCorrectionResultFragmentDoc = gql`
+    fragment UnitTestCorrectionResult on UnitTestCorrectionResult {
+  successful
+  file
+  status
+  stderr
+  stdout
+  testConfig {
+    description
+    id
+    shouldFail
   }
 }
     `;
+export const ProgrammingCompleteResultFragmentDoc = gql`
+    fragment ProgrammingCompleteResult on ProgCompleteResult {
+  solutionSaved
+  simplifiedResults {
+    ...SimplifiedExecutionResult
+  }
+  normalResult {
+    ...NormalExecutionResult
+  }
+  unitTestResults {
+    ...UnitTestCorrectionResult
+  }
+}
+    ${SimplifiedExecutionResultFragmentDoc}
+${NormalExecutionResultFragmentDoc}
+${UnitTestCorrectionResultFragmentDoc}`;
 export const ProgrammingCorrectionDocument = gql`
     mutation ProgrammingCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
   correctProgramming(collId: $collId, exId: $exId, part: $part, solution: $solution) {

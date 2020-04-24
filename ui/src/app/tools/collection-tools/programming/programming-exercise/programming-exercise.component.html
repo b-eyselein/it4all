@@ -30,7 +30,7 @@
             Die Korrektur läuft gerade...
           </div>
 
-          <div class="overflowHiddenDiv" *ngIf="result">
+          <div class="overflowHiddenDiv" *ngIf="resultQuery && result">
 
             <it4all-solution-saved [saved]="result.solutionSaved"></it4all-solution-saved>
 
@@ -39,33 +39,22 @@
             <!-- TODO: points nofitication programming! -->
             <!--            <it4all-points-notification [result]="result"></it4all-points-notification>-->
 
-            <div class="columns is-multiline" *ngIf="result.simplifiedResults">
-              <div class="column is-half-desktop" *ngFor="let simplifiedResult of result.simplifiedResults">
+            <div class="columns is-multiline" *ngIf="simplifiedResults && simplifiedResults.length > 0">
+              <div class="column is-half-desktop" *ngFor="let simplifiedResult of simplifiedResults">
                 <it4all-programming-simplified-result [result]="simplifiedResult">
                 </it4all-programming-simplified-result>
               </div>
             </div>
 
-            <div class="content" *ngIf="result.unitTestResults">
-              <ul *ngFor="let unitTestResult of result.unitTestResults">
-                <li>
-                  <p [class.has-text-danger]="!unitTestResult.successful"
-                     [class.has-text-success]="unitTestResult.successful">
-                    Der {{unitTestResult.testConfig.id}}. Test war
-                    <ng-container *ngIf="!unitTestResult.successful">nicht</ng-container>
-                    erfolgreich.
-                  </p>
-                  <p *ngIf="!unitTestResult.successful">{{unitTestResult.testConfig.description}}</p>
-                </li>
+            <div class="content" *ngIf="unitTestResults && unitTestResults.length > 0">
+              <ul *ngFor="let unitTestResult of unitTestResults">
+                <it4all-programming-unit-test-result [unitTestResult]="unitTestResult">
+                </it4all-programming-unit-test-result>
               </ul>
             </div>
 
-            <div class="notification" *ngIf="result.normalResult"
-                 [class.is-success]="result.normalResult.success === 'COMPLETE'"
-                 [class.is-danger]="result.normalResult.success !== 'COMPLETE'">
-              <pre>{{result.normalResult.logs}}</pre>
-            </div>
-
+            <it4all-programming-normal-result *ngIf="normalResult" [normalResult]="normalResult">
+            </it4all-programming-normal-result>
           </div>
         </it4all-tab>
 

@@ -26,8 +26,7 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
 
   override def correctAbstract(
     user: User,
-    sol: String,
-    collection: ExerciseCollection,
+    solution: String,
     exercise: Exercise[String, RoseExerciseContent],
     part: RoseExPart,
     solutionSaved: Boolean
@@ -36,10 +35,10 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
       case None => Future.successful(Failure(new Exception("No sample solution could be found!")))
       case Some(sampleSolution) =>
         RoseCorrector.correct(
-          sol,
+          solution,
           sampleSolution.sample,
           ProgLanguages.StandardLanguage,
-          solutionDirForExercise(user.username, collection.id, exercise.id),
+          solutionDirForExercise(user.username, exercise.collectionId, exercise.id),
           solutionSaved
         )
     }

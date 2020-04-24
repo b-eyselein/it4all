@@ -28,7 +28,7 @@ import {SqlCreateQueryPart} from "../sql-tool";
   encapsulation: ViewEncapsulation.None // style editor also
 })
 export class SqlExerciseComponent
-  extends ComponentWithExercise<string, string, SqlCorrectionMutation, SqlExPart, SqlCorrectionGQL, any>
+  extends ComponentWithExercise<string, string, SqlCorrectionMutation, SqlExPart, SqlCorrectionGQL>
   implements OnInit {
 
   readonly editorOptions = getDefaultEditorOptions('sql');

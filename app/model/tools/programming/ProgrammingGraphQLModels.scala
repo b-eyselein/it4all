@@ -3,6 +3,7 @@ package model.tools.programming
 import model.GraphQLArguments
 import model.core.result.SuccessType
 import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
+import play.api.libs.json.Json
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -47,9 +48,6 @@ object ProgrammingGraphQLModels
     buildSampleSolutionType("Programming", progSolutionType)
 
   override val exerciseContentType: ObjectType[Unit, ProgrammingExerciseContent] = {
-    //    implicit val progInputType: ObjectType[Unit, ProgInput] = deriveObjectType()
-    //    implicit val progDataType: ObjectType[Unit, ProgDataType] = deriveObjectType()
-
     implicit val utpt: ObjectType[Unit, UnitTestPart]                = unitTestPartType
     implicit val ipt: ObjectType[Unit, ImplementationPart]           = implementationPartType
     implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType
@@ -86,20 +84,29 @@ object ProgrammingGraphQLModels
     deriveObjectType()
   }
 
+  private val simplifiedExecutionResultType: ObjectType[Unit, SimplifiedExecutionResult] = {
+    implicit val stt: EnumType[SuccessType] = successTypeType
+
+    deriveObjectType(
+      ReplaceField("input", Field("input", StringType, resolve = context => Json.stringify(context.value.input))),
+      ReplaceField("awaited", Field("awaited", StringType, resolve = context => Json.stringify(context.value.awaited))),
+      ReplaceField("gotten", Field("gotten", StringType, resolve = context => Json.stringify(context.value.gotten)))
+    )
+  }
+
   private val unitTestCorrectionResultType: ObjectType[Unit, UnitTestCorrectionResult] = {
     implicit val uttct: ObjectType[Unit, UnitTestTestConfig] = unitTestTestConfigType
 
     deriveObjectType()
   }
 
-  override val AbstractResultTypeType: OutputType[Any] = {
+  private val progCompleteResultType: ObjectType[Unit, ProgCompleteResult] = {
     implicit val nert: ObjectType[Unit, NormalExecutionResult]     = NormalExecutionResultType
+    implicit val sert: ObjectType[Unit, SimplifiedExecutionResult] = simplifiedExecutionResultType
     implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = unitTestCorrectionResultType
 
-    deriveObjectType[Unit, ProgCompleteResult](
-      // FIXME: do not exclude fields anymore...
-      ExcludeFields("simplifiedResults")
-    )
+    deriveObjectType[Unit, ProgCompleteResult]()
   }
 
+  override val AbstractResultTypeType: OutputType[Any] = progCompleteResultType
 }
