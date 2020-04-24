@@ -64,17 +64,6 @@ query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
         id
         title
         text
-        # programmingContent {
-        #   unitTestPart {
-        #     unitTestType
-        #   }
-        # }
-        # webContent {
-        #   siteSpec {
-        #     htmlTaskCount
-        #     jsTaskCount
-        #   }
-        # }
         parts {
           ...Part
         }
@@ -248,6 +237,7 @@ fragment Topic on Topic {
 fragment Part on ExPart {
   id
   name
+  isEntryPart
 }
 
 fragment FieldsForLink on Exercise {

@@ -47,7 +47,8 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
     "ExPart",
     fields[Unit, ExPart](
       Field("id", StringType, resolve = _.value.id),
-      Field("name", StringType, resolve = _.value.partName)
+      Field("name", StringType, resolve = _.value.partName),
+      Field("isEntryPart", BooleanType, resolve = _.value.isEntryPart)
     )
   )
 
@@ -100,7 +101,7 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
           StringType,
           resolve = context => {
             ToolList.tools.find(_.id == context.value.toolId) match {
-              case None => ???
+              case None       => ???
               case Some(tool) =>
                 // FIXME: remove cast!
                 Json.stringify(

@@ -12,9 +12,11 @@
     <div class="notification is-light-grey" [innerHTML]="exerciseOverviewQuery.tool.collection.exercise.text"></div>
 
     <div class="columns">
-      <div class="column" *ngFor="let part of parts">
-        <a class="button is-link is-fullwidth" [routerLink]="['parts', part.id]">{{part.name}}</a>
-      </div>
+      <ng-container *ngFor="let part of parts">
+        <div class="column" *ngIf="part.isEntryPart">
+          <a class="button is-link is-fullwidth" [routerLink]="['parts', part.id]">{{part.name}}</a>
+        </div>
+      </ng-container>
     </div>
 
   </ng-container>

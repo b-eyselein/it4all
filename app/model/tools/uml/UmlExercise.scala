@@ -3,7 +3,11 @@ package model.tools.uml
 import enumeratum.{EnumEntry, PlayEnum}
 import model.tools._
 
-sealed abstract class UmlExPart(val partName: String, val id: String) extends ExPart
+sealed abstract class UmlExPart(
+  val partName: String,
+  val id: String,
+  override val isEntryPart: Boolean = true
+) extends ExPart
 
 object UmlExPart extends ExParts[UmlExPart] {
 
@@ -11,11 +15,13 @@ object UmlExPart extends ExParts[UmlExPart] {
 
   case object ClassSelection extends UmlExPart(partName = "Klassenwahl", id = "classSelection")
 
-  case object DiagramDrawingHelp extends UmlExPart(partName = "Zeichnen des Diagramms", id = "diagramDrawingHelp")
+  case object DiagramDrawingHelp
+      extends UmlExPart(partName = "Zeichnen des Diagramms", id = "diagramDrawingHelp", isEntryPart = false)
 
   case object DiagramDrawing extends UmlExPart(partName = "Zeichnen des Diagramms", id = "diagramDrawing")
 
-  case object MemberAllocation extends UmlExPart(partName = "Zuordnung der Member", id = "memberAllocation")
+  case object MemberAllocation
+      extends UmlExPart(partName = "Zuordnung der Member", id = "memberAllocation", isEntryPart = false)
 
 }
 

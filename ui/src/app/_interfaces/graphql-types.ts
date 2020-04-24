@@ -29,10 +29,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  TruePositive = 'TruePositive',
-  FalsePositive = 'FalsePositive',
   FalseNegative = 'FalseNegative',
-  TrueNegative = 'TrueNegative'
+  FalsePositive = 'FalsePositive',
+  TrueNegative = 'TrueNegative',
+  TruePositive = 'TruePositive'
 }
 
 export type CollectionTol = {
@@ -164,6 +164,7 @@ export type ExPart = {
    __typename?: 'ExPart';
   id: Scalars['String'];
   name: Scalars['String'];
+  isEntryPart: Scalars['Boolean'];
 };
 
 export type GradedHtmlTaskResult = {
@@ -265,10 +266,10 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   OnlySample = 'ONLY_SAMPLE',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   OnlyUser = 'ONLY_USER',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH'
 }
 
@@ -412,8 +413,8 @@ export type QueryToolArgs = {
 };
 
 export enum RegexCorrectionType {
-  Matching = 'MATCHING',
-  Extraction = 'EXTRACTION'
+  Extraction = 'EXTRACTION',
+  Matching = 'MATCHING'
 }
 
 export type RegexExerciseContent = {
@@ -586,11 +587,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
+  Update = 'UPDATE',
   Create = 'CREATE',
   Delete = 'DELETE',
-  Select = 'SELECT',
   Insert = 'INSERT',
-  Update = 'UPDATE'
+  Select = 'SELECT'
 }
 
 export enum SqlExPart {
@@ -736,17 +737,17 @@ export type SqlWrongQueryTypeResult = AbstractCorrectionResult & {
 };
 
 export enum SuccessType {
+  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY',
-  Complete = 'COMPLETE'
+  Partially = 'PARTIALLY'
 }
 
 export enum ToolState {
-  Live = 'LIVE',
-  PreAlpha = 'PRE_ALPHA',
   Alpha = 'ALPHA',
-  Beta = 'BETA'
+  Beta = 'BETA',
+  Live = 'LIVE',
+  PreAlpha = 'PRE_ALPHA'
 }
 
 export type Topic = {
@@ -801,8 +802,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
 };
 
 export enum UmlAssociationType {
-  Association = 'ASSOCIATION',
   Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
   Composition = 'COMPOSITION'
 }
 
@@ -911,9 +912,9 @@ export type UmlClassMatchingResult = MatchingResult & {
 };
 
 export enum UmlClassType {
+  Abstract = 'ABSTRACT',
   Class = 'CLASS',
-  Interface = 'INTERFACE',
-  Abstract = 'ABSTRACT'
+  Interface = 'INTERFACE'
 }
 
 export type UmlCompleteResult = AbstractCorrectionResult & {
@@ -1035,10 +1036,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
-  Public = 'PUBLIC',
   Package = 'PACKAGE',
+  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Private = 'PRIVATE'
+  Public = 'PUBLIC'
 }
 
 export type UnitTestCorrectionResult = {

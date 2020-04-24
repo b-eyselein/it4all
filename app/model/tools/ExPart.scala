@@ -4,9 +4,11 @@ import enumeratum.{EnumEntry, PlayEnum}
 
 trait ExPart extends EnumEntry {
 
-  def id: String
+  val id: String
 
-  def partName: String
+  val partName: String
+
+  def isEntryPart: Boolean = true
 
 }
 

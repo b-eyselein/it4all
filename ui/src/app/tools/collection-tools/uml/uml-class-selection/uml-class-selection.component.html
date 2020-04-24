@@ -9,7 +9,7 @@
         <ng-container *ngFor="let textPart of umlExerciseTextParts">
           <span *ngIf="textPart.selectableClass"
                 (click)="toggleClassSelected(textPart.selectableClass)"
-                [class.has-text-link]="textPart.selectableClass.selected">{{textPart.text}}</span>
+                [ngClass]="textPart.selectableClass.selected ? 'has-text-link' : 'has-text-black'">{{textPart.text}}</span>
 
           <span *ngIf="!textPart.selectableClass">{{textPart.text}}</span>
         </ng-container>
@@ -35,7 +35,7 @@
     </div>
     <div class="column">
       <button class="button is-fullwidth" [routerLink]="['..', nextPart.id]" [disabled]="!corrected"
-              [ngClass]="corrected ? 'is-link': 'is-dark'">
+              [ngClass]="corrected ? 'is-link': 'is-dark'" title="Führen Sie zuerst die Korrektur aus!">
         Zum nächsten Aufgabenteil
       </button>
     </div>

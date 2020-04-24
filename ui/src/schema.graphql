@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Apr 23 2020 14:27:50 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Fri Apr 24 2020 09:42:57 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -20,10 +20,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  TruePositive
-  FalsePositive
   FalseNegative
+  FalsePositive
   TrueNegative
+  TruePositive
 }
 
 type CollectionTol {
@@ -125,6 +125,7 @@ input ExerciseFileInput {
 type ExPart {
   id: String!
   name: String!
+  isEntryPart: Boolean!
 }
 
 type GradedHtmlTaskResult {
@@ -216,10 +217,10 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  SUCCESSFUL_MATCH
-  UNSUCCESSFUL_MATCH
   ONLY_SAMPLE
+  UNSUCCESSFUL_MATCH
   ONLY_USER
+  SUCCESSFUL_MATCH
   PARTIAL_MATCH
 }
 
@@ -286,8 +287,8 @@ type Query {
 }
 
 enum RegexCorrectionType {
-  MATCHING
   EXTRACTION
+  MATCHING
 }
 
 type RegexExerciseContent {
@@ -430,11 +431,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
+  UPDATE
   CREATE
   DELETE
-  SELECT
   INSERT
-  UPDATE
+  SELECT
 }
 
 enum SqlExPart {
@@ -562,17 +563,17 @@ type SqlWrongQueryTypeResult implements AbstractCorrectionResult {
 }
 
 enum SuccessType {
+  COMPLETE
   ERROR
   NONE
   PARTIALLY
-  COMPLETE
 }
 
 enum ToolState {
-  LIVE
-  PRE_ALPHA
   ALPHA
   BETA
+  LIVE
+  PRE_ALPHA
 }
 
 type Topic {
@@ -622,8 +623,8 @@ type UmlAssociationMatchingResult implements MatchingResult {
 }
 
 enum UmlAssociationType {
-  ASSOCIATION
   AGGREGATION
+  ASSOCIATION
   COMPOSITION
 }
 
@@ -723,9 +724,9 @@ type UmlClassMatchingResult implements MatchingResult {
 }
 
 enum UmlClassType {
+  ABSTRACT
   CLASS
   INTERFACE
-  ABSTRACT
 }
 
 type UmlCompleteResult implements AbstractCorrectionResult {
@@ -832,10 +833,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PUBLIC
   PACKAGE
-  PROTECTED
   PRIVATE
+  PROTECTED
+  PUBLIC
 }
 
 type UnitTestCorrectionResult {

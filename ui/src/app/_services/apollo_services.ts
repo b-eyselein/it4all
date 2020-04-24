@@ -380,7 +380,7 @@ export type TopicFragment = (
 
 export type PartFragment = (
   { __typename?: 'ExPart' }
-  & Pick<Types.ExPart, 'id' | 'name'>
+  & Pick<Types.ExPart, 'id' | 'name' | 'isEntryPart'>
 );
 
 export type FieldsForLinkFragment = (
@@ -614,6 +614,7 @@ export const PartFragmentDoc = gql`
     fragment Part on ExPart {
   id
   name
+  isEntryPart
 }
     `;
 export const TopicFragmentDoc = gql`
