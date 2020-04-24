@@ -22,13 +22,13 @@ final case class RegexExtractionSingleResult(
 
 // complete result
 
-sealed trait AbstractRegexResult extends AbstractCorrectionResult
+sealed trait RegexAbstractResult extends AbstractCorrectionResult
 
 final case class RegexIllegalRegexResult(
   solutionSaved: Boolean,
   message: String,
   maxPoints: Points
-) extends AbstractRegexResult {
+) extends RegexAbstractResult {
 
   override def points: Points = zeroPoints
 
@@ -39,11 +39,11 @@ final case class RegexMatchingResult(
   matchingResults: Seq[RegexMatchingSingleResult],
   points: Points,
   maxPoints: Points
-) extends AbstractRegexResult
+) extends RegexAbstractResult
 
 final case class RegexExtractionResult(
   solutionSaved: Boolean,
   extractionResults: Seq[RegexExtractionSingleResult],
   points: Points,
   maxPoints: Points
-) extends AbstractRegexResult
+) extends RegexAbstractResult

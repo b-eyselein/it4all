@@ -4,7 +4,7 @@ import model.User
 import model.core.matching.MatchingResult
 import model.points._
 import model.tools.sql.matcher._
-import model.tools.{StringSampleSolutionToolJsonProtocol, _}
+import model.tools._
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
@@ -61,7 +61,7 @@ object SqlTool extends CollectionTool("sql", "Sql") {
   )(implicit executionContext: ExecutionContext): Future[Try[SqlAbstractResult]] = Future {
     Success {
       correctorsAndDaos.get(exercise.content.exerciseType) match {
-        case None => SqlInternalErrorResult(solutionSaved, (-1).points)
+        case None => SqlInternalErrorResult("There has been an internal error", solutionSaved, (-1).points)
         case Some((corrector, dao)) =>
           corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions, solutionSaved)
       }
