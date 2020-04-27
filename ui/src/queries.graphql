@@ -32,12 +32,13 @@ query AllExercisesOverview($toolId: String!) {
   }
 }
 
-# /tools/:toolid/collections
+# /tools/:toolId/collections
 query CollectionList($toolId: String!) {
   tool(toolId: $toolId) {
     name
     collections {
-      id
+      completeId
+      collectionId
       title
       exerciseCount
     }
@@ -61,7 +62,7 @@ query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
       exercise(exId: $exId) {
-        id
+        exerciseId
         title
         text
         parts {
@@ -127,6 +128,7 @@ query Lesson($toolId: String!, $lessonId: Int!) {
 
 # Admin queries
 
+# /admin/index
 query AdminIndex {
   tools {
     id
@@ -137,6 +139,7 @@ query AdminIndex {
   }
 }
 
+# /admin/:toolId
 query CollectionToolAdmin($toolId: String!) {
   tool(toolId: $toolId) {
     name
@@ -145,6 +148,7 @@ query CollectionToolAdmin($toolId: String!) {
   }
 }
 
+# /admin/:toolId/lessons
 query AdminLessonIndex($toolId: String!) {
   tool(toolId: $toolId) {
     name
@@ -169,7 +173,7 @@ query AdminCollectionsIndex($toolId: String!) {
   tool(toolId: $toolId) {
     name
     collections {
-      id
+      collectionId
       title
       exerciseCount
     }
@@ -192,7 +196,9 @@ query AdminReadCollections($toolId: String!) {
 }
 
 mutation AdminUpsertCollection($toolId: String!, $content: String!) {
-  upsertCollection(toolId: $toolId, content: $content)
+  upsertCollection(toolId: $toolId, content: $content) {
+    completeId
+  }
 }
 
 query AdminReadLessons($toolId: String!) {
@@ -203,7 +209,6 @@ query AdminReadLessons($toolId: String!) {
     }
   }
 }
-
 
 query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
@@ -224,7 +229,9 @@ query AdminReadExercises($toolId: String!, $collId: Int!) {
 }
 
 mutation AdminUpsertExercise($toolId: String!, $content: String!) {
-  upsertExercise(toolId: $toolId, content: $content)
+  upsertExercise(toolId: $toolId, content: $content) {
+    completeId
+  }
 }
 
 # Fragments
@@ -241,7 +248,7 @@ fragment Part on ExPart {
 }
 
 fragment FieldsForLink on Exercise {
-  id
+  exerciseId
   collectionId
   toolId
   title
@@ -252,7 +259,7 @@ fragment FieldsForLink on Exercise {
 }
 
 fragment ExerciseSolveFields on Exercise {
-  id
+  exerciseId
   collectionId
   toolId
   title
@@ -263,12 +270,12 @@ fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {
   unitTestPart {
     unitTestType
     unitTestFiles {
-      ...ExFileAll
+      ...ExerciseFile
     }
   }
   implementationPart {
     files {
-      ...ExFileAll
+      ...ExerciseFile
     }
   }
   sampleSolutions {
@@ -280,7 +287,7 @@ fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
   __typename
   sample {
     files {
-      ...ExFileAll
+      ...ExerciseFile
     }
   }
 }
@@ -412,9 +419,10 @@ fragment UmlImplementation on UmlImplementation {
 
 fragment WebExerciseContentSolveFields on WebExerciseContent {
   files {
-    ...ExFileAll
+    ...ExerciseFile
   }
   siteSpec {
+    fileName
     htmlTasks {
       text
     }
@@ -430,7 +438,7 @@ fragment WebSampleSolution on WebSampleSolution {
   __typename
   sample {
     files {
-      ...ExFileAll
+      ...ExerciseFile
     }
   }
 }
@@ -453,7 +461,7 @@ fragment XmlSampleSolution on XmlSampleSolution {
 }
 
 
-fragment ExFileAll on ExerciseFile {
+fragment ExerciseFile on ExerciseFile {
   name
   fileType
   content

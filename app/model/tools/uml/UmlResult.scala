@@ -6,7 +6,7 @@ import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, Implemen
 
 trait UmlAbstractResult extends AbstractCorrectionResult
 
-final case class UmlInternalError(
+final case class UmlInternalErrorResult(
   msg: String,
   solutionSaved: Boolean,
   maxPoints: Points
@@ -17,7 +17,7 @@ final case class UmlInternalError(
 
 }
 
-final case class UmlCompleteResult(
+final case class UmlResult(
   classResult: Option[ClassComparison],
   assocResult: Option[AssociationComparison],
   implResult: Option[ImplementationComparison],

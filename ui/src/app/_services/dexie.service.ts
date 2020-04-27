@@ -19,12 +19,12 @@ export class DexieService extends Dexie {
   }
 
   getSolution<T>(exerciseFragment: ExerciseSolveFieldsFragment, partId: string): Dexie.Promise<DbSolution<T> | undefined> {
-    return this.solutions.get([exerciseFragment.toolId, exerciseFragment.collectionId, exerciseFragment.id, partId]);
+    return this.solutions.get([exerciseFragment.toolId, exerciseFragment.collectionId, exerciseFragment.exerciseId, partId]);
   }
 
   upsertSolution<T>(exerciseFragment: ExerciseSolveFieldsFragment, partId: string, solution: T): Dexie.Promise<[string, number, number, string]> {
     return this.solutions.put({
-      exId: exerciseFragment.id,
+      exId: exerciseFragment.exerciseId,
       collId: exerciseFragment.collectionId,
       toolId: exerciseFragment.toolId,
       partId,

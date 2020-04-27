@@ -19,7 +19,7 @@ import {
   ExerciseSolveFieldsFragment,
   UmlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
-import {UmlCorrectionGQL, UmlCorrectionMutation} from '../uml-apollo-mutations.service';
+import {UmlCorrectionGQL, UmlCorrectionMutation, UmlResultFragment} from '../uml-apollo-mutations.service';
 import {UmlClassDiagram, UmlClassDiagramInput, UmlExPart} from '../../../../_interfaces/graphql-types';
 
 import * as joint from 'jointjs';
@@ -117,14 +117,9 @@ export class UmlDiagramDrawingComponent
 
     // load classes
 
-    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id)
-      .then((oldSol) => {
-        if (oldSol) {
-          this.loadClassDiagram(oldSol);
-        } else {
-          this.loadClassDiagram(this.contentFragment.sampleSolutions[0].sample as ExportedUmlClassDiagram);
-        }
-      });
+    this.loadClassDiagram(this.contentFragment.sampleSolutions[0].sample as ExportedUmlClassDiagram);
+
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id, (oldSol) => this.loadClassDiagram(oldSol));
   }
 
   loadClassDiagram(cd: ExportedUmlClassDiagram): void {
@@ -265,6 +260,10 @@ export class UmlDiagramDrawingComponent
 
   get sampleSolutions(): UmlClassDiagram[] {
     return this.contentFragment.sampleSolutions.map((sample) => sample.sample);
+  }
+
+  get result(): UmlResultFragment | null {
+    return this.resultQuery.correctUml.__typename === 'UmlResult' ? this.resultQuery.correctUml : null;
   }
 
   correct(): void {

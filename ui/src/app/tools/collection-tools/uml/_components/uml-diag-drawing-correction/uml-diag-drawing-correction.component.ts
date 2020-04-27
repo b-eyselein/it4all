@@ -2,8 +2,8 @@ import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {MatchType, UmlAssociationMatch, UmlImplementationMatch} from '../../../../../_interfaces/graphql-types';
 import {
   UmlAssociationMatchingResultFragment,
-  UmlCompleteResultFragment,
-  UmlImplementationMatchingResultFragment
+  UmlImplementationMatchingResultFragment,
+  UmlResultFragment
 } from '../../uml-apollo-mutations.service';
 
 @Component({
@@ -12,7 +12,7 @@ import {
 })
 export class UmlDiagDrawingCorrectionComponent implements OnChanges {
 
-  @Input() result: UmlCompleteResultFragment;
+  @Input() result: UmlResultFragment;
 
   assocResultSuccessful = false;
   implResultSuccessful = false;

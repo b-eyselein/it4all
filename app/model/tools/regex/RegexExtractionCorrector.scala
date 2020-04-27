@@ -2,55 +2,60 @@ package model.tools.regex
 
 import model.core.matching.MatchType
 import model.points._
-import model.tools.{ExPart, ExParts}
+import model.tools.{AbstractCorrector, SampleSolution}
+import play.api.Logger
 
+import scala.util.Try
 import scala.util.matching.Regex
-import scala.util.matching.Regex.{Match => RegexMatch}
 
-sealed abstract class RegexExPart(val partName: String, val id: String) extends ExPart
+object RegexExtractionCorrector extends AbstractCorrector {
 
-object RegexExPart extends ExParts[RegexExPart] {
+  override type AbstractResult = RegexAbstractResult
 
-  val values: IndexedSeq[RegexExPart] = findValues
+  override protected val logger: Logger = Logger(RegexExtractionCorrector.getClass)
 
-  case object RegexSingleExPart extends RegexExPart(partName = "Ausdruck erstellen", id = "regex")
-
-}
-
-object RegexExtractionCorrector {
+  override protected def buildInternalError(
+    msg: String,
+    solutionSaved: Boolean,
+    maxPoints: Points
+  ): RegexInternalErrorResult = RegexInternalErrorResult(msg, solutionSaved, maxPoints)
 
   def correctExtraction(
     exerciseContent: RegexExerciseContent,
     userRegex: Regex,
     solutionSaved: Boolean
-  ): RegexExtractionResult = {
+  ): RegexAbstractResult = exerciseContent.sampleSolutions.headOption match {
+    case None => onError("No sample solution found", solutionSaved)
+    case Some(SampleSolution(_, sample)) =>
+      Try(sample.r).fold(
+        exception => onError("Error while building sample regex", solutionSaved, maybeException = Some(exception)),
+        sampleRegex => {
 
-    val extractionResults = exerciseContent.extractionTestData.map { extractionTestData =>
-      // FIXME: build sample regex in calling function!
-      val sampleRegex = exerciseContent.sampleSolutions.headOption.map(_.sample).getOrElse(???).r
+          val extractionResults = exerciseContent.extractionTestData.map {
+            extractionTestData =>
+              val regexMatchMatchingResult = RegexMatchMatcher.doMatch(
+                userRegex.findAllMatchIn(extractionTestData.base).toList,
+                sampleRegex.findAllMatchIn(extractionTestData.base).toList
+              )
 
-      val sampleExtracted: Seq[RegexMatch] = sampleRegex.findAllMatchIn(extractionTestData.base).toList
+              val correct = regexMatchMatchingResult.allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH)
 
-      val userExtracted: Seq[RegexMatch] = userRegex.findAllMatchIn(extractionTestData.base).toList
+              RegexExtractionSingleResult(extractionTestData.base, regexMatchMatchingResult, correct)
+          }
 
-      val regexMatchMatchingResult = RegexMatchMatcher.doMatch(userExtracted, sampleExtracted)
+          val correctResultsCount: Int = extractionResults.count(_.correct)
 
-      val correct = regexMatchMatchingResult.allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH)
+          val points: Points =
+            (correctResultsCount.toDouble / exerciseContent.extractionTestData.size.toDouble * exerciseContent.maxPoints * 4).toInt.quarterPoints
 
-      RegexExtractionSingleResult(extractionTestData.base, regexMatchMatchingResult, correct)
-    }
-
-    val correctResultsCount: Int = extractionResults.count(_.correct)
-
-    val points: Points =
-      (correctResultsCount.toDouble / exerciseContent.extractionTestData.size.toDouble * exerciseContent.maxPoints * 4).toInt.quarterPoints
-
-    RegexExtractionResult(
-      solutionSaved,
-      extractionResults,
-      points,
-      exerciseContent.maxPoints.points
-    )
+          RegexExtractionResult(
+            solutionSaved,
+            extractionResults,
+            points,
+            exerciseContent.maxPoints.points
+          )
+        }
+      )
   }
 
 }

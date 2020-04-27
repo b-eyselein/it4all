@@ -14,17 +14,86 @@
   "__schema": {
     "types": [
       {
-        "kind": "UNION",
-        "name": "AbstractRegexResult",
+        "kind": "INTERFACE",
+        "name": "ProgrammingAbstractResult",
         "possibleTypes": [
+          {
+            "name": "ProgrammingInternalErrorResult"
+          },
+          {
+            "name": "ProgrammingResult"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "RegexAbstractResult",
+        "possibleTypes": [
+          {
+            "name": "RegexExtractionResult"
+          },
           {
             "name": "RegexIllegalRegexResult"
           },
           {
-            "name": "RegexMatchingResult"
+            "name": "RegexInternalErrorResult"
           },
           {
-            "name": "RegexExtractionResult"
+            "name": "RegexMatchingResult"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "SqlAbstractResult",
+        "possibleTypes": [
+          {
+            "name": "SqlIllegalQueryResult"
+          },
+          {
+            "name": "SqlInternalErrorResult"
+          },
+          {
+            "name": "SqlResult"
+          },
+          {
+            "name": "SqlWrongQueryTypeResult"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "UmlAbstractResult",
+        "possibleTypes": [
+          {
+            "name": "UmlInternalErrorResult"
+          },
+          {
+            "name": "UmlResult"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "WebAbstractResult",
+        "possibleTypes": [
+          {
+            "name": "WebInternalErrorResult"
+          },
+          {
+            "name": "WebResult"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "XmlAbstractResult",
+        "possibleTypes": [
+          {
+            "name": "XmlInternalErrorResult"
+          },
+          {
+            "name": "XmlResult"
           }
         ]
       },
@@ -33,31 +102,46 @@
         "name": "AbstractCorrectionResult",
         "possibleTypes": [
           {
-            "name": "RegexIllegalRegexResult"
+            "name": "ProgrammingInternalErrorResult"
           },
           {
-            "name": "RegexMatchingResult"
+            "name": "ProgrammingResult"
           },
           {
             "name": "RegexExtractionResult"
           },
           {
+            "name": "RegexIllegalRegexResult"
+          },
+          {
+            "name": "RegexInternalErrorResult"
+          },
+          {
+            "name": "RegexMatchingResult"
+          },
+          {
             "name": "SqlIllegalQueryResult"
           },
           {
-            "name": "SqlWrongQueryTypeResult"
+            "name": "SqlInternalErrorResult"
           },
           {
             "name": "SqlResult"
           },
           {
-            "name": "UmlCompleteResult"
+            "name": "SqlWrongQueryTypeResult"
           },
           {
-            "name": "WebCompleteResult"
+            "name": "WebInternalErrorResult"
           },
           {
-            "name": "XmlCompleteResult"
+            "name": "WebResult"
+          },
+          {
+            "name": "XmlInternalErrorResult"
+          },
+          {
+            "name": "XmlResult"
           }
         ]
       },
@@ -65,18 +149,6 @@
         "kind": "INTERFACE",
         "name": "MatchingResult",
         "possibleTypes": [
-          {
-            "name": "RegexExtractedValuesComparisonMatchingResult"
-          },
-          {
-            "name": "SqlColumnComparisonMatchingResult"
-          },
-          {
-            "name": "SqlTableComparisonMatchingResult"
-          },
-          {
-            "name": "SqlBinaryExpressionComparisonMatchingResult"
-          },
           {
             "name": "SqlGroupByComparisonMatchingResult"
           },
@@ -90,7 +162,19 @@
             "name": "SqlInsertComparisonMatchingResult"
           },
           {
-            "name": "UmlClassMatchingResult"
+            "name": "RegexExtractedValuesComparisonMatchingResult"
+          },
+          {
+            "name": "SqlBinaryExpressionComparisonMatchingResult"
+          },
+          {
+            "name": "SqlColumnComparisonMatchingResult"
+          },
+          {
+            "name": "SqlTableComparisonMatchingResult"
+          },
+          {
+            "name": "UmlAssociationMatchingResult"
           },
           {
             "name": "UmlAttributeMatchingResult"
@@ -99,7 +183,7 @@
             "name": "UmlMethodMatchingResult"
           },
           {
-            "name": "UmlAssociationMatchingResult"
+            "name": "UmlClassMatchingResult"
           },
           {
             "name": "UmlImplementationMatchingResult"
@@ -114,18 +198,6 @@
         "name": "NewMatch",
         "possibleTypes": [
           {
-            "name": "RegexMatchMatch"
-          },
-          {
-            "name": "SqlColumnMatch"
-          },
-          {
-            "name": "SqlTableMatch"
-          },
-          {
-            "name": "SqlBinaryExpressionMatch"
-          },
-          {
             "name": "SqlGroupByMatch"
           },
           {
@@ -138,37 +210,34 @@
             "name": "SqlInsertMatch"
           },
           {
-            "name": "UmlClassMatch"
+            "name": "ElementLineMatch"
           },
           {
-            "name": "UmlAttributeMatch"
+            "name": "RegexMatchMatch"
           },
           {
-            "name": "UmlMethodMatch"
+            "name": "SqlBinaryExpressionMatch"
+          },
+          {
+            "name": "SqlColumnMatch"
+          },
+          {
+            "name": "SqlTableMatch"
           },
           {
             "name": "UmlAssociationMatch"
           },
           {
+            "name": "UmlAttributeMatch"
+          },
+          {
+            "name": "UmlClassMatch"
+          },
+          {
+            "name": "UmlMethodMatch"
+          },
+          {
             "name": "UmlImplementationMatch"
-          },
-          {
-            "name": "ElementLineMatch"
-          }
-        ]
-      },
-      {
-        "kind": "UNION",
-        "name": "SqlAbstractResult",
-        "possibleTypes": [
-          {
-            "name": "SqlIllegalQueryResult"
-          },
-          {
-            "name": "SqlWrongQueryTypeResult"
-          },
-          {
-            "name": "SqlResult"
           }
         ]
       }

@@ -62,8 +62,11 @@
           </div>
         </it4all-tab>
         <it4all-tab [title]="correctionTabTitle">
-          <it4all-uml-diag-drawing-correction [result]="resultQuery.correctUml"
-                                              *ngIf="resultQuery"></it4all-uml-diag-drawing-correction>
+
+          <it4all-solution-saved [saved]="resultQuery.correctUml.solutionSaved"></it4all-solution-saved>
+
+          <it4all-uml-diag-drawing-correction *ngIf="resultQuery" [result]="result">
+          </it4all-uml-diag-drawing-correction>
         </it4all-tab>
       </it4all-tabs>
 

@@ -4,18 +4,19 @@ import {ProgrammingImplementationToolPart, ProgrammingTestCreationPart} from '..
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {
+  ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
   ProgExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {
   NormalExecutionResultFragment,
-  ProgrammingCompleteResultFragment,
   ProgrammingCorrectionGQL,
   ProgrammingCorrectionMutation,
+  ProgrammingResultFragment,
   SimplifiedExecutionResultFragment,
   UnitTestCorrectionResultFragment
 } from '../programming-apollo-mutations.service';
-import {ExerciseFile, ProgExPart, ProgSolution, ProgSolutionInput} from '../../../../_interfaces/graphql-types';
+import {ProgExPart, ProgSolution, ProgSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/python/python';
 
@@ -33,13 +34,13 @@ export class ProgrammingExerciseComponent
 
   private oldPart: ToolPart;
 
-  exerciseFiles: ExerciseFile[] = [];
+  exerciseFiles: ExerciseFileFragment[] = [];
 
   constructor(programmingCorrectionGQL: ProgrammingCorrectionGQL, dexieService: DexieService) {
     super(programmingCorrectionGQL, dexieService);
   }
 
-  get sampleSolutionFilesList(): ExerciseFile[][] {
+  get sampleSolutionFilesList(): ExerciseFileFragment[][] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample.files);
   }
 
@@ -62,14 +63,11 @@ export class ProgrammingExerciseComponent
   }
 
   loadOldSolution(): void {
-    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id)
-      .then((maybeOldSolution: ProgSolutionInput | undefined) => {
-        if (maybeOldSolution) {
-          console.info(JSON.stringify(maybeOldSolution));
-          // TODO: deactivated for now...
-          // this.exerciseFiles = maybeOldSolution.files;
-        }
-      });
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id, (maybeOldSolution: ProgSolutionInput) => {
+      console.info(JSON.stringify(maybeOldSolution));
+      // TODO: deactivated for now...
+      // this.exerciseFiles = maybeOldSolution.files;
+    });
   }
 
   protected getSolution(): ProgSolutionInput {
@@ -80,24 +78,16 @@ export class ProgrammingExerciseComponent
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 
-  get result(): ProgrammingCompleteResultFragment | null {
-    return this.resultQuery.correctProgramming;
+  get result(): ProgrammingResultFragment | null {
+    return this.resultQuery.correctProgramming.__typename === 'ProgrammingResult' ? this.resultQuery.correctProgramming : null;
   }
 
   get simplifiedResults(): SimplifiedExecutionResultFragment[] {
-    if (this.result) {
-      return this.result.simplifiedResults;
-    } else {
-      return [];
-    }
+    return this.result ? this.result.simplifiedResults : [];
   }
 
   get unitTestResults(): UnitTestCorrectionResultFragment[] {
-    if (this.result) {
-      return this.result.unitTestResults;
-    } else {
-      []
-    }
+    return this.result ? this.result.unitTestResults : [];
   }
 
   get normalResult(): NormalExecutionResultFragment | null {

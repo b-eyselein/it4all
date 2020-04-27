@@ -2,16 +2,16 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
-import {DbSolution} from '../../../../_interfaces/exercise';
 import {
+  ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
   WebExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
-import {WebCorrectionGQL, WebCorrectionMutation} from '../web-apollo-mutations.service';
-import {ExerciseFile, WebExPart, WebSolution, WebSolutionInput} from '../../../../_interfaces/graphql-types';
+import {WebCorrectionGQL, WebCorrectionMutation, WebResultFragment} from '../web-apollo-mutations.service';
+import {WebExPart, WebSolution, WebSolutionInput} from '../../../../_interfaces/graphql-types';
+import {HtmlPart, JsPart} from "../web-tool";
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
-import {HtmlPart, JsPart} from "../web-tool";
 
 @Component({
   selector: 'it4all-web-exercise',
@@ -26,7 +26,7 @@ export class WebExerciseComponent
 
   part: ToolPart;
 
-  exerciseFiles: ExerciseFile[] = [];
+  exerciseFileFragments: ExerciseFileFragment[] = [];
 
   constructor(webCorrectionGQL: WebCorrectionGQL, dexieService: DexieService) {
     super(webCorrectionGQL, dexieService);
@@ -39,27 +39,38 @@ export class WebExerciseComponent
         break;
       case WebExPart.JsPart:
         this.part = JsPart;
+        break;
     }
 
-    this.exerciseFiles = this.contentFragment.files;
+    this.exerciseFileFragments = this.contentFragment.files;
 
-    this.dexieService
-      .getSolution<ExerciseFile[]>(this.exerciseFragment, this.part.id)
-      .then((oldSolution: DbSolution<ExerciseFile[]> | undefined) => this.exerciseFiles = oldSolution ? oldSolution.solution : []);
+    this.loadOldSolutionAbstract(
+      this.exerciseFragment,
+      this.part.id,
+      (oldSolution) => this.exerciseFileFragments = oldSolution.files
+    );
   }
 
   correct(): void {
     this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.part.id);
   }
 
-  protected getSolution(): WebSolution {
-    console.info(JSON.stringify(this.exerciseFiles, null, 2));
+  protected getSolution(): WebSolutionInput {
+    console.info(
+      this.exerciseFileFragments
+        .find((ef) => ef.name === this.contentFragment.siteSpec.fileName)
+        .content
+    );
 
-    return {files: this.exerciseFiles};
+    return {files: this.exerciseFileFragments};
   }
 
   get sampleSolutions(): WebSolution[] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
+  }
+
+  get result(): WebResultFragment | null {
+    return this.resultQuery?.correctWeb.__typename === 'WebResult' ? this.resultQuery.correctWeb : null;
   }
 
 }

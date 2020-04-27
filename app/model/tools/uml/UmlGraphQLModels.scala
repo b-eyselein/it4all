@@ -10,7 +10,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 object UmlGraphQLModels
-    extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart]
+    extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlAbstractResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[UmlExPart] = EnumType(
@@ -205,7 +205,18 @@ object UmlGraphQLModels
     )
   }
 
-  private val umlCompleteResultType: ObjectType[Unit, UmlCompleteResult] = {
+  // Abstract result
+
+  private val umlAbstractResultType = InterfaceType(
+    "UmlAbstractResult",
+    fields[Unit, UmlAbstractResult](
+      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
+      Field("points", FloatType, resolve = _.value.points.asDouble),
+      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
+    )
+  ).withPossibleTypes(() => List(umlResultType, umlInternalErrorResultType))
+
+  private val umlResultType: ObjectType[Unit, UmlResult] = {
     implicit val cct: ObjectType[Unit, ClassComparison] =
       matchingResultType("UmlClass", umlClassMatchType)
     implicit val act: ObjectType[Unit, AssociationComparison] =
@@ -213,12 +224,17 @@ object UmlGraphQLModels
     implicit val ict: ObjectType[Unit, ImplementationComparison] =
       matchingResultType("UmlImplementation", umlImplementationMatchType)
 
-    deriveObjectType[Unit, UmlCompleteResult](
-      Interfaces(abstractResultInterfaceType),
+    deriveObjectType[Unit, UmlResult](
+      Interfaces(umlAbstractResultType),
       ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }
 
-  override val AbstractResultTypeType: OutputType[Any] = umlCompleteResultType
+  private val umlInternalErrorResultType: ObjectType[Unit, UmlInternalErrorResult] = deriveObjectType(
+    Interfaces(umlAbstractResultType),
+    ExcludeFields("maxPoints")
+  )
+
+  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, UmlAbstractResult] = umlAbstractResultType
 
 }

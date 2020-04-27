@@ -6,8 +6,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 import model.core.Levenshtein
 import model.core.result.SuccessType
 import model.points._
-import model.tools.SampleSolution
 import model.tools.xml.XmlTool.ElementLineComparison
+import model.tools.{AbstractCorrector, SampleSolution}
 import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
 import play.api.Logger
 
@@ -28,23 +28,17 @@ class CorrectionErrorHandler extends ErrorHandler {
 
 }
 
-object XmlCorrector {
+object XmlCorrector extends AbstractCorrector {
 
-  private val logger = Logger(XmlCorrector.getClass)
+  override protected val logger: Logger = Logger(XmlCorrector.getClass)
 
-  private def onError(
+  override type AbstractResult = XmlAbstractResult
+
+  override protected def buildInternalError(
     msg: String,
     solutionSaved: Boolean,
-    maybeException: Option[Throwable] = None,
-    maxPoints: Points = (-1).points
-  ): XmlAbstractResult = {
-    maybeException match {
-      case None            => logger.error(msg)
-      case Some(exception) => logger.error(msg, exception)
-    }
-
-    XmlInternalErrorResult(solutionSaved, maxPoints)
-  }
+    maxPoints: Points
+  ): XmlInternalErrorResult = XmlInternalErrorResult(msg, solutionSaved, maxPoints)
 
   // Document correction
 
@@ -90,13 +84,12 @@ object XmlCorrector {
       val points    = (-1).points
       val maxPoints = (-1).points
 
-      XmlCompleteResult(
+      XmlResult(
         successType,
-        documentResult = xmlErrors,
-        grammarResult = None,
         points,
         maxPoints,
-        solutionSaved
+        solutionSaved,
+        documentResult = Some(XmlDocumentResult(xmlErrors))
       )
   }
 
@@ -123,7 +116,7 @@ object XmlCorrector {
       DocTypeDefParser
         .tryParseDTD(sampleSolution.sample.grammar)
         .fold(
-          error => onError("Error while parseing dtd", solutionSaved, Some(error)),
+          error => onError("Error while parsing dtd", solutionSaved, maybeException = Some(error)),
           sampleGrammar => {
             val dtdParseResult = DocTypeDefParser.parseDTD(solution.grammar)
 
@@ -141,13 +134,12 @@ object XmlCorrector {
               case _                          => SuccessType.ERROR
             }
 
-            XmlCompleteResult(
+            XmlResult(
               successType,
-              documentResult = Seq.empty,
-              grammarResult = Some(XmlGrammarResult(dtdParseResult.parseErrors, matchingResult)),
               points,
               maxPoints,
-              solutionSaved
+              solutionSaved,
+              grammarResult = Some(XmlGrammarResult(dtdParseResult.parseErrors, matchingResult))
             )
           }
         )

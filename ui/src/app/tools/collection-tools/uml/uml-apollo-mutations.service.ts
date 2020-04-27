@@ -4,53 +4,6 @@ import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
-type AbstractCorrectionResult_RegexIllegalRegexResult_Fragment = (
-  { __typename?: 'RegexIllegalRegexResult' }
-  & Pick<Types.RegexIllegalRegexResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_RegexMatchingResult_Fragment = (
-  { __typename?: 'RegexMatchingResult' }
-  & Pick<Types.RegexMatchingResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_RegexExtractionResult_Fragment = (
-  { __typename?: 'RegexExtractionResult' }
-  & Pick<Types.RegexExtractionResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_SqlIllegalQueryResult_Fragment = (
-  { __typename?: 'SqlIllegalQueryResult' }
-  & Pick<Types.SqlIllegalQueryResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment = (
-  { __typename?: 'SqlWrongQueryTypeResult' }
-  & Pick<Types.SqlWrongQueryTypeResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_SqlResult_Fragment = (
-  { __typename?: 'SqlResult' }
-  & Pick<Types.SqlResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_UmlCompleteResult_Fragment = (
-  { __typename?: 'UmlCompleteResult' }
-  & Pick<Types.UmlCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_WebCompleteResult_Fragment = (
-  { __typename?: 'WebCompleteResult' }
-  & Pick<Types.WebCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_XmlCompleteResult_Fragment = (
-  { __typename?: 'XmlCompleteResult' }
-  & Pick<Types.XmlCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-export type AbstractCorrectionResultFragment = AbstractCorrectionResult_RegexIllegalRegexResult_Fragment | AbstractCorrectionResult_RegexMatchingResult_Fragment | AbstractCorrectionResult_RegexExtractionResult_Fragment | AbstractCorrectionResult_SqlIllegalQueryResult_Fragment | AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment | AbstractCorrectionResult_SqlResult_Fragment | AbstractCorrectionResult_UmlCompleteResult_Fragment | AbstractCorrectionResult_WebCompleteResult_Fragment | AbstractCorrectionResult_XmlCompleteResult_Fragment;
-
 export type UmlCorrectionMutationVariables = {
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
@@ -61,14 +14,24 @@ export type UmlCorrectionMutationVariables = {
 
 export type UmlCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctUml?: Types.Maybe<(
-    { __typename?: 'UmlCompleteResult' }
-    & UmlCompleteResultFragment
-  )> }
+  & { correctUml: (
+    { __typename: 'UmlInternalErrorResult' }
+    & Pick<Types.UmlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+    & UmlInternalErrorResultFragment
+  ) | (
+    { __typename: 'UmlResult' }
+    & Pick<Types.UmlResult, 'solutionSaved' | 'points' | 'maxPoints'>
+    & UmlResultFragment
+  ) }
 );
 
-export type UmlCompleteResultFragment = (
-  { __typename?: 'UmlCompleteResult' }
+export type UmlInternalErrorResultFragment = (
+  { __typename?: 'UmlInternalErrorResult' }
+  & Pick<Types.UmlInternalErrorResult, 'msg'>
+);
+
+export type UmlResultFragment = (
+  { __typename?: 'UmlResult' }
   & { classResult?: Types.Maybe<(
     { __typename?: 'UmlClassMatchingResult' }
     & UmlClassMatchingResultFragment
@@ -79,7 +42,6 @@ export type UmlCompleteResultFragment = (
     { __typename?: 'UmlImplementationMatchingResult' }
     & UmlImplementationMatchingResultFragment
   )> }
-  & AbstractCorrectionResult_UmlCompleteResult_Fragment
 );
 
 export type UmlClassMatchingResultFragment = (
@@ -161,11 +123,9 @@ export type UmlImplementationFragment = (
   & Pick<Types.UmlImplementation, 'subClass' | 'superClass'>
 );
 
-export const AbstractCorrectionResultFragmentDoc = gql`
-    fragment AbstractCorrectionResult on AbstractCorrectionResult {
-  solutionSaved
-  points
-  maxPoints
+export const UmlInternalErrorResultFragmentDoc = gql`
+    fragment UmlInternalErrorResult on UmlInternalErrorResult {
+  msg
 }
     `;
 export const UmlSolutionClassFragmentDoc = gql`
@@ -262,9 +222,8 @@ export const UmlImplementationMatchingResultFragmentDoc = gql`
   maxPoints
 }
     ${UmlImplementationMatchFragmentDoc}`;
-export const UmlCompleteResultFragmentDoc = gql`
-    fragment UmlCompleteResult on UmlCompleteResult {
-  ...AbstractCorrectionResult
+export const UmlResultFragmentDoc = gql`
+    fragment UmlResult on UmlResult {
   classResult {
     ...UmlClassMatchingResult
   }
@@ -275,17 +234,22 @@ export const UmlCompleteResultFragmentDoc = gql`
     ...UmlImplementationMatchingResult
   }
 }
-    ${AbstractCorrectionResultFragmentDoc}
-${UmlClassMatchingResultFragmentDoc}
+    ${UmlClassMatchingResultFragmentDoc}
 ${UmlAssociationMatchingResultFragmentDoc}
 ${UmlImplementationMatchingResultFragmentDoc}`;
 export const UmlCorrectionDocument = gql`
     mutation UmlCorrection($collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
   correctUml(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...UmlCompleteResult
+    __typename
+    solutionSaved
+    points
+    maxPoints
+    ...UmlInternalErrorResult
+    ...UmlResult
   }
 }
-    ${UmlCompleteResultFragmentDoc}`;
+    ${UmlInternalErrorResultFragmentDoc}
+${UmlResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

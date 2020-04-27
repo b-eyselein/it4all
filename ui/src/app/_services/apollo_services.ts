@@ -10,8 +10,8 @@ export type ToolOverviewQueryVariables = {};
 export type ToolOverviewQuery = (
   { __typename?: 'Query' }
   & { tools: Array<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'id' | 'name' | 'state' | 'collectionCount' | 'lessonCount' | 'exerciseCount'>
+    { __typename?: 'CollectionTool' }
+    & Pick<Types.CollectionTool, 'id' | 'name' | 'state' | 'collectionCount' | 'lessonCount' | 'exerciseCount'>
   )> }
 );
 
@@ -23,8 +23,8 @@ export type CollectionToolOverviewQueryVariables = {
 export type CollectionToolOverviewQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
+    { __typename?: 'CollectionTool' }
+    & Pick<Types.CollectionTool, 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
   )> }
 );
 
@@ -36,7 +36,7 @@ export type AllExercisesOverviewQueryVariables = {
 export type AllExercisesOverviewQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
+    { __typename?: 'CollectionTool' }
     & { allExercises: Array<(
       { __typename?: 'Exercise' }
       & { topics: Array<(
@@ -56,11 +56,11 @@ export type CollectionListQueryVariables = {
 export type CollectionListQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'name'>
+    { __typename?: 'CollectionTool' }
+    & Pick<Types.CollectionTool, 'name'>
     & { collections: Array<(
       { __typename?: 'ExerciseCollection' }
-      & Pick<Types.ExerciseCollection, 'id' | 'title' | 'exerciseCount'>
+      & Pick<Types.ExerciseCollection, 'completeId' | 'collectionId' | 'title' | 'exerciseCount'>
     )> }
   )> }
 );
@@ -74,7 +74,7 @@ export type CollectionOverviewQueryVariables = {
 export type CollectionOverviewQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
+    { __typename?: 'CollectionTool' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & Pick<Types.ExerciseCollection, 'title'>
@@ -96,12 +96,12 @@ export type ExerciseOverviewQueryVariables = {
 export type ExerciseOverviewQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
+    { __typename?: 'CollectionTool' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & { exercise?: Types.Maybe<(
         { __typename?: 'Exercise' }
-        & Pick<Types.Exercise, 'id' | 'title' | 'text'>
+        & Pick<Types.Exercise, 'exerciseId' | 'title' | 'text'>
         & { parts: Array<(
           { __typename?: 'ExPart' }
           & PartFragment
@@ -122,7 +122,7 @@ export type ExerciseQueryVariables = {
 export type ExerciseQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
+    { __typename?: 'CollectionTool' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & { exercise?: Types.Maybe<(
@@ -160,8 +160,8 @@ export type LessonsForToolQueryVariables = {
 export type LessonsForToolQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'name'>
+    { __typename?: 'CollectionTool' }
+    & Pick<Types.CollectionTool, 'name'>
     & { lessons: Array<(
       { __typename?: 'Lesson' }
       & Pick<Types.Lesson, 'id' | 'title' | 'description'>
@@ -178,8 +178,8 @@ export type LessonQueryVariables = {
 export type LessonQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'name'>
+    { __typename?: 'CollectionTool' }
+    & Pick<Types.CollectionTool, 'name'>
     & { lesson?: Types.Maybe<(
       { __typename?: 'Lesson' }
       & Pick<Types.Lesson, 'id' | 'title' | 'description'>
@@ -193,8 +193,8 @@ export type AdminIndexQueryVariables = {};
 export type AdminIndexQuery = (
   { __typename?: 'Query' }
   & { tools: Array<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'id' | 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
+    { __typename?: 'CollectionTool' }
+    & Pick<Types.CollectionTool, 'id' | 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
   )> }
 );
 
@@ -206,8 +206,8 @@ export type CollectionToolAdminQueryVariables = {
 export type CollectionToolAdminQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'name' | 'collectionCount' | 'lessonCount'>
+    { __typename?: 'CollectionTool' }
+    & Pick<Types.CollectionTool, 'name' | 'collectionCount' | 'lessonCount'>
   )> }
 );
 
@@ -219,8 +219,8 @@ export type AdminLessonIndexQueryVariables = {
 export type AdminLessonIndexQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'name'>
+    { __typename?: 'CollectionTool' }
+    & Pick<Types.CollectionTool, 'name'>
     & { lessons: Array<(
       { __typename?: 'Lesson' }
       & LessonFragment
@@ -237,7 +237,7 @@ export type CollectionAdminQueryVariables = {
 export type CollectionAdminQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
+    { __typename?: 'CollectionTool' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & Pick<Types.ExerciseCollection, 'title'>
@@ -257,11 +257,11 @@ export type AdminCollectionsIndexQueryVariables = {
 export type AdminCollectionsIndexQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'name'>
+    { __typename?: 'CollectionTool' }
+    & Pick<Types.CollectionTool, 'name'>
     & { collections: Array<(
       { __typename?: 'ExerciseCollection' }
-      & Pick<Types.ExerciseCollection, 'id' | 'title' | 'exerciseCount'>
+      & Pick<Types.ExerciseCollection, 'collectionId' | 'title' | 'exerciseCount'>
     )> }
   )> }
 );
@@ -275,7 +275,7 @@ export type AdminEditCollectionQueryVariables = {
 export type AdminEditCollectionQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
+    { __typename?: 'CollectionTool' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & Pick<Types.ExerciseCollection, 'asJsonString'>
@@ -291,8 +291,8 @@ export type AdminReadCollectionsQueryVariables = {
 export type AdminReadCollectionsQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'name' | 'readCollections'>
+    { __typename?: 'CollectionTool' }
+    & Pick<Types.CollectionTool, 'name' | 'readCollections'>
   )> }
 );
 
@@ -304,7 +304,10 @@ export type AdminUpsertCollectionMutationVariables = {
 
 export type AdminUpsertCollectionMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Types.Mutation, 'upsertCollection'>
+  & { upsertCollection?: Types.Maybe<(
+    { __typename?: 'ExerciseCollection' }
+    & Pick<Types.ExerciseCollection, 'completeId'>
+  )> }
 );
 
 export type AdminReadLessonsQueryVariables = {
@@ -315,8 +318,8 @@ export type AdminReadLessonsQueryVariables = {
 export type AdminReadLessonsQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
-    & Pick<Types.CollectionTol, 'name'>
+    { __typename?: 'CollectionTool' }
+    & Pick<Types.CollectionTool, 'name'>
     & { readLessons: Array<(
       { __typename?: 'Lesson' }
       & LessonFragment
@@ -334,7 +337,7 @@ export type AdminEditExerciseQueryVariables = {
 export type AdminEditExerciseQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
+    { __typename?: 'CollectionTool' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & { exercise?: Types.Maybe<(
@@ -354,7 +357,7 @@ export type AdminReadExercisesQueryVariables = {
 export type AdminReadExercisesQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTol' }
+    { __typename?: 'CollectionTool' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
       & Pick<Types.ExerciseCollection, 'readExercises'>
@@ -370,7 +373,10 @@ export type AdminUpsertExerciseMutationVariables = {
 
 export type AdminUpsertExerciseMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Types.Mutation, 'upsertExercise'>
+  & { upsertExercise?: Types.Maybe<(
+    { __typename?: 'Exercise' }
+    & Pick<Types.Exercise, 'completeId'>
+  )> }
 );
 
 export type TopicFragment = (
@@ -385,7 +391,7 @@ export type PartFragment = (
 
 export type FieldsForLinkFragment = (
   { __typename?: 'Exercise' }
-  & Pick<Types.Exercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
+  & Pick<Types.Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
   & { topics: Array<(
     { __typename?: 'Topic' }
     & TopicFragment
@@ -394,7 +400,7 @@ export type FieldsForLinkFragment = (
 
 export type ExerciseSolveFieldsFragment = (
   { __typename?: 'Exercise' }
-  & Pick<Types.Exercise, 'id' | 'collectionId' | 'toolId' | 'title' | 'text'>
+  & Pick<Types.Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'text'>
 );
 
 export type ProgExerciseContentSolveFieldsFragment = (
@@ -405,13 +411,13 @@ export type ProgExerciseContentSolveFieldsFragment = (
     & Pick<Types.UnitTestPart, 'unitTestType'>
     & { unitTestFiles: Array<(
       { __typename?: 'ExerciseFile' }
-      & ExFileAllFragment
+      & ExerciseFileFragment
     )> }
   ), implementationPart: (
     { __typename?: 'ImplementationPart' }
     & { files: Array<(
       { __typename?: 'ExerciseFile' }
-      & ExFileAllFragment
+      & ExerciseFileFragment
     )> }
   ), sampleSolutions: Array<(
     { __typename?: 'ProgrammingSampleSolution' }
@@ -425,7 +431,7 @@ export type ProgrammingSampleSolutionFragment = (
     { __typename?: 'ProgSolution' }
     & { files: Array<(
       { __typename?: 'ExerciseFile' }
-      & ExFileAllFragment
+      & ExerciseFileFragment
     )> }
   ) }
 );
@@ -558,10 +564,10 @@ export type WebExerciseContentSolveFieldsFragment = (
   & Pick<Types.WebExerciseContent, 'part'>
   & { files: Array<(
     { __typename?: 'ExerciseFile' }
-    & ExFileAllFragment
+    & ExerciseFileFragment
   )>, siteSpec: (
     { __typename?: 'SiteSpec' }
-    & Pick<Types.SiteSpec, 'jsTaskCount'>
+    & Pick<Types.SiteSpec, 'fileName' | 'jsTaskCount'>
     & { htmlTasks: Array<(
       { __typename?: 'HtmlTask' }
       & Pick<Types.HtmlTask, 'text'>
@@ -578,7 +584,7 @@ export type WebSampleSolutionFragment = (
     { __typename?: 'WebSolution' }
     & { files: Array<(
       { __typename?: 'ExerciseFile' }
-      & ExFileAllFragment
+      & ExerciseFileFragment
     )> }
   ) }
 );
@@ -600,7 +606,7 @@ export type XmlSampleSolutionFragment = (
   ) }
 );
 
-export type ExFileAllFragment = (
+export type ExerciseFileFragment = (
   { __typename?: 'ExerciseFile' }
   & Pick<Types.ExerciseFile, 'name' | 'fileType' | 'content' | 'editable'>
 );
@@ -625,7 +631,7 @@ export const TopicFragmentDoc = gql`
     `;
 export const FieldsForLinkFragmentDoc = gql`
     fragment FieldsForLink on Exercise {
-  id
+  exerciseId
   collectionId
   toolId
   title
@@ -637,15 +643,15 @@ export const FieldsForLinkFragmentDoc = gql`
     ${TopicFragmentDoc}`;
 export const ExerciseSolveFieldsFragmentDoc = gql`
     fragment ExerciseSolveFields on Exercise {
-  id
+  exerciseId
   collectionId
   toolId
   title
   text
 }
     `;
-export const ExFileAllFragmentDoc = gql`
-    fragment ExFileAll on ExerciseFile {
+export const ExerciseFileFragmentDoc = gql`
+    fragment ExerciseFile on ExerciseFile {
   name
   fileType
   content
@@ -657,22 +663,22 @@ export const ProgrammingSampleSolutionFragmentDoc = gql`
   __typename
   sample {
     files {
-      ...ExFileAll
+      ...ExerciseFile
     }
   }
 }
-    ${ExFileAllFragmentDoc}`;
+    ${ExerciseFileFragmentDoc}`;
 export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
     fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {
   unitTestPart {
     unitTestType
     unitTestFiles {
-      ...ExFileAll
+      ...ExerciseFile
     }
   }
   implementationPart {
     files {
-      ...ExFileAll
+      ...ExerciseFile
     }
   }
   sampleSolutions {
@@ -680,7 +686,7 @@ export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
   }
   part(partId: $partId)
 }
-    ${ExFileAllFragmentDoc}
+    ${ExerciseFileFragmentDoc}
 ${ProgrammingSampleSolutionFragmentDoc}`;
 export const RegexSampleSolutionFragmentDoc = gql`
     fragment RegexSampleSolution on RegexSampleSolution {
@@ -831,17 +837,18 @@ export const WebSampleSolutionFragmentDoc = gql`
   __typename
   sample {
     files {
-      ...ExFileAll
+      ...ExerciseFile
     }
   }
 }
-    ${ExFileAllFragmentDoc}`;
+    ${ExerciseFileFragmentDoc}`;
 export const WebExerciseContentSolveFieldsFragmentDoc = gql`
     fragment WebExerciseContentSolveFields on WebExerciseContent {
   files {
-    ...ExFileAll
+    ...ExerciseFile
   }
   siteSpec {
+    fileName
     htmlTasks {
       text
     }
@@ -852,7 +859,7 @@ export const WebExerciseContentSolveFieldsFragmentDoc = gql`
   }
   part(partId: $partId)
 }
-    ${ExFileAllFragmentDoc}
+    ${ExerciseFileFragmentDoc}
 ${WebSampleSolutionFragmentDoc}`;
 export const XmlSampleSolutionFragmentDoc = gql`
     fragment XmlSampleSolution on XmlSampleSolution {
@@ -943,7 +950,8 @@ export const CollectionListDocument = gql`
   tool(toolId: $toolId) {
     name
     collections {
-      id
+      completeId
+      collectionId
       title
       exerciseCount
     }
@@ -983,7 +991,7 @@ export const ExerciseOverviewDocument = gql`
   tool(toolId: $toolId) {
     collection(collId: $collId) {
       exercise(exId: $exId) {
-        id
+        exerciseId
         title
         text
         parts {
@@ -1164,7 +1172,7 @@ export const AdminCollectionsIndexDocument = gql`
   tool(toolId: $toolId) {
     name
     collections {
-      id
+      collectionId
       title
       exerciseCount
     }
@@ -1214,7 +1222,9 @@ export const AdminReadCollectionsDocument = gql`
   }
 export const AdminUpsertCollectionDocument = gql`
     mutation AdminUpsertCollection($toolId: String!, $content: String!) {
-  upsertCollection(toolId: $toolId, content: $content)
+  upsertCollection(toolId: $toolId, content: $content) {
+    completeId
+  }
 }
     `;
 
@@ -1281,7 +1291,9 @@ export const AdminReadExercisesDocument = gql`
   }
 export const AdminUpsertExerciseDocument = gql`
     mutation AdminUpsertExercise($toolId: String!, $content: String!) {
-  upsertExercise(toolId: $toolId, content: $content)
+  upsertExercise(toolId: $toolId, content: $content) {
+    completeId
+  }
 }
     `;
 

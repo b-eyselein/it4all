@@ -1,6 +1,6 @@
 package model.tools.programming
 
-import model.core.result.{AbstractCorrectionResult, SuccessType}
+import model.core.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import model.points._
 import play.api.libs.json.JsValue
 
@@ -13,15 +13,17 @@ sealed trait ProgEvalResult {
 trait ProgrammingAbstractResult extends AbstractCorrectionResult
 
 final case class ProgrammingInternalErrorResult(
+  msg: String,
   solutionSaved: Boolean,
   maxPoints: Points
-) extends ProgrammingAbstractResult {
+) extends ProgrammingAbstractResult
+    with InternalErrorResult {
 
   override def points: Points = zeroPoints
 
 }
 
-final case class ProgCompleteResult(
+final case class ProgrammingResult(
   solutionSaved: Boolean,
   simplifiedResults: Seq[SimplifiedExecutionResult] = Seq.empty,
   normalResult: Option[NormalExecutionResult] = None,

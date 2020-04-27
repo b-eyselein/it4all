@@ -29,6 +29,12 @@
         <it4all-tab [title]="correctionTabTitle">
           <ng-container *ngIf="resultQuery">
 
+            <it4all-solution-saved [saved]="resultQuery.correctSql.solutionSaved"></it4all-solution-saved>
+
+            <ng-container *ngIf="sqlInternalErrorResult">
+              {{sqlInternalErrorResult | json}}
+            </ng-container>
+
             <div class="message is-danger" *ngIf="sqlIllegalQueryResult">
               <div class="message-header">Es gab einen Fehler beim Parsen ihrer Query:</div>
               <div class="message-body">

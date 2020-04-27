@@ -1,17 +1,19 @@
-fragment AbstractCorrectionResult on AbstractCorrectionResult {
-  solutionSaved
-  points
-  maxPoints
-}
-
 mutation UmlCorrection($collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
   correctUml(collId: $collId, exId: $exId,part: $part, solution: $solution) {
-    ...UmlCompleteResult
+    __typename
+    solutionSaved
+    points
+    maxPoints
+    ...UmlInternalErrorResult
+    ...UmlResult
   }
 }
 
-fragment UmlCompleteResult on UmlCompleteResult {
-  ...AbstractCorrectionResult
+fragment UmlInternalErrorResult on UmlInternalErrorResult {
+  msg
+}
+
+fragment UmlResult on UmlResult {
   classResult {
     ...UmlClassMatchingResult
   }

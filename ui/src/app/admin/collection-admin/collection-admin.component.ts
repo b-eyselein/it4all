@@ -6,14 +6,12 @@ import {Subscription} from 'rxjs';
 @Component({templateUrl: './collection-admin.component.html'})
 export class CollectionAdminComponent implements OnInit, OnDestroy {
 
-  sub: Subscription;
+  private sub: Subscription;
+  private apolloSub: Subscription;
 
   collectionAdminQuery: CollectionAdminQuery;
 
-  constructor(
-    private route: ActivatedRoute,
-    private collectionAdminGQL: CollectionAdminGQL,
-  ) {
+  constructor(private route: ActivatedRoute, private collectionAdminGQL: CollectionAdminGQL) {
   }
 
   ngOnInit() {
@@ -21,7 +19,7 @@ export class CollectionAdminComponent implements OnInit, OnDestroy {
       const toolId = paramMap.get('toolId');
       const collId: number = parseInt(paramMap.get('collId'), 10);
 
-      this.collectionAdminGQL
+      this.apolloSub = this.collectionAdminGQL
         .watch({toolId, collId})
         .valueChanges
         .subscribe(({data}) => this.collectionAdminQuery = data);
@@ -29,6 +27,7 @@ export class CollectionAdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.apolloSub.unsubscribe();
     this.sub.unsubscribe();
   }
 

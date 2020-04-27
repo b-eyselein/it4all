@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ElementLineMatch} from '../../../../../_interfaces/graphql-types';
+import {XmlElementLineMatchFragment} from "../../xml-apollo-mutations.service";
+import {MatchType} from "../../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-xml-element-line-match',
@@ -7,23 +8,24 @@ import {ElementLineMatch} from '../../../../../_interfaces/graphql-types';
 })
 export class XmlElementLineMatchComponent implements OnInit {
 
-  @Input() match: ElementLineMatch;
+  @Input() match: XmlElementLineMatchFragment;
 
   isCorrect = false;
 
   ngOnInit() {
-    this.isCorrect = this.match.matchType === 'SUCCESSFUL_MATCH';
+    this.isCorrect = this.match.matchType === MatchType.SuccessfulMatch;
   }
 
   get matchWord(): string {
     switch (this.match.matchType) {
-      case 'ONLY_SAMPLE':
+      case MatchType.OnlySample:
         return 'fehlt!';
-      case 'ONLY_USER':
+      case MatchType.OnlyUser:
         return 'ist falsch!';
-      case 'SUCCESSFUL_MATCH':
+      case MatchType.SuccessfulMatch:
         return 'ist korrekt.';
-      default:
+      case MatchType.PartialMatch:
+      case MatchType.UnsuccessfulMatch:
         return 'ist nicht komplett korrekt:';
     }
   }

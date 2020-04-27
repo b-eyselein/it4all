@@ -4,53 +4,6 @@ import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
-type AbstractCorrectionResult_RegexIllegalRegexResult_Fragment = (
-  { __typename?: 'RegexIllegalRegexResult' }
-  & Pick<Types.RegexIllegalRegexResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_RegexMatchingResult_Fragment = (
-  { __typename?: 'RegexMatchingResult' }
-  & Pick<Types.RegexMatchingResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_RegexExtractionResult_Fragment = (
-  { __typename?: 'RegexExtractionResult' }
-  & Pick<Types.RegexExtractionResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_SqlIllegalQueryResult_Fragment = (
-  { __typename?: 'SqlIllegalQueryResult' }
-  & Pick<Types.SqlIllegalQueryResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment = (
-  { __typename?: 'SqlWrongQueryTypeResult' }
-  & Pick<Types.SqlWrongQueryTypeResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_SqlResult_Fragment = (
-  { __typename?: 'SqlResult' }
-  & Pick<Types.SqlResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_UmlCompleteResult_Fragment = (
-  { __typename?: 'UmlCompleteResult' }
-  & Pick<Types.UmlCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_WebCompleteResult_Fragment = (
-  { __typename?: 'WebCompleteResult' }
-  & Pick<Types.WebCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_XmlCompleteResult_Fragment = (
-  { __typename?: 'XmlCompleteResult' }
-  & Pick<Types.XmlCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-export type AbstractCorrectionResultFragment = AbstractCorrectionResult_RegexIllegalRegexResult_Fragment | AbstractCorrectionResult_RegexMatchingResult_Fragment | AbstractCorrectionResult_RegexExtractionResult_Fragment | AbstractCorrectionResult_SqlIllegalQueryResult_Fragment | AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment | AbstractCorrectionResult_SqlResult_Fragment | AbstractCorrectionResult_UmlCompleteResult_Fragment | AbstractCorrectionResult_WebCompleteResult_Fragment | AbstractCorrectionResult_XmlCompleteResult_Fragment;
-
 export type SqlCorrectionMutationVariables = {
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
@@ -61,28 +14,38 @@ export type SqlCorrectionMutationVariables = {
 
 export type SqlCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctSql?: Types.Maybe<(
-    { __typename?: 'SqlIllegalQueryResult' }
+  & { correctSql: (
+    { __typename: 'SqlIllegalQueryResult' }
+    & Pick<Types.SqlIllegalQueryResult, 'solutionSaved' | 'points' | 'maxPoints'>
     & SqlIllegalQueryResultFragment
   ) | (
-    { __typename?: 'SqlWrongQueryTypeResult' }
-    & SqlWrongQueryTypeResultFragment
+    { __typename: 'SqlInternalErrorResult' }
+    & Pick<Types.SqlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+    & SqlInternalErrorResultFragment
   ) | (
-    { __typename?: 'SqlResult' }
+    { __typename: 'SqlResult' }
+    & Pick<Types.SqlResult, 'solutionSaved' | 'points' | 'maxPoints'>
     & SqlResultFragment
-  )> }
+  ) | (
+    { __typename: 'SqlWrongQueryTypeResult' }
+    & Pick<Types.SqlWrongQueryTypeResult, 'solutionSaved' | 'points' | 'maxPoints'>
+    & SqlWrongQueryTypeResultFragment
+  ) }
+);
+
+export type SqlInternalErrorResultFragment = (
+  { __typename?: 'SqlInternalErrorResult' }
+  & Pick<Types.SqlInternalErrorResult, 'msg'>
 );
 
 export type SqlIllegalQueryResultFragment = (
   { __typename?: 'SqlIllegalQueryResult' }
   & Pick<Types.SqlIllegalQueryResult, 'message'>
-  & AbstractCorrectionResult_SqlIllegalQueryResult_Fragment
 );
 
 export type SqlWrongQueryTypeResultFragment = (
   { __typename?: 'SqlWrongQueryTypeResult' }
   & Pick<Types.SqlWrongQueryTypeResult, 'message'>
-  & AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment
 );
 
 export type ColumnMatchFragment = (
@@ -200,7 +163,6 @@ export type SqlResultFragment = (
     { __typename?: 'SqlExecutionResult' }
     & SqlExecutionResultFragment
   ) }
-  & AbstractCorrectionResult_SqlResult_Fragment
 );
 
 export type SqlExecutionResultFragment = (
@@ -240,26 +202,6 @@ export type SqlCellFragment = (
   & Pick<Types.SqlCell, 'colName' | 'content' | 'different'>
 );
 
-type NewMatch_RegexMatchMatch_Fragment = (
-  { __typename?: 'RegexMatchMatch' }
-  & Pick<Types.RegexMatchMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
-
-type NewMatch_SqlColumnMatch_Fragment = (
-  { __typename?: 'SqlColumnMatch' }
-  & Pick<Types.SqlColumnMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
-
-type NewMatch_SqlTableMatch_Fragment = (
-  { __typename?: 'SqlTableMatch' }
-  & Pick<Types.SqlTableMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
-
-type NewMatch_SqlBinaryExpressionMatch_Fragment = (
-  { __typename?: 'SqlBinaryExpressionMatch' }
-  & Pick<Types.SqlBinaryExpressionMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
-
 type NewMatch_SqlGroupByMatch_Fragment = (
   { __typename?: 'SqlGroupByMatch' }
   & Pick<Types.SqlGroupByMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
@@ -280,19 +222,29 @@ type NewMatch_SqlInsertMatch_Fragment = (
   & Pick<Types.SqlInsertMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
 );
 
-type NewMatch_UmlClassMatch_Fragment = (
-  { __typename?: 'UmlClassMatch' }
-  & Pick<Types.UmlClassMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+type NewMatch_ElementLineMatch_Fragment = (
+  { __typename?: 'ElementLineMatch' }
+  & Pick<Types.ElementLineMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
 );
 
-type NewMatch_UmlAttributeMatch_Fragment = (
-  { __typename?: 'UmlAttributeMatch' }
-  & Pick<Types.UmlAttributeMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+type NewMatch_RegexMatchMatch_Fragment = (
+  { __typename?: 'RegexMatchMatch' }
+  & Pick<Types.RegexMatchMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
 );
 
-type NewMatch_UmlMethodMatch_Fragment = (
-  { __typename?: 'UmlMethodMatch' }
-  & Pick<Types.UmlMethodMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+type NewMatch_SqlBinaryExpressionMatch_Fragment = (
+  { __typename?: 'SqlBinaryExpressionMatch' }
+  & Pick<Types.SqlBinaryExpressionMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlColumnMatch_Fragment = (
+  { __typename?: 'SqlColumnMatch' }
+  & Pick<Types.SqlColumnMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlTableMatch_Fragment = (
+  { __typename?: 'SqlTableMatch' }
+  & Pick<Types.SqlTableMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
 );
 
 type NewMatch_UmlAssociationMatch_Fragment = (
@@ -300,53 +252,27 @@ type NewMatch_UmlAssociationMatch_Fragment = (
   & Pick<Types.UmlAssociationMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
 );
 
+type NewMatch_UmlAttributeMatch_Fragment = (
+  { __typename?: 'UmlAttributeMatch' }
+  & Pick<Types.UmlAttributeMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlClassMatch_Fragment = (
+  { __typename?: 'UmlClassMatch' }
+  & Pick<Types.UmlClassMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlMethodMatch_Fragment = (
+  { __typename?: 'UmlMethodMatch' }
+  & Pick<Types.UmlMethodMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
 type NewMatch_UmlImplementationMatch_Fragment = (
   { __typename?: 'UmlImplementationMatch' }
   & Pick<Types.UmlImplementationMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
 );
 
-type NewMatch_ElementLineMatch_Fragment = (
-  { __typename?: 'ElementLineMatch' }
-  & Pick<Types.ElementLineMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
-
-export type NewMatchFragment = NewMatch_RegexMatchMatch_Fragment | NewMatch_SqlColumnMatch_Fragment | NewMatch_SqlTableMatch_Fragment | NewMatch_SqlBinaryExpressionMatch_Fragment | NewMatch_SqlGroupByMatch_Fragment | NewMatch_SqlOrderByMatch_Fragment | NewMatch_SqlLimitMatch_Fragment | NewMatch_SqlInsertMatch_Fragment | NewMatch_UmlClassMatch_Fragment | NewMatch_UmlAttributeMatch_Fragment | NewMatch_UmlMethodMatch_Fragment | NewMatch_UmlAssociationMatch_Fragment | NewMatch_UmlImplementationMatch_Fragment | NewMatch_ElementLineMatch_Fragment;
-
-type Mr_RegexExtractedValuesComparisonMatchingResult_Fragment = (
-  { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
-  & Pick<Types.RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints'>
-  & { allMatches: Array<(
-    { __typename?: 'RegexMatchMatch' }
-    & NewMatch_RegexMatchMatch_Fragment
-  )> }
-);
-
-type Mr_SqlColumnComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlColumnComparisonMatchingResult' }
-  & Pick<Types.SqlColumnComparisonMatchingResult, 'points' | 'maxPoints'>
-  & { allMatches: Array<(
-    { __typename?: 'SqlColumnMatch' }
-    & NewMatch_SqlColumnMatch_Fragment
-  )> }
-);
-
-type Mr_SqlTableComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlTableComparisonMatchingResult' }
-  & Pick<Types.SqlTableComparisonMatchingResult, 'points' | 'maxPoints'>
-  & { allMatches: Array<(
-    { __typename?: 'SqlTableMatch' }
-    & NewMatch_SqlTableMatch_Fragment
-  )> }
-);
-
-type Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-  & Pick<Types.SqlBinaryExpressionComparisonMatchingResult, 'points' | 'maxPoints'>
-  & { allMatches: Array<(
-    { __typename?: 'SqlBinaryExpressionMatch' }
-    & NewMatch_SqlBinaryExpressionMatch_Fragment
-  )> }
-);
+export type NewMatchFragment = NewMatch_SqlGroupByMatch_Fragment | NewMatch_SqlOrderByMatch_Fragment | NewMatch_SqlLimitMatch_Fragment | NewMatch_SqlInsertMatch_Fragment | NewMatch_ElementLineMatch_Fragment | NewMatch_RegexMatchMatch_Fragment | NewMatch_SqlBinaryExpressionMatch_Fragment | NewMatch_SqlColumnMatch_Fragment | NewMatch_SqlTableMatch_Fragment | NewMatch_UmlAssociationMatch_Fragment | NewMatch_UmlAttributeMatch_Fragment | NewMatch_UmlClassMatch_Fragment | NewMatch_UmlMethodMatch_Fragment | NewMatch_UmlImplementationMatch_Fragment;
 
 type Mr_SqlGroupByComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlGroupByComparisonMatchingResult' }
@@ -384,12 +310,48 @@ type Mr_SqlInsertComparisonMatchingResult_Fragment = (
   )> }
 );
 
-type Mr_UmlClassMatchingResult_Fragment = (
-  { __typename?: 'UmlClassMatchingResult' }
-  & Pick<Types.UmlClassMatchingResult, 'points' | 'maxPoints'>
+type Mr_RegexExtractedValuesComparisonMatchingResult_Fragment = (
+  { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
+  & Pick<Types.RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints'>
   & { allMatches: Array<(
-    { __typename?: 'UmlClassMatch' }
-    & NewMatch_UmlClassMatch_Fragment
+    { __typename?: 'RegexMatchMatch' }
+    & NewMatch_RegexMatchMatch_Fragment
+  )> }
+);
+
+type Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
+  & Pick<Types.SqlBinaryExpressionComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlBinaryExpressionMatch' }
+    & NewMatch_SqlBinaryExpressionMatch_Fragment
+  )> }
+);
+
+type Mr_SqlColumnComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlColumnComparisonMatchingResult' }
+  & Pick<Types.SqlColumnComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlColumnMatch' }
+    & NewMatch_SqlColumnMatch_Fragment
+  )> }
+);
+
+type Mr_SqlTableComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlTableComparisonMatchingResult' }
+  & Pick<Types.SqlTableComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlTableMatch' }
+    & NewMatch_SqlTableMatch_Fragment
+  )> }
+);
+
+type Mr_UmlAssociationMatchingResult_Fragment = (
+  { __typename?: 'UmlAssociationMatchingResult' }
+  & Pick<Types.UmlAssociationMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlAssociationMatch' }
+    & NewMatch_UmlAssociationMatch_Fragment
   )> }
 );
 
@@ -411,12 +373,12 @@ type Mr_UmlMethodMatchingResult_Fragment = (
   )> }
 );
 
-type Mr_UmlAssociationMatchingResult_Fragment = (
-  { __typename?: 'UmlAssociationMatchingResult' }
-  & Pick<Types.UmlAssociationMatchingResult, 'points' | 'maxPoints'>
+type Mr_UmlClassMatchingResult_Fragment = (
+  { __typename?: 'UmlClassMatchingResult' }
+  & Pick<Types.UmlClassMatchingResult, 'points' | 'maxPoints'>
   & { allMatches: Array<(
-    { __typename?: 'UmlAssociationMatch' }
-    & NewMatch_UmlAssociationMatch_Fragment
+    { __typename?: 'UmlClassMatch' }
+    & NewMatch_UmlClassMatch_Fragment
   )> }
 );
 
@@ -438,27 +400,23 @@ type Mr_XmlElementLineComparisonMatchingResult_Fragment = (
   )> }
 );
 
-export type MrFragment = Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_UmlClassMatchingResult_Fragment | Mr_UmlAttributeMatchingResult_Fragment | Mr_UmlMethodMatchingResult_Fragment | Mr_UmlAssociationMatchingResult_Fragment | Mr_UmlImplementationMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
+export type MrFragment = Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_UmlAssociationMatchingResult_Fragment | Mr_UmlAttributeMatchingResult_Fragment | Mr_UmlMethodMatchingResult_Fragment | Mr_UmlClassMatchingResult_Fragment | Mr_UmlImplementationMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
 
-export const AbstractCorrectionResultFragmentDoc = gql`
-    fragment AbstractCorrectionResult on AbstractCorrectionResult {
-  solutionSaved
-  points
-  maxPoints
+export const SqlInternalErrorResultFragmentDoc = gql`
+    fragment SqlInternalErrorResult on SqlInternalErrorResult {
+  msg
 }
     `;
 export const SqlIllegalQueryResultFragmentDoc = gql`
     fragment SqlIllegalQueryResult on SqlIllegalQueryResult {
-  ...AbstractCorrectionResult
   message
 }
-    ${AbstractCorrectionResultFragmentDoc}`;
+    `;
 export const SqlWrongQueryTypeResultFragmentDoc = gql`
     fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
-  ...AbstractCorrectionResult
   message
 }
-    ${AbstractCorrectionResultFragmentDoc}`;
+    `;
 export const ColumnMatchFragmentDoc = gql`
     fragment ColumnMatch on SqlColumnMatch {
   matchType
@@ -612,7 +570,6 @@ export const SqlExecutionResultFragmentDoc = gql`
     ${SqlQueryResultFragmentDoc}`;
 export const SqlResultFragmentDoc = gql`
     fragment SqlResult on SqlResult {
-  ...AbstractCorrectionResult
   staticComparison {
     columnComparison {
       ...ColumnComparison
@@ -640,8 +597,7 @@ export const SqlResultFragmentDoc = gql`
     ...SqlExecutionResult
   }
 }
-    ${AbstractCorrectionResultFragmentDoc}
-${ColumnComparisonFragmentDoc}
+    ${ColumnComparisonFragmentDoc}
 ${MrFragmentDoc}
 ${TableComparisonFragmentDoc}
 ${BinaryExpressionComparisonFragmentDoc}
@@ -651,12 +607,18 @@ ${SqlExecutionResultFragmentDoc}`;
 export const SqlCorrectionDocument = gql`
     mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
   correctSql(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+    __typename
+    solutionSaved
+    points
+    maxPoints
+    ...SqlInternalErrorResult
     ...SqlIllegalQueryResult
     ...SqlWrongQueryTypeResult
     ...SqlResult
   }
 }
-    ${SqlIllegalQueryResultFragmentDoc}
+    ${SqlInternalErrorResultFragmentDoc}
+${SqlIllegalQueryResultFragmentDoc}
 ${SqlWrongQueryTypeResultFragmentDoc}
 ${SqlResultFragmentDoc}`;
 

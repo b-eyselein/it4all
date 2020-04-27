@@ -10,6 +10,7 @@ import {AdminEditExerciseGQL, AdminUpsertExerciseGQL} from '../../_services/apol
 export class AdminEditExerciseComponent implements OnInit, OnDestroy {
 
   private sub: Subscription;
+  private apolloSub: Subscription;
 
   private toolId: string;
 
@@ -28,7 +29,7 @@ export class AdminEditExerciseComponent implements OnInit, OnDestroy {
       const collId = parseInt(paramMap.get('collId'), 10);
       const exId = parseInt(paramMap.get('exId'), 10);
 
-      this.adminEditExerciseGQL
+      this.apolloSub = this.adminEditExerciseGQL
         .watch({toolId, collId, exId})
         .valueChanges
         .subscribe(({data}) => this.exerciseToEdit = JSON.parse(data.tool.collection.exercise.asJsonString));
@@ -36,10 +37,13 @@ export class AdminEditExerciseComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.apolloSub.unsubscribe();
     this.sub.unsubscribe();
   }
 
   save(): void {
+    console.info(this.adminUpsertExerciseGQL.document);
+
     this.adminUpsertExerciseGQL
       .mutate({toolId: this.toolId, content: JSON.stringify(this.exerciseToEdit)})
       .subscribe(({data}) => {

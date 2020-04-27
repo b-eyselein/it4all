@@ -2,13 +2,12 @@ import {TabsComponent} from '../../../shared/tabs/tabs.component';
 import {Directive, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {TabComponent} from '../../../shared/tab/tab.component';
 import {DexieService} from '../../../_services/dexie.service';
-import * as Apollo from 'apollo-angular';
 import {ExerciseSolveFieldsFragment} from '../../../_services/apollo_services';
+import {Mutation} from 'apollo-angular';
 
 @Directive()
-export abstract class ComponentWithExercise<SolutionType,
-  SolutionInputType, MutationQueryType, PartType,
-  MutationGQL extends Apollo.Mutation<MutationQueryType, { exId: number, collId: number, part: PartType, solution: SolutionInputType }>> {
+export abstract class ComponentWithExercise<SolutionType, SolutionInputType, MutationQueryType, PartType,
+  MutationGQL extends Mutation<MutationQueryType, { exId: number, collId: number, part: PartType, solution: SolutionInputType }>> {
 
   readonly exerciseTextTabTitle = 'Aufgabenstellung';
   readonly correctionTabTitle = 'Korrektur';
@@ -49,7 +48,7 @@ export abstract class ComponentWithExercise<SolutionType,
     }
 
     const mutationQueryVars = {
-      exId: exerciseFragment.id, collId: exerciseFragment.collectionId, part, solution
+      exId: exerciseFragment.exerciseId, collId: exerciseFragment.collectionId, part, solution
     };
 
     // noinspection JSIgnoredPromiseFromCall
@@ -70,9 +69,17 @@ export abstract class ComponentWithExercise<SolutionType,
       );
   }
 
-  protected loadOldSolutionAbstract(exerciseFragment: ExerciseSolveFieldsFragment, partId: string): Promise<SolutionInputType | undefined> {
+  protected loadOldSolutionAbstract(
+    exerciseFragment: ExerciseSolveFieldsFragment,
+    partId: string,
+    setOldSolution: (oldSol: SolutionInputType) => void
+  ) {
     return this.dexieService.getSolution<SolutionInputType>(exerciseFragment, partId)
-      .then((dbSol) => dbSol ? dbSol.solution : undefined);
+      .then((dbSol) => {
+        if (dbSol) {
+          setOldSolution(dbSol.solution);
+        }
+      });
   }
 
   protected abstract getSolution(): SolutionInputType | undefined;

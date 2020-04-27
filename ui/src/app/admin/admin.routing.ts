@@ -13,24 +13,35 @@ import {RouterModule, Routes} from '@angular/router';
 import {AdminReadLessonsComponent} from './admin-read-lessons/admin-read-lessons.component';
 import {AdminEditExerciseComponent} from './admin-edit-exercise/admin-edit-exercise.component';
 
+const adminCollectionRoutes: Routes = [
+  {path: '', component: AdminCollectionsIndexComponent},
+  {path: 'read', component: AdminReadCollectionsComponent},
+  {path: ':collId/editForm', component: AdminEditCollectionComponent},
+
+  {path: ':collId/exercises', component: CollectionAdminComponent},
+  {path: ':collId/exercises/read', component: AdminReadExercisesComponent},
+
+  {path: ':collId/exercises/:exId/editForm', component: AdminEditExerciseComponent},
+];
+
+const adminLessonRoutes: Routes = [
+  {path: '', component: AdminLessonsIndexComponent},
+  {path: 'read', component: AdminReadLessonsComponent}
+]
+
+const adminToolRoutes: Routes = [
+  {path: '', component: CollectionToolAdminComponent},
+  {path: 'collections', children: adminCollectionRoutes},
+  {path: 'lessons', children: adminLessonRoutes}
+]
+
 const adminRoutes: Routes = [
   {
-    path: 'admin', canActivate: [AdminAuthGuard],
+    path: 'admin',
+    canActivate: [AdminAuthGuard],
     children: [
       {path: 'index', component: AdminIndexComponent},
-      {path: ':toolId', component: CollectionToolAdminComponent},
-
-      {path: ':toolId/collections', component: AdminCollectionsIndexComponent},
-      {path: ':toolId/collections/read', component: AdminReadCollectionsComponent},
-      {path: ':toolId/collections/:collId/editForm', component: AdminEditCollectionComponent},
-
-      {path: ':toolId/collections/:collId/exercises', component: CollectionAdminComponent},
-      {path: ':toolId/collections/:collId/exercises/read', component: AdminReadExercisesComponent},
-
-      {path: ':toolId/collections/:collId/exercises/:exId/editForm', component: AdminEditExerciseComponent},
-
-      {path: ':toolId/lessons', component: AdminLessonsIndexComponent},
-      {path: ':toolId/lessons/read', component: AdminReadLessonsComponent}
+      {path: ':toolId', children: adminToolRoutes}
     ]
   }
 ];

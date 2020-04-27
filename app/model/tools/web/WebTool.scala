@@ -12,23 +12,23 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Try}
+import scala.util.Try
 
 object WebTool extends CollectionTool("web", "Web") {
 
   private val logger = Logger(WebTool.getClass)
 
-  override type SolType        = WebSolution
-  override type ExContentType  = WebExerciseContent
-  override type PartType       = WebExPart
-  override type CompResultType = WebAbstractResult
+  override type SolType       = WebSolution
+  override type ExContentType = WebExerciseContent
+  override type PartType      = WebExPart
+  override type ResType       = WebAbstractResult
 
   // Yaml, Html forms, Json
 
   override val toolJsonProtocol: ToolJsonProtocol[WebSolution, WebExerciseContent, WebExPart] =
     WebToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExPart] =
+  override val graphQlModels: ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExPart, WebAbstractResult] =
     WebGraphQLModels
 
   // DB
@@ -54,7 +54,7 @@ object WebTool extends CollectionTool("web", "Web") {
     part: WebExPart,
     driver: HtmlUnitDriver,
     solutionSaved: Boolean
-  ): Unit => WebCompleteResult = _ => {
+  ): Unit => WebResult = _ => {
     part match {
       case WebExPart.HtmlPart =>
         val gradedHtmlTaskResults: Seq[GradedHtmlTaskResult] = exContent.siteSpec.htmlTasks
@@ -64,7 +64,7 @@ object WebTool extends CollectionTool("web", "Web") {
         val points    = addUp(gradedHtmlTaskResults.map(_.points))
         val maxPoints = addUp(gradedHtmlTaskResults.map(_.maxPoints))
 
-        WebCompleteResult(gradedHtmlTaskResults, Seq.empty, points, maxPoints, solutionSaved)
+        WebResult(gradedHtmlTaskResults, Seq.empty, points, maxPoints, solutionSaved)
 
       case WebExPart.JsPart =>
         val gradedJsTaskResults: Seq[GradedJsTaskResult] = exContent.siteSpec.jsTasks
@@ -74,7 +74,7 @@ object WebTool extends CollectionTool("web", "Web") {
         val points    = addUp(gradedJsTaskResults.map(_.points))
         val maxPoints = addUp(gradedJsTaskResults.map(_.maxPoints))
 
-        WebCompleteResult(Seq.empty, gradedJsTaskResults, points, maxPoints, solutionSaved)
+        WebResult(Seq.empty, gradedJsTaskResults, points, maxPoints, solutionSaved)
     }
   }
 
@@ -85,7 +85,7 @@ object WebTool extends CollectionTool("web", "Web") {
   ): Throwable => WebAbstractResult = error => {
     logger.error(msg, error)
 
-    WebInternalErrorResult(solutionSaved, maxPoints)
+    WebInternalErrorResult(msg, solutionSaved, maxPoints)
   }
 
   override def correctAbstract(
@@ -94,25 +94,23 @@ object WebTool extends CollectionTool("web", "Web") {
     exercise: Exercise[WebSolution, WebExerciseContent],
     part: WebExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[WebAbstractResult]] = Future {
-    Success {
-      writeWebSolutionFiles(solutionDirForExercise(user.username, exercise.collectionId, exercise.id), solution)
-        .fold(
-          onCorrectionError("Error while writing user solution", solutionSaved),
-          _ => {
-            val driver = new HtmlUnitDriver(true)
+  )(implicit executionContext: ExecutionContext): Future[WebAbstractResult] = Future {
+    writeWebSolutionFiles(solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId), solution)
+      .fold(
+        onCorrectionError("Error while writing user solution", solutionSaved),
+        _ => {
+          val driver = new HtmlUnitDriver(true)
 
-            val fileName = exercise.content.siteSpec.fileName
-            val solutionUrl =
-              s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.id}/$fileName"
+          val fileName = exercise.content.siteSpec.fileName
+          val solutionUrl =
+            s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.exerciseId}/$fileName"
 
-            Try(driver.get(solutionUrl)).fold(
-              onCorrectionError(s"Error while looking up url $solutionUrl", solutionSaved),
-              onDriverGetSuccess(exercise.content, part, driver, solutionSaved)
-            )
-          }
-        )
-    }
+          Try(driver.get(solutionUrl)).fold(
+            onCorrectionError(s"Error while looking up url $solutionUrl", solutionSaved),
+            onDriverGetSuccess(exercise.content, part, driver, solutionSaved)
+          )
+        }
+      )
   }
 
 }

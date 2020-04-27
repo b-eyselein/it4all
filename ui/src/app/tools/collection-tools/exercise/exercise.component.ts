@@ -17,7 +17,10 @@ import {Subscription} from "rxjs";
 export class ExerciseComponent implements OnInit, OnDestroy {
 
   private sub: Subscription;
+  private apolloSub: Subscription;
+
   exerciseQuery: ExerciseQuery;
+
 
   constructor(private route: ActivatedRoute, private exerciseGQL: ExerciseGQL) {
   }
@@ -29,7 +32,7 @@ export class ExerciseComponent implements OnInit, OnDestroy {
       const exId = parseInt(paramMap.get('exId'), 10);
       const partId = paramMap.get('partId');
 
-      this.exerciseGQL
+      this.apolloSub = this.exerciseGQL
         .watch({toolId, collId, exId, partId})
         .valueChanges
         .subscribe(({data}) => this.exerciseQuery = data);
@@ -37,6 +40,7 @@ export class ExerciseComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.apolloSub.unsubscribe();
     this.sub.unsubscribe();
   }
 

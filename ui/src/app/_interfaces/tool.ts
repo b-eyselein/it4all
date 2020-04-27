@@ -1,7 +1,5 @@
 export type ToolStatus = 'live' | 'alpha' | 'beta';
 
-export type SuccessType = 'ERROR' | 'NONE' | 'PARTIALLY' | 'COMPLETE';
-
 export interface ToolPart {
   id: string;
   name: string;

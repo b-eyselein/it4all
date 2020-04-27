@@ -1,31 +1,37 @@
 package model.tools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
-import model.core.result.{AbstractCorrectionResult, SuccessType}
+import model.core.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import model.points._
 import model.tools.xml.XmlTool.ElementLineComparison
 
 trait XmlAbstractResult extends AbstractCorrectionResult
 
 final case class XmlInternalErrorResult(
+  msg: String,
   solutionSaved: Boolean,
   maxPoints: Points
-) extends XmlAbstractResult {
+) extends XmlAbstractResult
+    with InternalErrorResult {
 
   override def points: Points = (-1).points
 
 }
 
-final case class XmlCompleteResult(
+final case class XmlResult(
   successType: SuccessType,
-  documentResult: Seq[XmlError],
-  grammarResult: Option[XmlGrammarResult],
   points: Points,
   maxPoints: Points,
-  solutionSaved: Boolean
+  solutionSaved: Boolean,
+  documentResult: Option[XmlDocumentResult] = None,
+  grammarResult: Option[XmlGrammarResult] = None
 ) extends XmlAbstractResult
 
-// Grammar result
+// Single result
+
+final case class XmlDocumentResult(
+  errors: Seq[XmlError]
+)
 
 final case class XmlGrammarResult(
   parseErrors: Seq[DTDParseException] = Seq.empty,

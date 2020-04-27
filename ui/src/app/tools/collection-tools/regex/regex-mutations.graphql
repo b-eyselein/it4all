@@ -1,21 +1,22 @@
-fragment AbstractCorrectionResult on AbstractCorrectionResult {
-  solutionSaved
-  points
-  maxPoints
-}
-
 mutation RegexCorrection($collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
   correctRegex(collId: $collId, exId: $exId,part:$part, solution: $solution) {
+    __typename
+    solutionSaved
+    points
+    maxPoints
+    ...RegexInternalErrorResult
     ...RegexIllegalRegexResult
     ...RegexMatchingResult
     ...RegexExtractionResult
   }
 }
 
-fragment RegexIllegalRegexResult on RegexIllegalRegexResult {
-  ...AbstractCorrectionResult
-  message
+fragment RegexInternalErrorResult on RegexInternalErrorResult {
+  msg
+}
 
+fragment RegexIllegalRegexResult on RegexIllegalRegexResult {
+  message
 }
 
 fragment RegexMatchingSingleResult on RegexMatchingSingleResult {
@@ -24,7 +25,6 @@ fragment RegexMatchingSingleResult on RegexMatchingSingleResult {
 }
 
 fragment RegexMatchingResult on RegexMatchingResult {
-  ...AbstractCorrectionResult
   matchingResults {
     ...RegexMatchingSingleResult
   }
@@ -53,7 +53,6 @@ fragment RegexExtractionSingleResult on RegexExtractionSingleResult {
 }
 
 fragment RegexExtractionResult on RegexExtractionResult {
-  ...AbstractCorrectionResult
   extractionResults {
     ...RegexExtractionSingleResult
   }

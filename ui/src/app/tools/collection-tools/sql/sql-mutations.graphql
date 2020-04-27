@@ -1,26 +1,25 @@
-# Result fragments
-
-fragment AbstractCorrectionResult on AbstractCorrectionResult {
-  solutionSaved
-  points
-  maxPoints
-}
-
 mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
   correctSql(collId: $collId, exId: $exId,part: $part, solution: $solution) {
+    __typename
+    solutionSaved
+    points
+    maxPoints
+    ...SqlInternalErrorResult
     ...SqlIllegalQueryResult
     ...SqlWrongQueryTypeResult
     ...SqlResult
   }
 }
 
+fragment SqlInternalErrorResult on SqlInternalErrorResult {
+  msg
+}
+
 fragment SqlIllegalQueryResult on SqlIllegalQueryResult {
-  ...AbstractCorrectionResult
   message
 }
 
 fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
-  ...AbstractCorrectionResult
   message
 }
 
@@ -146,7 +145,6 @@ fragment SelectAdditionalComparison on SelectAdditionalComparisons {
 # Complete result
 
 fragment SqlResult on SqlResult {
-  ...AbstractCorrectionResult
   staticComparison {
     columnComparison {
       ...ColumnComparison

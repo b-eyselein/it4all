@@ -7,11 +7,14 @@ import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select._
+import play.api.Logger
 
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
 
 object SelectCorrector extends QueryCorrector("SELECT") {
+
+  override protected val logger: Logger = Logger(SelectCorrector.getClass)
 
   override type Q = net.sf.jsqlparser.statement.select.Select
 

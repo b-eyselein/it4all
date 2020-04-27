@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header">
-    <div class="card-header-title">{{exercise.id}}. {{exercise.title}}</div>
+    <div class="card-header-title">{{exercise.exerciseId}}. {{exercise.title}}</div>
   </div>
   <div class="card-content">
     <div *ngIf="exercise.difficulty">
@@ -19,7 +19,7 @@
   </div>
   <footer class="card-footer">
     <a class="card-footer-item"
-       [routerLink]="['/tools', exercise.toolId, 'collections',exercise.collectionId, 'exercises', exercise.id]">
+       [routerLink]="['/tools', exercise.toolId, 'collections',exercise.collectionId, 'exercises', exercise.exerciseId]">
       Zur Aufgabe
     </a>
   </footer>

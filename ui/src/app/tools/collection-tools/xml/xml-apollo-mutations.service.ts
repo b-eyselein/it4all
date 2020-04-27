@@ -4,53 +4,6 @@ import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
-type AbstractCorrectionResult_RegexIllegalRegexResult_Fragment = (
-  { __typename?: 'RegexIllegalRegexResult' }
-  & Pick<Types.RegexIllegalRegexResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_RegexMatchingResult_Fragment = (
-  { __typename?: 'RegexMatchingResult' }
-  & Pick<Types.RegexMatchingResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_RegexExtractionResult_Fragment = (
-  { __typename?: 'RegexExtractionResult' }
-  & Pick<Types.RegexExtractionResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_SqlIllegalQueryResult_Fragment = (
-  { __typename?: 'SqlIllegalQueryResult' }
-  & Pick<Types.SqlIllegalQueryResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment = (
-  { __typename?: 'SqlWrongQueryTypeResult' }
-  & Pick<Types.SqlWrongQueryTypeResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_SqlResult_Fragment = (
-  { __typename?: 'SqlResult' }
-  & Pick<Types.SqlResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_UmlCompleteResult_Fragment = (
-  { __typename?: 'UmlCompleteResult' }
-  & Pick<Types.UmlCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_WebCompleteResult_Fragment = (
-  { __typename?: 'WebCompleteResult' }
-  & Pick<Types.WebCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-type AbstractCorrectionResult_XmlCompleteResult_Fragment = (
-  { __typename?: 'XmlCompleteResult' }
-  & Pick<Types.XmlCompleteResult, 'solutionSaved' | 'points' | 'maxPoints'>
-);
-
-export type AbstractCorrectionResultFragment = AbstractCorrectionResult_RegexIllegalRegexResult_Fragment | AbstractCorrectionResult_RegexMatchingResult_Fragment | AbstractCorrectionResult_RegexExtractionResult_Fragment | AbstractCorrectionResult_SqlIllegalQueryResult_Fragment | AbstractCorrectionResult_SqlWrongQueryTypeResult_Fragment | AbstractCorrectionResult_SqlResult_Fragment | AbstractCorrectionResult_UmlCompleteResult_Fragment | AbstractCorrectionResult_WebCompleteResult_Fragment | AbstractCorrectionResult_XmlCompleteResult_Fragment;
-
 export type XmlCorrectionMutationVariables = {
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
@@ -61,23 +14,32 @@ export type XmlCorrectionMutationVariables = {
 
 export type XmlCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctXml?: Types.Maybe<(
-    { __typename?: 'XmlCompleteResult' }
-    & XmlCompleteResultFragment
-  )> }
+  & { correctXml: (
+    { __typename: 'XmlInternalErrorResult' }
+    & Pick<Types.XmlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+    & XmlInternalErrorResultFragment
+  ) | (
+    { __typename: 'XmlResult' }
+    & Pick<Types.XmlResult, 'solutionSaved' | 'points' | 'maxPoints'>
+    & XmlResultFragment
+  ) }
 );
 
-export type XmlCompleteResultFragment = (
-  { __typename?: 'XmlCompleteResult' }
-  & Pick<Types.XmlCompleteResult, 'successType'>
+export type XmlInternalErrorResultFragment = (
+  { __typename?: 'XmlInternalErrorResult' }
+  & Pick<Types.XmlInternalErrorResult, 'msg'>
+);
+
+export type XmlResultFragment = (
+  { __typename?: 'XmlResult' }
+  & Pick<Types.XmlResult, 'successType'>
   & { grammarResult?: Types.Maybe<(
     { __typename?: 'XmlGrammarResult' }
     & XmlGrammarResultFragment
-  )>, documentResult: Array<(
-    { __typename?: 'XmlError' }
-    & XmlErrorFragment
+  )>, documentResult?: Types.Maybe<(
+    { __typename?: 'XmlDocumentResult' }
+    & XmlDocumentResultFragment
   )> }
-  & AbstractCorrectionResult_XmlCompleteResult_Fragment
 );
 
 export type XmlGrammarResultFragment = (
@@ -87,7 +49,7 @@ export type XmlGrammarResultFragment = (
     & Pick<Types.DtdParseException, 'msg' | 'parsedLine'>
   )>, results: (
     { __typename?: 'XmlElementLineComparisonMatchingResult' }
-    & Mr_XmlElementLineComparisonMatchingResult_Fragment
+    & Pick<Types.XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints'>
     & XmlElementLineMatchingResultFragment
   ) }
 );
@@ -109,7 +71,15 @@ export type XmlElementLineMatchFragment = (
   )>, sampleArg?: Types.Maybe<(
     { __typename?: 'ElementLine' }
     & ElementLineFragment
+  )>, maybeAnalysisResult?: Types.Maybe<(
+    { __typename?: 'ElementLineAnalysisResult' }
+    & XmlElementLineAnalysisResultFragment
   )> }
+);
+
+export type XmlElementLineAnalysisResultFragment = (
+  { __typename?: 'ElementLineAnalysisResult' }
+  & Pick<Types.ElementLineAnalysisResult, 'attributesCorrect' | 'correctAttributes' | 'contentCorrect' | 'correctContent'>
 );
 
 export type ElementLineFragment = (
@@ -124,94 +94,22 @@ export type ElementLineFragment = (
   )> }
 );
 
+export type XmlDocumentResultFragment = (
+  { __typename?: 'XmlDocumentResult' }
+  & { errors: Array<(
+    { __typename?: 'XmlError' }
+    & XmlErrorFragment
+  )> }
+);
+
 export type XmlErrorFragment = (
   { __typename?: 'XmlError' }
   & Pick<Types.XmlError, 'success' | 'line' | 'errorType' | 'errorMessage'>
 );
 
-type Mr_RegexExtractedValuesComparisonMatchingResult_Fragment = (
-  { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
-  & Pick<Types.RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlColumnComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlColumnComparisonMatchingResult' }
-  & Pick<Types.SqlColumnComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlTableComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlTableComparisonMatchingResult' }
-  & Pick<Types.SqlTableComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-  & Pick<Types.SqlBinaryExpressionComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlGroupByComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlGroupByComparisonMatchingResult' }
-  & Pick<Types.SqlGroupByComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlOrderByComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlOrderByComparisonMatchingResult' }
-  & Pick<Types.SqlOrderByComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlLimitComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlLimitComparisonMatchingResult' }
-  & Pick<Types.SqlLimitComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_SqlInsertComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlInsertComparisonMatchingResult' }
-  & Pick<Types.SqlInsertComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_UmlClassMatchingResult_Fragment = (
-  { __typename?: 'UmlClassMatchingResult' }
-  & Pick<Types.UmlClassMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_UmlAttributeMatchingResult_Fragment = (
-  { __typename?: 'UmlAttributeMatchingResult' }
-  & Pick<Types.UmlAttributeMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_UmlMethodMatchingResult_Fragment = (
-  { __typename?: 'UmlMethodMatchingResult' }
-  & Pick<Types.UmlMethodMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_UmlAssociationMatchingResult_Fragment = (
-  { __typename?: 'UmlAssociationMatchingResult' }
-  & Pick<Types.UmlAssociationMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_UmlImplementationMatchingResult_Fragment = (
-  { __typename?: 'UmlImplementationMatchingResult' }
-  & Pick<Types.UmlImplementationMatchingResult, 'points' | 'maxPoints'>
-);
-
-type Mr_XmlElementLineComparisonMatchingResult_Fragment = (
-  { __typename?: 'XmlElementLineComparisonMatchingResult' }
-  & Pick<Types.XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints'>
-);
-
-export type MrFragment = Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_UmlClassMatchingResult_Fragment | Mr_UmlAttributeMatchingResult_Fragment | Mr_UmlMethodMatchingResult_Fragment | Mr_UmlAssociationMatchingResult_Fragment | Mr_UmlImplementationMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
-
-export const AbstractCorrectionResultFragmentDoc = gql`
-    fragment AbstractCorrectionResult on AbstractCorrectionResult {
-  solutionSaved
-  points
-  maxPoints
-}
-    `;
-export const MrFragmentDoc = gql`
-    fragment MR on MatchingResult {
-  points
-  maxPoints
+export const XmlInternalErrorResultFragmentDoc = gql`
+    fragment XmlInternalErrorResult on XmlInternalErrorResult {
+  msg
 }
     `;
 export const ElementLineFragmentDoc = gql`
@@ -227,6 +125,14 @@ export const ElementLineFragmentDoc = gql`
   }
 }
     `;
+export const XmlElementLineAnalysisResultFragmentDoc = gql`
+    fragment XmlElementLineAnalysisResult on ElementLineAnalysisResult {
+  attributesCorrect
+  correctAttributes
+  contentCorrect
+  correctContent
+}
+    `;
 export const XmlElementLineMatchFragmentDoc = gql`
     fragment XmlElementLineMatch on ElementLineMatch {
   matchType
@@ -236,8 +142,12 @@ export const XmlElementLineMatchFragmentDoc = gql`
   sampleArg {
     ...ElementLine
   }
+  maybeAnalysisResult {
+    ...XmlElementLineAnalysisResult
+  }
 }
-    ${ElementLineFragmentDoc}`;
+    ${ElementLineFragmentDoc}
+${XmlElementLineAnalysisResultFragmentDoc}`;
 export const XmlElementLineMatchingResultFragmentDoc = gql`
     fragment XmlElementLineMatchingResult on XmlElementLineComparisonMatchingResult {
   allMatches {
@@ -252,12 +162,12 @@ export const XmlGrammarResultFragmentDoc = gql`
     parsedLine
   }
   results {
-    ...MR
+    points
+    maxPoints
     ...XmlElementLineMatchingResult
   }
 }
-    ${MrFragmentDoc}
-${XmlElementLineMatchingResultFragmentDoc}`;
+    ${XmlElementLineMatchingResultFragmentDoc}`;
 export const XmlErrorFragmentDoc = gql`
     fragment XmlError on XmlError {
   success
@@ -266,27 +176,38 @@ export const XmlErrorFragmentDoc = gql`
   errorMessage
 }
     `;
-export const XmlCompleteResultFragmentDoc = gql`
-    fragment XmlCompleteResult on XmlCompleteResult {
-  ...AbstractCorrectionResult
+export const XmlDocumentResultFragmentDoc = gql`
+    fragment XmlDocumentResult on XmlDocumentResult {
+  errors {
+    ...XmlError
+  }
+}
+    ${XmlErrorFragmentDoc}`;
+export const XmlResultFragmentDoc = gql`
+    fragment XmlResult on XmlResult {
   successType
   grammarResult {
     ...XmlGrammarResult
   }
   documentResult {
-    ...XmlError
+    ...XmlDocumentResult
   }
 }
-    ${AbstractCorrectionResultFragmentDoc}
-${XmlGrammarResultFragmentDoc}
-${XmlErrorFragmentDoc}`;
+    ${XmlGrammarResultFragmentDoc}
+${XmlDocumentResultFragmentDoc}`;
 export const XmlCorrectionDocument = gql`
     mutation XmlCorrection($collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
   correctXml(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    ...XmlCompleteResult
+    __typename
+    solutionSaved
+    points
+    maxPoints
+    ...XmlInternalErrorResult
+    ...XmlResult
   }
 }
-    ${XmlCompleteResultFragmentDoc}`;
+    ${XmlInternalErrorResultFragmentDoc}
+${XmlResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

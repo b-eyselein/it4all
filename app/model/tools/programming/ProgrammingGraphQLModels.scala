@@ -8,7 +8,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 object ProgrammingGraphQLModels
-    extends ToolGraphQLModelBasics[ProgSolution, ProgrammingExerciseContent, ProgExPart]
+    extends ToolGraphQLModelBasics[ProgSolution, ProgrammingExerciseContent, ProgExPart, ProgrammingAbstractResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[ProgExPart] = EnumType(
@@ -76,8 +76,6 @@ object ProgrammingGraphQLModels
     )
   }
 
-  // Result types
-
   private val NormalExecutionResultType: ObjectType[Unit, NormalExecutionResult] = {
     implicit val stt: EnumType[SuccessType] = successTypeType
 
@@ -100,13 +98,33 @@ object ProgrammingGraphQLModels
     deriveObjectType()
   }
 
-  private val progCompleteResultType: ObjectType[Unit, ProgCompleteResult] = {
+  // Abstract result
+
+  private val programmingAbstractResultType: InterfaceType[Unit, ProgrammingAbstractResult] = InterfaceType(
+    "ProgrammingAbstractResult",
+    fields[Unit, ProgrammingAbstractResult](
+      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
+      Field("points", FloatType, resolve = _.value.points.asDouble),
+      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
+    ),
+    interfaces[Unit, ProgrammingAbstractResult](abstractResultInterfaceType)
+  ).withPossibleTypes(() => List(programmingInternalErrorResultType, programmingResultType))
+
+  private val programmingResultType: ObjectType[Unit, ProgrammingResult] = {
     implicit val nert: ObjectType[Unit, NormalExecutionResult]     = NormalExecutionResultType
     implicit val sert: ObjectType[Unit, SimplifiedExecutionResult] = simplifiedExecutionResultType
     implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = unitTestCorrectionResultType
 
-    deriveObjectType[Unit, ProgCompleteResult]()
+    deriveObjectType[Unit, ProgrammingResult](
+      Interfaces(programmingAbstractResultType)
+    )
   }
 
-  override val AbstractResultTypeType: OutputType[Any] = progCompleteResultType
+  private val programmingInternalErrorResultType: ObjectType[Unit, ProgrammingInternalErrorResult] = deriveObjectType(
+    Interfaces(programmingAbstractResultType),
+    ExcludeFields("maxPoints")
+  )
+
+  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, ProgrammingAbstractResult] =
+    programmingAbstractResultType
 }

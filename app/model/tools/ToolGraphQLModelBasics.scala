@@ -3,7 +3,6 @@ package model.tools
 import model.core.matching.{Match, MatchType, MatchingResult}
 import model.core.result.{AbstractCorrectionResult, SuccessType}
 import model.json.KeyValueObject
-import model.points.Points
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -25,11 +24,10 @@ trait ToolGraphQLModels {
 
   protected val successTypeType: EnumType[SuccessType] = deriveEnumType()
 
-  protected val pointsType: ObjectType[Unit, Points] = deriveObjectType()
-
 }
 
-trait ToolGraphQLModelBasics[SolType, ContentType, PartType <: ExPart] extends ToolGraphQLModels {
+trait ToolGraphQLModelBasics[SolType, ContentType, PartType <: ExPart, ResType <: AbstractCorrectionResult]
+    extends ToolGraphQLModels {
 
   protected def buildSampleSolutionType[S](
     name: String,
@@ -94,7 +92,7 @@ trait ToolGraphQLModelBasics[SolType, ContentType, PartType <: ExPart] extends T
 
   val exerciseContentType: OutputType[ContentType]
 
-  val AbstractResultTypeType: OutputType[Any]
+  val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, ResType]
 
   val sampleSolutionType: ObjectType[Unit, SampleSolution[SolType]]
 

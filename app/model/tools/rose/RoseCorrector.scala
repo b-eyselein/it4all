@@ -38,7 +38,7 @@ object RoseCorrector extends AbstractCorrector {
     solutionTargetDir: File,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[RoseAbstractResult] = exercise.content.sampleSolutions.headOption match {
-    case None => Future.successful(RoseInternalErrorResult(solutionSaved, (-1).points))
+    case None => Future.successful(onError("No sample solution for rose exercise!", solutionSaved))
     case Some(completeSampleSolution) =>
       val sampleSolution = completeSampleSolution.sample
 
@@ -86,7 +86,7 @@ object RoseCorrector extends AbstractCorrector {
                         jsValue =>
                           RoseToolJsonProtocol.roseExecutionResultFormat.reads(jsValue) match {
                             case JsSuccess(value, _) =>
-                              RoseCompleteResult(value, (-1).points, (-1).points, solutionSaved)
+                              RoseResult(value, (-1).points, (-1).points, solutionSaved)
                             case JsError(errors) =>
                               onError(
                                 s"Error while reading json\n${errors.map(_.toString).mkString("\n")}",

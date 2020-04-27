@@ -1,23 +1,25 @@
-fragment AbstractCorrectionResult on AbstractCorrectionResult {
-  solutionSaved
-  points
-  maxPoints
-}
-
 mutation XmlCorrection($collId: Int!, $exId: Int!,$part: XmlExPart!, $solution: XmlSolutionInput!) {
   correctXml(collId: $collId, exId: $exId,part: $part, solution: $solution) {
-    ...XmlCompleteResult
+    __typename
+    solutionSaved
+    points
+    maxPoints
+    ...XmlInternalErrorResult
+    ...XmlResult
   }
 }
 
-fragment XmlCompleteResult on XmlCompleteResult {
-  ...AbstractCorrectionResult
+fragment XmlInternalErrorResult on XmlInternalErrorResult {
+  msg
+}
+
+fragment XmlResult on XmlResult {
   successType
   grammarResult {
     ...XmlGrammarResult
   }
   documentResult {
-    ...XmlError
+    ...XmlDocumentResult
   }
 }
 
@@ -27,7 +29,8 @@ fragment XmlGrammarResult on XmlGrammarResult {
     parsedLine
   }
   results {
-    ...MR
+    points
+    maxPoints
     ...XmlElementLineMatchingResult
   }
 }
@@ -46,6 +49,16 @@ fragment XmlElementLineMatch on ElementLineMatch {
   sampleArg {
     ...ElementLine
   }
+  maybeAnalysisResult {
+    ...XmlElementLineAnalysisResult
+  }
+}
+
+fragment XmlElementLineAnalysisResult on ElementLineAnalysisResult {
+  attributesCorrect
+  correctAttributes
+  contentCorrect
+  correctContent
 }
 
 fragment ElementLine on ElementLine {
@@ -60,14 +73,15 @@ fragment ElementLine on ElementLine {
   }
 }
 
+fragment XmlDocumentResult on XmlDocumentResult {
+  errors {
+    ...XmlError
+  }
+}
+
 fragment XmlError on XmlError {
   success
   line
   errorType
   errorMessage
-}
-
-fragment MR on MatchingResult {
-  points
-  maxPoints
 }

@@ -8,16 +8,29 @@ import {ExerciseComponent} from './exercise/exercise.component';
 import {AllExercisesOverviewComponent} from './all-exercises-overview/all-exercises-overview.component';
 import {CollectionsListComponent} from './collections-list/collections-list.component';
 
+const collectionRoutes: Routes = [
+  {path: '', component: CollectionOverviewComponent},
+  {path: 'exercises/:exId', component: ExerciseOverviewComponent},
+  {path: 'exercises/:exId/parts/:partId', component: ExerciseComponent},
+];
+
+const collectionsRoutes: Routes = [
+  {path: '', component: CollectionsListComponent},
+  {path: ':collId', children: collectionRoutes},
+];
+
+
 const collectionToolRoutes: Routes = [
   {
     path: '', canActivate: [AuthGuard],
     children: [
-      {path: 'tools/:toolId', component: CollectionToolOverviewComponent},
-      {path: 'tools/:toolId/collections', component: CollectionsListComponent},
-      {path: 'tools/:toolId/allExercises', component: AllExercisesOverviewComponent},
-      {path: 'tools/:toolId/collections/:collId', component: CollectionOverviewComponent},
-      {path: 'tools/:toolId/collections/:collId/exercises/:exId', component: ExerciseOverviewComponent},
-      {path: 'tools/:toolId/collections/:collId/exercises/:exId/parts/:partId', component: ExerciseComponent},
+      {
+        path: 'tools/:toolId', children: [
+          {path: '', component: CollectionToolOverviewComponent},
+          {path: 'allExercises', component: AllExercisesOverviewComponent},
+          {path: 'collections', children: collectionsRoutes},
+        ]
+      },
     ]
   }
 ];

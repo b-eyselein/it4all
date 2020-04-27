@@ -4,11 +4,14 @@ import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.create.table.CreateTable
+import play.api.Logger
 
-import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
 
 object CreateCorrector extends QueryCorrector("CREATE TABLE") {
+
+  override protected val logger: Logger = Logger(CreateCorrector.getClass)
 
   override type Q = CreateTable
 

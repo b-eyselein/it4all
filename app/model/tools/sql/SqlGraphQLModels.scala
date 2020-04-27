@@ -11,7 +11,9 @@ import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 import sangria.macros.derive._
 import sangria.schema._
 
-object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart] with GraphQLArguments {
+object SqlGraphQLModels
+    extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlAbstractResult]
+    with GraphQLArguments {
 
   override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = buildSampleSolutionType("Sql", StringType)
 
@@ -108,18 +110,32 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     deriveObjectType()
   }
 
+  // Abstract result
+
+  private val sqlAbstractResultType: InterfaceType[Unit, SqlAbstractResult] = InterfaceType(
+    "SqlAbstractResult",
+    fields[Unit, SqlAbstractResult](
+      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
+      Field("points", FloatType, resolve = _.value.points.asDouble),
+      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
+    ),
+    interfaces[Unit, SqlAbstractResult](abstractResultInterfaceType)
+  ).withPossibleTypes(() =>
+    List(sqlInternalErrorResultType, sqlIllegalQueryResultType, sqlWrongQueryTypeResult, sqlResultType)
+  )
+
   private val sqlInternalErrorResultType: ObjectType[Unit, SqlInternalErrorResult] = deriveObjectType(
-    Interfaces(abstractResultInterfaceType),
+    Interfaces(sqlAbstractResultType),
     ExcludeFields("maxPoints")
   )
 
   private val sqlIllegalQueryResultType: ObjectType[Unit, SqlIllegalQueryResult] = deriveObjectType(
-    Interfaces(abstractResultInterfaceType),
+    Interfaces(sqlAbstractResultType),
     ExcludeFields("solutionSaved", "maxPoints")
   )
 
   private val sqlWrongQueryTypeResult: ObjectType[Unit, SqlWrongQueryTypeResult] = deriveObjectType(
-    Interfaces(abstractResultInterfaceType),
+    Interfaces(sqlAbstractResultType),
     ExcludeFields("solutionSaved", "maxPoints")
   )
 
@@ -127,13 +143,10 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     implicit val sqsct: ObjectType[Unit, SqlQueriesStaticComparison] = sqlQueriesStaticComparisonType
     implicit val sert: ObjectType[Unit, SqlExecutionResult]          = sqlExecutionResultType
 
-    deriveObjectType(Interfaces(abstractResultInterfaceType))
+    deriveObjectType(Interfaces(sqlAbstractResultType))
   }
 
-  override val AbstractResultTypeType: OutputType[Any] = UnionType(
-    "SqlAbstractResult",
-    types = sqlInternalErrorResultType :: sqlIllegalQueryResultType :: sqlWrongQueryTypeResult :: sqlResultType :: Nil
-  )
+  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, SqlAbstractResult] = sqlAbstractResultType
 
   private val dbContentQueryField: Field[GraphQLContext, SqlExerciseContent] = Field(
     "sqlDbContents",

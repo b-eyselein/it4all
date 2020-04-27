@@ -6,14 +6,13 @@ import model.tools._
 import model.tools.uml.matcher._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Try}
 
 object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
 
-  override type SolType        = UmlClassDiagram
-  override type ExContentType  = UmlExerciseContent
-  override type PartType       = UmlExPart
-  override type CompResultType = UmlAbstractResult
+  override type SolType       = UmlClassDiagram
+  override type ExContentType = UmlExerciseContent
+  override type PartType      = UmlExPart
+  override type ResType       = UmlAbstractResult
 
   type ClassComparison          = MatchingResult[UmlClass, UmlClassMatch]
   type AttributeComparison      = MatchingResult[UmlAttribute, UmlAttributeMatch]
@@ -26,7 +25,8 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
   override val toolJsonProtocol: ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] =
     UmlToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart] =
+  override val graphQlModels
+    : ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlAbstractResult] =
     UmlGraphQLModels
 
   // Correction
@@ -37,10 +37,8 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
     exercise: Exercise[UmlClassDiagram, UmlExerciseContent],
     part: UmlExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[UmlAbstractResult]] = Future.successful {
-    Success {
-      UmlCorrector.correct(solution, exercise, part, solutionSaved)
-    }
+  )(implicit executionContext: ExecutionContext): Future[UmlAbstractResult] = Future.successful {
+    UmlCorrector.correct(solution, exercise, part, solutionSaved)
   }
 
 }

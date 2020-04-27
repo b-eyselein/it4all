@@ -4,11 +4,12 @@ import model.json.JsonProtocols
 import model.tools.ToolList
 import play.api.libs.json._
 import sangria.marshalling.playJson._
-import sangria.schema.{Argument, BooleanType, Field, ObjectType, OptionType, fields}
+import sangria.schema._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
-trait GraphQLMutations extends GraphQLArguments {
+trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments {
 
   protected implicit val ec: ExecutionContext
 
@@ -20,11 +21,11 @@ trait GraphQLMutations extends GraphQLArguments {
 
     Field(
       s"correct${toolMain.id.capitalize}",
-      OptionType(toolMain.graphQlModels.AbstractResultTypeType),
+      toolMain.graphQlModels.toolAbstractResultTypeInterfaceType,
       arguments = collIdArgument :: exIdArgument :: PartTypeInputArg :: SolTypeInputArg :: Nil,
       resolve = context =>
         context.ctx.user match {
-          case None => Future.successful(None)
+          case None => ??? // Future.successful(None)
           case Some(user) =>
             val collId   = context.arg(collIdArgument)
             val exId     = context.arg(exIdArgument)
@@ -39,9 +40,7 @@ trait GraphQLMutations extends GraphQLArguments {
                   solutionSaved <- context.ctx.tables
                     .futureInsertSolution(user.username, exId, collId, toolMain.id, part, solutionJson)
 
-                  result <- toolMain
-                    .correctAbstract(user, solution, exercise, part, solutionSaved)
-                    .map(_.toOption)
+                  result <- toolMain.correctAbstract(user, solution, exercise, part, solutionSaved)
                 } yield result
 
               case _ => ???
@@ -56,30 +55,39 @@ trait GraphQLMutations extends GraphQLArguments {
     fields = fields[GraphQLContext, Unit](
       Field(
         "upsertCollection",
-        BooleanType,
+        OptionType(CollectionType),
         arguments = toolIdArgument :: contentArgument :: Nil,
-        resolve = context => {
-          val jsonCollection: JsValue = Json.parse(context.arg(contentArgument))
-
-          JsonProtocols.collectionFormat.reads(jsonCollection) match {
-            case JsError(_)               => Future.successful(false)
-            case JsSuccess(collection, _) => context.ctx.tables.futureUpsertCollection(collection)
-          }
-        }
+        resolve = context =>
+          Try(Json.parse(context.arg(contentArgument))).fold(
+            _ => Future.successful(None),
+            jsonCollection =>
+              JsonProtocols.collectionFormat.reads(jsonCollection) match {
+                case JsError(_) => Future.successful(None)
+                case JsSuccess(collection, _) =>
+                  context.ctx.tables.futureUpsertCollection(collection).map {
+                    case false => None
+                    case true  => Some(collection)
+                  }
+              }
+          )
       ),
       Field(
         "upsertExercise",
-        BooleanType,
+        OptionType(exerciseType),
         arguments = toolIdArgument :: contentArgument :: Nil,
         resolve = context => {
           ToolList.tools.find(_.id == context.arg(toolIdArgument)) match {
-            case None => Future.successful(false)
+            case None => Future.successful(None)
             case Some(tool) =>
               val jsonExercise: JsValue = Json.parse(context.arg(contentArgument))
 
               tool.toolJsonProtocol.exerciseFormat.reads(jsonExercise) match {
-                case JsError(_)             => Future.successful(false)
-                case JsSuccess(exercise, _) => tool.futureUpsertExercise(context.ctx.tables, exercise)
+                case JsError(_) => Future.successful(None)
+                case JsSuccess(exercise, _) =>
+                  tool.futureUpsertExercise(context.ctx.tables, exercise).map {
+                    case false => None
+                    case true  => Some(exercise)
+                  }
               }
           }
         }

@@ -4,16 +4,9 @@ import javax.inject.{Inject, Singleton}
 import model.json.JsonProtocols
 import model.persistence.ExerciseTableDefs
 import model.tools._
-import model.tools.programming.{ProgrammingExerciseContent, ProgrammingGraphQLModels}
-import model.tools.regex.{RegexExerciseContent, RegexGraphQLModels}
-import model.tools.sql.{SqlExerciseContent, SqlGraphQLModels}
-import model.tools.uml.{UmlExerciseContent, UmlGraphQLModels}
-import model.tools.web.{WebExerciseContent, WebGraphQLModels}
-import model.tools.xml.{XmlExerciseContent, XmlGraphQLModels}
+import play.api.Environment
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
-import play.api.{Environment, Mode}
-import sangria.macros.derive._
 import sangria.schema._
 
 import scala.concurrent.ExecutionContext
@@ -28,142 +21,21 @@ final case class GraphQLContext(
   tables: ExerciseTableDefs,
   user: Option[User]
 )
+
 @Singleton
-class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit val ec: ExecutionContext)
+class GraphQLModel @Inject() (
+  override protected val ws: WSClient,
+  override protected val environment: Environment
+)(implicit val ec: ExecutionContext)
     extends ToolGraphQLModels
+    with CollectionGraphQLModel
+    with ExerciseGraphQLModels
     with GraphQLMutations {
-
-  type UntypedExercise = Exercise[_, _ <: ExerciseContent[_]]
-
-  private val resourcesServerBaseUrl = {
-    val port = if (environment.mode == Mode.Dev) 5000 else 5050
-
-    s"http://localhost:$port/tools"
-  }
 
   // Types
 
-  private val exPartType: ObjectType[Unit, ExPart] = ObjectType(
-    "ExPart",
-    fields[Unit, ExPart](
-      Field("id", StringType, resolve = _.value.id),
-      Field("name", StringType, resolve = _.value.partName),
-      Field("isEntryPart", BooleanType, resolve = _.value.isEntryPart)
-    )
-  )
-
-  private val exerciseType: ObjectType[GraphQLContext, UntypedExercise] = {
-    implicit val tt: ObjectType[Unit, Topic] = topicType
-
-    deriveObjectType(
-      ExcludeFields("content"),
-      AddFields(
-        Field(
-          "topics",
-          ListType(topicType),
-          resolve = context =>
-            ToolList.tools.find(_.id == context.value.toolId) match {
-              case None       => ???
-              case Some(tool) => tool.allTopics.filter(t => context.value.topicAbbreviations.contains(t.abbreviation))
-            }
-        ),
-        Field(
-          "programmingContent",
-          OptionType(ProgrammingGraphQLModels.exerciseContentType),
-          resolve = _.value.content match {
-            case x: ProgrammingExerciseContent => Some(x)
-            case _                             => None
-          }
-        ),
-        Field("regexContent", OptionType(RegexGraphQLModels.exerciseContentType), resolve = _.value.content match {
-          case x: RegexExerciseContent => Some(x)
-          case _                       => None
-        }),
-        Field("sqlContent", OptionType(SqlGraphQLModels.exerciseContentType), resolve = _.value.content match {
-          case x: SqlExerciseContent => Some(x)
-          case _                     => None
-        }),
-        Field("umlContent", OptionType(UmlGraphQLModels.exerciseContentType), resolve = _.value.content match {
-          case x: UmlExerciseContent => Some(x)
-          case _                     => None
-        }),
-        Field("webContent", OptionType(WebGraphQLModels.exerciseContentType), resolve = _.value.content match {
-          case x: WebExerciseContent => Some(x)
-          case _                     => None
-        }),
-        Field("xmlContent", OptionType(XmlGraphQLModels.exerciseContentType), resolve = _.value.content match {
-          case x: XmlExerciseContent => Some(x)
-          case _                     => None
-        }),
-        Field("parts", ListType(exPartType), resolve = context => context.value.content.parts),
-        Field(
-          "asJsonString",
-          StringType,
-          resolve = context => {
-            ToolList.tools.find(_.id == context.value.toolId) match {
-              case None       => ???
-              case Some(tool) =>
-                // FIXME: remove cast!
-                Json.stringify(
-                  tool.toolJsonProtocol.exerciseFormat
-                    .writes(context.value.asInstanceOf[Exercise[tool.SolType, tool.ExContentType]])
-                )
-            }
-          }
-        )
-      )
-    )
-  }
-
-  private val CollectionType: ObjectType[GraphQLContext, ExerciseCollection] = deriveObjectType(
-    AddFields(
-      Field(
-        "asJsonString",
-        StringType,
-        resolve = context => Json.stringify(JsonProtocols.collectionFormat.writes(context.value))
-      ),
-      Field(
-        "exerciseCount",
-        IntType,
-        resolve = context => context.ctx.tables.futureExerciseCountInColl(context.value.toolId, context.value.id)
-      ),
-      Field(
-        "exercises",
-        ListType(exerciseType),
-        resolve = context =>
-          ToolList.tools.find(_.id == context.value.toolId) match {
-            case None       => ???
-            case Some(tool) => tool.futureExercisesInCollection(context.ctx.tables, context.value.id)
-          }
-      ),
-      Field(
-        "exercise",
-        OptionType(exerciseType),
-        arguments = exIdArgument :: Nil,
-        resolve = context =>
-          ToolList.tools.find(_.id == context.value.toolId) match {
-            case None       => ???
-            case Some(tool) => tool.futureExerciseById(context.ctx.tables, context.value.id, context.arg(exIdArgument))
-          }
-      ),
-      Field(
-        "readExercises",
-        ListType(StringType),
-        resolve = context => {
-          ToolList.tools.find(_.id == context.value.toolId) match {
-            case None => ???
-            case Some(tool) =>
-              ws.url(s"$resourcesServerBaseUrl/${context.value.toolId}/collections/${context.value.id}/exercises")
-                .get()
-                .map(request => tool.toolJsonProtocol.validateAndWriteReadExerciseMessage(request.json))
-          }
-        }
-      )
-    )
-  )
-
-  private val ToolType: ObjectType[GraphQLContext, CollectionTool] = ObjectType(
-    "CollectionTol",
+  protected val ToolType: ObjectType[GraphQLContext, CollectionTool] = ObjectType(
+    "CollectionTool",
     fields[GraphQLContext, CollectionTool](
       Field("id", IDType, resolve = _.value.id),
       Field("name", StringType, resolve = _.value.name),
@@ -208,8 +80,10 @@ class GraphQLModel @Inject() (ws: WSClient, environment: Environment)(implicit v
             .map { request =>
               JsonProtocols.readCollectionsMessageReads
                 .reads(request.json)
-                .map(_.collections)
-                .getOrElse(Seq.empty)
+                .fold(
+                  _ => Seq.empty,
+                  readCollectionsMessage => readCollectionsMessage.collections
+                )
                 .map(JsonProtocols.collectionFormat.writes)
                 .map(Json.stringify)
             }

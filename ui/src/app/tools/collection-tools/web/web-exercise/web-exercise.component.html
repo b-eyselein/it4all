@@ -2,7 +2,8 @@
 
   <div class="columns">
     <div class="column is-half-desktop">
-      <it4all-exercise-files-editor [exerciseFiles]="exerciseFiles" [mode]="'htmlmixed'"></it4all-exercise-files-editor>
+      <it4all-exercise-files-editor [exerciseFileFragments]="exerciseFileFragments" [mode]="'htmlmixed'">
+      </it4all-exercise-files-editor>
     </div>
 
     <div class="column is-half-desktop">
@@ -37,7 +38,7 @@
 
         <it4all-tab [title]="'Korrektur'">
 
-          <ng-container *ngIf="resultQuery">
+          <ng-container *ngIf="result">
 
             <it4all-solution-saved [saved]="resultQuery.correctWeb.solutionSaved"></it4all-solution-saved>
 
@@ -51,39 +52,12 @@
             <br>
 
             <div class="content">
-              <ul>
-                <li *ngFor="let htmlResult of resultQuery.correctWeb.gradedHtmlTaskResults">
-                  <span [ngClass]="htmlResult.isSuccessful ? 'has-text-success' : 'has-text-danger'">
-                    ({{htmlResult.points}} / {{htmlResult.maxPoints}})
-                    Teilaufgabe {{htmlResult.id}} ist {{htmlResult.isSuccessful ? '' : 'nicht'}} korrekt:
-                  </span>
-                  <ul>
-                    <li [ngClass]="htmlResult.elementFound ? 'has-text-success' : 'has-text-danger'">
-                      Das Element konnte {{htmlResult.elementFound ? '' : 'nicht'}} gefunden werden!
-                    </li>
-
-                    <li *ngFor="let attributeResult of htmlResult.attributeResults"
-                        [ngClass]="attributeResult.isSuccessful ? 'has-text-success' : 'has-text-danger'">
-                      Das Attribut <code>{{attributeResult.keyName}}</code>
-                      <ng-container *ngIf="attributeResult.maybeFoundContent">
-                        sollte den Wert <code>{{attributeResult.awaitedContent}}</code> haben.
-                        Gefunden wurde <code>{{attributeResult.maybeFoundContent}}</code>.
-                      </ng-container>
-                      <ng-container *ngIf="!attributeResult.maybeFoundContent">
-                        wurde nicht gefunden!
-                      </ng-container>
-                    </li>
-
-                    <li *ngIf="htmlResult.textContentResult"
-                        [ngClass]="htmlResult.textContentResult.isSuccessful ? 'has-text-success' : 'has-text-danger'">
-                      Das Element sollte den Textinhalt <code>{{htmlResult.textContentResult.awaitedContent}}</code>
-                      haben.
-                      Gefunden wurde <code>{{htmlResult.textContentResult.maybeFoundContent}}</code>.
-                    </li>
-                  </ul>
+              <ul *ngIf="result.gradedHtmlTaskResults.length > 0">
+                <li *ngFor="let htmlResult of result.gradedHtmlTaskResults">
+                  <it4all-html-task-result [htmlResult]="htmlResult"></it4all-html-task-result>
                 </li>
 
-                <li *ngFor="let jsResult of resultQuery.correctWeb.gradedJsTaskResults">
+                <li *ngFor="let jsResult of result.gradedJsTaskResults">
                   <span [ngClass]="jsResult.success === 'COMPLETE' ? 'has-text-success' : 'has-text-danger'">
                    ({{jsResult.points}} / {{jsResult.maxPoints}})
                     Test {{jsResult.id}} ist {{jsResult.success === 'COMPLETE' ? '' : 'nicht'}} korrekt:
@@ -108,7 +82,7 @@
 
           <ng-container *ngIf="displaySampleSolutions">
             <ng-container *ngFor="let sample of sampleSolutions">
-              <ng-container *ngFor="let exFile of sample; let last = last">
+              <ng-container *ngFor="let exFile of sample.files; let last = last">
                 <it4all-exercise-file-card [exerciseFile]="exFile"></it4all-exercise-file-card>
 
                 <br *ngIf="!last">

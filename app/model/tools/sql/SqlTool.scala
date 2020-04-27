@@ -3,15 +3,14 @@ package model.tools.sql
 import model.User
 import model.core.matching.MatchingResult
 import model.points._
-import model.tools.sql.matcher._
 import model.tools._
+import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Try}
 
 object SqlTool extends CollectionTool("sql", "Sql") {
 
@@ -25,10 +24,10 @@ object SqlTool extends CollectionTool("sql", "Sql") {
 
   // Abstract types
 
-  override type SolType        = String
-  override type ExContentType  = SqlExerciseContent
-  override type PartType       = SqlExPart
-  override type CompResultType = SqlAbstractResult
+  override type SolType       = String
+  override type ExContentType = SqlExerciseContent
+  override type PartType      = SqlExPart
+  override type ResType       = SqlAbstractResult
 
   type ColumnComparison           = MatchingResult[ColumnWrapper, ColumnMatch]
   type TableComparison            = MatchingResult[Table, TableMatch]
@@ -45,7 +44,7 @@ object SqlTool extends CollectionTool("sql", "Sql") {
   override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] =
     SqlToolJsonProtocols
 
-  override val graphQlModels: ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart] =
+  override val graphQlModels: ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlAbstractResult] =
     SqlGraphQLModels
 
   override val allTopics: Seq[Topic] = SqlTopics.values
@@ -58,13 +57,11 @@ object SqlTool extends CollectionTool("sql", "Sql") {
     exercise: Exercise[String, SqlExerciseContent],
     part: SqlExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[SqlAbstractResult]] = Future {
-    Success {
-      correctorsAndDaos.get(exercise.content.exerciseType) match {
-        case None => SqlInternalErrorResult("There has been an internal error", solutionSaved, (-1).points)
-        case Some((corrector, dao)) =>
-          corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions, solutionSaved)
-      }
+  )(implicit executionContext: ExecutionContext): Future[SqlAbstractResult] = Future {
+    correctorsAndDaos.get(exercise.content.exerciseType) match {
+      case None => SqlInternalErrorResult("There has been an internal error", solutionSaved, (-1).points)
+      case Some((corrector, dao)) =>
+        corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions, solutionSaved)
     }
   }
 

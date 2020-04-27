@@ -7,7 +7,7 @@ final case class Topic(
 )
 
 final case class ExerciseCollection(
-  id: Int,
+  collectionId: Int,
   toolId: String,
   title: String,
   authors: Seq[String],
@@ -23,7 +23,7 @@ trait ExerciseContent[S] {
 }
 
 final case class Exercise[S, C <: ExerciseContent[S]](
-  id: Int,
+  exerciseId: Int,
   collectionId: Int,
   toolId: String,
   title: String,

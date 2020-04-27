@@ -16,11 +16,11 @@
 
           <div class="card">
             <header class="card-header">
-              <p class="card-header-title">{{exercise.id}}. {{exercise.title}}</p>
+              <p class="card-header-title">{{exercise.exerciseId}}. {{exercise.title}}</p>
             </header>
             <div class="card-content"></div>
             <footer class="card-footer">
-              <a class="card-footer-item" [routerLink]="[exercise.id, 'editForm']">Aufgabe editieren</a>
+              <a class="card-footer-item" [routerLink]="[exercise.exerciseId, 'editForm']">Aufgabe editieren</a>
             </footer>
           </div>
 

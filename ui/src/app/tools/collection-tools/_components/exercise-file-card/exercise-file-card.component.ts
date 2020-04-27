@@ -1,18 +1,21 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {ExerciseFile} from "../../../../_interfaces/graphql-types";
+import {Component, Input} from '@angular/core';
+import {ExerciseFileFragment} from "../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-exercise-file-card',
-  templateUrl: './exercise-file-card.component.html'
+  template: `
+    <div class="card">
+      <header class="card-header">
+        <p class="card-header-title">{{exerciseFile.name}}</p>
+      </header>
+      <div class="card-content">
+        <pre>{{exerciseFile.content}}</pre>
+      </div>
+    </div>
+  `
 })
-export class ExerciseFileCardComponent implements OnInit {
+export class ExerciseFileCardComponent {
 
-  @Input() exerciseFile: ExerciseFile;
-
-  constructor() {
-  }
-
-  ngOnInit() {
-  }
+  @Input() exerciseFile: ExerciseFileFragment;
 
 }

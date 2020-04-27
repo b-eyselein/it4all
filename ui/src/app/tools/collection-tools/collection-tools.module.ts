@@ -40,6 +40,8 @@ import {StringSampleSolComponent} from './_components/string-sample-sol/string-s
 import {QueryResultTableComponent} from './sql/_components/query-result-table/query-result-table.component';
 import { ProgrammingUnitTestResultComponent } from './programming/_results/programming-unit-test-result/programming-unit-test-result.component';
 import { ProgrammingNormalResultComponent } from './programming/_results/programming-normal-result/programming-normal-result.component';
+import { HtmlTaskResultComponent } from './web/_components/html-task-result/html-task-result.component';
+import { HtmlAttributeResultComponent } from './web/_components/html-attribute-result/html-attribute-result.component';
 
 
 @NgModule({
@@ -70,7 +72,7 @@ import { ProgrammingNormalResultComponent } from './programming/_results/program
 
     WebExerciseComponent,
 
-    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent, QueryResultTableComponent, ProgrammingUnitTestResultComponent, ProgrammingNormalResultComponent
+    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent, QueryResultTableComponent, ProgrammingUnitTestResultComponent, ProgrammingNormalResultComponent, HtmlTaskResultComponent, HtmlAttributeResultComponent
   ],
   providers: [],
   imports: [

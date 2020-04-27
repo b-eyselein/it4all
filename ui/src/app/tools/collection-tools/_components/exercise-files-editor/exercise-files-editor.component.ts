@@ -1,9 +1,9 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
-import {ExerciseFile} from "../../../../_interfaces/graphql-types";
+import {ExerciseFileFragment} from "../../../../_services/apollo_services";
 
 interface ActivatableExerciseFile {
-  file: ExerciseFile;
+  file: ExerciseFileFragment;
   active: boolean;
 }
 
@@ -13,9 +13,9 @@ interface ActivatableExerciseFile {
   styleUrls: ['./exercise-files-editor.component.sass'],
   encapsulation: ViewEncapsulation.None // Style child component with same sass
 })
-export class ExerciseFilesEditorComponent implements OnInit, OnChanges {
+export class ExerciseFilesEditorComponent implements OnChanges {
 
-  @Input() exerciseFiles: ExerciseFile[];
+  @Input() exerciseFileFragments: ExerciseFileFragment[];
   @Input() mode: string;
 
   activatableExerciseFiles: ActivatableExerciseFile[];
@@ -44,8 +44,8 @@ export class ExerciseFilesEditorComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnInit(): void {
-    this.activatableExerciseFiles = this.exerciseFiles.map((file) => {
+  ngOnChanges(changes: SimpleChanges): void {
+    this.activatableExerciseFiles = this.exerciseFileFragments.map((file) => {
       // Delete __typename field that was added by apollo
       delete file.__typename;
       return {file, active: false}
@@ -54,12 +54,10 @@ export class ExerciseFilesEditorComponent implements OnInit, OnChanges {
     this.updateFirstFile();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.updateFirstFile();
-  }
-
   private updateFirstFile(): void {
     if (this.activatableExerciseFiles && this.activatableExerciseFiles.length > 0) {
+      console.info(this.currentFileName);
+
       if (!this.currentFileName) {
         const editableExerciseFile: ActivatableExerciseFile | undefined = this.activatableExerciseFiles.find((ef) => ef.file.editable);
 
@@ -77,7 +75,6 @@ export class ExerciseFilesEditorComponent implements OnInit, OnChanges {
 
   private updateEditor(exerciseFile: ActivatableExerciseFile, saveContent: boolean = true): void {
     if (saveContent) {
-      console.warn('Saving content...');
       this.saveEditorContent();
     }
 
@@ -88,9 +85,6 @@ export class ExerciseFilesEditorComponent implements OnInit, OnChanges {
 
     this.editorOptions.mode = exerciseFile.file.fileType;
     this.editorOptions.readOnly = !exerciseFile.file.editable;
-
-    console.info('The Content:');
-    console.info(this.theContent);
   }
 
   changeFile($event: MouseEvent): void {

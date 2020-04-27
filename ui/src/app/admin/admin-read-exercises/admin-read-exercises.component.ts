@@ -8,8 +8,11 @@ import {Exercise} from "../../_interfaces/graphql-types";
 @Component({templateUrl: './admin-read-exercises.component.html'})
 export class AdminReadExercisesComponent implements OnInit, OnDestroy {
 
-  private sub: Subscription;
   private toolId: string;
+
+  private sub: Subscription;
+  private apolloSub: Subscription;
+
 
   savableExercises: Saveable<Exercise>[];
 
@@ -25,7 +28,7 @@ export class AdminReadExercisesComponent implements OnInit, OnDestroy {
       this.toolId = paramMap.get('toolId');
       const collId = parseInt(paramMap.get('collId'), 10);
 
-      this.adminReadExercisesGQL
+      this.apolloSub = this.adminReadExercisesGQL
         .watch({toolId: this.toolId, collId})
         .valueChanges
         .subscribe(({data}) => {
@@ -33,13 +36,19 @@ export class AdminReadExercisesComponent implements OnInit, OnDestroy {
             .map((res) => {
               const exercise: Exercise = JSON.parse(res);
 
-              return {saved: false, stringified: res, value: exercise, title: `${exercise.id}. ${exercise.title}`}
+              return {
+                saved: false,
+                stringified: res,
+                value: exercise,
+                title: `${exercise.exerciseId}. ${exercise.title}`
+              }
             });
         });
     })
   }
 
   ngOnDestroy(): void {
+    this.apolloSub.unsubscribe();
     this.sub.unsubscribe();
   }
 
@@ -49,7 +58,7 @@ export class AdminReadExercisesComponent implements OnInit, OnDestroy {
         toolId: this.toolId,
         content: exercise.stringified
       })
-      .subscribe(({data}) => exercise.saved = data.upsertExercise)
+      .subscribe(({data}) => exercise.saved = !!data.upsertExercise)
   }
 
   saveAll(): void {

@@ -1,10 +1,18 @@
 package model.tools.rose
 
+import model.GraphQLArguments
 import model.tools.{SampleSolution, ToolGraphQLModelBasics}
-import sangria.macros.derive.{ExcludeFields, deriveObjectType}
+import sangria.macros.derive.{ExcludeFields, Interfaces, deriveObjectType}
 import sangria.schema._
 
-object RoseGraphQLModels extends ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExPart] {
+object RoseGraphQLModels
+    extends ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExPart, RoseAbstractResult]
+    with GraphQLArguments {
+
+  override val partEnumType: EnumType[RoseExPart] = EnumType(
+    "RoseExPart",
+    values = RoseExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  )
 
   override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] =
     buildSampleSolutionType("Rose", StringType)
@@ -19,13 +27,28 @@ object RoseGraphQLModels extends ToolGraphQLModelBasics[String, RoseExerciseCont
 
   override val SolTypeInputType: InputType[String] = StringType
 
-  override val AbstractResultTypeType: OutputType[Any] = deriveObjectType[Unit, RoseCompleteResult](
+  // Abstract result
+
+  private val roseAbstractResultType: InterfaceType[Unit, RoseAbstractResult] = InterfaceType(
+    "RoseAbstractResult",
+    fields[Unit, RoseAbstractResult](
+      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
+      Field("points", FloatType, resolve = _.value.points.asDouble),
+      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
+    ),
+    interfaces[Unit, RoseAbstractResult](abstractResultInterfaceType)
+  ).withPossibleTypes(() => List(roseResultType, roseInternalErrorResultType))
+
+  private val roseResultType: ObjectType[Unit, RoseResult] = deriveObjectType[Unit, RoseResult](
+    Interfaces(roseAbstractResultType),
     ExcludeFields("points", "maxPoints", "result")
   )
 
-  override val partEnumType: EnumType[RoseExPart] = EnumType(
-    "RoseExPart",
-    values = RoseExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
+  private val roseInternalErrorResultType: ObjectType[Unit, RoseInternalErrorResult] = deriveObjectType(
+    Interfaces(roseAbstractResultType),
+    ExcludeFields("maxPoints")
   )
+
+  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, RoseAbstractResult] = roseAbstractResultType
 
 }

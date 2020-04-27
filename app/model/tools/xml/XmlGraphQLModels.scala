@@ -10,7 +10,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 object XmlGraphQLModels
-    extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart]
+    extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlAbstractResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[XmlExPart] = EnumType(
@@ -57,6 +57,12 @@ object XmlGraphQLModels
     deriveObjectType()
   }
 
+  private val xmlDocumentResultType: ObjectType[Unit, XmlDocumentResult] = {
+    implicit val xet: ObjectType[Unit, XmlError] = xmlErrorType
+
+    deriveObjectType()
+  }
+
   private val dtdParseExceptionType: ObjectType[Unit, DTDParseException] = deriveObjectType()
 
   private val elementDefinitionType: ObjectType[Unit, ElementDefinition] = deriveObjectType(
@@ -95,17 +101,34 @@ object XmlGraphQLModels
     deriveObjectType()
   }
 
-  private val xmlCompleteResultType: ObjectType[Unit, XmlCompleteResult] = {
-    implicit val st: EnumType[SuccessType]                = successTypeType
-    implicit val xet: ObjectType[Unit, XmlError]          = xmlErrorType
-    implicit val xgrt: ObjectType[Unit, XmlGrammarResult] = xmlGrammarResultType
+  // Abstract result
 
-    deriveObjectType[Unit, XmlCompleteResult](
-      Interfaces(abstractResultInterfaceType),
+  private val xmlAbstractResultType: InterfaceType[Unit, XmlAbstractResult] = InterfaceType(
+    "XmlAbstractResult",
+    fields[Unit, XmlAbstractResult](
+      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
+      Field("points", FloatType, resolve = _.value.points.asDouble),
+      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
+    ),
+    interfaces[Unit, XmlAbstractResult](abstractResultInterfaceType)
+  ).withPossibleTypes(() => List(xmlResultType, xmlInternalErrorResultType))
+
+  private val xmlResultType: ObjectType[Unit, XmlResult] = {
+    implicit val st: EnumType[SuccessType]                 = successTypeType
+    implicit val xdrt: ObjectType[Unit, XmlDocumentResult] = xmlDocumentResultType
+    implicit val xgrt: ObjectType[Unit, XmlGrammarResult]  = xmlGrammarResultType
+
+    deriveObjectType[Unit, XmlResult](
+      Interfaces(xmlAbstractResultType),
       ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }
 
-  override val AbstractResultTypeType: OutputType[Any] = xmlCompleteResultType
+  private val xmlInternalErrorResultType: ObjectType[Unit, XmlInternalErrorResult] = deriveObjectType(
+    Interfaces(xmlAbstractResultType),
+    ExcludeFields("maxPoints")
+  )
+
+  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, XmlAbstractResult] = xmlAbstractResultType
 
 }

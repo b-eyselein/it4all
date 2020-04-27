@@ -14,8 +14,6 @@ export type AbstractCorrectionResult = {
   maxPoints: Scalars['Float'];
 };
 
-export type AbstractRegexResult = RegexIllegalRegexResult | RegexMatchingResult | RegexExtractionResult;
-
 export type AdditionalComparison = {
    __typename?: 'AdditionalComparison';
   selectComparisons?: Maybe<SelectAdditionalComparisons>;
@@ -35,8 +33,8 @@ export enum BinaryClassificationResultType {
   TruePositive = 'TruePositive'
 }
 
-export type CollectionTol = {
-   __typename?: 'CollectionTol';
+export type CollectionTool = {
+   __typename?: 'CollectionTool';
   id: Scalars['ID'];
   name: Scalars['String'];
   state: ToolState;
@@ -54,17 +52,17 @@ export type CollectionTol = {
 };
 
 
-export type CollectionTolLessonArgs = {
+export type CollectionToolLessonArgs = {
   lessonId: Scalars['Int'];
 };
 
 
-export type CollectionTolCollectionArgs = {
+export type CollectionToolCollectionArgs = {
   collId: Scalars['Int'];
 };
 
 
-export type CollectionTolPartArgs = {
+export type CollectionToolPartArgs = {
   partId: Scalars['String'];
 };
 
@@ -107,7 +105,7 @@ export type ElementLineMatch = NewMatch & {
 
 export type Exercise = {
    __typename?: 'Exercise';
-  id: Scalars['Int'];
+  exerciseId: Scalars['Int'];
   collectionId: Scalars['Int'];
   toolId: Scalars['String'];
   title: Scalars['String'];
@@ -115,6 +113,7 @@ export type Exercise = {
   text: Scalars['String'];
   topicAbbreviations: Array<Scalars['String']>;
   difficulty: Scalars['Int'];
+  completeId: Scalars['ID'];
   topics: Array<Topic>;
   programmingContent?: Maybe<ProgrammingExerciseContent>;
   regexContent?: Maybe<RegexExerciseContent>;
@@ -128,11 +127,12 @@ export type Exercise = {
 
 export type ExerciseCollection = {
    __typename?: 'ExerciseCollection';
-  id: Scalars['Int'];
+  collectionId: Scalars['Int'];
   toolId: Scalars['String'];
   title: Scalars['String'];
   authors: Array<Scalars['String']>;
   text: Scalars['String'];
+  completeId: Scalars['ID'];
   asJsonString: Scalars['String'];
   exerciseCount: Scalars['Int'];
   exercises: Array<Exercise>;
@@ -266,23 +266,23 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlySample = 'ONLY_SAMPLE',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  OnlyUser = 'ONLY_USER',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  PartialMatch = 'PARTIAL_MATCH'
+  OnlyUser = 'ONLY_USER',
+  PartialMatch = 'PARTIAL_MATCH',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE'
 }
 
 export type Mutation = {
    __typename?: 'Mutation';
-  upsertCollection: Scalars['Boolean'];
-  upsertExercise: Scalars['Boolean'];
-  correctProgramming?: Maybe<ProgCompleteResult>;
-  correctRegex?: Maybe<AbstractRegexResult>;
-  correctSql?: Maybe<SqlAbstractResult>;
-  correctUml?: Maybe<UmlCompleteResult>;
-  correctWeb?: Maybe<WebCompleteResult>;
-  correctXml?: Maybe<XmlCompleteResult>;
+  upsertCollection?: Maybe<ExerciseCollection>;
+  upsertExercise?: Maybe<Exercise>;
+  correctProgramming: ProgrammingAbstractResult;
+  correctRegex: RegexAbstractResult;
+  correctSql: SqlAbstractResult;
+  correctUml: UmlAbstractResult;
+  correctWeb: WebAbstractResult;
+  correctXml: XmlAbstractResult;
 };
 
 
@@ -357,19 +357,17 @@ export type NormalExecutionResult = {
   logs: Scalars['String'];
 };
 
-export type ProgCompleteResult = {
-   __typename?: 'ProgCompleteResult';
-  solutionSaved: Scalars['Boolean'];
-  simplifiedResults: Array<SimplifiedExecutionResult>;
-  normalResult?: Maybe<NormalExecutionResult>;
-  unitTestResults: Array<UnitTestCorrectionResult>;
-};
-
 export enum ProgExPart {
   TestCreation = 'TestCreation',
   Implementation = 'Implementation',
   ActivityDiagram = 'ActivityDiagram'
 }
+
+export type ProgrammingAbstractResult = {
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
 
 export type ProgrammingExerciseContent = {
    __typename?: 'ProgrammingExerciseContent';
@@ -385,6 +383,24 @@ export type ProgrammingExerciseContent = {
 
 export type ProgrammingExerciseContentPartArgs = {
   partId: Scalars['String'];
+};
+
+export type ProgrammingInternalErrorResult = ProgrammingAbstractResult & AbstractCorrectionResult & {
+   __typename?: 'ProgrammingInternalErrorResult';
+  msg: Scalars['String'];
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
+export type ProgrammingResult = ProgrammingAbstractResult & AbstractCorrectionResult & {
+   __typename?: 'ProgrammingResult';
+  solutionSaved: Scalars['Boolean'];
+  simplifiedResults: Array<SimplifiedExecutionResult>;
+  normalResult?: Maybe<NormalExecutionResult>;
+  unitTestResults: Array<UnitTestCorrectionResult>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type ProgrammingSampleSolution = {
@@ -404,13 +420,19 @@ export type ProgSolutionInput = {
 
 export type Query = {
    __typename?: 'Query';
-  tools: Array<CollectionTol>;
-  tool?: Maybe<CollectionTol>;
+  tools: Array<CollectionTool>;
+  tool?: Maybe<CollectionTool>;
 };
 
 
 export type QueryToolArgs = {
   toolId: Scalars['String'];
+};
+
+export type RegexAbstractResult = {
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export enum RegexCorrectionType {
@@ -444,7 +466,7 @@ export type RegexExtractedValuesComparisonMatchingResult = MatchingResult & {
   maxPoints: Scalars['Float'];
 };
 
-export type RegexExtractionResult = AbstractCorrectionResult & {
+export type RegexExtractionResult = RegexAbstractResult & AbstractCorrectionResult & {
    __typename?: 'RegexExtractionResult';
   extractionResults: Array<RegexExtractionSingleResult>;
   solutionSaved: Scalars['Boolean'];
@@ -465,7 +487,7 @@ export type RegexExtractionTestData = {
   base: Scalars['String'];
 };
 
-export type RegexIllegalRegexResult = AbstractCorrectionResult & {
+export type RegexIllegalRegexResult = RegexAbstractResult & AbstractCorrectionResult & {
    __typename?: 'RegexIllegalRegexResult';
   message: Scalars['String'];
   solutionSaved: Scalars['Boolean'];
@@ -473,7 +495,15 @@ export type RegexIllegalRegexResult = AbstractCorrectionResult & {
   maxPoints: Scalars['Float'];
 };
 
-export type RegexMatchingResult = AbstractCorrectionResult & {
+export type RegexInternalErrorResult = RegexAbstractResult & AbstractCorrectionResult & {
+   __typename?: 'RegexInternalErrorResult';
+  msg: Scalars['String'];
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
+export type RegexMatchingResult = RegexAbstractResult & AbstractCorrectionResult & {
    __typename?: 'RegexMatchingResult';
   matchingResults: Array<RegexMatchingSingleResult>;
   solutionSaved: Scalars['Boolean'];
@@ -535,7 +565,11 @@ export type SiteSpec = {
   jsTaskCount: Scalars['Int'];
 };
 
-export type SqlAbstractResult = SqlIllegalQueryResult | SqlWrongQueryTypeResult | SqlResult;
+export type SqlAbstractResult = {
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
 
 export type SqlBinaryExpressionComparisonMatchingResult = MatchingResult & {
    __typename?: 'SqlBinaryExpressionComparisonMatchingResult';
@@ -598,11 +632,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Update = 'UPDATE',
   Create = 'CREATE',
-  Delete = 'DELETE',
   Insert = 'INSERT',
-  Select = 'SELECT'
+  Select = 'SELECT',
+  Delete = 'DELETE',
+  Update = 'UPDATE'
 }
 
 export enum SqlExPart {
@@ -625,7 +659,7 @@ export type SqlGroupByMatch = NewMatch & {
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
-export type SqlIllegalQueryResult = AbstractCorrectionResult & {
+export type SqlIllegalQueryResult = SqlAbstractResult & AbstractCorrectionResult & {
    __typename?: 'SqlIllegalQueryResult';
   message: Scalars['String'];
   solutionSaved: Scalars['Boolean'];
@@ -647,6 +681,14 @@ export type SqlInsertMatch = NewMatch & {
   matchType: MatchType;
   userArgDescription?: Maybe<Scalars['String']>;
   sampleArgDescription?: Maybe<Scalars['String']>;
+};
+
+export type SqlInternalErrorResult = SqlAbstractResult & AbstractCorrectionResult & {
+   __typename?: 'SqlInternalErrorResult';
+  msg: Scalars['String'];
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type SqlKeyCellValueObject = {
@@ -703,7 +745,7 @@ export type SqlQueryResult = {
   tableName: Scalars['String'];
 };
 
-export type SqlResult = AbstractCorrectionResult & {
+export type SqlResult = SqlAbstractResult & AbstractCorrectionResult & {
    __typename?: 'SqlResult';
   staticComparison: SqlQueriesStaticComparison;
   executionResult: SqlExecutionResult;
@@ -739,7 +781,7 @@ export type SqlTableMatch = NewMatch & {
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
-export type SqlWrongQueryTypeResult = AbstractCorrectionResult & {
+export type SqlWrongQueryTypeResult = SqlAbstractResult & AbstractCorrectionResult & {
    __typename?: 'SqlWrongQueryTypeResult';
   message: Scalars['String'];
   solutionSaved: Scalars['Boolean'];
@@ -766,6 +808,12 @@ export type Topic = {
   abbreviation: Scalars['String'];
   toolId: Scalars['String'];
   title: Scalars['String'];
+};
+
+export type UmlAbstractResult = {
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type UmlAssociation = {
@@ -928,16 +976,6 @@ export enum UmlClassType {
   Interface = 'INTERFACE'
 }
 
-export type UmlCompleteResult = AbstractCorrectionResult & {
-   __typename?: 'UmlCompleteResult';
-  classResult?: Maybe<UmlClassMatchingResult>;
-  assocResult?: Maybe<UmlAssociationMatchingResult>;
-  implResult?: Maybe<UmlImplementationMatchingResult>;
-  solutionSaved: Scalars['Boolean'];
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
 export type UmlExerciseContent = {
    __typename?: 'UmlExerciseContent';
   toIgnore: Array<Scalars['String']>;
@@ -981,6 +1019,14 @@ export type UmlImplementationMatch = NewMatch & {
 export type UmlImplementationMatchingResult = MatchingResult & {
    __typename?: 'UmlImplementationMatchingResult';
   allMatches: Array<UmlImplementationMatch>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
+export type UmlInternalErrorResult = UmlAbstractResult & {
+   __typename?: 'UmlInternalErrorResult';
+  msg: Scalars['String'];
+  solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
@@ -1040,6 +1086,16 @@ export enum UmlMultiplicity {
   Unbound = 'UNBOUND'
 }
 
+export type UmlResult = UmlAbstractResult & {
+   __typename?: 'UmlResult';
+  classResult?: Maybe<UmlClassMatchingResult>;
+  assocResult?: Maybe<UmlAssociationMatchingResult>;
+  implResult?: Maybe<UmlImplementationMatchingResult>;
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
 export type UmlSampleSolution = {
    __typename?: 'UmlSampleSolution';
   id: Scalars['Int'];
@@ -1087,10 +1143,7 @@ export enum UnitTestType {
   Simplified = 'Simplified'
 }
 
-export type WebCompleteResult = AbstractCorrectionResult & {
-   __typename?: 'WebCompleteResult';
-  gradedHtmlTaskResults: Array<GradedHtmlTaskResult>;
-  gradedJsTaskResults: Array<GradedJsTaskResult>;
+export type WebAbstractResult = {
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -1116,6 +1169,23 @@ export enum WebExPart {
   JsPart = 'JsPart'
 }
 
+export type WebInternalErrorResult = WebAbstractResult & AbstractCorrectionResult & {
+   __typename?: 'WebInternalErrorResult';
+  msg: Scalars['String'];
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
+export type WebResult = WebAbstractResult & AbstractCorrectionResult & {
+   __typename?: 'WebResult';
+  gradedHtmlTaskResults: Array<GradedHtmlTaskResult>;
+  gradedJsTaskResults: Array<GradedJsTaskResult>;
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
 export type WebSampleSolution = {
    __typename?: 'WebSampleSolution';
   id: Scalars['Int'];
@@ -1131,14 +1201,15 @@ export type WebSolutionInput = {
   files: Array<ExerciseFileInput>;
 };
 
-export type XmlCompleteResult = AbstractCorrectionResult & {
-   __typename?: 'XmlCompleteResult';
-  successType: SuccessType;
-  documentResult: Array<XmlError>;
-  grammarResult?: Maybe<XmlGrammarResult>;
+export type XmlAbstractResult = {
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+};
+
+export type XmlDocumentResult = {
+   __typename?: 'XmlDocumentResult';
+  errors: Array<XmlError>;
 };
 
 export type XmlElementLineComparisonMatchingResult = MatchingResult & {
@@ -1184,6 +1255,24 @@ export type XmlGrammarResult = {
    __typename?: 'XmlGrammarResult';
   parseErrors: Array<DtdParseException>;
   results: XmlElementLineComparisonMatchingResult;
+};
+
+export type XmlInternalErrorResult = XmlAbstractResult & AbstractCorrectionResult & {
+   __typename?: 'XmlInternalErrorResult';
+  msg: Scalars['String'];
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
+export type XmlResult = XmlAbstractResult & AbstractCorrectionResult & {
+   __typename?: 'XmlResult';
+  successType: SuccessType;
+  documentResult?: Maybe<XmlDocumentResult>;
+  grammarResult?: Maybe<XmlGrammarResult>;
+  solutionSaved: Scalars['Boolean'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
 };
 
 export type XmlSampleSolution = {

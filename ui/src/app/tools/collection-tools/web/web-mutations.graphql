@@ -1,17 +1,18 @@
-fragment AbstractCorrectionResult on AbstractCorrectionResult {
-  solutionSaved
-  points
-  maxPoints
-}
-
 mutation WebCorrection($collId: Int!, $exId: Int!,$part: WebExPart!, $solution: WebSolutionInput!) {
   correctWeb(collId: $collId, exId: $exId,part: $part, solution: $solution) {
-    ...WebCompleteResult
+    __typename
+    solutionSaved
+    points
+    maxPoints
+    ...WebResult
   }
 }
 
-fragment WebCompleteResult on WebCompleteResult {
-  ...AbstractCorrectionResult
+fragment WebInternalErrorResult on WebInternalErrorResult {
+  msg
+}
+
+fragment WebResult on WebResult {
   gradedHtmlTaskResults {
     ...GradedHtmlTaskResult
   }

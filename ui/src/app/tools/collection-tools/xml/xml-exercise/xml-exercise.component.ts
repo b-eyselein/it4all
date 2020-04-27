@@ -3,20 +3,22 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {DexieService} from '../../../../_services/dexie.service';
 import {
+  ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
   XmlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {
   XmlCorrectionGQL,
   XmlCorrectionMutation,
-  XmlErrorFragment,
-  XmlGrammarResultFragment
+  XmlDocumentResultFragment,
+  XmlGrammarResultFragment,
+  XmlResultFragment
 } from '../xml-apollo-mutations.service';
-import {ExerciseFile, XmlExPart, XmlSolution, XmlSolutionInput} from '../../../../_interfaces/graphql-types';
+import {XmlExPart, XmlSolution, XmlSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
-import {XmlDocumentCreation, XmlGrammarCreation} from "../xml-tool";
+import {XmlDocumentCreation, XmlGrammarCreation} from '../xml-tool';
 
 function getXmlGrammarContent(rootNode: string): string {
   return `<!ELEMENT ${rootNode} (EMPTY)>`;
@@ -45,10 +47,10 @@ export class XmlExerciseComponent
 
   isGrammarPart: boolean;
 
-  grammarFile: ExerciseFile;
-  documentFile: ExerciseFile;
+  grammarFile: ExerciseFileFragment;
+  documentFile: ExerciseFileFragment;
 
-  exerciseFiles: ExerciseFile[] = [];
+  exerciseFileFragments: ExerciseFileFragment[] = [];
 
   constructor(xmlCorrectionGQL: XmlCorrectionGQL, dexieService: DexieService) {
     super(xmlCorrectionGQL, dexieService);
@@ -84,18 +86,15 @@ export class XmlExerciseComponent
       editable: !this.isGrammarPart,
     };
 
-    this.exerciseFiles = [this.grammarFile, this.documentFile];
+    this.exerciseFileFragments = [this.grammarFile, this.documentFile];
 
-    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id)
-      .then((oldSol) => {
-        if (oldSol) {
-          this.grammarFile.content = oldSol.grammar;
-          this.documentFile.content = oldSol.document;
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id, (oldSol) => {
+      this.grammarFile.content = oldSol.grammar;
+      this.documentFile.content = oldSol.document;
 
-          // do not delete or else editor does not get updated...
-          this.exerciseFiles = [this.grammarFile, this.documentFile];
-        }
-      });
+      // do not delete or else editor does not get updated...
+      this.exerciseFileFragments = [this.grammarFile, this.documentFile];
+    });
   }
 
   correct(): void {
@@ -113,16 +112,16 @@ export class XmlExerciseComponent
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 
-  get grammarDescription(): string {
-    return this.contentFragment.grammarDescription;
+  private get xmlResult(): XmlResultFragment | null {
+    return this.resultQuery?.correctXml.__typename === 'XmlResult' ? this.resultQuery?.correctXml : null;
   }
 
   get grammarResult(): XmlGrammarResultFragment | null {
-    return this.resultQuery?.correctXml.grammarResult;
+    return this.xmlResult?.grammarResult;
   }
 
-  get documentResult(): XmlErrorFragment[] | null {
-    return this.resultQuery?.correctXml.documentResult;
+  get documentResult(): XmlDocumentResultFragment | null {
+    return this.xmlResult?.documentResult;
   }
 
 }

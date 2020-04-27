@@ -7,7 +7,6 @@ import model.persistence._
 import play.api.libs.json.{JsArray, JsString, JsValue}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 abstract class CollectionTool(
   val id: String,
@@ -25,13 +24,13 @@ abstract class CollectionTool(
   type SolType
   type ExContentType <: ExerciseContent[SolType]
   type PartType <: ExPart
-  type CompResultType <: AbstractCorrectionResult
+  type ResType <: AbstractCorrectionResult
 
   // Yaml, Html forms, Json, GraphQL
 
   val toolJsonProtocol: ToolJsonProtocol[SolType, ExContentType, PartType]
 
-  val graphQlModels: ToolGraphQLModelBasics[SolType, ExContentType, PartType]
+  val graphQlModels: ToolGraphQLModelBasics[SolType, ExContentType, PartType, ResType]
 
   // Db
 
@@ -98,10 +97,7 @@ abstract class CollectionTool(
   def futureUpsertExercise(
     tableDefs: ExerciseTableDefs,
     exercise: Exercise[SolType, ExContentType]
-  )(implicit ec: ExecutionContext): Future[Boolean] =
-    for {
-      exInserted <- tableDefs.futureUpsertExercise(exerciseToDbExercise(exercise))
-    } yield exInserted
+  )(implicit ec: ExecutionContext): Future[Boolean] = tableDefs.futureUpsertExercise(exerciseToDbExercise(exercise))
 
   // Other helper methods
 
@@ -111,7 +107,7 @@ abstract class CollectionTool(
     exercise: Exercise[SolType, ExContentType],
     part: PartType,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[Try[CompResultType]]
+  )(implicit executionContext: ExecutionContext): Future[ResType]
 
   val allTopics: Seq[Topic] = Seq.empty
 

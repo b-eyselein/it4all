@@ -36,8 +36,7 @@ export class RegexExerciseComponent
   }
 
   ngOnInit(): void {
-    this.loadOldSolutionAbstract(this.exerciseFragment, RegexExercisePart.id)
-      .then((oldSol) => this.solution = oldSol ? oldSol : '');
+    this.loadOldSolutionAbstract(this.exerciseFragment, RegexExercisePart.id, (oldSol) => this.solution = oldSol);
   }
 
   protected getSolution(): string {

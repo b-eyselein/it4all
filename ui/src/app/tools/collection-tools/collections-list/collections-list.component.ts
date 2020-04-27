@@ -10,7 +10,6 @@ export class CollectionsListComponent implements OnInit, OnDestroy {
 
   collectionListQuery: CollectionListQuery;
 
-
   constructor(protected route: ActivatedRoute, private collectionsGQL: CollectionListGQL) {
   }
 

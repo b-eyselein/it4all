@@ -15,7 +15,7 @@ object UmlCorrector extends AbstractCorrector {
     msg: String,
     solutionSaved: Boolean,
     maxPoints: Points
-  ): UmlAbstractResult = UmlInternalError(msg, solutionSaved, maxPoints)
+  ): UmlInternalErrorResult = UmlInternalErrorResult(msg, solutionSaved, maxPoints)
 
   /*
    * FIXME: compare against every sample solution, take best?
@@ -58,7 +58,7 @@ object UmlCorrector extends AbstractCorrector {
 
       val maxPoints: Points = (-1).points
 
-      UmlCompleteResult(classResult, assocResult, implResult, points, maxPoints, solutionSaved)
+      UmlResult(classResult, assocResult, implResult, points, maxPoints, solutionSaved)
   }
 
 }

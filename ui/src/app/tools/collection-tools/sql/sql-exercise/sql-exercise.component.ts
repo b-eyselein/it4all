@@ -15,7 +15,7 @@ import {
   SqlResultFragment,
   SqlWrongQueryTypeResultFragment
 } from '../sql-apollo-mutations.service';
-import {SqlExPart} from '../../../../_interfaces/graphql-types';
+import {SqlExPart, SqlInternalErrorResult} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/sql/sql';
 import {SqlCreateQueryPart} from "../sql-tool";
@@ -59,6 +59,10 @@ export class SqlExerciseComponent
   }
 
   // Result types
+
+  get sqlInternalErrorResult(): SqlInternalErrorResult | undefined {
+    return this.resultQuery?.correctSql.__typename === 'SqlInternalErrorResult' ? this.resultQuery.correctSql : undefined;
+  }
 
   get sqlIllegalQueryResult(): SqlIllegalQueryResultFragment | undefined {
     return this.resultQuery?.correctSql.__typename === 'SqlIllegalQueryResult' ? this.resultQuery.correctSql : undefined;

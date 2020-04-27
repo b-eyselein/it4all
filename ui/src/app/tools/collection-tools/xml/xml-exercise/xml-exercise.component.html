@@ -2,7 +2,8 @@
 
   <div class="columns">
     <div class="column is-half-desktop">
-      <it4all-exercise-files-editor [exerciseFiles]="exerciseFiles" [mode]="'xml'"></it4all-exercise-files-editor>
+      <it4all-exercise-files-editor [exerciseFileFragments]="exerciseFileFragments" [mode]="'xml'">
+      </it4all-exercise-files-editor>
     </div>
 
     <div class="column is-half-desktop">
@@ -12,7 +13,7 @@
           <div class="notification is-light-grey">
             <ng-container *ngIf="isGrammarPart; else documentTextBlock">
               <p class="has-text-weight-bold">Erstellen Sie eine DTD zu folgender Beschreibung:</p>
-              <p>{{grammarDescription}}</p>
+              <p>{{contentFragment.grammarDescription}}</p>
               <p class="is-italic has-text-info">
                 Hinweis: Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen. Falls nichts anderes
                 angegeben ist, sollen die Elemente nur Text enthalten.
@@ -43,23 +44,34 @@
 
             <br>
 
-            <it4all-points-notification [points]="resultQuery.correctXml.points" [maxPoints]="resultQuery.correctXml.maxPoints" *ngIf="isGrammarPart">
+            <it4all-points-notification
+              *ngIf="isGrammarPart"
+              [points]="resultQuery.correctXml.points"
+              [maxPoints]="resultQuery.correctXml.maxPoints">
             </it4all-points-notification>
 
             <br>
 
-            <ng-container *ngIf="documentResult.length > 0">
+            <ng-container *ngIf="documentResult">
               <!-- Document correction! -->
               <it4all-xml-document-correction [result]="documentResult"></it4all-xml-document-correction>
+            </ng-container>
+            <ng-container *ngIf="documentResult && documentResult.errors.length === 0">
+
             </ng-container>
 
             <ng-container *ngIf="grammarResult">
               <!-- Grammar correction -->
 
-              <div *ngFor="let parseError of grammarResult.parseErrors">
-                <div>Fehler beim Parse von &quot;<code>{{parseError.parsedLine}}</code>&quot;:
+              <div *ngFor="let parseError of grammarResult.parseErrors" class="message is-danger">
+                <div class="message-header">
+                  Fehler beim Parse von &quot;<code>{{parseError.parsedLine}}</code>&quot;:
                 </div>
-                <div class="has-text-danger">{{parseError.msg}}</div>
+                <div class="message-body">
+                  <pre>
+                    <code class="has-text-danger">{{parseError.msg}}</code>
+                  </pre>
+                </div>
               </div>
 
               <div *ngFor="let gr of grammarResult.results.allMatches" class="content">

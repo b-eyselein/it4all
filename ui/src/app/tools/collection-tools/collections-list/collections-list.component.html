@@ -14,11 +14,11 @@
 
         <div class="card">
           <header class="card-header">
-            <p class="card-header-title is-centered">{{coll.id}}. {{coll.title}}</p>
+            <p class="card-header-title is-centered">{{coll.collectionId}}. {{coll.title}}</p>
           </header>
           <div class="card-content">{{coll.exerciseCount}} Aufgaben</div>
           <footer class="card-footer">
-            <a class="card-footer-item" [routerLink]="[coll.id]">Zur Sammlung</a>
+            <a class="card-footer-item" [routerLink]="[coll.collectionId]">Zur Sammlung</a>
           </footer>
         </div>
 

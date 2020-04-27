@@ -9,7 +9,7 @@ import sangria.schema._
 import scala.util.matching.Regex.{Match => RegexMatch}
 
 object RegexGraphQLModels
-    extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart]
+    extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart, RegexAbstractResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[RegexExPart] = EnumType(
@@ -68,8 +68,27 @@ object RegexGraphQLModels
     deriveObjectType()
   }
 
+  // Abstract result
+
+  private val regexAbstractResultType: InterfaceType[Unit, RegexAbstractResult] = InterfaceType(
+    "RegexAbstractResult",
+    fields[Unit, RegexAbstractResult](
+      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
+      Field("points", FloatType, resolve = _.value.points.asDouble),
+      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
+    ),
+    interfaces[Unit, RegexAbstractResult](abstractResultInterfaceType)
+  ).withPossibleTypes(() =>
+    List(regexInternalErrorResultType, regexIllegalRegexResultType, regexMatchingResultType, regexExtractionResultType)
+  )
+
+  private val regexInternalErrorResultType: ObjectType[Unit, RegexInternalErrorResult] = deriveObjectType(
+    Interfaces(regexAbstractResultType),
+    ExcludeFields("solutionSaved", "maxPoints")
+  )
+
   private val regexIllegalRegexResultType: ObjectType[Unit, RegexIllegalRegexResult] = deriveObjectType(
-    Interfaces(abstractResultInterfaceType),
+    Interfaces(regexAbstractResultType),
     ExcludeFields("solutionSaved", "maxPoints")
   )
 
@@ -77,7 +96,7 @@ object RegexGraphQLModels
     implicit val rmert: ObjectType[Unit, RegexMatchingSingleResult] = regexMatchingEvaluationResultType
 
     deriveObjectType(
-      Interfaces(abstractResultInterfaceType),
+      Interfaces(regexAbstractResultType),
       ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }
@@ -86,16 +105,11 @@ object RegexGraphQLModels
     implicit val reert: ObjectType[Unit, RegexExtractionSingleResult] = regexExtractionEvaluationResultType
 
     deriveObjectType(
-      Interfaces(abstractResultInterfaceType),
+      Interfaces(regexAbstractResultType),
       ExcludeFields("solutionSaved", "points", "maxPoints")
     )
   }
 
-  val abstractRegexResultType: UnionType[Unit] = UnionType(
-    "AbstractRegexResult",
-    types = regexIllegalRegexResultType :: regexMatchingResultType :: regexExtractionResultType :: Nil
-  )
-
-  override val AbstractResultTypeType: OutputType[Any] = abstractRegexResultType
+  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, RegexAbstractResult] = regexAbstractResultType
 
 }

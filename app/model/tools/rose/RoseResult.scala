@@ -16,7 +16,7 @@ final case class RoseInternalErrorResult(
 
 }
 
-final case class RoseCompleteResult(
+final case class RoseResult(
   result: RoseExecutionResult,
   points: Points = (-1).points,
   maxPoints: Points = (-1).points,
