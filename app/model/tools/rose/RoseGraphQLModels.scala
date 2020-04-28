@@ -1,6 +1,6 @@
 package model.tools.rose
 
-import model.GraphQLArguments
+import model.graphql.GraphQLArguments
 import model.tools.{SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive.{ExcludeFields, Interfaces, deriveObjectType}
 import sangria.schema._

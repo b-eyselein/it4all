@@ -2,7 +2,8 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 import model.persistence.ExerciseTableDefs
-import model.{GraphQLContext, GraphQLModel, GraphQLRequest, User}
+import model.User
+import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
 import play.api.Configuration
 import play.api.libs.json._
 import play.api.mvc._

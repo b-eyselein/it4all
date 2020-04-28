@@ -2,7 +2,6 @@ package model.persistence
 
 import javax.inject.Inject
 import model._
-import model.learningPath.LearningPathTableDefs
 import model.tools._
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import play.api.libs.json._
@@ -14,7 +13,7 @@ import scala.reflect.ClassTag
 
 class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfigProvider)(
   override implicit val executionContext: ExecutionContext
-) extends LearningPathTableDefs
+) extends TableDefs
     with ProficiencyTableDefs
     with ExerciseTableDefQueries {
   self: HasDatabaseConfigProvider[JdbcProfile] =>
@@ -23,7 +22,6 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
 
   // Table Queries
 
-  protected final val topicsTQ: TableQuery[TopicsTable]                   = TableQuery[TopicsTable]
   protected final val collectionsTQ: TableQuery[ExerciseCollectionsTable] = TableQuery[ExerciseCollectionsTable]
   protected final val exercisesTQ: TableQuery[ExercisesTable]             = TableQuery[ExercisesTable]
   protected final val userSolutionsTQ: TableQuery[UserSolutionsTable]     = TableQuery[UserSolutionsTable]
@@ -133,8 +131,8 @@ class ExerciseTableDefs @Inject() (override val dbConfigProvider: DatabaseConfig
     def pk = primaryKey("user_solutions_fk", (id, exerciseId, collectionId, toolId, part, username))
 
     def exerciseFk: ForeignKeyQuery[ExercisesTable, DbExercise] =
-      foreignKey("exercise_fk", (exerciseId, collectionId, toolId), exercisesTQ)(
-        ex => (ex.id, ex.collectionId, ex.toolId)
+      foreignKey("exercise_fk", (exerciseId, collectionId, toolId), exercisesTQ)(ex =>
+        (ex.id, ex.collectionId, ex.toolId)
       )
 
     def userFk: ForeignKeyQuery[UsersTable, User] = foreignKey("user_fk", username, users)(_.username)

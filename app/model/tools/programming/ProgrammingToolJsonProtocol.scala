@@ -156,6 +156,4 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
     baseDataName -> baseData
   )
 
-  override val partTypeFormat: Format[ProgExPart] = ProgExPart.jsonFormat
-
 }

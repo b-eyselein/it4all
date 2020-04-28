@@ -1,6 +1,6 @@
 package model.tools
 
-import model.json.{JsonProtocols, KeyValueObject}
+import model.json.KeyValueObject
 import play.api.libs.json._
 
 final case class ReadExercisesMessage[S, C <: ExerciseContent[S]](
@@ -30,24 +30,10 @@ trait ToolJsonProtocol[S, C <: ExerciseContent[S], PartType <: ExPart] {
   val exerciseContentFormat: Format[C]
 
   final lazy val exerciseFormat: Format[Exercise[S, C]] = {
-    implicit val tf: Format[Topic]              = JsonProtocols.topicFormat
-    implicit val fc: Format[C]                  = exerciseContentFormat
-    implicit val ssf: Format[SampleSolution[S]] = sampleSolutionFormat
+    implicit val fc: Format[C] = exerciseContentFormat
 
     Json.format
   }
-
-  val partTypeFormat: Format[PartType]
-
-  /*
-  lazy val readExerciseFormat: Format[ReadExercise[S, C]] = {
-
-    implicit val sf: Format[SampleSolution[S]] = sampleSolutionFormat
-    implicit val cf: Format[C]                 = exerciseContentFormat
-
-    Json.format
-  }
-   */
 
   lazy val readExercisesMessageReads: Reads[ReadExercisesMessage[S, C]] = {
     implicit val ef: Format[Exercise[S, C]] = exerciseFormat

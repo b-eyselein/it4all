@@ -1,4 +1,4 @@
-package model
+package model.graphql
 
 import sangria.schema.{Argument, IntType, StringType}
 

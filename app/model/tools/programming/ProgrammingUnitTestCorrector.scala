@@ -1,7 +1,6 @@
 package model.tools.programming
 
 import better.files.File
-import better.files.File._
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.tools.programming.ProgrammingToolJsonProtocol.UnitTestTestData
 import play.api.Logger
@@ -23,83 +22,90 @@ object ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
     exerciseContent: ProgrammingExerciseContent,
     resultFile: File,
     solutionSaved: Boolean
-  )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
+  )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] =
+    solution.files.find(_.name == exerciseContent.unitTestPart.testFileName) match {
+      case None               => Future.successful(onError("Could not find test main file", solutionSaved))
+      case Some(testMainFile) =>
+        // write unit test file
+        val testFileName = exerciseContent.unitTestPart.testFileName
+        val testFile     = solTargetDir / testFileName
+        createFileAndWrite(testFile, testMainFile.content)
 
-    // write unit test file
-    val testFileName = exerciseContent.unitTestPart.testFileName
-    val testFile     = solTargetDir / testFileName
-    createFileAndWrite(testFile, solution.files.find(_.name == testFileName).map(_.content).getOrElse(???))
+        // write test data file
+        val testDataFile = solTargetDir / testDataFileName
 
-    // write test data file
-    val testDataFile = solTargetDir / testDataFileName
-    // remove ending '.py'
-    val testFileNameForTestData = exerciseContent.unitTestPart.testFileName
-      .substring(0, exerciseContent.unitTestPart.testFileName.length - 3)
+        // remove ending '.py'
+        val testFileNameForTestData = exerciseContent.unitTestPart.testFileName
+          .substring(0, exerciseContent.unitTestPart.testFileName.length - 3)
 
-    createFileAndWrite(
-      testDataFile,
-      Json.prettyPrint(
-        ProgrammingToolJsonProtocol.unitTestDataWrites.writes(
-          UnitTestTestData(
-            exerciseContent.foldername,
-            exerciseContent.filename,
-            testFileNameForTestData,
-            exerciseContent.unitTestPart.unitTestTestConfigs
-          )
-        )
-      )
-    )
-
-    // find mounts for implementation files
-    val unitTestSolFilesDockerBinds: Seq[DockerBind] = exerciseContent.unitTestPart.unitTestTestConfigs
-      .filter(tc => implFileRegex.matches(tc.file.name))
-      .map { tc =>
-        writeExerciseFileAndMount(
-          tc.file,
-          solTargetDir,
-          DockerConnector.DefaultWorkingDir / exerciseContent.foldername
-        )
-      }
-
-    // find mounts for exercise files
-    val exFilesMounts = exerciseContent.unitTestPart.unitTestFiles
-      .filter(f => f.name != testFileName && f.name != exerciseContent.implementationPart.implFileName)
-      .map { exFile =>
-        writeExerciseFileAndMount(exFile, solTargetDir, DockerConnector.DefaultWorkingDir / exerciseContent.foldername)
-      }
-
-    val dockerBinds = unitTestSolFilesDockerBinds ++ exFilesMounts ++ Seq(
-      DockerBind(
-        testFile,
-        DockerConnector.DefaultWorkingDir / exerciseContent.foldername / testFileName,
-        isReadOnly = true
-      ),
-      DockerBind(testDataFile, DockerConnector.DefaultWorkingDir / testDataFileName, isReadOnly = true),
-      DockerBind(resultFile, DockerConnector.DefaultWorkingDir / resultFileName)
-    )
-
-    DockerConnector
-      .runContainer(imageName = programmingUnitTestCorrectionDockerImageName.name, maybeDockerBinds = dockerBinds)
-      .map {
-        case Failure(exception) =>
-          onError(
-            "Error while running programming unit test correction image",
-            solutionSaved,
-            maybeException = Some(exception)
-          )
-        case Success(_) =>
-          ResultsFileJsonFormat
-            .readTestCorrectionResultFile(resultFile)
-            .fold(
-              exception =>
-                onError(
-                  "Error while reading unit test correction result file",
-                  solutionSaved,
-                  maybeException = Some(exception)
-                ),
-              results => ProgrammingResult(solutionSaved, unitTestResults = results)
+        createFileAndWrite(
+          testDataFile,
+          Json.prettyPrint(
+            ProgrammingToolJsonProtocol.unitTestDataWrites.writes(
+              UnitTestTestData(
+                exerciseContent.foldername,
+                exerciseContent.filename,
+                testFileNameForTestData,
+                exerciseContent.unitTestPart.unitTestTestConfigs
+              )
             )
-      }
-  }
+          )
+        )
+
+        // find mounts for implementation files
+        val unitTestSolFilesDockerBinds: Seq[DockerBind] = exerciseContent.unitTestPart.unitTestTestConfigs
+          .filter(tc => implFileRegex.matches(tc.file.name))
+          .map { tc =>
+            writeExerciseFileAndMount(
+              tc.file,
+              solTargetDir,
+              s"${DockerConnector.DefaultWorkingDir}/${exerciseContent.foldername}"
+            )
+          }
+
+        // find mounts for exercise files
+        val exFilesMounts = exerciseContent.unitTestPart.unitTestFiles
+          .filter(f => f.name != testFileName && f.name != exerciseContent.implementationPart.implFileName)
+          .map { exFile =>
+            writeExerciseFileAndMount(
+              exFile,
+              solTargetDir,
+              s"${DockerConnector.DefaultWorkingDir}/${exerciseContent.foldername}"
+            )
+          }
+
+        val dockerBinds = unitTestSolFilesDockerBinds ++ exFilesMounts ++ Seq(
+          DockerBind(
+            testFile,
+            s"${DockerConnector.DefaultWorkingDir}/${exerciseContent.foldername}/$testFileName",
+            isReadOnly = true
+          ),
+          DockerBind(testDataFile, s"${DockerConnector.DefaultWorkingDir}/$testDataFileName", isReadOnly = true),
+          DockerBind(resultFile, s"${DockerConnector.DefaultWorkingDir}/$resultFileName")
+        )
+
+        DockerConnector
+          .runContainer(imageName = programmingUnitTestCorrectionDockerImageName.name, maybeDockerBinds = dockerBinds)
+          .map {
+            case Failure(exception) =>
+              onError(
+                "Error while running programming unit test correction image",
+                solutionSaved,
+                maybeException = Some(exception)
+              )
+            case Success(_) =>
+              ResultsFileJsonFormat
+                .readTestCorrectionResultFile(resultFile)
+                .fold(
+                  exception =>
+                    onError(
+                      "Error while reading unit test correction result file",
+                      solutionSaved,
+                      maybeException = Some(exception)
+                    ),
+                  results => ProgrammingResult(solutionSaved, unitTestResults = results)
+                )
+          }
+    }
 
 }

@@ -1,6 +1,7 @@
-package model
+package model.graphql
 
 import javax.inject.{Inject, Singleton}
+import model.User
 import model.json.JsonProtocols
 import model.persistence.ExerciseTableDefs
 import model.tools._

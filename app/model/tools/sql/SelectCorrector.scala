@@ -1,6 +1,5 @@
 package model.tools.sql
 
-import model.tools.sql.ColumnWrapper.wrapColumn
 import model.tools.sql.SqlTool.LimitComparison
 import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
@@ -24,8 +23,17 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   }
 
   override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getSelectBody match {
-    case ps: PlainSelect => ps.getSelectItems.asScala.map(wrapColumn).toSeq
-    case _               => Seq[ColumnWrapper]()
+    case ps: PlainSelect =>
+      ps.getSelectItems.asScala.map { column =>
+        val columnName = column match {
+          case _: AllColumns             => "*"
+          case at: AllTableColumns       => at.toString
+          case set: SelectExpressionItem => set.getExpression.toString
+        }
+
+        SelectColumnWrapper(columnName, column)
+      }.toSeq
+    case _ => Seq[ColumnWrapper]()
   }
 
   override protected def getTables(query: Q): Seq[Table] = query.getSelectBody match {
@@ -56,7 +64,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
         case None => Seq.empty
         case Some(joins) =>
           joins.flatMap { join =>
-            Option(join.getOnExpression) flatMap {
+            Option(join.getOnExpression).flatMap {
               case be: BinaryExpression => Some(be)
               case _                    => None
             }

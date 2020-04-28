@@ -1,7 +1,7 @@
 package model.tools.uml
 
-import model.GraphQLArguments
 import model.core.matching.{MatchType, MatchingResult}
+import model.graphql.GraphQLArguments
 import model.json.KeyValueObject
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._

@@ -32,14 +32,14 @@ trait ProgrammingAbstractCorrector extends AbstractCorrector {
   def writeExerciseFileAndMount(
     exerciseFile: ExerciseFile,
     writeToDirectory: File,
-    bindToDirectory: File = DockerConnector.DefaultWorkingDir,
+    bindToDirectory: String = DockerConnector.DefaultWorkingDir,
     isReadOnly: Boolean = true
   ): DockerBind = {
     val targetPath = writeToDirectory / exerciseFile.name
 
     createFileAndWrite(targetPath, exerciseFile.content)
 
-    DockerBind(targetPath, bindToDirectory / exerciseFile.name, isReadOnly)
+    DockerBind(targetPath, s"$bindToDirectory/${exerciseFile.name}", isReadOnly)
   }
 
 }

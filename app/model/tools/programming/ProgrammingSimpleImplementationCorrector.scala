@@ -1,7 +1,6 @@
 package model.tools.programming
 
 import better.files.File
-import better.files.File._
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import play.api.Logger
 import play.api.libs.json.Json
@@ -39,9 +38,9 @@ object ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorre
           .runContainer(
             imageName = programmingSimplifiedCorrectionDockerImageName.name,
             maybeDockerBinds = progSolutionFilesMounts ++ Seq(
-              DockerBind(testDataFile, DockerConnector.DefaultWorkingDir / testDataFileName, isReadOnly = true),
-              DockerBind(testMainFile, DockerConnector.DefaultWorkingDir / testMainFileName, isReadOnly = true),
-              DockerBind(solTargetDir / resultFileName, DockerConnector.DefaultWorkingDir / resultFileName)
+              DockerBind(testDataFile, s"${DockerConnector.DefaultWorkingDir}/$testDataFileName", isReadOnly = true),
+              DockerBind(testMainFile, s"${DockerConnector.DefaultWorkingDir}/$testMainFileName", isReadOnly = true),
+              DockerBind(solTargetDir / resultFileName, s"${DockerConnector.DefaultWorkingDir}/$resultFileName")
             )
           )
           .map {
