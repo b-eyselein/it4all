@@ -48,20 +48,28 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   guice,
   ws,
-  "com.pauldijou"          %% "jwt-play"              % "4.3.0",
-  "org.scalatestplus.play" %% "scalatestplus-play"    % "5.0.0" % Test,
-  "mysql"                  % "mysql-connector-java"   % "8.0.19", // GPL 2.0
-  "com.typesafe.play"      %% "play-slick"            % "5.0.0", // Apache 2.0
-  "com.typesafe.play"      %% "play-slick-evolutions" % "5.0.0", // Apache 2.0
-  "com.beachape"           %% "enumeratum-play"       % "1.5.17", // MIT
-  "com.beachape"           %% "enumeratum-play-json"  % "1.5.17", // MIT
-  "com.github.t3hnar"      %% "scala-bcrypt"          % "4.1", // Apache 2.0
-  "com.github.pathikrit"   %% "better-files"          % "3.8.0", // MIT
-  "com.spotify"            % "docker-client"          % "8.16.0", // Apache 2.0
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test, // Apache 2.0
+
+  // JWT
+  "com.pauldijou" %% "jwt-play" % "4.3.0", // Apache 2.0
+
+  // Databases
+  "mysql"             % "mysql-connector-java"   % "8.0.19", // GPL 2.0
+  "com.typesafe.play" %% "play-slick"            % "5.0.0",  // Apache 2.0
+  "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0",  // Apache 2.0
+
+  // Other helpers
+  "com.beachape"         %% "enumeratum-play"      % "1.5.17", // MIT
+  "com.beachape"         %% "enumeratum-play-json" % "1.5.17", // MIT
+  "com.github.t3hnar"    %% "scala-bcrypt"         % "4.1",    // Apache 2.0
+  "com.github.pathikrit" %% "better-files"         % "3.8.0",  // MIT
+
+  // Docker
+  "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
 
   // GraphQL
   "org.sangria-graphql" %% "sangria"           % "2.0.0-RC1", // Apache 2.0
-  "org.sangria-graphql" %% "sangria-play-json" % "2.0.1",    // Apache 2.0
+  "org.sangria-graphql" %% "sangria-play-json" % "2.0.1",     // Apache 2.0
 
   // Sql
   "com.github.jsqlparser" % "jsqlparser" % "3.1", // Apache 2.0
