@@ -13,6 +13,15 @@ services:
     ports:
       - 5050:5000
 
+  mongo_main:
+    image:        ls6uniwue/it4all-resources:mongo
+    restart:      always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+
   webtester:
     image:        httpd:alpine
     restart:      always

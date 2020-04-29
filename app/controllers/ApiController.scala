@@ -1,12 +1,13 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import model.persistence.ExerciseTableDefs
 import model.User
 import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
+import model.persistence.ExerciseTableDefs
 import play.api.Configuration
 import play.api.libs.json._
 import play.api.mvc._
+import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 import sangria.ast.Document
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
 import sangria.marshalling.playJson._
@@ -20,9 +21,12 @@ class ApiController @Inject() (
   cc: ControllerComponents,
   tables: ExerciseTableDefs,
   graphQLModel: GraphQLModel,
-  override protected val configuration: Configuration
+  override protected val configuration: Configuration,
+  override val reactiveMongoApi: ReactiveMongoApi
 )(implicit val ec: ExecutionContext)
     extends AbstractController(cc)
+    with MongoController
+    with ReactiveMongoComponents
     with AbstractApiController {
 
   override protected val adminRightsRequired: Boolean = false
@@ -35,7 +39,7 @@ class ApiController @Inject() (
     operationName: Option[String],
     variables: JsObject
   ): Future[Result] = {
-    val userContext = GraphQLContext(tables, user)
+    val userContext = GraphQLContext(tables, database, user)
 
     Executor
       .execute(graphQLModel.schema, query, userContext, operationName = operationName, variables = variables)

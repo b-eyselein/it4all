@@ -43,8 +43,6 @@ resolvers ++= Seq(
   // LS 6 Uni Wue Artifactory
   ("Artifactory" at s"$artifactoryUrl/libs-release").withAllowInsecureProtocol(true),
   ("Snapshot Artifactory" at s"$artifactoryUrl/libs-snapshot/").withAllowInsecureProtocol(true)
-  // Typescript Interfaces Plugin
-  // Resolver.sonatypeRepo("snapshots")
 )
 
 libraryDependencies ++= Seq(
@@ -56,9 +54,10 @@ libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-play" % "4.3.0", // Apache 2.0
 
   // Databases
-  "mysql"             % "mysql-connector-java"   % "8.0.19", // GPL 2.0
-  "com.typesafe.play" %% "play-slick"            % "5.0.0",  // Apache 2.0
-  "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0",  // Apache 2.0
+  "mysql"             % "mysql-connector-java"   % "8.0.20",        // GPL 2.0
+  "com.typesafe.play" %% "play-slick"            % "5.0.0",         // Apache 2.0
+  "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0",         // Apache 2.0
+  "org.reactivemongo" %% "play2-reactivemongo"   % "0.20.8-play28", // Apache 2.0
 
   // Other helpers
   "com.beachape"         %% "enumeratum-play"      % "1.5.17", // MIT
@@ -70,7 +69,7 @@ libraryDependencies ++= Seq(
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
 
   // GraphQL
-  "org.sangria-graphql" %% "sangria"           % "2.0.0-RC1", // Apache 2.0
+  "org.sangria-graphql" %% "sangria"           % "2.0.0-RC2", // Apache 2.0
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.1",     // Apache 2.0
 
   // Sql

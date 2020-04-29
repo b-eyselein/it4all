@@ -1,10 +1,11 @@
 package model.graphql
 
+import model.MongoClientQueries
 import model.json.JsonProtocols
 import model.tools.{ExerciseCollection, ToolGraphQLModels, ToolList}
 import play.api.libs.json.Json
 import sangria.macros.derive.{AddFields, deriveObjectType}
-import sangria.schema.{Field, IDType, IntType, ListType, ObjectType, OptionType, StringType}
+import sangria.schema.{Field, IDType, ListType, LongType, ObjectType, OptionType, StringType}
 
 trait CollectionGraphQLModel extends ToolGraphQLModels with ExerciseGraphQLModels with GraphQLArguments {
 
@@ -22,9 +23,10 @@ trait CollectionGraphQLModel extends ToolGraphQLModels with ExerciseGraphQLModel
       ),
       Field(
         "exerciseCount",
-        IntType,
-        resolve =
-          context => context.ctx.tables.futureExerciseCountInColl(context.value.toolId, context.value.collectionId)
+        LongType,
+        resolve = context =>
+          MongoClientQueries
+            .getExerciseCountForCollection(context.ctx.mongoDB, context.value.toolId, context.value.collectionId)
       ),
       Field(
         "exercises",
@@ -32,7 +34,7 @@ trait CollectionGraphQLModel extends ToolGraphQLModels with ExerciseGraphQLModel
         resolve = context =>
           ToolList.tools.find(_.id == context.value.toolId) match {
             case None       => ???
-            case Some(tool) => tool.futureExercisesInCollection(context.ctx.tables, context.value.collectionId)
+            case Some(tool) => tool.futureUntypedExercisesInCollection(context.ctx.tables, context.value.collectionId)
           }
       ),
       Field(

@@ -70,7 +70,7 @@ abstract class CollectionTool(
       dbExercises <- tableDefs.futureAllExercisesForTool(this.id)
     } yield dbExercises.flatMap(dbExerciseToExercise)
 
-  def futureExercisesInCollection(
+  def futureUntypedExercisesInCollection(
     tableDefs: ExerciseTableDefs,
     collId: Int
   )(implicit ec: ExecutionContext): Future[Seq[Exercise[_, _ <: ExerciseContent[_]]]] =

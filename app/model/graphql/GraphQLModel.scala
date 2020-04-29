@@ -1,16 +1,17 @@
 package model.graphql
 
 import javax.inject.{Inject, Singleton}
-import model.User
 import model.json.JsonProtocols
 import model.persistence.ExerciseTableDefs
 import model.tools._
+import model.{MongoClientQueries, User}
 import play.api.Environment
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
+import reactivemongo.api.DefaultDB
 import sangria.schema._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 final case class GraphQLRequest(
   query: String,
@@ -19,7 +20,8 @@ final case class GraphQLRequest(
 )
 
 final case class GraphQLContext(
-  tables: ExerciseTableDefs,
+  @deprecated("A", "B") tables: ExerciseTableDefs,
+  mongoDB: Future[DefaultDB],
   user: Option[User]
 )
 
@@ -58,19 +60,20 @@ class GraphQLModel @Inject() (
       // Fields for collections
       Field(
         "collectionCount",
-        IntType,
-        resolve = context => context.ctx.tables.futureCollectionCount(context.value.id)
+        LongType,
+        resolve = context => MongoClientQueries.getCollectionCount(context.ctx.mongoDB, context.value.id)
       ),
       Field(
         "collections",
         ListType(CollectionType),
-        resolve = context => context.ctx.tables.futureAllCollections(context.value.id)
+        resolve = context => MongoClientQueries.getExerciseCollections(context.ctx.mongoDB, context.value.id)
       ),
       Field(
         "collection",
         OptionType(CollectionType),
         arguments = collIdArgument :: Nil,
-        resolve = context => context.ctx.tables.futureCollById(context.value.id, context.arg(collIdArgument))
+        resolve = context =>
+          MongoClientQueries.getExerciseCollection(context.ctx.mongoDB, context.value.id, context.arg(collIdArgument))
       ),
       Field(
         "readCollections",
@@ -92,8 +95,8 @@ class GraphQLModel @Inject() (
       // Special fields for exercises
       Field(
         "exerciseCount",
-        IntType,
-        resolve = context => context.ctx.tables.futureExerciseCountForTool(context.value.id)
+        LongType,
+        resolve = context => MongoClientQueries.getExerciseCountForTool(context.ctx.mongoDB, context.value.id)
       ),
       Field(
         "allExercises",
