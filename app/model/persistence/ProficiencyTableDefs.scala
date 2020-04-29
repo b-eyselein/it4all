@@ -14,24 +14,21 @@ trait ProficiencyTableDefs extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
+  protected val topicsTQ: TableQuery[TopicsTable]                         = TableQuery[TopicsTable]
   protected val toolProficienciesTQ: TableQuery[ToolProficienciesTable]   = TableQuery[ToolProficienciesTable]
   protected val topicProficienciesTQ: TableQuery[TopicProficienciesTable] = TableQuery[TopicProficienciesTable]
 
   private def toolProficiency(username: String, toolId: String): Future[Option[ToolProficiency]] =
     db.run(
       toolProficienciesTQ
-        .filter { tp =>
-          tp.username === username && tp.toolId === toolId
-        }
+        .filter { tp => tp.username === username && tp.toolId === toolId }
         .result
         .headOption
     )
 
   private def topicProficiencies(username: String, toolId: String): Future[Seq[TopicProficiency]] =
     db.run(
-      topicProficienciesTQ.filter { tp =>
-        tp.username === username && tp.toolId === toolId
-      }.result
+      topicProficienciesTQ.filter { tp => tp.username === username && tp.toolId === toolId }.result
     )
 
   def futureProficiencies(username: String, toolId: String): Future[Option[Proficiencies]] =

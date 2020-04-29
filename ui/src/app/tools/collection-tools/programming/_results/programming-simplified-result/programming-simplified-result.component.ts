@@ -5,11 +5,9 @@ import {SuccessType} from "../../../../../_interfaces/graphql-types";
 @Component({
   selector: 'it4all-programming-simplified-result',
   template: `
-    <div class="card" [class.is-success]="correct" [class.is-danger]="!correct">
-      <header class="card-header">
-        <p class="card-header-title">{{result.id}}. Test war {{correct ? '' : 'nicht'}} erfolgreich.</p>
-      </header>
-      <div class="card-content">
+    <div class="message" [ngClass]="correct ? 'is-success' : 'is-danger'">
+      <header class="message-header">{{result.id}}. Test war {{correct ? '' : 'nicht'}} erfolgreich.</header>
+      <div class="message-body">
 
         <p>Eingabe: <code>{{result.input}}</code></p>
         <p>Erwartet: <code>{{result.awaited}}</code></p>

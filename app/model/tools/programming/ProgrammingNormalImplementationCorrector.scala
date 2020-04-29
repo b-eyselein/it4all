@@ -1,7 +1,6 @@
 package model.tools.programming
 
 import better.files.File
-import better.files.File._
 import model.core.result.SuccessType
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.tools.SampleSolution
@@ -33,16 +32,13 @@ object ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorre
             val unitTestFile     = solTargetDir / unitTestFileName
             createFileAndWrite(unitTestFile, unitTestFileContent)
 
-            val dockerBinds = programmingSolutionFilesMounts :+ DockerBind(
-              unitTestFile,
-              DockerConnector.DefaultWorkingDir / unitTestFileName,
-              isReadOnly = true
-            )
+            val unitTestFileMount =
+              DockerBind(unitTestFile, s"${DockerConnector.DefaultWorkingDir}/$unitTestFileName}", isReadOnly = true)
 
             DockerConnector
               .runContainer(
                 programmingNormalCorrectionDockerImage.name,
-                maybeDockerBinds = dockerBinds,
+                maybeDockerBinds = programmingSolutionFilesMounts :+ unitTestFileMount,
                 deleteContainerAfterRun = false
               )
               .map {

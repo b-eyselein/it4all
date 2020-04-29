@@ -13,6 +13,4 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlSolution, XmlExerciseCont
     Json.format
   }
 
-  override val partTypeFormat: Format[XmlExPart] = XmlExPart.jsonFormat
-
 }

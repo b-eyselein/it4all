@@ -1,7 +1,6 @@
 package model.tools.sql
 
 import model.core.matching.MatchingResult
-import model.tools.sql.ColumnWrapper.wrapColumn
 import model.tools.sql.matcher.{ExpressionListMatch, ExpressionListMatcher}
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.expression.operators.relational.{ExpressionList, MultiExpressionList}
@@ -81,7 +80,7 @@ object UpdateCorrector extends ChangeCorrector("UPDATE") {
   override type Q = Update
 
   override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] =
-    query.getColumns.asScala.map(wrapColumn).toSeq
+    query.getColumns.asScala.map { column => ChangeColumnWrapper(column.getColumnName, column) }.toSeq
 
   override protected def getTables(query: Q): Seq[Table] = Seq(query.getTable)
 

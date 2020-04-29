@@ -1,6 +1,5 @@
 package model.tools.rose
 
-import better.files.File._
 import better.files._
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.points._
@@ -62,10 +61,10 @@ object RoseCorrector extends AbstractCorrector {
       optionsFilePath.createFileIfNotExists(createParents = true).write(buildOptionFileContent())
 
       val dockerBinds: Seq[DockerBind] = Seq(
-        DockerBind(solutionFilePath, DockerConnector.DefaultWorkingDir / solutionFileName),
-        DockerBind(sampleFilePath, DockerConnector.DefaultWorkingDir / sampleFileName),
-        DockerBind(actionFilePath, DockerConnector.DefaultWorkingDir / actionsFileName),
-        DockerBind(optionsFilePath, DockerConnector.DefaultWorkingDir / optionsFileName)
+        DockerBind(solutionFilePath, s"${DockerConnector.DefaultWorkingDir}/$solutionFileName"),
+        DockerBind(sampleFilePath, s"${DockerConnector.DefaultWorkingDir}/$sampleFileName"),
+        DockerBind(actionFilePath, s"${DockerConnector.DefaultWorkingDir}/$actionsFileName"),
+        DockerBind(optionsFilePath, s"${DockerConnector.DefaultWorkingDir}/$optionsFileName")
       )
 
       futureImageExists.flatMap {
@@ -101,7 +100,7 @@ object RoseCorrector extends AbstractCorrector {
       }
   }
 
-  private def indent(str: String, depth: Int): String = str.split(NewLine).map(" " * 4 * depth + _).mkString(NewLine)
+  private def indent(str: String): String = str.split(NewLine).map(" " * 4 * 2 + _).mkString(NewLine)
 
   private def buildSampleFileContent(sampleSolution: String): String = {
     val baseDeclaration =
@@ -112,7 +111,7 @@ object RoseCorrector extends AbstractCorrector {
         |    def run(self, width: int, height: int):
         |""".stripMargin
 
-    baseDeclaration + indent(sampleSolution, 2)
+    baseDeclaration + indent(sampleSolution)
   }
 
   private def buildOptionFileContent(): String =

@@ -1,7 +1,5 @@
 package model.core
 
-import java.nio.file.{Path, Paths}
-
 import better.files.File
 import com.spotify.docker.client.DockerClient.LogsParam
 import com.spotify.docker.client.messages.HostConfig.Bind
@@ -13,12 +11,12 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 
-final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = false) {
+final case class DockerBind(fromPath: File, toPath: String, isReadOnly: Boolean = false) {
 
   def toBind: Bind =
     Bind
       .from(fromPath.path.toAbsolutePath.toString)
-      .to(toPath.path.toAbsolutePath.toString)
+      .to(toPath)
       .readOnly(isReadOnly)
       .build()
 
@@ -36,11 +34,9 @@ object DockerConnector {
 
   private val logger: Logger = Logger(DockerConnector.getClass)
 
-  private val MaxWaitTimeInSeconds: Int = 3
-
   private val SuccessStatusCode: Int = 0
 
-  val DefaultWorkingDir: Path = Paths.get("/data")
+  val DefaultWorkingDir = "/data"
 
   private val dockerClient: DockerClient = DefaultDockerClient.fromEnv().build()
 
@@ -104,31 +100,29 @@ object DockerConnector {
 
   private def startContainer(container: String): Try[Unit] = Try(dockerClient.startContainer(container))
 
-  private def waitForContainer(container: String, waitTimeInSeconds: Int): Try[ContainerExit] =
-    Try(dockerClient.waitContainer(container))
+  private def waitForContainer(container: String): Try[ContainerExit] = Try(dockerClient.waitContainer(container))
 
   private def deleteContainer(container: String): Try[Unit] = Try(dockerClient.removeContainer(container))
 
   def runContainer(
     imageName: String,
-    maybeWorkingDir: Option[Path] = Some(DefaultWorkingDir),
+    maybeWorkingDir: Option[String] = Some(DefaultWorkingDir),
     maybeEntryPoint: Option[Seq[String]] = None,
     maybeCmd: Option[Seq[String]] = None,
     maybeDockerBinds: Seq[DockerBind] = Seq.empty,
-    maxWaitTimeInSeconds: Int = MaxWaitTimeInSeconds,
     deleteContainerAfterRun: Boolean = true
   )(implicit ec: ExecutionContext): Future[Try[RunContainerResult]] = Future {
 
-    createContainer(imageName, maybeWorkingDir map (_.toString), maybeEntryPoint, maybeCmd, maybeDockerBinds).flatMap {
+    createContainer(imageName, maybeWorkingDir, maybeEntryPoint, maybeCmd, maybeDockerBinds).flatMap {
       containerCreation: ContainerCreation =>
         val containerId = containerCreation.id
 
         startContainer(containerId).flatMap { _ =>
-          waitForContainer(containerId, maxWaitTimeInSeconds).map { containerExit =>
+          waitForContainer(containerId).map { containerExit =>
             val statusCode = containerExit.statusCode.toInt
 
             val result: RunContainerResult =
-              RunContainerResult(statusCode, getContainerLogs(containerId, maxWaitTimeInSeconds))
+              RunContainerResult(statusCode, getContainerLogs(containerId))
 
             if (deleteContainerAfterRun && statusCode == SuccessStatusCode) {
               // Do not delete failed containers for now
@@ -144,7 +138,13 @@ object DockerConnector {
     }
   }
 
-  private def getContainerLogs(containerId: String, maxWaitTimeInSeconds: Int): String =
-    dockerClient.logs(containerId, LogsParam.stdout(), LogsParam.stderr()).readFully()
+  private def getContainerLogs(containerId: String): String =
+    dockerClient
+      .logs(
+        containerId,
+        LogsParam.stdout(),
+        LogsParam.stderr()
+      )
+      .readFully()
 
 }

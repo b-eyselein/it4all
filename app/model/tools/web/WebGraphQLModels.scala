@@ -1,8 +1,8 @@
 package model.tools.web
 
 import de.uniwue.webtester.sitespec.{HtmlTask, JsAction, JsActionType, SiteSpec}
-import model.GraphQLArguments
 import model.core.result.SuccessType
+import model.graphql.GraphQLArguments
 import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._

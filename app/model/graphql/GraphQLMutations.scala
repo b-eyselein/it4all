@@ -1,4 +1,4 @@
-package model
+package model.graphql
 
 import model.json.JsonProtocols
 import model.tools.ToolList

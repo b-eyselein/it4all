@@ -15,7 +15,9 @@ wartremoverWarnings ++= Warts.allBut(
   Wart.ImplicitParameter,
   Wart.Nothing,
   Wart.Recursion,
-  Wart.Any
+  Wart.Any,
+  Wart.JavaSerializable,
+  Wart.Product
 )
 
 wartremoverExcluded ++= routes.in(Compile).value

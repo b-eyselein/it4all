@@ -14,6 +14,4 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlClassDiagram, UmlExercise
     Json.format
   }
 
-  override val partTypeFormat: Format[UmlExPart] = UmlExPart.jsonFormat
-
 }

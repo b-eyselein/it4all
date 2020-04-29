@@ -21,8 +21,6 @@ object RoseToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RoseExe
     Json.format
   }
 
-  override val partTypeFormat: Format[RoseExPart] = RoseExPart.jsonFormat
-
   // Other
 
   val roseExecutionResultFormat: Format[RoseExecutionResult] = {

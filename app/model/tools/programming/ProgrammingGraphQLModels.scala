@@ -1,7 +1,7 @@
 package model.tools.programming
 
-import model.GraphQLArguments
 import model.core.result.SuccessType
+import model.graphql.GraphQLArguments
 import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
 import play.api.libs.json.Json
 import sangria.macros.derive._
