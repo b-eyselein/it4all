@@ -1,6 +1,7 @@
 version: "3.3"
 
 volumes:
+  mongo_data_volume: {}
   sql_main_volume: {}
   select_db_volume: {}
   update_db_volume: {}
@@ -21,6 +22,10 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: 1234
+    volumes:
+      - type:     volume
+        source:   mongo_data_volume
+        target:   /data/db
 
   webtester:
     image:        httpd:alpine

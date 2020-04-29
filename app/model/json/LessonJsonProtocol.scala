@@ -1,11 +1,11 @@
 package model.json
 
 import model.lesson._
-import play.api.libs.json.{Format, Json, JsonConfiguration, JsonNaming}
+import play.api.libs.json._
 
 trait LessonJsonProtocol {
 
-  val lessonContentFormat: Format[LessonContent] = {
+  val lessonContentFormat: OFormat[LessonContent] = {
 
     implicit val cfg: JsonConfiguration = JsonConfiguration(
       typeNaming = JsonNaming { fullName =>
@@ -25,6 +25,12 @@ trait LessonJsonProtocol {
 
       Json.format
     }
+
+    Json.format
+  }
+
+  val lessonFormat: OFormat[Lesson] = {
+    implicit val lcf: OFormat[LessonContent] = lessonContentFormat
 
     Json.format
   }

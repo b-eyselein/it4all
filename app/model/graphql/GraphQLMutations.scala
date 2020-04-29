@@ -1,7 +1,8 @@
 package model.graphql
 
+import model.MongoClientQueries
 import model.json.JsonProtocols
-import model.tools.ToolList
+import model.tools.{ToolList, UserSolution}
 import play.api.libs.json._
 import sangria.marshalling.playJson._
 import sangria.schema._
@@ -9,7 +10,7 @@ import sangria.schema._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments {
+trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries {
 
   protected implicit val ec: ExecutionContext
 
@@ -32,13 +33,14 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments {
             val part     = context.arg(PartTypeInputArg)
             val solution = context.arg(SolTypeInputArg)
 
-            toolMain.futureExerciseTypeById(context.ctx.tables, collId, exId).flatMap {
+            getExercise(context.ctx.mongoDB, toolMain, collId, exId, toolMain.toolJsonProtocol.exerciseFormat).flatMap {
               case Some(exercise) =>
-                val solutionJson = toolMain.toolJsonProtocol.solutionFormat.writes(solution)
-
                 for {
-                  solutionSaved <- context.ctx.tables
-                    .futureInsertSolution(user.username, exId, collId, toolMain.id, part, solutionJson)
+                  solutionSaved <- insertSolution(
+                    context.ctx.mongoDB,
+                    UserSolution(exId, collId, toolMain.id, user.username, solution),
+                    toolMain.toolJsonProtocol.userSolutionFormat
+                  )
 
                   result <- toolMain.correctAbstract(user, solution, exercise, part, solutionSaved)
                 } yield result
@@ -64,7 +66,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments {
               JsonProtocols.collectionFormat.reads(jsonCollection) match {
                 case JsError(_) => Future.successful(None)
                 case JsSuccess(collection, _) =>
-                  context.ctx.tables.futureUpsertCollection(collection).map {
+                  upsertExerciseCollection(context.ctx.mongoDB, collection).map {
                     case false => None
                     case true  => Some(collection)
                   }
@@ -82,12 +84,16 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments {
               val jsonExercise: JsValue = Json.parse(context.arg(contentArgument))
 
               tool.toolJsonProtocol.exerciseFormat.reads(jsonExercise) match {
-                case JsError(_) => Future.successful(None)
+                case JsError(_)             => Future.successful(None)
                 case JsSuccess(exercise, _) =>
+                  /*
                   tool.futureUpsertExercise(context.ctx.tables, exercise).map {
                     case false => None
                     case true  => Some(exercise)
                   }
+
+                   */
+                  None
               }
           }
         }

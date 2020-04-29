@@ -1,21 +1,22 @@
 package model.persistence
 
+import javax.inject.Inject
 import model._
-import play.api.db.slick.HasDatabaseConfigProvider
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait TableDefs extends HasDatabaseConfigProvider[JdbcProfile] {
+class TableDefs @Inject() (
+  override protected val dbConfigProvider: DatabaseConfigProvider
+) extends HasDatabaseConfigProvider[JdbcProfile] {
 
   import profile.api._
 
-  protected implicit val executionContext: ExecutionContext
-
   // Table queries
 
-  protected val users = TableQuery[UsersTable]
+  private val users = TableQuery[UsersTable]
 
   // Reading
 
@@ -26,7 +27,8 @@ trait TableDefs extends HasDatabaseConfigProvider[JdbcProfile] {
       .headOption
   )
 
-  def saveUser(user: User): Future[Boolean] = db.run(users += user).transform(_ == 1, identity)
+  def saveUser(user: User)(implicit ec: ExecutionContext): Future[Boolean] =
+    db.run(users += user).transform(_ == 1, identity)
 
   // Column types
 

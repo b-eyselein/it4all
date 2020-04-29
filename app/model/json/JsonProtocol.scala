@@ -10,11 +10,11 @@ final case class KeyValueObject(key: String, value: String)
 
 object JsonProtocols extends LessonJsonProtocol {
 
-  val userFormat: Format[User] = Json.format
+  val userFormat: OFormat[User] = Json.format
 
-  val collectionFormat: Format[ExerciseCollection] = Json.format
+  val collectionFormat: OFormat[ExerciseCollection] = Json.format
 
-  val exerciseFileFormat: Format[ExerciseFile] = Json.format
+  val exerciseFileFormat: OFormat[ExerciseFile] = Json.format
 
   val readCollectionsMessageReads: Reads[ReadCollectionsMessage] = {
     implicit val cr: Reads[ExerciseCollection] = JsonProtocols.collectionFormat

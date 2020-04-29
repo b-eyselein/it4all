@@ -7,7 +7,7 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.json.JsonProtocols
 import model.lti.BasicLtiLaunchRequest
-import model.persistence.ExerciseTableDefs
+import model.persistence.TableDefs
 import pdi.jwt.JwtSession
 import play.api.Configuration
 import play.api.libs.json._
@@ -19,7 +19,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ApiLoginController @Inject() (
   cc: ControllerComponents,
-  tables: ExerciseTableDefs,
+  tables: TableDefs,
   override protected val configuration: Configuration
 )(implicit val ec: ExecutionContext)
     extends AbstractController(cc)

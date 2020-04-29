@@ -21,7 +21,13 @@ trait ToolJsonProtocol[S, C <: ExerciseContent[S], PartType <: ExPart] {
 
   val solutionFormat: Format[S]
 
-  lazy val sampleSolutionFormat: Format[SampleSolution[S]] = {
+  lazy val sampleSolutionFormat: OFormat[SampleSolution[S]] = {
+    implicit val sf: Format[S] = solutionFormat
+
+    Json.format
+  }
+
+  lazy val userSolutionFormat: OFormat[UserSolution[S]] = {
     implicit val sf: Format[S] = solutionFormat
 
     Json.format
@@ -29,7 +35,7 @@ trait ToolJsonProtocol[S, C <: ExerciseContent[S], PartType <: ExPart] {
 
   val exerciseContentFormat: Format[C]
 
-  final lazy val exerciseFormat: Format[Exercise[S, C]] = {
+  final lazy val exerciseFormat: OFormat[Exercise[S, C]] = {
     implicit val fc: Format[C] = exerciseContentFormat
 
     Json.format

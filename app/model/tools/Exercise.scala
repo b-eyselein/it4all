@@ -11,7 +11,7 @@ final case class ExerciseCollection(
   toolId: String,
   title: String,
   authors: Seq[String],
-  text: String,
+  text: String
 )
 
 trait ExerciseContent[S] {
@@ -34,14 +34,22 @@ final case class Exercise[S, C <: ExerciseContent[S]](
   content: C
 )
 
-final case class SampleSolution[SolType](
-  id: Int,
-  sample: SolType
-)
-
 final case class ExerciseFile(
   name: String,
   fileType: String,
   editable: Boolean,
   content: String
+)
+
+final case class SampleSolution[SolType](
+  id: Int,
+  sample: SolType
+)
+
+final case class UserSolution[SolType](
+  exerciseId: Int,
+  collectionId: Int,
+  toolId: String,
+  username: String,
+  solution: SolType
 )

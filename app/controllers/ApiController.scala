@@ -3,7 +3,6 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import model.User
 import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
-import model.persistence.ExerciseTableDefs
 import play.api.Configuration
 import play.api.libs.json._
 import play.api.mvc._
@@ -19,7 +18,6 @@ import scala.util.{Failure, Success}
 @Singleton
 class ApiController @Inject() (
   cc: ControllerComponents,
-  tables: ExerciseTableDefs,
   graphQLModel: GraphQLModel,
   override protected val configuration: Configuration,
   override val reactiveMongoApi: ReactiveMongoApi
@@ -39,7 +37,7 @@ class ApiController @Inject() (
     operationName: Option[String],
     variables: JsObject
   ): Future[Result] = {
-    val userContext = GraphQLContext(tables, database, user)
+    val userContext = GraphQLContext(database, user)
 
     Executor
       .execute(graphQLModel.schema, query, userContext, operationName = operationName, variables = variables)
