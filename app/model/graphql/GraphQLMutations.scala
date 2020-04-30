@@ -1,16 +1,35 @@
 package model.graphql
 
-import model.MongoClientQueries
+import com.github.t3hnar.bcrypt._
+import controllers.JwtHelpers
+import model._
 import model.json.JsonProtocols
 import model.tools.{ToolList, UserSolution}
 import play.api.libs.json._
+import reactivemongo.api.DefaultDB
+import sangria.macros.derive._
 import sangria.marshalling.playJson._
 import sangria.schema._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries {
+trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries with JwtHelpers {
+
+  private val registerValuesInputType: InputObjectType[RegisterValues]   = deriveInputObjectType()
+  private val userCredentialsInputType: InputObjectType[UserCredentials] = deriveInputObjectType()
+
+  private val userCredentialsArgument: Argument[UserCredentials] = {
+    implicit val ucf: OFormat[UserCredentials] = JsonProtocols.userCredentialsFormat
+
+    Argument("credentials", userCredentialsInputType)
+  }
+
+  private val registerValuesArgument: Argument[RegisterValues] = {
+    implicit val rvf: OFormat[RegisterValues] = JsonProtocols.registerValuesFormat
+
+    Argument("registerValues", registerValuesInputType)
+  }
 
   protected implicit val ec: ExecutionContext
 
@@ -23,9 +42,12 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
     Field(
       s"correct${toolMain.id.capitalize}",
       toolMain.graphQlModels.toolAbstractResultTypeInterfaceType,
-      arguments = collIdArgument :: exIdArgument :: PartTypeInputArg :: SolTypeInputArg :: Nil,
-      resolve = context =>
-        context.ctx.user match {
+      arguments = userJwtArgument :: collIdArgument :: exIdArgument :: PartTypeInputArg :: SolTypeInputArg :: Nil,
+      resolve = context => {
+
+        val jwtString: String = context.arg(userJwtArgument)
+
+        deserializeJwt(jwtString) match {
           case None => ??? // Future.successful(None)
           case Some(user) =>
             val collId   = context.arg(collIdArgument)
@@ -49,12 +71,59 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
             }
 
         }
+      }
     )
   }
+
+  private def register(registerValues: RegisterValues, defaultDB: Future[DefaultDB]): Future[Option[String]] =
+    if (registerValues.isInvalid) {
+      Future.successful(None)
+    } else {
+      getUser(defaultDB, registerValues.username).flatMap {
+        case Some(_) => Future.successful(None)
+        case None =>
+          val newUser = User(registerValues.username, Some(registerValues.firstPassword.bcrypt))
+
+          insertUser(defaultDB, newUser).map {
+            case false => None
+            case true  => Some(newUser.username)
+          }
+      }
+    }
+
+  private def authenticate(
+    credentials: UserCredentials,
+    defaultDB: Future[DefaultDB]
+  ): Future[Option[LoggedInUserWithToken]] =
+    getUser(defaultDB, credentials.username).map { maybeUser =>
+      for {
+        user: User      <- maybeUser
+        pwHash: String  <- user.pwHash
+        pwOkay: Boolean <- credentials.password.isBcryptedSafe(pwHash).toOption
+        maybeUser <- if (pwOkay) {
+          val loggedInUser = LoggedInUser(user.username, user.isAdmin)
+
+          Some(LoggedInUserWithToken(loggedInUser, createJwtSession(loggedInUser).serialize))
+        } else None
+
+      } yield maybeUser
+    }
 
   protected val MutationType: ObjectType[GraphQLContext, Unit] = ObjectType(
     "Mutation",
     fields = fields[GraphQLContext, Unit](
+      Field(
+        "register",
+        OptionType(StringType),
+        arguments = registerValuesArgument :: Nil,
+        resolve = context => register(context.arg(registerValuesArgument), context.ctx.mongoDB)
+      ),
+      Field(
+        "login",
+        OptionType(loggedInUserWithTokenType),
+        arguments = userCredentialsArgument :: Nil,
+        resolve = context => authenticate(context.arg(userCredentialsArgument), context.ctx.mongoDB)
+      ),
       Field(
         "upsertCollection",
         OptionType(CollectionType),
@@ -84,16 +153,12 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
               val jsonExercise: JsValue = Json.parse(context.arg(contentArgument))
 
               tool.toolJsonProtocol.exerciseFormat.reads(jsonExercise) match {
-                case JsError(_)             => Future.successful(None)
+                case JsError(_) => Future.successful(None)
                 case JsSuccess(exercise, _) =>
-                  /*
-                  tool.futureUpsertExercise(context.ctx.tables, exercise).map {
+                  insertExercise(context.ctx.mongoDB, exercise, tool.toolJsonProtocol.exerciseFormat).map {
                     case false => None
                     case true  => Some(exercise)
                   }
-
-                   */
-                  None
               }
           }
         }

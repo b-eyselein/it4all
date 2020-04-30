@@ -1,6 +1,5 @@
 package model.tools.xml
 
-import enumeratum.{EnumEntry, PlayEnum}
 import model.tools._
 
 sealed abstract class XmlExPart(val partName: String, val id: String) extends ExPart
@@ -12,16 +11,6 @@ object XmlExPart extends ExParts[XmlExPart] {
   case object GrammarCreationXmlPart extends XmlExPart(partName = "Grammatik", id = "grammar")
 
   case object DocumentCreationXmlPart extends XmlExPart(partName = "Dokument", id = "document")
-
-}
-
-sealed trait XmlExTag extends EnumEntry
-
-case object XmlExTag extends PlayEnum[XmlExTag] {
-
-  override val values: IndexedSeq[XmlExTag] = findValues
-
-  case object XmlExTagTodo extends XmlExTag
 
 }
 

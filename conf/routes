@@ -1,11 +1,7 @@
+# Client
 GET         /                                  controllers.FrontendController.index
 
-# User managemente
-# TODO: registration of users ?!?
-#PUT          /api/register                                                                controllers.ApiLoginController.register
-
-PUT         /api/users/authenticate            controllers.ApiLoginController.apiAuthenticate
-
+# LTI
 POST        /api/lti                           controllers.ApiLoginController.ltiHoneypot
 GET         /api/claimWebToken/:uuidStr        controllers.ApiLoginController.claimJsonWebToken(uuidStr: String)
 

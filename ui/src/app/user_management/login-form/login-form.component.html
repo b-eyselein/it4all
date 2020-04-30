@@ -1,4 +1,7 @@
 <div class="container">
+
+  <h1 class="title is-3 has-text-centered">Login</h1>
+
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
     <div class="field">
@@ -6,9 +9,6 @@
       <div class="control">
         <input type="text" id="username" formControlName="username" class="input" placeholder="Nutzername" autofocus>
       </div>
-      <p *ngIf="submitted && f.username.errors && f.username.errors.required" class="help is-danger">
-        Nutzername darf nicht leer sein!
-      </p>
     </div>
 
     <div class="field">
@@ -16,10 +16,13 @@
       <div class="control">
         <input type="password" formControlName="password" placeholder="Passwort" id="password" class="input">
       </div>
-      <p *ngIf="submitted && f.password.errors && f.password.errors.required" class="help is-danger">
-        Passwort darf nicht leer sein!
-      </p>
     </div>
+
+    <div class="notification is-danger" *ngIf="submitted && inValid">
+      Kombination aus Nutzername und Password ist nicht valide!
+    </div>
+
+    <br>
 
     <div class="field">
       <div class="control">

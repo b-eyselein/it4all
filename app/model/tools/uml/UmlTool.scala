@@ -1,7 +1,8 @@
 package model.tools.uml
 
-import model.User
+import model.LoggedInUser
 import model.core.matching.MatchingResult
+import model.graphql.ToolGraphQLModelBasics
 import model.tools._
 import model.tools.uml.matcher._
 
@@ -32,7 +33,7 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
   // Correction
 
   override def correctAbstract(
-    user: User,
+    user: LoggedInUser,
     solution: UmlClassDiagram,
     exercise: Exercise[UmlClassDiagram, UmlExerciseContent],
     part: UmlExPart,

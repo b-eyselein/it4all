@@ -1,9 +1,9 @@
 package model.tools.sql
 
-import model.graphql.{GraphQLArguments, GraphQLContext}
+import model.graphql.{GraphQLArguments, GraphQLContext, ToolGraphQLModelBasics}
 import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
-import model.tools.{SampleSolution, ToolGraphQLModelBasics}
+import model.tools.SampleSolution
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table

@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
 export type RegexCorrectionMutationVariables = {
+  userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.RegexExPart;
@@ -143,8 +144,8 @@ export const RegexExtractionResultFragmentDoc = gql`
 }
     ${RegexExtractionSingleResultFragmentDoc}`;
 export const RegexCorrectionDocument = gql`
-    mutation RegexCorrection($collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
-  correctRegex(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+    mutation RegexCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
+  correctRegex(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
     __typename
     solutionSaved
     points

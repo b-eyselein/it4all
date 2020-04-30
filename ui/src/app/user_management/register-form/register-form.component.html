@@ -1,0 +1,45 @@
+<div class="container">
+
+  <h1 class="title is-3 has-text-centered">Registrieren</h1>
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+    <div class="field">
+      <label for="username" class="label">Nutzername:</label>
+      <div class="control">
+        <input type="text" id="username" formControlName="username" class="input" placeholder="Nutzername" required
+               autofocus>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="firstPassword" class="label">Passwort:</label>
+      <div class="control">
+        <input type="password" id="firstPassword" formControlName="firstPassword" class="input" placeholder="Passwort"
+               required>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="secondPassword" class="label">Passwort wiederholen:</label>
+      <div class="control">
+        <input type="password" id="secondPassword" formControlName="secondPassword" class="input"
+               placeholder="Passwort wiederholen" required>
+      </div>
+    </div>
+
+    <div class="notification" *ngIf="registeredUsername">
+      Nutzer <code>{{registeredUsername}}</code> wurde erfolgreich registriert.
+    </div>
+
+    <br>
+
+    <div class="field">
+      <div class="control">
+        <button class="button is-link">Registrieren</button>
+      </div>
+    </div>
+
+  </form>
+
+</div>

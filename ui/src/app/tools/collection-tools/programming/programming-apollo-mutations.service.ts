@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
 export type ProgrammingCorrectionMutationVariables = {
+  userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.ProgExPart;
@@ -113,8 +114,8 @@ export const ProgrammingResultFragmentDoc = gql`
 ${NormalExecutionResultFragmentDoc}
 ${UnitTestCorrectionResultFragmentDoc}`;
 export const ProgrammingCorrectionDocument = gql`
-    mutation ProgrammingCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
-  correctProgramming(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+    mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
+  correctProgramming(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
     __typename
     solutionSaved
     points

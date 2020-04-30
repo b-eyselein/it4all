@@ -4,6 +4,41 @@ import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
+export type RegisterMutationVariables = {
+  username: Types.Scalars['String'];
+  firstPassword: Types.Scalars['String'];
+  secondPassword: Types.Scalars['String'];
+};
+
+
+export type RegisterMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Types.Mutation, 'register'>
+);
+
+export type LoggedInUserWithTokenFragment = (
+  { __typename?: 'LoggedInUserWithToken' }
+  & Pick<Types.LoggedInUserWithToken, 'jwt'>
+  & { loggedInUser: (
+    { __typename?: 'LoggedInUser' }
+    & Pick<Types.LoggedInUser, 'username' | 'isAdmin'>
+  ) }
+);
+
+export type LoginMutationVariables = {
+  username: Types.Scalars['String'];
+  password: Types.Scalars['String'];
+};
+
+
+export type LoginMutation = (
+  { __typename?: 'Mutation' }
+  & { login?: Types.Maybe<(
+    { __typename?: 'LoggedInUserWithToken' }
+    & LoggedInUserWithTokenFragment
+  )> }
+);
+
 export type ToolOverviewQueryVariables = {};
 
 
@@ -276,23 +311,7 @@ export type AdminEditCollectionQuery = (
   { __typename?: 'Query' }
   & { tool?: Types.Maybe<(
     { __typename?: 'CollectionTool' }
-    & { collection?: Types.Maybe<(
-      { __typename?: 'ExerciseCollection' }
-      & Pick<Types.ExerciseCollection, 'asJsonString'>
-    )> }
-  )> }
-);
-
-export type AdminReadCollectionsQueryVariables = {
-  toolId: Types.Scalars['String'];
-};
-
-
-export type AdminReadCollectionsQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTool' }
-    & Pick<Types.CollectionTool, 'name' | 'readCollections'>
+    & { collection?: Types.Maybe<{ __typename: 'ExerciseCollection' }> }
   )> }
 );
 
@@ -310,23 +329,6 @@ export type AdminUpsertCollectionMutation = (
   )> }
 );
 
-export type AdminReadLessonsQueryVariables = {
-  toolId: Types.Scalars['String'];
-};
-
-
-export type AdminReadLessonsQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTool' }
-    & Pick<Types.CollectionTool, 'name'>
-    & { readLessons: Array<(
-      { __typename?: 'Lesson' }
-      & LessonFragment
-    )> }
-  )> }
-);
-
 export type AdminEditExerciseQueryVariables = {
   toolId: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
@@ -340,27 +342,7 @@ export type AdminEditExerciseQuery = (
     { __typename?: 'CollectionTool' }
     & { collection?: Types.Maybe<(
       { __typename?: 'ExerciseCollection' }
-      & { exercise?: Types.Maybe<(
-        { __typename?: 'Exercise' }
-        & Pick<Types.Exercise, 'asJsonString'>
-      )> }
-    )> }
-  )> }
-);
-
-export type AdminReadExercisesQueryVariables = {
-  toolId: Types.Scalars['String'];
-  collId: Types.Scalars['Int'];
-};
-
-
-export type AdminReadExercisesQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTool' }
-    & { collection?: Types.Maybe<(
-      { __typename?: 'ExerciseCollection' }
-      & Pick<Types.ExerciseCollection, 'readExercises'>
+      & { exercise?: Types.Maybe<{ __typename: 'Exercise' }> }
     )> }
   )> }
 );
@@ -616,6 +598,15 @@ export type LessonFragment = (
   & Pick<Types.Lesson, 'id' | 'title'>
 );
 
+export const LoggedInUserWithTokenFragmentDoc = gql`
+    fragment LoggedInUserWithToken on LoggedInUserWithToken {
+  loggedInUser {
+    username
+    isAdmin
+  }
+  jwt
+}
+    `;
 export const PartFragmentDoc = gql`
     fragment Part on ExPart {
   id
@@ -886,6 +877,34 @@ export const LessonFragmentDoc = gql`
   title
 }
     `;
+export const RegisterDocument = gql`
+    mutation Register($username: String!, $firstPassword: String!, $secondPassword: String!) {
+  register(registerValues: {username: $username, firstPassword: $firstPassword, secondPassword: $secondPassword})
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RegisterGQL extends Apollo.Mutation<RegisterMutation, RegisterMutationVariables> {
+    document = RegisterDocument;
+    
+  }
+export const LoginDocument = gql`
+    mutation Login($username: String!, $password: String!) {
+  login(credentials: {username: $username, password: $password}) {
+    ...LoggedInUserWithToken
+  }
+}
+    ${LoggedInUserWithTokenFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class LoginGQL extends Apollo.Mutation<LoginMutation, LoginMutationVariables> {
+    document = LoginDocument;
+    
+  }
 export const ToolOverviewDocument = gql`
     query ToolOverview {
   tools {
@@ -1191,7 +1210,7 @@ export const AdminEditCollectionDocument = gql`
     query AdminEditCollection($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
-      asJsonString
+      __typename
     }
   }
 }
@@ -1202,22 +1221,6 @@ export const AdminEditCollectionDocument = gql`
   })
   export class AdminEditCollectionGQL extends Apollo.Query<AdminEditCollectionQuery, AdminEditCollectionQueryVariables> {
     document = AdminEditCollectionDocument;
-    
-  }
-export const AdminReadCollectionsDocument = gql`
-    query AdminReadCollections($toolId: String!) {
-  tool(toolId: $toolId) {
-    name
-    readCollections
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class AdminReadCollectionsGQL extends Apollo.Query<AdminReadCollectionsQuery, AdminReadCollectionsQueryVariables> {
-    document = AdminReadCollectionsDocument;
     
   }
 export const AdminUpsertCollectionDocument = gql`
@@ -1235,30 +1238,12 @@ export const AdminUpsertCollectionDocument = gql`
     document = AdminUpsertCollectionDocument;
     
   }
-export const AdminReadLessonsDocument = gql`
-    query AdminReadLessons($toolId: String!) {
-  tool(toolId: $toolId) {
-    name
-    readLessons {
-      ...Lesson
-    }
-  }
-}
-    ${LessonFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class AdminReadLessonsGQL extends Apollo.Query<AdminReadLessonsQuery, AdminReadLessonsQueryVariables> {
-    document = AdminReadLessonsDocument;
-    
-  }
 export const AdminEditExerciseDocument = gql`
     query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
       exercise(exId: $exId) {
-        asJsonString
+        __typename
       }
     }
   }
@@ -1270,23 +1255,6 @@ export const AdminEditExerciseDocument = gql`
   })
   export class AdminEditExerciseGQL extends Apollo.Query<AdminEditExerciseQuery, AdminEditExerciseQueryVariables> {
     document = AdminEditExerciseDocument;
-    
-  }
-export const AdminReadExercisesDocument = gql`
-    query AdminReadExercises($toolId: String!, $collId: Int!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      readExercises
-    }
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class AdminReadExercisesGQL extends Apollo.Query<AdminReadExercisesQuery, AdminReadExercisesQueryVariables> {
-    document = AdminReadExercisesDocument;
     
   }
 export const AdminUpsertExerciseDocument = gql`

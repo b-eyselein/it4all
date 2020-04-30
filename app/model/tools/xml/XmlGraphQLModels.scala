@@ -4,8 +4,8 @@ import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
 import model.core.matching.MatchType
 import model.core.result.SuccessType
-import model.graphql.GraphQLArguments
-import model.tools.{SampleSolution, ToolGraphQLModelBasics}
+import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
+import model.tools.SampleSolution
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -23,10 +23,7 @@ object XmlGraphQLModels
   override val sampleSolutionType: ObjectType[Unit, SampleSolution[XmlSolution]] =
     buildSampleSolutionType("Xml", xmlSolutionType)
 
-  private val xmlExerciseTagType: EnumType[XmlExTag] = deriveEnumType()
-
   override val exerciseContentType: ObjectType[Unit, XmlExerciseContent] = {
-    implicit val xett: EnumType[XmlExTag]                           = xmlExerciseTagType
     implicit val sst: ObjectType[Unit, SampleSolution[XmlSolution]] = sampleSolutionType
 
     deriveObjectType(

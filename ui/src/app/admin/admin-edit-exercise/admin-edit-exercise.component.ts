@@ -32,7 +32,7 @@ export class AdminEditExerciseComponent implements OnInit, OnDestroy {
       this.apolloSub = this.adminEditExerciseGQL
         .watch({toolId, collId, exId})
         .valueChanges
-        .subscribe(({data}) => this.exerciseToEdit = JSON.parse(data.tool.collection.exercise.asJsonString));
+        .subscribe(({data}) => this.exerciseToEdit = JSON.parse(/*data.tool.collection.exercise.asJsonString*/ '{]'));
     });
   }
 

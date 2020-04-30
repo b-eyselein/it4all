@@ -1,6 +1,7 @@
 package model.tools.rose
 
-import model.User
+import model.LoggedInUser
+import model.graphql.ToolGraphQLModelBasics
 import model.tools._
 import model.tools.programming.ProgLanguages
 
@@ -24,7 +25,7 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
   // Correction
 
   override def correctAbstract(
-    user: User,
+    user: LoggedInUser,
     solution: String,
     exercise: Exercise[String, RoseExerciseContent],
     part: RoseExPart,

@@ -6,6 +6,11 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /**
+   * The `Long` scalar type represents non-fractional signed whole numeric values.
+   * Long can represent values between -(2^63) and 2^63 - 1.
+   */
+  Long: any;
 };
 
 export type AbstractCorrectionResult = {
@@ -27,10 +32,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  FalseNegative = 'FalseNegative',
+  TruePositive = 'TruePositive',
   FalsePositive = 'FalsePositive',
-  TrueNegative = 'TrueNegative',
-  TruePositive = 'TruePositive'
+  FalseNegative = 'FalseNegative',
+  TrueNegative = 'TrueNegative'
 }
 
 export type CollectionTool = {
@@ -38,17 +43,20 @@ export type CollectionTool = {
   id: Scalars['ID'];
   name: Scalars['String'];
   state: ToolState;
-  lessonCount: Scalars['Int'];
-  lessons: Array<Lesson>;
-  lesson?: Maybe<Lesson>;
-  readLessons: Array<Lesson>;
-  collectionCount: Scalars['Int'];
-  collections: Array<ExerciseCollection>;
-  collection?: Maybe<ExerciseCollection>;
-  readCollections: Array<Scalars['String']>;
-  exerciseCount: Scalars['Int'];
+  exerciseCount: Scalars['Long'];
   allExercises: Array<Exercise>;
   part?: Maybe<ExPart>;
+  lessonCount: Scalars['Long'];
+  lessons: Array<Lesson>;
+  lesson?: Maybe<Lesson>;
+  collectionCount: Scalars['Long'];
+  collections: Array<ExerciseCollection>;
+  collection?: Maybe<ExerciseCollection>;
+};
+
+
+export type CollectionToolPartArgs = {
+  partId: Scalars['String'];
 };
 
 
@@ -59,11 +67,6 @@ export type CollectionToolLessonArgs = {
 
 export type CollectionToolCollectionArgs = {
   collId: Scalars['Int'];
-};
-
-
-export type CollectionToolPartArgs = {
-  partId: Scalars['String'];
 };
 
 export type DtdParseException = {
@@ -122,7 +125,6 @@ export type Exercise = {
   webContent?: Maybe<WebExerciseContent>;
   xmlContent?: Maybe<XmlExerciseContent>;
   parts: Array<ExPart>;
-  asJsonString: Scalars['String'];
 };
 
 export type ExerciseCollection = {
@@ -133,11 +135,9 @@ export type ExerciseCollection = {
   authors: Array<Scalars['String']>;
   text: Scalars['String'];
   completeId: Scalars['ID'];
-  asJsonString: Scalars['String'];
-  exerciseCount: Scalars['Int'];
+  exerciseCount: Scalars['Long'];
   exercises: Array<Exercise>;
   exercise?: Maybe<Exercise>;
-  readExercises: Array<Scalars['String']>;
 };
 
 
@@ -259,6 +259,19 @@ export type Lesson = {
   description: Scalars['String'];
 };
 
+export type LoggedInUser = {
+   __typename?: 'LoggedInUser';
+  username: Scalars['String'];
+  isAdmin: Scalars['Boolean'];
+};
+
+export type LoggedInUserWithToken = {
+   __typename?: 'LoggedInUserWithToken';
+  loggedInUser: LoggedInUser;
+  jwt: Scalars['String'];
+};
+
+
 export type MatchingResult = {
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -266,15 +279,17 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlyUser = 'ONLY_USER',
+  OnlySample = 'ONLY_SAMPLE',
   PartialMatch = 'PARTIAL_MATCH',
+  OnlyUser = 'ONLY_USER',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  OnlySample = 'ONLY_SAMPLE'
+  SuccessfulMatch = 'SUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
    __typename?: 'Mutation';
+  register?: Maybe<Scalars['String']>;
+  login?: Maybe<LoggedInUserWithToken>;
   upsertCollection?: Maybe<ExerciseCollection>;
   upsertExercise?: Maybe<Exercise>;
   correctProgramming: ProgrammingAbstractResult;
@@ -283,6 +298,16 @@ export type Mutation = {
   correctUml: UmlAbstractResult;
   correctWeb: WebAbstractResult;
   correctXml: XmlAbstractResult;
+};
+
+
+export type MutationRegisterArgs = {
+  registerValues: RegisterValues;
+};
+
+
+export type MutationLoginArgs = {
+  credentials: UserCredentials;
 };
 
 
@@ -299,6 +324,7 @@ export type MutationUpsertExerciseArgs = {
 
 
 export type MutationCorrectProgrammingArgs = {
+  userJwt: Scalars['String'];
   collId: Scalars['Int'];
   exId: Scalars['Int'];
   part: ProgExPart;
@@ -307,6 +333,7 @@ export type MutationCorrectProgrammingArgs = {
 
 
 export type MutationCorrectRegexArgs = {
+  userJwt: Scalars['String'];
   collId: Scalars['Int'];
   exId: Scalars['Int'];
   part: RegexExPart;
@@ -315,6 +342,7 @@ export type MutationCorrectRegexArgs = {
 
 
 export type MutationCorrectSqlArgs = {
+  userJwt: Scalars['String'];
   collId: Scalars['Int'];
   exId: Scalars['Int'];
   part: SqlExPart;
@@ -323,6 +351,7 @@ export type MutationCorrectSqlArgs = {
 
 
 export type MutationCorrectUmlArgs = {
+  userJwt: Scalars['String'];
   collId: Scalars['Int'];
   exId: Scalars['Int'];
   part: UmlExPart;
@@ -331,6 +360,7 @@ export type MutationCorrectUmlArgs = {
 
 
 export type MutationCorrectWebArgs = {
+  userJwt: Scalars['String'];
   collId: Scalars['Int'];
   exId: Scalars['Int'];
   part: WebExPart;
@@ -339,6 +369,7 @@ export type MutationCorrectWebArgs = {
 
 
 export type MutationCorrectXmlArgs = {
+  userJwt: Scalars['String'];
   collId: Scalars['Int'];
   exId: Scalars['Int'];
   part: XmlExPart;
@@ -436,8 +467,8 @@ export type RegexAbstractResult = {
 };
 
 export enum RegexCorrectionType {
-  Extraction = 'EXTRACTION',
-  Matching = 'MATCHING'
+  Matching = 'MATCHING',
+  Extraction = 'EXTRACTION'
 }
 
 export type RegexExerciseContent = {
@@ -540,6 +571,12 @@ export type RegexSampleSolution = {
   sample: Scalars['String'];
 };
 
+export type RegisterValues = {
+  username: Scalars['String'];
+  firstPassword: Scalars['String'];
+  secondPassword: Scalars['String'];
+};
+
 export type SelectAdditionalComparisons = {
    __typename?: 'SelectAdditionalComparisons';
   groupByComparison: SqlGroupByComparisonMatchingResult;
@@ -632,11 +669,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Create = 'CREATE',
-  Insert = 'INSERT',
-  Select = 'SELECT',
+  Update = 'UPDATE',
   Delete = 'DELETE',
-  Update = 'UPDATE'
+  Create = 'CREATE',
+  Select = 'SELECT',
+  Insert = 'INSERT'
 }
 
 export enum SqlExPart {
@@ -861,8 +898,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
 };
 
 export enum UmlAssociationType {
-  Aggregation = 'AGGREGATION',
   Association = 'ASSOCIATION',
+  Aggregation = 'AGGREGATION',
   Composition = 'COMPOSITION'
 }
 
@@ -971,9 +1008,9 @@ export type UmlClassMatchingResult = MatchingResult & {
 };
 
 export enum UmlClassType {
-  Abstract = 'ABSTRACT',
   Class = 'CLASS',
-  Interface = 'INTERFACE'
+  Interface = 'INTERFACE',
+  Abstract = 'ABSTRACT'
 }
 
 export type UmlExerciseContent = {
@@ -1103,10 +1140,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
+  Public = 'PUBLIC',
   Package = 'PACKAGE',
-  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Public = 'PUBLIC'
+  Private = 'PRIVATE'
 }
 
 export type UnitTestCorrectionResult = {
@@ -1139,9 +1176,14 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Normal = 'Normal',
-  Simplified = 'Simplified'
+  Simplified = 'Simplified',
+  Normal = 'Normal'
 }
+
+export type UserCredentials = {
+  username: Scalars['String'];
+  password: Scalars['String'];
+};
 
 export type WebAbstractResult = {
   solutionSaved: Scalars['Boolean'];

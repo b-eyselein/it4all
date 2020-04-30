@@ -6,7 +6,7 @@
   <div class="navbar-menu">
     <div class="navbar-end">
 
-      <a routerLink="/admin/index" class="navbar-item" *ngIf="currentUser && currentUser.stdRole !== 'RoleUser'">
+      <a routerLink="/admin/index" class="navbar-item" *ngIf="currentUser && currentUser.loggedInUser.isAdmin">
         Administratorenbereich
       </a>
 
@@ -19,12 +19,12 @@
 
       <div class="navbar-item">
         <ng-container *ngIf="currentUser; else noUserBlock">
-          <button (click)="logout()" class="button is-light">Logout {{currentUser.username}}</button>
+          <button (click)="logout()" class="button is-light">Logout {{currentUser.loggedInUser.username}}</button>
         </ng-container>
         <ng-template #noUserBlock>
           <div class="buttons">
-            <a [routerLink]="['/loginForm']" class="button is-light">Login</a>
-            <!--            <a [routerLink]="['/registerForm']" class="button is-light">Registrieren</a>-->
+            <a routerLink="/loginForm" class="button is-light">Login</a>
+            <a routerLink="/registerForm" class="button is-light">Registrieren</a>
           </div>
         </ng-template>
       </div>

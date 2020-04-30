@@ -1,33 +1,15 @@
-package model.tools
+package model.graphql
 
 import model.core.matching.{Match, MatchType, MatchingResult}
-import model.core.result.{AbstractCorrectionResult, SuccessType}
-import model.json.KeyValueObject
+import model.core.result.AbstractCorrectionResult
+import model.tools._
 import sangria.macros.derive._
 import sangria.schema._
 
 import scala.reflect.ClassTag
 
-trait ToolGraphQLModels {
-
-  protected val toolStateType: EnumType[ToolState] = deriveEnumType()
-
-  protected val topicType: ObjectType[Unit, Topic] = deriveObjectType()
-
-  protected val exerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
-
-  protected val exerciseFileInputType: InputObjectType[ExerciseFile] = deriveInputObjectType(
-    InputObjectTypeName("ExerciseFileInput")
-  )
-
-  protected val KeyValueObjectType: ObjectType[Unit, KeyValueObject] = deriveObjectType()
-
-  protected val successTypeType: EnumType[SuccessType] = deriveEnumType()
-
-}
-
 trait ToolGraphQLModelBasics[SolType, ContentType, PartType <: ExPart, ResType <: AbstractCorrectionResult]
-    extends ToolGraphQLModels {
+    extends BasicGraphQLModels {
 
   protected def buildSampleSolutionType[S](
     name: String,

@@ -1,12 +1,10 @@
 package model.graphql
 
 import javax.inject.{Inject, Singleton}
-import model.json.JsonProtocols
+import model.MongoClientQueries
 import model.tools._
-import model.{MongoClientQueries, User}
-import play.api.Environment
+import play.api.Configuration
 import play.api.libs.json._
-import play.api.libs.ws.WSClient
 import reactivemongo.api.DefaultDB
 import sangria.schema._
 
@@ -19,16 +17,14 @@ final case class GraphQLRequest(
 )
 
 final case class GraphQLContext(
-  mongoDB: Future[DefaultDB],
-  user: Option[User]
+  mongoDB: Future[DefaultDB]
 )
 
 @Singleton
 class GraphQLModel @Inject() (
-  override protected val ws: WSClient,
-  override protected val environment: Environment
+  override val configuration: Configuration
 )(implicit val ec: ExecutionContext)
-    extends ToolGraphQLModels
+    extends BasicGraphQLModels
     with CollectionGraphQLModel
     with ExerciseGraphQLModels
     with GraphQLMutations
@@ -52,8 +48,7 @@ class GraphQLModel @Inject() (
       OptionType(LessonGraphQLModel.LessonType),
       arguments = lessonIdArgument :: Nil,
       resolve = context => getLesson(context.ctx.mongoDB, context.value.id, context.arg(lessonIdArgument))
-    ),
-    Field("readLessons", ListType(LessonGraphQLModel.LessonType), resolve = _ => List())
+    )
   )
 
   private val collectionFieldsForToolType = fields[GraphQLContext, CollectionTool](
@@ -72,23 +67,6 @@ class GraphQLModel @Inject() (
       OptionType(CollectionType),
       arguments = collIdArgument :: Nil,
       resolve = context => getExerciseCollection(context.ctx.mongoDB, context.value.id, context.arg(collIdArgument))
-    ),
-    Field(
-      "readCollections",
-      ListType(StringType),
-      resolve = context =>
-        ws.url(s"$resourcesServerBaseUrl/${context.value.id}/collections")
-          .get()
-          .map { request =>
-            JsonProtocols.readCollectionsMessageReads
-              .reads(request.json)
-              .fold(
-                _ => Seq.empty,
-                readCollectionsMessage => readCollectionsMessage.collections
-              )
-              .map(JsonProtocols.collectionFormat.writes)
-              .map(Json.stringify)
-          }
     )
   )
 

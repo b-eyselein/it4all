@@ -57,7 +57,7 @@ libraryDependencies ++= Seq(
   "mysql"             % "mysql-connector-java"   % "8.0.20",        // GPL 2.0
   "com.typesafe.play" %% "play-slick"            % "5.0.0",         // Apache 2.0
   "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0",         // Apache 2.0
-  "org.reactivemongo" %% "play2-reactivemongo"   % "0.20.8-play28", // Apache 2.0
+  "org.reactivemongo" %% "play2-reactivemongo"   % "0.20.9-play28", // Apache 2.0
 
   // Other helpers
   "com.beachape"         %% "enumeratum-play"      % "1.5.17", // MIT

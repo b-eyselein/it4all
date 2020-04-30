@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
 export type SqlCorrectionMutationVariables = {
+  userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.SqlExPart;
@@ -605,8 +606,8 @@ ${SelectAdditionalComparisonFragmentDoc}
 ${InsertComparisonFragmentDoc}
 ${SqlExecutionResultFragmentDoc}`;
 export const SqlCorrectionDocument = gql`
-    mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
-  correctSql(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+    mutation SqlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
+  correctSql(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
     __typename
     solutionSaved
     points

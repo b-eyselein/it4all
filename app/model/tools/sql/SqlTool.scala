@@ -1,7 +1,8 @@
 package model.tools.sql
 
-import model.User
+import model.LoggedInUser
 import model.core.matching.MatchingResult
+import model.graphql.ToolGraphQLModelBasics
 import model.points._
 import model.tools._
 import model.tools.sql.matcher._
@@ -52,7 +53,7 @@ object SqlTool extends CollectionTool("sql", "Sql") {
   // Correction
 
   override def correctAbstract(
-    user: User,
+    user: LoggedInUser,
     solution: SolType,
     exercise: Exercise[String, SqlExerciseContent],
     part: SqlExPart,

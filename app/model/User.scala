@@ -1,27 +1,18 @@
 package model
 
-import enumeratum.{EnumEntry, PlayEnum}
+final case class RegisterValues(username: String, firstPassword: String, secondPassword: String) {
 
-sealed trait Role extends EnumEntry
-
-object Role extends PlayEnum[Role] {
-
-  override val values: IndexedSeq[Role] = findValues
-
-  case object RoleUser extends Role
-
-  case object RoleAdmin extends Role
-
-  case object RoleSuperAdmin extends Role
+  def isInvalid: Boolean = firstPassword != secondPassword
 
 }
-
-// Users
 
 final case class UserCredentials(username: String, password: String)
 
-final case class User(username: String, pwHash: Option[String], stdRole: Role = Role.RoleUser) {
+final case class User(username: String, pwHash: Option[String] = None, isAdmin: Boolean = false)
 
-  def isAdmin: Boolean = stdRole ne Role.RoleUser
+final case class LoggedInUser(username: String, isAdmin: Boolean = false)
 
-}
+final case class LoggedInUserWithToken(
+  loggedInUser: LoggedInUser,
+  jwt: String
+)

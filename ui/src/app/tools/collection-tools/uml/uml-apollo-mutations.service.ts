@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
 export type UmlCorrectionMutationVariables = {
+  userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.UmlExPart;
@@ -238,8 +239,8 @@ export const UmlResultFragmentDoc = gql`
 ${UmlAssociationMatchingResultFragmentDoc}
 ${UmlImplementationMatchingResultFragmentDoc}`;
 export const UmlCorrectionDocument = gql`
-    mutation UmlCorrection($collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
-  correctUml(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+    mutation UmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
+  correctUml(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
     __typename
     solutionSaved
     points

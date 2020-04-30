@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import model.User
 import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
 import play.api.Configuration
 import play.api.libs.json._
@@ -25,19 +24,16 @@ class ApiController @Inject() (
     extends AbstractController(cc)
     with MongoController
     with ReactiveMongoComponents
-    with AbstractApiController {
-
-  override protected val adminRightsRequired: Boolean = false
+    with JwtHelpers {
 
   private val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
 
   private def executeGraphQLQuery(
     query: Document,
-    user: Option[User],
     operationName: Option[String],
     variables: JsObject
   ): Future[Result] = {
-    val userContext = GraphQLContext(database, user)
+    val userContext = GraphQLContext(database)
 
     Executor
       .execute(graphQLModel.schema, query, userContext, operationName = operationName, variables = variables)
@@ -54,15 +50,11 @@ class ApiController @Inject() (
 
   def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest](graphQLRequestFormat)) {
     implicit request =>
+      val variables = request.body.variables.getOrElse(Json.obj())
+
       QueryParser.parse(request.body.query) match {
-        case Success(queryAst) =>
-          executeGraphQLQuery(
-            queryAst,
-            userFromHeader(request),
-            request.body.operationName,
-            request.body.variables.getOrElse(Json.obj())
-          )
-        case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
+        case Failure(error)    => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
+        case Success(queryAst) => executeGraphQLQuery(queryAst, request.body.operationName, variables)
       }
   }
 

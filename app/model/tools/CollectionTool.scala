@@ -3,6 +3,7 @@ package model.tools
 import better.files.File
 import model._
 import model.core.result.AbstractCorrectionResult
+import model.graphql.ToolGraphQLModelBasics
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,7 +34,7 @@ abstract class CollectionTool(
   // Other helper methods
 
   def correctAbstract(
-    user: User,
+    user: LoggedInUser,
     solution: SolType,
     exercise: Exercise[SolType, ExContentType],
     part: PartType,

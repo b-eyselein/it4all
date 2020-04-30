@@ -1,8 +1,8 @@
 package model.tools.programming
 
 import model.core.result.SuccessType
-import model.graphql.GraphQLArguments
-import model.tools.{ExerciseFile, SampleSolution, ToolGraphQLModelBasics}
+import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
+import model.tools.{ExerciseFile, SampleSolution}
 import play.api.libs.json.Json
 import sangria.macros.derive._
 import sangria.schema._

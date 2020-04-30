@@ -1,16 +1,20 @@
 import {Component} from '@angular/core';
-import {User} from './_interfaces/user';
 import {AuthenticationService} from './_services/authentication.service';
+import {LoggedInUserWithTokenFragment} from "./_services/apollo_services";
 
-@Component({selector: 'it4all-root', templateUrl: './app.component.html'})
+@Component({
+  selector: 'it4all-root',
+  templateUrl: './app.component.html'
+})
 export class AppComponent {
-  currentUser: User;
+
+  currentUser: LoggedInUserWithTokenFragment;
 
   constructor(private authenticationService: AuthenticationService) {
-    this.authenticationService.currentUser.subscribe((u: User) => this.currentUser = u);
+    this.authenticationService.currentUser.subscribe((u) => this.currentUser = u);
   }
 
-  logout() {
+  logout(): void {
     this.authenticationService.logout();
   }
 

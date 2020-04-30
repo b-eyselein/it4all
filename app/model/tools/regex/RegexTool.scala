@@ -1,7 +1,8 @@
 package model.tools.regex
 
-import model.User
+import model.LoggedInUser
 import model.core.matching.MatchingResult
+import model.graphql.ToolGraphQLModelBasics
 import model.points._
 import model.tools._
 
@@ -29,7 +30,7 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
   // Correction
 
   override def correctAbstract(
-    user: User,
+    user: LoggedInUser,
     solution: String,
     exercise: Exercise[String, RegexExerciseContent],
     part: RegexExPart,

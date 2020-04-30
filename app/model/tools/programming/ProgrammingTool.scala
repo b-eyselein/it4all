@@ -1,7 +1,8 @@
 package model.tools.programming
 
 import better.files.File
-import model.User
+import model.LoggedInUser
+import model.graphql.ToolGraphQLModelBasics
 import model.tools._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,14 +28,15 @@ object ProgrammingTool extends CollectionTool("programming", "Programmierung", T
   // Correction
 
   override def correctAbstract(
-    user: User,
+    user: LoggedInUser,
     solution: ProgSolution,
     exercise: Exercise[ProgSolution, ProgrammingExerciseContent],
     part: ProgExPart,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
 
-    val solutionTargetDir: File = solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId) / part.id
+    val solutionTargetDir: File =
+      solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId) / part.id
 
     // Create or truncate result file
     val resultFile = solutionTargetDir / ProgrammingNormalImplementationCorrector.resultFileName

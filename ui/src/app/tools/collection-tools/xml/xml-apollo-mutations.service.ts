@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
 export type XmlCorrectionMutationVariables = {
+  userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.XmlExPart;
@@ -196,8 +197,8 @@ export const XmlResultFragmentDoc = gql`
     ${XmlGrammarResultFragmentDoc}
 ${XmlDocumentResultFragmentDoc}`;
 export const XmlCorrectionDocument = gql`
-    mutation XmlCorrection($collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
-  correctXml(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+    mutation XmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
+  correctXml(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
     __typename
     solutionSaved
     points

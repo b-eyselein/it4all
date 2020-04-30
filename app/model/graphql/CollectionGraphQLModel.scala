@@ -1,16 +1,14 @@
 package model.graphql
 
 import model.MongoClientQueries
-import model.json.JsonProtocols
 import model.tools._
-import play.api.libs.json.Json
 import sangria.macros.derive.{AddFields, deriveObjectType}
-import sangria.schema.{Context, Field, IDType, ListType, LongType, ObjectType, OptionType, StringType}
+import sangria.schema.{Context, Field, IDType, ListType, LongType, ObjectType, OptionType}
 
 import scala.concurrent.Future
 
 trait CollectionGraphQLModel
-    extends ToolGraphQLModels
+    extends BasicGraphQLModels
     with ExerciseGraphQLModels
     with GraphQLArguments
     with MongoClientQueries {
@@ -26,11 +24,6 @@ trait CollectionGraphQLModel
         "completeId",
         IDType,
         resolve = context => s"${context.value.collectionId}_${context.value.toolId}"
-      ),
-      Field(
-        "asJsonString",
-        StringType,
-        resolve = context => Json.stringify(JsonProtocols.collectionFormat.writes(context.value))
       ),
       Field(
         "exerciseCount",
@@ -54,21 +47,6 @@ trait CollectionGraphQLModel
         OptionType(exerciseType),
         arguments = exIdArgument :: Nil,
         resolve = context => getExerciseUntyped(context)
-      ),
-      Field(
-        "readExercises",
-        ListType(StringType),
-        resolve = context => {
-          ToolList.tools.find(_.id == context.value.toolId) match {
-            case None => ???
-            case Some(tool) =>
-              ws.url(
-                  s"$resourcesServerBaseUrl/${context.value.toolId}/collections/${context.value.collectionId}/exercises"
-                )
-                .get()
-                .map(request => tool.toolJsonProtocol.validateAndWriteReadExerciseMessage(request.json))
-          }
-        }
       )
     )
   )

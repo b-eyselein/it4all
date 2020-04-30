@@ -1,8 +1,9 @@
 package model.tools.xml
 
 import de.uniwue.dtd.model.ElementLine
-import model.User
+import model.LoggedInUser
 import model.core.matching.MatchingResult
+import model.graphql.ToolGraphQLModelBasics
 import model.tools._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,7 +28,7 @@ object XmlTool extends CollectionTool("xml", "Xml") {
   // Correction
 
   override def correctAbstract(
-    user: User,
+    user: LoggedInUser,
     solution: XmlSolution,
     exercise: Exercise[XmlSolution, XmlExerciseContent],
     part: XmlExPart,

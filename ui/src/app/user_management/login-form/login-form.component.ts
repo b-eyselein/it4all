@@ -4,24 +4,24 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {AuthenticationService} from '../../_services/authentication.service';
 import {first} from 'rxjs/operators';
 
-@Component({
-  // selector: 'app-login-form',
-  templateUrl: './login-form.component.html'
-})
+@Component({templateUrl: './login-form.component.html'})
 export class LoginFormComponent implements OnInit {
 
   loginForm: FormGroup;
   loading = false;
   submitted = false;
+  inValid = false;
   returnUrl: string;
 
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService) {
+    private authenticationService: AuthenticationService
+  ) {
 
     if (this.authenticationService.currentUserValue) {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['/']);
     }
 
@@ -43,17 +43,28 @@ export class LoginFormComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
+    const username = this.f.username.value
+    const password = this.f.password.value;
+
     if (this.loginForm.invalid) {
       alert('Daten sind nicht valide!');
       return;
     }
 
     this.loading = true;
-    this.authenticationService.login(this.f.username.value, this.f.password.value)
+
+    this.authenticationService.login(username, password)
       .pipe(first())
       .subscribe(
-        (data) => this.router.navigate([this.returnUrl]),
-        (error) => this.loading = false
+        (data) => {
+          if (data) {
+            // noinspection JSIgnoredPromiseFromCall
+            this.router.navigate([this.returnUrl])
+          } else {
+            this.inValid = true;
+          }
+        },
+        () => this.loading = false
       );
   }
 

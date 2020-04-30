@@ -7,11 +7,10 @@ import javax.inject.{Inject, Singleton}
 import model._
 import model.json.JsonProtocols
 import model.lti.BasicLtiLaunchRequest
-import model.persistence.TableDefs
 import pdi.jwt.JwtSession
 import play.api.Configuration
-import play.api.libs.json._
 import play.api.mvc._
+import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 
 import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent.{ExecutionContext, Future}
@@ -19,28 +18,28 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ApiLoginController @Inject() (
   cc: ControllerComponents,
-  tables: TableDefs,
+  override val reactiveMongoApi: ReactiveMongoApi,
   override protected val configuration: Configuration
 )(implicit val ec: ExecutionContext)
     extends AbstractController(cc)
-    with AbstractApiController {
-
-  override protected val adminRightsRequired: Boolean = true
+    with MongoController
+    with ReactiveMongoComponents
+    with MongoClientQueries
+    with JwtHelpers {
 
   // Json Web Token session
 
-  private val jwtHashesToClaim: MutableMap[UUID, (JwtSession, User)] = MutableMap.empty
+  private val jwtHashesToClaim: MutableMap[UUID, (JwtSession, LoggedInUser)] = MutableMap.empty
 
-  private def getOrCreateUser(username: String): Future[User] = tables.userByName(username).flatMap {
-    case Some(u) => Future(u)
-    case None =>
-      val newUser   = User(username, None)
-      val userSaved = tables.saveUser(newUser)
-      userSaved.map(_ => newUser)
-  }
-
-  private def writeJsonWebToken(user: User, serializedSession: String): JsValue =
-    JsonProtocols.userFormat.writes(user).as[JsObject].+("token" -> JsString(serializedSession))
+  private def getOrCreateUser(username: String): Future[LoggedInUser] =
+    getUser(database, username)
+      .flatMap {
+        case Some(u) => Future(u)
+        case None =>
+          val newUser = User(username)
+          insertUser(database, newUser).map { _ => newUser }
+      }
+      .map { user => LoggedInUser(user.username) }
 
   def ltiHoneypot: Action[AnyContent] = Action.async { request =>
     request.body.asFormUrlEncoded match {
@@ -62,31 +61,35 @@ class ApiLoginController @Inject() (
 
   def claimJsonWebToken(uuidStr: String): Action[AnyContent] = Action { implicit request =>
     jwtHashesToClaim.remove(UUID.fromString(uuidStr)) match {
-      case None                     => NotFound("")
-      case Some((jwtSession, user)) => Ok(writeJsonWebToken(user, jwtSession.serialize))
+      case None => NotFound("")
+      case Some((jwtSession, user)) =>
+        val loggedInUserWithToken = LoggedInUserWithToken(user, jwtSession.serialize)
+
+        Ok(writeJsonWebToken(loggedInUserWithToken))
     }
   }
 
-  def apiAuthenticate: Action[UserCredentials] = {
-    implicit val userCredentialsFormat: Format[UserCredentials] = Json.format
-
-    Action.async(parse.json[UserCredentials]) { implicit request =>
-      tables.userByName(request.body.username).map {
+  def apiAuthenticate: Action[UserCredentials] =
+    Action.async(parse.json[UserCredentials](JsonProtocols.userCredentialsFormat)) { implicit request =>
+      getUser(database, request.body.username).map {
         case None => BadRequest("Invalid username!")
         case Some(user) =>
           user.pwHash match {
             case None => BadRequest("No password found!")
             case Some(pwHash) =>
               if (request.body.password.isBcrypted(pwHash)) {
-                val session = createJwtSession(user)
+                val loggedInUser = LoggedInUser(user.username)
 
-                Ok(writeJsonWebToken(user, session.serialize))
+                Ok(
+                  writeJsonWebToken(
+                    LoggedInUserWithToken(loggedInUser, createJwtSession(loggedInUser).serialize)
+                  )
+                )
               } else {
                 BadRequest("Password invalid!")
               }
           }
       }
     }
-  }
 
 }

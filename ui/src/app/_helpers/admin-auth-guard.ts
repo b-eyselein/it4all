@@ -5,16 +5,16 @@ import {AuthenticationService} from '../_services/authentication.service';
 @Injectable({providedIn: 'root'})
 export class AdminAuthGuard implements CanActivate {
 
-
   constructor(private router: Router, private authenticationService: AuthenticationService) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const currentUser = this.authenticationService.currentUserValue;
 
-    if (currentUser && currentUser.stdRole !== 'RoleUser') {
+    if (currentUser && currentUser.loggedInUser.isAdmin) {
       return true;
     } else {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['/loginForm'], {queryParams: {returnUrl: state.url}});
       return false;
     }

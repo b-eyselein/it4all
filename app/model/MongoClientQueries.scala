@@ -12,13 +12,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait MongoClientQueries {
 
+  private implicit val userFormat: OFormat[User]                             = Json.format
   private implicit val lessonFormat: OFormat[Lesson]                         = JsonProtocols.lessonFormat
   private implicit val exerciseCollectionFormat: OFormat[ExerciseCollection] = JsonProtocols.collectionFormat
 
+  private val usersCollectionName              = "users"
   private val lessonsCollectionName            = "lessons"
   private val exerciseCollectionCollectionName = "exercise_collections"
   private val exercisesCollectionName          = "exercises"
   private val solutionsCollectionName          = "solutions"
+
+  private def userFilter(username: String): JsObject = Json.obj(
+    "username" -> username
+  )
 
   private def toolFilter(toolId: String): JsObject = Json.obj(
     "toolId" -> toolId
@@ -39,14 +45,40 @@ trait MongoClientQueries {
     "exerciseId"   -> exerciseId
   )
 
+  // User queries
+
+  protected def getUser(
+    futureDefaultDB: Future[DefaultDB],
+    username: String
+  )(implicit ec: ExecutionContext): Future[Option[User]] =
+    for {
+      db <- futureDefaultDB
+      maybeUser <- db
+        .collection[JSONCollection](usersCollectionName)
+        .find(userFilter(username))
+        .one[User]
+    } yield maybeUser
+
+  protected def insertUser(
+    futureDefaultDB: Future[DefaultDB],
+    user: User
+  )(implicit ec: ExecutionContext): Future[Boolean] =
+    for {
+      db <- futureDefaultDB
+      insertResult <- db
+        .collection[JSONCollection](usersCollectionName)
+        .insert(true)
+        .one(user)
+    } yield insertResult.n == 1
+
   // Lesson queries
 
   protected def lessonCountForTool(
-    futureDefaulDB: Future[DefaultDB],
+    futureDefaultDB: Future[DefaultDB],
     toolId: String
   )(implicit ec: ExecutionContext): Future[Long] =
     for {
-      db <- futureDefaulDB
+      db <- futureDefaultDB
       count <- db
         .collection[JSONCollection](lessonsCollectionName)
         .count(Some(toolFilter(toolId)), None, 0, None, ReadConcern.Local)
@@ -207,11 +239,21 @@ trait MongoClientQueries {
     } yield exercise
   }
 
-  protected def upsertExercise[S, EC <: ExerciseContent[S]](
+  protected def insertExercise[S, EC <: ExerciseContent[S]](
     defaultDB: Future[DefaultDB],
-    tool: CollectionTool,
-    exercise: Exercise[S, EC]
-  )(implicit exerciseFormat: OFormat[Exercise[S, EC]], ec: ExecutionContext): Future[Boolean] = ???
+    exercise: Exercise[S, EC],
+    exerciseFormat: OFormat[Exercise[S, EC]]
+  )(implicit ec: ExecutionContext): Future[Boolean] = {
+    implicit val ef: OFormat[Exercise[S, EC]] = exerciseFormat
+
+    for {
+      db <- defaultDB
+      insertResult <- db
+        .collection[JSONCollection](exercisesCollectionName)
+        .insert(true)
+        .one(exercise)
+    } yield insertResult.n == 1
+  }
 
   // Solution queries
 

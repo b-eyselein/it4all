@@ -5,7 +5,8 @@ import java.nio.file.StandardOpenOption
 import better.files.File
 import better.files.File.OpenOptions
 import de.uniwue.webtester.WebCorrector
-import model.User
+import model.LoggedInUser
+import model.graphql.ToolGraphQLModelBasics
 import model.points._
 import model.tools._
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -89,7 +90,7 @@ object WebTool extends CollectionTool("web", "Web") {
   }
 
   override def correctAbstract(
-    user: User,
+    user: LoggedInUser,
     solution: WebSolution,
     exercise: Exercise[WebSolution, WebExerciseContent],
     part: WebExPart,

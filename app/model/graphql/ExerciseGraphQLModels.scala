@@ -7,29 +7,16 @@ import model.tools.sql.{SqlExerciseContent, SqlGraphQLModels}
 import model.tools.uml.{UmlExerciseContent, UmlGraphQLModels}
 import model.tools.web.{WebExerciseContent, WebGraphQLModels}
 import model.tools.xml.{XmlExerciseContent, XmlGraphQLModels}
-import play.api.libs.json.Json
-import play.api.libs.ws.WSClient
-import play.api.{Environment, Mode}
 import sangria.macros.derive.{AddFields, ExcludeFields, deriveObjectType}
 import sangria.schema.{BooleanType, Field, IDType, ListType, ObjectType, OptionType, StringType, fields}
 
 import scala.concurrent.ExecutionContext
 
-trait ExerciseGraphQLModels extends ToolGraphQLModels with GraphQLArguments {
+trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
 
   protected type UntypedExercise = Exercise[_, _ <: ExerciseContent[_]]
 
-  protected val environment: Environment
-
-  protected val ws: WSClient
-
   protected implicit val ec: ExecutionContext
-
-  protected val resourcesServerBaseUrl: String = {
-    val port = if (environment.mode == Mode.Dev) 5000 else 5050
-
-    s"http://localhost:$port/tools"
-  }
 
   protected val exPartType: ObjectType[Unit, ExPart] = ObjectType(
     "ExPart",
@@ -85,22 +72,7 @@ trait ExerciseGraphQLModels extends ToolGraphQLModels with GraphQLArguments {
         case x: XmlExerciseContent => Some(x)
         case _                     => None
       }),
-      Field("parts", ListType(exPartType), resolve = context => context.value.content.parts),
-      Field(
-        "asJsonString",
-        StringType,
-        resolve = context => {
-          ToolList.tools.find(_.id == context.value.toolId) match {
-            case None       => ???
-            case Some(tool) =>
-              // FIXME: remove cast!
-              Json.stringify(
-                tool.toolJsonProtocol.exerciseFormat
-                  .writes(context.value.asInstanceOf[Exercise[tool.SolType, tool.ExContentType]])
-              )
-          }
-        }
-      )
+      Field("parts", ListType(exPartType), resolve = context => context.value.content.parts)
     )
   )
 

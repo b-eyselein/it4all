@@ -1,3 +1,25 @@
+# /registerForm
+
+mutation Register($username: String!, $firstPassword: String!, $secondPassword: String!) {
+  register(registerValues: {username: $username, firstPassword: $firstPassword, secondPassword: $secondPassword})
+}
+
+# /loginForm
+
+fragment LoggedInUserWithToken on LoggedInUserWithToken {
+  loggedInUser {
+    username
+    isAdmin
+  }
+  jwt
+}
+
+mutation Login($username: String!, $password: String!) {
+  login(credentials: {username: $username, password: $password}) {
+    ...LoggedInUserWithToken
+  }
+}
+
 # /tools
 query ToolOverview {
   tools {
@@ -183,15 +205,8 @@ query AdminCollectionsIndex($toolId: String!) {
 query AdminEditCollection($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
-      asJsonString
+      __typename
     }
-  }
-}
-
-query AdminReadCollections($toolId: String!) {
-  tool(toolId: $toolId) {
-    name
-    readCollections
   }
 }
 
@@ -201,29 +216,12 @@ mutation AdminUpsertCollection($toolId: String!, $content: String!) {
   }
 }
 
-query AdminReadLessons($toolId: String!) {
-  tool(toolId: $toolId) {
-    name
-    readLessons {
-      ...Lesson
-    }
-  }
-}
-
 query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collId) {
       exercise(exId: $exId) {
-        asJsonString
+        __typename
       }
-    }
-  }
-}
-
-query AdminReadExercises($toolId: String!, $collId: Int!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      readExercises
     }
   }
 }

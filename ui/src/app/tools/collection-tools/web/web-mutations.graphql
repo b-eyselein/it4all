@@ -1,5 +1,5 @@
-mutation WebCorrection($collId: Int!, $exId: Int!,$part: WebExPart!, $solution: WebSolutionInput!) {
-  correctWeb(collId: $collId, exId: $exId,part: $part, solution: $solution) {
+mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!,$part: WebExPart!, $solution: WebSolutionInput!) {
+  correctWeb(userJwt: $userJwt, collId: $collId, exId: $exId,part: $part, solution: $solution) {
     __typename
     solutionSaved
     points

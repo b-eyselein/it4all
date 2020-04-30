@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
 export type WebCorrectionMutationVariables = {
+  userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.WebExPart;
@@ -159,8 +160,8 @@ export const WebResultFragmentDoc = gql`
     ${GradedHtmlTaskResultFragmentDoc}
 ${GradedJsTaskResultFragmentDoc}`;
 export const WebCorrectionDocument = gql`
-    mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
-  correctWeb(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+    mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
+  correctWeb(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
     __typename
     solutionSaved
     points

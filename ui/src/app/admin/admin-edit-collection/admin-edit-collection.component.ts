@@ -27,7 +27,7 @@ export class AdminEditCollectionComponent implements OnInit, OnDestroy {
       this.adminEditCollectionGQL
         .watch({toolId: this.toolId, collId})
         .valueChanges
-        .subscribe(({data}) => this.collectionToEdit = JSON.parse(data.tool.collection.asJsonString));
+        .subscribe(({data}) => this.collectionToEdit = JSON.parse(/*data.tool.collection.asJsonString*/ '{}'));
     });
   }
 

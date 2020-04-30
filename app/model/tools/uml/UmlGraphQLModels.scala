@@ -1,11 +1,11 @@
 package model.tools.uml
 
 import model.core.matching.{MatchType, MatchingResult}
-import model.graphql.GraphQLArguments
+import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.json.KeyValueObject
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
-import model.tools.{SampleSolution, ToolGraphQLModelBasics}
+import model.tools.SampleSolution
 import sangria.macros.derive._
 import sangria.schema._
 
