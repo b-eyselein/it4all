@@ -17,11 +17,11 @@ import scala.util.{Failure, Success}
 @Singleton
 class ApiController @Inject() (
   cc: ControllerComponents,
-  graphQLModel: GraphQLModel,
   override protected val configuration: Configuration,
   override val reactiveMongoApi: ReactiveMongoApi
-)(implicit val ec: ExecutionContext)
+)(override protected implicit val ec: ExecutionContext)
     extends AbstractController(cc)
+    with GraphQLModel
     with MongoController
     with ReactiveMongoComponents
     with JwtHelpers {
@@ -32,11 +32,9 @@ class ApiController @Inject() (
     query: Document,
     operationName: Option[String],
     variables: JsObject
-  ): Future[Result] = {
-    val userContext = GraphQLContext(database)
-
+  ): Future[Result] =
     Executor
-      .execute(graphQLModel.schema, query, userContext, operationName = operationName, variables = variables)
+      .execute(schema, query, operationName = operationName, variables = variables)
       .map(Ok(_))
       .recover {
         case error: QueryAnalysisError =>
@@ -46,7 +44,6 @@ class ApiController @Inject() (
           println(error)
           InternalServerError(error.resolveError)
       }
-  }
 
   def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest](graphQLRequestFormat)) {
     implicit request =>

@@ -2,6 +2,7 @@ package model.graphql
 
 import model.MongoClientQueries
 import model.tools._
+import play.modules.reactivemongo.MongoController
 import sangria.macros.derive.{AddFields, deriveObjectType}
 import sangria.schema.{Context, Field, IDType, ListType, LongType, ObjectType, OptionType}
 
@@ -12,6 +13,7 @@ trait CollectionGraphQLModel
     with ExerciseGraphQLModels
     with GraphQLArguments
     with MongoClientQueries {
+  self: MongoController =>
 
   private def untypedExercises(exercises: Seq[Exercise[_, _ <: ExerciseContent[_]]]): Seq[UntypedExercise] = exercises
 
@@ -28,18 +30,15 @@ trait CollectionGraphQLModel
       Field(
         "exerciseCount",
         LongType,
-        resolve = context =>
-          getExerciseCountForCollection(context.ctx.mongoDB, context.value.toolId, context.value.collectionId)
+        resolve = context => getExerciseCountForCollection(context.value.toolId, context.value.collectionId)
       ),
       Field(
         "exercises",
         ListType(exerciseType),
         resolve = context =>
           ToolList.tools.find(_.id == context.value.toolId) match {
-            case None => ???
-            case Some(tool) =>
-              getExercisesForCollection(context.ctx.mongoDB, tool, context.value.collectionId)
-                .map(untypedExercises)
+            case None       => ???
+            case Some(tool) => getExercisesForCollection(tool, context.value.collectionId).map(untypedExercises)
           }
       ),
       Field(
@@ -56,12 +55,8 @@ trait CollectionGraphQLModel
   ): Future[Option[UntypedExercise]] = ToolList.tools.find(_.id == context.value.toolId) match {
     case None => ???
     case Some(tool) =>
-      getExercise(
-        context.ctx.mongoDB,
-        tool,
-        context.value.collectionId,
-        context.arg(exIdArgument),
-        tool.toolJsonProtocol.exerciseFormat
-      ).map(untypedMaybeExercise)
+      getExercise(tool, context.value.collectionId, context.arg(exIdArgument), tool.toolJsonProtocol.exerciseFormat)
+        .map(untypedMaybeExercise)
   }
+
 }

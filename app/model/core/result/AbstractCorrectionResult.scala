@@ -6,9 +6,9 @@ trait AbstractCorrectionResult {
 
   def solutionSaved: Boolean
 
-  def points: Points //= -1 point
+  def points: Points
 
-  def maxPoints: Points // = -1 point
+  def maxPoints: Points
 
 }
 

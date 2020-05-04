@@ -1,14 +1,10 @@
 package model.graphql
 
-import javax.inject.{Inject, Singleton}
 import model.MongoClientQueries
 import model.tools._
-import play.api.Configuration
 import play.api.libs.json._
-import reactivemongo.api.DefaultDB
+import play.modules.reactivemongo.MongoController
 import sangria.schema._
-
-import scala.concurrent.{ExecutionContext, Future}
 
 final case class GraphQLRequest(
   query: String,
@@ -16,63 +12,59 @@ final case class GraphQLRequest(
   variables: Option[JsObject]
 )
 
-final case class GraphQLContext(
-  mongoDB: Future[DefaultDB]
-)
+final case class GraphQLContext()
 
-@Singleton
-class GraphQLModel @Inject() (
-  override val configuration: Configuration
-)(implicit val ec: ExecutionContext)
+trait GraphQLModel
     extends BasicGraphQLModels
     with CollectionGraphQLModel
     with ExerciseGraphQLModels
     with GraphQLMutations
     with MongoClientQueries {
+  self: MongoController =>
 
   // Types
 
-  private val lessonFieldsForToolType = fields[GraphQLContext, CollectionTool](
+  private val lessonFieldsForToolType = fields[Unit, CollectionTool](
     Field(
       "lessonCount",
       LongType,
-      resolve = context => lessonCountForTool(context.ctx.mongoDB, context.value.id)
+      resolve = context => lessonCountForTool(context.value.id)
     ),
     Field(
       "lessons",
       ListType(LessonGraphQLModel.LessonType),
-      resolve = context => lessonsForTool(context.ctx.mongoDB, context.value.id)
+      resolve = context => lessonsForTool(context.value.id)
     ),
     Field(
       "lesson",
       OptionType(LessonGraphQLModel.LessonType),
       arguments = lessonIdArgument :: Nil,
-      resolve = context => getLesson(context.ctx.mongoDB, context.value.id, context.arg(lessonIdArgument))
+      resolve = context => getLesson(context.value.id, context.arg(lessonIdArgument))
     )
   )
 
-  private val collectionFieldsForToolType = fields[GraphQLContext, CollectionTool](
+  private val collectionFieldsForToolType = fields[Unit, CollectionTool](
     Field(
       "collectionCount",
       LongType,
-      resolve = context => getCollectionCount(context.ctx.mongoDB, context.value.id)
+      resolve = context => getCollectionCount(context.value.id)
     ),
     Field(
       "collections",
       ListType(CollectionType),
-      resolve = context => getExerciseCollections(context.ctx.mongoDB, context.value.id)
+      resolve = context => getExerciseCollections(context.value.id)
     ),
     Field(
       "collection",
       OptionType(CollectionType),
       arguments = collIdArgument :: Nil,
-      resolve = context => getExerciseCollection(context.ctx.mongoDB, context.value.id, context.arg(collIdArgument))
+      resolve = context => getExerciseCollection(context.value.id, context.arg(collIdArgument))
     )
   )
 
-  protected val ToolType: ObjectType[GraphQLContext, CollectionTool] = ObjectType(
+  protected val ToolType: ObjectType[Unit, CollectionTool] = ObjectType(
     "CollectionTool",
-    fields[GraphQLContext, CollectionTool](
+    fields[Unit, CollectionTool](
       Field("id", IDType, resolve = _.value.id),
       Field("name", StringType, resolve = _.value.name),
       Field("state", toolStateType, resolve = _.value.toolState),
@@ -80,7 +72,7 @@ class GraphQLModel @Inject() (
       Field(
         "exerciseCount",
         LongType,
-        resolve = context => getExerciseCountForTool(context.ctx.mongoDB, context.value.id)
+        resolve = context => getExerciseCountForTool(context.value.id)
       ),
       Field(
         "allExercises",
@@ -88,7 +80,7 @@ class GraphQLModel @Inject() (
         resolve = context =>
           ToolList.tools.find(_.id == context.value.id) match {
             case None       => ???
-            case Some(tool) => getExercisesForTool(context.ctx.mongoDB, tool)
+            case Some(tool) => getExercisesForTool(tool)
           }
       ),
       Field(
@@ -100,9 +92,9 @@ class GraphQLModel @Inject() (
     ) ++ lessonFieldsForToolType ++ collectionFieldsForToolType
   )
 
-  private val QueryType: ObjectType[GraphQLContext, Unit] = ObjectType(
+  private val QueryType: ObjectType[Unit, Unit] = ObjectType(
     "Query",
-    fields[GraphQLContext, Unit](
+    fields[Unit, Unit](
       Field("tools", ListType(ToolType), resolve = _ => ToolList.tools),
       Field(
         "tool",
@@ -113,6 +105,6 @@ class GraphQLModel @Inject() (
     )
   )
 
-  val schema: Schema[GraphQLContext, Unit] = Schema(QueryType, mutation = Some(MutationType))
+  val schema: Schema[Unit, Unit] = Schema(QueryType, mutation = Some(MutationType))
 
 }

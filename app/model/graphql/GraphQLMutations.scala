@@ -6,7 +6,7 @@ import model._
 import model.json.JsonProtocols
 import model.tools.{ToolList, UserSolution}
 import play.api.libs.json._
-import reactivemongo.api.DefaultDB
+import play.modules.reactivemongo.MongoController
 import sangria.macros.derive._
 import sangria.marshalling.playJson._
 import sangria.schema._
@@ -15,6 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries with JwtHelpers {
+  self: MongoController =>
 
   private val registerValuesInputType: InputObjectType[RegisterValues]   = deriveInputObjectType()
   private val userCredentialsInputType: InputObjectType[UserCredentials] = deriveInputObjectType()
@@ -33,7 +34,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
 
   protected implicit val ec: ExecutionContext
 
-  private val correctionFields = ToolList.tools.map[Field[GraphQLContext, Unit]] { toolMain =>
+  private val correctionFields = ToolList.tools.map[Field[Unit, Unit]] { toolMain =>
     implicit val solTypeFormat: Format[toolMain.SolType] = toolMain.toolJsonProtocol.solutionFormat
 
     val SolTypeInputArg  = Argument("solution", toolMain.graphQlModels.SolTypeInputType)
@@ -55,11 +56,10 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
             val part     = context.arg(PartTypeInputArg)
             val solution = context.arg(SolTypeInputArg)
 
-            getExercise(context.ctx.mongoDB, toolMain, collId, exId, toolMain.toolJsonProtocol.exerciseFormat).flatMap {
+            getExercise(toolMain, collId, exId, toolMain.toolJsonProtocol.exerciseFormat).flatMap {
               case Some(exercise) =>
                 for {
                   solutionSaved <- insertSolution(
-                    context.ctx.mongoDB,
                     UserSolution(exId, collId, toolMain.id, user.username, solution),
                     toolMain.toolJsonProtocol.userSolutionFormat
                   )
@@ -75,27 +75,24 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
     )
   }
 
-  private def register(registerValues: RegisterValues, defaultDB: Future[DefaultDB]): Future[Option[String]] =
+  private def register(registerValues: RegisterValues): Future[Option[String]] =
     if (registerValues.isInvalid) {
       Future.successful(None)
     } else {
-      getUser(defaultDB, registerValues.username).flatMap {
+      getUser(registerValues.username).flatMap {
         case Some(_) => Future.successful(None)
         case None =>
           val newUser = User(registerValues.username, Some(registerValues.firstPassword.bcrypt))
 
-          insertUser(defaultDB, newUser).map {
+          insertUser(newUser).map {
             case false => None
             case true  => Some(newUser.username)
           }
       }
     }
 
-  private def authenticate(
-    credentials: UserCredentials,
-    defaultDB: Future[DefaultDB]
-  ): Future[Option[LoggedInUserWithToken]] =
-    getUser(defaultDB, credentials.username).map { maybeUser =>
+  private def authenticate(credentials: UserCredentials): Future[Option[LoggedInUserWithToken]] =
+    getUser(credentials.username).map { maybeUser =>
       for {
         user: User      <- maybeUser
         pwHash: String  <- user.pwHash
@@ -109,56 +106,48 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
       } yield maybeUser
     }
 
-  protected val MutationType: ObjectType[GraphQLContext, Unit] = ObjectType(
+  protected val MutationType: ObjectType[Unit, Unit] = ObjectType(
     "Mutation",
-    fields = fields[GraphQLContext, Unit](
+    fields = fields[Unit, Unit](
       Field(
         "register",
         OptionType(StringType),
         arguments = registerValuesArgument :: Nil,
-        resolve = context => register(context.arg(registerValuesArgument), context.ctx.mongoDB)
+        resolve = context => register(context.arg(registerValuesArgument))
       ),
       Field(
         "login",
         OptionType(loggedInUserWithTokenType),
         arguments = userCredentialsArgument :: Nil,
-        resolve = context => authenticate(context.arg(userCredentialsArgument), context.ctx.mongoDB)
+        resolve = context => authenticate(context.arg(userCredentialsArgument))
       ),
       Field(
-        "upsertCollection",
-        OptionType(CollectionType),
+        "insertCollection",
+        BooleanType,
         arguments = toolIdArgument :: contentArgument :: Nil,
         resolve = context =>
           Try(Json.parse(context.arg(contentArgument))).fold(
-            _ => Future.successful(None),
+            _ => Future.successful(false),
             jsonCollection =>
               JsonProtocols.collectionFormat.reads(jsonCollection) match {
-                case JsError(_) => Future.successful(None)
-                case JsSuccess(collection, _) =>
-                  upsertExerciseCollection(context.ctx.mongoDB, collection).map {
-                    case false => None
-                    case true  => Some(collection)
-                  }
+                case JsError(_)               => Future.successful(false)
+                case JsSuccess(collection, _) => insertCollection(collection)
               }
           )
       ),
       Field(
-        "upsertExercise",
-        OptionType(exerciseType),
+        "insertExercise",
+        BooleanType,
         arguments = toolIdArgument :: contentArgument :: Nil,
         resolve = context => {
           ToolList.tools.find(_.id == context.arg(toolIdArgument)) match {
-            case None => Future.successful(None)
+            case None => Future.successful(false)
             case Some(tool) =>
               val jsonExercise: JsValue = Json.parse(context.arg(contentArgument))
 
               tool.toolJsonProtocol.exerciseFormat.reads(jsonExercise) match {
-                case JsError(_) => Future.successful(None)
-                case JsSuccess(exercise, _) =>
-                  insertExercise(context.ctx.mongoDB, exercise, tool.toolJsonProtocol.exerciseFormat).map {
-                    case false => None
-                    case true  => Some(exercise)
-                  }
+                case JsError(_)             => Future.successful(false)
+                case JsSuccess(exercise, _) => insertExercise(exercise, tool.toolJsonProtocol.exerciseFormat)
               }
           }
         }
