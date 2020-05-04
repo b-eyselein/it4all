@@ -5,9 +5,10 @@
       <h2 class="title is-3 has-text-centered">Filter</h2>
 
       <div class="columns is-multiline">
-        <div class="column" *ngFor="let tag of distinctTags">
-          <button class="button is-fullwidth" [class.is-link]="filtersActivated.get(tag)" (click)="toggleFilter(tag)">
-            {{tag.title}}
+        <div class="column" *ngFor="let topicWithLevel of distinctTopicWithLevels">
+          <button class="button is-fullwidth" [class.is-link]="filtersActivated.get(topicWithLevel.topic)"
+                  (click)="toggleFilter(topicWithLevel)">
+            {{topicWithLevel.topic.title}}
           </button>
         </div>
       </div>

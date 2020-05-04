@@ -32,10 +32,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  TruePositive = 'TruePositive',
-  FalsePositive = 'FalsePositive',
   FalseNegative = 'FalseNegative',
-  TrueNegative = 'TrueNegative'
+  FalsePositive = 'FalsePositive',
+  TrueNegative = 'TrueNegative',
+  TruePositive = 'TruePositive'
 }
 
 export type CollectionTool = {
@@ -114,10 +114,9 @@ export type Exercise = {
   title: Scalars['String'];
   authors: Array<Scalars['String']>;
   text: Scalars['String'];
-  topicAbbreviations: Array<Scalars['String']>;
   difficulty: Scalars['Int'];
+  topics: Array<TopicWithLevel>;
   completeId: Scalars['ID'];
-  topics: Array<Topic>;
   programmingContent?: Maybe<ProgrammingExerciseContent>;
   regexContent?: Maybe<RegexExerciseContent>;
   sqlContent?: Maybe<SqlExerciseContent>;
@@ -279,9 +278,9 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   OnlyUser = 'ONLY_USER',
   OnlySample = 'ONLY_SAMPLE',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH'
 }
@@ -467,8 +466,8 @@ export type RegexAbstractResult = {
 };
 
 export enum RegexCorrectionType {
-  Matching = 'MATCHING',
-  Extraction = 'EXTRACTION'
+  Extraction = 'EXTRACTION',
+  Matching = 'MATCHING'
 }
 
 export type RegexExerciseContent = {
@@ -669,11 +668,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Update = 'UPDATE',
-  Insert = 'INSERT',
-  Select = 'SELECT',
   Delete = 'DELETE',
-  Create = 'CREATE'
+  Update = 'UPDATE',
+  Select = 'SELECT',
+  Create = 'CREATE',
+  Insert = 'INSERT'
 }
 
 export enum SqlExPart {
@@ -827,17 +826,17 @@ export type SqlWrongQueryTypeResult = SqlAbstractResult & AbstractCorrectionResu
 };
 
 export enum SuccessType {
+  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY',
-  Complete = 'COMPLETE'
+  Partially = 'PARTIALLY'
 }
 
 export enum ToolState {
-  PreAlpha = 'PRE_ALPHA',
   Alpha = 'ALPHA',
   Beta = 'BETA',
-  Live = 'LIVE'
+  Live = 'LIVE',
+  PreAlpha = 'PRE_ALPHA'
 }
 
 export type Topic = {
@@ -845,6 +844,13 @@ export type Topic = {
   abbreviation: Scalars['String'];
   toolId: Scalars['String'];
   title: Scalars['String'];
+  maxLevel: Scalars['Int'];
+};
+
+export type TopicWithLevel = {
+   __typename?: 'TopicWithLevel';
+  topic: Topic;
+  level: Scalars['Int'];
 };
 
 export type UmlAbstractResult = {
@@ -898,8 +904,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
 };
 
 export enum UmlAssociationType {
-  Association = 'ASSOCIATION',
   Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
   Composition = 'COMPOSITION'
 }
 
@@ -1008,9 +1014,9 @@ export type UmlClassMatchingResult = MatchingResult & {
 };
 
 export enum UmlClassType {
+  Abstract = 'ABSTRACT',
   Class = 'CLASS',
-  Interface = 'INTERFACE',
-  Abstract = 'ABSTRACT'
+  Interface = 'INTERFACE'
 }
 
 export type UmlExerciseContent = {
@@ -1140,10 +1146,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
-  Public = 'PUBLIC',
   Package = 'PACKAGE',
+  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Private = 'PRIVATE'
+  Public = 'PUBLIC'
 }
 
 export type UnitTestCorrectionResult = {
@@ -1176,8 +1182,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Simplified = 'Simplified',
-  Normal = 'Normal'
+  Normal = 'Normal',
+  Simplified = 'Simplified'
 }
 
 export type UserCredentials = {

@@ -5,7 +5,8 @@ import {
   AllExercisesOverviewGQL,
   AllExercisesOverviewQuery,
   FieldsForLinkFragment,
-  TopicFragment
+  TopicFragment,
+  TopicWithLevelFragment
 } from "../../../_services/apollo_services";
 import {Subscription} from "rxjs";
 
@@ -15,10 +16,9 @@ export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
   private sub: Subscription;
   allExercisesOverviewQuery: AllExercisesOverviewQuery;
 
-  distinctTags: TopicFragment[];
+  distinctTopicWithLevels: TopicWithLevelFragment[];
   filteredExercises: FieldsForLinkFragment[];
   filtersActivated: Map<TopicFragment, boolean> = new Map();
-
 
   constructor(private route: ActivatedRoute, private allExercisesOverviewGQL: AllExercisesOverviewGQL) {
   }
@@ -35,9 +35,12 @@ export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
 
           this.filteredExercises = this.allExercisesOverviewQuery.tool.allExercises;
 
-          this.distinctTags = distinctObjectArray(
-            flatMapArray(this.allExercisesOverviewQuery.tool.allExercises, (exercises) => exercises.topics),
-            (t) => t.abbreviation
+          this.distinctTopicWithLevels = distinctObjectArray(
+            flatMapArray(
+              this.allExercisesOverviewQuery.tool.allExercises,
+              (exercises) => exercises.topics
+            ),
+            (t) => t.topic.abbreviation
           );
         });
     });
@@ -47,8 +50,8 @@ export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  toggleFilter(tag: TopicFragment): void {
-    this.filtersActivated.set(tag, !this.filtersActivated.get(tag));
+  toggleFilter(topicWithLevel: TopicWithLevelFragment): void {
+    this.filtersActivated.set(topicWithLevel.topic, !this.filtersActivated.get(topicWithLevel.topic));
 
     const activatedFilters: TopicFragment[] = Array.from(this.filtersActivated.entries())
       .filter(([_, activated]) => activated)
@@ -64,7 +67,7 @@ export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
 
   exerciseHasTag(exercise: FieldsForLinkFragment, tag: TopicFragment): boolean {
     return exercise.topics
-      .map((t) => t.abbreviation)
+      .map((t) => t.topic.abbreviation)
       .includes(tag.abbreviation);
   }
 

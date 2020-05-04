@@ -12,7 +12,6 @@ import {FormsModule} from '@angular/forms';
 import {ExerciseFilesEditorComponent} from './_components/exercise-files-editor/exercise-files-editor.component';
 import {ExerciseFileCardComponent} from './_components/exercise-file-card/exercise-file-card.component';
 import {SharedModule} from '../../shared/shared.module';
-import {TagComponent} from './_components/tag/tag.component';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {ExerciseOverviewComponent} from './exercise-overview/exercise-overview.component';
 import {ExerciseComponent} from './exercise/exercise.component';
@@ -38,10 +37,11 @@ import {XmlDocumentCorrectionComponent} from './xml/_components/xml-document-cor
 import {SqlTableContentsComponent} from './sql/_components/sql-table-contents/sql-table-contents.component';
 import {StringSampleSolComponent} from './_components/string-sample-sol/string-sample-sol.component';
 import {QueryResultTableComponent} from './sql/_components/query-result-table/query-result-table.component';
-import { ProgrammingUnitTestResultComponent } from './programming/_results/programming-unit-test-result/programming-unit-test-result.component';
-import { ProgrammingNormalResultComponent } from './programming/_results/programming-normal-result/programming-normal-result.component';
-import { HtmlTaskResultComponent } from './web/_components/html-task-result/html-task-result.component';
-import { HtmlAttributeResultComponent } from './web/_components/html-attribute-result/html-attribute-result.component';
+import {ProgrammingUnitTestResultComponent} from './programming/_results/programming-unit-test-result/programming-unit-test-result.component';
+import {ProgrammingNormalResultComponent} from './programming/_results/programming-normal-result/programming-normal-result.component';
+import {HtmlTaskResultComponent} from './web/_components/html-task-result/html-task-result.component';
+import {HtmlAttributeResultComponent} from './web/_components/html-attribute-result/html-attribute-result.component';
+import { FilledPointsComponent } from './_components/filled-points/filled-points.component';
 
 
 @NgModule({
@@ -50,7 +50,6 @@ import { HtmlAttributeResultComponent } from './web/_components/html-attribute-r
 
     ExerciseFilesEditorComponent, ExerciseFileCardComponent,
 
-    TagComponent,
 
     AllExercisesOverviewComponent,
     ExerciseOverviewComponent,
@@ -72,7 +71,7 @@ import { HtmlAttributeResultComponent } from './web/_components/html-attribute-r
 
     WebExerciseComponent,
 
-    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent, QueryResultTableComponent, ProgrammingUnitTestResultComponent, ProgrammingNormalResultComponent, HtmlTaskResultComponent, HtmlAttributeResultComponent
+    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent, QueryResultTableComponent, ProgrammingUnitTestResultComponent, ProgrammingNormalResultComponent, HtmlTaskResultComponent, HtmlAttributeResultComponent, FilledPointsComponent
   ],
   providers: [],
   imports: [

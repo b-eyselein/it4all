@@ -7,7 +7,7 @@ import model.tools.sql.{SqlExerciseContent, SqlGraphQLModels}
 import model.tools.uml.{UmlExerciseContent, UmlGraphQLModels}
 import model.tools.web.{WebExerciseContent, WebGraphQLModels}
 import model.tools.xml.{XmlExerciseContent, XmlGraphQLModels}
-import sangria.macros.derive.{AddFields, ExcludeFields, deriveObjectType}
+import sangria.macros.derive.{AddFields, ExcludeFields, ReplaceField, deriveObjectType}
 import sangria.schema.{BooleanType, Field, IDType, ListType, ObjectType, OptionType, StringType, fields}
 
 import scala.concurrent.ExecutionContext
@@ -29,20 +29,31 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
 
   protected val exerciseType: ObjectType[GraphQLContext, UntypedExercise] = deriveObjectType(
     ExcludeFields("content"),
+    ReplaceField(
+      "topicAbbreviations",
+      Field(
+        "topics",
+        ListType(topicWithLevelType),
+        resolve = context => {
+          val allTopics = ToolList.tools
+            .find(_.id == context.value.toolId)
+            .map(_.allTopics)
+            .getOrElse(Seq.empty)
+
+          context.value.topicAbbreviations.flatMap {
+            case (topicAbbreviation, level) =>
+              allTopics
+                .find { topic => topicAbbreviation == topic.abbreviation }
+                .map { topic => TopicWithLevel(topic, level) }
+          }
+        }
+      )
+    ),
     AddFields(
       Field(
         "completeId",
         IDType,
         resolve = context => s"${context.value.toolId}_${context.value.collectionId}_${context.value.exerciseId}"
-      ),
-      Field(
-        "topics",
-        ListType(topicType),
-        resolve = context =>
-          ToolList.tools.find(_.id == context.value.toolId) match {
-            case None       => ???
-            case Some(tool) => tool.allTopics.filter(t => context.value.topicAbbreviations.contains(t.abbreviation))
-          }
       ),
       Field(
         "programmingContent",

@@ -3,7 +3,8 @@ package model.tools
 final case class Topic(
   abbreviation: String,
   toolId: String,
-  title: String
+  title: String,
+  maxLevel: Int = 3
 )
 
 final case class ExerciseCollection(
@@ -22,6 +23,11 @@ trait ExerciseContent[S] {
 
 }
 
+final case class TopicWithLevel(
+  topic: Topic,
+  level: Int
+)
+
 final case class Exercise[S, C <: ExerciseContent[S]](
   exerciseId: Int,
   collectionId: Int,
@@ -29,7 +35,7 @@ final case class Exercise[S, C <: ExerciseContent[S]](
   title: String,
   authors: Seq[String],
   text: String,
-  topicAbbreviations: Seq[String],
+  topicAbbreviations: Seq[(String, Int)],
   difficulty: Int,
   content: C
 )

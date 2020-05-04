@@ -75,8 +75,8 @@ export type AllExercisesOverviewQuery = (
     & { allExercises: Array<(
       { __typename?: 'Exercise' }
       & { topics: Array<(
-        { __typename?: 'Topic' }
-        & TopicFragment
+        { __typename?: 'TopicWithLevel' }
+        & TopicWithLevelFragment
       )> }
       & FieldsForLinkFragment
     )> }
@@ -357,7 +357,16 @@ export type AdminUpsertExerciseMutation = (
 
 export type TopicFragment = (
   { __typename?: 'Topic' }
-  & Pick<Types.Topic, 'abbreviation' | 'title'>
+  & Pick<Types.Topic, 'abbreviation' | 'title' | 'maxLevel'>
+);
+
+export type TopicWithLevelFragment = (
+  { __typename?: 'TopicWithLevel' }
+  & Pick<Types.TopicWithLevel, 'level'>
+  & { topic: (
+    { __typename?: 'Topic' }
+    & TopicFragment
+  ) }
 );
 
 export type PartFragment = (
@@ -369,8 +378,8 @@ export type FieldsForLinkFragment = (
   { __typename?: 'Exercise' }
   & Pick<Types.Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
   & { topics: Array<(
-    { __typename?: 'Topic' }
-    & TopicFragment
+    { __typename?: 'TopicWithLevel' }
+    & TopicWithLevelFragment
   )> }
 );
 
@@ -612,8 +621,17 @@ export const TopicFragmentDoc = gql`
     fragment Topic on Topic {
   abbreviation
   title
+  maxLevel
 }
     `;
+export const TopicWithLevelFragmentDoc = gql`
+    fragment TopicWithLevel on TopicWithLevel {
+  topic {
+    ...Topic
+  }
+  level
+}
+    ${TopicFragmentDoc}`;
 export const FieldsForLinkFragmentDoc = gql`
     fragment FieldsForLink on Exercise {
   exerciseId
@@ -622,10 +640,10 @@ export const FieldsForLinkFragmentDoc = gql`
   title
   difficulty
   topics {
-    ...Topic
+    ...TopicWithLevel
   }
 }
-    ${TopicFragmentDoc}`;
+    ${TopicWithLevelFragmentDoc}`;
 export const ExerciseSolveFieldsFragmentDoc = gql`
     fragment ExerciseSolveFields on Exercise {
   exerciseId
@@ -942,13 +960,13 @@ export const AllExercisesOverviewDocument = gql`
   tool(toolId: $toolId) {
     allExercises {
       topics {
-        ...Topic
+        ...TopicWithLevel
       }
       ...FieldsForLink
     }
   }
 }
-    ${TopicFragmentDoc}
+    ${TopicWithLevelFragmentDoc}
 ${FieldsForLinkFragmentDoc}`;
 
   @Injectable({

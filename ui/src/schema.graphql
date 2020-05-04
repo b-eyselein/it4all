@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon May 04 2020 09:59:17 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon May 04 2020 13:11:45 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -18,10 +18,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  TruePositive
-  FalsePositive
   FalseNegative
+  FalsePositive
   TrueNegative
+  TruePositive
 }
 
 type CollectionTool {
@@ -78,10 +78,9 @@ type Exercise {
   title: String!
   authors: [String!]!
   text: String!
-  topicAbbreviations: [String!]!
   difficulty: Int!
+  topics: [TopicWithLevel!]!
   completeId: ID!
-  topics: [Topic!]!
   programmingContent: ProgrammingExerciseContent
   regexContent: RegexExerciseContent
   sqlContent: SqlExerciseContent
@@ -228,9 +227,9 @@ interface MatchingResult {
 }
 
 enum MatchType {
+  SUCCESSFUL_MATCH
   ONLY_USER
   ONLY_SAMPLE
-  SUCCESSFUL_MATCH
   UNSUCCESSFUL_MATCH
   PARTIAL_MATCH
 }
@@ -322,8 +321,8 @@ interface RegexAbstractResult {
 }
 
 enum RegexCorrectionType {
-  MATCHING
   EXTRACTION
+  MATCHING
 }
 
 type RegexExerciseContent {
@@ -492,11 +491,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  UPDATE
-  INSERT
-  SELECT
   DELETE
+  UPDATE
+  SELECT
   CREATE
+  INSERT
 }
 
 enum SqlExPart {
@@ -631,23 +630,29 @@ type SqlWrongQueryTypeResult implements SqlAbstractResult & AbstractCorrectionRe
 }
 
 enum SuccessType {
+  COMPLETE
   ERROR
   NONE
   PARTIALLY
-  COMPLETE
 }
 
 enum ToolState {
-  PRE_ALPHA
   ALPHA
   BETA
   LIVE
+  PRE_ALPHA
 }
 
 type Topic {
   abbreviation: String!
   toolId: String!
   title: String!
+  maxLevel: Int!
+}
+
+type TopicWithLevel {
+  topic: Topic!
+  level: Int!
 }
 
 interface UmlAbstractResult {
@@ -697,8 +702,8 @@ type UmlAssociationMatchingResult implements MatchingResult {
 }
 
 enum UmlAssociationType {
-  ASSOCIATION
   AGGREGATION
+  ASSOCIATION
   COMPOSITION
 }
 
@@ -798,9 +803,9 @@ type UmlClassMatchingResult implements MatchingResult {
 }
 
 enum UmlClassType {
+  ABSTRACT
   CLASS
   INTERFACE
-  ABSTRACT
 }
 
 type UmlExerciseContent {
@@ -914,10 +919,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PUBLIC
   PACKAGE
-  PROTECTED
   PRIVATE
+  PROTECTED
+  PUBLIC
 }
 
 type UnitTestCorrectionResult {
@@ -947,8 +952,8 @@ type UnitTestTestConfig {
 }
 
 enum UnitTestType {
-  Simplified
   Normal
+  Simplified
 }
 
 input UserCredentials {

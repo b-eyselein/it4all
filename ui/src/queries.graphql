@@ -47,7 +47,7 @@ query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
     allExercises {
       topics {
-        ...Topic
+        ...TopicWithLevel
       }
       ...FieldsForLink
     }
@@ -233,6 +233,14 @@ mutation AdminUpsertExercise($toolId: String!, $content: String!) {
 fragment Topic on Topic {
   abbreviation
   title
+  maxLevel
+}
+
+fragment TopicWithLevel on TopicWithLevel{
+  topic {
+    ...Topic
+  }
+  level
 }
 
 fragment Part on ExPart {
@@ -248,7 +256,7 @@ fragment FieldsForLink on Exercise {
   title
   difficulty
   topics {
-    ...Topic
+    ...TopicWithLevel
   }
 }
 

@@ -2,25 +2,32 @@
   <div class="card-header">
     <div class="card-header-title">{{exercise.exerciseId}}. {{exercise.title}}</div>
   </div>
+
   <div class="card-content">
-    <div *ngIf="exercise.difficulty">
-      Schwierigkeit: {{exercise.difficulty}}
-      &nbsp;
-      <span *ngFor="let x of filledDifficultyStars">&#9899;</span>
-      <span *ngFor="let x of nonFilledDifficultyStars">&#9898;</span>
+    <div class="columns">
+      <div class="column">Schwierigkeit:</div>
+      <div class="column">
+        <it4all-filled-points [filledPoints]="exercise.difficulty" maxPoints="5"></it4all-filled-points>
+      </div>
     </div>
 
-    <!-- Tags -->
-    <div class="buttons" *ngIf="exercise.topics">
-      <span *ngIf="exercise.topics.length === 0">&nbsp;</span>
-      <it4all-tag *ngFor="let tag of exercise.topics" [topic]="tag"></it4all-tag>
-    </div>
+    <hr>
 
+    <div class="columns" *ngFor="let topicWithLevel of exercise.topics">
+      <div class="column">{{topicWithLevel.topic.title}}:</div>
+      <div class="column">
+        <it4all-filled-points
+          [filledPoints]="topicWithLevel.level"
+          [maxPoints]="topicWithLevel.topic.maxLevel"></it4all-filled-points>
+      </div>
+    </div>
   </div>
+
   <footer class="card-footer">
     <a class="card-footer-item"
-       [routerLink]="['/tools', exercise.toolId, 'collections',exercise.collectionId, 'exercises', exercise.exerciseId]">
+       [routerLink]="['/tools', exercise.toolId, 'collections', exercise.collectionId, 'exercises', exercise.exerciseId]">
       Zur Aufgabe
     </a>
   </footer>
+
 </div>
