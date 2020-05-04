@@ -323,10 +323,7 @@ export type AdminUpsertCollectionMutationVariables = {
 
 export type AdminUpsertCollectionMutation = (
   { __typename?: 'Mutation' }
-  & { upsertCollection?: Types.Maybe<(
-    { __typename?: 'ExerciseCollection' }
-    & Pick<Types.ExerciseCollection, 'completeId'>
-  )> }
+  & Pick<Types.Mutation, 'insertCollection'>
 );
 
 export type AdminEditExerciseQueryVariables = {
@@ -355,10 +352,7 @@ export type AdminUpsertExerciseMutationVariables = {
 
 export type AdminUpsertExerciseMutation = (
   { __typename?: 'Mutation' }
-  & { upsertExercise?: Types.Maybe<(
-    { __typename?: 'Exercise' }
-    & Pick<Types.Exercise, 'completeId'>
-  )> }
+  & Pick<Types.Mutation, 'insertExercise'>
 );
 
 export type TopicFragment = (
@@ -1225,9 +1219,7 @@ export const AdminEditCollectionDocument = gql`
   }
 export const AdminUpsertCollectionDocument = gql`
     mutation AdminUpsertCollection($toolId: String!, $content: String!) {
-  upsertCollection(toolId: $toolId, content: $content) {
-    completeId
-  }
+  insertCollection(toolId: $toolId, content: $content)
 }
     `;
 
@@ -1259,9 +1251,7 @@ export const AdminEditExerciseDocument = gql`
   }
 export const AdminUpsertExerciseDocument = gql`
     mutation AdminUpsertExercise($toolId: String!, $content: String!) {
-  upsertExercise(toolId: $toolId, content: $content) {
-    completeId
-  }
+  insertExercise(toolId: $toolId, content: $content)
 }
     `;
 

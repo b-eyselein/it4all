@@ -211,9 +211,7 @@ query AdminEditCollection($toolId: String!, $collId: Int!) {
 }
 
 mutation AdminUpsertCollection($toolId: String!, $content: String!) {
-  upsertCollection(toolId: $toolId, content: $content) {
-    completeId
-  }
+  insertCollection(toolId: $toolId, content: $content)
 }
 
 query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
@@ -227,9 +225,7 @@ query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
 }
 
 mutation AdminUpsertExercise($toolId: String!, $content: String!) {
-  upsertExercise(toolId: $toolId, content: $content) {
-    completeId
-  }
+  insertExercise(toolId: $toolId, content: $content)
 }
 
 # Fragments

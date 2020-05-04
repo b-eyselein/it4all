@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Apr 30 2020 14:14:49 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon May 04 2020 09:59:17 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -228,18 +228,18 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_SAMPLE
-  PARTIAL_MATCH
   ONLY_USER
-  UNSUCCESSFUL_MATCH
+  ONLY_SAMPLE
   SUCCESSFUL_MATCH
+  UNSUCCESSFUL_MATCH
+  PARTIAL_MATCH
 }
 
 type Mutation {
   register(registerValues: RegisterValues!): String
   login(credentials: UserCredentials!): LoggedInUserWithToken
-  upsertCollection(toolId: String!, content: String!): ExerciseCollection
-  upsertExercise(toolId: String!, content: String!): Exercise
+  insertCollection(toolId: String!, content: String!): Boolean!
+  insertExercise(toolId: String!, content: String!): Boolean!
   correctProgramming(userJwt: String!, collId: Int!, exId: Int!, part: ProgExPart!, solution: ProgSolutionInput!): ProgrammingAbstractResult!
   correctRegex(userJwt: String!, collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): RegexAbstractResult!
   correctSql(userJwt: String!, collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlAbstractResult!
@@ -493,10 +493,10 @@ type SqlExerciseContent {
 
 enum SqlExerciseType {
   UPDATE
+  INSERT
+  SELECT
   DELETE
   CREATE
-  SELECT
-  INSERT
 }
 
 enum SqlExPart {
@@ -631,17 +631,17 @@ type SqlWrongQueryTypeResult implements SqlAbstractResult & AbstractCorrectionRe
 }
 
 enum SuccessType {
-  COMPLETE
   ERROR
   NONE
   PARTIALLY
+  COMPLETE
 }
 
 enum ToolState {
+  PRE_ALPHA
   ALPHA
   BETA
   LIVE
-  PRE_ALPHA
 }
 
 type Topic {
