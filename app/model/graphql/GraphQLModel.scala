@@ -25,16 +25,8 @@ trait GraphQLModel
   // Types
 
   private val lessonFieldsForToolType = fields[Unit, CollectionTool](
-    Field(
-      "lessonCount",
-      LongType,
-      resolve = context => lessonCountForTool(context.value.id)
-    ),
-    Field(
-      "lessons",
-      ListType(LessonGraphQLModel.LessonType),
-      resolve = context => lessonsForTool(context.value.id)
-    ),
+    Field("lessonCount", LongType, resolve = context => lessonCountForTool(context.value.id)),
+    Field("lessons", ListType(LessonGraphQLModel.LessonType), resolve = context => lessonsForTool(context.value.id)),
     Field(
       "lesson",
       OptionType(LessonGraphQLModel.LessonType),
@@ -44,16 +36,8 @@ trait GraphQLModel
   )
 
   private val collectionFieldsForToolType = fields[Unit, CollectionTool](
-    Field(
-      "collectionCount",
-      LongType,
-      resolve = context => getCollectionCount(context.value.id)
-    ),
-    Field(
-      "collections",
-      ListType(CollectionType),
-      resolve = context => getExerciseCollections(context.value.id)
-    ),
+    Field("collectionCount", LongType, resolve = context => getCollectionCount(context.value.id)),
+    Field("collections", ListType(CollectionType), resolve = context => getExerciseCollections(context.value.id)),
     Field(
       "collection",
       OptionType(CollectionType),
@@ -69,11 +53,7 @@ trait GraphQLModel
       Field("name", StringType, resolve = _.value.name),
       Field("state", toolStateType, resolve = _.value.toolState),
       // Special fields for exercises
-      Field(
-        "exerciseCount",
-        LongType,
-        resolve = context => getExerciseCountForTool(context.value.id)
-      ),
+      Field("exerciseCount", LongType, resolve = context => getExerciseCountForTool(context.value.id)),
       Field(
         "allExercises",
         ListType(exerciseType),

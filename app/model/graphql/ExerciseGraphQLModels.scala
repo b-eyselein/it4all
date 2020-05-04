@@ -8,7 +8,7 @@ import model.tools.uml.{UmlExerciseContent, UmlGraphQLModels}
 import model.tools.web.{WebExerciseContent, WebGraphQLModels}
 import model.tools.xml.{XmlExerciseContent, XmlGraphQLModels}
 import sangria.macros.derive.{AddFields, ExcludeFields, ReplaceField, deriveObjectType}
-import sangria.schema.{BooleanType, Field, IDType, ListType, ObjectType, OptionType, StringType, fields}
+import sangria.schema.{BooleanType, Field, ListType, ObjectType, OptionType, StringType, fields}
 
 import scala.concurrent.ExecutionContext
 
@@ -50,11 +50,6 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
       )
     ),
     AddFields(
-      Field(
-        "completeId",
-        IDType,
-        resolve = context => s"${context.value.toolId}_${context.value.collectionId}_${context.value.exerciseId}"
-      ),
       Field(
         "programmingContent",
         OptionType(ProgrammingGraphQLModels.exerciseContentType),

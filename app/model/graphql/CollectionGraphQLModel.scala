@@ -23,11 +23,6 @@ trait CollectionGraphQLModel
   protected val CollectionType: ObjectType[GraphQLContext, ExerciseCollection] = deriveObjectType(
     AddFields(
       Field(
-        "completeId",
-        IDType,
-        resolve = context => s"${context.value.collectionId}_${context.value.toolId}"
-      ),
-      Field(
         "exerciseCount",
         LongType,
         resolve = context => getExerciseCountForCollection(context.value.toolId, context.value.collectionId)
