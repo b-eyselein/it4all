@@ -1,5 +1,6 @@
 package model.tools
 
+import model.{ExPart, Exercise, ExerciseContent, SampleSolution, UserSolution}
 import model.json.KeyValueObject
 import play.api.libs.json._
 

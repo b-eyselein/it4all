@@ -1,6 +1,7 @@
 package model.tools.web
 
 import de.uniwue.webtester.sitespec._
+import model.{ExerciseFile, SampleSolution}
 import model.json.JsonProtocols
 import model.tools._
 import play.api.libs.json.{Format, Json}

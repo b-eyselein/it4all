@@ -2,10 +2,10 @@ package model.tools.xml
 
 import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
+import model.SampleSolution
 import model.core.matching.MatchType
 import model.core.result.SuccessType
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
-import model.tools.SampleSolution
 import sangria.macros.derive._
 import sangria.schema._
 

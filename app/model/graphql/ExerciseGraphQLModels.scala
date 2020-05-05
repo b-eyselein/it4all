@@ -1,5 +1,7 @@
 package model.graphql
 
+import model.{ExPart, TopicWithLevel}
+import model.tools.Helper.UntypedExercise
 import model.tools._
 import model.tools.programming.{ProgrammingExerciseContent, ProgrammingGraphQLModels}
 import model.tools.regex.{RegexExerciseContent, RegexGraphQLModels}
@@ -13,8 +15,6 @@ import sangria.schema.{BooleanType, Field, ListType, ObjectType, OptionType, Str
 import scala.concurrent.ExecutionContext
 
 trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
-
-  protected type UntypedExercise = Exercise[_, _ <: ExerciseContent[_]]
 
   protected implicit val ec: ExecutionContext
 

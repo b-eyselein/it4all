@@ -5,10 +5,10 @@ import java.nio.file.StandardOpenOption
 import better.files.File
 import better.files.File.OpenOptions
 import de.uniwue.webtester.WebCorrector
-import model.LoggedInUser
 import model.graphql.ToolGraphQLModelBasics
 import model.points._
 import model.tools._
+import model.{Exercise, LoggedInUser}
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.Logger
 
@@ -23,6 +23,8 @@ object WebTool extends CollectionTool("web", "Web") {
   override type ExContentType = WebExerciseContent
   override type PartType      = WebExPart
   override type ResType       = WebAbstractResult
+
+  type WebExercise = Exercise[WebSolution, WebExerciseContent]
 
   // Yaml, Html forms, Json
 
@@ -92,7 +94,7 @@ object WebTool extends CollectionTool("web", "Web") {
   override def correctAbstract(
     user: LoggedInUser,
     solution: WebSolution,
-    exercise: Exercise[WebSolution, WebExerciseContent],
+    exercise: WebExercise,
     part: WebExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[WebAbstractResult] = Future {

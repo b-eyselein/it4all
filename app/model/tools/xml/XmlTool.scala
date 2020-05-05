@@ -1,10 +1,10 @@
 package model.tools.xml
 
 import de.uniwue.dtd.model.ElementLine
-import model.LoggedInUser
 import model.core.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
 import model.tools._
+import model.{Exercise, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -14,6 +14,8 @@ object XmlTool extends CollectionTool("xml", "Xml") {
   override type ExContentType = XmlExerciseContent
   override type PartType      = XmlExPart
   override type ResType       = XmlAbstractResult
+
+  type XmlExercise = Exercise[XmlSolution, XmlExerciseContent]
 
   type ElementLineComparison = MatchingResult[ElementLine, ElementLineMatch]
 
@@ -30,7 +32,7 @@ object XmlTool extends CollectionTool("xml", "Xml") {
   override def correctAbstract(
     user: LoggedInUser,
     solution: XmlSolution,
-    exercise: Exercise[XmlSolution, XmlExerciseContent],
+    exercise: XmlExercise,
     part: XmlExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[XmlAbstractResult] = Future.successful {

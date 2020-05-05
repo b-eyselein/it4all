@@ -1,6 +1,7 @@
 package model.tools.uml
 
 import enumeratum.{EnumEntry, PlayEnum}
+import model.{ExPart, ExParts, ExerciseContent, SampleSolution}
 import model.tools._
 
 sealed abstract class UmlExPart(

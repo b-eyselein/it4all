@@ -1,8 +1,9 @@
 package model.tools.regex
 
+import model.SampleSolution
 import model.core.matching.MatchType
 import model.points._
-import model.tools.{AbstractCorrector, SampleSolution}
+import model.tools.AbstractCorrector
 import play.api.Logger
 
 import scala.util.Try

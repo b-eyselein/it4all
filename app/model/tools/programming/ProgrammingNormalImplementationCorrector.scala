@@ -1,9 +1,9 @@
 package model.tools.programming
 
 import better.files.File
+import model.SampleSolution
 import model.core.result.SuccessType
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
-import model.tools.SampleSolution
 import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}

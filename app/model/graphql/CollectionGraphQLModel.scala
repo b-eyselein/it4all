@@ -1,7 +1,8 @@
 package model.graphql
 
-import model.MongoClientQueries
+import model.tools.Helper.UntypedExercise
 import model.tools._
+import model.{Exercise, ExerciseCollection, ExerciseContent, MongoClientQueries}
 import play.modules.reactivemongo.MongoController
 import sangria.macros.derive.{AddFields, deriveObjectType}
 import sangria.schema.{Context, Field, ListType, LongType, ObjectType, OptionType}

@@ -116,7 +116,6 @@ export type Exercise = {
   text: Scalars['String'];
   difficulty: Scalars['Int'];
   topics: Array<TopicWithLevel>;
-  completeId: Scalars['ID'];
   programmingContent?: Maybe<ProgrammingExerciseContent>;
   regexContent?: Maybe<RegexExerciseContent>;
   sqlContent?: Maybe<SqlExerciseContent>;
@@ -133,7 +132,6 @@ export type ExerciseCollection = {
   title: Scalars['String'];
   authors: Array<Scalars['String']>;
   text: Scalars['String'];
-  completeId: Scalars['ID'];
   exerciseCount: Scalars['Long'];
   exercises: Array<Exercise>;
   exercise?: Maybe<Exercise>;
@@ -258,6 +256,13 @@ export type Lesson = {
   description: Scalars['String'];
 };
 
+export enum Level {
+  Advanced = 'Advanced',
+  Beginner = 'Beginner',
+  Expert = 'Expert',
+  Intermediate = 'Intermediate'
+}
+
 export type LoggedInUser = {
    __typename?: 'LoggedInUser';
   username: Scalars['String'];
@@ -280,9 +285,9 @@ export type MatchingResult = {
 export enum MatchType {
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
   OnlyUser = 'ONLY_USER',
-  OnlySample = 'ONLY_SAMPLE',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  PartialMatch = 'PARTIAL_MATCH'
+  PartialMatch = 'PARTIAL_MATCH',
+  OnlySample = 'ONLY_SAMPLE'
 }
 
 export type Mutation = {
@@ -450,8 +455,14 @@ export type ProgSolutionInput = {
 
 export type Query = {
    __typename?: 'Query';
+  me: User;
   tools: Array<CollectionTool>;
   tool?: Maybe<CollectionTool>;
+};
+
+
+export type QueryMeArgs = {
+  userJwt: Scalars['String'];
 };
 
 
@@ -668,11 +679,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Delete = 'DELETE',
-  Update = 'UPDATE',
   Select = 'SELECT',
+  Insert = 'INSERT',
   Create = 'CREATE',
-  Insert = 'INSERT'
+  Delete = 'DELETE',
+  Update = 'UPDATE'
 }
 
 export enum SqlExPart {
@@ -850,7 +861,7 @@ export type Topic = {
 export type TopicWithLevel = {
    __typename?: 'TopicWithLevel';
   topic: Topic;
-  level: Scalars['Int'];
+  level: Level;
 };
 
 export type UmlAbstractResult = {
@@ -1185,6 +1196,11 @@ export enum UnitTestType {
   Normal = 'Normal',
   Simplified = 'Simplified'
 }
+
+export type User = {
+   __typename?: 'User';
+  proficiencies: Array<Scalars['String']>;
+};
 
 export type UserCredentials = {
   username: Scalars['String'];

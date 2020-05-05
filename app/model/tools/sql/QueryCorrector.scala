@@ -1,9 +1,10 @@
 package model.tools.sql
 
+import model.SampleSolution
 import model.core.result.InternalErrorResult
 import model.points._
 import model.tools.sql.matcher._
-import model.tools.{AbstractCorrector, SampleSolution}
+import model.tools.AbstractCorrector
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table

@@ -59,7 +59,6 @@ query CollectionList($toolId: String!) {
   tool(toolId: $toolId) {
     name
     collections {
-      completeId
       collectionId
       title
       exerciseCount

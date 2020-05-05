@@ -1,5 +1,6 @@
 package model.tools.programming
 
+import model.{ExerciseFile, SampleSolution}
 import model.json.JsonProtocols
 import model.tools._
 import model.tools.programming.ProgDataTypes.{GenericProgDataType, NonGenericProgDataType}

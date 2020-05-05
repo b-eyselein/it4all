@@ -1,7 +1,7 @@
 package model.tools.programming
 
 import better.files.File
-import model.LoggedInUser
+import model.{Exercise, ExerciseFile, LoggedInUser, Topic}
 import model.graphql.ToolGraphQLModelBasics
 import model.tools._
 

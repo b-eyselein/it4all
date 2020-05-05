@@ -3,11 +3,12 @@ package model.tools.xml
 import better.files.File
 import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.xml.parsers.DocumentBuilderFactory
+import model.SampleSolution
 import model.core.Levenshtein
 import model.core.result.SuccessType
 import model.points._
 import model.tools.xml.XmlTool.ElementLineComparison
-import model.tools.{AbstractCorrector, SampleSolution}
+import model.tools.AbstractCorrector
 import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
 import play.api.Logger
 

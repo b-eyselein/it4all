@@ -1,6 +1,6 @@
 package model.tools.rose
 
-import model.LoggedInUser
+import model.{Exercise, LoggedInUser}
 import model.graphql.ToolGraphQLModelBasics
 import model.tools._
 import model.tools.programming.ProgLanguages

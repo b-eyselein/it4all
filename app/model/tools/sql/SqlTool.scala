@@ -1,6 +1,6 @@
 package model.tools.sql
 
-import model.LoggedInUser
+import model.{Exercise, LoggedInUser, Topic}
 import model.core.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
 import model.points._

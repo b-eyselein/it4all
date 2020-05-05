@@ -1,6 +1,6 @@
 package model.tools.regex
 
-import model.LoggedInUser
+import model.{Exercise, LoggedInUser}
 import model.core.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
 import model.points._

@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon May 04 2020 13:11:45 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Tue May 05 2020 12:51:39 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -80,7 +80,6 @@ type Exercise {
   text: String!
   difficulty: Int!
   topics: [TopicWithLevel!]!
-  completeId: ID!
   programmingContent: ProgrammingExerciseContent
   regexContent: RegexExerciseContent
   sqlContent: SqlExerciseContent
@@ -96,7 +95,6 @@ type ExerciseCollection {
   title: String!
   authors: [String!]!
   text: String!
-  completeId: ID!
   exerciseCount: Long!
   exercises: [Exercise!]!
   exercise(exId: Int!): Exercise
@@ -204,6 +202,13 @@ type Lesson {
   description: String!
 }
 
+enum Level {
+  Advanced
+  Beginner
+  Expert
+  Intermediate
+}
+
 type LoggedInUser {
   username: String!
   isAdmin: Boolean!
@@ -229,9 +234,9 @@ interface MatchingResult {
 enum MatchType {
   SUCCESSFUL_MATCH
   ONLY_USER
-  ONLY_SAMPLE
   UNSUCCESSFUL_MATCH
   PARTIAL_MATCH
+  ONLY_SAMPLE
 }
 
 type Mutation {
@@ -310,6 +315,7 @@ input ProgSolutionInput {
 }
 
 type Query {
+  me(userJwt: String!): User!
   tools: [CollectionTool!]!
   tool(toolId: String!): CollectionTool
 }
@@ -491,11 +497,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
+  SELECT
+  INSERT
+  CREATE
   DELETE
   UPDATE
-  SELECT
-  CREATE
-  INSERT
 }
 
 enum SqlExPart {
@@ -652,7 +658,7 @@ type Topic {
 
 type TopicWithLevel {
   topic: Topic!
-  level: Int!
+  level: Level!
 }
 
 interface UmlAbstractResult {
@@ -954,6 +960,10 @@ type UnitTestTestConfig {
 enum UnitTestType {
   Normal
   Simplified
+}
+
+type User {
+  proficiencies: [String!]!
 }
 
 input UserCredentials {

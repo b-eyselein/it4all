@@ -1,7 +1,8 @@
 package model.tools.rose
 
+import model.SampleSolution
 import model.tools.programming.{ProgDataType, ProgrammingToolJsonProtocol}
-import model.tools.{SampleSolution, StringSampleSolutionToolJsonProtocol}
+import model.tools.StringSampleSolutionToolJsonProtocol
 import play.api.libs.json.{Format, Json, Reads, Writes}
 
 object RoseToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RoseExerciseContent, RoseExPart] {

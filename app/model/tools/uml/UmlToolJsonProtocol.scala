@@ -1,6 +1,7 @@
 package model.tools.uml
 
-import model.tools.{SampleSolution, ToolJsonProtocol}
+import model.SampleSolution
+import model.tools.ToolJsonProtocol
 import play.api.libs.json._
 
 object UmlToolJsonProtocol extends ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] {

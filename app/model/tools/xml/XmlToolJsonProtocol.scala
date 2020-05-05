@@ -1,6 +1,7 @@
 package model.tools.xml
 
-import model.tools.{SampleSolution, ToolJsonProtocol}
+import model.SampleSolution
+import model.tools.ToolJsonProtocol
 import play.api.libs.json._
 
 object XmlToolJsonProtocol extends ToolJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] {

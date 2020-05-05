@@ -2,6 +2,7 @@ package model
 
 import model.json.JsonProtocols
 import model.lesson.Lesson
+import model.tools.Helper.UntypedExercise
 import model.tools._
 import play.api.libs.json.{Format, JsObject, Json, OFormat}
 import play.modules.reactivemongo.MongoController
@@ -19,6 +20,8 @@ trait MongoClientQueries {
   private implicit val userFormat: OFormat[User]                             = Json.format
   private implicit val lessonFormat: OFormat[Lesson]                         = JsonProtocols.lessonFormat
   private implicit val exerciseCollectionFormat: OFormat[ExerciseCollection] = JsonProtocols.collectionFormat
+  private implicit val topicFormat: OFormat[Topic]                           = JsonProtocols.topicFormat
+  private implicit val userProficiencyFormat: OFormat[UserProficiency]       = JsonProtocols.userProficiencyFormat
 
   private def userFilter(username: String): JsObject = Json.obj(
     "username" -> username
@@ -54,6 +57,18 @@ trait MongoClientQueries {
     "exerciseId"   -> exerciseId,
     "part"         -> part
   )
+
+  private def userAndToolFilter(username: String, toolId: String) = Json.obj(
+    "username" -> username,
+    "toolId"   -> toolId
+  )
+
+  private def userToolAndTopicFilter(username: String, topic: Topic) = Json.obj(
+    "username" -> username,
+    "toolId"   -> topic.toolId,
+    "topic"    -> topic
+  )
+
   // Collections
 
   private def futureUsersCollection: Future[JSONCollection] = database.map(_.collection("users"))
@@ -65,6 +80,9 @@ trait MongoClientQueries {
   private def futureExercisesCollection: Future[JSONCollection] = database.map(_.collection("exercises"))
 
   private def futureUserSolutionsCollection: Future[JSONCollection] = database.map(_.collection("solutions"))
+
+  private def futureUserProficienciesCollection: Future[JSONCollection] =
+    database.map(_.collection("userProficiencies"))
 
   // User queries
 
@@ -206,10 +224,7 @@ trait MongoClientQueries {
 
   // Solution queries
 
-  protected def nextUserSolutionId[P](
-    exercise: Exercise[_, _ <: ExerciseContent[_]],
-    part: P
-  )(implicit pf: Format[P]): Future[Int] =
+  protected def nextUserSolutionId[P](exercise: UntypedExercise, part: P)(implicit pf: Format[P]): Future[Int] =
     for {
       userSolutionsCollection <- futureUserSolutionsCollection
       exFilter = exercisePartFilter(exercise.toolId, exercise.collectionId, exercise.exerciseId, part)
@@ -228,6 +243,53 @@ trait MongoClientQueries {
       userSolutionsCollection <- futureUserSolutionsCollection
       insertResult            <- userSolutionsCollection.insert(true).one(solution)
     } yield insertResult.ok
+  }
+
+  // Update user proficiencies
+
+  protected def userProficienciesForTool(username: String, toolId: String): Future[Seq[UserProficiency]] =
+    for {
+      userProficienciesCollection <- futureUserProficienciesCollection
+      dbUserProfs <- userProficienciesCollection
+        .find(userAndToolFilter(username, toolId))
+        .cursor[UserProficiency]()
+        .collect[Seq](-1, Cursor.FailOnError())
+      userProfs = dbUserProfs
+    } yield userProfs
+
+  protected def allTopicsWithLevelForTool(username: String, tool: CollectionTool): Future[Seq[TopicWithLevel]] =
+    for {
+      dbUserProficiencies <- userProficienciesForTool(username, tool.id)
+      userProficiencies = dbUserProficiencies
+        .map(up => (up.topic, TopicWithLevel(up.topic, up.getLevel)))
+        .toMap
+      allUserProficiencies = tool.allTopics
+        .map { t => userProficiencies.getOrElse(t, TopicWithLevel(t, Level.Beginner)) }
+    } yield allUserProficiencies
+
+  protected def updateUserProficiencies(
+    username: String,
+    topicWithLevel: TopicWithLevel
+  ): Future[Unit] = {
+
+    val filter      = userToolAndTopicFilter(username, topicWithLevel.topic)
+    val pointsToAdd = UserProficiency.pointsGainedForCompletion(topicWithLevel.level)
+
+    for {
+      userProficienciesCollection <- futureUserSolutionsCollection
+
+      oldUserProficiency <- userProficienciesCollection
+        .find(filter)
+        .one[UserProficiency]
+        .map(_.getOrElse(UserProficiency(username, topicWithLevel.topic)))
+
+      newUserProficiency = oldUserProficiency.withUpdatedPointsForLevel(topicWithLevel.level, pointsToAdd)
+
+      updateResult <- userProficienciesCollection
+        .update(true)
+        .one(filter, newUserProficiency, upsert = true)
+
+    } yield updateResult.ok
   }
 
 }

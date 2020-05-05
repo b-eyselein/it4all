@@ -1,11 +1,11 @@
 package model.graphql
 
+import model._
 import model.core.result.SuccessType
 import model.json.KeyValueObject
-import model.tools.{ExerciseFile, ToolState, Topic, TopicWithLevel}
-import model.{LoggedInUser, LoggedInUserWithToken}
-import sangria.macros.derive.{InputObjectTypeName, deriveEnumType, deriveInputObjectType, deriveObjectType}
-import sangria.schema.{EnumType, InputObjectType, ObjectType}
+import model.tools.ToolState
+import sangria.macros.derive._
+import sangria.schema._
 
 trait BasicGraphQLModels {
 
@@ -19,10 +19,13 @@ trait BasicGraphQLModels {
 
   protected val toolStateType: EnumType[ToolState] = deriveEnumType()
 
+  protected val levelEnumType: EnumType[Level] = deriveEnumType()
+
   protected val topicType: ObjectType[Unit, Topic] = deriveObjectType()
 
   protected val topicWithLevelType: ObjectType[Unit, TopicWithLevel] = {
     implicit val tt: ObjectType[Unit, Topic] = topicType
+    implicit val lt: EnumType[Level]         = levelEnumType
 
     deriveObjectType()
   }

@@ -1,5 +1,6 @@
 package model.tools.programming
 
+import model.{ExerciseContent, ExerciseFile, SampleSolution}
 import model.tools._
 import model.tools.uml.UmlClassDiagram
 import play.api.libs.json.JsValue

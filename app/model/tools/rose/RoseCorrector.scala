@@ -1,10 +1,11 @@
 package model.tools.rose
 
 import better.files._
+import model.Exercise
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.points._
 import model.tools.programming.ProgLanguage
-import model.tools.{AbstractCorrector, Exercise}
+import model.tools.AbstractCorrector
 import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, Json}
 

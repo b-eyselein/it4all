@@ -1,6 +1,5 @@
 package model
 
-import model.tools.Topic
 import model.tools.programming.ProgrammingTopics
 import org.scalatest.{FlatSpec, Matchers}
 

@@ -1,5 +1,6 @@
 package model.tools.xml
 
+import model.{ExPart, ExParts, ExerciseContent, SampleSolution}
 import model.tools._
 
 sealed abstract class XmlExPart(val partName: String, val id: String) extends ExPart

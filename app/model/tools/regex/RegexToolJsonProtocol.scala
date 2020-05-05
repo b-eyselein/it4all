@@ -1,6 +1,7 @@
 package model.tools.regex
 
-import model.tools.{SampleSolution, StringSampleSolutionToolJsonProtocol}
+import model.SampleSolution
+import model.tools.StringSampleSolutionToolJsonProtocol
 import play.api.libs.json.{Format, Json}
 
 object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] {

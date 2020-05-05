@@ -16,6 +16,7 @@ final case class GraphQLContext()
 
 trait GraphQLModel
     extends BasicGraphQLModels
+    with UserGraphQLModel
     with CollectionGraphQLModel
     with ExerciseGraphQLModels
     with GraphQLMutations
@@ -75,6 +76,12 @@ trait GraphQLModel
   private val QueryType: ObjectType[Unit, Unit] = ObjectType(
     "Query",
     fields[Unit, Unit](
+      Field(
+        "me",
+        OptionType(userType),
+        arguments = userJwtArgument :: Nil,
+        resolve = context => deserializeJwt(context.arg(userJwtArgument)).map(_.username)
+      ),
       Field("tools", ListType(ToolType), resolve = _ => ToolList.tools),
       Field(
         "tool",

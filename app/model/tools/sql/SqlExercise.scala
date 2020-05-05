@@ -1,6 +1,7 @@
 package model.tools.sql
 
 import enumeratum.{EnumEntry, PlayEnum}
+import model.{ExPart, ExParts, ExerciseContent, SampleSolution, Topic}
 import model.tools._
 
 sealed abstract class SqlExPart(val partName: String, val id: String) extends ExPart

@@ -1,9 +1,10 @@
 package model.tools.programming
 
 import better.files.File
+import model.ExerciseFile
 import model.core.{DockerBind, DockerConnector}
 import model.points.Points
-import model.tools.{AbstractCorrector, ExerciseFile}
+import model.tools.AbstractCorrector
 
 import scala.util.matching.Regex
 

@@ -1,6 +1,7 @@
 package model.tools.sql
 
-import model.tools.{SampleSolution, StringSampleSolutionToolJsonProtocol}
+import model.SampleSolution
+import model.tools.StringSampleSolutionToolJsonProtocol
 import play.api.libs.json._
 
 object SqlToolJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] {

@@ -1,5 +1,6 @@
 package model.graphql
 
+import model.{ExPart, SampleSolution}
 import model.core.matching.{Match, MatchType, MatchingResult}
 import model.core.result.AbstractCorrectionResult
 import model.tools._

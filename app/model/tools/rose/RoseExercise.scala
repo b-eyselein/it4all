@@ -1,5 +1,6 @@
 package model.tools.rose
 
+import model.{ExPart, ExParts, ExerciseContent, SampleSolution}
 import model.tools._
 import model.tools.programming.ProgDataType
 

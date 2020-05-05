@@ -1,8 +1,9 @@
 package model.tools.uml
 
+import model.Exercise
 import model.points._
 import model.tools.uml.matcher.{UmlAssociationMatcher, UmlClassMatcher, UmlImplementationMatcher}
-import model.tools.{AbstractCorrector, Exercise}
+import model.tools.AbstractCorrector
 import play.api.Logger
 
 object UmlCorrector extends AbstractCorrector {

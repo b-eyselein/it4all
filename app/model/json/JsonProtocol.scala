@@ -1,7 +1,7 @@
 package model.json
 
+import model._
 import model.tools._
-import model.{LoggedInUser, LoggedInUserWithToken, RegisterValues, UserCredentials}
 import play.api.libs.json._
 
 final case class ReadCollectionsMessage(collections: Seq[ExerciseCollection])
@@ -9,6 +9,8 @@ final case class ReadCollectionsMessage(collections: Seq[ExerciseCollection])
 final case class KeyValueObject(key: String, value: String)
 
 object JsonProtocols extends LessonJsonProtocol {
+
+  val topicFormat: OFormat[Topic] = Json.format
 
   val registerValuesFormat: OFormat[RegisterValues] = Json.format
 
@@ -30,6 +32,12 @@ object JsonProtocols extends LessonJsonProtocol {
     implicit val cr: Reads[ExerciseCollection] = JsonProtocols.collectionFormat
 
     Json.reads
+  }
+
+  val userProficiencyFormat: OFormat[UserProficiency] = {
+    implicit val tf: OFormat[Topic] = topicFormat
+
+    Json.format
   }
 
 }

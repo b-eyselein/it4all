@@ -95,7 +95,7 @@ export type CollectionListQuery = (
     & Pick<Types.CollectionTool, 'name'>
     & { collections: Array<(
       { __typename?: 'ExerciseCollection' }
-      & Pick<Types.ExerciseCollection, 'completeId' | 'collectionId' | 'title' | 'exerciseCount'>
+      & Pick<Types.ExerciseCollection, 'collectionId' | 'title' | 'exerciseCount'>
     )> }
   )> }
 );
@@ -981,7 +981,6 @@ export const CollectionListDocument = gql`
   tool(toolId: $toolId) {
     name
     collections {
-      completeId
       collectionId
       title
       exerciseCount

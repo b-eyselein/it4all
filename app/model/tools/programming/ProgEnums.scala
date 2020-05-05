@@ -1,7 +1,7 @@
 package model.tools.programming
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.tools.{ExPart, ExParts, Topic}
+import model.{ExPart, ExParts, Topic}
 
 // Exercise Parts
 
@@ -63,7 +63,5 @@ case object UnitTestTypes extends PlayEnum[UnitTestType] {
   case object Simplified extends UnitTestType
 
   case object Normal extends UnitTestType
-
-  //  case object Both extends UnitTestType
 
 }

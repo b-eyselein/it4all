@@ -1,8 +1,8 @@
 package model.tools.regex
 
+import model.SampleSolution
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.tools.regex.RegexTool.ExtractedValuesComparison
-import model.tools.SampleSolution
 import sangria.macros.derive._
 import sangria.schema._
 

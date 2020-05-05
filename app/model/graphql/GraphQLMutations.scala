@@ -4,7 +4,7 @@ import com.github.t3hnar.bcrypt._
 import controllers.JwtHelpers
 import model._
 import model.json.JsonProtocols
-import model.tools.{ToolList, UserSolution}
+import model.tools.ToolList
 import play.api.libs.json._
 import play.modules.reactivemongo.MongoController
 import sangria.marshalling.playJson._

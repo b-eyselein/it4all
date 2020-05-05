@@ -1,7 +1,7 @@
 package model.tools.regex
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.tools.{ExPart, ExParts, ExerciseContent, SampleSolution}
+import model.{ExPart, ExParts, ExerciseContent, SampleSolution}
 
 sealed abstract class RegexExPart(val partName: String, val id: String) extends ExPart
 

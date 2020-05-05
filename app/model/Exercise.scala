@@ -1,4 +1,4 @@
-package model.tools
+package model
 
 import enumeratum.{EnumEntry, PlayEnum}
 
@@ -6,7 +6,7 @@ final case class Topic(
   abbreviation: String,
   toolId: String,
   title: String,
-  maxLevel: Int = 3
+  maxLevel: Level = Level.Expert
 )
 
 final case class ExerciseCollection(
@@ -39,7 +39,7 @@ trait ExerciseContent[S] {
 
 final case class TopicWithLevel(
   topic: Topic,
-  level: Int
+  level: Level
 )
 
 final case class Exercise[S, C <: ExerciseContent[S]](
@@ -49,7 +49,7 @@ final case class Exercise[S, C <: ExerciseContent[S]](
   title: String,
   authors: Seq[String],
   text: String,
-  topicAbbreviations: Seq[(String, Int)],
+  topicAbbreviations: Seq[(String, Level)],
   difficulty: Int,
   content: C
 )
