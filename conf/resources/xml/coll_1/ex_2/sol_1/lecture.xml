@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lecture SYSTEM "lecture.dtd">
+<lecture>
+    <lecturer title="Prof.">
+        <name>Jason Bourne</name>
+    </lecturer>
+    <lecturer title="Commander">
+        <name>James Bond</name>
+    </lecturer>
+    <date weekday="mon">
+        <hours>16.00 to 18.00</hours>
+    </date>
+    <student matrikel="173">
+        <name>Jack Bauer</name>
+    </student>
+</lecture>

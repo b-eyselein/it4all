@@ -1,0 +1,10 @@
+<!ELEMENT party (gast+)>
+<!ATTLIST party datum CDATA #REQUIRED>
+<!ELEMENT gast (vorname, nachname, getraenk+)>
+<!ELEMENT vorname (#PCDATA)>
+<!ELEMENT nachname (#PCDATA)>
+<!ELEMENT getraenk (#PCDATA)>
+<!ATTLIST gast
+        ledig (true | false) #REQUIRED
+        nuechtern (true | false) #REQUIRED
+>

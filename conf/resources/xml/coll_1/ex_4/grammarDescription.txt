@@ -1,0 +1,3 @@
+Mit dieser DTD sollen XML-Dokumente erstellt werden, die das Frühstücksmenü eines Restaurants darstellen. Auf der
+Frühstückskarte [breakfast] werden mehrere Speißen [food] angeboten. Jede Speiße hat einen Namen [food],
+einen Preis [price], eine Beschreibung [description] und eine Anzahl an Kalorien [calories].

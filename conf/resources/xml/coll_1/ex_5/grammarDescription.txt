@@ -1,0 +1,4 @@
+In dieser Aufgabe soll eine XML-Grammatik für die Beschreibung einer Bibliothek [bibliothek] erstellt werden. Diese
+besteht aus mehreren Abteilung, die jeweils einen Titel [titel] und Bücher [buch] enthalten. Die Bücher wiederum
+besitzen eine ISBN [isbn], einen Titel, einen Autor [autor], eventuell mehrere Co-Autoren [coautor], und ein
+Veröffentlichungsjahr [jahr]. Außerdem kann optional ein Verlag [verlag] bzw. eine Auflage [auflage] angegeben sein.

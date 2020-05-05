@@ -1,0 +1,11 @@
+<!ELEMENT bibliothek (abteilung+)>
+<!ELEMENT abteilung (titel, buch+)>
+<!ELEMENT buch (isbn, titel, autor, coautor*, verlag?, auflage?, jahr)>
+<!ATTLIST buch id CDATA #REQUIRED>
+<!ELEMENT isbn (#PCDATA)>
+<!ELEMENT titel (#PCDATA)>
+<!ELEMENT autor (#PCDATA)>
+<!ELEMENT coautor (#PCDATA)>
+<!ELEMENT verlag (#PCDATA)>
+<!ELEMENT auflage (#PCDATA)>
+<!ELEMENT jahr (#PCDATA)>
