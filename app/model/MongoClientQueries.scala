@@ -43,6 +43,17 @@ trait MongoClientQueries {
     "exerciseId"   -> exerciseId
   )
 
+  private def exercisePartFilter[P](
+    toolId: String,
+    collectionId: Int,
+    exerciseId: Int,
+    part: P
+  )(implicit pf: Format[P]): JsObject = Json.obj(
+    "toolId"       -> toolId,
+    "collectionId" -> collectionId,
+    "exerciseId"   -> exerciseId,
+    "part"         -> part
+  )
   // Collections
 
   private def futureUsersCollection: Future[JSONCollection] = database.map(_.collection("users"))
@@ -132,7 +143,7 @@ trait MongoClientQueries {
     } yield exerciseCount
 
   protected def getExercisesForTool(tool: CollectionTool): Future[Seq[Exercise[tool.SolType, tool.ExContentType]]] = {
-    implicit val ef: Format[Exercise[tool.SolType, tool.ExContentType]] = tool.toolJsonProtocol.exerciseFormat
+    implicit val ef: Format[Exercise[tool.SolType, tool.ExContentType]] = tool.jsonFormats.exerciseFormat
 
     for {
       exercisesCollection <- futureExercisesCollection
@@ -154,7 +165,7 @@ trait MongoClientQueries {
     tool: CollectionTool,
     collectionId: Int
   ): Future[Seq[Exercise[tool.SolType, tool.ExContentType]]] = {
-    implicit val ef: Format[Exercise[tool.SolType, tool.ExContentType]] = tool.toolJsonProtocol.exerciseFormat
+    implicit val ef: Format[Exercise[tool.SolType, tool.ExContentType]] = tool.jsonFormats.exerciseFormat
 
     for {
       exercisesCollection <- futureExercisesCollection
@@ -166,7 +177,7 @@ trait MongoClientQueries {
   }
 
   protected def getExercise[S, EC <: ExerciseContent[S]](
-    tool: CollectionTool,
+    toolId: String,
     collectionId: Int,
     exerciseId: Int,
     exerciseFormat: OFormat[Exercise[S, EC]]
@@ -176,7 +187,7 @@ trait MongoClientQueries {
     for {
       exercisesCollection <- futureExercisesCollection
       maybeExercise <- exercisesCollection
-        .find(exerciseFilter(tool.id, collectionId, exerciseId))
+        .find(exerciseFilter(toolId, collectionId, exerciseId))
         .one[Exercise[S, EC]]
     } yield maybeExercise
   }
@@ -195,11 +206,23 @@ trait MongoClientQueries {
 
   // Solution queries
 
-  protected def insertSolution[S](
-    solution: UserSolution[S],
-    solutionFormat: OFormat[UserSolution[S]]
+  protected def nextUserSolutionId[P](
+    exercise: Exercise[_, _ <: ExerciseContent[_]],
+    part: P
+  )(implicit pf: Format[P]): Future[Int] =
+    for {
+      userSolutionsCollection <- futureUserSolutionsCollection
+      exFilter = exercisePartFilter(exercise.toolId, exercise.collectionId, exercise.exerciseId, part)
+      x <- userSolutionsCollection
+        .find(selector = exFilter, projection = Some(Json.obj("solutionId" -> 1)))
+        .one[Int]
+    } yield x.getOrElse(0) + 1
+
+  protected def insertSolution[S, P <: ExPart](
+    solution: UserSolution[S, P],
+    solutionFormat: OFormat[UserSolution[S, P]]
   ): Future[Boolean] = {
-    implicit val sf: OFormat[UserSolution[S]] = solutionFormat
+    implicit val sf: OFormat[UserSolution[S, P]] = solutionFormat
 
     for {
       userSolutionsCollection <- futureUserSolutionsCollection

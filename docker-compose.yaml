@@ -15,10 +15,10 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: 1234
-    volumes:
-      - type:     volume
-        source:   mongo_data_volume
-        target:   /data/db
+#    volumes:
+#      - type:     volume
+#        source:   mongo_data_volume
+#        target:   /data/db
 
   webtester:
     image:        httpd:alpine

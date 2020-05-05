@@ -5,6 +5,8 @@ import play.api.libs.json.{Format, Json}
 
 object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] {
 
+  override val partTypeFormat: Format[RegexExPart] = RegexExPart.jsonFormat
+
   private val regexMatchTestDataFormat: Format[RegexMatchTestData] = Json.format[RegexMatchTestData]
 
   private val regexExtractionTestDataFormat: Format[RegexExtractionTestData] = Json.format[RegexExtractionTestData]

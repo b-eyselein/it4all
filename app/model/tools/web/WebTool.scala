@@ -26,7 +26,7 @@ object WebTool extends CollectionTool("web", "Web") {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: ToolJsonProtocol[WebSolution, WebExerciseContent, WebExPart] =
+  override val jsonFormats: ToolJsonProtocol[WebSolution, WebExerciseContent, WebExPart] =
     WebToolJsonProtocol
 
   override val graphQlModels: ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExPart, WebAbstractResult] =

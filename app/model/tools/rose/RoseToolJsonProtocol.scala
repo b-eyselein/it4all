@@ -6,6 +6,8 @@ import play.api.libs.json.{Format, Json, Reads, Writes}
 
 object RoseToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RoseExerciseContent, RoseExPart] {
 
+  override val partTypeFormat: Format[RoseExPart] = RoseExPart.jsonFormat
+
   override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)
 
   val roseInputTypeFormat: Format[RoseInputType] = {

@@ -7,68 +7,48 @@ import model.json.JsonProtocols
 import model.tools.{ToolList, UserSolution}
 import play.api.libs.json._
 import play.modules.reactivemongo.MongoController
-import sangria.macros.derive._
 import sangria.marshalling.playJson._
 import sangria.schema._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.util.Try
 
 trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries with JwtHelpers {
   self: MongoController =>
 
-  private val registerValuesInputType: InputObjectType[RegisterValues]   = deriveInputObjectType()
-  private val userCredentialsInputType: InputObjectType[UserCredentials] = deriveInputObjectType()
+  private val correctionFields = ToolList.tools.map[Field[Unit, Unit]] { tool =>
+    implicit val solTypeFormat: Format[tool.SolType] = tool.jsonFormats.solutionFormat
+    implicit val partFormat: Format[tool.PartType]   = tool.jsonFormats.partTypeFormat
 
-  private val userCredentialsArgument: Argument[UserCredentials] = {
-    implicit val ucf: OFormat[UserCredentials] = JsonProtocols.userCredentialsFormat
-
-    Argument("credentials", userCredentialsInputType)
-  }
-
-  private val registerValuesArgument: Argument[RegisterValues] = {
-    implicit val rvf: OFormat[RegisterValues] = JsonProtocols.registerValuesFormat
-
-    Argument("registerValues", registerValuesInputType)
-  }
-
-  protected implicit val ec: ExecutionContext
-
-  private val correctionFields = ToolList.tools.map[Field[Unit, Unit]] { toolMain =>
-    implicit val solTypeFormat: Format[toolMain.SolType] = toolMain.toolJsonProtocol.solutionFormat
-
-    val SolTypeInputArg  = Argument("solution", toolMain.graphQlModels.SolTypeInputType)
-    val PartTypeInputArg = Argument("part", toolMain.graphQlModels.partEnumType)
+    val SolTypeInputArg  = Argument("solution", tool.graphQlModels.SolTypeInputType)
+    val PartTypeInputArg = Argument("part", tool.graphQlModels.partEnumType)
 
     Field(
-      s"correct${toolMain.id.capitalize}",
-      toolMain.graphQlModels.toolAbstractResultTypeInterfaceType,
+      s"correct${tool.id.capitalize}",
+      tool.graphQlModels.toolAbstractResultTypeInterfaceType,
       arguments = userJwtArgument :: collIdArgument :: exIdArgument :: PartTypeInputArg :: SolTypeInputArg :: Nil,
-      resolve = context => {
+      resolve = ctx => {
 
-        val jwtString: String = context.arg(userJwtArgument)
+        val part     = ctx.arg(PartTypeInputArg)
+        val solution = ctx.arg(SolTypeInputArg)
 
-        deserializeJwt(jwtString) match {
+        deserializeJwt(ctx.arg(userJwtArgument)) match {
           case None => ??? // Future.successful(None)
           case Some(user) =>
-            val collId   = context.arg(collIdArgument)
-            val exId     = context.arg(exIdArgument)
-            val part     = context.arg(PartTypeInputArg)
-            val solution = context.arg(SolTypeInputArg)
+            getExercise(tool.id, ctx.arg(collIdArgument), ctx.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
+              .flatMap {
+                case Some(exercise) =>
+                  for {
+                    nextUserSolutionId <- nextUserSolutionId(exercise, part)
+                    solutionSaved <- insertSolution(
+                      UserSolution.forExercise(nextUserSolutionId, exercise, user.username, solution, part),
+                      tool.jsonFormats.userSolutionFormat
+                    )
+                    result <- tool.correctAbstract(user, solution, exercise, part, solutionSaved)
+                  } yield result
 
-            getExercise(toolMain, collId, exId, toolMain.toolJsonProtocol.exerciseFormat).flatMap {
-              case Some(exercise) =>
-                for {
-                  solutionSaved <- insertSolution(
-                    UserSolution(exId, collId, toolMain.id, user.username, solution),
-                    toolMain.toolJsonProtocol.userSolutionFormat
-                  )
-
-                  result <- toolMain.correctAbstract(user, solution, exercise, part, solutionSaved)
-                } yield result
-
-              case _ => ???
-            }
+                case _ => ???
+              }
 
         }
       }
@@ -145,9 +125,9 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
             case Some(tool) =>
               val jsonExercise: JsValue = Json.parse(context.arg(contentArgument))
 
-              tool.toolJsonProtocol.exerciseFormat.reads(jsonExercise) match {
+              tool.jsonFormats.exerciseFormat.reads(jsonExercise) match {
                 case JsError(_)             => Future.successful(false)
-                case JsSuccess(exercise, _) => insertExercise(exercise, tool.toolJsonProtocol.exerciseFormat)
+                case JsSuccess(exercise, _) => insertExercise(exercise, tool.jsonFormats.exerciseFormat)
               }
           }
         }

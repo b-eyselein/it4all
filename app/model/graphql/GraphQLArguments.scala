@@ -1,6 +1,11 @@
 package model.graphql
 
-import sangria.schema.{Argument, IntType, StringType}
+import model.json.JsonProtocols
+import model.{RegisterValues, UserCredentials}
+import play.api.libs.json.OFormat
+import sangria.macros.derive.deriveInputObjectType
+import sangria.marshalling.playJson._
+import sangria.schema.{Argument, InputObjectType, IntType, StringType}
 
 trait GraphQLArguments {
 
@@ -17,5 +22,19 @@ trait GraphQLArguments {
   protected val contentArgument: Argument[String] = Argument("content", StringType)
 
   protected val userJwtArgument: Argument[String] = Argument("userJwt", StringType)
+
+  protected val userCredentialsArgument: Argument[UserCredentials] = {
+    implicit val ucf: OFormat[UserCredentials]                     = JsonProtocols.userCredentialsFormat
+    val userCredentialsInputType: InputObjectType[UserCredentials] = deriveInputObjectType()
+
+    Argument("credentials", userCredentialsInputType)
+  }
+
+  protected val registerValuesArgument: Argument[RegisterValues] = {
+    implicit val rvf: OFormat[RegisterValues]                    = JsonProtocols.registerValuesFormat
+    val registerValuesInputType: InputObjectType[RegisterValues] = deriveInputObjectType()
+
+    Argument("registerValues", registerValuesInputType)
+  }
 
 }

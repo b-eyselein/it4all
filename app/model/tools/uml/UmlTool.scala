@@ -23,7 +23,7 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] =
+  override val jsonFormats: ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] =
     UmlToolJsonProtocol
 
   override val graphQlModels

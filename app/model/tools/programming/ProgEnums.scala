@@ -22,19 +22,33 @@ object ProgExPart extends ExParts[ProgExPart] {
 // Topics
 
 object ProgrammingTopics {
+
+  val ForLoops: Topic   = Topic("FL", "programming", "For-Schleifen")
+  val WhileLoops: Topic = Topic("WL", "programming", "While-Schleifen")
+  val Conditions: Topic = Topic("C", "programming", "Bedingungen")
+  val Lists: Topic      = Topic("L", "programming", "Listen")
+  val Tuples: Topic     = Topic("T", "programming", "Tuples")
+  val Dicts: Topic      = Topic("D", "programming", "Dictionaries")
+  val Classes: Topic    = Topic("CL", "programming", "Klassen")
+  val Exceptions: Topic = Topic("E", "programming", "Exceptions")
+  val Maths: Topic      = Topic("M", "programming", "Mathematik")
+  val Strings: Topic    = Topic("S", "programming", "Strings")
+  val Slicing: Topic    = Topic("SL", "programming", "Slicing")
+  val Recursion: Topic  = Topic("R", "programming", "Rekursion")
+
   val values: Seq[Topic] = Seq(
-    Topic("FL", "programming", "For-Schleifen"),
-    Topic("WL", "programming", "While-Schleifen"),
-    Topic("C", "programming", "Bedingungen"),
-    Topic("L", "programming", "Listen"),
-    Topic("T", "programming", "Tuples"),
-    Topic("D", "programming", "Dictionaries"),
-    Topic("CL", "programming", "Klassen"),
-    Topic("E", "programming", "Exceptions"),
-    Topic("M", "programming", "Mathematik"),
-    Topic("S", "programming", "Strings"),
-    Topic("SL", "programming", "Slicing"),
-    Topic("R", "programming", "Rekursion")
+    ForLoops,
+    WhileLoops,
+    Conditions,
+    Lists,
+    Tuples,
+    Dicts,
+    Classes,
+    Exceptions,
+    Maths,
+    Strings,
+    Slicing,
+    Recursion
   )
 }
 

@@ -1,5 +1,7 @@
 package model.tools
 
+import enumeratum.{EnumEntry, PlayEnum}
+
 final case class Topic(
   abbreviation: String,
   toolId: String,
@@ -14,6 +16,18 @@ final case class ExerciseCollection(
   authors: Seq[String],
   text: String
 )
+
+trait ExPart extends EnumEntry {
+
+  val id: String
+
+  val partName: String
+
+  def isEntryPart: Boolean = true
+
+}
+
+trait ExParts[EP <: ExPart] extends PlayEnum[EP]
 
 trait ExerciseContent[S] {
 
@@ -52,10 +66,25 @@ final case class SampleSolution[SolType](
   sample: SolType
 )
 
-final case class UserSolution[SolType](
+object UserSolution {
+
+  def forExercise[S, P <: ExPart](
+    solutionId: Int,
+    exercise: Exercise[S, _ <: ExerciseContent[S]],
+    username: String,
+    solution: S,
+    part: P
+  ): UserSolution[S, P] =
+    UserSolution(solutionId, exercise.exerciseId, exercise.collectionId, exercise.toolId, username, solution, part)
+
+}
+
+final case class UserSolution[SolType, PartType <: ExPart](
+  solutionId: Int,
   exerciseId: Int,
   collectionId: Int,
   toolId: String,
   username: String,
-  solution: SolType
+  solution: SolType,
+  part: PartType
 )

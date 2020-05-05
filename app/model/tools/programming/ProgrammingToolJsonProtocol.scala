@@ -2,19 +2,13 @@ package model.tools.programming
 
 import model.json.JsonProtocols
 import model.tools._
-import model.tools.programming.ProgConsts._
 import model.tools.programming.ProgDataTypes.{GenericProgDataType, NonGenericProgDataType}
 import model.tools.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
 import play.api.libs.json._
 
-object ProgConsts {
-
-  val baseDataName: String = "baseData"
-  val testDataName: String = "testData"
-
-}
-
 object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, ProgrammingExerciseContent, ProgExPart] {
+
+  override val partTypeFormat: Format[ProgExPart] = ProgExPart.jsonFormat
 
   private val progTestDataFormat: Format[ProgTestData] = Json.format[ProgTestData]
 
@@ -152,8 +146,8 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
   // Simplified ProgUserTestData
 
   def dumpCompleteTestDataToJson(baseData: Option[JsValue], testData: Seq[ProgTestData]): JsValue = Json.obj(
-    testDataName -> JsArray(testData.map(progTestDataFormat.writes)),
-    baseDataName -> baseData
+    "testData" -> JsArray(testData.map(progTestDataFormat.writes)),
+    "baseData" -> baseData
   )
 
 }

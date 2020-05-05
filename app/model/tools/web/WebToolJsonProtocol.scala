@@ -7,15 +7,13 @@ import play.api.libs.json.{Format, Json}
 
 object WebToolJsonProtocol extends ToolJsonProtocol[WebSolution, WebExerciseContent, WebExPart] {
 
-  // solution format
+  override val partTypeFormat: Format[WebExPart] = WebExPart.jsonFormat
 
   override val solutionFormat: Format[WebSolution] = {
     implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
 
     Json.format
   }
-
-  // other...
 
   private val jsActionFormat: Format[JsAction] = {
     implicit val jatf: Format[JsActionType] = JsActionType.jsonFormat

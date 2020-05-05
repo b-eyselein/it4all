@@ -27,7 +27,7 @@ abstract class CollectionTool(
 
   // Yaml, Html forms, Json, GraphQL
 
-  val toolJsonProtocol: ToolJsonProtocol[SolType, ExContentType, PartType]
+  val jsonFormats: ToolJsonProtocol[SolType, ExContentType, PartType]
 
   val graphQlModels: ToolGraphQLModelBasics[SolType, ExContentType, PartType, ResType]
 

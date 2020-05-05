@@ -16,7 +16,7 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: ToolJsonProtocol[String, RoseExerciseContent, RoseExPart] =
+  override val jsonFormats: ToolJsonProtocol[String, RoseExerciseContent, RoseExPart] =
     RoseToolJsonProtocol
 
   override val graphQlModels: ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExPart, RoseAbstractResult] =

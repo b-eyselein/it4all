@@ -16,7 +16,7 @@ object ProgrammingTool extends CollectionTool("programming", "Programmierung", T
 
   // Yaml, Html Forms, Json
 
-  override val toolJsonProtocol: ToolJsonProtocol[ProgSolution, ProgrammingExerciseContent, ProgExPart] =
+  override val jsonFormats: ToolJsonProtocol[ProgSolution, ProgrammingExerciseContent, ProgExPart] =
     ProgrammingToolJsonProtocol
 
   override val graphQlModels

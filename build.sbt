@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.1"
 
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.2"
 
 scalacOptions ++= CompilerOptions.allOptions
 
@@ -16,6 +16,7 @@ wartremoverWarnings ++= Warts.allBut(
   Wart.Nothing,
   Wart.Recursion,
   Wart.Any,
+  Wart.Serializable,
   Wart.JavaSerializable,
   Wart.Product
 )
@@ -53,15 +54,13 @@ libraryDependencies ++= Seq(
   // JWT
   "com.pauldijou" %% "jwt-play" % "4.3.0", // Apache 2.0
 
-  // Databases
-  "mysql"             % "mysql-connector-java"   % "8.0.20",        // GPL 2.0
-  "com.typesafe.play" %% "play-slick"            % "5.0.0",         // Apache 2.0
-  "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0",         // Apache 2.0
-  "org.reactivemongo" %% "play2-reactivemongo"   % "0.20.9-play28", // Apache 2.0
+  // Mongo database
+  "org.reactivemongo" %% "play2-reactivemongo" % "0.20.10-play28", // Apache 2.0
+//  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "0.20.10-play28",
 
   // Other helpers
-  "com.beachape"         %% "enumeratum-play"      % "1.5.17", // MIT
-  "com.beachape"         %% "enumeratum-play-json" % "1.5.17", // MIT
+  "com.beachape"         %% "enumeratum-play"      % "1.6.0", // MIT
+  "com.beachape"         %% "enumeratum-play-json" % "1.6.0", // MIT
   "com.github.t3hnar"    %% "scala-bcrypt"         % "4.1",    // Apache 2.0
   "com.github.pathikrit" %% "better-files"         % "3.8.0",  // MIT
 
@@ -73,7 +72,9 @@ libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.1",     // Apache 2.0
 
   // Sql
-  "com.github.jsqlparser" % "jsqlparser" % "3.1", // Apache 2.0
+  "mysql"                 % "mysql-connector-java" % "8.0.20", // GPL 2.0
+  "com.typesafe.play"     %% "play-slick"          % "5.0.0",  // Apache 2.0
+  "com.github.jsqlparser" % "jsqlparser"           % "3.1",    // Apache 2.0
 
   // DTD Parser
   "de.uniwue" %% "it4all_dtd_parser" % "0.5.0",

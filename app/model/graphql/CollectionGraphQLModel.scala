@@ -4,7 +4,7 @@ import model.MongoClientQueries
 import model.tools._
 import play.modules.reactivemongo.MongoController
 import sangria.macros.derive.{AddFields, deriveObjectType}
-import sangria.schema.{Context, Field, IDType, ListType, LongType, ObjectType, OptionType}
+import sangria.schema.{Context, Field, ListType, LongType, ObjectType, OptionType}
 
 import scala.concurrent.Future
 
@@ -50,7 +50,7 @@ trait CollectionGraphQLModel
   ): Future[Option[UntypedExercise]] = ToolList.tools.find(_.id == context.value.toolId) match {
     case None => ???
     case Some(tool) =>
-      getExercise(tool, context.value.collectionId, context.arg(exIdArgument), tool.toolJsonProtocol.exerciseFormat)
+      getExercise(tool.id, context.value.collectionId, context.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
         .map(untypedMaybeExercise)
   }
 

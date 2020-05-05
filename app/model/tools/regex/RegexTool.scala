@@ -21,7 +21,7 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
 
   // Yaml, Html forms, Json
 
-  override val toolJsonProtocol: StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] =
+  override val jsonFormats: StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] =
     RegexToolJsonProtocol
 
   override val graphQlModels: ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart, RegexAbstractResult] =
