@@ -30,6 +30,8 @@ object SqlTool extends CollectionTool("sql", "Sql") {
   override type PartType      = SqlExPart
   override type ResType       = SqlAbstractResult
 
+  type SqlExercise = Exercise[String, SqlExerciseContent]
+
   type ColumnComparison           = MatchingResult[ColumnWrapper, ColumnMatch]
   type TableComparison            = MatchingResult[Table, TableMatch]
   type BinaryExpressionComparison = MatchingResult[BinaryExpression, BinaryExpressionMatch]

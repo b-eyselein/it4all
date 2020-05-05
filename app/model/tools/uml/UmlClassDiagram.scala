@@ -72,7 +72,7 @@ sealed trait UmlClassMember {
 }
 
 final case class UmlAttribute(
-  visibility: UmlVisibility,
+  visibility: UmlVisibility = UmlVisibility.PUBLIC,
   memberName: String,
   memberType: String,
   isStatic: Boolean = false,
@@ -81,7 +81,7 @@ final case class UmlAttribute(
 ) extends UmlClassMember
 
 final case class UmlMethod(
-  visibility: UmlVisibility,
+  visibility: UmlVisibility = UmlVisibility.PUBLIC,
   memberName: String,
   memberType: String,
   parameters: String,
@@ -90,10 +90,10 @@ final case class UmlMethod(
 ) extends UmlClassMember
 
 final case class UmlClass(
-  classType: UmlClassType,
+  classType: UmlClassType = UmlClassType.CLASS,
   name: String,
-  attributes: Seq[UmlAttribute],
-  methods: Seq[UmlMethod]
+  attributes: Seq[UmlAttribute] = Seq.empty,
+  methods: Seq[UmlMethod] = Seq.empty
 ) {
 
   def allMembers: Seq[UmlClassMember] = attributes ++ methods
@@ -101,8 +101,8 @@ final case class UmlClass(
 }
 
 final case class UmlAssociation(
-  assocType: UmlAssociationType,
-  assocName: Option[String],
+  assocType: UmlAssociationType = UmlAssociationType.ASSOCIATION,
+  assocName: Option[String] = None,
   firstEnd: String,
   firstMult: UmlMultiplicity,
   secondEnd: String,

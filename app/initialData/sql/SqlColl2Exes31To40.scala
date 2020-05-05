@@ -1,0 +1,313 @@
+package initialData.sql
+
+import model.tools.sql.SqlTool.SqlExercise
+import model.tools.sql.{SqlExerciseContent, SqlExerciseType}
+import model.{Exercise, SampleSolution}
+
+object SqlColl2Exes31To40 {
+
+  private val schemaName = "amazon"
+
+  private val sql_coll_2_ex_31: SqlExercise = Exercise(
+    exerciseId = 31,
+    collectionId = 2,
+    toolId = "sql",
+    title = "Tolkien in Billig",
+    authors = Seq("bje40dc"),
+    text = """Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien' deren Preis über 10€ liegt.
+             |Ordnen Sie die Einträge nach Erscheinungsjahr abwärts.""".stripMargin
+      .replace("\n", " "),
+    topicAbbreviations = Seq.empty,
+    difficulty = 3,
+    content = SqlExerciseContent(
+      exerciseType = SqlExerciseType.SELECT,
+      schemaName = schemaName,
+      sampleSolutions = Seq(
+        SampleSolution(
+          id = 1,
+          sample = """SELECT title, price
+                     |    FROM books JOIN authors on authors.id = books.author_id
+                     |    WHERE authors.family_name = 'Tolkien' AND price > 10
+                     |    ORDER BY year DESC;""".stripMargin
+        )
+      ) /*,
+        tags=Seq(SqlExTag.SQL_ORDER_BY)
+     */
+    )
+  )
+
+  private val sql_coll_2_ex_32: SqlExercise = Exercise(
+    exerciseId = 32,
+    collectionId = 2,
+    toolId = "sql",
+    title = "Billig gekauft",
+    authors = Seq("bje40dc"),
+    text =
+      """Berechnen Sie die Anzahl der bestellten Buchexemplare (Tabelle order_positions), die zum Zeitpunkt des Kaufes
+        |weniger als fünf Euro gekostet haben. Geben Sie das Ergebnis unter dem Spaltenname 'Anzahl' aus.""".stripMargin
+        .replace("\n", " "),
+    topicAbbreviations = Seq.empty,
+    difficulty = 2,
+    content = SqlExerciseContent(
+      exerciseType = SqlExerciseType.SELECT,
+      schemaName = schemaName,
+      sampleSolutions = Seq(
+        SampleSolution(
+          id = 1,
+          sample = """SELECT SUM(amount) AS Anzahl
+                     |    FROM order_positions
+                     |    WHERE price < 5;""".stripMargin
+        ),
+        SampleSolution(
+          id = 2,
+          sample = """SELECT SUM(amount) AS Anzahl
+                     |    FROM order_positions
+                     |    WHERE price < 5.00;""".stripMargin
+        )
+      ) /*,
+        tags=Seq(SqlExTag.SQL_FUNCTION, SqlExTag.SQL_ALIAS)
+     */
+    )
+  )
+
+  private val sql_coll_2_ex_33: SqlExercise = Exercise(
+    exerciseId = 33,
+    collectionId = 2,
+    toolId = "sql",
+    title = "Kumulierter Bestand",
+    authors = Seq("bje40dc"),
+    text = """Erfassen Sie die ID aller Autoren und den kumulierten Bestand ihrer Bücher.
+             |Ordnen Sie die Einträge nach kumulierten Bestand abwärts.
+             |Benennen Sie die Spalte des kumulierten Bestandes 'stock_sum' (ohne Anführungszeichen).""".stripMargin
+      .replace("\n", " "),
+    topicAbbreviations = Seq.empty,
+    difficulty = 3,
+    content = SqlExerciseContent(
+      exerciseType = SqlExerciseType.SELECT,
+      schemaName = schemaName,
+      sampleSolutions = Seq(
+        SampleSolution(
+          id = 1,
+          sample = """SELECT author_id, sum(stock) AS stock_sum
+                     |    FROM books
+                     |    GROUP BY author_id
+                     |    ORDER BY stock_sum DESC;""".stripMargin
+        )
+      ),
+      hint = Some("""Verwenden Sie den Sum-Operator und das Schlüsselwort AS.""") /*,
+        tags=Seq(SqlExTag.SQL_FUNCTION, SqlExTag.SQL_GROUP_BY, SqlExTag.SQL_ORDER_BY),
+     */
+    )
+  )
+
+  private val sql_coll_2_ex_34: SqlExercise = Exercise(
+    exerciseId = 34,
+    collectionId = 2,
+    toolId = "sql",
+    title = "Februargeburtstag",
+    authors = Seq("bje40dc"),
+    text = """Wählen Sie alle Kunden aus die im Februar Geburtstag haben und geben Sie den Vornamen,
+             |Nachnamen und das Geburtsdatum aus.""".stripMargin
+      .replace("\n", " "),
+    topicAbbreviations = Seq.empty,
+    difficulty = 1,
+    content = SqlExerciseContent(
+      exerciseType = SqlExerciseType.SELECT,
+      schemaName = schemaName,
+      sampleSolutions = Seq(
+        SampleSolution(
+          id = 1,
+          sample = """SELECT first_name, family_name, birthday
+                     |    FROM customers
+                     |    WHERE birthday LIKE '%-02-%';""".stripMargin
+        )
+      ),
+      hint = Some("""Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator.""")
+    )
+  )
+
+  private val sql_coll_2_ex_35: SqlExercise = Exercise(
+    exerciseId = 35,
+    collectionId = 2,
+    toolId = "sql",
+    title = "Ich bin der Jüngste!",
+    authors = Seq("bje40dc"),
+    text = """Geben Sie den Vornamen, Nachnamen und Geburtstag des jüngsten Kunden aus.""",
+    topicAbbreviations = Seq.empty,
+    difficulty = 2,
+    content = SqlExerciseContent(
+      exerciseType = SqlExerciseType.SELECT,
+      schemaName = schemaName,
+      sampleSolutions = Seq(
+        SampleSolution(
+          id = 1,
+          sample = """SELECT first_name, family_name, birthday
+                     |    FROM customers
+                     |    ORDER BY birthday DESC
+                     |    LIMIT 1;""".stripMargin
+        )
+      ),
+      hint = Some("Achten Sie darauf, dass sich die Spaltennamen nicht verändern.") /*,
+        tags=Seq(SqlExTag.SQL_ORDER_BY, SqlExTag.SQL_LIMIT),
+     */
+    )
+  )
+
+  private val sql_coll_2_ex_36: SqlExercise = Exercise(
+    exerciseId = 36,
+    collectionId = 2,
+    toolId = "sql",
+    title = "Passwortupdate!",
+    authors = Seq("bje40dc"),
+    text =
+      """Sie möchten ihre Kunden dazu motivieren sichere Passwörter zu verwenden.
+        |Alle Kunden, die als Kennwort 'Passwort' verwenden, sollen beim nächsten Login über eine Meldung aufgefordert
+        |werden, sich ein neues auszudenken.
+        |Geben Sie die ID und die Email-Adresse der faulen Kunden aus.""".stripMargin
+        .replace("\n", " "),
+    topicAbbreviations = Seq.empty,
+    difficulty = 1,
+    content = SqlExerciseContent(
+      exerciseType = SqlExerciseType.SELECT,
+      schemaName = schemaName,
+      sampleSolutions = Seq(
+        SampleSolution(
+          id = 1,
+          sample = """SELECT id, email
+                     |    FROM customers
+                     |    WHERE password = '3e45af4ca27ea2b03fc6183af40ea112';""".stripMargin
+        )
+      ),
+      hint = Some(
+        """Die Passwörter der Kunden sind als MD5-Hash-String in der Tabelle 'customers' gespeichert.
+          |Der MD5-Hashstring zu 'Passwort' lautet '3e45af4ca27ea2b03fc6183af40ea112'.""".stripMargin
+      )
+    )
+  )
+
+  private val sql_coll_2_ex_37: SqlExercise = Exercise(
+    exerciseId = 37,
+    collectionId = 2,
+    toolId = "sql",
+    title = "Mit allem zufrieden?",
+    authors = Seq("bje40dc"),
+    text =
+      """Ermitteln Sie den Kunden, welcher die höchste durchschnittliche Bewertung abgegeben hat.
+        |Geben Sie dazu Vorname, Nachname und seine durchschnittliche Bewertung (Spaltenbezeichnung 'avg_rating') aus.""".stripMargin,
+    topicAbbreviations = Seq.empty,
+    difficulty = 3,
+    content = SqlExerciseContent(
+      exerciseType = SqlExerciseType.SELECT,
+      schemaName = schemaName,
+      sampleSolutions = Seq(
+        SampleSolution(
+          id = 1,
+          sample = """SELECT customers.first_name, customers.family_name, AVG(rating) AS avg_rating
+                        |    FROM ratings
+                        |        LEFT JOIN customers ON customers.id = customer_id
+                        |    GROUP BY customer_id
+                        |    ORDER BY avg_rating DESC
+                        |    LIMIT 1;"""
+        )
+      ) /*,
+        tags=Seq(SqlExTag.SQL_JOIN, SqlExTag.SQL_FUNCTION, SqlExTag.SQL_GROUP_BY, SqlExTag.SQL_ORDER_BY,
+              SqlExTag.SQL_LIMIT)
+     */
+    )
+  )
+
+  private val sql_coll_2_ex_38: SqlExercise = Exercise(
+    exerciseId = 38,
+    collectionId = 2,
+    toolId = "sql",
+    title = "Teure Wünsche...",
+    authors = Seq("bje40dc"),
+    text = """Ermitteln Sie den Einkaufswert der Wunschlisten für jeden Kunden.
+             |Listen Sie dabei Vorname, Nachname und Einkaufswert (Spaltenbezeichnung 'value') auf.
+             |Sortieren Sie die Einträge aufwärts nach Einkaufswert.""".stripMargin
+      .replace("\n", " "),
+    topicAbbreviations = Seq.empty,
+    difficulty = 4,
+    content = SqlExerciseContent(
+      exerciseType = SqlExerciseType.SELECT,
+      schemaName = schemaName,
+      sampleSolutions = Seq(
+        SampleSolution(
+          id = 1,
+          sample = """SELECT customers.first_name, customers.family_name, SUM(price) AS value
+                     |    FROM wishlists
+                     |        LEFT JOIN books ON books.id = book_id
+                     |        LEFT JOIN customers ON customers.id = customer_id
+                     |    GROUP BY customer_id
+                     |    ORDER BY value;""".stripMargin
+        )
+      ) /*,
+        tags=Seq(
+            SqlExTag.SQL_FUNCTION, SqlExTag.SQL_ALIAS, SqlExTag.SQL_DOUBLE_JOIN, SqlExTag.SQL_GROUP_BY,
+            SqlExTag.SQL_ORDER_BY
+        )
+     */
+    )
+  )
+
+  private val sql_coll_2_ex_39: SqlExercise = Exercise(
+    exerciseId = 39,
+    collectionId = 2,
+    toolId = "sql",
+    title = "Veröffentlichungsjahre",
+    authors = Seq("bje40dc"),
+    text = """Wählen Sie alle Bücher aus, die in den Jahren 1998, 2001 oder 2011 veröffentlicht wurden.""",
+    topicAbbreviations = Seq.empty,
+    difficulty = 2,
+    content = SqlExerciseContent(
+      exerciseType = SqlExerciseType.SELECT,
+      schemaName = schemaName,
+      sampleSolutions = Seq(
+        SampleSolution(
+          id = 1,
+          sample = """SELECT * FROM books
+                     |    WHERE year IN (1998, 2001, 2011);""".stripMargin
+        )
+      )
+    )
+  )
+  private val sql_coll_2_ex_40: SqlExercise = Exercise(
+    exerciseId = 40,
+    collectionId = 2,
+    toolId = "sql",
+    title = "Aufgestockt",
+    authors = Seq("bje40dc"),
+    text = """Es sind neue Exemplare des Buches mit dem Titel 1894 eingetroffen.
+             |Aktualisieren Sie den Bestand auf den neuen Wert von 500.""".stripMargin.replace("\n", " "),
+    topicAbbreviations = Seq.empty,
+    difficulty = 1,
+    content = SqlExerciseContent(
+      exerciseType = SqlExerciseType.UPDATE,
+      schemaName = schemaName,
+      sampleSolutions = Seq(
+        SampleSolution(
+          id = 1,
+          sample = """UPDATE books
+                     |    SET stock = 500
+                     |    WHERE title = '1984';""".stripMargin
+        )
+      ) /*,
+        tags=Seq(SqlExTag.SQL_UPDATE)
+     */
+    )
+  )
+
+  val sqlColl2Exes31To40 = Seq(
+    sql_coll_2_ex_31,
+    sql_coll_2_ex_32,
+    sql_coll_2_ex_33,
+    sql_coll_2_ex_34,
+    sql_coll_2_ex_35,
+    sql_coll_2_ex_36,
+    sql_coll_2_ex_37,
+    sql_coll_2_ex_38,
+    sql_coll_2_ex_39,
+    sql_coll_2_ex_40
+  )
+
+}

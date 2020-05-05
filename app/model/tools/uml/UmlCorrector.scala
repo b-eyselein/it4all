@@ -1,9 +1,9 @@
 package model.tools.uml
 
-import model.Exercise
 import model.points._
-import model.tools.uml.matcher.{UmlAssociationMatcher, UmlClassMatcher, UmlImplementationMatcher}
 import model.tools.AbstractCorrector
+import model.tools.uml.UmlTool.UmlExercise
+import model.tools.uml.matcher.{UmlAssociationMatcher, UmlClassMatcher, UmlImplementationMatcher}
 import play.api.Logger
 
 object UmlCorrector extends AbstractCorrector {
@@ -23,7 +23,7 @@ object UmlCorrector extends AbstractCorrector {
    */
   def correct(
     userClassDiagram: UmlClassDiagram,
-    exercise: Exercise[UmlClassDiagram, UmlExerciseContent],
+    exercise: UmlExercise,
     part: UmlExPart,
     solutionSaved: Boolean
   ): UmlAbstractResult = exercise.content.sampleSolutions.headOption match {

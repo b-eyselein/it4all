@@ -15,6 +15,8 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
   override type PartType      = UmlExPart
   override type ResType       = UmlAbstractResult
 
+  type UmlExercise = Exercise[UmlClassDiagram, UmlExerciseContent]
+
   type ClassComparison          = MatchingResult[UmlClass, UmlClassMatch]
   type AttributeComparison      = MatchingResult[UmlAttribute, UmlAttributeMatch]
   type MethodComparison         = MatchingResult[UmlMethod, UmlMethodMatch]
@@ -35,7 +37,7 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
   override def correctAbstract(
     user: LoggedInUser,
     solution: UmlClassDiagram,
-    exercise: Exercise[UmlClassDiagram, UmlExerciseContent],
+    exercise: UmlExercise,
     part: UmlExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[UmlAbstractResult] = Future.successful {
