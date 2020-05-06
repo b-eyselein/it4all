@@ -10,7 +10,7 @@ object XmlToolJsonProtocol extends ToolJsonProtocol[XmlSolution, XmlExerciseCont
 
   override val solutionFormat: Format[XmlSolution] = Json.format
 
-  override val exerciseContentFormat: Format[XmlExerciseContent] = {
+  override val exerciseContentFormat: OFormat[XmlExerciseContent] = {
     implicit val ssf: Format[SampleSolution[XmlSolution]] = sampleSolutionFormat
 
     Json.format

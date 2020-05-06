@@ -11,12 +11,13 @@ import initialData.web.coll_2.WebColl2Ex2.webColl2Ex2
 import initialData.web.coll_2.WebColl2Ex3.webColl2Ex3
 import model.ExerciseCollection
 import model.tools.web.WebTool.WebExercise
+import model.tools.web.{WebExerciseContent, WebSolution}
 
-object WebData extends InitialData {
+object WebData extends InitialData[WebSolution, WebExerciseContent] {
 
   override protected val toolId = "web"
 
-  val web_collections_and_exes: Seq[(ExerciseCollection, Seq[WebExercise])] = Seq(
+  override val data: Seq[(ExerciseCollection, Seq[WebExercise])] = Seq(
     (
       ExerciseCollection(collectionId = 1, toolId, title = "Html Elemente", authors = Seq("bje40dc"), text = "TODO"),
       Seq(webColl1Ex1, webColl1Ex2, webColl1Ex3, webColl1Ex4, webColl1Ex5)

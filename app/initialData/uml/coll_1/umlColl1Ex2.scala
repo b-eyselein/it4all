@@ -123,7 +123,6 @@ object umlColl1Ex2 {
              |Ein Patient wiederum kann in einer Station aufgenommen bzw. entlassen werden.""".stripMargin
       .replace("\n", " "),
     difficulty = 2,
-    topicAbbreviations = Seq.empty,
     content = UmlExerciseContent(
       mappings = Map(
         "Stationen"         -> "Station",

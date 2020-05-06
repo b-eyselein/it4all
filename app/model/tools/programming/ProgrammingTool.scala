@@ -1,9 +1,9 @@
 package model.tools.programming
 
 import better.files.File
-import model.{Exercise, ExerciseFile, LoggedInUser, Topic}
 import model.graphql.ToolGraphQLModelBasics
 import model.tools._
+import model.{Exercise, ExerciseFile, LoggedInUser, Topic}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -13,6 +13,8 @@ object ProgrammingTool extends CollectionTool("programming", "Programmierung", T
   override type ExContentType = ProgrammingExerciseContent
   override type PartType      = ProgExPart
   override type ResType       = ProgrammingAbstractResult
+
+  type ProgrammingExercise = Exercise[ProgSolution, ProgrammingExerciseContent]
 
   // Yaml, Html Forms, Json
 
@@ -30,7 +32,7 @@ object ProgrammingTool extends CollectionTool("programming", "Programmierung", T
   override def correctAbstract(
     user: LoggedInUser,
     solution: ProgSolution,
-    exercise: Exercise[ProgSolution, ProgrammingExerciseContent],
+    exercise: ProgrammingExercise,
     part: ProgExPart,
     solutionSaved: Boolean
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
@@ -55,7 +57,7 @@ object ProgrammingTool extends CollectionTool("programming", "Programmierung", T
         }
 
         exercise.content.unitTestPart.unitTestType match {
-          case UnitTestTypes.Simplified =>
+          case UnitTestType.Simplified =>
             ProgrammingSimpleImplementationCorrector.correctSimplifiedImplementation(
               solutionTargetDir,
               exercise.content,
@@ -63,7 +65,7 @@ object ProgrammingTool extends CollectionTool("programming", "Programmierung", T
               resultFile,
               solutionSaved
             )
-          case UnitTestTypes.Normal =>
+          case UnitTestType.Normal =>
             ProgrammingNormalImplementationCorrector.correctNormalImplementation(
               solutionTargetDir,
               exercise.content,

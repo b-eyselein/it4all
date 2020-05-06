@@ -1,7 +1,7 @@
 package model.tools
 
-import model.{ExPart, Exercise, ExerciseContent, SampleSolution, UserSolution}
-import model.json.KeyValueObject
+import model.json.{JsonProtocols, KeyValueObject}
+import model._
 import play.api.libs.json._
 
 final case class ReadExercisesMessage[S, C <: ExerciseContent[S]](
@@ -37,10 +37,11 @@ trait ToolJsonProtocol[S, C <: ExerciseContent[S], PartType <: ExPart] {
     Json.format
   }
 
-  val exerciseContentFormat: Format[C]
+  val exerciseContentFormat: OFormat[C]
 
   final lazy val exerciseFormat: OFormat[Exercise[S, C]] = {
-    implicit val fc: Format[C] = exerciseContentFormat
+    implicit val twlf: OFormat[TopicWithLevel] = JsonProtocols.topicWithLevelFormat
+    implicit val fc: OFormat[C]                 = exerciseContentFormat
 
     Json.format
   }

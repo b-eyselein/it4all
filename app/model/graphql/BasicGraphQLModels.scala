@@ -21,7 +21,11 @@ trait BasicGraphQLModels {
 
   protected val levelEnumType: EnumType[Level] = deriveEnumType()
 
-  protected val topicType: ObjectType[Unit, Topic] = deriveObjectType()
+  protected val topicType: ObjectType[Unit, Topic] = {
+    implicit val lt: EnumType[Level] = levelEnumType
+
+    deriveObjectType()
+  }
 
   protected val topicWithLevelType: ObjectType[Unit, TopicWithLevel] = {
     implicit val tt: ObjectType[Unit, Topic] = topicType

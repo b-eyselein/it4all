@@ -74,7 +74,7 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
   }
 
   val unitTestPartFormat: Format[UnitTestPart] = {
-    implicit val uttf: Format[UnitTestType] = UnitTestTypes.jsonFormat
+    implicit val uttf: Format[UnitTestType] = UnitTestType.jsonFormat
 
     implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
 
@@ -89,7 +89,7 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
     Json.format
   }
 
-  val exerciseContentFormat: Format[ProgrammingExerciseContent] = {
+  val exerciseContentFormat: OFormat[ProgrammingExerciseContent] = {
     implicit val pif: Format[ProgInput]                    = progInputFormat
     implicit val pdtf: Format[ProgDataType]                = progDataTypeFormat
     implicit val utf: Format[UnitTestPart]                 = unitTestPartFormat

@@ -15,7 +15,6 @@ object SqlColl2Exes01To10 {
     title = "Alles über die Autoren",
     authors = Seq("bje40dc"),
     text = """Geben Sie alle Spalten der Autorentabelle aus!""",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -42,7 +41,6 @@ object SqlColl2Exes01To10 {
     title = "Nachnamen aller Autoren",
     authors = Seq("bje40dc"),
     text = """Geben Sie die Nachnamen aller Autoren aus!""",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -64,7 +62,6 @@ object SqlColl2Exes01To10 {
     title = "Verlagsnamen",
     authors = Seq("bje40dc"),
     text = """Geben Sie die Namen aller Verlage aus!""",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -86,7 +83,6 @@ object SqlColl2Exes01To10 {
     title = "Namen aller Kunden",
     authors = Seq("bje40dc"),
     text = """Geben Sie die Vor- und Nachnamen aller Kunden aus!""",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -108,7 +104,6 @@ object SqlColl2Exes01To10 {
     title = """Daten über Bücher""",
     authors = Seq("bje40dc"),
     text = """Geben Sie für jedes Buch jeweils den Titel das Erscheinungsjahr und die ISBN aus!""",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -130,7 +125,6 @@ object SqlColl2Exes01To10 {
     title = """Titelsuche""",
     authors = Seq("bje40dc"),
     text = """Bestimmen Sie den Titel des Buches mit der ISBN '978-3551354051' (ohne Anführungszeichen).""",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -153,7 +147,6 @@ object SqlColl2Exes01To10 {
     title = "Preissuche",
     authors = Seq("bje40dc"),
     text = "Bestimmen Sie den Preis des Buches mit der ISBN '978-3551354068' (ohne Anführungszeichen).",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -176,7 +169,6 @@ object SqlColl2Exes01To10 {
     title = "Autorensuche",
     authors = Seq("bje40dc"),
     text = "Bestimmen Sie den Vor- und Nachnamen des Autoren mit der ID 3.",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -199,7 +191,6 @@ object SqlColl2Exes01To10 {
     title = """Der kleine Prinz?""",
     authors = Seq("bje40dc"),
     text = "Bestimmen Sie die Autor-ID des Buches 'Der kleine Prinz' (ohne Anführungszeichen).",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -222,7 +213,6 @@ object SqlColl2Exes01To10 {
     title = "Verlag mit Telefonnummer",
     authors = Seq("bje40dc"),
     text = """Bestimmen Sie den Namen des Verlages der unter der Telefonnummer '+49 2402 / 806341' erreichbar ist.""",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,

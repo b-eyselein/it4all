@@ -1,8 +1,8 @@
 package initialData.sql
 
 import model.tools.sql.SqlTool.SqlExercise
-import model.tools.sql.{SqlExerciseContent, SqlExerciseType}
-import model.{Exercise, SampleSolution}
+import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
+import model.{Exercise, Level, SampleSolution, TopicWithLevel}
 
 object SqlColl2Exes11To20 {
 
@@ -17,8 +17,10 @@ object SqlColl2Exes11To20 {
     text = """Ordnen Sie allen Büchern ihre jeweiligen Autoren zu.
              |Geben Sie jeweils den Titel des Buches und den Nachnamen des Autoren aus!""".stripMargin
       .replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Join, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -28,9 +30,7 @@ object SqlColl2Exes11To20 {
           sample = """SELECT title, family_name
                      |    FROM authors JOIN books ON authors.id = books.author_id;""".stripMargin
         )
-      ) /*,
-        tags=[SqlExTag.SQL_JOIN]
-     */
+      )
     )
   )
 
@@ -41,8 +41,10 @@ object SqlColl2Exes11To20 {
     title = "Bücher von Carlsen",
     authors = Seq("bje40dc"),
     text = """Bestimmen Sie Titel und Preis aller Bücher die im Verlag 'Carlsen' erschienen sind.""",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Join, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -55,9 +57,6 @@ object SqlColl2Exes11To20 {
         )
       ),
       hint = Some("""Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.""")
-      /*,
-      tags=[SqlExTag.SQL_JOIN]
-     */
     )
   )
 
@@ -68,8 +67,10 @@ object SqlColl2Exes11To20 {
     title = "Harry Potters Leben",
     authors = Seq("bje40dc"),
     text = """Bestimmen Sie Titel und ISBN sämtlicher Bücher der Autorin 'Rowling' (ohne Anführungszeichen).""",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Join, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -80,9 +81,7 @@ object SqlColl2Exes11To20 {
                      |    FROM books JOIN authors on books.author_id = authors.id
                      |    WHERE family_name = 'Rowling'""".stripMargin
         )
-      ) /*,
-        tags=[SqlExTag.SQL_JOIN]
-     */
+      )
     )
   )
 
@@ -94,8 +93,10 @@ object SqlColl2Exes11To20 {
     authors = Seq("bje40dc"),
     text =
       """Zeigen Sie die Werte aller Ratings an, die der Kunde mit der Email 'wilhard_1041@web.de' abgegeben hat.""",
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Join, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -106,9 +107,7 @@ object SqlColl2Exes11To20 {
                      |    FROM ratings JOIN customers ON ratings.customer_id = customers.id
                      |    WHERE email = 'wilhard_1041@web.de';""".stripMargin
         )
-      ) /*,
-        tags=[SqlExTag.SQL_JOIN]
-     */
+      )
     )
   )
 
@@ -119,8 +118,10 @@ object SqlColl2Exes11To20 {
     title = """Wer hat hier so viel bestellt?""",
     authors = Seq("bje40dc"),
     text = """Wie lauten die Nachnamen der Kunden, die mindestens 3 Bestellung aufgegeben haben?""",
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Join, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -133,10 +134,6 @@ object SqlColl2Exes11To20 {
         )
       ),
       hint = Some("""Diese Bestellungen haben eine ID von mindestens 3.""")
-
-      /*,
-        tags=[SqlExTag.SQL_JOIN],
-     */
     )
   )
 
@@ -147,7 +144,6 @@ object SqlColl2Exes11To20 {
     title = "GMX-Kunden",
     authors = Seq("bje40dc"),
     text = """Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de' enden.""",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -171,7 +167,6 @@ object SqlColl2Exes11To20 {
     title = "Billige Bücher",
     authors = Seq("bje40dc"),
     text = """Geben Sie die Titel aller Bücher aus die weniger als 10,00 € kosten.""",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -194,7 +189,6 @@ object SqlColl2Exes11To20 {
     authors = Seq("bje40dc"),
     text = """Geben die die IDs aller Bücher aus, die von Kunden gewünscht werden.
              |Achten Sie darauf, dass eine ID nur einmal vorkommt.""".stripMargin,
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -216,7 +210,6 @@ object SqlColl2Exes11To20 {
     title = "Jahrgang 81",
     authors = Seq("bje40dc"),
     text = """Wählen Sie die Vor- und Nachnamen der Kunden aus, die im Jahr 1981 Geburtstag haben.""",
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -247,7 +240,6 @@ object SqlColl2Exes11To20 {
     authors = Seq("bje40dc"),
     text = """Geben Sie die Titel aller Bücher aus, die einen Bestand von weniger als 20.000 Exemplaren
              |oder einen Preis unter 14€ haben.""".stripMargin.replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,

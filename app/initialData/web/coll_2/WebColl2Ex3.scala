@@ -139,7 +139,6 @@ object WebColl2Ex3 {
     authors = Seq("alg81dm"),
     text = load_text_from_file(ex_res_path / "text.html"),
     difficulty = 2,
-    topicAbbreviations = Seq.empty,
     content = WebExerciseContent(
       files = Seq(
         ExerciseFile(

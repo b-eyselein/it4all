@@ -1,8 +1,8 @@
 package initialData.sql
 
 import model.tools.sql.SqlTool.SqlExercise
-import model.tools.sql.{SqlExerciseContent, SqlExerciseType}
-import model.{Exercise, SampleSolution}
+import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
+import model.{Exercise, Level, SampleSolution, TopicWithLevel}
 
 object SqlColl1Exes01To10 {
 
@@ -16,7 +16,10 @@ object SqlColl1Exes01To10 {
     authors = Seq("bje40dc"),
     text = """Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'.""",
     difficulty = 1,
-    topicAbbreviations = Seq.empty,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Aggregate, Level.Beginner),
+      TopicWithLevel(SqlTopics.Alias, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName,
@@ -43,7 +46,6 @@ object SqlColl1Exes01To10 {
     authors = Seq("bje40dc"),
     text = """Welche Angestelltennummer (id) hat Max Becker?""",
     difficulty = 1,
-    topicAbbreviations = Seq.empty,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName,
@@ -66,7 +68,9 @@ object SqlColl1Exes01To10 {
     authors = Seq("bje40dc"),
     text = "Welche Emailadresse hat Max Becker für die Arbeit?",
     difficulty = 1,
-    topicAbbreviations = Seq.empty,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Join, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName,
@@ -89,9 +93,7 @@ object SqlColl1Exes01To10 {
                      |    FROM employee as emp, emailaddress as email
                      |    WHERE emp.id = email.employee_id AND firstname = 'Max' AND lastname = 'Becker';""".stripMargin
         )
-      ) /*,
-      tags = Seq(SqlExTag.SQL_JOIN)
-     */
+      )
     )
   )
 
@@ -103,7 +105,9 @@ object SqlColl1Exes01To10 {
     authors = Seq("bje40dc"),
     text = "Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!",
     difficulty = 1,
-    topicAbbreviations = Seq.empty,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.OrderBy, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName,
@@ -114,9 +118,7 @@ object SqlColl1Exes01To10 {
                      |    FROM employee
                      |    ORDER BY username;""".stripMargin
         )
-      ) /*,
-      tags = Seq(SqlExTag.SQL_ORDER_BY)
-     */
+      )
     )
   )
 
@@ -128,7 +130,9 @@ object SqlColl1Exes01To10 {
     authors = Seq("bje40dc"),
     text = """Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die OID des Chefs und die Anzahl aus!""",
     difficulty = 2,
-    topicAbbreviations = Seq.empty,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.GroupBy, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName,
@@ -140,9 +144,7 @@ object SqlColl1Exes01To10 {
                      |    WHERE chef_id IS NOT NULL
                      |    GROUP BY chef_id;""".stripMargin
         )
-      ) /*,
-      tags = Seq(SqlExTag.SQL_GROUP_BY)
-     */
+      )
     )
   )
 
@@ -153,8 +155,10 @@ object SqlColl1Exes01To10 {
     title = """Tabelle 'employee' erstellen""",
     authors = Seq("bje40dc"),
     text = "Erstellen Sie das CREATE TABLE-Skript für die Tabelle employee!",
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Create, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.CREATE,
       schemaName,
@@ -184,7 +188,9 @@ object SqlColl1Exes01To10 {
              |Aktualisieren Sie die Datenbank!""".stripMargin
       .replace("\n", " "),
     difficulty = 1,
-    topicAbbreviations = Seq.empty,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Update, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.UPDATE,
       schemaName,
@@ -207,7 +213,9 @@ object SqlColl1Exes01To10 {
     authors = Seq("bje40dc"),
     text = """Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle.""",
     difficulty = 1,
-    topicAbbreviations = Seq.empty,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Delete, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.DELETE,
       schemaName,
@@ -231,7 +239,9 @@ object SqlColl1Exes01To10 {
       """Es gibt eine neue Angestellte mit Namen Tina Sattler.
         |Diese arbeitet für die Person mit der OID 2 und soll als OID 9 und als Nutzernamen 'tina_sattler' bekommen.""".stripMargin,
     difficulty = 1,
-    topicAbbreviations = Seq.empty,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Insert, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.INSERT,
       schemaName,

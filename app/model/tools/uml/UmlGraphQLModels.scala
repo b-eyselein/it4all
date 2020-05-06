@@ -6,7 +6,9 @@ import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.json.KeyValueObject
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
+import play.api.libs.json.OFormat
 import sangria.macros.derive._
+import sangria.marshalling.playJson._
 import sangria.schema._
 
 object UmlGraphQLModels
@@ -57,6 +59,9 @@ object UmlGraphQLModels
     implicit val uat: InputObjectType[UmlAttribute] = umlAttributeInputType
     implicit val umt: InputObjectType[UmlMethod]    = umlMethodInputType
 
+    implicit val uaf: OFormat[UmlAttribute] = UmlClassDiagramJsonFormat.umlAttributeFormat
+    implicit val umf: OFormat[UmlMethod]    = UmlClassDiagramJsonFormat.umlMethodFormat
+
     deriveInputObjectType(InputObjectTypeName("UmlClassInput"))
   }
 
@@ -87,10 +92,7 @@ object UmlGraphQLModels
   override val sampleSolutionType: ObjectType[Unit, SampleSolution[UmlClassDiagram]] =
     buildSampleSolutionType("Uml", umlClassDiagramType)
 
-  private val umlExTagType: EnumType[UmlExTag] = deriveEnumType()
-
   override val exerciseContentType: ObjectType[Unit, UmlExerciseContent] = {
-    implicit val uett: EnumType[UmlExTag]                               = umlExTagType
     implicit val sst: ObjectType[Unit, SampleSolution[UmlClassDiagram]] = sampleSolutionType
 
     deriveObjectType(

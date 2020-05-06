@@ -8,9 +8,10 @@ import initialData.sql.SqlColl2Exes21To30.sqlColl2Exes21To30
 import initialData.sql.SqlColl2Exes31To40.sqlColl2Exes31To40
 import initialData.sql.SqlColl2Exes41To50.sqlColl2Exes41To50
 import model.ExerciseCollection
+import model.tools.sql.SqlExerciseContent
 import model.tools.sql.SqlTool.SqlExercise
 
-object SqlData extends InitialData {
+object SqlData extends InitialData[String, SqlExerciseContent] {
 
   override protected val toolId: String = "sql"
 
@@ -22,7 +23,7 @@ object SqlData extends InitialData {
     sqlColl2Exes41To50
   ).flatten
 
-  val sql_collections_and_exes: Seq[(ExerciseCollection, Seq[SqlExercise])] = Seq(
+  override val data: Seq[(ExerciseCollection, Seq[SqlExercise])] = Seq(
     (
       ExerciseCollection(
         1,

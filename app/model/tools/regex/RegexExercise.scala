@@ -15,7 +15,7 @@ object RegexExPart extends ExParts[RegexExPart] {
 
 sealed trait RegexCorrectionType extends EnumEntry
 
-case object RegexCorrectionTypes extends PlayEnum[RegexCorrectionType] {
+case object RegexCorrectionType extends PlayEnum[RegexCorrectionType] {
 
   override val values: IndexedSeq[RegexCorrectionType] = findValues
 

@@ -1,8 +1,8 @@
 package initialData.sql
 
 import model.tools.sql.SqlTool.SqlExercise
-import model.tools.sql.{SqlExerciseContent, SqlExerciseType}
-import model.{Exercise, SampleSolution}
+import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
+import model.{Exercise, Level, SampleSolution, TopicWithLevel}
 
 object SqlColl2Exes41To50 {
 
@@ -18,8 +18,11 @@ object SqlColl2Exes41To50 {
              |Geben Sie nur den Vornamen und Nachnamen aus.
              |Die Datensätze sollen nach dem Nachnamen alphabetisch sortiert werden.""".stripMargin
       .replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 3,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.OrderBy, Level.Beginner),
+      TopicWithLevel(SqlTopics.Aggregate, Level.Intermediate)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -31,9 +34,7 @@ object SqlColl2Exes41To50 {
                      |    WHERE LENGTH(family_name) = 4
                      |    ORDER BY family_name;""".stripMargin
         )
-      ) /*,
-        tags=Seq(SqlExTag.SQL_ORDER_BY)
-     */
+      )
     )
   )
 
@@ -46,8 +47,10 @@ object SqlColl2Exes41To50 {
     text = """Zeigen Sie Titel, Verlag-Name und Lagerbestand sämtlicher Bücher an,
              |deren Lagerbestand geringer als 40000 ist.""".stripMargin
       .replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Join, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -59,9 +62,7 @@ object SqlColl2Exes41To50 {
                      |    WHERE stock < 40000;""".stripMargin
         )
       ),
-      hint = Some("""Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.""") /*,
-        tags=Seq(SqlExTag.SQL_JOIN)
-     */
+      hint = Some("""Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.""")
     )
   )
 
@@ -76,8 +77,10 @@ object SqlColl2Exes41To50 {
              |Email: 'ferdinandus_1856 @yahoo.com',
              |Geburtstag: '1990 - 11 - 24 '.
              |Das Passwort und die Adresse soll vorerst leer gelassen werden.""".stripMargin,
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Insert, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.INSERT,
       schemaName = schemaName,
@@ -103,8 +106,10 @@ object SqlColl2Exes41To50 {
     title = "Immer diese Jugendlichen",
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Kunden, die nach dem Jahr 1995 geboren wurden.",
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Delete, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.DELETE,
       schemaName = schemaName,
@@ -125,8 +130,10 @@ object SqlColl2Exes41To50 {
     title = "Karteileichen",
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Kunden, die noch keine Bestellung abgegeben haben.",
-    topicAbbreviations = Seq.empty,
     difficulty = 3,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.SubSelect, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.DELETE,
       schemaName = schemaName,
@@ -148,8 +155,10 @@ object SqlColl2Exes41To50 {
     title = "Weg mit den Billigheimern",
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Bücher, die mehr als 8,50 Euro kosten und die Verlags-ID 7 besitzen.",
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Delete, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.DELETE,
       schemaName = schemaName,
@@ -170,8 +179,10 @@ object SqlColl2Exes41To50 {
     title = "Bye Bye, J. R. R!",
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Bücher, die vom Autor mit der ID 3 geschrieben wurden.",
-    topicAbbreviations = Seq.empty,
     difficulty = 3,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Delete, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.DELETE,
       schemaName = schemaName,
@@ -195,8 +206,10 @@ object SqlColl2Exes41To50 {
              |(Autor-ID: 2, Erscheinungsjahr: 2010, Publisher-ID: '12' , Signatur 'PF / 520 - Y / 2',
              |Lagerbestand '289', Preis: '24.99 ').""".stripMargin
       .replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Insert, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.INSERT,
       schemaName = schemaName,

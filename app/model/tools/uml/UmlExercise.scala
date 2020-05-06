@@ -1,8 +1,6 @@
 package model.tools.uml
 
-import enumeratum.{EnumEntry, PlayEnum}
 import model.{ExPart, ExParts, ExerciseContent, SampleSolution}
-import model.tools._
 
 sealed abstract class UmlExPart(
   val partName: String,
@@ -23,16 +21,6 @@ object UmlExPart extends ExParts[UmlExPart] {
 
   case object MemberAllocation
       extends UmlExPart(partName = "Zuordnung der Member", id = "memberAllocation", isEntryPart = false)
-
-}
-
-sealed trait UmlExTag extends EnumEntry
-
-case object UmlExTag extends PlayEnum[UmlExTag] {
-
-  override val values: IndexedSeq[UmlExTag] = findValues
-
-  case object UmlExTagTodo extends UmlExTag
 
 }
 

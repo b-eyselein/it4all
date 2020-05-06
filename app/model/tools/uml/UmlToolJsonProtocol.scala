@@ -10,7 +10,7 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlClassDiagram, UmlExercise
 
   override val solutionFormat: Format[UmlClassDiagram] = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
 
-  override val exerciseContentFormat: Format[UmlExerciseContent] = {
+  override val exerciseContentFormat: OFormat[UmlExerciseContent] = {
     implicit val mf: Format[Map[String, String]]              = keyValueObjectMapFormat
     implicit val ssf: Format[SampleSolution[UmlClassDiagram]] = sampleSolutionFormat
 

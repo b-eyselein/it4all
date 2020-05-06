@@ -1,10 +1,10 @@
 package model.tools.regex
 
-import model.{Exercise, LoggedInUser}
 import model.core.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
 import model.points._
 import model.tools._
+import model.{Exercise, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -16,6 +16,8 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
   override type ExContentType = RegexExerciseContent
   override type PartType      = RegexExPart
   override type ResType       = RegexAbstractResult
+
+  type RegexExercise = Exercise[String, RegexExerciseContent]
 
   type ExtractedValuesComparison = MatchingResult[RegexMatch, RegexMatchMatch]
 
@@ -32,7 +34,7 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
   override def correctAbstract(
     user: LoggedInUser,
     solution: String,
-    exercise: Exercise[String, RegexExerciseContent],
+    exercise: RegexExercise,
     part: RegexExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[RegexAbstractResult] = Future.successful {
@@ -40,10 +42,10 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
       error => RegexIllegalRegexResult(solutionSaved, error.getMessage, exercise.content.maxPoints.points),
       userRegex =>
         exercise.content.correctionType match {
-          case RegexCorrectionTypes.MATCHING =>
+          case RegexCorrectionType.MATCHING =>
             RegexMatchingCorrector.correctMatching(exercise.content, userRegex, solutionSaved)
 
-          case RegexCorrectionTypes.EXTRACTION =>
+          case RegexCorrectionType.EXTRACTION =>
             RegexExtractionCorrector.correctExtraction(exercise.content, userRegex, solutionSaved)
         }
     )

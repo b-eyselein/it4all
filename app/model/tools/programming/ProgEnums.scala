@@ -56,7 +56,7 @@ object ProgrammingTopics {
 
 sealed trait UnitTestType extends EnumEntry
 
-case object UnitTestTypes extends PlayEnum[UnitTestType] {
+case object UnitTestType extends PlayEnum[UnitTestType] {
 
   override val values: IndexedSeq[UnitTestType] = findValues
 

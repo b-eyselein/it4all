@@ -1,8 +1,7 @@
 package model.tools.sql
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.{ExPart, ExParts, ExerciseContent, SampleSolution, Topic}
-import model.tools._
+import model._
 
 sealed abstract class SqlExPart(val partName: String, val id: String) extends ExPart
 
@@ -15,16 +14,27 @@ object SqlExPart extends ExParts[SqlExPart] {
 }
 
 object SqlTopics {
+  val Join: Topic      = Topic("J", "sql", "Join")
+  val OrderBy: Topic   = Topic("O", "sql", "Reihenfolge")
+  val GroupBy: Topic   = Topic("G", "sql", "Gruppierung")
+  val Aggregate: Topic = Topic("F", "sql", "Aggregatsfunktion")
+  val Alias: Topic     = Topic("A", "sql", "Alias")
+  val Limit: Topic     = Topic("L", "sql", "Limitierung")
+  val SubSelect: Topic = Topic("S", "sql", "Zweites Select innerhalb")
+
+  val Create: Topic = Topic("C", "sql", "Create")
+  val Update: Topic = Topic("U", "sql", "Update")
+  val Insert: Topic = Topic("I", "sql", "Insert")
+  val Delete: Topic = Topic("D", "sql", "Delete")
+
   val values: Seq[Topic] = Seq(
-    Topic("J", "sql", "Join"),
-    Topic("2J", "sql", "Zweifacher Join"),
-    Topic("3J", "sql", "Dreifacher Join"),
-    Topic("O", "sql", "Reihenfolge"),
-    Topic("G", "sql", "Gruppierung"),
-    Topic("F", "sql", "Funktion"),
-    Topic("A", "sql", "Alias"),
-    Topic("L", "sql", "Limitierung"),
-    Topic("S", "sql", "Zweites Select innerhalb")
+    Join,
+    OrderBy,
+    GroupBy,
+    Aggregate,
+    Alias,
+    Limit,
+    SubSelect
   )
 }
 

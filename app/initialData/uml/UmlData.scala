@@ -4,13 +4,14 @@ import initialData.InitialData
 import initialData.uml.coll_1.UmlColl1Ex1.umlColl1Ex1
 import initialData.uml.coll_1.umlColl1Ex2.umlColl1Ex2
 import model.ExerciseCollection
+import model.tools.uml.{UmlClassDiagram, UmlExerciseContent}
 import model.tools.uml.UmlTool.UmlExercise
 
-object UmlData extends InitialData {
+object UmlData extends InitialData[UmlClassDiagram, UmlExerciseContent] {
 
   override protected val toolId: String = "uml"
 
-  val uml_collections_and_exes: Seq[(ExerciseCollection, Seq[UmlExercise])] = Seq(
+  override val data: Seq[(ExerciseCollection, Seq[UmlExercise])] = Seq(
     (
       ExerciseCollection(
         1,

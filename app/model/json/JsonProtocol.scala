@@ -1,7 +1,6 @@
 package model.json
 
 import model._
-import model.tools._
 import play.api.libs.json._
 
 final case class ReadCollectionsMessage(collections: Seq[ExerciseCollection])
@@ -11,6 +10,12 @@ final case class KeyValueObject(key: String, value: String)
 object JsonProtocols extends LessonJsonProtocol {
 
   val topicFormat: OFormat[Topic] = Json.format
+
+  val topicWithLevelFormat: OFormat[TopicWithLevel] = {
+    implicit val tf: OFormat[Topic] = topicFormat
+
+    Json.format
+  }
 
   val registerValuesFormat: OFormat[RegisterValues] = Json.format
 

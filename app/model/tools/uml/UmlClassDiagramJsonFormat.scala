@@ -4,9 +4,12 @@ import play.api.libs.json._
 
 object UmlClassDiagramJsonFormat {
 
+  val umlAttributeFormat: OFormat[UmlAttribute] = Json.format
+  val umlMethodFormat: OFormat[UmlMethod]       = Json.format
+
   private val umlClassFormat: Format[UmlClass] = {
-    implicit val uaf: Format[UmlAttribute] = Json.format
-    implicit val umf: Format[UmlMethod]    = Json.format
+    implicit val uaf: Format[UmlAttribute] = umlAttributeFormat
+    implicit val umf: Format[UmlMethod]    = umlMethodFormat
 
     Json.format
   }

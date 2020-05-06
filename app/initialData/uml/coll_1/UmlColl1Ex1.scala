@@ -67,7 +67,6 @@ object UmlColl1Ex1 {
              |Jeder Kunde kann mehrere Konten besitzen und hat die Möglichkeit, sich das Gesamtsaldo aller Konten anzeigen
              |zu lassen und Geld auf ein Konto einzuzahlen.""".stripMargin.replace("\n", " "),
     difficulty = 1,
-    topicAbbreviations = Seq.empty,
     content = UmlExerciseContent(
       mappings = Map(
         "Konten" -> "Konto",

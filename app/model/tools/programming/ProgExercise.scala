@@ -1,8 +1,7 @@
 package model.tools.programming
 
-import model.{ExerciseContent, ExerciseFile, SampleSolution}
-import model.tools._
 import model.tools.uml.UmlClassDiagram
+import model.{ExerciseContent, ExerciseFile, SampleSolution}
 import play.api.libs.json.JsValue
 
 final case class ProgrammingExerciseContent(
@@ -11,19 +10,19 @@ final case class ProgrammingExerciseContent(
   filename: String,
   inputTypes: Seq[ProgInput],
   outputType: ProgDataType,
-  baseData: Option[JsValue],
   unitTestPart: UnitTestPart,
   implementationPart: ImplementationPart,
-  sampleTestData: Seq[ProgTestData],
-  maybeClassDiagramPart: Option[UmlClassDiagram],
-  sampleSolutions: Seq[SampleSolution[ProgSolution]]
+  sampleTestData: Seq[ProgTestData] = Seq.empty,
+  baseData: Option[JsValue] = None,
+  maybeClassDiagramPart: Option[UmlClassDiagram] = None,
+  override val sampleSolutions: Seq[SampleSolution[ProgSolution]]
 ) extends ExerciseContent[ProgSolution] {
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
     ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this.baseData, completeTestData)
 
   def parts: Seq[ProgExPart] =
-    if (unitTestPart.unitTestType == UnitTestTypes.Normal) {
+    if (unitTestPart.unitTestType == UnitTestType.Normal) {
       Seq(ProgExPart.Implementation, ProgExPart.TestCreation)
     } else {
       Seq(ProgExPart.Implementation)
@@ -36,9 +35,9 @@ final case class UnitTestPart(
   unitTestsDescription: String,
   unitTestFiles: Seq[ExerciseFile],
   unitTestTestConfigs: Seq[UnitTestTestConfig],
-  simplifiedTestMainFile: Option[ExerciseFile],
   testFileName: String,
-  sampleSolFileNames: Seq[String]
+  sampleSolFileNames: Seq[String],
+  simplifiedTestMainFile: Option[ExerciseFile] = None
 )
 
 final case class UnitTestTestConfig(id: Int, shouldFail: Boolean, description: String, file: ExerciseFile)

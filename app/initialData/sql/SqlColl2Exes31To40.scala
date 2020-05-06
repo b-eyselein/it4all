@@ -1,8 +1,8 @@
 package initialData.sql
 
 import model.tools.sql.SqlTool.SqlExercise
-import model.tools.sql.{SqlExerciseContent, SqlExerciseType}
-import model.{Exercise, SampleSolution}
+import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
+import model.{Exercise, Level, SampleSolution, TopicWithLevel}
 
 object SqlColl2Exes31To40 {
 
@@ -17,8 +17,10 @@ object SqlColl2Exes31To40 {
     text = """Bestimmen Sie Titel und Preis aller Bücher des Autors 'Tolkien' deren Preis über 10€ liegt.
              |Ordnen Sie die Einträge nach Erscheinungsjahr abwärts.""".stripMargin
       .replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 3,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.OrderBy, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -30,9 +32,7 @@ object SqlColl2Exes31To40 {
                      |    WHERE authors.family_name = 'Tolkien' AND price > 10
                      |    ORDER BY year DESC;""".stripMargin
         )
-      ) /*,
-        tags=Seq(SqlExTag.SQL_ORDER_BY)
-     */
+      )
     )
   )
 
@@ -46,8 +46,11 @@ object SqlColl2Exes31To40 {
       """Berechnen Sie die Anzahl der bestellten Buchexemplare (Tabelle order_positions), die zum Zeitpunkt des Kaufes
         |weniger als fünf Euro gekostet haben. Geben Sie das Ergebnis unter dem Spaltenname 'Anzahl' aus.""".stripMargin
         .replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Aggregate, Level.Beginner),
+      TopicWithLevel(SqlTopics.Alias, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -64,9 +67,7 @@ object SqlColl2Exes31To40 {
                      |    FROM order_positions
                      |    WHERE price < 5.00;""".stripMargin
         )
-      ) /*,
-        tags=Seq(SqlExTag.SQL_FUNCTION, SqlExTag.SQL_ALIAS)
-     */
+      )
     )
   )
 
@@ -80,8 +81,12 @@ object SqlColl2Exes31To40 {
              |Ordnen Sie die Einträge nach kumulierten Bestand abwärts.
              |Benennen Sie die Spalte des kumulierten Bestandes 'stock_sum' (ohne Anführungszeichen).""".stripMargin
       .replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 3,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Aggregate, Level.Intermediate),
+      TopicWithLevel(SqlTopics.GroupBy, Level.Beginner),
+      TopicWithLevel(SqlTopics.OrderBy, Level.Intermediate)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -94,9 +99,7 @@ object SqlColl2Exes31To40 {
                      |    ORDER BY stock_sum DESC;""".stripMargin
         )
       ),
-      hint = Some("""Verwenden Sie den Sum-Operator und das Schlüsselwort AS.""") /*,
-        tags=Seq(SqlExTag.SQL_FUNCTION, SqlExTag.SQL_GROUP_BY, SqlExTag.SQL_ORDER_BY),
-     */
+      hint = Some("""Verwenden Sie den Sum-Operator und das Schlüsselwort AS.""")
     )
   )
 
@@ -109,7 +112,6 @@ object SqlColl2Exes31To40 {
     text = """Wählen Sie alle Kunden aus die im Februar Geburtstag haben und geben Sie den Vornamen,
              |Nachnamen und das Geburtsdatum aus.""".stripMargin
       .replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -133,8 +135,11 @@ object SqlColl2Exes31To40 {
     title = "Ich bin der Jüngste!",
     authors = Seq("bje40dc"),
     text = """Geben Sie den Vornamen, Nachnamen und Geburtstag des jüngsten Kunden aus.""",
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.OrderBy, Level.Intermediate),
+      TopicWithLevel(SqlTopics.Limit, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -147,9 +152,7 @@ object SqlColl2Exes31To40 {
                      |    LIMIT 1;""".stripMargin
         )
       ),
-      hint = Some("Achten Sie darauf, dass sich die Spaltennamen nicht verändern.") /*,
-        tags=Seq(SqlExTag.SQL_ORDER_BY, SqlExTag.SQL_LIMIT),
-     */
+      hint = Some("Achten Sie darauf, dass sich die Spaltennamen nicht verändern.")
     )
   )
 
@@ -165,7 +168,6 @@ object SqlColl2Exes31To40 {
         |werden, sich ein neues auszudenken.
         |Geben Sie die ID und die Email-Adresse der faulen Kunden aus.""".stripMargin
         .replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -194,8 +196,14 @@ object SqlColl2Exes31To40 {
     text =
       """Ermitteln Sie den Kunden, welcher die höchste durchschnittliche Bewertung abgegeben hat.
         |Geben Sie dazu Vorname, Nachname und seine durchschnittliche Bewertung (Spaltenbezeichnung 'avg_rating') aus.""".stripMargin,
-    topicAbbreviations = Seq.empty,
     difficulty = 3,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Join, Level.Beginner),
+      TopicWithLevel(SqlTopics.Aggregate, Level.Intermediate),
+      TopicWithLevel(SqlTopics.GroupBy, Level.Beginner),
+      TopicWithLevel(SqlTopics.OrderBy, Level.Intermediate),
+      TopicWithLevel(SqlTopics.Limit, Level.Beginner)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -209,10 +217,7 @@ object SqlColl2Exes31To40 {
                         |    ORDER BY avg_rating DESC
                         |    LIMIT 1;"""
         )
-      ) /*,
-        tags=Seq(SqlExTag.SQL_JOIN, SqlExTag.SQL_FUNCTION, SqlExTag.SQL_GROUP_BY, SqlExTag.SQL_ORDER_BY,
-              SqlExTag.SQL_LIMIT)
-     */
+      )
     )
   )
 
@@ -226,8 +231,14 @@ object SqlColl2Exes31To40 {
              |Listen Sie dabei Vorname, Nachname und Einkaufswert (Spaltenbezeichnung 'value') auf.
              |Sortieren Sie die Einträge aufwärts nach Einkaufswert.""".stripMargin
       .replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 4,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Aggregate, Level.Intermediate),
+      TopicWithLevel(SqlTopics.Alias, Level.Beginner),
+      TopicWithLevel(SqlTopics.Join, Level.Advanced),
+      TopicWithLevel(SqlTopics.GroupBy, Level.Intermediate),
+      TopicWithLevel(SqlTopics.OrderBy, Level.Intermediate)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -241,12 +252,7 @@ object SqlColl2Exes31To40 {
                      |    GROUP BY customer_id
                      |    ORDER BY value;""".stripMargin
         )
-      ) /*,
-        tags=Seq(
-            SqlExTag.SQL_FUNCTION, SqlExTag.SQL_ALIAS, SqlExTag.SQL_DOUBLE_JOIN, SqlExTag.SQL_GROUP_BY,
-            SqlExTag.SQL_ORDER_BY
-        )
-     */
+      )
     )
   )
 
@@ -257,7 +263,6 @@ object SqlColl2Exes31To40 {
     title = "Veröffentlichungsjahre",
     authors = Seq("bje40dc"),
     text = """Wählen Sie alle Bücher aus, die in den Jahren 1998, 2001 oder 2011 veröffentlicht wurden.""",
-    topicAbbreviations = Seq.empty,
     difficulty = 2,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -271,6 +276,7 @@ object SqlColl2Exes31To40 {
       )
     )
   )
+
   private val sql_coll_2_ex_40: SqlExercise = Exercise(
     exerciseId = 40,
     collectionId = 2,
@@ -279,8 +285,10 @@ object SqlColl2Exes31To40 {
     authors = Seq("bje40dc"),
     text = """Es sind neue Exemplare des Buches mit dem Titel 1894 eingetroffen.
              |Aktualisieren Sie den Bestand auf den neuen Wert von 500.""".stripMargin.replace("\n", " "),
-    topicAbbreviations = Seq.empty,
     difficulty = 1,
+    topicsWithLevels = Seq(
+      TopicWithLevel(SqlTopics.Update, Level.Intermediate)
+    ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.UPDATE,
       schemaName = schemaName,
@@ -291,9 +299,7 @@ object SqlColl2Exes31To40 {
                      |    SET stock = 500
                      |    WHERE title = '1984';""".stripMargin
         )
-      ) /*,
-        tags=Seq(SqlExTag.SQL_UPDATE)
-     */
+      )
     )
   )
 

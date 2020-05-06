@@ -93,7 +93,6 @@ object WebColl1Ex4 {
     authors = Seq("bje40dc"),
     text = load_text_from_file(ex_res_path / "text.html"),
     difficulty = 3,
-    topicAbbreviations = Seq.empty,
     content = WebExerciseContent(
       files = Seq(
         ExerciseFile(

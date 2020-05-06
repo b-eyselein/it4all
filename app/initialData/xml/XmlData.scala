@@ -7,7 +7,7 @@ import model.tools.xml.XmlTool.XmlExercise
 import model.tools.xml.{XmlExerciseContent, XmlSolution}
 import model.{Exercise, ExerciseCollection, SampleSolution}
 
-object XmlData extends InitialData {
+object XmlData extends InitialData[XmlSolution, XmlExerciseContent] {
 
   override protected val toolId = "xml"
 
@@ -22,7 +22,6 @@ object XmlData extends InitialData {
       authors = Seq("bje40dc"),
       text = "Erstellen Sie zu dieser DTD ein passendes Xml-Dokument",
       difficulty = 1,
-      topicAbbreviations = Seq.empty,
       content = XmlExerciseContent(
         rootNode = "part",
         grammarDescription = load_text_from_file(exResPath / "grammarDescription.txt"),
@@ -50,7 +49,6 @@ object XmlData extends InitialData {
       authors = Seq("bje40dc"),
       text = "Erstellen Sie zu dieser DTD ein passendes Xml-Dokument.",
       difficulty = 2,
-      topicAbbreviations = Seq.empty,
       content = XmlExerciseContent(
         rootNode = "lecture",
         grammarDescription = load_text_from_file(exResPath / "grammarDescription.txt"),
@@ -85,7 +83,6 @@ object XmlData extends InitialData {
       authors = Seq("bje40dc"),
       text = "Erstellen Sie zu dieser DTD ein passendes Xml-Dokument.",
       difficulty = 1,
-      topicAbbreviations = Seq.empty,
       content = XmlExerciseContent(
         rootNode = "praxis",
         grammarDescription = load_text_from_file(exResPath / "grammarDescription.txt"),
@@ -113,7 +110,6 @@ object XmlData extends InitialData {
       authors = Seq("bje40dc"),
       text = "Erstellen Sie für dieses Xml-Dokument eine passende DTD.",
       difficulty = 1,
-      topicAbbreviations = Seq.empty,
       content = XmlExerciseContent(
         rootNode = "breakfast",
         grammarDescription = load_text_from_file(exResPath / "grammarDescription.txt"),
@@ -141,7 +137,6 @@ object XmlData extends InitialData {
       authors = Seq("bje40dc"),
       text = "Erstellen Sie für dieses Xml-Dokument eine passende DTD.",
       difficulty = 2,
-      topicAbbreviations = Seq.empty,
       content = XmlExerciseContent(
         rootNode = "bibliothek",
         grammarDescription = load_text_from_file(exResPath / "xml" / "coll_1" / "ex_5" / "grammarDescription.txt"),
@@ -166,7 +161,7 @@ object XmlData extends InitialData {
 
   }
 
-  val xml_collections_and_exes: Seq[(ExerciseCollection, Seq[XmlExercise])] = Seq(
+  override val data: Seq[(ExerciseCollection, Seq[XmlExercise])] = Seq(
     (
       ExerciseCollection(1, toolId, title = "Xml Basics", authors = Seq("bje40dc"), text = "TODO"),
       Seq(xmlColl1Ex1, xmlColl1Ex2, xmlColl1Ex3, xmlColl1Ex4, xmlColl1Ex5)

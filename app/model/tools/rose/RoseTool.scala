@@ -14,6 +14,8 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
   override type PartType      = RoseExPart
   override type ResType       = RoseAbstractResult
 
+  type RoseExercise = Exercise[String, RoseExerciseContent]
+
   // Yaml, Html forms, Json
 
   override val jsonFormats: ToolJsonProtocol[String, RoseExerciseContent, RoseExPart] =
@@ -27,7 +29,7 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
   override def correctAbstract(
     user: LoggedInUser,
     solution: String,
-    exercise: Exercise[String, RoseExerciseContent],
+    exercise: RoseExercise,
     part: RoseExPart,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[RoseAbstractResult] = {

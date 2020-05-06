@@ -1,11 +1,11 @@
 package model.tools.rose
 
 import better.files._
-import model.Exercise
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.points._
-import model.tools.programming.ProgLanguage
 import model.tools.AbstractCorrector
+import model.tools.programming.ProgLanguage
+import model.tools.rose.RoseTool.RoseExercise
 import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, Json}
 
@@ -33,7 +33,7 @@ object RoseCorrector extends AbstractCorrector {
 
   def correct(
     learnerSolution: String,
-    exercise: Exercise[String, RoseExerciseContent],
+    exercise: RoseExercise,
     language: ProgLanguage,
     solutionTargetDir: File,
     solutionSaved: Boolean

@@ -1,10 +1,13 @@
 package initialData
 
 import better.files.File
+import model.{Exercise, ExerciseCollection, ExerciseContent}
 
-trait InitialData {
+trait InitialData[S, EC <: ExerciseContent[S]] {
 
   protected val toolId: String
+
+  protected val data : Seq[(ExerciseCollection, Seq[Exercise[S, EC]])]
 
 }
 
