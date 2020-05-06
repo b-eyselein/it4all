@@ -12,7 +12,7 @@ import model.ExerciseCollection
 import model.tools.regex.RegexExerciseContent
 import model.tools.regex.RegexTool.RegexExercise
 
-object RegexData extends InitialData[String, RegexExerciseContent] {
+object RegexInitialData extends InitialData[String, RegexExerciseContent] {
 
   override protected val toolId: String = "regex"
 

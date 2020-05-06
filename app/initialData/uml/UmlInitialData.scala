@@ -7,7 +7,7 @@ import model.ExerciseCollection
 import model.tools.uml.{UmlClassDiagram, UmlExerciseContent}
 import model.tools.uml.UmlTool.UmlExercise
 
-object UmlData extends InitialData[UmlClassDiagram, UmlExerciseContent] {
+object UmlInitialData extends InitialData[UmlClassDiagram, UmlExerciseContent] {
 
   override protected val toolId: String = "uml"
 

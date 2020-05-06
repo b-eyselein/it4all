@@ -1,6 +1,6 @@
 package initialData.programming.coll_1
 
-import initialData.InitialData.{ex_resources_path, load_text_from_file}
+import initialData.InitialData._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 import model._
@@ -8,7 +8,7 @@ import play.api.libs.json.{JsNumber, Json}
 
 object ProgrammingColl1Ex1 {
 
-  private val ex_res_path = ex_resources_path("programming", 1, 1)
+  private val ex_res_path = exerciseResourcesPath("programming", 1, 1)
 
   private val unitTestPart = UnitTestPart(
     unitTestType = UnitTestType.Simplified,
@@ -20,7 +20,7 @@ object ProgrammingColl1Ex1 {
         name = "test_main.py",
         fileType = "python",
         editable = false,
-        content = load_text_from_file(ex_res_path / "test_main.py")
+        content = loadTextFromFile(ex_res_path / "test_main.py")
       )
     ),
     testFileName = "test_ggt.py",
@@ -36,7 +36,7 @@ object ProgrammingColl1Ex1 {
         name = "ggt.py",
         fileType = "python",
         editable = true,
-        content = load_text_from_file(ex_res_path / "ggt_declaration.py")
+        content = loadTextFromFile(ex_res_path / "ggt_declaration.py")
       )
     ),
     implFileName = "ggt.py",
@@ -51,7 +51,7 @@ object ProgrammingColl1Ex1 {
           name = "ggt.py",
           fileType = "python",
           editable = true,
-          content = load_text_from_file(ex_res_path / "ggt.py")
+          content = loadTextFromFile(ex_res_path / "ggt.py")
         )
       ) /*,
       testData = Seq.empty
@@ -65,7 +65,7 @@ object ProgrammingColl1Ex1 {
     toolId = "programming",
     title = "Größter gemeinsamer Teiler",
     authors = Seq("bje40dc"),
-    text = load_text_from_file(ex_res_path / "text.html"),
+    text = loadTextFromFile(ex_res_path / "text.html"),
     difficulty = 2,
     topicsWithLevels = Seq(
       TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner),

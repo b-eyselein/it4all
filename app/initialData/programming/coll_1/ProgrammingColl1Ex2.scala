@@ -1,13 +1,13 @@
 package initialData.programming.coll_1
 
-import initialData.InitialData.{ex_resources_path, load_text_from_file}
+import initialData.InitialData._
+import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
-import model._
 
 object ProgrammingColl1Ex2 {
 
-  private val ex_res_path = ex_resources_path("programming", 1, 2)
+  private val ex_res_path = exerciseResourcesPath("programming", 1, 2)
 
   private val unitTestPart = UnitTestPart(
     unitTestType = UnitTestType.Normal,
@@ -20,13 +20,13 @@ object ProgrammingColl1Ex2 {
         name = "factorial.py",
         fileType = "python",
         editable = false,
-        content = load_text_from_file(ex_res_path / "factorial_declaration.py")
+        content = loadTextFromFile(ex_res_path / "factorial_declaration.py")
       ),
       ExerciseFile(
         name = "test_factorial.py",
         fileType = "python",
         editable = true,
-        content = load_text_from_file(ex_res_path / "test_factorial_declaration.py")
+        content = loadTextFromFile(ex_res_path / "test_factorial_declaration.py")
       )
     ),
     unitTestTestConfigs = Seq(
@@ -38,7 +38,7 @@ object ProgrammingColl1Ex2 {
           name = "factorial_0.py",
           fileType = "python",
           editable = false,
-          content = load_text_from_file(ex_res_path / "unit_test_sols" / "factorial_0.py")
+          content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_0.py")
         )
       ),
       UnitTestTestConfig(
@@ -49,7 +49,7 @@ object ProgrammingColl1Ex2 {
           name = "factorial_1.py",
           fileType = "python",
           editable = false,
-          content = load_text_from_file(ex_res_path / "unit_test_sols" / "factorial_1.py")
+          content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_1.py")
         )
       ),
       UnitTestTestConfig(
@@ -60,7 +60,7 @@ object ProgrammingColl1Ex2 {
           name = "factorial_2.py",
           fileType = "python",
           editable = false,
-          content = load_text_from_file(ex_res_path / "unit_test_sols" / "factorial_2.py")
+          content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_2.py")
         )
       ),
       UnitTestTestConfig(
@@ -71,7 +71,7 @@ object ProgrammingColl1Ex2 {
           name = "factorial_3.py",
           fileType = "python",
           editable = false,
-          content = load_text_from_file(ex_res_path / "unit_test_sols" / "factorial_3.py")
+          content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_3.py")
         )
       )
     ),
@@ -88,13 +88,13 @@ object ProgrammingColl1Ex2 {
         name = "test_factorial.py",
         fileType = "python",
         editable = false,
-        content = load_text_from_file(ex_res_path / "test_factorial.py")
+        content = loadTextFromFile(ex_res_path / "test_factorial.py")
       ),
       ExerciseFile(
         name = "factorial.py",
         fileType = "python",
         editable = true,
-        content = load_text_from_file(ex_res_path / "factorial_declaration.py")
+        content = loadTextFromFile(ex_res_path / "factorial_declaration.py")
       )
     ),
     implFileName = "factorial.py",
@@ -109,13 +109,13 @@ object ProgrammingColl1Ex2 {
           name = "test_factorial.py",
           fileType = "python",
           editable = false,
-          content = load_text_from_file(ex_res_path / "test_factorial.py")
+          content = loadTextFromFile(ex_res_path / "test_factorial.py")
         ),
         ExerciseFile(
           name = "factorial.py",
           fileType = "python",
           editable = false,
-          content = load_text_from_file(ex_res_path / "factorial.py")
+          content = loadTextFromFile(ex_res_path / "factorial.py")
         )
       )
     )
@@ -127,7 +127,7 @@ object ProgrammingColl1Ex2 {
     toolId = "programming",
     title = "Fakultät",
     authors = Seq("bje40dc"),
-    text = load_text_from_file(ex_res_path / "text.html"),
+    text = loadTextFromFile(ex_res_path / "text.html"),
     difficulty = 1,
     topicsWithLevels = Seq(
       TopicWithLevel(ProgrammingTopics.Exceptions, Level.Beginner),

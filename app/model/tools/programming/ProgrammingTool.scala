@@ -1,6 +1,8 @@
 package model.tools.programming
 
 import better.files.File
+import initialData.InitialData
+import initialData.programming.ProgrammingInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.tools._
 import model.{Exercise, ExerciseFile, LoggedInUser, Topic}
@@ -75,5 +77,7 @@ object ProgrammingTool extends CollectionTool("programming", "Programmierung", T
         }
     }
   }
+
+  override val initialData: InitialData[ProgSolution, ProgrammingExerciseContent] = ProgrammingInitialData
 
 }

@@ -1,6 +1,7 @@
 package model.tools
 
 import better.files.File
+import initialData.InitialData
 import model._
 import model.core.result.AbstractCorrectionResult
 import model.graphql.ToolGraphQLModelBasics
@@ -42,5 +43,7 @@ abstract class CollectionTool(
   )(implicit executionContext: ExecutionContext): Future[ResType]
 
   val allTopics: Seq[Topic] = Seq.empty
+
+  val initialData: InitialData[SolType, ExContentType]
 
 }

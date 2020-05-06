@@ -3,8 +3,9 @@ package model.graphql
 import model.MongoClientQueries
 import model.tools._
 import play.api.libs.json._
-import play.modules.reactivemongo.MongoController
 import sangria.schema._
+
+import scala.concurrent.Future
 
 final case class GraphQLRequest(
   query: String,
@@ -16,14 +17,28 @@ final case class GraphQLContext()
 
 trait GraphQLModel
     extends BasicGraphQLModels
-    with UserGraphQLModel
     with CollectionGraphQLModel
     with ExerciseGraphQLModels
     with GraphQLMutations
     with MongoClientQueries {
-  self: MongoController =>
 
   // Types
+
+  protected val userType: ObjectType[Unit, String] = ObjectType(
+    "User",
+    fields[Unit, String](
+      Field(
+        "proficiencies",
+        ListType(topicWithLevelType),
+        arguments = toolIdArgument :: Nil,
+        resolve = context =>
+          ToolList.tools.find(_.id == context.arg(toolIdArgument)) match {
+            case None       => Future.successful(Seq.empty)
+            case Some(tool) => allTopicsWithLevelForTool(context.value, tool)
+          }
+      )
+    )
+  )
 
   private val lessonFieldsForToolType = fields[Unit, CollectionTool](
     Field("lessonCount", LongType, resolve = context => lessonCountForTool(context.value.id)),

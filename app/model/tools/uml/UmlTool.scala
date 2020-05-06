@@ -1,10 +1,12 @@
 package model.tools.uml
 
-import model.{Exercise, LoggedInUser}
+import initialData.InitialData
+import initialData.uml.UmlInitialData
 import model.core.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
 import model.tools._
 import model.tools.uml.matcher._
+import model.{Exercise, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,5 +45,7 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
   )(implicit executionContext: ExecutionContext): Future[UmlAbstractResult] = Future.successful {
     UmlCorrector.correct(solution, exercise, part, solutionSaved)
   }
+
+  override val initialData: InitialData[UmlClassDiagram, UmlExerciseContent] = UmlInitialData
 
 }

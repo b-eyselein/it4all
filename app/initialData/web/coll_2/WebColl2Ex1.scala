@@ -1,14 +1,14 @@
 package initialData.web.coll_2
 
 import de.uniwue.webtester.sitespec._
-import initialData.InitialData.{ex_resources_path, load_text_from_file}
+import initialData.InitialData._
 import model.tools.web.WebTool.WebExercise
 import model.tools.web.{WebExerciseContent, WebSolution}
 import model.{Exercise, ExerciseFile, SampleSolution}
 
 object WebColl2Ex1 {
 
-  private val ex_res_path = ex_resources_path("web", 2, 1)
+  private val ex_res_path = exerciseResourcesPath("web", 2, 1)
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -73,13 +73,13 @@ object WebColl2Ex1 {
           name = "clickCounter.html",
           fileType = "htmlmixed",
           editable = false,
-          content = load_text_from_file(ex_res_path / "sol_1" / "clickCounter.html")
+          content = loadTextFromFile(ex_res_path / "sol_1" / "clickCounter.html")
         ),
         ExerciseFile(
           name = "clickCounter.js",
           fileType = "javascript",
           editable = false,
-          content = load_text_from_file(ex_res_path / "sol_1" / "clickCounter.js")
+          content = loadTextFromFile(ex_res_path / "sol_1" / "clickCounter.js")
         )
       )
     )
@@ -91,7 +91,7 @@ object WebColl2Ex1 {
     toolId = "web",
     title = "Klickzähler",
     authors = Seq("bje40dc"),
-    text = load_text_from_file(ex_res_path / "text.html"),
+    text = loadTextFromFile(ex_res_path / "text.html"),
     difficulty = 2,
     content = WebExerciseContent(
       files = Seq(
@@ -99,13 +99,13 @@ object WebColl2Ex1 {
           name = "clickCounter.html",
           fileType = "htmlmixed",
           editable = true,
-          content = load_text_from_file(ex_res_path / "clickCounter.html")
+          content = loadTextFromFile(ex_res_path / "clickCounter.html")
         ),
         ExerciseFile(
           name = "clickCounter.js",
           fileType = "javascript",
           editable = true,
-          content = load_text_from_file(ex_res_path / "clickCounter.js")
+          content = loadTextFromFile(ex_res_path / "clickCounter.js")
         )
       ),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),

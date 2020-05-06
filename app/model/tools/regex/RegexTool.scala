@@ -1,5 +1,7 @@
 package model.tools.regex
 
+import initialData.InitialData
+import initialData.regex.RegexInitialData
 import model.core.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
 import model.points._
@@ -50,5 +52,7 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
         }
     )
   }
+
+  override val initialData: InitialData[String, RegexExerciseContent] = RegexInitialData
 
 }

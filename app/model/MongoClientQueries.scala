@@ -5,15 +5,14 @@ import model.lesson.Lesson
 import model.tools.Helper.UntypedExercise
 import model.tools._
 import play.api.libs.json.{Format, JsObject, Json, OFormat}
-import play.modules.reactivemongo.MongoController
+import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.{Cursor, ReadConcern}
 import reactivemongo.play.json._
 import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MongoClientQueries {
-  self: MongoController =>
+trait MongoClientQueries extends ReactiveMongoComponents {
 
   protected implicit val ec: ExecutionContext
 
@@ -71,18 +70,21 @@ trait MongoClientQueries {
 
   // Collections
 
-  private def futureUsersCollection: Future[JSONCollection] = database.map(_.collection("users"))
+  private def futureUsersCollection: Future[JSONCollection] = reactiveMongoApi.database.map(_.collection("users"))
 
-  private def futureLessonsCollection: Future[JSONCollection] = database.map(_.collection("lessons"))
+  private def futureLessonsCollection: Future[JSONCollection] = reactiveMongoApi.database.map(_.collection("lessons"))
 
-  private def futureCollectionsCollection: Future[JSONCollection] = database.map(_.collection("exercise_collections"))
+  private def futureCollectionsCollection: Future[JSONCollection] =
+    reactiveMongoApi.database.map(_.collection("exercise_collections"))
 
-  private def futureExercisesCollection: Future[JSONCollection] = database.map(_.collection("exercises"))
+  private def futureExercisesCollection: Future[JSONCollection] =
+    reactiveMongoApi.database.map(_.collection("exercises"))
 
-  private def futureUserSolutionsCollection: Future[JSONCollection] = database.map(_.collection("solutions"))
+  private def futureUserSolutionsCollection: Future[JSONCollection] =
+    reactiveMongoApi.database.map(_.collection("solutions"))
 
   private def futureUserProficienciesCollection: Future[JSONCollection] =
-    database.map(_.collection("userProficiencies"))
+    reactiveMongoApi.database.map(_.collection("userProficiencies"))
 
   // User queries
 

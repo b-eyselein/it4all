@@ -7,7 +7,7 @@ import model.ExerciseCollection
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming.{ProgSolution, ProgrammingExerciseContent}
 
-object ProgrammingData extends InitialData[ProgSolution, ProgrammingExerciseContent] {
+object ProgrammingInitialData extends InitialData[ProgSolution, ProgrammingExerciseContent] {
 
   override protected val toolId = "programming"
 

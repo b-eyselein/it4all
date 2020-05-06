@@ -1,14 +1,14 @@
 package initialData.web.coll_2
 
 import de.uniwue.webtester.sitespec._
-import initialData.InitialData.{ex_resources_path, load_text_from_file}
+import initialData.InitialData._
 import model.tools.web.WebTool.WebExercise
 import model.tools.web.{WebExerciseContent, WebSolution}
 import model.{Exercise, ExerciseFile, SampleSolution}
 
 object WebColl2Ex2 {
 
-  private val ex_res_path = ex_resources_path("web", 2, 2)
+  private val ex_res_path = exerciseResourcesPath("web", 2, 2)
 
   private val sampleSolution: SampleSolution[WebSolution] = SampleSolution(
     id = 1,
@@ -18,13 +18,13 @@ object WebColl2Ex2 {
           name = "pwChecker.html",
           fileType = "htmlmixed",
           editable = false,
-          content = load_text_from_file(ex_res_path / "sol_1" / "branchesStrings.html")
+          content = loadTextFromFile(ex_res_path / "sol_1" / "branchesStrings.html")
         ),
         ExerciseFile(
           name = "pwChecker.js",
           fileType = "javascript",
           editable = false,
-          content = load_text_from_file(ex_res_path / "sol_1" / "branchesStrings.js")
+          content = loadTextFromFile(ex_res_path / "sol_1" / "branchesStrings.js")
         )
       )
     )
@@ -127,7 +127,7 @@ object WebColl2Ex2 {
     toolId = "web",
     title = "Verzweigungen und Strings",
     authors = Seq("alg81dm"),
-    text = load_text_from_file(ex_res_path / "text.html"),
+    text = loadTextFromFile(ex_res_path / "text.html"),
     difficulty = 3,
     content = WebExerciseContent(
       files = Seq(
@@ -135,13 +135,13 @@ object WebColl2Ex2 {
           name = "pwChecker.html",
           fileType = "htmlmixed",
           editable = true,
-          content = load_text_from_file(ex_res_path / "branchesStrings.html")
+          content = loadTextFromFile(ex_res_path / "branchesStrings.html")
         ),
         ExerciseFile(
           name = "pwChecker.js",
           fileType = "javascript",
           editable = true,
-          content = load_text_from_file(ex_res_path / "branchesStrings.js")
+          content = loadTextFromFile(ex_res_path / "branchesStrings.js")
         )
       ),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),

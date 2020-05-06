@@ -1,14 +1,14 @@
 package initialData.web.coll_1
 
 import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
-import initialData.InitialData.{ex_resources_path, load_text_from_file}
+import initialData.InitialData._
 import model.tools.web.WebTool.WebExercise
 import model.tools.web.{WebExerciseContent, WebSolution}
 import model.{Exercise, ExerciseFile, SampleSolution}
 
 object WebColl1Ex4 {
 
-  private val ex_res_path = ex_resources_path("web", 1, 4)
+  private val ex_res_path = exerciseResourcesPath("web", 1, 4)
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -79,7 +79,7 @@ object WebColl1Ex4 {
           name = "login.html",
           fileType = "htmlmixed",
           editable = false,
-          content = load_text_from_file(ex_res_path / "sol_1" / "login.html")
+          content = loadTextFromFile(ex_res_path / "sol_1" / "login.html")
         )
       )
     )
@@ -91,7 +91,7 @@ object WebColl1Ex4 {
     toolId = "web",
     title = "Login-Formular",
     authors = Seq("bje40dc"),
-    text = load_text_from_file(ex_res_path / "text.html"),
+    text = loadTextFromFile(ex_res_path / "text.html"),
     difficulty = 3,
     content = WebExerciseContent(
       files = Seq(
@@ -99,13 +99,13 @@ object WebColl1Ex4 {
           name = "login.html",
           fileType = "htmlmixed",
           editable = true,
-          content = load_text_from_file(ex_res_path / "login.html")
+          content = loadTextFromFile(ex_res_path / "login.html")
         ),
         ExerciseFile(
           name = "loginStyle.css",
           fileType = "css",
           editable = false,
-          content = load_text_from_file(ex_res_path / "loginStyle.css")
+          content = loadTextFromFile(ex_res_path / "loginStyle.css")
         )
       ),
       siteSpec = SiteSpec(

@@ -5,6 +5,8 @@ import java.nio.file.StandardOpenOption
 import better.files.File
 import better.files.File.OpenOptions
 import de.uniwue.webtester.WebCorrector
+import initialData.InitialData
+import initialData.web.WebInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.points._
 import model.tools._
@@ -115,5 +117,7 @@ object WebTool extends CollectionTool("web", "Web") {
         }
       )
   }
+
+  override val initialData: InitialData[WebSolution, WebExerciseContent] = WebInitialData
 
 }

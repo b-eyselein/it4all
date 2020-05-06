@@ -1,9 +1,11 @@
 package model.tools.rose
 
-import model.{Exercise, LoggedInUser}
+import initialData.InitialData
+import initialData.rose.RoseInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.tools._
 import model.tools.programming.ProgLanguages
+import model.{Exercise, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,5 +40,7 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
 
     RoseCorrector.correct(solution, exercise, ProgLanguages.StandardLanguage, solDir, solutionSaved)
   }
+
+  override val initialData: InitialData[String, RoseExerciseContent] = RoseInitialData
 
 }

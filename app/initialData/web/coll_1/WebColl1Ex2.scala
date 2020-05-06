@@ -2,14 +2,14 @@ package initialData.web.coll_1
 
 import better.files.File
 import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
-import initialData.InitialData.{ex_resources_path, load_text_from_file}
+import initialData.InitialData._
 import model.tools.web.WebTool.WebExercise
 import model.tools.web.{WebExerciseContent, WebSolution}
 import model.{Exercise, ExerciseFile, SampleSolution}
 
 object WebColl1Ex2 {
 
-  private val ex_res_folder: File = ex_resources_path("web", 1, 2)
+  private val ex_res_folder: File = exerciseResourcesPath("web", 1, 2)
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -118,7 +118,7 @@ object WebColl1Ex2 {
           name = "production.html",
           fileType = "htmlmixed",
           editable = false,
-          content = load_text_from_file(ex_res_folder / "sol_1" / "production.html")
+          content = loadTextFromFile(ex_res_folder / "sol_1" / "production.html")
         )
       )
     )
@@ -130,7 +130,7 @@ object WebColl1Ex2 {
     toolId = "web",
     title = "Tabellen in Html",
     authors = Seq("bje40dc"),
-    text = load_text_from_file(ex_res_folder / "text.html"),
+    text = loadTextFromFile(ex_res_folder / "text.html"),
     difficulty = 2,
     content = WebExerciseContent(
       files = Seq(
@@ -138,13 +138,13 @@ object WebColl1Ex2 {
           name = "production.html",
           fileType = "htmlmixed",
           editable = true,
-          content = load_text_from_file(ex_res_folder / "production.html")
+          content = loadTextFromFile(ex_res_folder / "production.html")
         ),
         ExerciseFile(
           name = "productionStyle.css",
           fileType = "css",
           editable = false,
-          content = load_text_from_file(ex_res_folder / "productionStyle.css")
+          content = loadTextFromFile(ex_res_folder / "productionStyle.css")
         )
       ),
       siteSpec = SiteSpec(

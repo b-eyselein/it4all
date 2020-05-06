@@ -3,7 +3,6 @@ package model.graphql
 import model.tools.Helper.UntypedExercise
 import model.tools._
 import model.{Exercise, ExerciseCollection, ExerciseContent, MongoClientQueries}
-import play.modules.reactivemongo.MongoController
 import sangria.macros.derive.{AddFields, deriveObjectType}
 import sangria.schema.{Context, Field, ListType, LongType, ObjectType, OptionType}
 
@@ -14,7 +13,6 @@ trait CollectionGraphQLModel
     with ExerciseGraphQLModels
     with GraphQLArguments
     with MongoClientQueries {
-  self: MongoController =>
 
   private def untypedExercises(exercises: Seq[Exercise[_, _ <: ExerciseContent[_]]]): Seq[UntypedExercise] = exercises
 

@@ -1,14 +1,14 @@
 package initialData.web.coll_2
 
 import de.uniwue.webtester.sitespec._
-import initialData.InitialData.{ex_resources_path, load_text_from_file}
+import initialData.InitialData._
 import model.tools.web.WebTool.WebExercise
 import model.tools.web.{WebExerciseContent, WebSolution}
 import model.{Exercise, ExerciseFile, SampleSolution}
 
 object WebColl2Ex3 {
 
-  private val ex_res_path = ex_resources_path("web", 2, 3)
+  private val ex_res_path = exerciseResourcesPath("web", 2, 3)
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -119,13 +119,13 @@ object WebColl2Ex3 {
           name = "factorial.html",
           fileType = "htmlmixed",
           editable = false,
-          content = load_text_from_file(ex_res_path / "sol_1" / "factorial.html")
+          content = loadTextFromFile(ex_res_path / "sol_1" / "factorial.html")
         ),
         ExerciseFile(
           name = "factorial.js",
           fileType = "javascript",
           editable = false,
-          content = load_text_from_file(ex_res_path / "sol_1" / "factorial.js")
+          content = loadTextFromFile(ex_res_path / "sol_1" / "factorial.js")
         )
       )
     )
@@ -137,7 +137,7 @@ object WebColl2Ex3 {
     toolId = "web",
     title = "Schleifen",
     authors = Seq("alg81dm"),
-    text = load_text_from_file(ex_res_path / "text.html"),
+    text = loadTextFromFile(ex_res_path / "text.html"),
     difficulty = 2,
     content = WebExerciseContent(
       files = Seq(
@@ -145,13 +145,13 @@ object WebColl2Ex3 {
           name = "factorial.html",
           fileType = "htmlmixed",
           editable = true,
-          content = load_text_from_file(ex_res_path / "factorial.html")
+          content = loadTextFromFile(ex_res_path / "factorial.html")
         ),
         ExerciseFile(
           name = "factorial.js",
           fileType = "javascript",
           editable = true,
-          content = load_text_from_file(ex_res_path / "factorial.js")
+          content = loadTextFromFile(ex_res_path / "factorial.js")
         )
       ),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),

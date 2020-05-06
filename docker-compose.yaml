@@ -8,17 +8,18 @@ volumes:
 
 services:
   mongo_main:
-    image:        ls6uniwue/it4all-resources:mongo
+    image:        mongo
     restart:      always
     ports:
       - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: 1234
-#    volumes:
-#      - type:     volume
-#        source:   mongo_data_volume
-#        target:   /data/db
+      MONGO_INITDB_DATABASE:      it4all
+    volumes:
+      - type: bind
+        source: ./conf/inits/mongo_init.js
+        target: /docker-entrypoint-initdb.d/mongo_init.js
 
   webtester:
     image:        httpd:alpine

@@ -1,14 +1,14 @@
 package initialData.web.coll_1
 
 import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
-import initialData.InitialData.{ex_resources_path, load_text_from_file}
+import initialData.InitialData._
 import model.tools.web.WebTool.WebExercise
 import model.tools.web.{WebExerciseContent, WebSolution}
 import model.{Exercise, ExerciseFile, SampleSolution}
 
 object WebColl1Ex3 {
 
-  private val ex_res_folder = ex_resources_path("web", 1, 3)
+  private val ex_res_folder = exerciseResourcesPath("web", 1, 3)
 
   private val html_tasks = Seq(
     HtmlTask(
@@ -64,7 +64,7 @@ object WebColl1Ex3 {
           name = "mustang.html",
           fileType = "htmlmixed",
           editable = false,
-          content = load_text_from_file(ex_res_folder / "sol_1" / "mustang.html")
+          content = loadTextFromFile(ex_res_folder / "sol_1" / "mustang.html")
         )
       )
     )
@@ -76,7 +76,7 @@ object WebColl1Ex3 {
     toolId = "web",
     title = "Hyperlinks und Bilder in HTML",
     authors = Seq("bje40dc"),
-    text = load_text_from_file(ex_res_folder / "text.html"),
+    text = loadTextFromFile(ex_res_folder / "text.html"),
     difficulty = 2,
     content = WebExerciseContent(
       files = Seq(
@@ -84,13 +84,13 @@ object WebColl1Ex3 {
           name = "mustang.html",
           fileType = "htmlmixed",
           editable = true,
-          content = load_text_from_file(ex_res_folder / "mustang.html")
+          content = loadTextFromFile(ex_res_folder / "mustang.html")
         ),
         ExerciseFile(
           name = "mustangStyle.css",
           fileType = "css",
           editable = false,
-          content = load_text_from_file(ex_res_folder / "mustangStyle.css")
+          content = loadTextFromFile(ex_res_folder / "mustangStyle.css")
         )
       ),
       siteSpec = SiteSpec(

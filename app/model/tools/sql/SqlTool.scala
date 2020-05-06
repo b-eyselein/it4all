@@ -1,11 +1,13 @@
 package model.tools.sql
 
-import model.{Exercise, LoggedInUser, Topic}
+import initialData.InitialData
+import initialData.sql.SqlInitialData
 import model.core.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
 import model.points._
 import model.tools._
 import model.tools.sql.matcher._
+import model.{Exercise, LoggedInUser, Topic}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.Table
@@ -67,5 +69,7 @@ object SqlTool extends CollectionTool("sql", "Sql") {
         corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions, solutionSaved)
     }
   }
+
+  override val initialData: InitialData[String, SqlExerciseContent] = SqlInitialData
 
 }

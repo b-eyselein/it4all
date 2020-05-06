@@ -6,7 +6,6 @@ import model._
 import model.json.JsonProtocols
 import model.tools.ToolList
 import play.api.libs.json._
-import play.modules.reactivemongo.MongoController
 import sangria.marshalling.playJson._
 import sangria.schema._
 
@@ -14,7 +13,6 @@ import scala.concurrent.Future
 import scala.util.Try
 
 trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries with JwtHelpers {
-  self: MongoController =>
 
   private val correctionFields = ToolList.tools.map[Field[Unit, Unit]] { tool =>
     implicit val solTypeFormat: Format[tool.SolType] = tool.jsonFormats.solutionFormat

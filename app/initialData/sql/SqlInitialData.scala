@@ -11,7 +11,7 @@ import model.ExerciseCollection
 import model.tools.sql.SqlExerciseContent
 import model.tools.sql.SqlTool.SqlExercise
 
-object SqlData extends InitialData[String, SqlExerciseContent] {
+object SqlInitialData extends InitialData[String, SqlExerciseContent] {
 
   override protected val toolId: String = "sql"
 

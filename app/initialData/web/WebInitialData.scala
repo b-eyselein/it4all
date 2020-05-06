@@ -13,7 +13,7 @@ import model.ExerciseCollection
 import model.tools.web.WebTool.WebExercise
 import model.tools.web.{WebExerciseContent, WebSolution}
 
-object WebData extends InitialData[WebSolution, WebExerciseContent] {
+object WebInitialData extends InitialData[WebSolution, WebExerciseContent] {
 
   override protected val toolId = "web"
 

@@ -7,12 +7,12 @@ import model.tools.xml.XmlTool.XmlExercise
 import model.tools.xml.{XmlExerciseContent, XmlSolution}
 import model.{Exercise, ExerciseCollection, SampleSolution}
 
-object XmlData extends InitialData[XmlSolution, XmlExerciseContent] {
+object XmlInitialData extends InitialData[XmlSolution, XmlExerciseContent] {
 
   override protected val toolId = "xml"
 
   private val xmlColl1Ex1: XmlExercise = {
-    val exResPath: File = exerciseResourcesPath("toolId", 1, 1)
+    val exResPath: File = exerciseResourcesPath(toolId, 1, 1)
 
     Exercise(
       exerciseId = 1,
@@ -24,13 +24,13 @@ object XmlData extends InitialData[XmlSolution, XmlExerciseContent] {
       difficulty = 1,
       content = XmlExerciseContent(
         rootNode = "part",
-        grammarDescription = load_text_from_file(exResPath / "grammarDescription.txt"),
+        grammarDescription = loadTextFromFile(exResPath / "grammarDescription.txt"),
         sampleSolutions = Seq(
           SampleSolution(
             id = 1,
             sample = XmlSolution(
-              grammar = load_text_from_file(exResPath / "sol_1" / "party.dtd"),
-              document = load_text_from_file(exResPath / "sol_1" / "party.xml")
+              grammar = loadTextFromFile(exResPath / "sol_1" / "party.dtd"),
+              document = loadTextFromFile(exResPath / "sol_1" / "party.xml")
             )
           )
         )
@@ -51,20 +51,20 @@ object XmlData extends InitialData[XmlSolution, XmlExerciseContent] {
       difficulty = 2,
       content = XmlExerciseContent(
         rootNode = "lecture",
-        grammarDescription = load_text_from_file(exResPath / "grammarDescription.txt"),
+        grammarDescription = loadTextFromFile(exResPath / "grammarDescription.txt"),
         sampleSolutions = Seq(
           SampleSolution(
             id = 1,
             sample = XmlSolution(
-              grammar = load_text_from_file(exResPath / "sol_1" / "lecture.dtd"),
-              document = load_text_from_file(exResPath / "sol_1" / "lecture.xml")
+              grammar = loadTextFromFile(exResPath / "sol_1" / "lecture.dtd"),
+              document = loadTextFromFile(exResPath / "sol_1" / "lecture.xml")
             )
           ),
           SampleSolution(
             id = 2,
             sample = XmlSolution(
-              grammar = load_text_from_file(exResPath / "sol_2" / "lecture.dtd"),
-              document = load_text_from_file(exResPath / "sol_2" / "lecture.xml")
+              grammar = loadTextFromFile(exResPath / "sol_2" / "lecture.dtd"),
+              document = loadTextFromFile(exResPath / "sol_2" / "lecture.xml")
             )
           )
         )
@@ -85,13 +85,13 @@ object XmlData extends InitialData[XmlSolution, XmlExerciseContent] {
       difficulty = 1,
       content = XmlExerciseContent(
         rootNode = "praxis",
-        grammarDescription = load_text_from_file(exResPath / "grammarDescription.txt"),
+        grammarDescription = loadTextFromFile(exResPath / "grammarDescription.txt"),
         sampleSolutions = Seq(
           SampleSolution(
             id = 1,
             sample = XmlSolution(
-              grammar = load_text_from_file(exResPath / "sol_1" / "praxis.dtd"),
-              document = load_text_from_file(exResPath / "sol_1" / "praxis.xml")
+              grammar = loadTextFromFile(exResPath / "sol_1" / "praxis.dtd"),
+              document = loadTextFromFile(exResPath / "sol_1" / "praxis.xml")
             )
           )
         )
@@ -112,13 +112,13 @@ object XmlData extends InitialData[XmlSolution, XmlExerciseContent] {
       difficulty = 1,
       content = XmlExerciseContent(
         rootNode = "breakfast",
-        grammarDescription = load_text_from_file(exResPath / "grammarDescription.txt"),
+        grammarDescription = loadTextFromFile(exResPath / "grammarDescription.txt"),
         sampleSolutions = Seq(
           SampleSolution(
             id = 1,
             sample = XmlSolution(
-              grammar = load_text_from_file(exResPath / "sol_1" / "breakfast.dtd"),
-              document = load_text_from_file(exResPath / "sol_1" / "breakfast.xml")
+              grammar = loadTextFromFile(exResPath / "sol_1" / "breakfast.dtd"),
+              document = loadTextFromFile(exResPath / "sol_1" / "breakfast.xml")
             )
           )
         )
@@ -139,20 +139,20 @@ object XmlData extends InitialData[XmlSolution, XmlExerciseContent] {
       difficulty = 2,
       content = XmlExerciseContent(
         rootNode = "bibliothek",
-        grammarDescription = load_text_from_file(exResPath / "xml" / "coll_1" / "ex_5" / "grammarDescription.txt"),
+        grammarDescription = loadTextFromFile(exResPath / "grammarDescription.txt"),
         sampleSolutions = Seq(
           SampleSolution(
             id = 1,
             sample = XmlSolution(
-              grammar = load_text_from_file(exResPath / "sol_1" / "library.dtd"),
-              document = load_text_from_file(exResPath / "sol_1" / "library.xml")
+              grammar = loadTextFromFile(exResPath / "sol_1" / "library.dtd"),
+              document = loadTextFromFile(exResPath / "sol_1" / "library.xml")
             )
           ),
           SampleSolution(
             id = 2,
             sample = XmlSolution(
-              grammar = load_text_from_file(exResPath / "sol_2" / "library.dtd"),
-              document = load_text_from_file(exResPath / "sol_2" / "library.xml")
+              grammar = loadTextFromFile(exResPath / "sol_2" / "library.dtd"),
+              document = loadTextFromFile(exResPath / "sol_2" / "library.xml")
             )
           )
         )
