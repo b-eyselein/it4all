@@ -136,6 +136,7 @@ trait MongoClientQueries extends ReactiveMongoComponents {
       collectionsCollection <- futureCollectionsCollection
       collections <- collectionsCollection
         .find(toolFilter(toolId))
+        .sort(Json.obj("collectionId" -> 1))
         .cursor[ExerciseCollection]()
         .collect[Seq](-1, Cursor.FailOnError())
     } yield collections
@@ -191,6 +192,7 @@ trait MongoClientQueries extends ReactiveMongoComponents {
       exercisesCollection <- futureExercisesCollection
       exercises <- exercisesCollection
         .find(collectionFilter(tool.id, collectionId))
+        .sort(Json.obj("exerciseId" -> 1))
         .cursor[Exercise[tool.SolType, tool.ExContentType]]()
         .collect[Seq](-1, Cursor.FailOnError())
     } yield exercises
@@ -252,11 +254,10 @@ trait MongoClientQueries extends ReactiveMongoComponents {
   protected def userProficienciesForTool(username: String, toolId: String): Future[Seq[UserProficiency]] =
     for {
       userProficienciesCollection <- futureUserProficienciesCollection
-      dbUserProfs <- userProficienciesCollection
+      userProfs <- userProficienciesCollection
         .find(userAndToolFilter(username, toolId))
         .cursor[UserProficiency]()
         .collect[Seq](-1, Cursor.FailOnError())
-      userProfs = dbUserProfs
     } yield userProfs
 
   protected def allTopicsWithLevelForTool(username: String, tool: CollectionTool): Future[Seq[TopicWithLevel]] =

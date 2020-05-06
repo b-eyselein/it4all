@@ -38,7 +38,7 @@ export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
           this.distinctTopicWithLevels = distinctObjectArray(
             flatMapArray(
               this.allExercisesOverviewQuery.tool.allExercises,
-              (exercises) => exercises.topics
+              (exercises) => exercises.topicsWithLevels
             ),
             (t) => t.topic.abbreviation
           );
@@ -66,7 +66,7 @@ export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
   }
 
   exerciseHasTag(exercise: FieldsForLinkFragment, tag: TopicFragment): boolean {
-    return exercise.topics
+    return exercise.topicsWithLevels
       .map((t) => t.topic.abbreviation)
       .includes(tag.abbreviation);
   }

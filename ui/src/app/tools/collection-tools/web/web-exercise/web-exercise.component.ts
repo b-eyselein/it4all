@@ -7,18 +7,24 @@ import {
   ExerciseSolveFieldsFragment,
   WebExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
-import {WebCorrectionGQL, WebCorrectionMutation, WebResultFragment} from '../web-apollo-mutations.service';
+import {
+  WebCorrectionGQL,
+  WebCorrectionMutation,
+  WebCorrectionMutationVariables,
+  WebResultFragment
+} from '../web-apollo-mutations.service';
 import {WebExPart, WebSolution, WebSolutionInput} from '../../../../_interfaces/graphql-types';
 import {HtmlPart, JsPart} from "../web-tool";
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
+import {AuthenticationService} from "../../../../_services/authentication.service";
 
 @Component({
   selector: 'it4all-web-exercise',
   templateUrl: './web-exercise.component.html'
 })
 export class WebExerciseComponent
-  extends ComponentWithExercise<WebSolution, WebSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionGQL>
+  extends ComponentWithExercise<WebSolution, WebSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionMutationVariables, WebCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
@@ -28,7 +34,7 @@ export class WebExerciseComponent
 
   exerciseFileFragments: ExerciseFileFragment[] = [];
 
-  constructor(webCorrectionGQL: WebCorrectionGQL, dexieService: DexieService) {
+  constructor(private authenticationService: AuthenticationService, webCorrectionGQL: WebCorrectionGQL, dexieService: DexieService) {
     super(webCorrectionGQL, dexieService);
   }
 
@@ -67,6 +73,16 @@ export class WebExerciseComponent
 
   get sampleSolutions(): WebSolution[] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
+  }
+
+  protected getMutationQueryVariables(part: WebExPart): WebCorrectionMutationVariables {
+    return {
+      exId: this.exerciseFragment.exerciseId,
+      collId: this.exerciseFragment.collectionId,
+      solution: this.getSolution(),
+      part,
+      userJwt: this.authenticationService.currentUserValue.jwt
+    };
   }
 
   get result(): WebResultFragment | null {

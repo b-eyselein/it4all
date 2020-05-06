@@ -6,8 +6,12 @@ import {ExerciseSolveFieldsFragment} from '../../../_services/apollo_services';
 import {Mutation} from 'apollo-angular';
 
 @Directive()
-export abstract class ComponentWithExercise<SolutionType, SolutionInputType, MutationQueryType, PartType,
-  MutationGQL extends Mutation<MutationQueryType, { exId: number, collId: number, part: PartType, solution: SolutionInputType }>> {
+export abstract class ComponentWithExercise<SolutionType,
+  SolutionInputType,
+  MutationQueryType,
+  PartType,
+  MutationVariablesType extends { exId: number, collId: number, part: PartType, userJwt: string, solution: SolutionInputType },
+  MutationGQL extends Mutation<MutationQueryType, MutationVariablesType>> {
 
   readonly exerciseTextTabTitle = 'Aufgabenstellung';
   readonly correctionTabTitle = 'Korrektur';
@@ -47,15 +51,11 @@ export abstract class ComponentWithExercise<SolutionType, SolutionInputType, Mut
       return;
     }
 
-    const mutationQueryVars = {
-      exId: exerciseFragment.exerciseId, collId: exerciseFragment.collectionId, part, solution
-    };
-
     // noinspection JSIgnoredPromiseFromCall
     this.dexieService.upsertSolution<SolutionInputType>(exerciseFragment, partId, solution);
 
     this.mutationGQL
-      .mutate(mutationQueryVars)
+      .mutate(this.getMutationQueryVariables(part))
       .subscribe(
         ({data}) => {
           this.resultQuery = data;
@@ -82,8 +82,10 @@ export abstract class ComponentWithExercise<SolutionType, SolutionInputType, Mut
       });
   }
 
+  protected abstract get sampleSolutions(): SolutionType[];
+
   protected abstract getSolution(): SolutionInputType | undefined;
 
-  protected abstract get sampleSolutions(): SolutionType[];
+  protected abstract getMutationQueryVariables(part: PartType): MutationVariablesType;
 
 }

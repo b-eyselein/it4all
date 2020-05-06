@@ -11,6 +11,7 @@ import {
 import {
   SqlCorrectionGQL,
   SqlCorrectionMutation,
+  SqlCorrectionMutationVariables,
   SqlIllegalQueryResultFragment,
   SqlResultFragment,
   SqlWrongQueryTypeResultFragment
@@ -19,6 +20,7 @@ import {SqlExPart, SqlInternalErrorResult} from '../../../../_interfaces/graphql
 
 import 'codemirror/mode/sql/sql';
 import {SqlCreateQueryPart} from "../sql-tool";
+import {AuthenticationService} from "../../../../_services/authentication.service";
 
 
 @Component({
@@ -28,7 +30,7 @@ import {SqlCreateQueryPart} from "../sql-tool";
   encapsulation: ViewEncapsulation.None // style editor also
 })
 export class SqlExerciseComponent
-  extends ComponentWithExercise<string, string, SqlCorrectionMutation, SqlExPart, SqlCorrectionGQL>
+  extends ComponentWithExercise<string, string, SqlCorrectionMutation, SqlExPart, SqlCorrectionMutationVariables, SqlCorrectionGQL>
   implements OnInit {
 
   readonly editorOptions = getDefaultEditorOptions('sql');
@@ -40,7 +42,7 @@ export class SqlExerciseComponent
 
   solution = '';
 
-  constructor(sqlCorrectionGQL: SqlCorrectionGQL, dexieService: DexieService) {
+  constructor(private authenticationService: AuthenticationService, sqlCorrectionGQL: SqlCorrectionGQL, dexieService: DexieService) {
     super(sqlCorrectionGQL, dexieService);
   }
 
@@ -56,6 +58,16 @@ export class SqlExerciseComponent
 
   get sampleSolutions(): string[] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
+  }
+
+  protected getMutationQueryVariables(part: SqlExPart): SqlCorrectionMutationVariables {
+    return {
+      exId: this.exerciseFragment.exerciseId,
+      collId: this.exerciseFragment.collectionId,
+      solution: this.getSolution(),
+      part,
+      userJwt: this.authenticationService.currentUserValue.jwt
+    };
   }
 
   // Result types
@@ -81,5 +93,6 @@ export class SqlExerciseComponent
   correct(): void {
     this.correctAbstract(this.exerciseFragment, SqlExPart.SqlSingleExPart, this.oldPart.id);
   }
+
 
 }

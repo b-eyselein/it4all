@@ -73,7 +73,7 @@ libraryDependencies ++= Seq(
 
   // Sql
   "mysql"                 % "mysql-connector-java" % "8.0.20", // GPL 2.0
-  "com.typesafe.play"     %% "play-slick"          % "5.0.0",  // Apache 2.0
+//  "com.typesafe.play"     %% "play-slick"          % "5.0.0",  // Apache 2.0
   "com.github.jsqlparser" % "jsqlparser"           % "3.1",    // Apache 2.0
 
   // DTD Parser

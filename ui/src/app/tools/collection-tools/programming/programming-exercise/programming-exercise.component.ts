@@ -12,6 +12,7 @@ import {
   NormalExecutionResultFragment,
   ProgrammingCorrectionGQL,
   ProgrammingCorrectionMutation,
+  ProgrammingCorrectionMutationVariables,
   ProgrammingResultFragment,
   SimplifiedExecutionResultFragment,
   UnitTestCorrectionResultFragment
@@ -19,6 +20,7 @@ import {
 import {ProgExPart, ProgSolution, ProgSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/python/python';
+import {AuthenticationService} from "../../../../_services/authentication.service";
 
 @Component({
   selector: 'it4all-programming-exercise',
@@ -26,7 +28,7 @@ import 'codemirror/mode/python/python';
   styleUrls: ['./programming-exercise.component.sass']
 })
 export class ProgrammingExerciseComponent
-  extends ComponentWithExercise<ProgSolution, ProgSolutionInput, ProgrammingCorrectionMutation, ProgExPart, ProgrammingCorrectionGQL>
+  extends ComponentWithExercise<ProgSolution, ProgSolutionInput, ProgrammingCorrectionMutation, ProgExPart, ProgrammingCorrectionMutationVariables, ProgrammingCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
@@ -36,7 +38,7 @@ export class ProgrammingExerciseComponent
 
   exerciseFiles: ExerciseFileFragment[] = [];
 
-  constructor(programmingCorrectionGQL: ProgrammingCorrectionGQL, dexieService: DexieService) {
+  constructor(private authenticationService: AuthenticationService, programmingCorrectionGQL: ProgrammingCorrectionGQL, dexieService: DexieService) {
     super(programmingCorrectionGQL, dexieService);
   }
 
@@ -76,6 +78,16 @@ export class ProgrammingExerciseComponent
 
   get sampleSolutions(): ProgSolution[] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
+  }
+
+  protected getMutationQueryVariables(part: ProgExPart): ProgrammingCorrectionMutationVariables {
+    return {
+      exId: this.exerciseFragment.exerciseId,
+      collId: this.exerciseFragment.collectionId,
+      solution: this.getSolution(),
+      part,
+      userJwt: this.authenticationService.currentUserValue.jwt
+    };
   }
 
   get result(): ProgrammingResultFragment | null {

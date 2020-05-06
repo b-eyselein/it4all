@@ -52,6 +52,7 @@ export type ToolOverviewQuery = (
 
 export type CollectionToolOverviewQueryVariables = {
   toolId: Types.Scalars['String'];
+  userJwt: Types.Scalars['String'];
 };
 
 
@@ -60,6 +61,19 @@ export type CollectionToolOverviewQuery = (
   & { tool?: Types.Maybe<(
     { __typename?: 'CollectionTool' }
     & Pick<Types.CollectionTool, 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
+  )>, me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { proficiencies: Array<(
+      { __typename?: 'UserProficiency' }
+      & Pick<Types.UserProficiency, 'beginnerPoints' | 'intermediatePoints' | 'advancedPoints' | 'expertPoints'>
+      & { topic: (
+        { __typename?: 'Topic' }
+        & TopicFragment
+      ), level: (
+        { __typename?: 'Level' }
+        & LevelFragment
+      ) }
+    )> }
   )> }
 );
 
@@ -74,7 +88,7 @@ export type AllExercisesOverviewQuery = (
     { __typename?: 'CollectionTool' }
     & { allExercises: Array<(
       { __typename?: 'Exercise' }
-      & { topics: Array<(
+      & { topicsWithLevels: Array<(
         { __typename?: 'TopicWithLevel' }
         & TopicWithLevelFragment
       )> }
@@ -355,17 +369,28 @@ export type AdminUpsertExerciseMutation = (
   & Pick<Types.Mutation, 'insertExercise'>
 );
 
+export type LevelFragment = (
+  { __typename?: 'Level' }
+  & Pick<Types.Level, 'title' | 'levelIndex'>
+);
+
 export type TopicFragment = (
   { __typename?: 'Topic' }
-  & Pick<Types.Topic, 'abbreviation' | 'title' | 'maxLevel'>
+  & Pick<Types.Topic, 'abbreviation' | 'title'>
+  & { maxLevel: (
+    { __typename?: 'Level' }
+    & LevelFragment
+  ) }
 );
 
 export type TopicWithLevelFragment = (
   { __typename?: 'TopicWithLevel' }
-  & Pick<Types.TopicWithLevel, 'level'>
   & { topic: (
     { __typename?: 'Topic' }
     & TopicFragment
+  ), level: (
+    { __typename?: 'Level' }
+    & LevelFragment
   ) }
 );
 
@@ -377,7 +402,7 @@ export type PartFragment = (
 export type FieldsForLinkFragment = (
   { __typename?: 'Exercise' }
   & Pick<Types.Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
-  & { topics: Array<(
+  & { topicsWithLevels: Array<(
     { __typename?: 'TopicWithLevel' }
     & TopicWithLevelFragment
   )> }
@@ -617,21 +642,32 @@ export const PartFragmentDoc = gql`
   isEntryPart
 }
     `;
+export const LevelFragmentDoc = gql`
+    fragment Level on Level {
+  title
+  levelIndex
+}
+    `;
 export const TopicFragmentDoc = gql`
     fragment Topic on Topic {
   abbreviation
   title
-  maxLevel
+  maxLevel {
+    ...Level
+  }
 }
-    `;
+    ${LevelFragmentDoc}`;
 export const TopicWithLevelFragmentDoc = gql`
     fragment TopicWithLevel on TopicWithLevel {
   topic {
     ...Topic
   }
-  level
+  level {
+    ...Level
+  }
 }
-    ${TopicFragmentDoc}`;
+    ${TopicFragmentDoc}
+${LevelFragmentDoc}`;
 export const FieldsForLinkFragmentDoc = gql`
     fragment FieldsForLink on Exercise {
   exerciseId
@@ -639,7 +675,7 @@ export const FieldsForLinkFragmentDoc = gql`
   toolId
   title
   difficulty
-  topics {
+  topicsWithLevels {
     ...TopicWithLevel
   }
 }
@@ -938,15 +974,30 @@ export const ToolOverviewDocument = gql`
     
   }
 export const CollectionToolOverviewDocument = gql`
-    query CollectionToolOverview($toolId: String!) {
+    query CollectionToolOverview($toolId: String!, $userJwt: String!) {
   tool(toolId: $toolId) {
     name
     collectionCount
     exerciseCount
     lessonCount
   }
+  me(userJwt: $userJwt) {
+    proficiencies(toolId: $toolId) {
+      topic {
+        ...Topic
+      }
+      beginnerPoints
+      intermediatePoints
+      advancedPoints
+      expertPoints
+      level {
+        ...Level
+      }
+    }
+  }
 }
-    `;
+    ${TopicFragmentDoc}
+${LevelFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -959,7 +1010,7 @@ export const AllExercisesOverviewDocument = gql`
     query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
     allExercises {
-      topics {
+      topicsWithLevels {
         ...TopicWithLevel
       }
       ...FieldsForLink

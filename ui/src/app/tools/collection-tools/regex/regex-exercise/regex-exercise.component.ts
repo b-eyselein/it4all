@@ -9,11 +9,13 @@ import {
 import {
   RegexCorrectionGQL,
   RegexCorrectionMutation,
+  RegexCorrectionMutationVariables,
   RegexExtractionResultFragment,
   RegexIllegalRegexResultFragment,
   RegexMatchingResultFragment
 } from '../regex-apollo-mutations.service';
 import {RegexExPart} from '../../../../_interfaces/graphql-types';
+import {AuthenticationService} from "../../../../_services/authentication.service";
 
 
 @Component({
@@ -21,7 +23,7 @@ import {RegexExPart} from '../../../../_interfaces/graphql-types';
   templateUrl: './regex-exercise.component.html'
 })
 export class RegexExerciseComponent
-  extends ComponentWithExercise<string, string, RegexCorrectionMutation, RegexExPart, RegexCorrectionGQL>
+  extends ComponentWithExercise<string, string, RegexCorrectionMutation, RegexExPart, RegexCorrectionMutationVariables, RegexCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
@@ -31,7 +33,7 @@ export class RegexExerciseComponent
 
   showInfo = false;
 
-  constructor(regexCorrectionGQL: RegexCorrectionGQL, dexieService: DexieService) {
+  constructor(private authenticationService: AuthenticationService, regexCorrectionGQL: RegexCorrectionGQL, dexieService: DexieService) {
     super(regexCorrectionGQL, dexieService);
   }
 
@@ -45,6 +47,16 @@ export class RegexExerciseComponent
 
   get sampleSolutions(): string[] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
+  }
+
+  protected getMutationQueryVariables(part: RegexExPart): RegexCorrectionMutationVariables {
+    return {
+      exId: this.exerciseFragment.exerciseId,
+      collId: this.exerciseFragment.collectionId,
+      solution: this.getSolution(),
+      part,
+      userJwt: this.authenticationService.currentUserValue.jwt
+    };
   }
 
   get regexIllegalRegexResult(): RegexIllegalRegexResultFragment | undefined {

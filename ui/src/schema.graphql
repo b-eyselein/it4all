@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue May 05 2020 12:51:39 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed May 06 2020 15:09:35 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -78,8 +78,8 @@ type Exercise {
   title: String!
   authors: [String!]!
   text: String!
+  topicsWithLevels: [TopicWithLevel!]!
   difficulty: Int!
-  topics: [TopicWithLevel!]!
   programmingContent: ProgrammingExerciseContent
   regexContent: RegexExerciseContent
   sqlContent: SqlExerciseContent
@@ -202,11 +202,9 @@ type Lesson {
   description: String!
 }
 
-enum Level {
-  Advanced
-  Beginner
-  Expert
-  Intermediate
+type Level {
+  title: String!
+  levelIndex: Int!
 }
 
 type LoggedInUser {
@@ -232,8 +230,8 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  SUCCESSFUL_MATCH
   ONLY_USER
+  SUCCESSFUL_MATCH
   UNSUCCESSFUL_MATCH
   PARTIAL_MATCH
   ONLY_SAMPLE
@@ -315,7 +313,7 @@ input ProgSolutionInput {
 }
 
 type Query {
-  me(userJwt: String!): User!
+  me(userJwt: String!): User
   tools: [CollectionTool!]!
   tool(toolId: String!): CollectionTool
 }
@@ -497,11 +495,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  SELECT
   INSERT
   CREATE
-  DELETE
   UPDATE
+  DELETE
+  SELECT
 }
 
 enum SqlExPart {
@@ -653,7 +651,7 @@ type Topic {
   abbreviation: String!
   toolId: String!
   title: String!
-  maxLevel: Int!
+  maxLevel: Level!
 }
 
 type TopicWithLevel {
@@ -684,7 +682,7 @@ type UmlAssociationAnalysisResult {
 }
 
 input UmlAssociationInput {
-  assocType: UmlAssociationType!
+  assocType: UmlAssociationType = ASSOCIATION
   assocName: String
   firstEnd: String!
   firstMult: UmlMultiplicity!
@@ -736,7 +734,7 @@ type UmlAttributeAnalysisResult {
 }
 
 input UmlAttributeInput {
-  visibility: UmlVisibility!
+  visibility: UmlVisibility = PUBLIC
   memberName: String!
   memberType: String!
   isStatic: Boolean = false
@@ -779,10 +777,10 @@ input UmlClassDiagramInput {
 }
 
 input UmlClassInput {
-  classType: UmlClassType!
+  classType: UmlClassType = CLASS
   name: String!
-  attributes: [UmlAttributeInput!]!
-  methods: [UmlMethodInput!]!
+  attributes: [UmlAttributeInput!] = []
+  methods: [UmlMethodInput!] = []
 }
 
 type UmlClassMatch implements NewMatch {
@@ -882,7 +880,7 @@ type UmlMethodAnalysisResult {
 }
 
 input UmlMethodInput {
-  visibility: UmlVisibility!
+  visibility: UmlVisibility = PUBLIC
   memberName: String!
   memberType: String!
   parameters: String!
@@ -945,9 +943,9 @@ type UnitTestPart {
   unitTestsDescription: String!
   unitTestFiles: [ExerciseFile!]!
   unitTestTestConfigs: [UnitTestTestConfig!]!
-  simplifiedTestMainFile: ExerciseFile
   testFileName: String!
   sampleSolFileNames: [String!]!
+  simplifiedTestMainFile: ExerciseFile
 }
 
 type UnitTestTestConfig {
@@ -963,12 +961,22 @@ enum UnitTestType {
 }
 
 type User {
-  proficiencies: [String!]!
+  proficiencies(toolId: String!): [UserProficiency!]!
 }
 
 input UserCredentials {
   username: String!
   password: String!
+}
+
+type UserProficiency {
+  username: String!
+  topic: Topic!
+  beginnerPoints: Int!
+  intermediatePoints: Int!
+  advancedPoints: Int!
+  expertPoints: Int!
+  level: Level!
 }
 
 interface WebAbstractResult {

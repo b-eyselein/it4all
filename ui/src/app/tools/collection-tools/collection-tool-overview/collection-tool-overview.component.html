@@ -52,10 +52,42 @@
         </div>
       </div>
     </div>
+
+    <br>
+
+    <h2 class="subtitle is-3 has-text-centered">Meine Fertigkeiten</h2>
+
+    <div class="columns is-multiline"
+         *ngIf="collectionToolOverviewQuery.me.proficiencies.length > 0; else noProficienciesYetBlock">
+      <div class="column is-one-quarter-desktop"
+           *ngFor="let proficiency of collectionToolOverviewQuery.me.proficiencies">
+
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">{{proficiency.topic.title}}</p>
+          </header>
+          <div class="card-content">
+            <p>Level: {{proficiency.level.title}}</p>
+
+            <it4all-filled-points
+              [filledPoints]="proficiency.level.levelIndex"
+              [maxPoints]="proficiency.topic.maxLevel.levelIndex">
+            </it4all-filled-points>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </ng-container>
+
 
 </div>
 
 <ng-template #loadingDataBlock>
   <div class="notification is-primary has-text-centered">Lade Daten...</div>
+</ng-template>
+
+<ng-template #noProficienciesYetBlock>
+  <div class="notification is-primary has-text-centered">Sie haben bisher noch keine Fähigkeiten erworben.</div>
 </ng-template>

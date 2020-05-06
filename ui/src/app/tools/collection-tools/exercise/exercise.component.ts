@@ -21,7 +21,6 @@ export class ExerciseComponent implements OnInit, OnDestroy {
 
   exerciseQuery: ExerciseQuery;
 
-
   constructor(private route: ActivatedRoute, private exerciseGQL: ExerciseGQL) {
   }
 

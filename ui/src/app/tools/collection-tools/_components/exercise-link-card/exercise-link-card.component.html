@@ -13,12 +13,13 @@
 
     <hr>
 
-    <div class="columns" *ngFor="let topicWithLevel of exercise.topics">
+    <div class="columns" *ngFor="let topicWithLevel of exercise.topicsWithLevels">
       <div class="column">{{topicWithLevel.topic.title}}:</div>
       <div class="column">
         <it4all-filled-points
-          [filledPoints]="topicWithLevel.level"
-          [maxPoints]="topicWithLevel.topic.maxLevel"></it4all-filled-points>
+          [filledPoints]="topicWithLevel.level.levelIndex"
+          [maxPoints]="topicWithLevel.topic.maxLevel.levelIndex">
+        </it4all-filled-points>
       </div>
     </div>
   </div>

@@ -10,6 +10,7 @@ import {
 import {
   XmlCorrectionGQL,
   XmlCorrectionMutation,
+  XmlCorrectionMutationVariables,
   XmlDocumentResultFragment,
   XmlGrammarResultFragment,
   XmlResultFragment
@@ -19,6 +20,7 @@ import {XmlExPart, XmlSolution, XmlSolutionInput} from '../../../../_interfaces/
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
 import {XmlDocumentCreation, XmlGrammarCreation} from '../xml-tool';
+import {AuthenticationService} from "../../../../_services/authentication.service";
 
 function getXmlGrammarContent(rootNode: string): string {
   return `<!ELEMENT ${rootNode} (EMPTY)>`;
@@ -37,7 +39,7 @@ function getXmlDocumentContent(rootNode: string): string {
   templateUrl: './xml-exercise.component.html'
 })
 export class XmlExerciseComponent
-  extends ComponentWithExercise<XmlSolution, XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionGQL>
+  extends ComponentWithExercise<XmlSolution, XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionMutationVariables, XmlCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
@@ -52,7 +54,7 @@ export class XmlExerciseComponent
 
   exerciseFileFragments: ExerciseFileFragment[] = [];
 
-  constructor(xmlCorrectionGQL: XmlCorrectionGQL, dexieService: DexieService) {
+  constructor(private authenticationService: AuthenticationService, xmlCorrectionGQL: XmlCorrectionGQL, dexieService: DexieService) {
     super(xmlCorrectionGQL, dexieService);
   }
 
@@ -110,6 +112,16 @@ export class XmlExerciseComponent
 
   get sampleSolutions(): XmlSolution[] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
+  }
+
+  protected getMutationQueryVariables(part: XmlExPart): XmlCorrectionMutationVariables {
+    return {
+      exId: this.exerciseFragment.exerciseId,
+      collId: this.exerciseFragment.collectionId,
+      solution: this.getSolution(),
+      part,
+      userJwt: this.authenticationService.currentUserValue.jwt
+    };
   }
 
   private get xmlResult(): XmlResultFragment | null {

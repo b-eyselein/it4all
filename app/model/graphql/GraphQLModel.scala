@@ -29,12 +29,12 @@ trait GraphQLModel
     fields[Unit, String](
       Field(
         "proficiencies",
-        ListType(topicWithLevelType),
+        ListType(userProficiencyType),
         arguments = toolIdArgument :: Nil,
         resolve = context =>
           ToolList.tools.find(_.id == context.arg(toolIdArgument)) match {
             case None       => Future.successful(Seq.empty)
-            case Some(tool) => allTopicsWithLevelForTool(context.value, tool)
+            case Some(tool) => userProficienciesForTool(context.value, tool.id)
           }
       )
     )

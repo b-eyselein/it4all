@@ -33,12 +33,26 @@ query ToolOverview {
 }
 
 # /tools/:toolId
-query CollectionToolOverview($toolId: String!) {
+query CollectionToolOverview($toolId: String!, $userJwt: String!) {
   tool(toolId: $toolId) {
     name
     collectionCount
     exerciseCount
     lessonCount
+  }
+  me(userJwt: $userJwt) {
+    proficiencies(toolId: $toolId) {
+      topic {
+        ...Topic
+      }
+      beginnerPoints
+      intermediatePoints
+      advancedPoints
+      expertPoints
+      level {
+        ...Level
+      }
+    }
   }
 }
 
@@ -46,7 +60,7 @@ query CollectionToolOverview($toolId: String!) {
 query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
     allExercises {
-      topics {
+      topicsWithLevels {
         ...TopicWithLevel
       }
       ...FieldsForLink
@@ -229,17 +243,26 @@ mutation AdminUpsertExercise($toolId: String!, $content: String!) {
 
 # Fragments
 
+fragment Level on Level {
+  title
+  levelIndex
+}
+
 fragment Topic on Topic {
   abbreviation
   title
-  maxLevel
+  maxLevel {
+    ...Level
+  }
 }
 
 fragment TopicWithLevel on TopicWithLevel{
   topic {
     ...Topic
   }
-  level
+  level {
+    ...Level
+  }
 }
 
 fragment Part on ExPart {
@@ -254,7 +277,7 @@ fragment FieldsForLink on Exercise {
   toolId
   title
   difficulty
-  topics {
+  topicsWithLevels {
     ...TopicWithLevel
   }
 }

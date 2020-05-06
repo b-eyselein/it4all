@@ -114,8 +114,8 @@ export type Exercise = {
   title: Scalars['String'];
   authors: Array<Scalars['String']>;
   text: Scalars['String'];
+  topicsWithLevels: Array<TopicWithLevel>;
   difficulty: Scalars['Int'];
-  topics: Array<TopicWithLevel>;
   programmingContent?: Maybe<ProgrammingExerciseContent>;
   regexContent?: Maybe<RegexExerciseContent>;
   sqlContent?: Maybe<SqlExerciseContent>;
@@ -256,12 +256,11 @@ export type Lesson = {
   description: Scalars['String'];
 };
 
-export enum Level {
-  Advanced = 'Advanced',
-  Beginner = 'Beginner',
-  Expert = 'Expert',
-  Intermediate = 'Intermediate'
-}
+export type Level = {
+   __typename?: 'Level';
+  title: Scalars['String'];
+  levelIndex: Scalars['Int'];
+};
 
 export type LoggedInUser = {
    __typename?: 'LoggedInUser';
@@ -283,8 +282,8 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   OnlyUser = 'ONLY_USER',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
   OnlySample = 'ONLY_SAMPLE'
@@ -455,7 +454,7 @@ export type ProgSolutionInput = {
 
 export type Query = {
    __typename?: 'Query';
-  me: User;
+  me?: Maybe<User>;
   tools: Array<CollectionTool>;
   tool?: Maybe<CollectionTool>;
 };
@@ -679,11 +678,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
   Insert = 'INSERT',
   Create = 'CREATE',
+  Update = 'UPDATE',
   Delete = 'DELETE',
-  Update = 'UPDATE'
+  Select = 'SELECT'
 }
 
 export enum SqlExPart {
@@ -855,7 +854,7 @@ export type Topic = {
   abbreviation: Scalars['String'];
   toolId: Scalars['String'];
   title: Scalars['String'];
-  maxLevel: Scalars['Int'];
+  maxLevel: Level;
 };
 
 export type TopicWithLevel = {
@@ -889,7 +888,7 @@ export type UmlAssociationAnalysisResult = {
 };
 
 export type UmlAssociationInput = {
-  assocType: UmlAssociationType;
+  assocType?: Maybe<UmlAssociationType>;
   assocName?: Maybe<Scalars['String']>;
   firstEnd: Scalars['String'];
   firstMult: UmlMultiplicity;
@@ -945,7 +944,7 @@ export type UmlAttributeAnalysisResult = {
 };
 
 export type UmlAttributeInput = {
-  visibility: UmlVisibility;
+  visibility?: Maybe<UmlVisibility>;
   memberName: Scalars['String'];
   memberType: Scalars['String'];
   isStatic?: Maybe<Scalars['Boolean']>;
@@ -992,10 +991,10 @@ export type UmlClassDiagramInput = {
 };
 
 export type UmlClassInput = {
-  classType: UmlClassType;
+  classType?: Maybe<UmlClassType>;
   name: Scalars['String'];
-  attributes: Array<UmlAttributeInput>;
-  methods: Array<UmlMethodInput>;
+  attributes?: Maybe<Array<UmlAttributeInput>>;
+  methods?: Maybe<Array<UmlMethodInput>>;
 };
 
 export type UmlClassMatch = NewMatch & {
@@ -1110,7 +1109,7 @@ export type UmlMethodAnalysisResult = {
 };
 
 export type UmlMethodInput = {
-  visibility: UmlVisibility;
+  visibility?: Maybe<UmlVisibility>;
   memberName: Scalars['String'];
   memberType: Scalars['String'];
   parameters: Scalars['String'];
@@ -1179,9 +1178,9 @@ export type UnitTestPart = {
   unitTestsDescription: Scalars['String'];
   unitTestFiles: Array<ExerciseFile>;
   unitTestTestConfigs: Array<UnitTestTestConfig>;
-  simplifiedTestMainFile?: Maybe<ExerciseFile>;
   testFileName: Scalars['String'];
   sampleSolFileNames: Array<Scalars['String']>;
+  simplifiedTestMainFile?: Maybe<ExerciseFile>;
 };
 
 export type UnitTestTestConfig = {
@@ -1199,12 +1198,28 @@ export enum UnitTestType {
 
 export type User = {
    __typename?: 'User';
-  proficiencies: Array<Scalars['String']>;
+  proficiencies: Array<UserProficiency>;
+};
+
+
+export type UserProficienciesArgs = {
+  toolId: Scalars['String'];
 };
 
 export type UserCredentials = {
   username: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type UserProficiency = {
+   __typename?: 'UserProficiency';
+  username: Scalars['String'];
+  topic: Topic;
+  beginnerPoints: Scalars['Int'];
+  intermediatePoints: Scalars['Int'];
+  advancedPoints: Scalars['Int'];
+  expertPoints: Scalars['Int'];
+  level: Level;
 };
 
 export type WebAbstractResult = {

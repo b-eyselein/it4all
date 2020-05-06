@@ -19,10 +19,16 @@ import {
   ExerciseSolveFieldsFragment,
   UmlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
-import {UmlCorrectionGQL, UmlCorrectionMutation, UmlResultFragment} from '../uml-apollo-mutations.service';
+import {
+  UmlCorrectionGQL,
+  UmlCorrectionMutation,
+  UmlCorrectionMutationVariables,
+  UmlResultFragment
+} from '../uml-apollo-mutations.service';
 import {UmlClassDiagram, UmlClassDiagramInput, UmlExPart} from '../../../../_interfaces/graphql-types';
 
 import * as joint from 'jointjs';
+import {AuthenticationService} from "../../../../_services/authentication.service";
 
 
 enum CreatableClassDiagramObject {
@@ -49,7 +55,7 @@ interface SelectableClassDiagramObject {
   `]
 })
 export class UmlDiagramDrawingComponent
-  extends ComponentWithExercise<UmlClassDiagram, UmlClassDiagramInput, UmlCorrectionMutation, UmlExPart, UmlCorrectionGQL>
+  extends ComponentWithExercise<UmlClassDiagram, UmlClassDiagramInput, UmlCorrectionMutation, UmlExPart, UmlCorrectionMutationVariables, UmlCorrectionGQL>
   implements OnInit {
 
   readonly nextPart = UmlMemberAllocationPart;
@@ -78,7 +84,7 @@ export class UmlDiagramDrawingComponent
 
   readonly debug = !environment.production;
 
-  constructor(umlCorrectionGQL: UmlCorrectionGQL, dexieService: DexieService) {
+  constructor(private authenticationService: AuthenticationService, umlCorrectionGQL: UmlCorrectionGQL, dexieService: DexieService) {
     super(umlCorrectionGQL, dexieService);
   }
 
@@ -260,6 +266,16 @@ export class UmlDiagramDrawingComponent
 
   get sampleSolutions(): UmlClassDiagram[] {
     return this.contentFragment.sampleSolutions.map((sample) => sample.sample);
+  }
+
+  protected getMutationQueryVariables(part: UmlExPart): UmlCorrectionMutationVariables {
+    return {
+      exId: this.exerciseFragment.exerciseId,
+      collId: this.exerciseFragment.collectionId,
+      solution: this.getSolution(),
+      part,
+      userJwt: this.authenticationService.currentUserValue.jwt
+    };
   }
 
   get result(): UmlResultFragment | null {
