@@ -1,5 +1,6 @@
 package model.tools.uml
 
+import model.core.matching.MatchType
 import model.core.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
@@ -11,11 +12,7 @@ final case class UmlInternalErrorResult(
   solutionSaved: Boolean,
   maxPoints: Points
 ) extends UmlAbstractResult
-    with InternalErrorResult {
-
-  override def points: Points = zeroPoints
-
-}
+    with InternalErrorResult
 
 final case class UmlResult(
   classResult: Option[ClassComparison],
@@ -24,4 +21,18 @@ final case class UmlResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends UmlAbstractResult
+) extends UmlAbstractResult {
+
+  override def isCompletelyCorrect: Boolean = {
+
+    val classResultOk = classResult.forall(_.allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH))
+
+    val assocResultOk = assocResult.forall(_.allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH))
+
+    val implResultOk = implResult.forall(_.allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH))
+
+    classResultOk && assocResultOk && implResultOk
+
+  }
+
+}

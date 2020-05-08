@@ -42,6 +42,7 @@ import {ProgrammingNormalResultComponent} from './programming/_results/programmi
 import {HtmlTaskResultComponent} from './web/_components/html-task-result/html-task-result.component';
 import {HtmlAttributeResultComponent} from './web/_components/html-attribute-result/html-attribute-result.component';
 import { FilledPointsComponent } from './_components/filled-points/filled-points.component';
+import { ProficiencyCardComponent } from './_components/proficiency-card/proficiency-card.component';
 
 
 @NgModule({
@@ -71,7 +72,7 @@ import { FilledPointsComponent } from './_components/filled-points/filled-points
 
     WebExerciseComponent,
 
-    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent, QueryResultTableComponent, ProgrammingUnitTestResultComponent, ProgrammingNormalResultComponent, HtmlTaskResultComponent, HtmlAttributeResultComponent, FilledPointsComponent
+    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent, QueryResultTableComponent, ProgrammingUnitTestResultComponent, ProgrammingNormalResultComponent, HtmlTaskResultComponent, HtmlAttributeResultComponent, FilledPointsComponent, ProficiencyCardComponent
   ],
   providers: [],
   imports: [

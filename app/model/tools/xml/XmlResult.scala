@@ -1,6 +1,7 @@
 package model.tools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
+import model.core.matching.MatchType
 import model.core.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import model.points._
 import model.tools.xml.XmlTool.ElementLineComparison
@@ -12,11 +13,7 @@ final case class XmlInternalErrorResult(
   solutionSaved: Boolean,
   maxPoints: Points
 ) extends XmlAbstractResult
-    with InternalErrorResult {
-
-  override def points: Points = (-1).points
-
-}
+    with InternalErrorResult
 
 final case class XmlResult(
   successType: SuccessType,
@@ -25,7 +22,19 @@ final case class XmlResult(
   solutionSaved: Boolean,
   documentResult: Option[XmlDocumentResult] = None,
   grammarResult: Option[XmlGrammarResult] = None
-) extends XmlAbstractResult
+) extends XmlAbstractResult {
+
+  override def isCompletelyCorrect: Boolean = {
+    val documentResultCorrect = documentResult.forall(_.errors.isEmpty)
+
+    val grammarResultCorrect = grammarResult.forall { gr =>
+      gr.parseErrors.isEmpty && gr.results.allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH)
+    }
+
+    documentResultCorrect && grammarResultCorrect
+  }
+
+}
 
 // Single result
 

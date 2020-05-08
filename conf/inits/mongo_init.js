@@ -18,7 +18,7 @@ const usersCollection = db.getCollection('users');
 const usersIndex = {username: 1};
 const usersUniqueIndexName = usersCollection.createIndex(usersIndex, {unique: true});
 
-print(`Created unique index on ${usersCollection.name}: ${usersUniqueIndexName}`)
+print(`Created unique index on ${usersCollection.name}: ${usersUniqueIndexName}`);
 
 // TODO: instantiate unique index for lessons
 
@@ -33,9 +33,25 @@ print(`Created unique index on ${exCollectionsCollection.name}: ${exCollectionsU
 // instantiate unique index for exercises
 const exercisesCollection = db.getCollection('exercises');
 
-const exercisesIndex = {toolId: 1, collectionId: 1, exerciseId: 1};
+const exercisesIndex = {...exCollectionsIndex, exerciseId: 1};
 const exercisesUniqueIndexName = exercisesCollection.createIndex(exercisesIndex, {unique: true});
 
 print(`Created unique index on ${exercisesCollection.name}: ${exercisesUniqueIndexName}`);
 
-// TODO: instantiate unique index for user solutions
+// instantiate unique index for user solutions
+
+const userSolutionsCollection = db.getCollection('userSolutions');
+
+const userSolutionsIndex = {username: 1, ...exercisesIndex, solutionId: 1, part: 1}
+const userSolutionsUniqueIndex = userSolutionsCollection.createIndex(userSolutionsIndex, {unique: true});
+
+print(`Created unique index on ${userSolutionsCollection.name}: ${userSolutionsUniqueIndex}`);
+
+// TODO: instantiate unique index for user proficiencies
+
+const userProficienciesCollection = db.getCollection('userProficiencies');
+
+const userProficienciesIndex = {username: 1, topic: 1};
+const userProficienciesUniqueIndex = userProficienciesCollection.createIndex(userProficienciesIndex, {unique: true});
+
+print(`Created unique index on ${userProficienciesCollection.name}: ${userProficienciesUniqueIndex}`);

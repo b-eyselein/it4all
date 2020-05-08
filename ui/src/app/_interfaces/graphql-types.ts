@@ -32,10 +32,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  FalseNegative = 'FalseNegative',
+  TruePositive = 'TruePositive',
   FalsePositive = 'FalsePositive',
-  TrueNegative = 'TrueNegative',
-  TruePositive = 'TruePositive'
+  FalseNegative = 'FalseNegative',
+  TrueNegative = 'TrueNegative'
 }
 
 export type CollectionTool = {
@@ -282,11 +282,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlyUser = 'ONLY_USER',
+  OnlySample = 'ONLY_SAMPLE',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlyUser = 'ONLY_USER',
   PartialMatch = 'PARTIAL_MATCH',
-  OnlySample = 'ONLY_SAMPLE'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -476,8 +476,8 @@ export type RegexAbstractResult = {
 };
 
 export enum RegexCorrectionType {
-  Extraction = 'EXTRACTION',
-  Matching = 'MATCHING'
+  Matching = 'MATCHING',
+  Extraction = 'EXTRACTION'
 }
 
 export type RegexExerciseContent = {
@@ -525,14 +525,6 @@ export type RegexExtractionTestData = {
    __typename?: 'RegexExtractionTestData';
   id: Scalars['Int'];
   base: Scalars['String'];
-};
-
-export type RegexIllegalRegexResult = RegexAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'RegexIllegalRegexResult';
-  message: Scalars['String'];
-  solutionSaved: Scalars['Boolean'];
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
 };
 
 export type RegexInternalErrorResult = RegexAbstractResult & AbstractCorrectionResult & {
@@ -679,10 +671,10 @@ export type SqlExerciseContentPartArgs = {
 
 export enum SqlExerciseType {
   Insert = 'INSERT',
-  Create = 'CREATE',
-  Update = 'UPDATE',
   Delete = 'DELETE',
-  Select = 'SELECT'
+  Select = 'SELECT',
+  Create = 'CREATE',
+  Update = 'UPDATE'
 }
 
 export enum SqlExPart {
@@ -703,14 +695,6 @@ export type SqlGroupByMatch = NewMatch & {
   matchType: MatchType;
   userArgDescription?: Maybe<Scalars['String']>;
   sampleArgDescription?: Maybe<Scalars['String']>;
-};
-
-export type SqlIllegalQueryResult = SqlAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'SqlIllegalQueryResult';
-  message: Scalars['String'];
-  solutionSaved: Scalars['Boolean'];
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
 };
 
 export type SqlInsertComparisonMatchingResult = MatchingResult & {
@@ -827,14 +811,6 @@ export type SqlTableMatch = NewMatch & {
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
-export type SqlWrongQueryTypeResult = SqlAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'SqlWrongQueryTypeResult';
-  message: Scalars['String'];
-  solutionSaved: Scalars['Boolean'];
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
 export enum SuccessType {
   Complete = 'COMPLETE',
   Error = 'ERROR',
@@ -914,8 +890,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
 };
 
 export enum UmlAssociationType {
-  Aggregation = 'AGGREGATION',
   Association = 'ASSOCIATION',
+  Aggregation = 'AGGREGATION',
   Composition = 'COMPOSITION'
 }
 
@@ -1156,10 +1132,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
+  Public = 'PUBLIC',
   Package = 'PACKAGE',
-  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Public = 'PUBLIC'
+  Private = 'PRIVATE'
 }
 
 export type UnitTestCorrectionResult = {
@@ -1192,8 +1168,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Normal = 'Normal',
-  Simplified = 'Simplified'
+  Simplified = 'Simplified',
+  Normal = 'Normal'
 }
 
 export type User = {
@@ -1215,10 +1191,8 @@ export type UserProficiency = {
    __typename?: 'UserProficiency';
   username: Scalars['String'];
   topic: Topic;
-  beginnerPoints: Scalars['Int'];
-  intermediatePoints: Scalars['Int'];
-  advancedPoints: Scalars['Int'];
-  expertPoints: Scalars['Int'];
+  points: Scalars['Int'];
+  pointsForNextLevel: Scalars['Int'];
   level: Level;
 };
 

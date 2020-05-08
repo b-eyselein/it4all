@@ -1,10 +1,10 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
-import play.api.Configuration
+import model.graphql.{GraphQLModel, GraphQLRequest}
 import play.api.libs.json._
 import play.api.mvc._
+import play.api.{Configuration, Logger}
 import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 import sangria.ast.Document
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
@@ -26,6 +26,8 @@ class ApiController @Inject() (
     with ReactiveMongoComponents
     with JwtHelpers {
 
+  private val logger = Logger(classOf[ApiController])
+
   private val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
 
   private def executeGraphQLQuery(
@@ -38,10 +40,10 @@ class ApiController @Inject() (
       .map(Ok(_))
       .recover {
         case error: QueryAnalysisError =>
-          println(error)
+          logger.error("Error while analysing query", error)
           BadRequest(error.resolveError)
         case error: ErrorWithResolver =>
-          println(error)
+          logger.error("Error while executing query:", error)
           InternalServerError(error.resolveError)
       }
 

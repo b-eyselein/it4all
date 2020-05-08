@@ -41,7 +41,12 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[RegexAbstractResult] = Future.successful {
     Try(solution.r).fold(
-      error => RegexIllegalRegexResult(solutionSaved, error.getMessage, exercise.content.maxPoints.points),
+      error =>
+        RegexInternalErrorResult(
+          "Your regex could not be parsed: " + error.getMessage,
+          solutionSaved,
+          exercise.content.maxPoints.points
+        ),
       userRegex =>
         exercise.content.correctionType match {
           case RegexCorrectionType.MATCHING =>

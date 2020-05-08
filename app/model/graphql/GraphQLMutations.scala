@@ -43,6 +43,18 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
                       tool.jsonFormats.userSolutionFormat
                     )
                     result <- tool.correctAbstract(user, solution, exercise, part, solutionSaved)
+
+                    _ <- if (result.isCompletelyCorrect) {
+                      Future
+                        .sequence(
+                          exercise.topicsWithLevels.map { topicWithLevel =>
+                            updateUserProficiencies(user.username, exercise, topicWithLevel)
+                          }
+                        )
+                        .recover { _ => println("Could not update user proficiencies!") }
+                    } else {
+                      Future.successful(())
+                    }
                   } yield result
 
                 case _ => ???
@@ -107,7 +119,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
           Try(Json.parse(context.arg(contentArgument))).fold(
             _ => Future.successful(false),
             jsonCollection =>
-              JsonProtocols.collectionFormat.reads(jsonCollection) match {
+              JsonProtocols.exerciseCollectionFormat.reads(jsonCollection) match {
                 case JsError(_)               => Future.successful(false)
                 case JsSuccess(collection, _) => insertCollection(collection)
               }

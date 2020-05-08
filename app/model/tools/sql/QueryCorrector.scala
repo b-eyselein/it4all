@@ -34,51 +34,49 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
     learnerSolution: String,
     sampleSolutions: Seq[SampleSolution[String]],
     solutionSaved: Boolean
-  )(implicit ec: ExecutionContext): SqlAbstractResult = {
-    parseStatement(learnerSolution).fold(
-      exception => SqlIllegalQueryResult(solutionSaved, exception.getMessage, zeroPoints),
-      userQ =>
-        checkStatement(userQ).fold(
-          _ => SqlWrongQueryTypeResult(solutionSaved, "Wrong type of statement!", zeroPoints),
-          userQ => {
-            val userColumns         = getColumnWrappers(userQ)
-            val userTables          = getTables(userQ)
-            val userJoinExpressions = getJoinExpressions(userQ)
-            val userExpressions     = getExpressions(userQ)
-            val userTableAliases    = resolveAliases(userTables)
+  )(implicit ec: ExecutionContext): SqlAbstractResult = parseStatement(learnerSolution).fold(
+    exception => SqlInternalErrorResult("Your query could not be parsed: " + exception.getMessage, solutionSaved),
+    userQ =>
+      checkStatement(userQ).fold(
+        _ => SqlInternalErrorResult("Wrong type of statement!", solutionSaved),
+        userQ => {
+          val userColumns         = getColumnWrappers(userQ)
+          val userTables          = getTables(userQ)
+          val userJoinExpressions = getJoinExpressions(userQ)
+          val userExpressions     = getExpressions(userQ)
+          val userTableAliases    = resolveAliases(userTables)
 
-            val maybeStaticComparison: Option[(Q, SqlQueriesStaticComparison)] =
-              sampleSolutions
-                .flatMap { sqlSample =>
-                  parseStatement(sqlSample.sample).toOption
-                    .flatMap(ps => checkStatement(ps).toOption)
-                    .map { sampleQ =>
-                      val staticComp = performStaticComparison(
-                        userQ,
-                        sampleQ,
-                        userColumns,
-                        userTables,
-                        userJoinExpressions,
-                        userExpressions,
-                        userTableAliases
-                      )
-                      (sampleQ, staticComp)
-                    }
+          val maybeStaticComparison: Option[(Q, SqlQueriesStaticComparison)] =
+            sampleSolutions
+              .flatMap { sqlSample =>
+                parseStatement(sqlSample.sample).toOption
+                  .flatMap(ps => checkStatement(ps).toOption)
+                  .map { sampleQ =>
+                    val staticComp = performStaticComparison(
+                      userQ,
+                      sampleQ,
+                      userColumns,
+                      userTables,
+                      userJoinExpressions,
+                      userExpressions,
+                      userTableAliases
+                    )
+                    (sampleQ, staticComp)
+                  }
 
-                }
-                .minOption(queryAndStaticCompOrdering)
+              }
+              .minOption(queryAndStaticCompOrdering)
 
-            maybeStaticComparison match {
-              case None => ???
-              case Some((sampleQ, sc)) =>
-                val executionResult = database.executeQueries(schemaName, userQ, sampleQ)
+          maybeStaticComparison match {
+            case None => ???
+            case Some((sampleQ, sc)) =>
+              val executionResult = database.executeQueries(schemaName, userQ, sampleQ)
 
-                SqlResult(sc, executionResult, solutionSaved)
-            }
+              SqlResult(sc, executionResult, solutionSaved)
           }
-        )
-    )
-  }
+        }
+      )
+  )
 
   private def performStaticComparison(
     userQ: Q,

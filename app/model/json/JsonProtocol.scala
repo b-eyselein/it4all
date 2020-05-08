@@ -29,18 +29,17 @@ object JsonProtocols extends LessonJsonProtocol {
     Json.format
   }
 
-  val collectionFormat: OFormat[ExerciseCollection] = Json.format
+  val exerciseCollectionKeyFormat: OFormat[ExerciseCollectionKey] = Json.format
+
+  val exerciseCollectionFormat: OFormat[ExerciseCollection] = Json.format
+
+  val exerciseKeyFormat: OFormat[ExerciseKey] = Json.format
 
   val exerciseFileFormat: OFormat[ExerciseFile] = Json.format
 
-  val readCollectionsMessageReads: Reads[ReadCollectionsMessage] = {
-    implicit val cr: Reads[ExerciseCollection] = JsonProtocols.collectionFormat
-
-    Json.reads
-  }
-
   val userProficiencyFormat: OFormat[UserProficiency] = {
-    implicit val tf: OFormat[Topic] = topicFormat
+    implicit val tf: OFormat[Topic]              = topicFormat
+    implicit val lfef: OFormat[LevelForExercise] = Json.format
 
     Json.format
   }

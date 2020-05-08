@@ -10,18 +10,18 @@ final case class RoseInternalErrorResult(
   solutionSaved: Boolean,
   maxPoints: Points
 ) extends RoseAbstractResult
-    with InternalErrorResult {
-
-  override def points: Points = zeroPoints
-
-}
+    with InternalErrorResult
 
 final case class RoseResult(
   result: RoseExecutionResult,
   points: Points = (-1).points,
   maxPoints: Points = (-1).points,
   solutionSaved: Boolean
-) extends RoseAbstractResult
+) extends RoseAbstractResult {
+
+  override def isCompletelyCorrect: Boolean = ???
+
+}
 
 final case class RoseStart(x: Int, y: Int)
 

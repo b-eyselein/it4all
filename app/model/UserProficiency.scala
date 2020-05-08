@@ -2,7 +2,13 @@ package model
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-sealed abstract class Level(val level: Int) extends EnumEntry
+sealed abstract class Level(val level: Int) extends EnumEntry {
+
+  def pointsForExerciseCompletion: Int = Math.pow(2, level - 1).toInt
+
+  def pointsNeededForLevelCompletion: Int = 10 * level
+
+}
 
 object Level extends PlayEnum[Level] {
 
@@ -20,116 +26,32 @@ object Level extends PlayEnum[Level] {
 
 }
 
-object UserProficiency {
-
-  def pointsGainedForCompletion(level: Level): Int = Math.pow(2, level.level).toInt
-
-  def getAndRemove[T, V](key: T, from: Map[T, V]): (Option[V], Map[T, V]) = {
-
-    @scala.annotation.tailrec
-    def go(remainingMap: List[(T, V)], checkedMap: Seq[(T, V)]): (Option[V], Map[T, V]) = remainingMap match {
-      case Nil => (None, checkedMap.toMap)
-      case (headKey, headValues) :: tail =>
-        if (headKey == key) {
-          (Some(headValues), (checkedMap ++ tail).toMap)
-        } else {
-          go(tail, checkedMap :+ ((headKey, headValues)))
-        }
-    }
-
-    go(from.toList, Seq.empty)
-  }
-
-}
+final case class LevelForExercise(
+  exerciseId: Int,
+  collectionId: Int,
+  level: Level
+)
 
 final case class UserProficiency(
   username: String,
   topic: Topic,
-  beginnerPoints: Int = 0,
-  intermediatePoints: Int = 0,
-  advancedPoints: Int = 0,
-  expertPoints: Int = 0
+  pointsForExercises: Set[LevelForExercise] = Set.empty
 ) {
 
-  def pointsForLevels: Map[Level, Int] = Map(
-    Level.Beginner     -> beginnerPoints,
-    Level.Intermediate -> intermediatePoints,
-    Level.Advanced     -> advancedPoints,
-    Level.Expert       -> expertPoints
-  )
+  lazy val getPoints: Int = pointsForExercises.toSeq.map { _.level.pointsForExerciseCompletion }.sum
 
-  def withUpdatedPointsForLevel(level: Level, points: Int): UserProficiency = level match {
-    case Level.Beginner     => this.copy(beginnerPoints = beginnerPoints + points)
-    case Level.Intermediate => this.copy(intermediatePoints = intermediatePoints + points)
-    case Level.Advanced     => this.copy(advancedPoints = advancedPoints + points)
-    case Level.Expert       => this.copy(expertPoints = expertPoints + points)
+  def pointsForNextLevel: Int = getPoints match {
+    case e if e >= 60 => Int.MaxValue
+    case a if a >= 30 => 60
+    case i if i >= 10 => 30
+    case _            => 10
   }
 
-  def getLevel: Level = {
-
-    @annotation.tailrec
-    def checkLevels(remainingLevels: List[Level], remainingPoints: Int): Level = remainingLevels match {
-      case Nil => ???
-      case currentLevel :: tail =>
-        val pointsNeeded = 10 * currentLevel.level
-
-        if (remainingPoints >= pointsNeeded) {
-          checkLevels(tail, remainingPoints - pointsNeeded)
-        } else {
-          currentLevel
-        }
-    }
-
-    val completePoints = Level.values.map { reachableLevel =>
-      Math.min(
-        10 * reachableLevel.level,                   // max reachable points
-        pointsForLevels.getOrElse(reachableLevel, 0) // points gotten for level
-      )
-    }.sum
-
-    checkLevels(Level.values.toList, completePoints)
-  }
-
-  def explainLevel: Map[Level, Map[Level, Int]] = {
-
-    implicit val levelOrdering: Ordering[Level] = Level.ordering
-
-    @scala.annotation.tailrec
-    def go(
-      remainingLevels: List[Level],
-      pointsForCurrentLevel: Int,
-      remainingPoints: List[(Level, Int)],
-      acc: Map[Level, Map[Level, Int]]
-    ): Map[Level, Map[Level, Int]] = remainingLevels match {
-      case Nil => ???
-      case currentLevel :: levelsTail =>
-        remainingPoints match {
-          case Nil => acc
-          case (headLevel, headPoints) :: pointsTail =>
-            val neededPoints  = 10 * currentLevel.level
-            val currentPoints = pointsForCurrentLevel + headPoints
-
-            if (currentPoints > neededPoints) {
-              val newPointsForHeadLevel = currentPoints - neededPoints
-
-              go(
-                levelsTail,
-                0,
-                (headLevel -> newPointsForHeadLevel) +: pointsTail,
-                acc
-              )
-            } else {
-              go(
-                levelsTail,
-                pointsForCurrentLevel + headPoints,
-                pointsTail,
-                acc + (currentLevel -> Map(currentLevel -> 0))
-              )
-            }
-        }
-    }
-
-    go(Level.values.toList, 0, pointsForLevels.toList.sortBy(_._1), Map.empty)
+  def getLevel: Level = getPoints match {
+    case e if e >= 60 => Level.Expert
+    case a if a >= 30 => Level.Advanced
+    case i if i > 10  => Level.Intermediate
+    case _            => Level.Beginner
   }
 
 }

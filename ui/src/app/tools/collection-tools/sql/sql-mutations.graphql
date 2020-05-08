@@ -5,22 +5,12 @@ mutation SqlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: Sql
     points
     maxPoints
     ...SqlInternalErrorResult
-    ...SqlIllegalQueryResult
-    ...SqlWrongQueryTypeResult
     ...SqlResult
   }
 }
 
 fragment SqlInternalErrorResult on SqlInternalErrorResult {
   msg
-}
-
-fragment SqlIllegalQueryResult on SqlIllegalQueryResult {
-  message
-}
-
-fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
-  message
 }
 
 # Column comparison

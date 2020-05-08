@@ -48,10 +48,10 @@
 
             <br>
 
-            <div class="message is-danger" *ngIf="regexIllegalRegexResult">
+            <div class="message is-danger" *ngIf="regexInternalErrorResult">
               <div class="message-header">Fehler beim Parsen des regulären Ausdrucks:</div>
               <div class="message-body">
-                <pre>{{regexIllegalRegexResult.message}}</pre>
+                <pre>{{regexInternalErrorResult.msg}}</pre>
               </div>
             </div>
 

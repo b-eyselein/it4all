@@ -61,8 +61,8 @@ libraryDependencies ++= Seq(
   // Other helpers
   "com.beachape"         %% "enumeratum-play"      % "1.6.0", // MIT
   "com.beachape"         %% "enumeratum-play-json" % "1.6.0", // MIT
-  "com.github.t3hnar"    %% "scala-bcrypt"         % "4.1",    // Apache 2.0
-  "com.github.pathikrit" %% "better-files"         % "3.8.0",  // MIT
+  "com.github.t3hnar"    %% "scala-bcrypt"         % "4.1",   // Apache 2.0
+  "com.github.pathikrit" %% "better-files"         % "3.8.0", // MIT
 
   // Docker
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
@@ -73,7 +73,7 @@ libraryDependencies ++= Seq(
 
   // Sql
   "mysql"                 % "mysql-connector-java" % "8.0.20", // GPL 2.0
-//  "com.typesafe.play"     %% "play-slick"          % "5.0.0",  // Apache 2.0
+  "com.typesafe.play"     %% "play-slick"          % "5.0.0",  // Apache 2.0
   "com.github.jsqlparser" % "jsqlparser"           % "3.1",    // Apache 2.0
 
   // DTD Parser

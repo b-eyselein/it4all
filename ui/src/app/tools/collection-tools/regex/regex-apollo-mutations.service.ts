@@ -20,10 +20,6 @@ export type RegexCorrectionMutation = (
     & Pick<Types.RegexExtractionResult, 'solutionSaved' | 'points' | 'maxPoints'>
     & RegexExtractionResultFragment
   ) | (
-    { __typename: 'RegexIllegalRegexResult' }
-    & Pick<Types.RegexIllegalRegexResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & RegexIllegalRegexResultFragment
-  ) | (
     { __typename: 'RegexInternalErrorResult' }
     & Pick<Types.RegexInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
     & RegexInternalErrorResultFragment
@@ -37,11 +33,6 @@ export type RegexCorrectionMutation = (
 export type RegexInternalErrorResultFragment = (
   { __typename?: 'RegexInternalErrorResult' }
   & Pick<Types.RegexInternalErrorResult, 'msg'>
-);
-
-export type RegexIllegalRegexResultFragment = (
-  { __typename?: 'RegexIllegalRegexResult' }
-  & Pick<Types.RegexIllegalRegexResult, 'message'>
 );
 
 export type RegexMatchingSingleResultFragment = (
@@ -91,11 +82,6 @@ export type RegexExtractionResultFragment = (
 export const RegexInternalErrorResultFragmentDoc = gql`
     fragment RegexInternalErrorResult on RegexInternalErrorResult {
   msg
-}
-    `;
-export const RegexIllegalRegexResultFragmentDoc = gql`
-    fragment RegexIllegalRegexResult on RegexIllegalRegexResult {
-  message
 }
     `;
 export const RegexMatchingSingleResultFragmentDoc = gql`
@@ -151,13 +137,11 @@ export const RegexCorrectionDocument = gql`
     points
     maxPoints
     ...RegexInternalErrorResult
-    ...RegexIllegalRegexResult
     ...RegexMatchingResult
     ...RegexExtractionResult
   }
 }
     ${RegexInternalErrorResultFragmentDoc}
-${RegexIllegalRegexResultFragmentDoc}
 ${RegexMatchingResultFragmentDoc}
 ${RegexExtractionResultFragmentDoc}`;
 

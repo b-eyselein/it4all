@@ -17,11 +17,7 @@ final case class ProgrammingInternalErrorResult(
   solutionSaved: Boolean,
   maxPoints: Points
 ) extends ProgrammingAbstractResult
-    with InternalErrorResult {
-
-  override def points: Points = zeroPoints
-
-}
+    with InternalErrorResult
 
 final case class ProgrammingResult(
   solutionSaved: Boolean,
@@ -35,6 +31,17 @@ final case class ProgrammingResult(
   override val points: Points = results.count(_.success == SuccessType.COMPLETE).points
 
   override val maxPoints: Points = results.length.points
+
+  override def isCompletelyCorrect: Boolean = {
+
+    val simplifiedResultOk = simplifiedResults.forall(_.success == SuccessType.COMPLETE)
+
+    val normalResultOk = normalResult.forall(_.success == SuccessType.COMPLETE)
+
+    val unitTestResultsOk = unitTestResults.forall(_.successful)
+
+    simplifiedResultOk && normalResultOk && unitTestResultsOk
+  }
 
 }
 

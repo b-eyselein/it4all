@@ -33,9 +33,6 @@
             "name": "RegexExtractionResult"
           },
           {
-            "name": "RegexIllegalRegexResult"
-          },
-          {
             "name": "RegexInternalErrorResult"
           },
           {
@@ -48,16 +45,10 @@
         "name": "SqlAbstractResult",
         "possibleTypes": [
           {
-            "name": "SqlIllegalQueryResult"
-          },
-          {
             "name": "SqlInternalErrorResult"
           },
           {
             "name": "SqlResult"
-          },
-          {
-            "name": "SqlWrongQueryTypeResult"
           }
         ]
       },
@@ -111,25 +102,16 @@
             "name": "RegexExtractionResult"
           },
           {
-            "name": "RegexIllegalRegexResult"
-          },
-          {
             "name": "RegexInternalErrorResult"
           },
           {
             "name": "RegexMatchingResult"
           },
           {
-            "name": "SqlIllegalQueryResult"
-          },
-          {
             "name": "SqlInternalErrorResult"
           },
           {
             "name": "SqlResult"
-          },
-          {
-            "name": "SqlWrongQueryTypeResult"
           },
           {
             "name": "WebInternalErrorResult"

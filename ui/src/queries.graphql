@@ -42,17 +42,19 @@ query CollectionToolOverview($toolId: String!, $userJwt: String!) {
   }
   me(userJwt: $userJwt) {
     proficiencies(toolId: $toolId) {
-      topic {
-        ...Topic
-      }
-      beginnerPoints
-      intermediatePoints
-      advancedPoints
-      expertPoints
-      level {
-        ...Level
-      }
+      ...UserProficiency
     }
+  }
+}
+
+fragment UserProficiency on UserProficiency {
+  topic {
+    ...Topic
+  }
+  points
+  pointsForNextLevel
+  level {
+    ...Level
   }
 }
 

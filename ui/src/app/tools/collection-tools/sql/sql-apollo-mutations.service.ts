@@ -16,10 +16,6 @@ export type SqlCorrectionMutationVariables = {
 export type SqlCorrectionMutation = (
   { __typename?: 'Mutation' }
   & { correctSql: (
-    { __typename: 'SqlIllegalQueryResult' }
-    & Pick<Types.SqlIllegalQueryResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & SqlIllegalQueryResultFragment
-  ) | (
     { __typename: 'SqlInternalErrorResult' }
     & Pick<Types.SqlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
     & SqlInternalErrorResultFragment
@@ -27,26 +23,12 @@ export type SqlCorrectionMutation = (
     { __typename: 'SqlResult' }
     & Pick<Types.SqlResult, 'solutionSaved' | 'points' | 'maxPoints'>
     & SqlResultFragment
-  ) | (
-    { __typename: 'SqlWrongQueryTypeResult' }
-    & Pick<Types.SqlWrongQueryTypeResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & SqlWrongQueryTypeResultFragment
   ) }
 );
 
 export type SqlInternalErrorResultFragment = (
   { __typename?: 'SqlInternalErrorResult' }
   & Pick<Types.SqlInternalErrorResult, 'msg'>
-);
-
-export type SqlIllegalQueryResultFragment = (
-  { __typename?: 'SqlIllegalQueryResult' }
-  & Pick<Types.SqlIllegalQueryResult, 'message'>
-);
-
-export type SqlWrongQueryTypeResultFragment = (
-  { __typename?: 'SqlWrongQueryTypeResult' }
-  & Pick<Types.SqlWrongQueryTypeResult, 'message'>
 );
 
 export type ColumnMatchFragment = (
@@ -408,16 +390,6 @@ export const SqlInternalErrorResultFragmentDoc = gql`
   msg
 }
     `;
-export const SqlIllegalQueryResultFragmentDoc = gql`
-    fragment SqlIllegalQueryResult on SqlIllegalQueryResult {
-  message
-}
-    `;
-export const SqlWrongQueryTypeResultFragmentDoc = gql`
-    fragment SqlWrongQueryTypeResult on SqlWrongQueryTypeResult {
-  message
-}
-    `;
 export const ColumnMatchFragmentDoc = gql`
     fragment ColumnMatch on SqlColumnMatch {
   matchType
@@ -613,14 +585,10 @@ export const SqlCorrectionDocument = gql`
     points
     maxPoints
     ...SqlInternalErrorResult
-    ...SqlIllegalQueryResult
-    ...SqlWrongQueryTypeResult
     ...SqlResult
   }
 }
     ${SqlInternalErrorResultFragmentDoc}
-${SqlIllegalQueryResultFragmentDoc}
-${SqlWrongQueryTypeResultFragmentDoc}
 ${SqlResultFragmentDoc}`;
 
   @Injectable({

@@ -9,13 +9,22 @@ final case class Topic(
   maxLevel: Level = Level.Expert
 )
 
+final case class ExerciseCollectionKey(
+  collectionId: Int,
+  toolId: String
+)
+
 final case class ExerciseCollection(
   collectionId: Int,
   toolId: String,
   title: String,
   authors: Seq[String],
   text: String
-)
+) {
+
+  def key: ExerciseCollectionKey = ExerciseCollectionKey(collectionId, toolId)
+
+}
 
 trait ExPart extends EnumEntry {
 
@@ -42,6 +51,12 @@ final case class TopicWithLevel(
   level: Level
 )
 
+final case class ExerciseKey(
+  exerciseId: Int,
+  collectionId: Int,
+  toolId: String
+)
+
 final case class Exercise[S, C <: ExerciseContent[S]](
   exerciseId: Int,
   collectionId: Int,
@@ -52,7 +67,11 @@ final case class Exercise[S, C <: ExerciseContent[S]](
   topicsWithLevels: Seq[TopicWithLevel] = Seq.empty,
   difficulty: Int,
   content: C
-)
+) {
+
+  def key: ExerciseKey = ExerciseKey(exerciseId, collectionId, toolId)
+
+}
 
 final case class ExerciseFile(
   name: String,

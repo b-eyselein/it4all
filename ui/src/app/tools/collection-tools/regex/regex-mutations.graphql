@@ -5,7 +5,6 @@ mutation RegexCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: R
     points
     maxPoints
     ...RegexInternalErrorResult
-    ...RegexIllegalRegexResult
     ...RegexMatchingResult
     ...RegexExtractionResult
   }
@@ -13,10 +12,6 @@ mutation RegexCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: R
 
 fragment RegexInternalErrorResult on RegexInternalErrorResult {
   msg
-}
-
-fragment RegexIllegalRegexResult on RegexIllegalRegexResult {
-  message
 }
 
 fragment RegexMatchingSingleResult on RegexMatchingSingleResult {

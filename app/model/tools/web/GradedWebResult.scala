@@ -11,11 +11,7 @@ final case class WebInternalErrorResult(
   solutionSaved: Boolean,
   maxPoints: Points
 ) extends WebAbstractResult
-    with InternalErrorResult {
-
-  override def points: Points = zeroPoints
-
-}
+    with InternalErrorResult
 
 final case class WebResult(
   gradedHtmlTaskResults: Seq[GradedHtmlTaskResult],
@@ -23,7 +19,17 @@ final case class WebResult(
   points: Points,
   maxPoints: Points,
   solutionSaved: Boolean
-) extends WebAbstractResult
+) extends WebAbstractResult {
+
+  override def isCompletelyCorrect: Boolean = {
+
+    val htmlTasksOk = gradedHtmlTaskResults.forall(_.isSuccessful)
+    val jsTasksOk   = gradedJsTaskResults.forall(_.success == SuccessType.COMPLETE)
+
+    htmlTasksOk && jsTasksOk
+  }
+
+}
 
 sealed trait GradedWebTaskResult
 

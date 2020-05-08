@@ -120,23 +120,11 @@ object SqlGraphQLModels
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     ),
     interfaces[Unit, SqlAbstractResult](abstractResultInterfaceType)
-  ).withPossibleTypes(() =>
-    List(sqlInternalErrorResultType, sqlIllegalQueryResultType, sqlWrongQueryTypeResult, sqlResultType)
-  )
+  ).withPossibleTypes(() => List(sqlInternalErrorResultType, sqlResultType))
 
   private val sqlInternalErrorResultType: ObjectType[Unit, SqlInternalErrorResult] = deriveObjectType(
     Interfaces(sqlAbstractResultType),
     ExcludeFields("maxPoints")
-  )
-
-  private val sqlIllegalQueryResultType: ObjectType[Unit, SqlIllegalQueryResult] = deriveObjectType(
-    Interfaces(sqlAbstractResultType),
-    ExcludeFields("solutionSaved", "maxPoints")
-  )
-
-  private val sqlWrongQueryTypeResult: ObjectType[Unit, SqlWrongQueryTypeResult] = deriveObjectType(
-    Interfaces(sqlAbstractResultType),
-    ExcludeFields("solutionSaved", "maxPoints")
   )
 
   private val sqlResultType: ObjectType[Unit, SqlResult] = {

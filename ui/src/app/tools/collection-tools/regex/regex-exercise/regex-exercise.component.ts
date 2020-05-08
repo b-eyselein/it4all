@@ -11,7 +11,7 @@ import {
   RegexCorrectionMutation,
   RegexCorrectionMutationVariables,
   RegexExtractionResultFragment,
-  RegexIllegalRegexResultFragment,
+  RegexInternalErrorResultFragment,
   RegexMatchingResultFragment
 } from '../regex-apollo-mutations.service';
 import {RegexExPart} from '../../../../_interfaces/graphql-types';
@@ -59,8 +59,8 @@ export class RegexExerciseComponent
     };
   }
 
-  get regexIllegalRegexResult(): RegexIllegalRegexResultFragment | undefined {
-    return this.resultQuery?.correctRegex.__typename === 'RegexIllegalRegexResult' ? this.resultQuery.correctRegex : undefined;
+  get regexInternalErrorResult(): RegexInternalErrorResultFragment | undefined {
+    return this.resultQuery?.correctRegex.__typename === 'RegexInternalErrorResult' ? this.resultQuery.correctRegex : undefined;
   }
 
   get regexMatchingResult(): RegexMatchingResultFragment | undefined {

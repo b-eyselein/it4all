@@ -85,31 +85,9 @@ sealed trait SqlAbstractResult extends AbstractCorrectionResult
 final case class SqlInternalErrorResult(
   msg: String,
   solutionSaved: Boolean,
-  maxPoints: Points
+  maxPoints: Points = (-1).points
 ) extends SqlAbstractResult
-    with InternalErrorResult {
-  override def points: Points = zeroPoints
-}
-
-final case class SqlIllegalQueryResult(
-  solutionSaved: Boolean,
-  message: String,
-  maxPoints: Points
-) extends SqlAbstractResult {
-
-  override def points: Points = zeroPoints
-
-}
-
-final case class SqlWrongQueryTypeResult(
-  solutionSaved: Boolean,
-  message: String,
-  maxPoints: Points
-) extends SqlAbstractResult {
-
-  override def points: Points = zeroPoints
-
-}
+    with InternalErrorResult
 
 final case class SqlResult(
   staticComparison: SqlQueriesStaticComparison,
@@ -120,6 +98,8 @@ final case class SqlResult(
   override def points: Points = staticComparison.points
 
   override def maxPoints: Points = staticComparison.maxPoints
+
+  override def isCompletelyCorrect: Boolean = points == maxPoints
 
 }
 

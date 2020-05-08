@@ -48,8 +48,11 @@ trait BasicGraphQLModels {
 
     deriveObjectType(
       AddFields(
+        Field("points", IntType, resolve = _.value.getPoints),
+        Field("pointsForNextLevel", IntType, resolve = _.value.pointsForNextLevel),
         Field("level", levelType, resolve = _.value.getLevel)
-      )
+      ),
+      ExcludeFields("pointsForExercises")
     )
   }
 

@@ -65,16 +65,21 @@ export type CollectionToolOverviewQuery = (
     { __typename?: 'User' }
     & { proficiencies: Array<(
       { __typename?: 'UserProficiency' }
-      & Pick<Types.UserProficiency, 'beginnerPoints' | 'intermediatePoints' | 'advancedPoints' | 'expertPoints'>
-      & { topic: (
-        { __typename?: 'Topic' }
-        & TopicFragment
-      ), level: (
-        { __typename?: 'Level' }
-        & LevelFragment
-      ) }
+      & UserProficiencyFragment
     )> }
   )> }
+);
+
+export type UserProficiencyFragment = (
+  { __typename?: 'UserProficiency' }
+  & Pick<Types.UserProficiency, 'points' | 'pointsForNextLevel'>
+  & { topic: (
+    { __typename?: 'Topic' }
+    & TopicFragment
+  ), level: (
+    { __typename?: 'Level' }
+    & LevelFragment
+  ) }
 );
 
 export type AllExercisesOverviewQueryVariables = {
@@ -635,13 +640,6 @@ export const LoggedInUserWithTokenFragmentDoc = gql`
   jwt
 }
     `;
-export const PartFragmentDoc = gql`
-    fragment Part on ExPart {
-  id
-  name
-  isEntryPart
-}
-    `;
 export const LevelFragmentDoc = gql`
     fragment Level on Level {
   title
@@ -657,6 +655,26 @@ export const TopicFragmentDoc = gql`
   }
 }
     ${LevelFragmentDoc}`;
+export const UserProficiencyFragmentDoc = gql`
+    fragment UserProficiency on UserProficiency {
+  topic {
+    ...Topic
+  }
+  points
+  pointsForNextLevel
+  level {
+    ...Level
+  }
+}
+    ${TopicFragmentDoc}
+${LevelFragmentDoc}`;
+export const PartFragmentDoc = gql`
+    fragment Part on ExPart {
+  id
+  name
+  isEntryPart
+}
+    `;
 export const TopicWithLevelFragmentDoc = gql`
     fragment TopicWithLevel on TopicWithLevel {
   topic {
@@ -983,21 +1001,11 @@ export const CollectionToolOverviewDocument = gql`
   }
   me(userJwt: $userJwt) {
     proficiencies(toolId: $toolId) {
-      topic {
-        ...Topic
-      }
-      beginnerPoints
-      intermediatePoints
-      advancedPoints
-      expertPoints
-      level {
-        ...Level
-      }
+      ...UserProficiency
     }
   }
 }
-    ${TopicFragmentDoc}
-${LevelFragmentDoc}`;
+    ${UserProficiencyFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

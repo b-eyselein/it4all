@@ -62,20 +62,7 @@
       <div class="column is-one-quarter-desktop"
            *ngFor="let proficiency of collectionToolOverviewQuery.me.proficiencies">
 
-        <div class="card">
-          <header class="card-header">
-            <p class="card-header-title">{{proficiency.topic.title}}</p>
-          </header>
-          <div class="card-content">
-            <p>Level: {{proficiency.level.title}}</p>
-
-            <it4all-filled-points
-              [filledPoints]="proficiency.level.levelIndex"
-              [maxPoints]="proficiency.topic.maxLevel.levelIndex">
-            </it4all-filled-points>
-          </div>
-        </div>
-
+        <it4all-proficiency-card [proficiency]="proficiency"></it4all-proficiency-card>
       </div>
     </div>
 
