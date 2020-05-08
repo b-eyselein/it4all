@@ -10,6 +10,9 @@ import initialData.programming.coll_2.ProgrammingColl2Ex2.programmingColl2Ex2
 import initialData.programming.coll_2.ProgrammingColl2Ex3.programmingColl2Ex3
 import initialData.programming.coll_2.ProgrammingColl2Ex4.programmingColl2Ex4
 import initialData.programming.coll_2.ProgrammingColl2Ex5.programmingColl2Ex5
+import initialData.programming.coll_2.ProgrammingColl2Ex6.programmingColl2Ex6
+import initialData.programming.coll_2.ProgrammingColl2Ex7.programmingColl2Ex7
+import initialData.programming.coll_2.ProgrammingColl2Ex8.programmingColl2Ex8
 import model.ExerciseCollection
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming.{ProgSolution, ProgrammingExerciseContent}
@@ -25,7 +28,16 @@ object ProgrammingInitialData extends InitialData[ProgSolution, ProgrammingExerc
     ),
     (
       ExerciseCollection(collectionId = 2, toolId, title = "Strings", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(programmingColl2Ex1, programmingColl2Ex2, programmingColl2Ex3, programmingColl2Ex4, programmingColl2Ex5)
+      Seq(
+        programmingColl2Ex1,
+        programmingColl2Ex2,
+        programmingColl2Ex3,
+        programmingColl2Ex4,
+        programmingColl2Ex5,
+        programmingColl2Ex6,
+        programmingColl2Ex7,
+        programmingColl2Ex8
+      )
     ),
     (
       ExerciseCollection(collectionId = 3, toolId, title = "Bedingungen", authors = Seq("bje40dc"), text = "TODO"),
