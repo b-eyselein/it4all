@@ -13,6 +13,9 @@ import initialData.programming.coll_2.ProgrammingColl2Ex5.programmingColl2Ex5
 import initialData.programming.coll_2.ProgrammingColl2Ex6.programmingColl2Ex6
 import initialData.programming.coll_2.ProgrammingColl2Ex7.programmingColl2Ex7
 import initialData.programming.coll_2.ProgrammingColl2Ex8.programmingColl2Ex8
+import initialData.programming.coll_3.ProgrammingColl3Ex1.programmingColl3Ex1
+import initialData.programming.coll_3.ProgrammingColl3Ex2.programmingColl3Ex2
+import initialData.programming.coll_3.ProgrammingColl3Ex3.programmingColl3Ex3
 import model.ExerciseCollection
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming.{ProgSolution, ProgrammingExerciseContent}
@@ -41,7 +44,7 @@ object ProgrammingInitialData extends InitialData[ProgSolution, ProgrammingExerc
     ),
     (
       ExerciseCollection(collectionId = 3, toolId, title = "Bedingungen", authors = Seq("bje40dc"), text = "TODO"),
-      Seq.empty
+      Seq(programmingColl3Ex1, programmingColl3Ex2, programmingColl3Ex3)
     ),
     (
       ExerciseCollection(collectionId = 4, toolId, title = "Listen", authors = Seq("bje40dc"), text = "TODO"),

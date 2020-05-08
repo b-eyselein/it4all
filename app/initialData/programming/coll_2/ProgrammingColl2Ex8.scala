@@ -99,7 +99,7 @@ object ProgrammingColl2Ex8 {
     topicsWithLevels = Seq(
       TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner),
       TopicWithLevel(ProgrammingTopics.Strings, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Classes, Level.Beginner)
+      TopicWithLevel(ProgrammingTopics.Conditions, Level.Beginner)
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
