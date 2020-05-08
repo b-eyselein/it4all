@@ -1,6 +1,5 @@
 package model.tools.programming
 
-import model.tools.uml.UmlClassDiagram
 import model.{ExerciseContent, ExerciseFile, SampleSolution}
 import play.api.libs.json.JsValue
 
@@ -13,13 +12,11 @@ final case class ProgrammingExerciseContent(
   unitTestPart: UnitTestPart,
   implementationPart: ImplementationPart,
   sampleTestData: Seq[ProgTestData] = Seq.empty,
-  baseData: Option[JsValue] = None,
-  maybeClassDiagramPart: Option[UmlClassDiagram] = None,
   override val sampleSolutions: Seq[SampleSolution[ProgSolution]]
 ) extends ExerciseContent[ProgSolution] {
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
-    ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(this.baseData, completeTestData)
+    ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(completeTestData)
 
   def parts: Seq[ProgExPart] =
     if (unitTestPart.unitTestType == UnitTestType.Normal) {

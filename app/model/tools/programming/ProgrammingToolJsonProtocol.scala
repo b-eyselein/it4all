@@ -1,10 +1,10 @@
 package model.tools.programming
 
-import model.{ExerciseFile, SampleSolution}
 import model.json.JsonProtocols
 import model.tools._
 import model.tools.programming.ProgDataTypes.{GenericProgDataType, NonGenericProgDataType}
 import model.tools.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
+import model.{ExerciseFile, SampleSolution}
 import play.api.libs.json._
 
 object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, ProgrammingExerciseContent, ProgExPart] {
@@ -146,9 +146,9 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
 
   // Simplified ProgUserTestData
 
-  def dumpCompleteTestDataToJson(baseData: Option[JsValue], testData: Seq[ProgTestData]): JsValue = Json.obj(
+  def dumpCompleteTestDataToJson(testData: Seq[ProgTestData]): JsValue = Json.obj(
     "testData" -> JsArray(testData.map(progTestDataFormat.writes)),
-    "baseData" -> baseData
+    "baseData" -> None
   )
 
 }

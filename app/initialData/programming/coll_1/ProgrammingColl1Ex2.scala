@@ -7,7 +7,11 @@ import model.tools.programming._
 
 object ProgrammingColl1Ex2 {
 
-  private val ex_res_path = exerciseResourcesPath("programming", 1, 2)
+  private val toolId = "programming"
+
+  private val fileType = "python"
+
+  private val ex_res_path = exerciseResourcesPath(toolId, 1, 2)
 
   private val unitTestPart = UnitTestPart(
     unitTestType = UnitTestType.Normal,
@@ -18,13 +22,13 @@ object ProgrammingColl1Ex2 {
     unitTestFiles = Seq(
       ExerciseFile(
         name = "factorial.py",
-        fileType = "python",
+        fileType,
         editable = false,
         content = loadTextFromFile(ex_res_path / "factorial_declaration.py")
       ),
       ExerciseFile(
         name = "test_factorial.py",
-        fileType = "python",
+        fileType,
         editable = true,
         content = loadTextFromFile(ex_res_path / "test_factorial_declaration.py")
       )
@@ -36,7 +40,7 @@ object ProgrammingColl1Ex2 {
         description = "Diese Implementierung ist korrekt und sollte alle Tests bestehen.",
         file = ExerciseFile(
           name = "factorial_0.py",
-          fileType = "python",
+          fileType,
           editable = false,
           content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_0.py")
         )
@@ -47,7 +51,7 @@ object ProgrammingColl1Ex2 {
         description = """Falls das Funktionsargument 'n' keine Ganzzahl ist, soll eine Exception geworfen werden.""",
         file = ExerciseFile(
           name = "factorial_1.py",
-          fileType = "python",
+          fileType,
           editable = false,
           content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_1.py")
         )
@@ -58,7 +62,7 @@ object ProgrammingColl1Ex2 {
         description = "Falls das Funktionsargument kleiner oder gleich 0 ist, soll eine Exception geworfen werden.",
         file = ExerciseFile(
           name = "factorial_2.py",
-          fileType = "python",
+          fileType,
           editable = false,
           content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_2.py")
         )
@@ -69,7 +73,7 @@ object ProgrammingColl1Ex2 {
         description = "Die Funktion soll das richtige Resultat zurückliefern.",
         file = ExerciseFile(
           name = "factorial_3.py",
-          fileType = "python",
+          fileType,
           editable = false,
           content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_3.py")
         )
@@ -86,13 +90,13 @@ object ProgrammingColl1Ex2 {
     files = Seq(
       ExerciseFile(
         name = "test_factorial.py",
-        fileType = "python",
+        fileType,
         editable = false,
         content = loadTextFromFile(ex_res_path / "test_factorial.py")
       ),
       ExerciseFile(
         name = "factorial.py",
-        fileType = "python",
+        fileType,
         editable = true,
         content = loadTextFromFile(ex_res_path / "factorial_declaration.py")
       )
@@ -101,21 +105,23 @@ object ProgrammingColl1Ex2 {
     sampleSolFileNames = Seq("factorial.py")
   )
 
-  private val sampleSolution = SampleSolution(
-    id = 1,
-    sample = ProgSolution(
-      files = Seq(
-        ExerciseFile(
-          name = "test_factorial.py",
-          fileType = "python",
-          editable = false,
-          content = loadTextFromFile(ex_res_path / "test_factorial.py")
-        ),
-        ExerciseFile(
-          name = "factorial.py",
-          fileType = "python",
-          editable = false,
-          content = loadTextFromFile(ex_res_path / "factorial.py")
+  private val sampleSolutions = Seq(
+    SampleSolution(
+      id = 1,
+      sample = ProgSolution(
+        files = Seq(
+          ExerciseFile(
+            name = "test_factorial.py",
+            fileType,
+            editable = false,
+            content = loadTextFromFile(ex_res_path / "test_factorial.py")
+          ),
+          ExerciseFile(
+            name = "factorial.py",
+            fileType,
+            editable = false,
+            content = loadTextFromFile(ex_res_path / "factorial.py")
+          )
         )
       )
     )
@@ -142,7 +148,8 @@ object ProgrammingColl1Ex2 {
       outputType = ProgDataTypes.NonGenericProgDataType.INTEGER,
       unitTestPart,
       implementationPart,
-      sampleSolutions = Seq(sampleSolution)
+      sampleTestData = Seq.empty,
+      sampleSolutions
     )
   )
 

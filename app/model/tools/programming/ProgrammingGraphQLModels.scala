@@ -62,7 +62,7 @@ object ProgrammingGraphQLModels
         )
       ),
       // TODO: include fields !?!
-      ExcludeFields("inputTypes", "outputType", "baseData", "sampleTestData", "maybeClassDiagramPart")
+      ExcludeFields("inputTypes", "outputType", "sampleTestData")
     )
   }
 

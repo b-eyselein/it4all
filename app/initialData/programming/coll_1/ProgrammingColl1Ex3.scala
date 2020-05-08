@@ -105,31 +105,30 @@ object ProgrammingColl1Ex3 {
     sampleSolFileNames = Seq("test_babylonian_root.py")
   )
 
-  val programmingColl1Ex3: ProgrammingExercise = Exercise(
-    exerciseId = 3,
-    collectionId = 1,
-    toolId = "programming",
-    title = "Babylonisches Wurzelziehen",
-    authors = Seq("bje40dc"),
-    text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Exceptions, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner)
-    ),
-    difficulty = 2,
-    content = ProgrammingExerciseContent(
-      functionName = "babylonian_root",
-      filename = "babylonian_root",
-      foldername = "babylonian_root",
-      inputTypes = Seq(
-        ProgInput(id = 1, inputName = "number", inputType = ProgDataTypes.NonGenericProgDataType.FLOAT),
-        ProgInput(id = 2, inputName = "count", inputType = ProgDataTypes.NonGenericProgDataType.INTEGER)
+  private val implementationPart = ImplementationPart(
+    base = "",
+    files = Seq(
+      ExerciseFile(
+        name = "test_babylonian_root.py",
+        fileType,
+        editable = false,
+        content = loadTextFromFile(exResPath / "test_babylonian_root.py")
       ),
-      outputType = ProgDataTypes.NonGenericProgDataType.FLOAT,
-      unitTestPart = unitTestPart,
-      implementationPart = ImplementationPart(
-        base = "",
+      ExerciseFile(
+        name = "babylonian_root.py",
+        fileType,
+        editable = true,
+        content = loadTextFromFile(exResPath / "babylonian_root_declaration.py")
+      )
+    ),
+    implFileName = "babylonian_root.py",
+    sampleSolFileNames = Seq("babylonian_root.py")
+  )
+
+  private val sampleSolutions = Seq(
+    SampleSolution(
+      id = 1,
+      sample = ProgSolution(
         files = Seq(
           ExerciseFile(
             name = "test_babylonian_root.py",
@@ -140,35 +139,40 @@ object ProgrammingColl1Ex3 {
           ExerciseFile(
             name = "babylonian_root.py",
             fileType,
-            editable = true,
-            content = loadTextFromFile(exResPath / "babylonian_root_declaration.py")
-          )
-        ),
-        implFileName = "babylonian_root.py",
-        sampleSolFileNames = Seq("babylonian_root.py")
-      ),
-      sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = ProgSolution(
-            files = Seq(
-              ExerciseFile(
-                name = "test_babylonian_root.py",
-                fileType,
-                editable = false,
-                content = loadTextFromFile(exResPath / "test_babylonian_root.py")
-              ),
-              ExerciseFile(
-                name = "babylonian_root.py",
-                fileType,
-                editable = false,
-                content = loadTextFromFile(exResPath / "babylonian_root.py")
-              )
-            )
+            editable = false,
+            content = loadTextFromFile(exResPath / "babylonian_root.py")
           )
         )
+      )
+    )
+  )
+
+  val programmingColl1Ex3: ProgrammingExercise = Exercise(
+    exerciseId = 3,
+    collectionId = 1,
+    toolId = "programming",
+    title = "Babylonisches Wurzelziehen",
+    authors = Seq("bje40dc"),
+    text = loadTextFromFile(exResPath / "text.html"),
+    difficulty = 2,
+    topicsWithLevels = Seq(
+      TopicWithLevel(ProgrammingTopics.Exceptions, Level.Beginner),
+      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner),
+      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner)
+    ),
+    content = ProgrammingExerciseContent(
+      functionName = "babylonian_root",
+      foldername = "babylonian_root",
+      filename = "babylonian_root",
+      inputTypes = Seq(
+        ProgInput(id = 1, inputName = "number", inputType = ProgDataTypes.NonGenericProgDataType.FLOAT),
+        ProgInput(id = 2, inputName = "count", inputType = ProgDataTypes.NonGenericProgDataType.INTEGER)
       ),
-      sampleTestData = Seq.empty
+      outputType = ProgDataTypes.NonGenericProgDataType.FLOAT,
+      unitTestPart,
+      implementationPart,
+      sampleTestData = Seq.empty,
+      sampleSolutions
     )
   )
 
