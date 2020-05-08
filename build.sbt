@@ -49,7 +49,7 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   guice,
   ws,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test, // Apache 2.0
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test, // Apache 2.0
 
   // JWT
   "com.pauldijou" %% "jwt-play" % "4.3.0", // Apache 2.0
