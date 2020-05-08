@@ -1,0 +1,235 @@
+id: 2
+collectionId: 6
+toolId: programming
+semanticVersion: {major: 1, minor: 0, patch: 0}
+title: Längen
+authors:
+  - bje40dc
+text:
+  relativePath: text.html
+tags: [M]
+state: APPROVED
+difficulty: 2
+
+content:
+  functionName: distances
+  foldername: distances
+  filename: distances
+  inputTypes: []
+  outputType: VOID
+
+  unitTestPart:
+
+    unitTestType: Normal
+
+    unitTestsDescription: >
+
+    unitTestFiles:
+      - name: distances.py
+        resourcePath: distances_declaration.py
+        fileType: python
+        editable: false
+      - name: test_distances.py
+        resourcePath: test_distances_declaration.py
+        fileType: python
+        editable: true
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Musterlösung...
+        file:
+          name: distances_0.py
+          resourcePath: unit_test_sols/distances_0.py
+          fileType: python
+          editable: false
+      - id: 1
+        shouldFail: true
+        description: Die Funktion yards_to_meters soll die Distanz korrekt von Yards in Meter umrechnen.
+        file:
+          name: distances_1.py
+          resourcePath: unit_test_sols/distances_1.py
+          fileType: python
+          editable: false
+      - id: 2
+        shouldFail: true
+        description: Die Funktion yards_to_meters soll die Distanz korrekt von Yards in Meter umrechnen.
+        file:
+          name: distances_2.py
+          resourcePath: unit_test_sols/distances_2.py
+          fileType: python
+          editable: false
+      - id: 3
+        shouldFail: true
+        description: Die Funktion meters_to_yards soll die Distanz korrekt von Meter in Yards umrechnen.
+        file:
+          name: distances_3.py
+          resourcePath: unit_test_sols/distances_3.py
+          fileType: python
+          editable: false
+      - id: 4
+        shouldFail: true
+        description: Die Funktion meters_to_yards soll die Distanz korrekt von Meter in Yards umrechnen.
+        file:
+          name: distances_4.py
+          resourcePath: unit_test_sols/distances_4.py
+          fileType: python
+          editable: false
+      - id: 5
+        shouldFail: true
+        description: Die Funktion miles_to_meters soll die Distanz korrekt von Meilen in Meter umrechnen.
+        file:
+          name: distances_5.py
+          resourcePath: unit_test_sols/distances_5.py
+          fileType: python
+          editable: false
+      - id: 6
+        shouldFail: true
+        description: Die Funktion miles_to_meters soll die Distanz korrekt von Meilen in Meter umrechnen.
+        file:
+          name: distances_6.py
+          resourcePath: unit_test_sols/distances_6.py
+          fileType: python
+          editable: false
+      - id: 7
+        shouldFail: true
+        description: Die Funktion meters_to_miles soll die Distanz korrekt von Meter in Meilen umrechnen.
+        file:
+          name: distances_7.py
+          resourcePath: unit_test_sols/distances_7.py
+          fileType: python
+          editable: false
+      - id: 8
+        shouldFail: true
+        description: Die Funktion meters_to_miles soll die Distanz korrekt von Meter in Meilen umrechnen.
+        file:
+          name: distances_8.py
+          resourcePath: unit_test_sols/distances_8.py
+          fileType: python
+          editable: false
+      - id: 9
+        shouldFail: true
+        description: Die Funktion seamiles_to_meters soll die Distanz korrekt von Seemeilen in Meter umrechnen.
+        file:
+          name: distances_9.py
+          resourcePath: unit_test_sols/distances_9.py
+          fileType: python
+          editable: false
+      - id: 10
+        shouldFail: true
+        description: Die Funktion seamiles_to_meters soll die Distanz korrekt von Seemeilen in Meter umrechnen.
+        file:
+          name: distances_10.py
+          resourcePath: unit_test_sols/distances_10.py
+          fileType: python
+          editable: false
+      - id: 11
+        shouldFail: true
+        description: Die Funktion meters_to_seamiles soll die Distanz korrekt von Meter in Seemeilen umrechnen.
+        file:
+          name: distances_11.py
+          resourcePath: unit_test_sols/distances_11.py
+          fileType: python
+          editable: false
+      - id: 12
+        shouldFail: true
+        description: Die Funktion meters_to_seamiles soll die Distanz korrekt von Meter in Seemeilen umrechnen.
+        file:
+          name: distances_12.py
+          resourcePath: unit_test_sols/distances_12.py
+          fileType: python
+          editable: false
+      - id: 13
+        shouldFail: true
+        description: Die Funktion inches_to_meters soll die Distanz korrekt von Zoll in Meter umrechnen.
+        file:
+          name: distances_13.py
+          resourcePath: unit_test_sols/distances_13.py
+          fileType: python
+          editable: false
+      - id: 14
+        shouldFail: true
+        description: Die Funktion inches_to_meters soll die Distanz korrekt von Zoll in Meter umrechnen.
+        file:
+          name: distances_14.py
+          resourcePath: unit_test_sols/distances_14.py
+          fileType: python
+          editable: false
+      - id: 15
+        shouldFail: true
+        description: Die Funktion meters_to_inches soll die Distanz korrekt von Meter in Zoll umrechnen.
+        file:
+          name: distances_15.py
+          resourcePath: unit_test_sols/distances_15.py
+          fileType: python
+          editable: false
+      - id: 16
+        shouldFail: true
+        description: Die Funktion meters_to_inches soll die Distanz korrekt von Meter in Zoll umrechnen.
+        file:
+          name: distances_16.py
+          resourcePath: unit_test_sols/distances_16.py
+          fileType: python
+          editable: false
+    testFileName: test_distances.py
+    sampleSolFileNames: [test_distances.py]
+
+  implementationPart:
+    base: |
+      def yards_to_meters(length_yards: float) -> float:
+          pass
+
+
+      def meters_to_yards(length_meters: float) -> float:
+          pass
+
+
+      def miles_to_meters(length_miles: float) -> float:
+          pass
+
+
+      def meters_to_miles(length_meters: float) -> float:
+          pass
+
+
+      def seamiles_to_meters(length_sea_miles: float) -> float:
+          pass
+
+
+      def meters_to_seamiles(length_meters: float) -> float:
+          pass
+
+
+      def inches_to_meters(length_inches: float) -> float:
+          pass
+
+
+      def meters_to_inches(length_meters: float) -> float:
+          pass
+    files:
+      - name: test_distances.py
+        resourcePath: test_distances.py
+        fileType: python
+        editable: false
+      - name: distances.py
+        resourcePath: distances_declaration.py
+        fileType: python
+        editable: true
+    implFileName: distances.py
+    sampleSolFileNames: [distances.py]
+
+  sampleSolutions:
+    - id: 1
+      sample:
+        files:
+          - name: distances.py
+            resourcePath: distances.py
+            fileType: python
+            editable: false
+          - name: test_distances.py
+            resourcePath: test_distances.py
+            fileType: python
+            editable: false
+        testData: []
+
+  sampleTestData: []

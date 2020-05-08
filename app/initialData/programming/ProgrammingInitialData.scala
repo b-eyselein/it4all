@@ -2,7 +2,8 @@ package initialData.programming
 
 import initialData.InitialData
 import initialData.programming.coll_1.ProgrammingColl1Ex1.programmingColl1Ex1
-import initialData.programming.coll_1.ProgrammingColl1Ex2.ProgrammingColl1Ex2
+import initialData.programming.coll_1.ProgrammingColl1Ex2.programmingColl1Ex2
+import initialData.programming.coll_1.ProgrammingColl1Ex3.programmingColl1Ex3
 import model.ExerciseCollection
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming.{ProgSolution, ProgrammingExerciseContent}
@@ -14,7 +15,7 @@ object ProgrammingInitialData extends InitialData[ProgSolution, ProgrammingExerc
   override val data: Seq[(ExerciseCollection, Seq[ProgrammingExercise])] = Seq(
     (
       ExerciseCollection(collectionId = 1, toolId, title = "Zahlen", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(programmingColl1Ex1, ProgrammingColl1Ex2)
+      Seq(programmingColl1Ex1, programmingColl1Ex2, programmingColl1Ex3)
     ),
     (
       ExerciseCollection(collectionId = 2, toolId, title = "Strings", authors = Seq("bje40dc"), text = "TODO"),

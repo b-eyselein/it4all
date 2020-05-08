@@ -1,0 +1,47 @@
+<p>
+    Hinweis: Die Kreiszahl &pi; ist in Python im Paket <code>math</code> als pi definiert.
+    Es soll eine Klasse Circle erstellt werden, die einen Kreis mit einem Mittelpunkt (als 2-Tuple) und Radius
+    darstellt.
+</p>
+
+<p>
+    <code>def __init__(self, center: Tuple[float, float], radius: float)</code>:
+    Der Konstruktor bekommt den Mittelpunkt und den Radius &uuml;bergeben und speichert beides unter dem selben Namen
+    ab.
+</p>
+
+<p>
+    <code>def __repr__(self) -> str</code>:
+    F&uuml;r Debuggingzwecke soll auch die repr - Funktion &uuml;berschrieben werden.
+    Diese soll den Kreis im Format &quot;Circle(c = (&lt;x&gt;, &lt;y&gt;), r = &lt;radius&gt;)&quot; (ohne spitze
+    Klammern!) als String repr&auml;sentieren.
+    Die Zeichen in spitzen Klammern sollen jeweils mit den entsprechenden Werten ersetzt werden.
+</p>
+
+<p>
+    <code>def __eq__(self, other) -> bool</code>:
+    Diese Funktion wird beim Vergleich einer Instanz eines Kreises mit dem Operator == mit einem beliebigen anderen
+    Objekt aufgerufen. Zwei Kreise sollen dann gleich sein, wenn ihr Mittelpunkt und ihr Radius &uuml;bereinstimmen.
+</p>
+
+<p>
+    <code>def area(self) -> float</code>:
+    Diese Funktion soll die Fl&auml;che des Kreises an Hand der Formel <code>a = r<sup>2</sup> &middot; &pi;</code>
+    berechnen.
+</p>
+
+<p>
+    <code>def perimeter(self) -> float</code>:
+    Diese Funktion berechnet den Umfang des Kreises mit der Formel <code>u = 2 &middot; r &middot; &pi;</code>
+</p>
+
+<p>
+    <code>def intersects(self, other: 'Circle') -> bool</code>:
+    Diese Funktion entscheidet, ob sich diese Instanz eines Kreises mit einer anderen Instanz &uuml;berschneidet. Dies
+    ist der Fall, wenn der (euklidische) Abstand beider Kreise kleiner (oder gleich f&uuml;r diese Aufgabe) ist als die
+    Summe der Radien beider Kreise. Hinweis: Der euklidische Abstand ist (in $\mathbb{R}^2$) folgenderma&szlig;en
+    definiert:
+
+    <code>d(p, q) = &radic; ( (q<sub>1</sub> - p<sub>1</sub>)<sup>2</sup> + (q<sub>2</sub> -
+        p<sub>2</sub>)<sup>2</sup> )</code>
+</p>

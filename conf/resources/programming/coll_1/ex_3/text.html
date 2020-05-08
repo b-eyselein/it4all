@@ -1,0 +1,14 @@
+<p>
+    Implementieren Sie die Funktion <code>babylonian_root(number: float, count: int) -> float</code>, die eine N&auml;herung
+    der Wurzel der Zahl <code>number</code> in einem iterativen Verfahren nach der
+    <a href="https://de.wikipedia.org/wiki/Heron-Verfahren" target="_blank">Babylonischen Methode</a> berechnet.
+</p>
+<p>
+    Die Formel f&uuml;r die einzelnen Werte <code>x<sub>n</sub></code> ergibt (mit Startwert <code>x<sub>0</sub> = number</code>) sich
+    aus <code>x<sub>n+1</sub> = 1/2 &sdot; (x<sub>n</sub> + x<sub>0</sub> / x<sub>n</sub>)</code>. Es sollen exakt <code>count</code>
+    Iterationen berechnet werden.
+</p>
+<p>
+    Es soll eine Exception geworfen werden, falls das Argument <code>number</code> keine Zahl (int oder float) oder
+    kleiner oder gleich 0 oder das Argument <code>count</code> keine Ganzzahl oder kleiner als 0 ist.
+</p>

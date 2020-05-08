@@ -1,0 +1,53 @@
+<p>
+    Hinweise:
+</p>
+<ul>
+    <li>
+        Sie sollten die Aufgaben zu Listen bereits gelöst haben, da Listen als bekannt vorausgesetzt werden.
+    </li>
+    <li>
+        Einige Aufgaben setzen erweitertes Wissen über Strings wie zum Beispiel die Iteration über einzelne Buchstaben
+        oder
+        das Trennen von Strings an bestimmten Zeichen voraus.
+    </li>
+</ul>
+<h3>Fitnessprogramm</h3>
+<p>
+    Der Weihnachtsmann muss seine Rentiere für die lange Reise wieder in Topform bringen. Dafür muss er wissen, welche
+    Tiere
+    Kraftfutter brauchen und welche etwas weniger. Dazu sollen Sie den BMI der Rentiere berechnen.
+</p>
+<p>
+    Der BMI $b$ der Rentiere berechnet sich aus dem Gewicht $w_{kg}$ (in kg) und der Größe $h_m$ (in m):
+</p>
+<p>
+    $$ b = \frac{w_{kg}}{h_m^2} $$
+</p>
+<p>
+    <code>
+        from typing import Dict<br><br>
+
+        reindeers: Dict[str, Dict[str, int]] = {<br>
+        &nbsp;&nbsp;"Rudolph": {"age_years": 2, "height_cm": 200, "weight_kg": 120},<br>
+        &nbsp;&nbsp;"Comet": {"age_years": 1, "height_cm": 180, "weight_kg": 100},<br>
+        &nbsp;&nbsp;"Doner": {"age_years": 3, "height_cm": 210, "weight_kg": 90},<br>
+        &nbsp;&nbsp;"Blizzen": {"age_years": 4, "height_cm": 190, "weight_kg": 200},<br>
+        &nbsp;&nbsp;"Cupid": {"age_years": 2, "height_cm": 192, "weight_kg": 121},<br>
+        &nbsp;&nbsp;"Prancer": {"age_years": 4, "height_cm": 215, "weight_kg": 134},<br>
+        &nbsp;&nbsp;"Vixen": {"age_years": 6, "height_cm": 230, "weight_kg": 143},<br>
+        &nbsp;&nbsp;"Dancer": {"age_years": 1, "height_cm": 176, "weight_kg": 82},<br>
+        &nbsp;&nbsp;"Dasher": {"age_years": 5, "height_cm": 197, "weight_kg": 101}<br>
+        }
+    </code>
+</p>
+<ul>
+    <li>
+        <code>def bmi(height_cm: int, weight_km: int) -> float:</code>
+    </li>
+    <li>
+        <code>def calculate_bmi(reindeers: Dict[str, Dict[str, int]]) -> Dict[str, float]:</code>
+        <p>
+            Diese Funktion soll in einem neuen Dictionary jeweils den Namen eines Rentiers und dessen BMI zurückgeben.
+        </p>
+    </li>
+</ul>

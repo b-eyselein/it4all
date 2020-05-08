@@ -1,0 +1,115 @@
+id: 2
+collectionId: 2
+toolId: programming
+semanticVersion: {major: 1, minor: 0, patch: 0}
+title: Fließkommazahl in Exponentialschreibweise
+authors:
+  - bje40dc
+text:
+  relativePath: text.html
+tags: [S, M]
+state: APPROVED
+difficulty: 1
+
+content:
+  functionName: floating_point_exponential
+  foldername: floating_point_exponential
+  filename: floating_point_exponential
+  inputTypes: []
+  outputType: VOID
+
+  unitTestPart:
+
+    unitTestType: Normal
+
+    unitTestsDescription: >
+
+    unitTestFiles:
+      - name: floating_point_exponential.py
+        resourcePath: floating_point_exponential_declaration.py
+        fileType: python
+        editable: false
+      - name: test_floating_point_exponential.py
+        resourcePath: test_floating_point_exponential_declaration.py
+        fileType: python
+        editable: true
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Musterlösung...
+        file:
+          name: floating_point_exponential_0.py
+          resourcePath: unit_test_sols/floating_point_exponential_0.py
+          fileType: python
+          editable: false
+      - id: 1
+        shouldFail: true
+        description: Die Mantisse soll alle Dezimalstellen beinhalten.
+        file:
+          name: floating_point_exponential_1.py
+          resourcePath: unit_test_sols/floating_point_exponential_1.py
+          fileType: python
+          editable: false
+      - id: 2
+        shouldFail: true
+        description: Die Zahl 10 soll mit der Variable <code>exponent</code> potenziert und nicht multipliziert werden.
+        file:
+          name: floating_point_exponential_2.py
+          resourcePath: unit_test_sols/floating_point_exponential_2.py
+          fileType: python
+          editable: false
+      - id: 3
+        shouldFail: true
+        description: Die Zahl 10 soll mit der Variable <code>exponent</code> potenziert werden.
+        file:
+          name: floating_point_exponential_3.py
+          resourcePath: unit_test_sols/floating_point_exponential_3.py
+          fileType: python
+          editable: false
+      - id: 4
+        shouldFail: true
+        description: Die Ausgabe soll richtig formatiert sein {Mantisse}e{Exponent}.
+        file:
+          name: floating_point_exponential_4.py
+          resourcePath: unit_test_sols/floating_point_exponential_4.py
+          fileType: python
+          editable: false
+    testFileName: test_floating_point_exponential.py
+    sampleSolFileNames: [test_floating_point_exponential.py]
+
+  implementationPart:
+    base: |
+      from math import log10
+
+
+      def format_floating_point_exponential(number: float) -> str:
+          pass
+    files:
+      - name: test_floating_point_exponential.py
+        resourcePath: test_floating_point_exponential.py
+        fileType: python
+        editable: false
+      - name: floating_point_exponential.py
+        resourcePath: floating_point_exponential_declaration.py
+        fileType: python
+        editable: true
+    implFileName: floating_point_exponential.py
+    sampleSolFileNames: [floating_point_exponential.py]
+
+  sampleSolutions:
+    - id: 1
+      sample:
+        files:
+          - name: floating_point_exponential.py
+            resourcePath: floating_point_exponential.py
+            fileType: python
+            editable: false
+          - name: test_floating_point_exponential.py
+            resourcePath: test_floating_point_exponential.py
+            fileType: python
+            editable: false
+        testData: []
+
+  sampleTestData: []
+

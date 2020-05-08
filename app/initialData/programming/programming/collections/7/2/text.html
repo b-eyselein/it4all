@@ -1,0 +1,53 @@
+<p>
+    <a href="https://de.wikipedia.org/wiki/Mau-Mau_(Kartenspiel)" target="_blank">Mau-Mau</a> ist ein Kartenspiel für
+    zwei und mehr Spieler, bei dem es
+    darum geht, seine Karten möglichst schnell abzulegen.
+    Die Spieler legen dabei jeweils reihum - falls möglich - eine Karte auf den Stapel.
+    Möglich ist dies, wenn die abzulegende Karte in Kartenwert oder Kartenfarbe mit der obersten offen liegenden Karte
+    übereinstimmt.
+    Auf die Pik 10 darf also entweder eine andere Pik-Karte oder eine andere 10 gelegt werden.
+</p>
+<p>
+    Gegeben sei folgende Implementierung der Klasse <code>Card</code>, die eine Spielkarte darstellt:
+</p>
+<p>
+    <code>
+        class Card:<br>
+        &nbsp;&nbsp;def __init__(self, suit: int, rank: int):<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;self.suit: int = suit<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;self.rank: int = rank<br><br>
+
+        &nbsp;&nbsp;def __eq__(self, other: Any) -> bool:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;return isinstance(other, Card) and other.suit == self.suit and other.rank ==
+        self.rank<br><br>
+
+        &nbsp;&nbsp;def __repr__(self) -> str:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;return "Card({}, {})".format(self.suit, self.rank)
+    </code>
+</p>
+<p>
+    Die Attribute <code>suit</code> und <code>rank</code> stehen für die Farbe und das Bild der Karte und nehmen jeweils
+    Werte von 1 bis 4
+    beziehungsweise 2 (Karte 2) bis 14 (Ass) an.
+</p>
+<h3>Implementierung</h3>
+<p>
+    Es sollen folgende Methoden implementiert werden:
+</p>
+<ul>
+    <li>
+        <code>def can_by_played_on(first_card: Card, second_card: Card) -> bool:</code>
+        <p>
+            Diese Funktion bestimmt, ob die erste Karte aufgrund der Regeln von Mau-Mau auf die zweite gelegt werden
+            kann.
+        </p>
+    </li>
+    <li>
+        <code>def playable_cards(current_card: Card, hand_cards: List[Card]) -> List[Card]:</code>
+        <p>
+            Diese Funktion sucht aus einer Menge an Handkarten diejenigen heraus, die auf die gerade oben liegende
+            gelegt werden
+            können.
+        </p>
+    </li>
+</ul>

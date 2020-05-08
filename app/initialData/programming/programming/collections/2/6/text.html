@@ -1,0 +1,91 @@
+<p>
+    Ziel dieser Funktion ist es, einen Weihnachtsbaum auf der Konsole auszugeben. Dieser hat jeweils eine Stumpfh&ouml;he und
+    eine Kronenh&ouml;he, die jeweils in Zeilen angegeben sind. Die oberste Kronenzeile hat eine Breite von eins, die zweite
+    eine Breite von drei, die dritte von f&uuml;nf, usw. Sie sind jeweils mittig angeordnet.
+</p>
+<p>
+    Dazu werden mehrere Funktionen implementiert, die (teilweise) aufeinander aufbauen. Daher ist es empfehlenswert, die
+    Funktionen in der hier angegebenen Reihenfolge zu implementieren.
+</p>
+<ul>
+    <li>
+        <code>def xmas_tree_stub(tree_height: int) -> str:</code>
+        <p>
+            Diese Funktion zeichnet eine Stumpfzeile. Der Buchstabe f&uuml;r den Stumpf soll sich direkt in der Mitte
+            befinden.
+        </p>
+        <p>
+            Eine Zeile f&uuml;r einen Baum mit einer Kronenh&ouml;he von 3 sieht folgendermaßen aus:
+        </p>
+        <p>
+            <code>stump_height_3 = '# I #'</code>
+        </p>
+    </li>
+</ul>
+<h3>Einfache Version</h3>
+<code>
+    simple_tree: str = """\<br>
+    #############<br>
+    #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#<br>
+    #&nbsp;&nbsp;&nbsp;&nbsp;***&nbsp;&nbsp;&nbsp;&nbsp;#<br>
+    #&nbsp;&nbsp;&nbsp;*****&nbsp;&nbsp;&nbsp;#<br>
+    #&nbsp;&nbsp;*******&nbsp;&nbsp;#<br>
+    #&nbsp;*********&nbsp;#<br>
+    #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#<br>
+    #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#<br>
+    #############"""
+</code>
+<br><br>
+<ul>
+    <li>
+        <code>def xmas_tree_top_simple(row: int, tree_height: int) -> str:</code>
+        <p>
+            Diese Funktion zeichnet jeweils eine Kronenzeile. Das Argument <code>row</code> gibt dabei den Zeilenindex
+            an, <code>tree_height</code> die
+            Kronenh&ouml;he. Die Mitte der Krone befindet sich in der Mitte des Strings.
+        </p>
+        <p>
+            Eine Beispielr&uuml;ckgabe f&uuml;r die dritte Zeile (Index zwei) eines Baumes mit einer Kronenh&ouml;he von drei
+            sieht beispielsweise folgendermaßen aus:
+        </p>
+        <p>
+            <code>crown_row_3_height_3 = '# ***** #'</code>
+        </p>
+    </li>
+    <li>
+        <code>def xmas_tree_simple(treetop_height: int, stub_height: int) -> str:</code>
+        <p>
+            Diese Funktion soll einen kompletten Baum zeichnen.
+        </p>
+    </li>
+</ul>
+<h3>Geschm&uuml;ckte Version</h3>
+<code>
+    design_tree: str = """\<br>
+    #############<br>
+    #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#<br>
+    #&nbsp;&nbsp;&nbsp;&nbsp;*o*&nbsp;&nbsp;&nbsp;&nbsp;#<br>
+    #&nbsp;&nbsp;&nbsp;*J*J*&nbsp;&nbsp;&nbsp;#<br>
+    #&nbsp;&nbsp;*o*o*o*&nbsp;&nbsp;#<br>
+    #&nbsp;*J*J*J*J*&nbsp;#<br>
+    #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#<br>
+    #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#<br>
+    #############"""
+</code>
+<br><br>
+<ul>
+    <li>
+        <code>def xmas_tree_top_design(row: int, treetop_height: int) -> str:</code>
+        <p>
+            Diese Funktion soll eine geschm&uuml;ckte Kronenzeile zeichnen. Dabei sollen jeder zweite * jeweils mit einem J
+            bei
+            einem geraden Zeilenindex oder einem o bei einem ungeraden ersetzt werden.
+        </p>
+    </li>
+    <li>
+        <code>def xmas_tree_design(treetop_height: int, stub_height: int) -> str:</code>
+        <p>
+            Diese Funktion zeichnet jeweils einen geschm&uuml;ckten, kompletten Baum.
+        </p>
+    </li>
+</ul>

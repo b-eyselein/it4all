@@ -1,0 +1,49 @@
+<p>
+    Bei der A1Z26-"Verschl&uuml;sselung" werden die einzelnen Buchstaben des Alphabets mit dem Wert ihrer Position im
+    Alphabet
+    ersetzt. So wird zum Beispiel aus einem 'a' eine 1, aus einem 'b' eine 2 und aus einem 'z' eine 26.
+</p>
+<p>
+    Anmerkungen:
+<ul>
+    <li>
+        Bei einer symmetrischen Verschl&uuml;sselung wird der selbe Schl&uuml;ssel f&uuml;r das Ver- und Entschl&uuml;sseln
+        der Nachricht
+        benutzt.
+    </li>
+    <li>
+        Bei diesen Aufgaben beschr&auml;nken wir uns auf Kleinbuchstaben.
+    </li>
+    <li>
+        Ein Wort ist im Kontext dieser Aufgabe eine Menge von Kleinbuchstaben, also zum Beispiel "test", "von" oder
+        "azcasflh".
+    </li>
+</ul>
+</p>
+<ul>
+    <li>
+        <code>def encrypt_letter(letter: str) -> int:</code>
+        <p>
+            Diese Funktion verschl&uuml;sselt einen einzelnen Buchstaben.
+        </p>
+    </li>
+    <li>
+        <code>def decrypt_letter(letter: str) -> int:</code>
+        <p>
+            Diese Funktion entschl&uuml;sselt einen einzelnen Buchstaben.
+        </p>
+    </li>
+    <li>
+        <code>def encrypt_word(word: str) -> List[int]:</code>
+        <p>
+            Diese Funktion verschl&uuml;sselt ein Wort. Der &uuml;bersichtlichkeit wegen soll das Ergebnis als Liste zur&uuml;ckgegeben
+            werden.
+        </p>
+    </li>
+    <li>
+        <code>def decrypt_word(word: str) -> List[int]:</code>
+        <p>
+            Diese Funktion entschl&uuml;sselt ein vorher mit <code>encrypt_word</code> verschl&uuml;sseltes Wort.
+        </p>
+    </li>
+</ul>

@@ -121,7 +121,7 @@ object ProgrammingColl1Ex2 {
     )
   )
 
-  val ProgrammingColl1Ex2: ProgrammingExercise = Exercise(
+  val programmingColl1Ex2: ProgrammingExercise = Exercise(
     exerciseId = 2,
     collectionId = 1,
     toolId = "programming",

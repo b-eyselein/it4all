@@ -1,0 +1,64 @@
+id: 2
+collectionId: 4
+toolId: programming
+semanticVersion: {major: 1, minor: 0, patch: 0}
+title: Längste Zeichenkette
+authors:
+  - bje40dc
+text:
+  relativePath: text.html
+tags: [FL, C, L, S]
+state: APPROVED
+difficulty: 2
+
+content:
+  functionName: longest_string
+  foldername: longest_string
+  filename: longest_string
+
+  inputTypes:
+    - id: 1
+      inputName: my_list
+      inputType:
+        genericType: LIST
+        subType: STRING
+
+  outputType: STRING
+
+  unitTestPart:
+    unitTestType: Simplified
+    unitTestsDescription: TODO!
+    unitTestFiles: []
+    unitTestTestConfigs: []
+    testFileName: test_longest_string.py
+    sampleSolFileNames: []
+
+  implementationPart:
+    base: |
+      from typing import List
+
+      def longest_string(my_list: List[str]) -> str:
+          return ''
+    files:
+      - name: longest_string.py
+        resourcePath: longest_string_declaration.py
+        fileType: python
+        editable: true
+    implFileName: longest_string.py
+    sampleSolFileNames: [longest_string.py]
+
+  sampleSolutions:
+    - id: 1
+      sample:
+        files:
+          - name: longest_string.py
+            resourcePath: longest_string.py
+            fileType: python
+            editable: false
+        testData: []
+
+  sampleTestData:
+    - {id: 1, input: [], output: null}
+    - {id: 2, input: ["0"], output: "0"}
+    - {id: 3, input: ["1", "11", "111"], output: "111"}
+    - {id: 4, input: ["1", "121", "12321", "232", "3"], output: "12321"}

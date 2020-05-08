@@ -1,0 +1,16 @@
+Implementieren Sie die Funktion <code>def file_name_and_ending(filename: str) -> Tuple[str, str]</code>.
+Diese Funktion bekommt einen Dateinamen &uuml;bergeben und soll ihn in Dateinamen und Endung (ohne Punkt) trennen.
+Dabei sollen auch Spezialf&auml;lle beachtet werden:
+
+<ul>
+    <li>
+        Es gibt Dateien ohne Endung (z. B. <code>config</code>)
+    </li>
+    <li>
+        Dateien, die mit einem Punkt beginnen (z. B. <code>.gitignore</code>), sind versteckt und haben keine
+        Dateiendung, sondern nur einen Namen. Der Punkt geh&ouml;rt zum Namen.
+    </li>
+    <li>
+        Es gibt Dateien mit mehreren Endungen (z. B. <code>application.conf.json</code>)
+    </li>
+</ul>

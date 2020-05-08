@@ -1,0 +1,195 @@
+id: 1
+collectionId: 6
+toolId: programming
+semanticVersion: {major: 1, minor: 0, patch: 0}
+title: Temperaturen
+authors:
+  - bje40dc
+text:
+  relativePath: text.html
+tags: [M]
+state: APPROVED
+difficulty: 1
+
+content:
+  functionName: temperatures
+  foldername: temperatures
+  filename: temperatures
+  inputTypes: []
+  outputType: VOID
+
+  unitTestPart:
+
+    unitTestType: Normal
+
+    unitTestsDescription: >
+
+    unitTestFiles:
+      - name: temperatures.py
+        resourcePath: temperatures_declaration.py
+        fileType: python
+        editable: false
+      - name: test_temperatures.py
+        resourcePath: test_temperatures_declaration.py
+        fileType: python
+        editable: true
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Musterlösung...
+        file:
+          name: temperatures_0.py
+          resourcePath: unit_test_sols/temperatures_0.py
+          fileType: python
+          editable: false
+      - id: 1
+        shouldFail: true
+        description: Die Funktion celsius_to_fahrenheit soll die Temperatur korrekt von Celsius in Fahrenheit umrechnen.
+        file:
+          name: temperatures_1.py
+          resourcePath: unit_test_sols/temperatures_1.py
+          fileType: python
+          editable: false
+      - id: 2
+        shouldFail: true
+        description: Die Funktion celsius_to_fahrenheit soll die Temperatur korrekt von Celsius in Fahrenheit umrechnen.
+        file:
+          name: temperatures_2.py
+          resourcePath: unit_test_sols/temperatures_2.py
+          fileType: python
+          editable: false
+      - id: 3
+        shouldFail: true
+        description: Die Funktion celsius_to_kelvin soll die Temperatur korrekt von Celsius in Kelvin umrechnen.
+        file:
+          name: temperatures_3.py
+          resourcePath: unit_test_sols/temperatures_3.py
+          fileType: python
+          editable: false
+      - id: 4
+        shouldFail: true
+        description: Die Funktion celsius_to_kelvin soll die Temperatur korrekt von Celsius in Kelvin umrechnen.
+        file:
+          name: temperatures_4.py
+          resourcePath: unit_test_sols/temperatures_4.py
+          fileType: python
+          editable: false
+      - id: 5
+        shouldFail: true
+        description: Die Funktion fahrenheit_to_celsius soll die Temperatur korrekt von Fahrenheit in Celsius umrechnen.
+        file:
+          name: temperatures_5.py
+          resourcePath: unit_test_sols/temperatures_5.py
+          fileType: python
+          editable: false
+      - id: 6
+        shouldFail: true
+        description: Die Funktion fahrenheit_to_celsius soll die Temperatur korrekt von Fahrenheit in Celsius umrechnen.
+        file:
+          name: temperatures_6.py
+          resourcePath: unit_test_sols/temperatures_6.py
+          fileType: python
+          editable: false
+      - id: 7
+        shouldFail: true
+        description: Die Funktion fahrenheit_to_kelvin soll die Temperatur korrekt von Fahrenheit in Kelvin umrechnen.
+        file:
+          name: temperatures_7.py
+          resourcePath: unit_test_sols/temperatures_7.py
+          fileType: python
+          editable: false
+      - id: 8
+        shouldFail: true
+        description: Die Funktion fahrenheit_to_kelvin soll die Temperatur korrekt von Fahrenheit in Kelvin umrechnen.
+        file:
+          name: temperatures_8.py
+          resourcePath: unit_test_sols/temperatures_8.py
+          fileType: python
+          editable: false
+      - id: 9
+        shouldFail: true
+        description: Die Funktion kelvin_to_celsius soll die Temperatur korrekt von Kelvin in Celsius umrechnen.
+        file:
+          name: temperatures_9.py
+          resourcePath: unit_test_sols/temperatures_9.py
+          fileType: python
+          editable: false
+      - id: 10
+        shouldFail: true
+        description: Die Funktion kelvin_to_celsius soll die Temperatur korrekt von Kelvin in Celsius umrechnen.
+        file:
+          name: temperatures_10.py
+          resourcePath: unit_test_sols/temperatures_10.py
+          fileType: python
+          editable: false
+      - id: 11
+        shouldFail: true
+        description: Die Funktion kelvin_to_fahrenheit soll die Temperatur korrekt von Kelvin in Fahrenheit umrechnen.
+        file:
+          name: temperatures_11.py
+          resourcePath: unit_test_sols/temperatures_11.py
+          fileType: python
+          editable: false
+      - id: 12
+        shouldFail: true
+        description: Die Funktion kelvin_to_fahrenheit soll die Temperatur korrekt von Kelvin in Fahrenheit umrechnen.
+        file:
+          name: temperatures_12.py
+          resourcePath: unit_test_sols/temperatures_12.py
+          fileType: python
+          editable: false
+    testFileName: test_temperatures.py
+    sampleSolFileNames: [test_temperatures.py]
+
+  implementationPart:
+    base: |
+      def celsius_to_fahrenheit(degrees_celsius: float) -> float:
+          pass
+
+
+      def celsius_to_kelvin(degrees_celsius: float) -> float:
+          pass
+
+
+      def fahrenheit_to_celsius(degrees_fahrenheit: float) -> float:
+          pass
+
+
+      def fahrenheit_to_kelvin(degrees_fahrenheit: float) -> float:
+          pass
+
+
+      def kelvin_to_celsius(degrees_kelvin: float) -> float:
+          pass
+
+
+      def kelvin_to_fahrenheit(degrees_kelvin: float) -> float:
+          pass
+    files:
+      - name: test_temperatures.py
+        resourcePath: test_temperatures.py
+        fileType: python
+        editable: false
+      - name: temperatures.py
+        resourcePath: temperatures_declaration.py
+        fileType: python
+        editable: true
+    implFileName: temperatures.py
+    sampleSolFileNames: [temperatures.py]
+
+  sampleSolutions:
+    - id: 1
+      sample:
+        files:
+          - name: temperatures.py
+            resourcePath: temperatures.py
+            fileType: python
+            editable: false
+          - name: test_temperatures.py
+            resourcePath: test_temperatures.py
+            fileType: python
+            editable: false
+        testData: []
+
+  sampleTestData: []

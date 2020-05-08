@@ -1,0 +1,119 @@
+id: 4
+collectionId: 1
+toolId: programming
+semanticVersion: {major: 0, minor: 0, patch: 1}
+title: Fibonacci
+authors:
+  - bje40dc
+text:
+  relativePath: text.html
+tags: [E, R]
+state: APPROVED
+difficulty: 2
+
+content:
+  functionName: fibonacci
+  filename: fibonacci
+  foldername: fibonacci
+
+  inputTypes:
+    - {id: 1, inputName: number, inputType: INTEGER}
+  outputType: INTEGER
+
+  unitTestPart:
+    unitTestType: Normal
+
+    unitTestsDescription: ''
+
+    unitTestFiles:
+      - name: fibonacci.py
+        resourcePath: fibonacci_declaration.py
+        fileType: python
+        editable: true
+      - name: test_fibonacci.py
+        resourcePath: test_fibonacci_declaration.py
+        fileType: python
+        editable: true
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Diese Implementierun ist korrekt und sollte alle Tests bestehen.
+        file:
+          name: fibonacci_0.py
+          resourcePath: unit_test_sols/fibonacci_0.py
+          fileType: python
+          editable: false
+      - id: 1
+        shouldFail: true
+        description: Falls das Argument 'number' keine Zahl ist, soll eine Exception geworfen werden.
+        file:
+          name: fibonacci_1.py
+          resourcePath: unit_test_sols/fibonacci_1.py
+          fileType: python
+          editable: false
+      - id: 2
+        shouldFail: true
+        description: Falls das Argument 'number' kleiner als 0 ist, soll eine Exception geworfen werden.
+        file:
+          name: fibonacci_2.py
+          resourcePath: unit_test_sols/fibonacci_2.py
+          fileType: python
+          editable: false
+      - id: 3
+        shouldFail: true
+        description: Die Funktion sollte den richtigen Startwert für 0 benutzen.
+        file:
+          name: fibonacci_3.py
+          resourcePath: unit_test_sols/fibonacci_3.py
+          fileType: python
+          editable: false
+      - id: 4
+        shouldFail: true
+        description: Die Funktion sollte den richtigen Startwert für 1 benutzen.
+        file:
+          name: fibonacci_4.py
+          resourcePath: unit_test_sols/fibonacci_4.py
+          fileType: python
+          editable: false
+      - id: 5
+        shouldFail: true
+        description: Die Funktion sollte das richtige Ergebnis berechnen.
+        file:
+          name: fibonacci_5.py
+          resourcePath: unit_test_sols/fibonacci_5.py
+          fileType: python
+          editable: false
+
+    testFileName: test_fibonacci.py
+    sampleSolFileNames: [test_fibonacci.py]
+
+  implementationPart:
+    base:  ''
+    files:
+      - name: test_fibonacci.py
+        resourcePath: test_fibonacci.py
+        fileType: python
+        editable: false
+      - name: fibonacci.py
+        resourcePath: fibonacci_declaration.py
+        fileType: python
+        editable: true
+    implFileName: fibonacci.py
+    sampleSolFileNames: [fibonacci.py]
+
+  sampleSolutions:
+    - id: 1
+      sample:
+        files:
+          - name: test_fibonacci.py
+            resourcePath: test_fibonacci.py
+            fileType: python
+            editable: false
+          - name: fibonacci.py
+            resourcePath: fibonacci.py
+            fileType: python
+            editable: false
+        testData: []
+
+  sampleTestData: []

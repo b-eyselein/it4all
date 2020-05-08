@@ -1,0 +1,108 @@
+<p>
+    Hinweise:
+</p>
+<ul>
+    <li>
+        Sie sollten bereits die Aufgaben zu Funktionen, Bedingungen, String, Listen und Tuples bzw. Dicts bearbeitet
+        haben.
+    </li>
+    <li>
+        Einige der zu implementierenden Methoden beruhen aufeinander. Es empfiehlt sich daher, diese in der gegebenen
+        Reihenfolge zu implementieren (bis alle Unittests korrekt sind), da so die Wahrscheinlichkeit eines
+        Fehlschlagens eines
+        Unittests aufgrund eines Fehlers in einer aufgerufenen Methode verringert wird.
+    </li>
+    <li>
+        Die einfachen Anführungszeichen bei Type hints mit der eigenen Klasse sind erforderlich, da die Klasse in sich
+        selbst
+        nicht direkt als Type hint referenziert werden kann. Sie haben aber ansonsten keine Wirkung.
+    </li>
+    <li>
+        Die Funktionen <code>__add__</code>, <code>__sub__</code> und <code>__mul__</code> werden jeweils aufgerufen
+        (siehe Unittests),
+        falls
+        <ul>
+            <li>
+                zu einer Instanz mit <code>+</code> addiert wird (<code>__add__</code>)
+            </li>
+            <li>
+                von einer Instanz mit <code>-</code> subtrahiert wird (<code>__sub__</code>)
+            </li>
+            <li>
+                eine Instanz mit <code>*</code> multipliziert wird (<code>__mul__</code>)
+            </li>
+        </ul>
+    </li>
+</ul>
+<h3>Vektor2D</h3>
+<p>
+    In dieser Aufgabe soll eine Klasse <code>Vector2D</code> implementiert werden, die einen zweidimensionalen Vektor
+    repräsentiert.
+</p>
+<ul>
+    <li>
+        <code>def __init__(self, x: float, y: float):</code>
+        <p>
+            Der Konstruktor der Klasse bekommt die <code>x</code> und <code>y</code>-Koordinate übergeben und speichert
+            diese unter dem selben Namen ab.
+        </p>
+    </li>
+    <li>
+        <code>def __repr__(self) -> str:</code>
+        <p>
+            Die Funktion <code>__repr__</code> wird benutzt, um eine Instanz einer Klasse genauer zu beschreiben.
+            Überschreiben Sie daher
+            diese Funktion, so dass sie die Korrdinatenrepräsentation des Vektor <code>"(x, y)"</code> zurückgibt.
+        </p>
+    </li>
+    <li>
+        <code>def __eq__(self, other: Any) -> bool:</code>
+        <p>
+            Diese Funktion soll diese Instanz von <code>Vector2D</code> mit einem beliebigen anderen Objekt vergleichen.
+            Sollte das andere
+            Objekt kein Vektor sein, schlägt der Vergleich fehl. Ansonsten müssen für einen erfolgreichen Vergleich die
+            <code>x</code>- und
+            die <code>y</code>-Korrdinate der beiden Vektoren übereinstimmen.
+        </p>
+        <p>
+            Mit der Funktion <code>isinstance(o, t)</code> können Sie überprüfen, ob ein Objekt <code>o</code> eine
+            Instanz einer Klasse <code>t</code> ist.
+        </p>
+    </li>
+    <li>
+        <code>def abs(self) -> float:</code>
+        <p>
+            Diese Funktion berechnet die Länge dieser Instanz.
+        </p>
+    </li>
+    <li>
+        <code>def __add__(self, other: 'Vector2D') -> 'Vector2D':</code>
+        <p>
+            Diese Funktion addiert jeweils die beiden Korrdinaten zweier Vektoren und gibt das Resultat als neuen Vektor
+            zurück.
+        </p>
+    </li>
+    <li>
+        <code>def __sub__(self, other: 'Vecto2D') -> 'Vector2D':</code>
+        <p>
+            Diese Funktion subtrahiert den Vektor <code>other</code> von dieser Instanz und gibt das Ergebnis als neuen
+            Vektor zurück.
+        </p>
+    </li>
+    <li>
+        <code>def __mul__(self, scalar: float) -> 'Vector2D':</code>
+        <p>
+            Diese Funktion multipliziert (skaliert) diesen Vektor mit dem übergebenen Wert <code>scalar</code> und gibt
+            das Ergebnis als
+            neuen Vektor zurück.
+        </p>
+    </li>
+    <li>
+        <code>def dot(self, other: 'Vector2D') -> 'float':</code>
+        <p>
+            Diese Funktion berechnet das Skalarprodukt dieser Instanz und des Vektors <code>other</code>, indem sie die
+            Einträge elementweise
+            multipliziert und addiert.
+        </p>
+    </li>
+</ul>

@@ -1,0 +1,23 @@
+{
+  "id": 1,
+  "title": "Grundlagen von Python",
+  "description": "",
+  "content": [
+    {
+      "id": 1,
+      "_type": "Text",
+      "contentFile": "1.html"
+    },
+    {
+      "id": 2,
+      "_type": "Text",
+      "contentFile": "2.html"
+    },
+    {
+      "id": 5,
+      "_type": "Questions",
+      "questionsFile": "5_questions.json"
+    }
+  ],
+  "dependsOn": []
+}

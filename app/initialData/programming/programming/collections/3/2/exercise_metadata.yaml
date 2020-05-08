@@ -1,0 +1,127 @@
+id: 2
+collectionId: 3
+toolId: programming
+semanticVersion: {major: 1, minor: 0, patch: 0}
+title: Rabatt
+authors:
+  - bje40dc
+text:
+  relativePath: text.html
+tags: [C, M]
+state: APPROVED
+difficulty: 2
+
+content:
+  functionName: discount
+  foldername: discount
+  filename: discount
+  inputTypes: []
+  outputType: VOID
+
+  unitTestPart:
+
+    unitTestType: Normal
+
+    unitTestsDescription: >
+
+    unitTestFiles:
+      - name: discount.py
+        resourcePath: discount_declaration.py
+        fileType: python
+        editable: false
+      - name: test_discount.py
+        resourcePath: test_discount_declaration.py
+        fileType: python
+        editable: true
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Musterlösung...
+        file:
+          name: discount_0.py
+          resourcePath: unit_test_sols/discount_0.py
+          fileType: python
+          editable: false
+      - id: 1
+        shouldFail: true
+        description: Falls der Kunde einen Hund besitzt, soll der korrekte Rabatt gewährt werden.
+        file:
+          name: discount_1.py
+          resourcePath: unit_test_sols/discount_1.py
+          fileType: python
+          editable: false
+      - id: 2
+        shouldFail: true
+        description: Falls der Kunde eine Katze besitzt, soll der korrekte Rabatt gewährt werden.
+        file:
+          name: discount_2.py
+          resourcePath: unit_test_sols/discount_2.py
+          fileType: python
+          editable: false
+      - id: 3
+        shouldFail: true
+        description: Falls der Kunde einen Hund und eine Katze besitzt, soll der korrekte Rabatt gewährt werden.
+        file:
+          name: discount_3.py
+          resourcePath: unit_test_sols/discount_3.py
+          fileType: python
+          editable: false
+      - id: 4
+        shouldFail: true
+        description: Falls der Kunde keinen Hund und keine Katze besitzt, soll der korrekte Rabatt gewährt werden.
+        file:
+          name: discount_4.py
+          resourcePath: unit_test_sols/discount_4.py
+          fileType: python
+          editable: false
+      - id: 5
+        shouldFail: true
+        description: Falls der Kunde einen Hamster besitzt, soll der korrekte Rabatt gewährt werden.
+        file:
+          name: discount_5.py
+          resourcePath: unit_test_sols/discount_5.py
+          fileType: python
+          editable: false
+      - id: 6
+        shouldFail: true
+        description: Falls der Kunde keinen Hamster besitzt, soll der korrekte Rabatt gewährt werden.
+        file:
+          name: discount_6.py
+          resourcePath: unit_test_sols/discount_6.py
+          fileType: python
+          editable: false
+    testFileName: test_discount.py
+    sampleSolFileNames: [test_discount.py]
+
+  implementationPart:
+    base: |
+      def calculate_discount(has_dog: bool, has_cat: bool, has_hamster: bool) -> int:
+          pass
+    files:
+      - name: test_discount.py
+        resourcePath: test_discount.py
+        fileType: python
+        editable: false
+      - name: discount.py
+        resourcePath: discount_declaration.py
+        fileType: python
+        editable: true
+    implFileName: discount.py
+    sampleSolFileNames: [discount.py]
+
+  sampleSolutions:
+    - id: 1
+      sample:
+        files:
+          - name: discount.py
+            resourcePath: discount.py
+            fileType: python
+            editable: false
+          - name: test_discount.py
+            resourcePath: test_discount.py
+            fileType: python
+            editable: false
+        testData: []
+
+  sampleTestData: []

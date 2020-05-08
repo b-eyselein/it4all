@@ -1,0 +1,258 @@
+id: 3
+collectionId: 4
+toolId: programming
+semanticVersion: {major: 1, minor: 0, patch: 0}
+title: Allgemeine Aufgaben
+authors:
+  - bje40dc
+text:
+  relativePath: text.html
+tags: [L, FL, M, C]
+state: APPROVED
+difficulty: 3
+
+content:
+  functionName: general
+  foldername: general
+  filename: general
+  inputTypes: []
+  outputType: VOID
+
+  unitTestPart:
+
+    unitTestType: Normal
+
+    unitTestsDescription: >
+
+    unitTestFiles:
+      - name: general.py
+        resourcePath: general_declaration.py
+        fileType: python
+        editable: false
+      - name: test_general.py
+        resourcePath: test_general_declaration.py
+        fileType: python
+        editable: true
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Musterlösung...
+        file:
+          name: general_0.py
+          resourcePath: unit_test_sols/general_0.py
+          fileType: python
+          editable: false
+      - id: 1
+        shouldFail: true
+        description: Die Funktion filter_greater soll nur die Zahlen in einer Liste zurückgeben, die größer als die übergebene Zahl sind.
+        file:
+          name: general_1.py
+          resourcePath: unit_test_sols/general_1.py
+          fileType: python
+          editable: false
+      - id: 2
+        shouldFail: true
+        description: Die Funktion filter_greater soll eine leere Liste zurückgeben, falls keine Zahl größer als die übergebene Zahl ist.
+        file:
+          name: general_2.py
+          resourcePath: unit_test_sols/general_2.py
+          fileType: python
+          editable: false
+      - id: 3
+        shouldFail: true
+        description: Die Funktion count_lower soll die Zahlen zählen, welche kleiner als die übergebene Zahl sind.
+        file:
+          name: general_3.py
+          resourcePath: unit_test_sols/general_3.py
+          fileType: python
+          editable: false
+      - id: 4
+        shouldFail: true
+        description: Die Funktion count_lower soll 0 zurückgeben, falls keine Zahl kleiner als die übergebene Zahl ist.
+        file:
+          name: general_4.py
+          resourcePath: unit_test_sols/general_4.py
+          fileType: python
+          editable: false
+      - id: 5
+        shouldFail: true
+        description: Die Funktion bank_card_security_value soll die Zahlen mit den Inidzes multiplizieren.
+        file:
+          name: general_5.py
+          resourcePath: unit_test_sols/general_5.py
+          fileType: python
+          editable: false
+      - id: 6
+        shouldFail: true
+        description: Die Funktion bank_card_security_value soll die Zahlen mit den korrekten Indizes mutltiplizieren.
+        file:
+          name: general_6.py
+          resourcePath: unit_test_sols/general_6.py
+          fileType: python
+          editable: false
+      - id: 7
+        shouldFail: true
+        description: Die Funktion bank_card_security_value soll 0 zurückgeben, falls die übergebene Liste leer ist.
+        file:
+          name: general_7.py
+          resourcePath: unit_test_sols/general_7.py
+          fileType: python
+          editable: false
+      - id: 8
+        shouldFail: true
+        description: Die Funktion vector_length soll alle Einträge zuerst quadrieren.
+        file:
+          name: general_8.py
+          resourcePath: unit_test_sols/general_8.py
+          fileType: python
+          editable: false
+      - id: 9
+        shouldFail: true
+        description: Die Funktion vector_length soll alle quadrierten Einträge addieren.
+        file:
+          name: general_9.py
+          resourcePath: unit_test_sols/general_9.py
+          fileType: python
+          editable: false
+      - id: 10
+        shouldFail: true
+        description: Die Funktion vector_length soll die Wurzel der quadrierten und addierten Einträge zurückgeben.
+        file:
+          name: general_10.py
+          resourcePath: unit_test_sols/general_10.py
+          fileType: python
+          editable: false
+      - id: 11
+        shouldFail: true
+        description: Die Funktion vector_length soll 0 zurückgeben, falls die übergebene Liste leer ist.
+        file:
+          name: general_11.py
+          resourcePath: unit_test_sols/general_11.py
+          fileType: python
+          editable: false
+      - id: 12
+        shouldFail: true
+        description: Die Funktion vector_scalar soll den übergebenen Skalarwert zu jedem Element im Originalvektor addieren.
+        file:
+          name: general_12.py
+          resourcePath: unit_test_sols/general_12.py
+          fileType: python
+          editable: false
+      - id: 13
+        shouldFail: true
+        description: Die Funktion vector_scalar soll den korrekten übergebenen Skalarwert zu jedem Element im Originalvektor addieren.
+        file:
+          name: general_13.py
+          resourcePath: unit_test_sols/general_13.py
+          fileType: python
+          editable: false
+      - id: 14
+        shouldFail: true
+        description: Die Funktion vector_scalar soll eine leere Liste zurückgeben, falls die übergebene Liste leer ist.
+        file:
+          name: general_14.py
+          resourcePath: unit_test_sols/general_14.py
+          fileType: python
+          editable: false
+      - id: 15
+        shouldFail: true
+        description: Die Funktion vector_add_vector soll eine leere Liste zurückgeben, falls die Längen der beiden übergebenen Listen nicht übereinstimmen.
+        file:
+          name: general_15.py
+          resourcePath: unit_test_sols/general_15.py
+          fileType: python
+          editable: false
+      - id: 16
+        shouldFail: true
+        description: Die Funktion vector_add_vector soll die beiden Vektoren korrekt addieren.
+        file:
+          name: general_16.py
+          resourcePath: unit_test_sols/general_16.py
+          fileType: python
+          editable: false
+      - id: 17
+        shouldFail: true
+        description: Die Funktion vector_add_vector soll eine leere Liste zurückgeben, falls beide übergebenen Listen leer sind.
+        file:
+          name: general_17.py
+          resourcePath: unit_test_sols/general_17.py
+          fileType: python
+          editable: false
+      - id: 18
+        shouldFail: true
+        description: Die Funktion flatten_lists soll alle Listen korrekt in einer neuen Liste vereinen.
+        file:
+          name: general_18.py
+          resourcePath: unit_test_sols/general_18.py
+          fileType: python
+          editable: false
+      - id: 19
+        shouldFail: true
+        description: Die Funktion flatten_lists soll eine leere Liste zurückgeben, falls die übergebene Liste leer ist.
+        file:
+          name: general_19.py
+          resourcePath: unit_test_sols/general_19.py
+          fileType: python
+          editable: false
+    testFileName: test_general.py
+    sampleSolFileNames: [test_general.py]
+
+  implementationPart:
+    base: |
+      from typing import List
+
+
+      def filter_greater(vector: List[int], x: int) -> List[int]:
+          pass
+
+
+      def count_lower(vector: List[int], x: int) -> int:
+          pass
+
+
+      def bank_card_security_value(digits: List[int]) -> int:
+          pass
+
+
+      def vector_length(vector: List[int]) -> float:
+          pass
+
+
+      def vector_add_scalar(vector: List[int], scalar: int) -> List[int]:
+          pass
+
+
+      def vector_add_vector(vector1: List[int], vector2: List[int]) -> List[int]:
+          pass
+
+
+      def flatten_lists(list_of_lists: List[List[int]]) -> List[int]:
+          pass
+    files:
+      - name: test_general.py
+        resourcePath: test_general.py
+        fileType: python
+        editable: false
+      - name: general.py
+        resourcePath: general_declaration.py
+        fileType: python
+        editable: true
+    implFileName: general.py
+    sampleSolFileNames: [general.py]
+
+  sampleSolutions:
+    - id: 1
+      sample:
+        files:
+          - name: general.py
+            resourcePath: general.py
+            fileType: python
+            editable: false
+          - name: test_general.py
+            resourcePath: test_general.py
+            fileType: python
+            editable: false
+        testData: []
+
+  sampleTestData: []

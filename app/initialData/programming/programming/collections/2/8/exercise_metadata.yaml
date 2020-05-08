@@ -1,0 +1,112 @@
+id: 8
+collectionId: 2
+toolId: programming
+semanticVersion: {major: 1, minor: 0, patch: 0}
+title: Caesar-Verschlüsselung
+authors:
+  - bje40dc
+text:
+  relativePath: text.html
+tags: [M, S, CL]
+state: APPROVED
+difficulty: 2
+
+content:
+  functionName: ceasar
+  foldername: ceasar
+  filename: ceasar
+
+  inputTypes: []
+  outputType: VOID
+
+  unitTestPart:
+
+    unitTestType: Normal
+
+    unitTestsDescription: >
+      TODO
+
+    unitTestFiles:
+      - name: ceasar.py
+        resourcePath: ceasar_declaration.py
+        fileType: python
+        editable: false
+      - name: test_ceasar.py
+        resourcePath: test_ceasar_declaration.py
+        fileType: python
+        editable: true
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Musterlösung...
+        file:
+          name: caesar_0.py
+          resourcePath: unit_test_sols/ceasar_0.py
+          fileType: python
+          editable: false
+    testFileName: test_ceasar.py
+    sampleSolFileNames: [test_ceasar.py]
+
+  implementationPart:
+    base: |
+      from typing import Optional
+
+
+      class CeasarCipher:
+          point_a = ord("a")
+
+          def __init__(self, rounds: int):
+              self.rounds: int = rounds
+
+          def crypt_letter(self, lower_letter: str) -> str:
+              pass
+
+          def decrypt_letter(self, lower_letter: str) -> str:
+              pass
+
+          def crypt_word(self, lower_word: str) -> str:
+              pass
+
+          def decrypt_word(self, lower_word: str) -> str:
+              pass
+
+          def crypt_text(self, text_lower: str) -> str:
+              pass
+
+          def decrypt_text(self, text_lower: str) -> str:
+              pass
+
+
+      word_list = ["ich", "du", "er", "sie", "es", "wir", "ihr", "sie", "der", "die", "das"]
+
+
+      def crack_ceasar(encrypted_text: str) -> Optional[str]:
+          pass
+    files:
+      - name: test_ceasar.py
+        resourcePath: test_ceasar.py
+        fileType: python
+        editable: false
+      - name: ceasar.py
+        resourcePath: ceasar_declaration.py
+        fileType: python
+        editable: true
+    implFileName: ceasar.py
+    sampleSolFileNames: [ceasar.py]
+
+  sampleSolutions:
+    - id: 1
+      sample:
+        files:
+          - name: ceasar.py
+            resourcePath: ceasar.py
+            fileType: python
+            editable: false
+          - name: test_ceasar.py
+            resourcePath: test_ceasar.py
+            fileType: python
+            editable: false
+        testData: []
+
+  sampleTestData: []

@@ -1,0 +1,110 @@
+<p>
+    Die <a href="https://de.wikipedia.org/wiki/Caesar-Verschl%C3%BCsselung" target="_blank">Ceasar-Chiffre</a> ist ein
+    einfaches
+    Verschl&uuml;sselungsverfahren, das, wie der Name schon sagt, von Ceasar erfunden bzw. zumindest benutzt wurde.
+    Dabei
+    wird
+    jeder Buchstabe um einen vorher festgelegten Wert (bei Ceasar selbt z. B. 3) "nach hinten geschoben" (rotiert).
+    Dabei wird zum Beispiel mit dem Parameter 3 aus einem 'a' ein 'd', aus einem 'b' ein 'e' und so weiter. Sollte man
+    &uuml;ber die Grenzen des Alphabets hinausgehen, wird wieder von vorne angefangen. So wird
+    beim Parameter 3 aus einem 'x' ein 'a', aus einem 'y' ein 'b' und aus einem 'z' ein 'c'.
+</p>
+<p>
+    Anmerkungen:
+<ul>
+    <li>
+        Bei einer symmetrischen Verschl&uuml;sselung wird der selbe Schl&uuml;ssel f&uuml;r das Ver- und Entschl&uuml;sseln
+        der Nachricht
+        benutzt.
+    </li>
+    <li>
+        Bei diesen Aufgaben beschr&auml;nken wir uns auf Kleinbuchstaben.
+    </li>
+    <li>
+        Ein Wort ist im Kontext dieser Aufgabe eine Menge von Kleinbuchstaben, also zum Beispiel "test", "von" oder
+        "azcasflh".
+    </li>
+</ul>
+</p>
+<h3>Klasse <code>CeasarCipher</code></h3>
+<p>
+    Implementieren Sie die Klasse <code>CeararCiphre</code>. Diese bekommt im Konstruktor eine Ganzzahl &uuml;bergeben,
+    die
+    die Anzahl an
+    Rotationen darstellt.
+</p>
+<p>
+    Implementieren Sie au&szlig;erdem folgende Methoden:
+</p>
+<ul>
+    <li>
+        <code>def crypt_letter(self, lower_letter: str) -> str:</code>
+        <p>
+            Diese Methode ist daf&uuml;r zust&auml;ndig, einen einzelnen Buchstaben zu verschl&uuml;sseln, also ihn im
+            Alphabet um die
+            angegebene Anzahl nach hinten zu rotieren.
+        </p>
+    </li>
+    <li>
+        <code>def decrypt_letter(self, lower_letter: str) -> str:</code>
+        <p>
+            Diese Methode ist das Komplement zu <code>crypt_letter</code> und soll die Verschl&uuml;sselung eines
+            einzelnen
+            Buchstaben
+            r&uuml;ckg&auml;ngig machen.
+        </p>
+    </li>
+    <li>
+        <code>def crypt_word(self, lower_word: str) -> str:</code>
+        <p>
+            Diese Methode soll ein ganzes Wort verschl&uuml;sseln, also jeden Buchstaben einzeln.
+        </p>
+    </li>
+    <li>
+        <code>def decrypt_word(self, lower_word: str) -> str:</code>
+        <p>
+            Diese Methode soll ein einzelnes Wort entschl&uuml;sseln.
+        </p>
+    </li>
+    <li>
+        <code>def crypt_text(self, lower_text: str) -> str:</code>
+        <p>
+            Diese Methode soll einen ganzen Text verschl&uuml;sseln. Dazu sollen zuerst die S&auml;tze anhand der Punkte
+            getrennt
+            werden,
+            danach die W&ouml;rter anhand der Leerzeichen, die W&ouml;rter verschl&uuml;sselt und alles wieder
+            zusammengesetzt werden.
+        </p>
+    </li>
+    <li>
+        <code>def decrypt_text(self, lower_text: str) -> str:</code>
+        <p>
+            Diese Methode soll einen kompletten Text entschl&uuml;sseln.
+        </p>
+    </li>
+</ul>
+<h3>Methode <code>crack_ceasar</code></h3>
+<p>
+    Um zu testen, wie einfach die Ceasar-Verschl&uuml;sselung zu knacken ist, wollen wir einen
+    einfachen <a href="https://de.wikipedia.org/wiki/W%C3%B6rterbuchangriff" target="_blank">W&ouml;rterbuchangriff</a>
+    programmieren.
+</p>
+<ul>
+    <li>
+        <code>def crack_ceasar(encrypted_text: str) -> Optional[str]</code>
+        <p>
+            Die Funktion bekommt einen zu knackenden, verschl&uuml;sselten String &uuml;bergeben. Sie soll ihn mit den m&ouml;glichen
+            Rotationsanzahlen (1 bis 25) entschl&uuml;sseln und &uuml;berpr&uuml;fen, ob der Text mit einem der unten
+            angegeben W&ouml;rter
+            startet.
+            Falls ja, ist das Knacken (sehr wahrscheinlich) erfolgreich und der entschl&uuml;sselte Satz soll zur&uuml;ckgegeben
+            werden.
+            Wird keine passende Konfiguration gefunden, ist das W&ouml;rterbuch nicht gro&szlig; genug und es soll
+            <code>None</code> zur&uuml;ckgegeben werden.
+        </p>
+        <p>
+            Verwenden Sie folgendes <b>W&ouml;rterbuch</b>: <code>ich, du, er, sie, es, wir, ihr, sie, der, die,
+            das</code>
+        </p>
+    </li>
+</ul>

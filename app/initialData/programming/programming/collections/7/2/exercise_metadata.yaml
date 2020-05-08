@@ -1,0 +1,162 @@
+id: 2
+collectionId: 7
+toolId: programming
+semanticVersion: {major: 1, minor: 0, patch: 0}
+title: Mau-Mau
+authors:
+  - bje40dc
+text:
+  relativePath: text.html
+tags: [CL, C, L, S]
+state: APPROVED
+difficulty: 1
+
+content:
+  functionName: maumau
+  foldername: maumau
+  filename: maumau
+  inputTypes: []
+  outputType: VOID
+
+  unitTestPart:
+
+    unitTestType: Normal
+
+    unitTestsDescription: >
+
+    unitTestFiles:
+      - name: maumau.py
+        resourcePath: maumau_declaration.py
+        fileType: python
+        editable: false
+      - name: test_maumau.py
+        resourcePath: test_maumau_declaration.py
+        fileType: python
+        editable: true
+
+    unitTestTestConfigs:
+      - id: 0
+        shouldFail: false
+        description: Musterlösung...
+        file:
+          name: maumau_0.py
+          resourcePath: unit_test_sols/maumau_0.py
+          fileType: python
+          editable: false
+      - id: 1
+        shouldFail: true
+        description: Die Funktion can_be_played_on soll ebenfalls true zurückgeben, falls die Bilder der beiden Karten übereinstimmen.
+        file:
+          name: maumau_1.py
+          resourcePath: unit_test_sols/maumau_1.py
+          fileType: python
+          editable: false
+      - id: 2
+        shouldFail: true
+        description: Die Funktion can_be_played_on soll ebenfalls true zurückgeben, falls die Farben der beiden Karten übereinstimmen.
+        file:
+          name: maumau_2.py
+          resourcePath: unit_test_sols/maumau_2.py
+          fileType: python
+          editable: false
+      - id: 3
+        shouldFail: true
+        description: Die Funktion can_be_played_on soll nur true zurückgeben, falls die Farben der beiden Karten übereinstimmen.
+        file:
+          name: maumau_3.py
+          resourcePath: unit_test_sols/maumau_3.py
+          fileType: python
+          editable: false
+      - id: 4
+        shouldFail: true
+        description: Die Funktion can_be_played_on soll nur true zurückgeben, falls die Bilder der beiden Karten übereinstimmen.
+        file:
+          name: maumau_4.py
+          resourcePath: unit_test_sols/maumau_4.py
+          fileType: python
+          editable: false
+      - id: 5
+        shouldFail: true
+        description: Die Funktion can_be_palyed_on soll true zurückgeben, falls entweder die Farben oder die Bilder der beiden Karten übereinstimmen.
+        file:
+          name: maumau_5.py
+          resourcePath: unit_test_sols/maumau_5.py
+          fileType: python
+          editable: false
+      - id: 6
+        shouldFail: true
+        description: Die Funktion playable_cards soll die Handkarten zurückgeben, die spielbar sind.
+        file:
+          name: maumau_6.py
+          resourcePath: unit_test_sols/maumau_6.py
+          fileType: python
+          editable: false
+      - id: 7
+        shouldFail: true
+        description: Die Funktion playable_cards soll alle Handkarten zurückgeben, die spielbar sind.
+        file:
+          name: maumau_7.py
+          resourcePath: unit_test_sols/maumau_7.py
+          fileType: python
+          editable: false
+      - id: 8
+        shouldFail: true
+        description: Die Funktion playable_cards soll eine leere Liste zurückgeben, falls keine Handkarten vorhanden sind.
+        file:
+          name: maumau_8.py
+          resourcePath: unit_test_sols/maumau_8.py
+          fileType: python
+          editable: false
+    testFileName: test_maumau.py
+    sampleSolFileNames: [test_maumau.py]
+
+  implementationPart:
+    base: |
+      from typing import List, Any
+
+
+      class Card:
+          def __init__(self, suit: int, rank: int):
+              self.suit: int = suit
+              self.rank: int = rank
+
+          def __eq__(self, other: Any) -> bool:
+              return isinstance(other, Card) and other.suit == self.suit and other.rank == self.rank  # pragma: no cover
+
+          def __repr__(self) -> str:
+              return "Card({}, {})".format(self.suit, self.rank)  # pragma: no cover
+
+
+      def can_be_played_on(first_card: Card, second_card: Card) -> bool:
+          pass
+
+
+      def playable_cards(card: Card, hand: List[Card]) -> List[Card]:
+          pass
+    files:
+      - name: test_maumau.py
+        resourcePath: test_maumau.py
+        fileType: python
+        editable: false
+      - name: maumau.py
+        resourcePath: maumau_declaration.py
+        fileType: python
+        editable: true
+    implFileName: maumau.py
+    sampleSolFileNames: [maumau.py]
+
+  sampleSolutions:
+    - id: 1
+      sample:
+        files:
+          - name: maumau.py
+            resourcePath: maumau.py
+            fileType: python
+            editable: false
+          - name: test_maumau.py
+            resourcePath: test_maumau.py
+            fileType: python
+            editable: false
+        testData: []
+
+  sampleTestData: []

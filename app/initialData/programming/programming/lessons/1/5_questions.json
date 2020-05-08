@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "question": "<p>Was gilt folgende Anweisung auf der Konsole aus?</p>\n<pre>println(\"5\")</pre>",
+    "answers": [
+      {"answer": "4", "isCorrect": false},
+      {"answer": "5", "isCorrect": true},
+      {"answer": "6", "isCorrect": false}
+    ]
+  }
+]
