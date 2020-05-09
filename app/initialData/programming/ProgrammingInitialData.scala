@@ -16,6 +16,10 @@ import initialData.programming.coll_2.ProgrammingColl2Ex8.programmingColl2Ex8
 import initialData.programming.coll_3.ProgrammingColl3Ex1.programmingColl3Ex1
 import initialData.programming.coll_3.ProgrammingColl3Ex2.programmingColl3Ex2
 import initialData.programming.coll_3.ProgrammingColl3Ex3.programmingColl3Ex3
+import initialData.programming.coll_4.ProgrammingColl4Ex1.programmingColl4Ex1
+import initialData.programming.coll_4.ProgrammingColl4Ex2.programmingColl4Ex2
+import initialData.programming.coll_4.ProgrammingColl4Ex3.programmingColl4Ex3
+import initialData.programming.coll_4.ProgrammingColl4Ex4.programmingColl4Ex4
 import model.ExerciseCollection
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming.{ProgSolution, ProgrammingExerciseContent}
@@ -48,7 +52,7 @@ object ProgrammingInitialData extends InitialData[ProgSolution, ProgrammingExerc
     ),
     (
       ExerciseCollection(collectionId = 4, toolId, title = "Listen", authors = Seq("bje40dc"), text = "TODO"),
-      Seq.empty
+      Seq(programmingColl4Ex1, programmingColl4Ex2, programmingColl4Ex3, programmingColl4Ex4)
     ),
     (
       ExerciseCollection(collectionId = 5, toolId, title = "Tupel und Dicts", authors = Seq("bje40dc"), text = "TODO"),
