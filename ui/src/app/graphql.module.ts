@@ -4,7 +4,7 @@ import {HttpLink, HttpLinkModule} from 'apollo-angular-link-http';
 import {InMemoryCache, IntrospectionFragmentMatcher} from 'apollo-cache-inmemory';
 import possibleTypes from '../introspection-result';
 
-const uri = 'http://localhost:9000/api/graphql'; // <-- add the URL of the GraphQL server here
+const uri = '/api/graphql'; // <-- add the URL of the GraphQL server here
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({
   introspectionQueryResultData: possibleTypes
