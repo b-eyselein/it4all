@@ -22,6 +22,10 @@ import initialData.programming.coll_4.ProgrammingColl4Ex3.programmingColl4Ex3
 import initialData.programming.coll_4.ProgrammingColl4Ex4.programmingColl4Ex4
 import initialData.programming.coll_5.ProgrammingColl5Ex1.programmingColl5Ex1
 import initialData.programming.coll_5.ProgrammingColl5Ex2.programmingColl5Ex2
+import initialData.programming.coll_5.ProgrammingColl5Ex3.programmingColl5Ex3
+import initialData.programming.coll_5.ProgrammingColl5Ex4.programmingColl5Ex4
+import initialData.programming.coll_6.ProgrammingColl6Ex1.programmingColl6Ex1
+import initialData.programming.coll_6.ProgrammingColl6Ex2.programmingColl6Ex2
 import model.ExerciseCollection
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming.{ProgSolution, ProgrammingExerciseContent}
@@ -58,11 +62,11 @@ object ProgrammingInitialData extends InitialData[ProgSolution, ProgrammingExerc
     ),
     (
       ExerciseCollection(collectionId = 5, toolId, title = "Tupel und Dicts", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(programmingColl5Ex1, programmingColl5Ex2)
+      Seq(programmingColl5Ex1, programmingColl5Ex2, programmingColl5Ex3, programmingColl5Ex4)
     ),
     (
       ExerciseCollection(collectionId = 6, toolId, title = "Funktionen", authors = Seq("bje40dc"), text = "TODO"),
-      Seq.empty
+      Seq(programmingColl6Ex1, programmingColl6Ex2)
     ),
     (
       ExerciseCollection(collectionId = 7, toolId, title = "Klassen", authors = Seq("bje40dc"), text = "TODO"),
