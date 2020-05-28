@@ -334,17 +334,6 @@ export type AdminEditCollectionQuery = (
   )> }
 );
 
-export type AdminUpsertCollectionMutationVariables = {
-  toolId: Types.Scalars['String'];
-  content: Types.Scalars['String'];
-};
-
-
-export type AdminUpsertCollectionMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Types.Mutation, 'insertCollection'>
-);
-
 export type AdminEditExerciseQueryVariables = {
   toolId: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
@@ -361,17 +350,6 @@ export type AdminEditExerciseQuery = (
       & { exercise?: Types.Maybe<{ __typename: 'Exercise' }> }
     )> }
   )> }
-);
-
-export type AdminUpsertExerciseMutationVariables = {
-  toolId: Types.Scalars['String'];
-  content: Types.Scalars['String'];
-};
-
-
-export type AdminUpsertExerciseMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Types.Mutation, 'insertExercise'>
 );
 
 export type LevelFragment = (
@@ -1293,19 +1271,6 @@ export const AdminEditCollectionDocument = gql`
     document = AdminEditCollectionDocument;
     
   }
-export const AdminUpsertCollectionDocument = gql`
-    mutation AdminUpsertCollection($toolId: String!, $content: String!) {
-  insertCollection(toolId: $toolId, content: $content)
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class AdminUpsertCollectionGQL extends Apollo.Mutation<AdminUpsertCollectionMutation, AdminUpsertCollectionMutationVariables> {
-    document = AdminUpsertCollectionDocument;
-    
-  }
 export const AdminEditExerciseDocument = gql`
     query AdminEditExercise($toolId: String!, $collId: Int!, $exId: Int!) {
   tool(toolId: $toolId) {
@@ -1323,18 +1288,5 @@ export const AdminEditExerciseDocument = gql`
   })
   export class AdminEditExerciseGQL extends Apollo.Query<AdminEditExerciseQuery, AdminEditExerciseQueryVariables> {
     document = AdminEditExerciseDocument;
-    
-  }
-export const AdminUpsertExerciseDocument = gql`
-    mutation AdminUpsertExercise($toolId: String!, $content: String!) {
-  insertExercise(toolId: $toolId, content: $content)
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class AdminUpsertExerciseGQL extends Apollo.Mutation<AdminUpsertExerciseMutation, AdminUpsertExerciseMutationVariables> {
-    document = AdminUpsertExerciseDocument;
     
   }

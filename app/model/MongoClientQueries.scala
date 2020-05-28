@@ -7,8 +7,8 @@ import model.tools._
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.{Cursor, ReadConcern}
-import reactivemongo.play.json._
 import reactivemongo.play.json.collection.JSONCollection
+import reactivemongo.play.json.compat._
 
 import scala.concurrent.{ExecutionContext, Future}
 

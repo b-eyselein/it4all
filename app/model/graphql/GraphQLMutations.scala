@@ -3,14 +3,12 @@ package model.graphql
 import com.github.t3hnar.bcrypt._
 import controllers.JwtHelpers
 import model._
-import model.json.JsonProtocols
 import model.tools.ToolList
 import play.api.libs.json._
 import sangria.marshalling.playJson._
 import sangria.schema._
 
 import scala.concurrent.Future
-import scala.util.Try
 
 trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries with JwtHelpers {
 
@@ -59,7 +57,6 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
 
                 case _ => ???
               }
-
         }
       }
     )
@@ -110,7 +107,8 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
         OptionType(loggedInUserWithTokenType),
         arguments = userCredentialsArgument :: Nil,
         resolve = context => authenticate(context.arg(userCredentialsArgument))
-      ),
+      )
+      /*,
       Field(
         "insertCollection",
         BooleanType,
@@ -141,7 +139,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
               }
           }
         }
-      )
+      )*/
     ) ++ correctionFields
   )
 

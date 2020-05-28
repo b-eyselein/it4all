@@ -55,14 +55,14 @@ libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-play" % "4.3.0", // Apache 2.0
 
   // Mongo database
-  "org.reactivemongo" %% "play2-reactivemongo" % "0.20.10-play28", // Apache 2.0
-//  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "0.20.10-play28",
+  "org.reactivemongo" %% "play2-reactivemongo"            % "0.20.10-play28", // Apache 2.0
+  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "0.20.10-play28", // Apache 2.0
 
   // Other helpers
   "com.beachape"         %% "enumeratum-play"      % "1.6.0", // MIT
   "com.beachape"         %% "enumeratum-play-json" % "1.6.0", // MIT
   "com.github.t3hnar"    %% "scala-bcrypt"         % "4.1",   // Apache 2.0
-  "com.github.pathikrit" %% "better-files"         % "3.8.0", // MIT
+  "com.github.pathikrit" %% "better-files"         % "3.9.1", // MIT
 
   // Docker
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0

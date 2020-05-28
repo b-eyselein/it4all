@@ -282,19 +282,17 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlySample = 'ONLY_SAMPLE',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlyUser = 'ONLY_USER',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
+  OnlyUser = 'ONLY_USER',
+  OnlySample = 'ONLY_SAMPLE',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
    __typename?: 'Mutation';
   register?: Maybe<Scalars['String']>;
   login?: Maybe<LoggedInUserWithToken>;
-  insertCollection: Scalars['Boolean'];
-  insertExercise: Scalars['Boolean'];
   correctProgramming: ProgrammingAbstractResult;
   correctRegex: RegexAbstractResult;
   correctSql: SqlAbstractResult;
@@ -311,18 +309,6 @@ export type MutationRegisterArgs = {
 
 export type MutationLoginArgs = {
   credentials: UserCredentials;
-};
-
-
-export type MutationInsertCollectionArgs = {
-  toolId: Scalars['String'];
-  content: Scalars['String'];
-};
-
-
-export type MutationInsertExerciseArgs = {
-  toolId: Scalars['String'];
-  content: Scalars['String'];
 };
 
 
@@ -670,11 +656,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Insert = 'INSERT',
+  Create = 'CREATE',
+  Update = 'UPDATE',
   Delete = 'DELETE',
   Select = 'SELECT',
-  Create = 'CREATE',
-  Update = 'UPDATE'
+  Insert = 'INSERT'
 }
 
 export enum SqlExPart {
@@ -812,17 +798,17 @@ export type SqlTableMatch = NewMatch & {
 };
 
 export enum SuccessType {
-  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY'
+  Partially = 'PARTIALLY',
+  Complete = 'COMPLETE'
 }
 
 export enum ToolState {
+  PreAlpha = 'PRE_ALPHA',
   Alpha = 'ALPHA',
   Beta = 'BETA',
-  Live = 'LIVE',
-  PreAlpha = 'PRE_ALPHA'
+  Live = 'LIVE'
 }
 
 export type Topic = {
