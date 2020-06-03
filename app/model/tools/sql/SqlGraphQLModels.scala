@@ -1,7 +1,7 @@
 package model.tools.sql
 
 import model.SampleSolution
-import model.graphql.{GraphQLArguments, GraphQLContext, ToolGraphQLModelBasics}
+import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
@@ -136,13 +136,13 @@ object SqlGraphQLModels
 
   override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, SqlAbstractResult] = sqlAbstractResultType
 
-  private val dbContentQueryField: Field[GraphQLContext, SqlExerciseContent] = Field(
+  private val dbContentQueryField: Field[Unit, SqlExerciseContent] = Field(
     "sqlDbContents",
     ListType(SqlGraphQLModels.sqlQueryResultType),
     resolve = context => SelectDAO.tableContents(context.value.schemaName)
   )
 
-  private val sqlExerciseContentType: ObjectType[GraphQLContext, SqlExerciseContent] = {
+  private val sqlExerciseContentType: ObjectType[Unit, SqlExerciseContent] = {
     implicit val seTypeT: EnumType[SqlExerciseType]            = sqlExerciseTypeType
     implicit val sst: ObjectType[Unit, SampleSolution[String]] = sampleSolutionType
 

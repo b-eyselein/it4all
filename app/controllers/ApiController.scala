@@ -6,7 +6,6 @@ import play.api.libs.json._
 import play.api.mvc._
 import play.api.{Configuration, Logger}
 import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
-import sangria.ast.Document
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
 import sangria.marshalling.playJson._
 import sangria.parser.QueryParser
@@ -30,30 +29,29 @@ class ApiController @Inject() (
 
   private val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
 
-  private def executeGraphQLQuery(
-    query: Document,
-    operationName: Option[String],
-    variables: JsObject
-  ): Future[Result] =
-    Executor
-      .execute(schema, query, operationName = operationName, variables = variables)
-      .map(Ok(_))
-      .recover {
-        case error: QueryAnalysisError =>
-          logger.error("Error while analysing query", error)
-          BadRequest(error.resolveError)
-        case error: ErrorWithResolver =>
-          logger.error("Error while executing query:", error)
-          InternalServerError(error.resolveError)
-      }
-
   def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest](graphQLRequestFormat)) {
     implicit request =>
       val variables = request.body.variables.getOrElse(Json.obj())
 
       QueryParser.parse(request.body.query) match {
-        case Failure(error)    => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
-        case Success(queryAst) => executeGraphQLQuery(queryAst, request.body.operationName, variables)
+        case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
+        case Success(queryAst) =>
+          Executor
+            .execute(
+              schema,
+              queryAst,
+              operationName = request.body.operationName,
+              variables = variables
+            )
+            .map(Ok(_))
+            .recover {
+              case error: QueryAnalysisError =>
+                logger.error("Error while analysing query", error)
+                BadRequest(error.resolveError)
+              case error: ErrorWithResolver =>
+                logger.error("Error while executing query:", error)
+                InternalServerError(error.resolveError)
+            }
       }
   }
 

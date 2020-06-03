@@ -43,20 +43,14 @@ export type CollectionTool = {
   id: Scalars['ID'];
   name: Scalars['String'];
   state: ToolState;
-  exerciseCount: Scalars['Long'];
-  allExercises: Array<Exercise>;
-  part?: Maybe<ExPart>;
   lessonCount: Scalars['Long'];
   lessons: Array<Lesson>;
   lesson?: Maybe<Lesson>;
   collectionCount: Scalars['Long'];
   collections: Array<ExerciseCollection>;
   collection?: Maybe<ExerciseCollection>;
-};
-
-
-export type CollectionToolPartArgs = {
-  partId: Scalars['String'];
+  exerciseCount: Scalars['Long'];
+  allExercises: Array<Exercise>;
 };
 
 
@@ -128,7 +122,6 @@ export type Exercise = {
 export type ExerciseCollection = {
    __typename?: 'ExerciseCollection';
   collectionId: Scalars['Int'];
-  toolId: Scalars['String'];
   title: Scalars['String'];
   authors: Array<Scalars['String']>;
   text: Scalars['String'];
@@ -282,11 +275,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  PartialMatch = 'PARTIAL_MATCH',
-  OnlyUser = 'ONLY_USER',
   OnlySample = 'ONLY_SAMPLE',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH'
+  OnlyUser = 'ONLY_USER',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -657,10 +650,10 @@ export type SqlExerciseContentPartArgs = {
 
 export enum SqlExerciseType {
   Create = 'CREATE',
-  Update = 'UPDATE',
-  Delete = 'DELETE',
+  Insert = 'INSERT',
   Select = 'SELECT',
-  Insert = 'INSERT'
+  Update = 'UPDATE',
+  Delete = 'DELETE'
 }
 
 export enum SqlExPart {

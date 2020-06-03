@@ -108,38 +108,6 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
         arguments = userCredentialsArgument :: Nil,
         resolve = context => authenticate(context.arg(userCredentialsArgument))
       )
-      /*,
-      Field(
-        "insertCollection",
-        BooleanType,
-        arguments = toolIdArgument :: contentArgument :: Nil,
-        resolve = context =>
-          Try(Json.parse(context.arg(contentArgument))).fold(
-            _ => Future.successful(false),
-            jsonCollection =>
-              JsonProtocols.exerciseCollectionFormat.reads(jsonCollection) match {
-                case JsError(_)               => Future.successful(false)
-                case JsSuccess(collection, _) => insertCollection(collection)
-              }
-          )
-      ),
-      Field(
-        "insertExercise",
-        BooleanType,
-        arguments = toolIdArgument :: contentArgument :: Nil,
-        resolve = context => {
-          ToolList.tools.find(_.id == context.arg(toolIdArgument)) match {
-            case None => Future.successful(false)
-            case Some(tool) =>
-              val jsonExercise: JsValue = Json.parse(context.arg(contentArgument))
-
-              tool.jsonFormats.exerciseFormat.reads(jsonExercise) match {
-                case JsError(_)             => Future.successful(false)
-                case JsSuccess(exercise, _) => insertExercise(exercise, tool.jsonFormats.exerciseFormat)
-              }
-          }
-        }
-      )*/
     ) ++ correctionFields
   )
 

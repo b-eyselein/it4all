@@ -1,12 +1,9 @@
 package model.graphql
 
+import model.tools.CollectionTool
 import model.tools.Helper.UntypedExercise
-import model.tools._
 import model.{Exercise, ExerciseCollection, ExerciseContent, MongoClientQueries}
-import sangria.macros.derive.{AddFields, deriveObjectType}
-import sangria.schema.{Context, Field, ListType, LongType, ObjectType, OptionType}
-
-import scala.concurrent.Future
+import sangria.schema._
 
 trait CollectionGraphQLModel
     extends BasicGraphQLModels
@@ -14,43 +11,43 @@ trait CollectionGraphQLModel
     with GraphQLArguments
     with MongoClientQueries {
 
-  private def untypedExercises(exercises: Seq[Exercise[_, _ <: ExerciseContent[_]]]): Seq[UntypedExercise] = exercises
+  protected def untypedExercises(exercises: Seq[Exercise[_, _ <: ExerciseContent[_]]]): Seq[UntypedExercise] = exercises
 
   private def untypedMaybeExercise(exercise: Option[Exercise[_, _ <: ExerciseContent[_]]]): Option[UntypedExercise] =
     exercise
 
-  protected val CollectionType: ObjectType[GraphQLContext, ExerciseCollection] = deriveObjectType(
-    AddFields(
+  protected val collectionType: ObjectType[Unit, (CollectionTool, ExerciseCollection)] = ObjectType(
+    "ExerciseCollection",
+    fields[Unit, (CollectionTool, ExerciseCollection)](
+      Field("collectionId", IntType, resolve = _.value._2.collectionId),
+      Field("title", StringType, resolve = _.value._2.title),
+      Field("authors", ListType(StringType), resolve = _.value._2.authors),
+      Field("text", StringType, resolve = _.value._2.text),
       Field(
         "exerciseCount",
         LongType,
-        resolve = context => getExerciseCountForCollection(context.value.toolId, context.value.collectionId)
+        resolve = context => getExerciseCountForCollection(context.value._1.id, context.value._2.collectionId)
       ),
       Field(
         "exercises",
         ListType(exerciseType),
         resolve = context =>
-          ToolList.tools.find(_.id == context.value.toolId) match {
-            case None       => ???
-            case Some(tool) => getExercisesForCollection(tool, context.value.collectionId).map(untypedExercises)
-          }
+          getExercisesForCollection(context.value._1, context.value._2.collectionId)
+            .map(untypedExercises)
       ),
       Field(
         "exercise",
         OptionType(exerciseType),
         arguments = exIdArgument :: Nil,
-        resolve = context => getExerciseUntyped(context)
+        resolve = context =>
+          getExercise(
+            context.value._1.id,
+            context.value._2.collectionId,
+            context.arg(exIdArgument),
+            context.value._1.jsonFormats.exerciseFormat
+          ).map(untypedMaybeExercise)
       )
     )
   )
-
-  private def getExerciseUntyped(
-    context: Context[GraphQLContext, ExerciseCollection]
-  ): Future[Option[UntypedExercise]] = ToolList.tools.find(_.id == context.value.toolId) match {
-    case None => ???
-    case Some(tool) =>
-      getExercise(tool.id, context.value.collectionId, context.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
-        .map(untypedMaybeExercise)
-  }
 
 }

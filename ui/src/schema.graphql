@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu May 28 2020 12:04:53 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Jun 03 2020 12:58:11 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -28,15 +28,14 @@ type CollectionTool {
   id: ID!
   name: String!
   state: ToolState!
-  exerciseCount: Long!
-  allExercises: [Exercise!]!
-  part(partId: String!): ExPart
   lessonCount: Long!
   lessons: [Lesson!]!
   lesson(lessonId: Int!): Lesson
   collectionCount: Long!
   collections: [ExerciseCollection!]!
   collection(collId: Int!): ExerciseCollection
+  exerciseCount: Long!
+  allExercises: [Exercise!]!
 }
 
 type DTDParseException {
@@ -91,7 +90,6 @@ type Exercise {
 
 type ExerciseCollection {
   collectionId: Int!
-  toolId: String!
   title: String!
   authors: [String!]!
   text: String!
@@ -230,11 +228,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  UNSUCCESSFUL_MATCH
-  PARTIAL_MATCH
-  ONLY_USER
   ONLY_SAMPLE
+  ONLY_USER
   SUCCESSFUL_MATCH
+  PARTIAL_MATCH
+  UNSUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -487,10 +485,10 @@ type SqlExerciseContent {
 
 enum SqlExerciseType {
   CREATE
+  INSERT
+  SELECT
   UPDATE
   DELETE
-  SELECT
-  INSERT
 }
 
 enum SqlExPart {

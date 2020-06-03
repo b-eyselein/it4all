@@ -1,7 +1,7 @@
 package model.graphql
 
-import model.MongoClientQueries
 import model.tools._
+import model.{LoggedInUser, MongoClientQueries}
 import play.api.libs.json._
 import sangria.schema._
 
@@ -13,8 +13,6 @@ final case class GraphQLRequest(
   variables: Option[JsObject]
 )
 
-final case class GraphQLContext()
-
 trait GraphQLModel
     extends BasicGraphQLModels
     with CollectionGraphQLModel
@@ -24,9 +22,9 @@ trait GraphQLModel
 
   // Types
 
-  protected val userType: ObjectType[Unit, String] = ObjectType(
+  protected val userType: ObjectType[Unit, LoggedInUser] = ObjectType(
     "User",
-    fields[Unit, String](
+    fields[Unit, LoggedInUser](
       Field(
         "proficiencies",
         ListType(userProficiencyType),
@@ -34,31 +32,9 @@ trait GraphQLModel
         resolve = context =>
           ToolList.tools.find(_.id == context.arg(toolIdArgument)) match {
             case None       => Future.successful(Seq.empty)
-            case Some(tool) => userProficienciesForTool(context.value, tool.id)
+            case Some(tool) => userProficienciesForTool(context.value.username, tool.id)
           }
       )
-    )
-  )
-
-  private val lessonFieldsForToolType = fields[Unit, CollectionTool](
-    Field("lessonCount", LongType, resolve = context => lessonCountForTool(context.value.id)),
-    Field("lessons", ListType(LessonGraphQLModel.LessonType), resolve = context => lessonsForTool(context.value.id)),
-    Field(
-      "lesson",
-      OptionType(LessonGraphQLModel.LessonType),
-      arguments = lessonIdArgument :: Nil,
-      resolve = context => getLesson(context.value.id, context.arg(lessonIdArgument))
-    )
-  )
-
-  private val collectionFieldsForToolType = fields[Unit, CollectionTool](
-    Field("collectionCount", LongType, resolve = context => getCollectionCount(context.value.id)),
-    Field("collections", ListType(CollectionType), resolve = context => getExerciseCollections(context.value.id)),
-    Field(
-      "collection",
-      OptionType(CollectionType),
-      arguments = collIdArgument :: Nil,
-      resolve = context => getExerciseCollection(context.value.id, context.arg(collIdArgument))
     )
   )
 
@@ -68,24 +44,40 @@ trait GraphQLModel
       Field("id", IDType, resolve = _.value.id),
       Field("name", StringType, resolve = _.value.name),
       Field("state", toolStateType, resolve = _.value.toolState),
+      // Lesson fields
+      Field("lessonCount", LongType, resolve = context => lessonCountForTool(context.value.id)),
+      Field("lessons", ListType(LessonGraphQLModel.LessonType), resolve = context => lessonsForTool(context.value.id)),
+      Field(
+        "lesson",
+        OptionType(LessonGraphQLModel.LessonType),
+        arguments = lessonIdArgument :: Nil,
+        resolve = context => getLesson(context.value.id, context.arg(lessonIdArgument))
+      ),
+      // Collection fields
+      Field("collectionCount", LongType, resolve = context => getCollectionCount(context.value.id)),
+      Field(
+        "collections",
+        ListType(collectionType),
+        resolve = context =>
+          getExerciseCollections(context.value.id)
+            .map(futureExerciseCollections => futureExerciseCollections.map(coll => (context.value, coll)))
+      ),
+      Field(
+        "collection",
+        OptionType(collectionType),
+        arguments = collIdArgument :: Nil,
+        resolve = context =>
+          getExerciseCollection(context.value.id, context.arg(collIdArgument))
+            .map(futureMaybeExerciseCollection => futureMaybeExerciseCollection.map(coll => (context.value, coll)))
+      ),
       // Special fields for exercises
       Field("exerciseCount", LongType, resolve = context => getExerciseCountForTool(context.value.id)),
       Field(
         "allExercises",
         ListType(exerciseType),
-        resolve = context =>
-          ToolList.tools.find(_.id == context.value.id) match {
-            case None       => ???
-            case Some(tool) => getExercisesForTool(tool)
-          }
-      ),
-      Field(
-        "part",
-        OptionType(exPartType),
-        arguments = partIdArgument :: Nil,
-        resolve = context => ??? // context.value.parts
+        resolve = context => getExercisesForTool(context.value).map(untypedExercises)
       )
-    ) ++ lessonFieldsForToolType ++ collectionFieldsForToolType
+    )
   )
 
   private val QueryType: ObjectType[Unit, Unit] = ObjectType(
@@ -95,14 +87,14 @@ trait GraphQLModel
         "me",
         OptionType(userType),
         arguments = userJwtArgument :: Nil,
-        resolve = context => deserializeJwt(context.arg(userJwtArgument)).map(_.username)
+        resolve = context => deserializeJwt(context.arg(userJwtArgument))
       ),
       Field("tools", ListType(ToolType), resolve = _ => ToolList.tools),
       Field(
         "tool",
         OptionType(ToolType),
         arguments = toolIdArgument :: Nil,
-        resolve = ctx => ToolList.tools.find(_.id == ctx.arg(toolIdArgument))
+        resolve = context => ToolList.tools.find(_.id == context.arg(toolIdArgument))
       )
     )
   )
