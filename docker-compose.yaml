@@ -17,9 +17,12 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: 1234
       MONGO_INITDB_DATABASE:      it4all
     volumes:
-      - type: bind
-        source: ./conf/inits/mongo_init.js
-        target: /docker-entrypoint-initdb.d/mongo_init.js
+      - type:     bind
+        source:   ./conf/inits/mongo_init.js
+        target:   /docker-entrypoint-initdb.d/mongo_init.js
+      - type:     volume
+        source:   mongo_data_volume
+        target:   /data/db
 
   webtester:
     image:        httpd:alpine

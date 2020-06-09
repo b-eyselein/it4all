@@ -44,7 +44,6 @@ trait BasicGraphQLModels {
 
   protected val userProficiencyType: ObjectType[Unit, UserProficiency] = {
     implicit val tt: ObjectType[Unit, Topic] = topicType
-    implicit val lt: ObjectType[Unit, Level] = levelType
 
     deriveObjectType(
       AddFields(
