@@ -14,7 +14,7 @@ object ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorre
   override protected val logger: Logger = Logger(ProgrammingNormalImplementationCorrector.getClass)
 
   val programmingNormalCorrectionDockerImage: ScalaDockerImage =
-    ScalaDockerImage("ls6uniwue", "py_normal_prog_corrector", "0.2.0")
+    ScalaDockerImage("ls6uniwue", "py_normal_prog_corrector", "0.3.1")
 
   def correctNormalImplementation(
     solTargetDir: File,

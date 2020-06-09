@@ -13,7 +13,7 @@ object ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorre
   override protected val logger: Logger = Logger(ProgrammingSimpleImplementationCorrector.getClass)
 
   val programmingSimplifiedCorrectionDockerImageName: ScalaDockerImage =
-    ScalaDockerImage("ls6uniwue", "py_simplified_prog_corrector", "0.2.0")
+    ScalaDockerImage("ls6uniwue", "py_simplified_prog_corrector", "0.3.1")
 
   def correctSimplifiedImplementation(
     solTargetDir: File,

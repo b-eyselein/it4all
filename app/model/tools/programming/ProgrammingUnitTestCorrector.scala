@@ -14,7 +14,7 @@ object ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
   override protected val logger: Logger = Logger(ProgrammingUnitTestCorrector.getClass)
 
   val programmingUnitTestCorrectionDockerImageName: ScalaDockerImage =
-    ScalaDockerImage("ls6uniwue", "py_unit_test_corrector", "0.3.1")
+    ScalaDockerImage("ls6uniwue", "py_unit_test_corrector", "0.4.1")
 
   def correctUnitTestPart(
     solTargetDir: File,
