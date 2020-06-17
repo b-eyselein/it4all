@@ -57,11 +57,8 @@
 
     <h2 class="subtitle is-3 has-text-centered">Meine Fertigkeiten</h2>
 
-    <div class="columns is-multiline"
-         *ngIf="collectionToolOverviewQuery.me.proficiencies.length > 0; else noProficienciesYetBlock">
-      <div class="column is-one-quarter-desktop"
-           *ngFor="let proficiency of collectionToolOverviewQuery.me.proficiencies">
-
+    <div class="columns is-multiline" *ngIf="proficiencies.length > 0; else noProficienciesYetBlock">
+      <div class="column is-one-quarter-desktop" *ngFor="let proficiency of proficiencies">
         <it4all-proficiency-card [proficiency]="proficiency"></it4all-proficiency-card>
       </div>
     </div>

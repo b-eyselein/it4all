@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Jun 17 2020 13:51:41 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Jun 17 2020 14:32:07 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -36,6 +36,7 @@ type CollectionTool {
   collection(collId: Int!): ExerciseCollection
   exerciseCount: Long!
   allExercises: [Exercise!]!
+  proficiencies: [UserProficiency!]!
 }
 
 type DTDParseException {
@@ -936,7 +937,6 @@ enum UnitTestType {
 type User {
   tools: [CollectionTool!]!
   tool(toolId: String!): CollectionTool
-  proficiencies(toolId: String!): [UserProficiency!]!
 }
 
 input UserCredentials {

@@ -40,16 +40,16 @@ query ToolOverview($userJwt: String!) {
 }
 
 # /tools/:toolId
-query CollectionToolOverview($toolId: String!, $userJwt: String!) {
+query CollectionToolOverview($userJwt: String!, $toolId: String!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
       name
       collectionCount
       exerciseCount
       lessonCount
-    }
-    proficiencies(toolId: $toolId) {
-      ...UserProficiency
+      proficiencies {
+        ...UserProficiency
+      }
     }
   }
 }

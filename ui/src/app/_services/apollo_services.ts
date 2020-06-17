@@ -61,8 +61,8 @@ export type ToolOverviewQuery = (
 );
 
 export type CollectionToolOverviewQueryVariables = {
-  toolId: Types.Scalars['String'];
   userJwt: Types.Scalars['String'];
+  toolId: Types.Scalars['String'];
 };
 
 
@@ -73,9 +73,10 @@ export type CollectionToolOverviewQuery = (
     & { tool?: Types.Maybe<(
       { __typename?: 'CollectionTool' }
       & Pick<Types.CollectionTool, 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
-    )>, proficiencies: Array<(
-      { __typename?: 'UserProficiency' }
-      & UserProficiencyFragment
+      & { proficiencies: Array<(
+        { __typename?: 'UserProficiency' }
+        & UserProficiencyFragment
+      )> }
     )> }
   )> }
 );
@@ -939,16 +940,16 @@ export const ToolOverviewDocument = gql`
     
   }
 export const CollectionToolOverviewDocument = gql`
-    query CollectionToolOverview($toolId: String!, $userJwt: String!) {
+    query CollectionToolOverview($userJwt: String!, $toolId: String!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
       name
       collectionCount
       exerciseCount
       lessonCount
-    }
-    proficiencies(toolId: $toolId) {
-      ...UserProficiency
+      proficiencies {
+        ...UserProficiency
+      }
     }
   }
 }

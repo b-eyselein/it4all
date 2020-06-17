@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {CollectionToolOverviewGQL, CollectionToolOverviewQuery} from "../../../_services/apollo_services";
+import {CollectionToolOverviewGQL, CollectionToolOverviewQuery, UserProficiencyFragment} from '../../../_services/apollo_services';
 import {Subscription} from "rxjs";
 import {AuthenticationService} from "../../../_services/authentication.service";
 
@@ -31,6 +31,10 @@ export class CollectionToolOverviewComponent implements OnInit, OnDestroy {
         .valueChanges
         .subscribe(({data}) => this.collectionToolOverviewQuery = data);
     });
+  }
+
+  get proficiencies(): UserProficiencyFragment[] {
+    return this.collectionToolOverviewQuery.me.tool.proficiencies;
   }
 
   ngOnDestroy(): void {

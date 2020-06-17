@@ -51,6 +51,7 @@ export type CollectionTool = {
   collection?: Maybe<ExerciseCollection>;
   exerciseCount: Scalars['Long'];
   allExercises: Array<Exercise>;
+  proficiencies: Array<UserProficiency>;
 };
 
 
@@ -1148,16 +1149,10 @@ export type User = {
   __typename?: 'User';
   tools: Array<CollectionTool>;
   tool?: Maybe<CollectionTool>;
-  proficiencies: Array<UserProficiency>;
 };
 
 
 export type UserToolArgs = {
-  toolId: Scalars['String'];
-};
-
-
-export type UserProficienciesArgs = {
   toolId: Scalars['String'];
 };
 

@@ -5,8 +5,6 @@ import model.{LoggedInUser, MongoClientQueries}
 import play.api.libs.json._
 import sangria.schema._
 
-import scala.concurrent.Future
-
 final case class GraphQLRequest(
   query: String,
   operationName: Option[String],
@@ -22,44 +20,55 @@ trait GraphQLModel
 
   // Types
 
-  protected val ToolType: ObjectType[Unit, CollectionTool] = ObjectType(
+  private val ToolType: ObjectType[Unit, (LoggedInUser, CollectionTool)] = ObjectType(
     "CollectionTool",
-    fields[Unit, CollectionTool](
-      Field("id", IDType, resolve = _.value.id),
-      Field("name", StringType, resolve = _.value.name),
-      Field("state", toolStateType, resolve = _.value.toolState),
+    fields[Unit, (LoggedInUser, CollectionTool)](
+      Field("id", IDType, resolve = _.value._2.id),
+      Field("name", StringType, resolve = _.value._2.name),
+      Field("state", toolStateType, resolve = _.value._2.toolState),
       // Lesson fields
-      Field("lessonCount", LongType, resolve = context => lessonCountForTool(context.value.id)),
-      Field("lessons", ListType(LessonGraphQLModel.LessonType), resolve = context => lessonsForTool(context.value.id)),
+      Field("lessonCount", LongType, resolve = context => lessonCountForTool(context.value._2.id)),
+      Field(
+        "lessons",
+        ListType(LessonGraphQLModel.LessonType),
+        resolve = context => lessonsForTool(context.value._2.id)
+      ),
       Field(
         "lesson",
         OptionType(LessonGraphQLModel.LessonType),
         arguments = lessonIdArgument :: Nil,
-        resolve = context => getLesson(context.value.id, context.arg(lessonIdArgument))
+        resolve = context => getLesson(context.value._2.id, context.arg(lessonIdArgument))
       ),
       // Collection fields
-      Field("collectionCount", LongType, resolve = context => getCollectionCount(context.value.id)),
+      Field("collectionCount", LongType, resolve = context => getCollectionCount(context.value._2.id)),
       Field(
         "collections",
         ListType(collectionType),
         resolve = context =>
-          getExerciseCollections(context.value.id)
-            .map(futureExerciseCollections => futureExerciseCollections.map(coll => (context.value, coll)))
+          getExerciseCollections(context.value._2.id)
+            .map(futureExerciseCollections => futureExerciseCollections.map(coll => (context.value._2, coll)))
       ),
       Field(
         "collection",
         OptionType(collectionType),
         arguments = collIdArgument :: Nil,
         resolve = context =>
-          getExerciseCollection(context.value.id, context.arg(collIdArgument))
-            .map(futureMaybeExerciseCollection => futureMaybeExerciseCollection.map(coll => (context.value, coll)))
+          getExerciseCollection(context.value._2.id, context.arg(collIdArgument))
+            .map(futureMaybeExerciseCollection => futureMaybeExerciseCollection.map(coll => (context.value._2, coll)))
       ),
       // Special fields for exercises
-      Field("exerciseCount", LongType, resolve = context => getExerciseCountForTool(context.value.id)),
+      Field("exerciseCount", LongType, resolve = context => getExerciseCountForTool(context.value._2.id)),
       Field(
         "allExercises",
         ListType(exerciseType),
-        resolve = context => getExercisesForTool(context.value).map(untypedExercises)
+        resolve = context => getExercisesForTool(context.value._2).map(untypedExercises)
+      ),
+      // Fields for users
+      Field(
+        // TODO: move to tool!
+        "proficiencies",
+        ListType(userProficiencyType),
+        resolve = context => userProficienciesForTool(context.value._1.username, context.value._2.id)
       )
     )
   )
@@ -67,23 +76,15 @@ trait GraphQLModel
   protected val loggedInUserType: ObjectType[Unit, LoggedInUser] = ObjectType(
     "User",
     fields[Unit, LoggedInUser](
-      Field("tools", ListType(ToolType), resolve = _ => ToolList.tools),
+      Field("tools", ListType(ToolType), resolve = context => ToolList.tools.map(tool => (context.value, tool))),
       Field(
         "tool",
         OptionType(ToolType),
         arguments = toolIdArgument :: Nil,
-        resolve = context => ToolList.tools.find(_.id == context.arg(toolIdArgument))
-      ),
-      Field(
-        // TODO: move to tool!
-        "proficiencies",
-        ListType(userProficiencyType),
-        arguments = toolIdArgument :: Nil,
         resolve = context =>
-          ToolList.tools.find(_.id == context.arg(toolIdArgument)) match {
-            case None       => Future.successful(Seq.empty)
-            case Some(tool) => userProficienciesForTool(context.value.username, tool.id)
-          }
+          ToolList.tools
+            .find(_.id == context.arg(toolIdArgument))
+            .map(tool => (context.value, tool))
       )
     )
   )
