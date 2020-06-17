@@ -39,14 +39,24 @@ export type LoginMutation = (
   )> }
 );
 
-export type ToolOverviewQueryVariables = {};
+export type CollectionToolFragment = (
+  { __typename?: 'CollectionTool' }
+  & Pick<Types.CollectionTool, 'id' | 'name' | 'state' | 'collectionCount' | 'lessonCount' | 'exerciseCount'>
+);
+
+export type ToolOverviewQueryVariables = {
+  userJwt: Types.Scalars['String'];
+};
 
 
 export type ToolOverviewQuery = (
   { __typename?: 'Query' }
-  & { tools: Array<(
-    { __typename?: 'CollectionTool' }
-    & Pick<Types.CollectionTool, 'id' | 'name' | 'state' | 'collectionCount' | 'lessonCount' | 'exerciseCount'>
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tools: Array<(
+      { __typename?: 'CollectionTool' }
+      & CollectionToolFragment
+    )> }
   )> }
 );
 
@@ -58,12 +68,12 @@ export type CollectionToolOverviewQueryVariables = {
 
 export type CollectionToolOverviewQuery = (
   { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTool' }
-    & Pick<Types.CollectionTool, 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
-  )>, me?: Types.Maybe<(
+  & { me?: Types.Maybe<(
     { __typename?: 'User' }
-    & { proficiencies: Array<(
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & Pick<Types.CollectionTool, 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
+    )>, proficiencies: Array<(
       { __typename?: 'UserProficiency' }
       & UserProficiencyFragment
     )> }
@@ -83,43 +93,57 @@ export type UserProficiencyFragment = (
 );
 
 export type AllExercisesOverviewQueryVariables = {
+  userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
 };
 
 
 export type AllExercisesOverviewQuery = (
   { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTool' }
-    & { allExercises: Array<(
-      { __typename?: 'Exercise' }
-      & { topicsWithLevels: Array<(
-        { __typename?: 'TopicWithLevel' }
-        & TopicWithLevelFragment
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & { allExercises: Array<(
+        { __typename?: 'Exercise' }
+        & { topicsWithLevels: Array<(
+          { __typename?: 'TopicWithLevel' }
+          & TopicWithLevelFragment
+        )> }
+        & FieldsForLinkFragment
       )> }
-      & FieldsForLinkFragment
     )> }
   )> }
 );
 
+export type CollectionValuesFragment = (
+  { __typename?: 'ExerciseCollection' }
+  & Pick<Types.ExerciseCollection, 'collectionId' | 'title' | 'exerciseCount'>
+);
+
 export type CollectionListQueryVariables = {
+  userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
 };
 
 
 export type CollectionListQuery = (
   { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTool' }
-    & Pick<Types.CollectionTool, 'name'>
-    & { collections: Array<(
-      { __typename?: 'ExerciseCollection' }
-      & Pick<Types.ExerciseCollection, 'collectionId' | 'title' | 'exerciseCount'>
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & Pick<Types.CollectionTool, 'name'>
+      & { collections: Array<(
+        { __typename?: 'ExerciseCollection' }
+        & CollectionValuesFragment
+      )> }
     )> }
   )> }
 );
 
 export type CollectionOverviewQueryVariables = {
+  userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
 };
@@ -127,20 +151,24 @@ export type CollectionOverviewQueryVariables = {
 
 export type CollectionOverviewQuery = (
   { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTool' }
-    & { collection?: Types.Maybe<(
-      { __typename?: 'ExerciseCollection' }
-      & Pick<Types.ExerciseCollection, 'title'>
-      & { exercises: Array<(
-        { __typename?: 'Exercise' }
-        & FieldsForLinkFragment
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & { collection?: Types.Maybe<(
+        { __typename?: 'ExerciseCollection' }
+        & Pick<Types.ExerciseCollection, 'title'>
+        & { exercises: Array<(
+          { __typename?: 'Exercise' }
+          & FieldsForLinkFragment
+        )> }
       )> }
     )> }
   )> }
 );
 
 export type ExerciseOverviewQueryVariables = {
+  userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
@@ -149,23 +177,51 @@ export type ExerciseOverviewQueryVariables = {
 
 export type ExerciseOverviewQuery = (
   { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTool' }
-    & { collection?: Types.Maybe<(
-      { __typename?: 'ExerciseCollection' }
-      & { exercise?: Types.Maybe<(
-        { __typename?: 'Exercise' }
-        & Pick<Types.Exercise, 'exerciseId' | 'title' | 'text'>
-        & { parts: Array<(
-          { __typename?: 'ExPart' }
-          & PartFragment
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & { collection?: Types.Maybe<(
+        { __typename?: 'ExerciseCollection' }
+        & { exercise?: Types.Maybe<(
+          { __typename?: 'Exercise' }
+          & Pick<Types.Exercise, 'exerciseId' | 'title' | 'text'>
+          & { parts: Array<(
+            { __typename?: 'ExPart' }
+            & PartFragment
+          )> }
         )> }
       )> }
     )> }
   )> }
 );
 
+export type ExerciseSolveFieldsFragment = (
+  { __typename?: 'Exercise' }
+  & Pick<Types.Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'text'>
+  & { programmingContent?: Types.Maybe<(
+    { __typename?: 'ProgrammingExerciseContent' }
+    & ProgExerciseContentSolveFieldsFragment
+  )>, regexContent?: Types.Maybe<(
+    { __typename?: 'RegexExerciseContent' }
+    & RegexExerciseContentSolveFieldsFragment
+  )>, sqlContent?: Types.Maybe<(
+    { __typename?: 'SqlExerciseContent' }
+    & SqlExerciseContentSolveFieldsFragment
+  )>, umlContent?: Types.Maybe<(
+    { __typename?: 'UmlExerciseContent' }
+    & UmlExerciseContentSolveFieldsFragment
+  )>, webContent?: Types.Maybe<(
+    { __typename?: 'WebExerciseContent' }
+    & WebExerciseContentSolveFieldsFragment
+  )>, xmlContent?: Types.Maybe<(
+    { __typename?: 'XmlExerciseContent' }
+    & XmlExerciseContentSolveFieldsFragment
+  )> }
+);
+
 export type ExerciseQueryVariables = {
+  userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
@@ -175,55 +231,44 @@ export type ExerciseQueryVariables = {
 
 export type ExerciseQuery = (
   { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTool' }
-    & { collection?: Types.Maybe<(
-      { __typename?: 'ExerciseCollection' }
-      & { exercise?: Types.Maybe<(
-        { __typename?: 'Exercise' }
-        & { programmingContent?: Types.Maybe<(
-          { __typename?: 'ProgrammingExerciseContent' }
-          & ProgExerciseContentSolveFieldsFragment
-        )>, regexContent?: Types.Maybe<(
-          { __typename?: 'RegexExerciseContent' }
-          & RegexExerciseContentSolveFieldsFragment
-        )>, sqlContent?: Types.Maybe<(
-          { __typename?: 'SqlExerciseContent' }
-          & SqlExerciseContentSolveFieldsFragment
-        )>, umlContent?: Types.Maybe<(
-          { __typename?: 'UmlExerciseContent' }
-          & UmlExerciseContentSolveFieldsFragment
-        )>, webContent?: Types.Maybe<(
-          { __typename?: 'WebExerciseContent' }
-          & WebExerciseContentSolveFieldsFragment
-        )>, xmlContent?: Types.Maybe<(
-          { __typename?: 'XmlExerciseContent' }
-          & XmlExerciseContentSolveFieldsFragment
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & { collection?: Types.Maybe<(
+        { __typename?: 'ExerciseCollection' }
+        & { exercise?: Types.Maybe<(
+          { __typename?: 'Exercise' }
+          & ExerciseSolveFieldsFragment
         )> }
-        & ExerciseSolveFieldsFragment
       )> }
     )> }
   )> }
 );
 
 export type LessonsForToolQueryVariables = {
+  userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
 };
 
 
 export type LessonsForToolQuery = (
   { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTool' }
-    & Pick<Types.CollectionTool, 'name'>
-    & { lessons: Array<(
-      { __typename?: 'Lesson' }
-      & Pick<Types.Lesson, 'id' | 'title' | 'description'>
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & Pick<Types.CollectionTool, 'name'>
+      & { lessons: Array<(
+        { __typename?: 'Lesson' }
+        & Pick<Types.Lesson, 'id' | 'title' | 'description'>
+      )> }
     )> }
   )> }
 );
 
 export type LessonQueryVariables = {
+  userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
   lessonId: Types.Scalars['Int'];
 };
@@ -231,12 +276,15 @@ export type LessonQueryVariables = {
 
 export type LessonQuery = (
   { __typename?: 'Query' }
-  & { tool?: Types.Maybe<(
-    { __typename?: 'CollectionTool' }
-    & Pick<Types.CollectionTool, 'name'>
-    & { lesson?: Types.Maybe<(
-      { __typename?: 'Lesson' }
-      & Pick<Types.Lesson, 'id' | 'title' | 'description'>
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & Pick<Types.CollectionTool, 'name'>
+      & { lesson?: Types.Maybe<(
+        { __typename?: 'Lesson' }
+        & Pick<Types.Lesson, 'id' | 'title' | 'description'>
+      )> }
     )> }
   )> }
 );
@@ -278,11 +326,6 @@ export type FieldsForLinkFragment = (
     { __typename?: 'TopicWithLevel' }
     & TopicWithLevelFragment
   )> }
-);
-
-export type ExerciseSolveFieldsFragment = (
-  { __typename?: 'Exercise' }
-  & Pick<Types.Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'text'>
 );
 
 export type ProgExerciseContentSolveFieldsFragment = (
@@ -507,6 +550,16 @@ export const LoggedInUserWithTokenFragmentDoc = gql`
   jwt
 }
     `;
+export const CollectionToolFragmentDoc = gql`
+    fragment CollectionTool on CollectionTool {
+  id
+  name
+  state
+  collectionCount
+  lessonCount
+  exerciseCount
+}
+    `;
 export const LevelFragmentDoc = gql`
     fragment Level on Level {
   title
@@ -535,43 +588,11 @@ export const UserProficiencyFragmentDoc = gql`
 }
     ${TopicFragmentDoc}
 ${LevelFragmentDoc}`;
-export const PartFragmentDoc = gql`
-    fragment Part on ExPart {
-  id
-  name
-  isEntryPart
-}
-    `;
-export const TopicWithLevelFragmentDoc = gql`
-    fragment TopicWithLevel on TopicWithLevel {
-  topic {
-    ...Topic
-  }
-  level {
-    ...Level
-  }
-}
-    ${TopicFragmentDoc}
-${LevelFragmentDoc}`;
-export const FieldsForLinkFragmentDoc = gql`
-    fragment FieldsForLink on Exercise {
-  exerciseId
+export const CollectionValuesFragmentDoc = gql`
+    fragment CollectionValues on ExerciseCollection {
   collectionId
-  toolId
   title
-  difficulty
-  topicsWithLevels {
-    ...TopicWithLevel
-  }
-}
-    ${TopicWithLevelFragmentDoc}`;
-export const ExerciseSolveFieldsFragmentDoc = gql`
-    fragment ExerciseSolveFields on Exercise {
-  exerciseId
-  collectionId
-  toolId
-  title
-  text
+  exerciseCount
 }
     `;
 export const ExerciseFileFragmentDoc = gql`
@@ -804,6 +825,68 @@ export const XmlExerciseContentSolveFieldsFragmentDoc = gql`
   part(partId: $partId)
 }
     ${XmlSampleSolutionFragmentDoc}`;
+export const ExerciseSolveFieldsFragmentDoc = gql`
+    fragment ExerciseSolveFields on Exercise {
+  exerciseId
+  collectionId
+  toolId
+  title
+  text
+  programmingContent {
+    ...ProgExerciseContentSolveFields
+  }
+  regexContent {
+    ...RegexExerciseContentSolveFields
+  }
+  sqlContent {
+    ...SqlExerciseContentSolveFields
+  }
+  umlContent {
+    ...UmlExerciseContentSolveFields
+  }
+  webContent {
+    ...WebExerciseContentSolveFields
+  }
+  xmlContent {
+    ...XmlExerciseContentSolveFields
+  }
+}
+    ${ProgExerciseContentSolveFieldsFragmentDoc}
+${RegexExerciseContentSolveFieldsFragmentDoc}
+${SqlExerciseContentSolveFieldsFragmentDoc}
+${UmlExerciseContentSolveFieldsFragmentDoc}
+${WebExerciseContentSolveFieldsFragmentDoc}
+${XmlExerciseContentSolveFieldsFragmentDoc}`;
+export const PartFragmentDoc = gql`
+    fragment Part on ExPart {
+  id
+  name
+  isEntryPart
+}
+    `;
+export const TopicWithLevelFragmentDoc = gql`
+    fragment TopicWithLevel on TopicWithLevel {
+  topic {
+    ...Topic
+  }
+  level {
+    ...Level
+  }
+}
+    ${TopicFragmentDoc}
+${LevelFragmentDoc}`;
+export const FieldsForLinkFragmentDoc = gql`
+    fragment FieldsForLink on Exercise {
+  exerciseId
+  collectionId
+  toolId
+  title
+  difficulty
+  topicsWithLevels {
+    ...TopicWithLevel
+  }
+}
+    ${TopicWithLevelFragmentDoc}`;
 export const LessonFragmentDoc = gql`
     fragment Lesson on Lesson {
   id
@@ -839,17 +922,14 @@ export const LoginDocument = gql`
     
   }
 export const ToolOverviewDocument = gql`
-    query ToolOverview {
-  tools {
-    id
-    name
-    state
-    collectionCount
-    lessonCount
-    exerciseCount
+    query ToolOverview($userJwt: String!) {
+  me(userJwt: $userJwt) {
+    tools {
+      ...CollectionTool
+    }
   }
 }
-    `;
+    ${CollectionToolFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -860,13 +940,13 @@ export const ToolOverviewDocument = gql`
   }
 export const CollectionToolOverviewDocument = gql`
     query CollectionToolOverview($toolId: String!, $userJwt: String!) {
-  tool(toolId: $toolId) {
-    name
-    collectionCount
-    exerciseCount
-    lessonCount
-  }
   me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      name
+      collectionCount
+      exerciseCount
+      lessonCount
+    }
     proficiencies(toolId: $toolId) {
       ...UserProficiency
     }
@@ -882,13 +962,15 @@ export const CollectionToolOverviewDocument = gql`
     
   }
 export const AllExercisesOverviewDocument = gql`
-    query AllExercisesOverview($toolId: String!) {
-  tool(toolId: $toolId) {
-    allExercises {
-      topicsWithLevels {
-        ...TopicWithLevel
+    query AllExercisesOverview($userJwt: String!, $toolId: String!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      allExercises {
+        topicsWithLevels {
+          ...TopicWithLevel
+        }
+        ...FieldsForLink
       }
-      ...FieldsForLink
     }
   }
 }
@@ -903,17 +985,17 @@ ${FieldsForLinkFragmentDoc}`;
     
   }
 export const CollectionListDocument = gql`
-    query CollectionList($toolId: String!) {
-  tool(toolId: $toolId) {
-    name
-    collections {
-      collectionId
-      title
-      exerciseCount
+    query CollectionList($userJwt: String!, $toolId: String!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      name
+      collections {
+        ...CollectionValues
+      }
     }
   }
 }
-    `;
+    ${CollectionValuesFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -923,12 +1005,14 @@ export const CollectionListDocument = gql`
     
   }
 export const CollectionOverviewDocument = gql`
-    query CollectionOverview($toolId: String!, $collId: Int!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      title
-      exercises {
-        ...FieldsForLink
+    query CollectionOverview($userJwt: String!, $toolId: String!, $collId: Int!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      collection(collId: $collId) {
+        title
+        exercises {
+          ...FieldsForLink
+        }
       }
     }
   }
@@ -943,15 +1027,17 @@ export const CollectionOverviewDocument = gql`
     
   }
 export const ExerciseOverviewDocument = gql`
-    query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      exercise(exId: $exId) {
-        exerciseId
-        title
-        text
-        parts {
-          ...Part
+    query ExerciseOverview($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      collection(collId: $collId) {
+        exercise(exId: $exId) {
+          exerciseId
+          title
+          text
+          parts {
+            ...Part
+          }
         }
       }
     }
@@ -967,40 +1053,18 @@ export const ExerciseOverviewDocument = gql`
     
   }
 export const ExerciseDocument = gql`
-    query Exercise($toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      exercise(exId: $exId) {
-        ...ExerciseSolveFields
-        programmingContent {
-          ...ProgExerciseContentSolveFields
-        }
-        regexContent {
-          ...RegexExerciseContentSolveFields
-        }
-        sqlContent {
-          ...SqlExerciseContentSolveFields
-        }
-        umlContent {
-          ...UmlExerciseContentSolveFields
-        }
-        webContent {
-          ...WebExerciseContentSolveFields
-        }
-        xmlContent {
-          ...XmlExerciseContentSolveFields
+    query Exercise($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      collection(collId: $collId) {
+        exercise(exId: $exId) {
+          ...ExerciseSolveFields
         }
       }
     }
   }
 }
-    ${ExerciseSolveFieldsFragmentDoc}
-${ProgExerciseContentSolveFieldsFragmentDoc}
-${RegexExerciseContentSolveFieldsFragmentDoc}
-${SqlExerciseContentSolveFieldsFragmentDoc}
-${UmlExerciseContentSolveFieldsFragmentDoc}
-${WebExerciseContentSolveFieldsFragmentDoc}
-${XmlExerciseContentSolveFieldsFragmentDoc}`;
+    ${ExerciseSolveFieldsFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -1010,13 +1074,15 @@ ${XmlExerciseContentSolveFieldsFragmentDoc}`;
     
   }
 export const LessonsForToolDocument = gql`
-    query LessonsForTool($toolId: String!) {
-  tool(toolId: $toolId) {
-    name
-    lessons {
-      id
-      title
-      description
+    query LessonsForTool($userJwt: String!, $toolId: String!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      name
+      lessons {
+        id
+        title
+        description
+      }
     }
   }
 }
@@ -1030,13 +1096,15 @@ export const LessonsForToolDocument = gql`
     
   }
 export const LessonDocument = gql`
-    query Lesson($toolId: String!, $lessonId: Int!) {
-  tool(toolId: $toolId) {
-    name
-    lesson(lessonId: $lessonId) {
-      id
-      title
-      description
+    query Lesson($userJwt: String!, $toolId: String!, $lessonId: Int!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      name
+      lesson(lessonId: $lessonId) {
+        id
+        title
+        description
+      }
     }
   }
 }

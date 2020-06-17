@@ -2,7 +2,7 @@
 
   <ng-container *ngIf="lessonQuery; else loadingDataBlock">
 
-    <h1 class="title is-3 has-text-centered">Lektion: {{lessonQuery.tool.lesson.title}}</h1>
+    <h1 class="title is-3 has-text-centered">Lektion: {{lessonQuery.me.tool.lesson.title}}</h1>
 
     <ng-container *ngFor="let content of contents">
 

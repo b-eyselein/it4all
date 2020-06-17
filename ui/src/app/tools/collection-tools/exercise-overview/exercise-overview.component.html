@@ -1,7 +1,7 @@
 <div class="container">
   <ng-container *ngIf="exerciseOverviewQuery; else loadingDataBlock">
 
-    <h1 class="title is-3 has-text-centered">Aufgabe &quot;{{exerciseOverviewQuery.tool.collection.exercise.title}}&quot;</h1>
+    <h1 class="title is-3 has-text-centered">Aufgabe &quot;{{exerciseOverviewQuery.me.tool.collection.exercise.title}}&quot;</h1>
 
     <div class="buttons">
       <a class="button is-primary is-fullwidth" [routerLink]="['../..']">Zurück zur Sammlung</a>
@@ -9,7 +9,7 @@
 
     <br>
 
-    <div class="notification is-light-grey" [innerHTML]="exerciseOverviewQuery.tool.collection.exercise.text"></div>
+    <div class="notification is-light-grey" [innerHTML]="exerciseOverviewQuery.me.tool.collection.exercise.text"></div>
 
     <div class="columns">
       <ng-container *ngFor="let part of parts">

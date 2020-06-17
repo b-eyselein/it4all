@@ -7,8 +7,9 @@ import {
   FieldsForLinkFragment,
   TopicFragment,
   TopicWithLevelFragment
-} from "../../../_services/apollo_services";
-import {Subscription} from "rxjs";
+} from '../../../_services/apollo_services';
+import {Subscription} from 'rxjs';
+import {AuthenticationService} from '../../../_services/authentication.service';
 
 @Component({templateUrl: './all-exercises-overview.component.html'})
 export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
@@ -20,24 +21,30 @@ export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
   filteredExercises: FieldsForLinkFragment[];
   filtersActivated: Map<TopicFragment, boolean> = new Map();
 
-  constructor(private route: ActivatedRoute, private allExercisesOverviewGQL: AllExercisesOverviewGQL) {
+  constructor(
+    private authenticationService: AuthenticationService,
+    private route: ActivatedRoute,
+    private allExercisesOverviewGQL: AllExercisesOverviewGQL
+  ) {
   }
 
   ngOnInit() {
+    const userJwt = this.authenticationService.currentUserValue.jwt;
+
     this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
 
       this.allExercisesOverviewGQL
-        .watch({toolId})
+        .watch({userJwt, toolId})
         .valueChanges
         .subscribe(({data}) => {
           this.allExercisesOverviewQuery = data;
 
-          this.filteredExercises = this.allExercisesOverviewQuery.tool.allExercises;
+          this.filteredExercises = this.allExercisesOverviewQuery.me.tool.allExercises;
 
           this.distinctTopicWithLevels = distinctObjectArray(
             flatMapArray(
-              this.allExercisesOverviewQuery.tool.allExercises,
+              this.allExercisesOverviewQuery.me.tool.allExercises,
               (exercises) => exercises.topicsWithLevels
             ),
             (t) => t.topic.abbreviation
@@ -58,10 +65,10 @@ export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
       .map(([t, _]) => t);
 
     if (activatedFilters.length > 0) {
-      this.filteredExercises = this.allExercisesOverviewQuery.tool.allExercises
+      this.filteredExercises = this.allExercisesOverviewQuery.me.tool.allExercises
         .filter((metaData) => activatedFilters.every((t) => this.exerciseHasTag(metaData, t)));
     } else {
-      this.filteredExercises = this.allExercisesOverviewQuery.tool.allExercises;
+      this.filteredExercises = this.allExercisesOverviewQuery.me.tool.allExercises;
     }
   }
 

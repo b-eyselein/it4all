@@ -2,15 +2,16 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {
   ExerciseGQL,
-  ExerciseQuery,
+  ExerciseQuery, ExerciseSolveFieldsFragment,
   ProgExerciseContentSolveFieldsFragment,
   RegexExerciseContentSolveFieldsFragment,
   SqlExerciseContentSolveFieldsFragment,
   UmlExerciseContentSolveFieldsFragment,
   WebExerciseContentSolveFieldsFragment,
   XmlExerciseContentSolveFieldsFragment
-} from "../../../_services/apollo_services";
-import {Subscription} from "rxjs";
+} from '../../../_services/apollo_services';
+import {Subscription} from 'rxjs';
+import {AuthenticationService} from '../../../_services/authentication.service';
 
 
 @Component({templateUrl: './exercise.component.html'})
@@ -21,10 +22,16 @@ export class ExerciseComponent implements OnInit, OnDestroy {
 
   exerciseQuery: ExerciseQuery;
 
-  constructor(private route: ActivatedRoute, private exerciseGQL: ExerciseGQL) {
+  constructor(
+    private authenticationService: AuthenticationService,
+    private route: ActivatedRoute,
+    private exerciseGQL: ExerciseGQL
+  ) {
   }
 
   ngOnInit() {
+    const userJwt = this.authenticationService.currentUserValue.jwt;
+
     this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
       const collId = parseInt(paramMap.get('collId'), 10);
@@ -32,7 +39,7 @@ export class ExerciseComponent implements OnInit, OnDestroy {
       const partId = paramMap.get('partId');
 
       this.apolloSub = this.exerciseGQL
-        .watch({toolId, collId, exId, partId})
+        .watch({userJwt, toolId, collId, exId, partId})
         .valueChanges
         .subscribe(({data}) => this.exerciseQuery = data);
     });
@@ -45,11 +52,11 @@ export class ExerciseComponent implements OnInit, OnDestroy {
 
   // Exercise content
 
-  private get exercise() {
-    return this.exerciseQuery.tool.collection.exercise;
+  get exercise(): ExerciseSolveFieldsFragment {
+    return this.exerciseQuery.me.tool.collection.exercise;
   }
 
-  get progExerciseContent(): ProgExerciseContentSolveFieldsFragment | undefined {
+  get programmingExerciseContent(): ProgExerciseContentSolveFieldsFragment | undefined {
     return this.exercise.programmingContent;
   }
 

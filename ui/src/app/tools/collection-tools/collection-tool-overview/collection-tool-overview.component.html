@@ -1,6 +1,6 @@
 <div class="container">
   <ng-container *ngIf="collectionToolOverviewQuery; else loadingDataBlock">
-    <h1 class="title is-3 has-text-centered">Tool {{collectionToolOverviewQuery.tool.name}}</h1>
+    <h1 class="title is-3 has-text-centered">Tool {{collectionToolOverviewQuery.me.tool.name}}</h1>
 
     <div class="buttons">
       <a class="button is-primary is-fullwidth" routerLink="/">Zurück zur Toolübersicht</a>
@@ -15,8 +15,8 @@
             <p class="card-header-title">Sammlungen</p>
           </header>
           <div class="card-content">
-            {{collectionToolOverviewQuery.tool.collectionCount}} Sammlungen
-            mit {{collectionToolOverviewQuery.tool.exerciseCount}} Aufgaben
+            {{collectionToolOverviewQuery.me.tool.collectionCount}} Sammlungen
+            mit {{collectionToolOverviewQuery.me.tool.exerciseCount}} Aufgaben
           </div>
           <footer class="card-footer">
             <a class="card-footer-item" routerLink="./collections">Zu den Sammlungen</a>
@@ -30,7 +30,7 @@
             <p class="card-header-title">Alle Aufgaben</p>
           </header>
           <div class="card-content">
-            {{collectionToolOverviewQuery.tool.exerciseCount}} Aufgaben
+            {{collectionToolOverviewQuery.me.tool.exerciseCount}} Aufgaben
           </div>
           <footer class="card-footer">
             <a class="card-footer-item" routerLink="allExercises">Zur Übersicht</a>
@@ -38,13 +38,13 @@
         </div>
       </div>
 
-      <div class="column" *ngIf="collectionToolOverviewQuery.tool.lessonCount > 0">
+      <div class="column" *ngIf="collectionToolOverviewQuery.me.tool.lessonCount > 0">
         <div class="card">
           <header class="card-header">
             <p class="card-header-title is-centered">Lektionen</p>
           </header>
           <div class="card-content">
-            {{collectionToolOverviewQuery.tool.lessonCount}} Lektionen
+            {{collectionToolOverviewQuery.me.tool.lessonCount}} Lektionen
           </div>
           <footer class="card-footer">
             <a class="card-footer-item" [routerLink]="['/lessons', toolId]">Zu den Lektionen</a>
@@ -78,3 +78,4 @@
 <ng-template #noProficienciesYetBlock>
   <div class="notification is-primary has-text-centered">Sie haben bisher noch keine Fähigkeiten erworben.</div>
 </ng-template>
+

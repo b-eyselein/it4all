@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {randomTools} from '../tools/random-tools/random-tools-list';
 import {RandomTool} from '../_interfaces/tool';
-import {ToolOverviewGQL, ToolOverviewQuery} from "../_services/apollo_services";
-import {ToolState} from "../_interfaces/graphql-types";
+import {CollectionToolFragment, ToolOverviewGQL, ToolOverviewQuery} from '../_services/apollo_services';
+import {ToolState} from '../_interfaces/graphql-types';
+import {AuthenticationService} from '../_services/authentication.service';
 
 @Component({templateUrl: './tool-overview.component.html'})
 export class ToolOverviewComponent implements OnInit {
@@ -11,18 +12,27 @@ export class ToolOverviewComponent implements OnInit {
 
   toolOverviewQuery: ToolOverviewQuery;
 
-  constructor(private toolOverviewGQL: ToolOverviewGQL) {
+  constructor(
+    private authenticationService: AuthenticationService,
+    private toolOverviewGQL: ToolOverviewGQL
+  ) {
   }
 
   ngOnInit(): void {
+    const userJwt = this.authenticationService.currentUserValue.jwt;
+
     this.toolOverviewGQL
-      .watch({})
+      .watch({userJwt})
       .valueChanges
       .subscribe(({data}) => this.toolOverviewQuery = data);
   }
 
   isLive(toolState: ToolState): boolean {
     return toolState === ToolState.Live;
+  }
+
+  get collectionTools(): CollectionToolFragment[] {
+    return this.toolOverviewQuery.me.tools;
   }
 
 }

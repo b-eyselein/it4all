@@ -22,22 +22,6 @@ trait GraphQLModel
 
   // Types
 
-  protected val userType: ObjectType[Unit, LoggedInUser] = ObjectType(
-    "User",
-    fields[Unit, LoggedInUser](
-      Field(
-        "proficiencies",
-        ListType(userProficiencyType),
-        arguments = toolIdArgument :: Nil,
-        resolve = context =>
-          ToolList.tools.find(_.id == context.arg(toolIdArgument)) match {
-            case None       => Future.successful(Seq.empty)
-            case Some(tool) => userProficienciesForTool(context.value.username, tool.id)
-          }
-      )
-    )
-  )
-
   protected val ToolType: ObjectType[Unit, CollectionTool] = ObjectType(
     "CollectionTool",
     fields[Unit, CollectionTool](
@@ -80,21 +64,38 @@ trait GraphQLModel
     )
   )
 
-  private val QueryType: ObjectType[Unit, Unit] = ObjectType(
-    "Query",
-    fields[Unit, Unit](
-      Field(
-        "me",
-        OptionType(userType),
-        arguments = userJwtArgument :: Nil,
-        resolve = context => deserializeJwt(context.arg(userJwtArgument))
-      ),
+  protected val loggedInUserType: ObjectType[Unit, LoggedInUser] = ObjectType(
+    "User",
+    fields[Unit, LoggedInUser](
       Field("tools", ListType(ToolType), resolve = _ => ToolList.tools),
       Field(
         "tool",
         OptionType(ToolType),
         arguments = toolIdArgument :: Nil,
         resolve = context => ToolList.tools.find(_.id == context.arg(toolIdArgument))
+      ),
+      Field(
+        // TODO: move to tool!
+        "proficiencies",
+        ListType(userProficiencyType),
+        arguments = toolIdArgument :: Nil,
+        resolve = context =>
+          ToolList.tools.find(_.id == context.arg(toolIdArgument)) match {
+            case None       => Future.successful(Seq.empty)
+            case Some(tool) => userProficienciesForTool(context.value.username, tool.id)
+          }
+      )
+    )
+  )
+
+  private val QueryType: ObjectType[Unit, Unit] = ObjectType(
+    "Query",
+    fields[Unit, Unit](
+      Field(
+        "me",
+        OptionType(loggedInUserType),
+        arguments = userJwtArgument :: Nil,
+        resolve = context => deserializeJwt(context.arg(userJwtArgument))
       )
     )
   )

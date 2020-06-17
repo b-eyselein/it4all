@@ -20,13 +20,13 @@ export type AbstractCorrectionResult = {
 };
 
 export type AdditionalComparison = {
-   __typename?: 'AdditionalComparison';
+  __typename?: 'AdditionalComparison';
   selectComparisons?: Maybe<SelectAdditionalComparisons>;
   insertComparison?: Maybe<SqlInsertComparisonMatchingResult>;
 };
 
 export type AttributeList = {
-   __typename?: 'AttributeList';
+  __typename?: 'AttributeList';
   elementName: Scalars['String'];
   attributeDefinitions: Array<Scalars['String']>;
 };
@@ -39,7 +39,7 @@ export enum BinaryClassificationResultType {
 }
 
 export type CollectionTool = {
-   __typename?: 'CollectionTool';
+  __typename?: 'CollectionTool';
   id: Scalars['ID'];
   name: Scalars['String'];
   state: ToolState;
@@ -64,26 +64,26 @@ export type CollectionToolCollectionArgs = {
 };
 
 export type DtdParseException = {
-   __typename?: 'DTDParseException';
+  __typename?: 'DTDParseException';
   msg: Scalars['String'];
   parsedLine: Scalars['String'];
 };
 
 export type ElementDefinition = {
-   __typename?: 'ElementDefinition';
+  __typename?: 'ElementDefinition';
   elementName: Scalars['String'];
   content: Scalars['String'];
 };
 
 export type ElementLine = {
-   __typename?: 'ElementLine';
+  __typename?: 'ElementLine';
   elementName: Scalars['String'];
   elementDefinition: ElementDefinition;
   attributeLists: Array<AttributeList>;
 };
 
 export type ElementLineAnalysisResult = {
-   __typename?: 'ElementLineAnalysisResult';
+  __typename?: 'ElementLineAnalysisResult';
   contentCorrect: Scalars['Boolean'];
   correctContent: Scalars['String'];
   attributesCorrect: Scalars['Boolean'];
@@ -91,7 +91,7 @@ export type ElementLineAnalysisResult = {
 };
 
 export type ElementLineMatch = NewMatch & {
-   __typename?: 'ElementLineMatch';
+  __typename?: 'ElementLineMatch';
   matchType: MatchType;
   userArg?: Maybe<ElementLine>;
   sampleArg?: Maybe<ElementLine>;
@@ -101,7 +101,7 @@ export type ElementLineMatch = NewMatch & {
 };
 
 export type Exercise = {
-   __typename?: 'Exercise';
+  __typename?: 'Exercise';
   exerciseId: Scalars['Int'];
   collectionId: Scalars['Int'];
   toolId: Scalars['String'];
@@ -120,7 +120,7 @@ export type Exercise = {
 };
 
 export type ExerciseCollection = {
-   __typename?: 'ExerciseCollection';
+  __typename?: 'ExerciseCollection';
   collectionId: Scalars['Int'];
   title: Scalars['String'];
   authors: Array<Scalars['String']>;
@@ -136,7 +136,7 @@ export type ExerciseCollectionExerciseArgs = {
 };
 
 export type ExerciseFile = {
-   __typename?: 'ExerciseFile';
+  __typename?: 'ExerciseFile';
   name: Scalars['String'];
   fileType: Scalars['String'];
   editable: Scalars['Boolean'];
@@ -151,14 +151,14 @@ export type ExerciseFileInput = {
 };
 
 export type ExPart = {
-   __typename?: 'ExPart';
+  __typename?: 'ExPart';
   id: Scalars['String'];
   name: Scalars['String'];
   isEntryPart: Scalars['Boolean'];
 };
 
 export type GradedHtmlTaskResult = {
-   __typename?: 'GradedHtmlTaskResult';
+  __typename?: 'GradedHtmlTaskResult';
   id: Scalars['Int'];
   success: SuccessType;
   elementFound: Scalars['Boolean'];
@@ -170,7 +170,7 @@ export type GradedHtmlTaskResult = {
 };
 
 export type GradedJsActionResult = {
-   __typename?: 'GradedJsActionResult';
+  __typename?: 'GradedJsActionResult';
   actionPerformed: Scalars['Boolean'];
   jsAction: JsAction;
   points: Scalars['Float'];
@@ -178,7 +178,7 @@ export type GradedJsActionResult = {
 };
 
 export type GradedJsHtmlElementSpecResult = {
-   __typename?: 'GradedJsHtmlElementSpecResult';
+  __typename?: 'GradedJsHtmlElementSpecResult';
   id: Scalars['Int'];
   success: SuccessType;
   elementFound: Scalars['Boolean'];
@@ -190,7 +190,7 @@ export type GradedJsHtmlElementSpecResult = {
 };
 
 export type GradedJsTaskResult = {
-   __typename?: 'GradedJsTaskResult';
+  __typename?: 'GradedJsTaskResult';
   id: Scalars['Int'];
   gradedPreResults: Array<GradedJsHtmlElementSpecResult>;
   gradedPostResults: Array<GradedJsHtmlElementSpecResult>;
@@ -201,7 +201,7 @@ export type GradedJsTaskResult = {
 };
 
 export type GradedTextResult = {
-   __typename?: 'GradedTextResult';
+  __typename?: 'GradedTextResult';
   keyName: Scalars['String'];
   awaitedContent: Scalars['String'];
   maybeFoundContent?: Maybe<Scalars['String']>;
@@ -211,12 +211,12 @@ export type GradedTextResult = {
 };
 
 export type HtmlTask = {
-   __typename?: 'HtmlTask';
+  __typename?: 'HtmlTask';
   text: Scalars['String'];
 };
 
 export type ImplementationPart = {
-   __typename?: 'ImplementationPart';
+  __typename?: 'ImplementationPart';
   base: Scalars['String'];
   files: Array<ExerciseFile>;
   implFileName: Scalars['String'];
@@ -224,7 +224,7 @@ export type ImplementationPart = {
 };
 
 export type JsAction = {
-   __typename?: 'JsAction';
+  __typename?: 'JsAction';
   xpathQuery: Scalars['String'];
   actionType: JsActionType;
   keysToSend?: Maybe<Scalars['String']>;
@@ -236,13 +236,13 @@ export enum JsActionType {
 }
 
 export type KeyValueObject = {
-   __typename?: 'KeyValueObject';
+  __typename?: 'KeyValueObject';
   key: Scalars['String'];
   value: Scalars['String'];
 };
 
 export type Lesson = {
-   __typename?: 'Lesson';
+  __typename?: 'Lesson';
   id: Scalars['Int'];
   toolId: Scalars['String'];
   title: Scalars['String'];
@@ -250,19 +250,19 @@ export type Lesson = {
 };
 
 export type Level = {
-   __typename?: 'Level';
+  __typename?: 'Level';
   title: Scalars['String'];
   levelIndex: Scalars['Int'];
 };
 
 export type LoggedInUser = {
-   __typename?: 'LoggedInUser';
+  __typename?: 'LoggedInUser';
   username: Scalars['String'];
   isAdmin: Scalars['Boolean'];
 };
 
 export type LoggedInUserWithToken = {
-   __typename?: 'LoggedInUserWithToken';
+  __typename?: 'LoggedInUserWithToken';
   loggedInUser: LoggedInUser;
   jwt: Scalars['String'];
 };
@@ -275,15 +275,15 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlySample = 'ONLY_SAMPLE',
   OnlyUser = 'ONLY_USER',
+  OnlySample = 'ONLY_SAMPLE',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  PartialMatch = 'PARTIAL_MATCH',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH'
 }
 
 export type Mutation = {
-   __typename?: 'Mutation';
+  __typename?: 'Mutation';
   register?: Maybe<Scalars['String']>;
   login?: Maybe<LoggedInUserWithToken>;
   correctProgramming: ProgrammingAbstractResult;
@@ -365,7 +365,7 @@ export type NewMatch = {
 };
 
 export type NormalExecutionResult = {
-   __typename?: 'NormalExecutionResult';
+  __typename?: 'NormalExecutionResult';
   success: SuccessType;
   logs: Scalars['String'];
 };
@@ -383,7 +383,7 @@ export type ProgrammingAbstractResult = {
 };
 
 export type ProgrammingExerciseContent = {
-   __typename?: 'ProgrammingExerciseContent';
+  __typename?: 'ProgrammingExerciseContent';
   functionName: Scalars['String'];
   foldername: Scalars['String'];
   filename: Scalars['String'];
@@ -399,7 +399,7 @@ export type ProgrammingExerciseContentPartArgs = {
 };
 
 export type ProgrammingInternalErrorResult = ProgrammingAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'ProgrammingInternalErrorResult';
+  __typename?: 'ProgrammingInternalErrorResult';
   msg: Scalars['String'];
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
@@ -407,7 +407,7 @@ export type ProgrammingInternalErrorResult = ProgrammingAbstractResult & Abstrac
 };
 
 export type ProgrammingResult = ProgrammingAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'ProgrammingResult';
+  __typename?: 'ProgrammingResult';
   solutionSaved: Scalars['Boolean'];
   simplifiedResults: Array<SimplifiedExecutionResult>;
   normalResult?: Maybe<NormalExecutionResult>;
@@ -417,13 +417,13 @@ export type ProgrammingResult = ProgrammingAbstractResult & AbstractCorrectionRe
 };
 
 export type ProgrammingSampleSolution = {
-   __typename?: 'ProgrammingSampleSolution';
+  __typename?: 'ProgrammingSampleSolution';
   id: Scalars['Int'];
   sample: ProgSolution;
 };
 
 export type ProgSolution = {
-   __typename?: 'ProgSolution';
+  __typename?: 'ProgSolution';
   files: Array<ExerciseFile>;
 };
 
@@ -432,20 +432,13 @@ export type ProgSolutionInput = {
 };
 
 export type Query = {
-   __typename?: 'Query';
+  __typename?: 'Query';
   me?: Maybe<User>;
-  tools: Array<CollectionTool>;
-  tool?: Maybe<CollectionTool>;
 };
 
 
 export type QueryMeArgs = {
   userJwt: Scalars['String'];
-};
-
-
-export type QueryToolArgs = {
-  toolId: Scalars['String'];
 };
 
 export type RegexAbstractResult = {
@@ -460,7 +453,7 @@ export enum RegexCorrectionType {
 }
 
 export type RegexExerciseContent = {
-   __typename?: 'RegexExerciseContent';
+  __typename?: 'RegexExerciseContent';
   maxPoints: Scalars['Int'];
   correctionType: RegexCorrectionType;
   matchTestData: Array<RegexMatchTestData>;
@@ -479,14 +472,14 @@ export enum RegexExPart {
 }
 
 export type RegexExtractedValuesComparisonMatchingResult = MatchingResult & {
-   __typename?: 'RegexExtractedValuesComparisonMatchingResult';
+  __typename?: 'RegexExtractedValuesComparisonMatchingResult';
   allMatches: Array<RegexMatchMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export type RegexExtractionResult = RegexAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'RegexExtractionResult';
+  __typename?: 'RegexExtractionResult';
   extractionResults: Array<RegexExtractionSingleResult>;
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
@@ -494,20 +487,20 @@ export type RegexExtractionResult = RegexAbstractResult & AbstractCorrectionResu
 };
 
 export type RegexExtractionSingleResult = {
-   __typename?: 'RegexExtractionSingleResult';
+  __typename?: 'RegexExtractionSingleResult';
   base: Scalars['String'];
   extractionMatchingResult: RegexExtractedValuesComparisonMatchingResult;
   correct: Scalars['Boolean'];
 };
 
 export type RegexExtractionTestData = {
-   __typename?: 'RegexExtractionTestData';
+  __typename?: 'RegexExtractionTestData';
   id: Scalars['Int'];
   base: Scalars['String'];
 };
 
 export type RegexInternalErrorResult = RegexAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'RegexInternalErrorResult';
+  __typename?: 'RegexInternalErrorResult';
   msg: Scalars['String'];
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
@@ -515,7 +508,7 @@ export type RegexInternalErrorResult = RegexAbstractResult & AbstractCorrectionR
 };
 
 export type RegexMatchingResult = RegexAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'RegexMatchingResult';
+  __typename?: 'RegexMatchingResult';
   matchingResults: Array<RegexMatchingSingleResult>;
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
@@ -523,14 +516,14 @@ export type RegexMatchingResult = RegexAbstractResult & AbstractCorrectionResult
 };
 
 export type RegexMatchingSingleResult = {
-   __typename?: 'RegexMatchingSingleResult';
+  __typename?: 'RegexMatchingSingleResult';
   matchData: Scalars['String'];
   isIncluded: Scalars['Boolean'];
   resultType: BinaryClassificationResultType;
 };
 
 export type RegexMatchMatch = NewMatch & {
-   __typename?: 'RegexMatchMatch';
+  __typename?: 'RegexMatchMatch';
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
   matchType: MatchType;
@@ -539,14 +532,14 @@ export type RegexMatchMatch = NewMatch & {
 };
 
 export type RegexMatchTestData = {
-   __typename?: 'RegexMatchTestData';
+  __typename?: 'RegexMatchTestData';
   id: Scalars['Int'];
   data: Scalars['String'];
   isIncluded: Scalars['Boolean'];
 };
 
 export type RegexSampleSolution = {
-   __typename?: 'RegexSampleSolution';
+  __typename?: 'RegexSampleSolution';
   id: Scalars['Int'];
   sample: Scalars['String'];
 };
@@ -558,14 +551,14 @@ export type RegisterValues = {
 };
 
 export type SelectAdditionalComparisons = {
-   __typename?: 'SelectAdditionalComparisons';
+  __typename?: 'SelectAdditionalComparisons';
   groupByComparison: SqlGroupByComparisonMatchingResult;
   orderByComparison: SqlOrderByComparisonMatchingResult;
   limitComparison: SqlLimitComparisonMatchingResult;
 };
 
 export type SimplifiedExecutionResult = {
-   __typename?: 'SimplifiedExecutionResult';
+  __typename?: 'SimplifiedExecutionResult';
   success: SuccessType;
   id: Scalars['Int'];
   stdout?: Maybe<Scalars['String']>;
@@ -575,7 +568,7 @@ export type SimplifiedExecutionResult = {
 };
 
 export type SiteSpec = {
-   __typename?: 'SiteSpec';
+  __typename?: 'SiteSpec';
   fileName: Scalars['String'];
   htmlTasks: Array<HtmlTask>;
   htmlTaskCount: Scalars['Int'];
@@ -589,14 +582,14 @@ export type SqlAbstractResult = {
 };
 
 export type SqlBinaryExpressionComparisonMatchingResult = MatchingResult & {
-   __typename?: 'SqlBinaryExpressionComparisonMatchingResult';
+  __typename?: 'SqlBinaryExpressionComparisonMatchingResult';
   allMatches: Array<SqlBinaryExpressionMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export type SqlBinaryExpressionMatch = NewMatch & {
-   __typename?: 'SqlBinaryExpressionMatch';
+  __typename?: 'SqlBinaryExpressionMatch';
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
   matchType: MatchType;
@@ -605,21 +598,21 @@ export type SqlBinaryExpressionMatch = NewMatch & {
 };
 
 export type SqlCell = {
-   __typename?: 'SqlCell';
+  __typename?: 'SqlCell';
   colName: Scalars['String'];
   content?: Maybe<Scalars['String']>;
   different: Scalars['Boolean'];
 };
 
 export type SqlColumnComparisonMatchingResult = MatchingResult & {
-   __typename?: 'SqlColumnComparisonMatchingResult';
+  __typename?: 'SqlColumnComparisonMatchingResult';
   allMatches: Array<SqlColumnMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export type SqlColumnMatch = NewMatch & {
-   __typename?: 'SqlColumnMatch';
+  __typename?: 'SqlColumnMatch';
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
   matchType: MatchType;
@@ -628,13 +621,13 @@ export type SqlColumnMatch = NewMatch & {
 };
 
 export type SqlExecutionResult = {
-   __typename?: 'SqlExecutionResult';
+  __typename?: 'SqlExecutionResult';
   userResult?: Maybe<SqlQueryResult>;
   sampleResult?: Maybe<SqlQueryResult>;
 };
 
 export type SqlExerciseContent = {
-   __typename?: 'SqlExerciseContent';
+  __typename?: 'SqlExerciseContent';
   exerciseType: SqlExerciseType;
   schemaName: Scalars['String'];
   sampleSolutions: Array<SqlSampleSolution>;
@@ -649,11 +642,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Create = 'CREATE',
   Insert = 'INSERT',
   Select = 'SELECT',
   Update = 'UPDATE',
-  Delete = 'DELETE'
+  Delete = 'DELETE',
+  Create = 'CREATE'
 }
 
 export enum SqlExPart {
@@ -661,14 +654,14 @@ export enum SqlExPart {
 }
 
 export type SqlGroupByComparisonMatchingResult = MatchingResult & {
-   __typename?: 'SqlGroupByComparisonMatchingResult';
+  __typename?: 'SqlGroupByComparisonMatchingResult';
   allMatches: Array<SqlGroupByMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export type SqlGroupByMatch = NewMatch & {
-   __typename?: 'SqlGroupByMatch';
+  __typename?: 'SqlGroupByMatch';
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
   matchType: MatchType;
@@ -677,14 +670,14 @@ export type SqlGroupByMatch = NewMatch & {
 };
 
 export type SqlInsertComparisonMatchingResult = MatchingResult & {
-   __typename?: 'SqlInsertComparisonMatchingResult';
+  __typename?: 'SqlInsertComparisonMatchingResult';
   allMatches: Array<SqlInsertMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export type SqlInsertMatch = NewMatch & {
-   __typename?: 'SqlInsertMatch';
+  __typename?: 'SqlInsertMatch';
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
   matchType: MatchType;
@@ -693,7 +686,7 @@ export type SqlInsertMatch = NewMatch & {
 };
 
 export type SqlInternalErrorResult = SqlAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'SqlInternalErrorResult';
+  __typename?: 'SqlInternalErrorResult';
   msg: Scalars['String'];
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
@@ -701,20 +694,20 @@ export type SqlInternalErrorResult = SqlAbstractResult & AbstractCorrectionResul
 };
 
 export type SqlKeyCellValueObject = {
-   __typename?: 'SqlKeyCellValueObject';
+  __typename?: 'SqlKeyCellValueObject';
   key: Scalars['String'];
   value: SqlCell;
 };
 
 export type SqlLimitComparisonMatchingResult = MatchingResult & {
-   __typename?: 'SqlLimitComparisonMatchingResult';
+  __typename?: 'SqlLimitComparisonMatchingResult';
   allMatches: Array<SqlLimitMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export type SqlLimitMatch = NewMatch & {
-   __typename?: 'SqlLimitMatch';
+  __typename?: 'SqlLimitMatch';
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
   matchType: MatchType;
@@ -723,14 +716,14 @@ export type SqlLimitMatch = NewMatch & {
 };
 
 export type SqlOrderByComparisonMatchingResult = MatchingResult & {
-   __typename?: 'SqlOrderByComparisonMatchingResult';
+  __typename?: 'SqlOrderByComparisonMatchingResult';
   allMatches: Array<SqlOrderByMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export type SqlOrderByMatch = NewMatch & {
-   __typename?: 'SqlOrderByMatch';
+  __typename?: 'SqlOrderByMatch';
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
   matchType: MatchType;
@@ -739,7 +732,7 @@ export type SqlOrderByMatch = NewMatch & {
 };
 
 export type SqlQueriesStaticComparison = {
-   __typename?: 'SqlQueriesStaticComparison';
+  __typename?: 'SqlQueriesStaticComparison';
   columnComparison: SqlColumnComparisonMatchingResult;
   tableComparison: SqlTableComparisonMatchingResult;
   joinExpressionComparison: SqlBinaryExpressionComparisonMatchingResult;
@@ -748,14 +741,14 @@ export type SqlQueriesStaticComparison = {
 };
 
 export type SqlQueryResult = {
-   __typename?: 'SqlQueryResult';
+  __typename?: 'SqlQueryResult';
   columnNames: Array<Scalars['String']>;
   rows: Array<SqlRow>;
   tableName: Scalars['String'];
 };
 
 export type SqlResult = SqlAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'SqlResult';
+  __typename?: 'SqlResult';
   staticComparison: SqlQueriesStaticComparison;
   executionResult: SqlExecutionResult;
   solutionSaved: Scalars['Boolean'];
@@ -764,25 +757,25 @@ export type SqlResult = SqlAbstractResult & AbstractCorrectionResult & {
 };
 
 export type SqlRow = {
-   __typename?: 'SqlRow';
+  __typename?: 'SqlRow';
   cells: Array<SqlKeyCellValueObject>;
 };
 
 export type SqlSampleSolution = {
-   __typename?: 'SqlSampleSolution';
+  __typename?: 'SqlSampleSolution';
   id: Scalars['Int'];
   sample: Scalars['String'];
 };
 
 export type SqlTableComparisonMatchingResult = MatchingResult & {
-   __typename?: 'SqlTableComparisonMatchingResult';
+  __typename?: 'SqlTableComparisonMatchingResult';
   allMatches: Array<SqlTableMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export type SqlTableMatch = NewMatch & {
-   __typename?: 'SqlTableMatch';
+  __typename?: 'SqlTableMatch';
   sampleArg?: Maybe<Scalars['String']>;
   userArg?: Maybe<Scalars['String']>;
   matchType: MatchType;
@@ -805,7 +798,7 @@ export enum ToolState {
 }
 
 export type Topic = {
-   __typename?: 'Topic';
+  __typename?: 'Topic';
   abbreviation: Scalars['String'];
   toolId: Scalars['String'];
   title: Scalars['String'];
@@ -813,7 +806,7 @@ export type Topic = {
 };
 
 export type TopicWithLevel = {
-   __typename?: 'TopicWithLevel';
+  __typename?: 'TopicWithLevel';
   topic: Topic;
   level: Level;
 };
@@ -825,7 +818,7 @@ export type UmlAbstractResult = {
 };
 
 export type UmlAssociation = {
-   __typename?: 'UmlAssociation';
+  __typename?: 'UmlAssociation';
   assocType: UmlAssociationType;
   assocName?: Maybe<Scalars['String']>;
   firstEnd: Scalars['String'];
@@ -835,7 +828,7 @@ export type UmlAssociation = {
 };
 
 export type UmlAssociationAnalysisResult = {
-   __typename?: 'UmlAssociationAnalysisResult';
+  __typename?: 'UmlAssociationAnalysisResult';
   endsParallel: Scalars['Boolean'];
   assocTypeEqual: Scalars['Boolean'];
   correctAssocType: UmlAssociationType;
@@ -852,7 +845,7 @@ export type UmlAssociationInput = {
 };
 
 export type UmlAssociationMatch = NewMatch & {
-   __typename?: 'UmlAssociationMatch';
+  __typename?: 'UmlAssociationMatch';
   matchType: MatchType;
   userArg?: Maybe<UmlAssociation>;
   sampleArg?: Maybe<UmlAssociation>;
@@ -862,7 +855,7 @@ export type UmlAssociationMatch = NewMatch & {
 };
 
 export type UmlAssociationMatchingResult = MatchingResult & {
-   __typename?: 'UmlAssociationMatchingResult';
+  __typename?: 'UmlAssociationMatchingResult';
   allMatches: Array<UmlAssociationMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -875,7 +868,7 @@ export enum UmlAssociationType {
 }
 
 export type UmlAttribute = {
-   __typename?: 'UmlAttribute';
+  __typename?: 'UmlAttribute';
   visibility: UmlVisibility;
   memberName: Scalars['String'];
   memberType: Scalars['String'];
@@ -885,7 +878,7 @@ export type UmlAttribute = {
 };
 
 export type UmlAttributeAnalysisResult = {
-   __typename?: 'UmlAttributeAnalysisResult';
+  __typename?: 'UmlAttributeAnalysisResult';
   visibilityComparison: Scalars['Boolean'];
   correctVisibility: UmlVisibility;
   typeComparison: Scalars['Boolean'];
@@ -908,7 +901,7 @@ export type UmlAttributeInput = {
 };
 
 export type UmlAttributeMatch = NewMatch & {
-   __typename?: 'UmlAttributeMatch';
+  __typename?: 'UmlAttributeMatch';
   matchType: MatchType;
   userArg?: Maybe<UmlAttribute>;
   sampleArg?: Maybe<UmlAttribute>;
@@ -918,14 +911,14 @@ export type UmlAttributeMatch = NewMatch & {
 };
 
 export type UmlAttributeMatchingResult = MatchingResult & {
-   __typename?: 'UmlAttributeMatchingResult';
+  __typename?: 'UmlAttributeMatchingResult';
   allMatches: Array<UmlAttributeMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export type UmlClass = {
-   __typename?: 'UmlClass';
+  __typename?: 'UmlClass';
   classType: UmlClassType;
   name: Scalars['String'];
   attributes: Array<UmlAttribute>;
@@ -933,7 +926,7 @@ export type UmlClass = {
 };
 
 export type UmlClassDiagram = {
-   __typename?: 'UmlClassDiagram';
+  __typename?: 'UmlClassDiagram';
   classes: Array<UmlClass>;
   associations: Array<UmlAssociation>;
   implementations: Array<UmlImplementation>;
@@ -953,7 +946,7 @@ export type UmlClassInput = {
 };
 
 export type UmlClassMatch = NewMatch & {
-   __typename?: 'UmlClassMatch';
+  __typename?: 'UmlClassMatch';
   matchType: MatchType;
   userArg?: Maybe<UmlClass>;
   sampleArg?: Maybe<UmlClass>;
@@ -964,7 +957,7 @@ export type UmlClassMatch = NewMatch & {
 };
 
 export type UmlClassMatchAnalysisResult = {
-   __typename?: 'UmlClassMatchAnalysisResult';
+  __typename?: 'UmlClassMatchAnalysisResult';
   classTypeCorrect: Scalars['Boolean'];
   correctClassType: UmlClassType;
   maybeAttributeMatchingResult?: Maybe<UmlAttributeMatchingResult>;
@@ -972,7 +965,7 @@ export type UmlClassMatchAnalysisResult = {
 };
 
 export type UmlClassMatchingResult = MatchingResult & {
-   __typename?: 'UmlClassMatchingResult';
+  __typename?: 'UmlClassMatchingResult';
   allMatches: Array<UmlClassMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -985,7 +978,7 @@ export enum UmlClassType {
 }
 
 export type UmlExerciseContent = {
-   __typename?: 'UmlExerciseContent';
+  __typename?: 'UmlExerciseContent';
   toIgnore: Array<Scalars['String']>;
   sampleSolutions: Array<UmlSampleSolution>;
   part?: Maybe<UmlExPart>;
@@ -1005,7 +998,7 @@ export enum UmlExPart {
 }
 
 export type UmlImplementation = {
-   __typename?: 'UmlImplementation';
+  __typename?: 'UmlImplementation';
   subClass: Scalars['String'];
   superClass: Scalars['String'];
 };
@@ -1016,7 +1009,7 @@ export type UmlImplementationInput = {
 };
 
 export type UmlImplementationMatch = NewMatch & {
-   __typename?: 'UmlImplementationMatch';
+  __typename?: 'UmlImplementationMatch';
   matchType: MatchType;
   userArg?: Maybe<UmlImplementation>;
   sampleArg?: Maybe<UmlImplementation>;
@@ -1025,14 +1018,14 @@ export type UmlImplementationMatch = NewMatch & {
 };
 
 export type UmlImplementationMatchingResult = MatchingResult & {
-   __typename?: 'UmlImplementationMatchingResult';
+  __typename?: 'UmlImplementationMatchingResult';
   allMatches: Array<UmlImplementationMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export type UmlInternalErrorResult = UmlAbstractResult & {
-   __typename?: 'UmlInternalErrorResult';
+  __typename?: 'UmlInternalErrorResult';
   msg: Scalars['String'];
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
@@ -1040,7 +1033,7 @@ export type UmlInternalErrorResult = UmlAbstractResult & {
 };
 
 export type UmlMethod = {
-   __typename?: 'UmlMethod';
+  __typename?: 'UmlMethod';
   visibility: UmlVisibility;
   memberName: Scalars['String'];
   memberType: Scalars['String'];
@@ -1050,7 +1043,7 @@ export type UmlMethod = {
 };
 
 export type UmlMethodAnalysisResult = {
-   __typename?: 'UmlMethodAnalysisResult';
+  __typename?: 'UmlMethodAnalysisResult';
   visibilityComparison: Scalars['Boolean'];
   correctVisibility: UmlVisibility;
   typeComparison: Scalars['Boolean'];
@@ -1073,7 +1066,7 @@ export type UmlMethodInput = {
 };
 
 export type UmlMethodMatch = NewMatch & {
-   __typename?: 'UmlMethodMatch';
+  __typename?: 'UmlMethodMatch';
   matchType: MatchType;
   userArg?: Maybe<UmlMethod>;
   sampleArg?: Maybe<UmlMethod>;
@@ -1083,7 +1076,7 @@ export type UmlMethodMatch = NewMatch & {
 };
 
 export type UmlMethodMatchingResult = MatchingResult & {
-   __typename?: 'UmlMethodMatchingResult';
+  __typename?: 'UmlMethodMatchingResult';
   allMatches: Array<UmlMethodMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -1095,7 +1088,7 @@ export enum UmlMultiplicity {
 }
 
 export type UmlResult = UmlAbstractResult & {
-   __typename?: 'UmlResult';
+  __typename?: 'UmlResult';
   classResult?: Maybe<UmlClassMatchingResult>;
   assocResult?: Maybe<UmlAssociationMatchingResult>;
   implResult?: Maybe<UmlImplementationMatchingResult>;
@@ -1105,7 +1098,7 @@ export type UmlResult = UmlAbstractResult & {
 };
 
 export type UmlSampleSolution = {
-   __typename?: 'UmlSampleSolution';
+  __typename?: 'UmlSampleSolution';
   id: Scalars['Int'];
   sample: UmlClassDiagram;
 };
@@ -1118,7 +1111,7 @@ export enum UmlVisibility {
 }
 
 export type UnitTestCorrectionResult = {
-   __typename?: 'UnitTestCorrectionResult';
+  __typename?: 'UnitTestCorrectionResult';
   testConfig: UnitTestTestConfig;
   successful: Scalars['Boolean'];
   file: Scalars['String'];
@@ -1128,7 +1121,7 @@ export type UnitTestCorrectionResult = {
 };
 
 export type UnitTestPart = {
-   __typename?: 'UnitTestPart';
+  __typename?: 'UnitTestPart';
   unitTestType: UnitTestType;
   unitTestsDescription: Scalars['String'];
   unitTestFiles: Array<ExerciseFile>;
@@ -1139,7 +1132,7 @@ export type UnitTestPart = {
 };
 
 export type UnitTestTestConfig = {
-   __typename?: 'UnitTestTestConfig';
+  __typename?: 'UnitTestTestConfig';
   id: Scalars['Int'];
   shouldFail: Scalars['Boolean'];
   description: Scalars['String'];
@@ -1152,8 +1145,15 @@ export enum UnitTestType {
 }
 
 export type User = {
-   __typename?: 'User';
+  __typename?: 'User';
+  tools: Array<CollectionTool>;
+  tool?: Maybe<CollectionTool>;
   proficiencies: Array<UserProficiency>;
+};
+
+
+export type UserToolArgs = {
+  toolId: Scalars['String'];
 };
 
 
@@ -1167,7 +1167,7 @@ export type UserCredentials = {
 };
 
 export type UserProficiency = {
-   __typename?: 'UserProficiency';
+  __typename?: 'UserProficiency';
   username: Scalars['String'];
   topic: Topic;
   points: Scalars['Int'];
@@ -1182,7 +1182,7 @@ export type WebAbstractResult = {
 };
 
 export type WebExerciseContent = {
-   __typename?: 'WebExerciseContent';
+  __typename?: 'WebExerciseContent';
   htmlText?: Maybe<Scalars['String']>;
   jsText?: Maybe<Scalars['String']>;
   siteSpec: SiteSpec;
@@ -1202,7 +1202,7 @@ export enum WebExPart {
 }
 
 export type WebInternalErrorResult = WebAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'WebInternalErrorResult';
+  __typename?: 'WebInternalErrorResult';
   msg: Scalars['String'];
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
@@ -1210,7 +1210,7 @@ export type WebInternalErrorResult = WebAbstractResult & AbstractCorrectionResul
 };
 
 export type WebResult = WebAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'WebResult';
+  __typename?: 'WebResult';
   gradedHtmlTaskResults: Array<GradedHtmlTaskResult>;
   gradedJsTaskResults: Array<GradedJsTaskResult>;
   solutionSaved: Scalars['Boolean'];
@@ -1219,13 +1219,13 @@ export type WebResult = WebAbstractResult & AbstractCorrectionResult & {
 };
 
 export type WebSampleSolution = {
-   __typename?: 'WebSampleSolution';
+  __typename?: 'WebSampleSolution';
   id: Scalars['Int'];
   sample: WebSolution;
 };
 
 export type WebSolution = {
-   __typename?: 'WebSolution';
+  __typename?: 'WebSolution';
   files: Array<ExerciseFile>;
 };
 
@@ -1240,19 +1240,19 @@ export type XmlAbstractResult = {
 };
 
 export type XmlDocumentResult = {
-   __typename?: 'XmlDocumentResult';
+  __typename?: 'XmlDocumentResult';
   errors: Array<XmlError>;
 };
 
 export type XmlElementLineComparisonMatchingResult = MatchingResult & {
-   __typename?: 'XmlElementLineComparisonMatchingResult';
+  __typename?: 'XmlElementLineComparisonMatchingResult';
   allMatches: Array<ElementLineMatch>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export type XmlError = {
-   __typename?: 'XmlError';
+  __typename?: 'XmlError';
   errorType: XmlErrorType;
   errorMessage: Scalars['String'];
   line: Scalars['Int'];
@@ -1266,7 +1266,7 @@ export enum XmlErrorType {
 }
 
 export type XmlExerciseContent = {
-   __typename?: 'XmlExerciseContent';
+  __typename?: 'XmlExerciseContent';
   grammarDescription: Scalars['String'];
   rootNode: Scalars['String'];
   sampleSolutions: Array<XmlSampleSolution>;
@@ -1284,13 +1284,13 @@ export enum XmlExPart {
 }
 
 export type XmlGrammarResult = {
-   __typename?: 'XmlGrammarResult';
+  __typename?: 'XmlGrammarResult';
   parseErrors: Array<DtdParseException>;
   results: XmlElementLineComparisonMatchingResult;
 };
 
 export type XmlInternalErrorResult = XmlAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'XmlInternalErrorResult';
+  __typename?: 'XmlInternalErrorResult';
   msg: Scalars['String'];
   solutionSaved: Scalars['Boolean'];
   points: Scalars['Float'];
@@ -1298,7 +1298,7 @@ export type XmlInternalErrorResult = XmlAbstractResult & AbstractCorrectionResul
 };
 
 export type XmlResult = XmlAbstractResult & AbstractCorrectionResult & {
-   __typename?: 'XmlResult';
+  __typename?: 'XmlResult';
   successType: SuccessType;
   documentResult?: Maybe<XmlDocumentResult>;
   grammarResult?: Maybe<XmlGrammarResult>;
@@ -1308,13 +1308,13 @@ export type XmlResult = XmlAbstractResult & AbstractCorrectionResult & {
 };
 
 export type XmlSampleSolution = {
-   __typename?: 'XmlSampleSolution';
+  __typename?: 'XmlSampleSolution';
   id: Scalars['Int'];
   sample: XmlSolution;
 };
 
 export type XmlSolution = {
-   __typename?: 'XmlSolution';
+  __typename?: 'XmlSolution';
   document: Scalars['String'];
   grammar: Scalars['String'];
 };

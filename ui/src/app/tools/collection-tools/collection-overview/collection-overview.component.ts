@@ -1,11 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {
-  CollectionOverviewGQL,
-  CollectionOverviewQuery,
-  FieldsForLinkFragment
-} from "../../../_services/apollo_services";
-import {Subscription} from "rxjs";
+import {CollectionOverviewGQL, CollectionOverviewQuery, FieldsForLinkFragment} from '../../../_services/apollo_services';
+import {Subscription} from 'rxjs';
+import {AuthenticationService} from '../../../_services/authentication.service';
 
 @Component({templateUrl: './collection-overview.component.html'})
 export class CollectionOverviewComponent implements OnInit, OnDestroy {
@@ -14,16 +11,22 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
 
   collectionOverviewQuery: CollectionOverviewQuery;
 
-  constructor(private route: ActivatedRoute, private collectionOverviewGQL: CollectionOverviewGQL) {
+  constructor(
+    private authenticationService: AuthenticationService,
+    private route: ActivatedRoute,
+    private collectionOverviewGQL: CollectionOverviewGQL
+  ) {
   }
 
   ngOnInit() {
+    const userJwt = this.authenticationService.currentUserValue.jwt;
+
     this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId: string = paramMap.get('toolId');
       const collId: number = parseInt(paramMap.get('collId'), 10);
 
       this.collectionOverviewGQL
-        .watch({toolId, collId})
+        .watch({userJwt, toolId, collId})
         .valueChanges
         .subscribe(({data}) => this.collectionOverviewQuery = data);
     });
@@ -34,7 +37,7 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
   }
 
   get exercises(): FieldsForLinkFragment[] {
-    return this.collectionOverviewQuery.tool.collection.exercises;
+    return this.collectionOverviewQuery.me.tool.collection.exercises;
   }
 
 }

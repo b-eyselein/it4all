@@ -1,38 +1,38 @@
 <ng-container *ngIf=" exerciseQuery; else loadingDataBlock">
 
   <it4all-programming-exercise
-    *ngIf="progExerciseContent"
-    [exerciseFragment]="exerciseQuery.tool.collection.exercise"
-    [contentFragment]="progExerciseContent">
+    *ngIf="programmingExerciseContent"
+    [exerciseFragment]="exercise"
+    [contentFragment]="programmingExerciseContent">
   </it4all-programming-exercise>
 
   <it4all-regex-exercise
     *ngIf="regexExerciseContent"
-    [exerciseFragment]="exerciseQuery.tool.collection.exercise"
+    [exerciseFragment]="exercise"
     [contentFragment]="regexExerciseContent">
   </it4all-regex-exercise>
 
   <it4all-sql-exercise
     *ngIf="sqlExerciseContent"
-    [exerciseFragment]="exerciseQuery.tool.collection.exercise"
+    [exerciseFragment]="exercise"
     [contentFragment]="sqlExerciseContent">
   </it4all-sql-exercise>
 
   <it4all-uml-exercise
     *ngIf="umlExerciseContent"
-    [exerciseFragment]="exerciseQuery.tool.collection.exercise"
+    [exerciseFragment]="exercise"
     [contentFragment]="umlExerciseContent">
   </it4all-uml-exercise>
 
   <it4all-web-exercise
     *ngIf="webExerciseContent"
-    [exerciseFragment]="exerciseQuery.tool.collection.exercise"
+    [exerciseFragment]="exercise"
     [contentFragment]="webExerciseContent">
   </it4all-web-exercise>
 
   <it4all-xml-exercise
     *ngIf="xmlExerciseContent"
-    [exerciseFragment]="exerciseQuery.tool.collection.exercise"
+    [exerciseFragment]="exercise"
     [contentFragment]="xmlExerciseContent">
   </it4all-xml-exercise>
 

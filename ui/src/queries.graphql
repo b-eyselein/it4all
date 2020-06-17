@@ -21,26 +21,33 @@ mutation Login($username: String!, $password: String!) {
 }
 
 # /tools
-query ToolOverview {
-  tools {
-    id
-    name
-    state
-    collectionCount
-    lessonCount
-    exerciseCount
+
+fragment CollectionTool on CollectionTool {
+  id
+  name
+  state
+  collectionCount
+  lessonCount
+  exerciseCount
+}
+
+query ToolOverview($userJwt: String!) {
+  me(userJwt: $userJwt) {
+    tools {
+      ...CollectionTool
+    }
   }
 }
 
 # /tools/:toolId
 query CollectionToolOverview($toolId: String!, $userJwt: String!) {
-  tool(toolId: $toolId) {
-    name
-    collectionCount
-    exerciseCount
-    lessonCount
-  }
   me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      name
+      collectionCount
+      exerciseCount
+      lessonCount
+    }
     proficiencies(toolId: $toolId) {
       ...UserProficiency
     }
@@ -59,51 +66,64 @@ fragment UserProficiency on UserProficiency {
 }
 
 # /tools/:toolId/allExercises
-query AllExercisesOverview($toolId: String!) {
-  tool(toolId: $toolId) {
-    allExercises {
-      topicsWithLevels {
-        ...TopicWithLevel
-      }
-      ...FieldsForLink
-    }
-  }
-}
-
-# /tools/:toolId/collections
-query CollectionList($toolId: String!) {
-  tool(toolId: $toolId) {
-    name
-    collections {
-      collectionId
-      title
-      exerciseCount
-    }
-  }
-}
-
-# /tools/:toolId/collections/:collId
-query CollectionOverview($toolId: String!, $collId: Int!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      title
-      exercises {
+query AllExercisesOverview($userJwt: String!, $toolId: String!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      allExercises {
+        topicsWithLevels {
+          ...TopicWithLevel
+        }
         ...FieldsForLink
       }
     }
   }
 }
 
-# /tools/:toolId/collections/:collId/exercises/:exId
-query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      exercise(exId: $exId) {
-        exerciseId
+# /tools/:toolId/collections
+
+fragment CollectionValues on ExerciseCollection {
+  collectionId
+  title
+  exerciseCount
+}
+
+query CollectionList($userJwt: String!, $toolId: String!) {
+  me(userJwt: $userJwt){
+    tool(toolId: $toolId) {
+      name
+      collections {
+        ...CollectionValues
+      }
+    }
+  }
+}
+
+# /tools/:toolId/collections/:collId
+query CollectionOverview($userJwt: String!, $toolId: String!, $collId: Int!) {
+  me(userJwt: $userJwt){
+    tool(toolId: $toolId) {
+      collection(collId: $collId) {
         title
-        text
-        parts {
-          ...Part
+        exercises {
+          ...FieldsForLink
+        }
+      }
+    }
+  }
+}
+
+# /tools/:toolId/collections/:collId/exercises/:exId
+query ExerciseOverview($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!) {
+  me (userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      collection(collId: $collId) {
+        exercise(exId: $exId) {
+          exerciseId
+          title
+          text
+          parts {
+            ...Part
+          }
         }
       }
     }
@@ -111,28 +131,39 @@ query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
 }
 
 # /tools/:toolId/collections/:collId/exercises/:exId/parts/:part
-query Exercise($toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
-  tool(toolId: $toolId) {
-    collection(collId: $collId) {
-      exercise(exId: $exId) {
-        ...ExerciseSolveFields
-        programmingContent {
-          ...ProgExerciseContentSolveFields
-        }
-        regexContent {
-          ...RegexExerciseContentSolveFields
-        }
-        sqlContent {
-          ...SqlExerciseContentSolveFields
-        }
-        umlContent {
-          ...UmlExerciseContentSolveFields
-        }
-        webContent {
-          ...WebExerciseContentSolveFields
-        }
-        xmlContent {
-          ...XmlExerciseContentSolveFields
+
+fragment ExerciseSolveFields on Exercise {
+  exerciseId
+  collectionId
+  toolId
+  title
+  text
+  programmingContent {
+    ...ProgExerciseContentSolveFields
+  }
+  regexContent {
+    ...RegexExerciseContentSolveFields
+  }
+  sqlContent {
+    ...SqlExerciseContentSolveFields
+  }
+  umlContent {
+    ...UmlExerciseContentSolveFields
+  }
+  webContent {
+    ...WebExerciseContentSolveFields
+  }
+  xmlContent {
+    ...XmlExerciseContentSolveFields
+  }
+}
+
+query Exercise($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
+  me (userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      collection(collId: $collId) {
+        exercise(exId: $exId) {
+          ...ExerciseSolveFields
         }
       }
     }
@@ -141,24 +172,28 @@ query Exercise($toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
 
 # Lesson queries
 
-query LessonsForTool($toolId: String!) {
-  tool(toolId: $toolId) {
-    name
-    lessons {
-      id
-      title
-      description
+query LessonsForTool($userJwt: String!, $toolId: String!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      name
+      lessons {
+        id
+        title
+        description
+      }
     }
   }
 }
 
-query Lesson($toolId: String!, $lessonId: Int!) {
-  tool(toolId: $toolId) {
-    name
-    lesson(lessonId: $lessonId){
-      id
-      title
-      description
+query Lesson($userJwt: String!,$toolId: String!, $lessonId: Int!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      name
+      lesson(lessonId: $lessonId){
+        id
+        title
+        description
+      }
     }
   }
 }
@@ -202,14 +237,6 @@ fragment FieldsForLink on Exercise {
   topicsWithLevels {
     ...TopicWithLevel
   }
-}
-
-fragment ExerciseSolveFields on Exercise {
-  exerciseId
-  collectionId
-  toolId
-  title
-  text
 }
 
 fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {

@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Lesson, LessonContentBase} from '../../_interfaces/lesson';
-import {LessonGQL, LessonQuery} from "../../_services/apollo_services";
+import {LessonGQL, LessonQuery} from '../../_services/apollo_services';
+import {AuthenticationService} from '../../_services/authentication.service';
 
 interface SolvableLessonContent extends LessonContentBase {
   priorSolved?: boolean;
@@ -17,22 +18,28 @@ export class LessonComponent implements OnInit {
 
   currentIndex = 0;
 
-  constructor(private route: ActivatedRoute, private lessonGQL: LessonGQL) {
+  constructor(
+    private authenticationService: AuthenticationService,
+    private route: ActivatedRoute,
+    private lessonGQL: LessonGQL
+  ) {
   }
 
   ngOnInit() {
+    const userJwt = this.authenticationService.currentUserValue.jwt;
+
     this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
       const lessonId = parseInt(paramMap.get('lessonId'), 10);
 
       this.lessonGQL
-        .watch({toolId, lessonId})
+        .watch({userJwt, toolId, lessonId})
         .valueChanges
         .subscribe(({data}) => {
           this.lessonQuery = data;
           this.contents = [];
         });
-    })
+    });
   }
 
   update(): void {

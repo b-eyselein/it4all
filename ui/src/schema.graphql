@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Jun 03 2020 12:58:11 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Jun 17 2020 13:51:41 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -228,11 +228,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_SAMPLE
   ONLY_USER
+  ONLY_SAMPLE
   SUCCESSFUL_MATCH
-  PARTIAL_MATCH
   UNSUCCESSFUL_MATCH
+  PARTIAL_MATCH
 }
 
 type Mutation {
@@ -310,8 +310,6 @@ input ProgSolutionInput {
 
 type Query {
   me(userJwt: String!): User
-  tools: [CollectionTool!]!
-  tool(toolId: String!): CollectionTool
 }
 
 interface RegexAbstractResult {
@@ -484,11 +482,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  CREATE
   INSERT
   SELECT
   UPDATE
   DELETE
+  CREATE
 }
 
 enum SqlExPart {
@@ -936,6 +934,8 @@ enum UnitTestType {
 }
 
 type User {
+  tools: [CollectionTool!]!
+  tool(toolId: String!): CollectionTool
   proficiencies(toolId: String!): [UserProficiency!]!
 }
 
