@@ -32,7 +32,7 @@ object SqlTool extends CollectionTool("sql", "Sql") {
   override type PartType      = SqlExPart
   override type ResType       = SqlAbstractResult
 
-  type SqlExercise = Exercise[String, SqlExerciseContent]
+  type SqlExercise = Exercise[SqlExerciseContent]
 
   type ColumnComparison           = MatchingResult[ColumnWrapper, ColumnMatch]
   type TableComparison            = MatchingResult[Table, TableMatch]
@@ -59,17 +59,18 @@ object SqlTool extends CollectionTool("sql", "Sql") {
   override def correctAbstract(
     user: LoggedInUser,
     solution: SolType,
-    exercise: Exercise[String, SqlExerciseContent],
+    exercise: SqlExercise,
     part: SqlExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[SqlAbstractResult] = Future {
-    correctorsAndDaos.get(exercise.content.exerciseType) match {
-      case None => SqlInternalErrorResult("There has been an internal error", solutionSaved, (-1).points)
-      case Some((corrector, dao)) =>
-        corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions, solutionSaved)
+  )(implicit executionContext: ExecutionContext): Future[SqlAbstractResult] =
+    Future {
+      correctorsAndDaos.get(exercise.content.exerciseType) match {
+        case None => SqlInternalErrorResult("There has been an internal error", solutionSaved, (-1).points)
+        case Some((corrector, dao)) =>
+          corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions, solutionSaved)
+      }
     }
-  }
 
-  override val initialData: InitialData[String, SqlExerciseContent] = SqlInitialData
+  override val initialData: InitialData[SqlExerciseContent] = SqlInitialData
 
 }

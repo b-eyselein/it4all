@@ -15,19 +15,22 @@ export type RegexCorrectionMutationVariables = {
 
 export type RegexCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctRegex: (
-    { __typename: 'RegexExtractionResult' }
-    & Pick<Types.RegexExtractionResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & RegexExtractionResultFragment
-  ) | (
-    { __typename: 'RegexInternalErrorResult' }
-    & Pick<Types.RegexInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & RegexInternalErrorResultFragment
-  ) | (
-    { __typename: 'RegexMatchingResult' }
-    & Pick<Types.RegexMatchingResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & RegexMatchingResultFragment
-  ) }
+  & { me?: Types.Maybe<(
+    { __typename?: 'UserMutations' }
+    & { correctRegex: (
+      { __typename: 'RegexExtractionResult' }
+      & Pick<Types.RegexExtractionResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & RegexExtractionResultFragment
+    ) | (
+      { __typename: 'RegexInternalErrorResult' }
+      & Pick<Types.RegexInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & RegexInternalErrorResultFragment
+    ) | (
+      { __typename: 'RegexMatchingResult' }
+      & Pick<Types.RegexMatchingResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & RegexMatchingResultFragment
+    ) }
+  )> }
 );
 
 export type RegexInternalErrorResultFragment = (
@@ -131,14 +134,16 @@ export const RegexExtractionResultFragmentDoc = gql`
     ${RegexExtractionSingleResultFragmentDoc}`;
 export const RegexCorrectionDocument = gql`
     mutation RegexCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
-  correctRegex(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    __typename
-    solutionSaved
-    points
-    maxPoints
-    ...RegexInternalErrorResult
-    ...RegexMatchingResult
-    ...RegexExtractionResult
+  me(userJwt: $userJwt) {
+    correctRegex(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+      __typename
+      solutionSaved
+      points
+      maxPoints
+      ...RegexInternalErrorResult
+      ...RegexMatchingResult
+      ...RegexExtractionResult
+    }
   }
 }
     ${RegexInternalErrorResultFragmentDoc}

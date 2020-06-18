@@ -276,23 +276,18 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlyUser = 'ONLY_USER',
-  OnlySample = 'ONLY_SAMPLE',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  PartialMatch = 'PARTIAL_MATCH'
+  OnlyUser = 'ONLY_USER',
+  PartialMatch = 'PARTIAL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
   __typename?: 'Mutation';
   register?: Maybe<Scalars['String']>;
   login?: Maybe<LoggedInUserWithToken>;
-  correctProgramming: ProgrammingAbstractResult;
-  correctRegex: RegexAbstractResult;
-  correctSql: SqlAbstractResult;
-  correctUml: UmlAbstractResult;
-  correctWeb: WebAbstractResult;
-  correctXml: XmlAbstractResult;
+  me?: Maybe<UserMutations>;
 };
 
 
@@ -306,57 +301,8 @@ export type MutationLoginArgs = {
 };
 
 
-export type MutationCorrectProgrammingArgs = {
+export type MutationMeArgs = {
   userJwt: Scalars['String'];
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-  part: ProgExPart;
-  solution: ProgSolutionInput;
-};
-
-
-export type MutationCorrectRegexArgs = {
-  userJwt: Scalars['String'];
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-  part: RegexExPart;
-  solution: Scalars['String'];
-};
-
-
-export type MutationCorrectSqlArgs = {
-  userJwt: Scalars['String'];
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-  part: SqlExPart;
-  solution: Scalars['String'];
-};
-
-
-export type MutationCorrectUmlArgs = {
-  userJwt: Scalars['String'];
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-  part: UmlExPart;
-  solution: UmlClassDiagramInput;
-};
-
-
-export type MutationCorrectWebArgs = {
-  userJwt: Scalars['String'];
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-  part: WebExPart;
-  solution: WebSolutionInput;
-};
-
-
-export type MutationCorrectXmlArgs = {
-  userJwt: Scalars['String'];
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-  part: XmlExPart;
-  solution: XmlSolutionInput;
 };
 
 export type NewMatch = {
@@ -643,11 +589,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Insert = 'INSERT',
-  Select = 'SELECT',
-  Update = 'UPDATE',
   Delete = 'DELETE',
-  Create = 'CREATE'
+  Select = 'SELECT',
+  Insert = 'INSERT',
+  Create = 'CREATE',
+  Update = 'UPDATE'
 }
 
 export enum SqlExPart {
@@ -1159,6 +1105,64 @@ export type UserToolArgs = {
 export type UserCredentials = {
   username: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type UserMutations = {
+  __typename?: 'UserMutations';
+  correctProgramming: ProgrammingAbstractResult;
+  correctRegex: RegexAbstractResult;
+  correctSql: SqlAbstractResult;
+  correctUml: UmlAbstractResult;
+  correctWeb: WebAbstractResult;
+  correctXml: XmlAbstractResult;
+};
+
+
+export type UserMutationsCorrectProgrammingArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: ProgExPart;
+  solution: ProgSolutionInput;
+};
+
+
+export type UserMutationsCorrectRegexArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: RegexExPart;
+  solution: Scalars['String'];
+};
+
+
+export type UserMutationsCorrectSqlArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: SqlExPart;
+  solution: Scalars['String'];
+};
+
+
+export type UserMutationsCorrectUmlArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: UmlExPart;
+  solution: UmlClassDiagramInput;
+};
+
+
+export type UserMutationsCorrectWebArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: WebExPart;
+  solution: WebSolutionInput;
+};
+
+
+export type UserMutationsCorrectXmlArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: XmlExPart;
+  solution: XmlSolutionInput;
 };
 
 export type UserProficiency = {

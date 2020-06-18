@@ -1,10 +1,12 @@
 mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!,$part: WebExPart!, $solution: WebSolutionInput!) {
-  correctWeb(userJwt: $userJwt, collId: $collId, exId: $exId,part: $part, solution: $solution) {
-    __typename
-    solutionSaved
-    points
-    maxPoints
-    ...WebResult
+  me(userJwt:$userJwt) {
+    correctWeb(collId: $collId, exId: $exId,part: $part, solution: $solution) {
+      __typename
+      solutionSaved
+      points
+      maxPoints
+      ...WebResult
+    }
   }
 }
 

@@ -15,20 +15,12 @@ import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
-import {
-  ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment
-} from '../../../../_services/apollo_services';
-import {
-  UmlCorrectionGQL,
-  UmlCorrectionMutation,
-  UmlCorrectionMutationVariables,
-  UmlResultFragment
-} from '../uml-apollo-mutations.service';
+import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {UmlCorrectionGQL, UmlCorrectionMutation, UmlCorrectionMutationVariables, UmlResultFragment} from '../uml-apollo-mutations.service';
 import {UmlClassDiagram, UmlClassDiagramInput, UmlExPart} from '../../../../_interfaces/graphql-types';
 
 import * as joint from 'jointjs';
-import {AuthenticationService} from "../../../../_services/authentication.service";
+import {AuthenticationService} from '../../../../_services/authentication.service';
 
 
 enum CreatableClassDiagramObject {
@@ -279,7 +271,7 @@ export class UmlDiagramDrawingComponent
   }
 
   get result(): UmlResultFragment | null {
-    return this.resultQuery.correctUml.__typename === 'UmlResult' ? this.resultQuery.correctUml : null;
+    return this.resultQuery.me.correctUml.__typename === 'UmlResult' ? this.resultQuery.me.correctUml : null;
   }
 
   correct(): void {

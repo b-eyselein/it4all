@@ -1,14 +1,14 @@
 package model.tools
 
-import model.json.{JsonProtocols, KeyValueObject}
 import model._
+import model.json.{JsonProtocols, KeyValueObject}
 import play.api.libs.json._
 
-final case class ReadExercisesMessage[S, C <: ExerciseContent[S]](
-  exercises: Seq[Exercise[S, C]]
+final case class ReadExercisesMessage[C <: ExerciseContent](
+  exercises: Seq[Exercise[C]]
 )
 
-trait ToolJsonProtocol[S, C <: ExerciseContent[S], PartType <: ExPart] {
+trait ToolJsonProtocol[S, C <: ExerciseContent, PartType <: ExPart] {
 
   protected val keyValueObjectMapFormat: Format[Map[String, String]] = {
 
@@ -39,21 +39,21 @@ trait ToolJsonProtocol[S, C <: ExerciseContent[S], PartType <: ExPart] {
 
   val exerciseContentFormat: OFormat[C]
 
-  final lazy val exerciseFormat: OFormat[Exercise[S, C]] = {
+  final lazy val exerciseFormat: OFormat[Exercise[C]] = {
     implicit val twlf: OFormat[TopicWithLevel] = JsonProtocols.topicWithLevelFormat
-    implicit val fc: OFormat[C]                 = exerciseContentFormat
+    implicit val fc: OFormat[C]                = exerciseContentFormat
 
     Json.format
   }
 
-  lazy val readExercisesMessageReads: Reads[ReadExercisesMessage[S, C]] = {
-    implicit val ef: Format[Exercise[S, C]] = exerciseFormat
+  lazy val readExercisesMessageReads: Reads[ReadExercisesMessage[C]] = {
+    implicit val ef: Format[Exercise[C]] = exerciseFormat
 
     Json.reads
   }
 
   def validateAndWriteReadExerciseMessage(message: JsValue): Seq[String] = {
-    val readExercises: Seq[Exercise[S, C]] = readExercisesMessageReads.reads(message) match {
+    val readExercises: Seq[Exercise[C]] = readExercisesMessageReads.reads(message) match {
       case JsSuccess(readExercisesMessage, _) => readExercisesMessage.exercises
       case JsError(errors) =>
         errors.foreach(println)
@@ -67,7 +67,7 @@ trait ToolJsonProtocol[S, C <: ExerciseContent[S], PartType <: ExPart] {
 
 }
 
-abstract class StringSampleSolutionToolJsonProtocol[C <: ExerciseContent[String], PartType <: ExPart]
+abstract class StringSampleSolutionToolJsonProtocol[C <: ExerciseContent, PartType <: ExPart]
     extends ToolJsonProtocol[String, C, PartType] {
 
   override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)

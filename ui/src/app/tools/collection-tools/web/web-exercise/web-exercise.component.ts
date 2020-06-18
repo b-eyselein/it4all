@@ -86,7 +86,7 @@ export class WebExerciseComponent
   }
 
   get result(): WebResultFragment | null {
-    return this.resultQuery?.correctWeb.__typename === 'WebResult' ? this.resultQuery.correctWeb : null;
+    return this.resultQuery?.me.correctWeb.__typename === 'WebResult' ? this.resultQuery.me.correctWeb : null;
   }
 
 }

@@ -17,7 +17,7 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
   override type PartType      = UmlExPart
   override type ResType       = UmlAbstractResult
 
-  type UmlExercise = Exercise[UmlClassDiagram, UmlExerciseContent]
+  type UmlExercise = Exercise[UmlExerciseContent]
 
   type ClassComparison          = MatchingResult[UmlClass, UmlClassMatch]
   type AttributeComparison      = MatchingResult[UmlAttribute, UmlAttributeMatch]
@@ -27,8 +27,7 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] =
-    UmlToolJsonProtocol
+  override val jsonFormats: ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] = UmlToolJsonProtocol
 
   override val graphQlModels
     : ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlAbstractResult] =
@@ -42,10 +41,11 @@ object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
     exercise: UmlExercise,
     part: UmlExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[UmlAbstractResult] = Future.successful {
-    UmlCorrector.correct(solution, exercise, part, solutionSaved)
-  }
+  )(implicit executionContext: ExecutionContext): Future[UmlAbstractResult] =
+    Future.successful {
+      UmlCorrector.correct(solution, exercise, part, solutionSaved)
+    }
 
-  override val initialData: InitialData[UmlClassDiagram, UmlExerciseContent] = UmlInitialData
+  override val initialData: InitialData[UmlExerciseContent] = UmlInitialData
 
 }

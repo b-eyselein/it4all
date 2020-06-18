@@ -1,11 +1,13 @@
 mutation UmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
-  correctUml(userJwt: $userJwt, collId: $collId, exId: $exId,part: $part, solution: $solution) {
-    __typename
-    solutionSaved
-    points
-    maxPoints
-    ...UmlInternalErrorResult
-    ...UmlResult
+  me(userJwt: $userJwt) {
+    correctUml(collId: $collId, exId: $exId,part: $part, solution: $solution) {
+      __typename
+      solutionSaved
+      points
+      maxPoints
+      ...UmlInternalErrorResult
+      ...UmlResult
+    }
   }
 }
 

@@ -4,10 +4,10 @@ import initialData.InitialData
 import initialData.uml.coll_1.UmlColl1Ex1.umlColl1Ex1
 import initialData.uml.coll_1.umlColl1Ex2.umlColl1Ex2
 import model.ExerciseCollection
-import model.tools.uml.{UmlClassDiagram, UmlExerciseContent}
+import model.tools.uml.UmlExerciseContent
 import model.tools.uml.UmlTool.UmlExercise
 
-object UmlInitialData extends InitialData[UmlClassDiagram, UmlExerciseContent] {
+object UmlInitialData extends InitialData[UmlExerciseContent] {
 
   override protected val toolId: String = "uml"
 

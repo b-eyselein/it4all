@@ -12,52 +12,50 @@ import scala.concurrent.Future
 
 trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries with JwtHelpers {
 
-  private val correctionFields = ToolList.tools.map[Field[Unit, Unit]] { tool =>
+  private val correctionFields = ToolList.tools.map[Field[Unit, LoggedInUser]] { tool =>
     implicit val solTypeFormat: Format[tool.SolType] = tool.jsonFormats.solutionFormat
     implicit val partFormat: Format[tool.PartType]   = tool.jsonFormats.partTypeFormat
 
-    val SolTypeInputArg  = Argument("solution", tool.graphQlModels.SolTypeInputType)
-    val PartTypeInputArg = Argument("part", tool.graphQlModels.partEnumType)
+    val SolTypeInputArg: Argument[tool.SolType] = Argument("solution", tool.graphQlModels.SolTypeInputType)
+    val PartTypeInputArg                        = Argument("part", tool.graphQlModels.partEnumType)
 
     Field(
       s"correct${tool.id.capitalize}",
       tool.graphQlModels.toolAbstractResultTypeInterfaceType,
-      arguments = userJwtArgument :: collIdArgument :: exIdArgument :: PartTypeInputArg :: SolTypeInputArg :: Nil,
-      resolve = ctx => {
+      arguments = collIdArgument :: exIdArgument :: PartTypeInputArg :: SolTypeInputArg :: Nil,
+      resolve = context => {
 
-        val part     = ctx.arg(PartTypeInputArg)
-        val solution = ctx.arg(SolTypeInputArg)
+        val user     = context.value
+        val part     = context.arg(PartTypeInputArg)
+        val solution = context.arg(SolTypeInputArg)
 
-        deserializeJwt(ctx.arg(userJwtArgument)) match {
-          case None => ??? // Future.successful(None)
-          case Some(user) =>
-            getExercise(tool.id, ctx.arg(collIdArgument), ctx.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
-              .flatMap {
-                case Some(exercise) =>
-                  for {
-                    nextUserSolutionId <- nextUserSolutionId(exercise, part)
-                    solutionSaved <- insertSolution(
-                      UserSolution.forExercise(nextUserSolutionId, exercise, user.username, solution, part),
-                      tool.jsonFormats.userSolutionFormat
-                    )
-                    result <- tool.correctAbstract(user, solution, exercise, part, solutionSaved)
+        getExercise(tool.id, context.arg(collIdArgument), context.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
+          .flatMap {
+            case Some(exercise) =>
+              for {
+                nextUserSolutionId <- nextUserSolutionId(exercise, part)
+                solutionSaved <- insertSolution(
+                  UserSolution.forExercise(nextUserSolutionId, exercise, user.username, solution, part),
+                  tool.jsonFormats.userSolutionFormat
+                )
+                result <- tool.correctAbstract(user, solution, exercise, part, solutionSaved)
 
-                    _ <- if (result.isCompletelyCorrect) {
-                      Future
-                        .sequence(
-                          exercise.topicsWithLevels.map { topicWithLevel =>
-                            updateUserProficiencies(user.username, exercise, topicWithLevel)
-                          }
-                        )
-                        .recover { _ => println("Could not update user proficiencies!") }
-                    } else {
-                      Future.successful(())
-                    }
-                  } yield result
+                _ <-
+                  if (result.isCompletelyCorrect) {
+                    Future
+                      .sequence(
+                        exercise.topicsWithLevels.map { topicWithLevel =>
+                          updateUserProficiencies(user.username, exercise, topicWithLevel)
+                        }
+                      )
+                      .recover { _ => println("Could not update user proficiencies!") }
+                  } else {
+                    Future.successful(())
+                  }
+              } yield result
 
-                case _ => ???
-              }
-        }
+            case _ => ???
+          }
       }
     )
   }
@@ -84,14 +82,20 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
         user: User      <- maybeUser
         pwHash: String  <- user.pwHash
         pwOkay: Boolean <- credentials.password.isBcryptedSafe(pwHash).toOption
-        maybeUser <- if (pwOkay) {
-          val loggedInUser = LoggedInUser(user.username, user.isAdmin)
+        maybeUser <-
+          if (pwOkay) {
+            val loggedInUser = LoggedInUser(user.username, user.isAdmin)
 
-          Some(LoggedInUserWithToken(loggedInUser, createJwtSession(loggedInUser).serialize))
-        } else None
+            Some(LoggedInUserWithToken(loggedInUser, createJwtSession(loggedInUser).serialize))
+          } else None
 
       } yield maybeUser
     }
+
+  private val loggedInUserMutationType: ObjectType[Unit, LoggedInUser] = ObjectType(
+    "UserMutations",
+    correctionFields
+  )
 
   protected val MutationType: ObjectType[Unit, Unit] = ObjectType(
     "Mutation",
@@ -107,8 +111,14 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
         OptionType(loggedInUserWithTokenType),
         arguments = userCredentialsArgument :: Nil,
         resolve = context => authenticate(context.arg(userCredentialsArgument))
+      ),
+      Field(
+        "me",
+        OptionType(loggedInUserMutationType),
+        arguments = userJwtArgument :: Nil,
+        resolve = context => deserializeJwt(context.arg(userJwtArgument))
       )
-    ) ++ correctionFields
+    ) /*++ correctionFields */
   )
 
 }

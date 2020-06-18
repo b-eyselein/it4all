@@ -15,15 +15,18 @@ export type UmlCorrectionMutationVariables = {
 
 export type UmlCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctUml: (
-    { __typename: 'UmlInternalErrorResult' }
-    & Pick<Types.UmlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & UmlInternalErrorResultFragment
-  ) | (
-    { __typename: 'UmlResult' }
-    & Pick<Types.UmlResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & UmlResultFragment
-  ) }
+  & { me?: Types.Maybe<(
+    { __typename?: 'UserMutations' }
+    & { correctUml: (
+      { __typename: 'UmlInternalErrorResult' }
+      & Pick<Types.UmlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & UmlInternalErrorResultFragment
+    ) | (
+      { __typename: 'UmlResult' }
+      & Pick<Types.UmlResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & UmlResultFragment
+    ) }
+  )> }
 );
 
 export type UmlInternalErrorResultFragment = (
@@ -240,13 +243,15 @@ ${UmlAssociationMatchingResultFragmentDoc}
 ${UmlImplementationMatchingResultFragmentDoc}`;
 export const UmlCorrectionDocument = gql`
     mutation UmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
-  correctUml(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    __typename
-    solutionSaved
-    points
-    maxPoints
-    ...UmlInternalErrorResult
-    ...UmlResult
+  me(userJwt: $userJwt) {
+    correctUml(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+      __typename
+      solutionSaved
+      points
+      maxPoints
+      ...UmlInternalErrorResult
+      ...UmlResult
+    }
   }
 }
     ${UmlInternalErrorResultFragmentDoc}

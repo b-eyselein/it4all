@@ -1,11 +1,13 @@
 mutation XmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!,$part: XmlExPart!, $solution: XmlSolutionInput!) {
-  correctXml(userJwt: $userJwt, collId: $collId, exId: $exId,part: $part, solution: $solution) {
-    __typename
-    solutionSaved
-    points
-    maxPoints
-    ...XmlInternalErrorResult
-    ...XmlResult
+  me(userJwt: $userJwt ) {
+    correctXml(collId: $collId, exId: $exId,part: $part, solution: $solution) {
+      __typename
+      solutionSaved
+      points
+      maxPoints
+      ...XmlInternalErrorResult
+      ...XmlResult
+    }
   }
 }
 

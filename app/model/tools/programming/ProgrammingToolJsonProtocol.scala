@@ -146,9 +146,10 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
 
   // Simplified ProgUserTestData
 
-  def dumpCompleteTestDataToJson(testData: Seq[ProgTestData]): JsValue = Json.obj(
-    "testData" -> JsArray(testData.map(progTestDataFormat.writes)),
-    "baseData" -> None
-  )
+  def dumpCompleteTestDataToJson(testData: Seq[ProgTestData]): JsValue =
+    Json.obj(
+      "testData" -> JsArray(testData.map(progTestDataFormat.writes)),
+      "baseData" -> None
+    )
 
 }

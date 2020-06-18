@@ -38,7 +38,11 @@ trait ExPart extends EnumEntry {
 
 trait ExParts[EP <: ExPart] extends PlayEnum[EP]
 
-trait ExerciseContent[S] {
+trait ExerciseContent {
+
+  // [S]
+
+  protected type S
 
   val sampleSolutions: Seq[SampleSolution[S]]
 
@@ -57,7 +61,7 @@ final case class ExerciseKey(
   toolId: String
 )
 
-final case class Exercise[S, C <: ExerciseContent[S]](
+final case class Exercise[C <: ExerciseContent](
   exerciseId: Int,
   collectionId: Int,
   toolId: String,
@@ -89,7 +93,7 @@ object UserSolution {
 
   def forExercise[S, P <: ExPart](
     solutionId: Int,
-    exercise: Exercise[S, _ <: ExerciseContent[S]],
+    exercise: Exercise[_ <: ExerciseContent],
     username: String,
     solution: S,
     part: P

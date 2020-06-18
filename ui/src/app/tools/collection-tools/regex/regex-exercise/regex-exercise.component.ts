@@ -60,15 +60,15 @@ export class RegexExerciseComponent
   }
 
   get regexInternalErrorResult(): RegexInternalErrorResultFragment | undefined {
-    return this.resultQuery?.correctRegex.__typename === 'RegexInternalErrorResult' ? this.resultQuery.correctRegex : undefined;
+    return this.resultQuery?.me.correctRegex.__typename === 'RegexInternalErrorResult' ? this.resultQuery.me.correctRegex : undefined;
   }
 
   get regexMatchingResult(): RegexMatchingResultFragment | undefined {
-    return this.resultQuery?.correctRegex.__typename === 'RegexMatchingResult' ? this.resultQuery.correctRegex : undefined;
+    return this.resultQuery?.me.correctRegex.__typename === 'RegexMatchingResult' ? this.resultQuery.me.correctRegex : undefined;
   }
 
   get regexExtractionResult(): RegexExtractionResultFragment | undefined {
-    return this.resultQuery?.correctRegex.__typename === 'RegexExtractionResult' ? this.resultQuery.correctRegex : undefined;
+    return this.resultQuery?.me.correctRegex.__typename === 'RegexExtractionResult' ? this.resultQuery.me.correctRegex : undefined;
   }
 
   correct(): void {

@@ -1,8 +1,7 @@
 package model.tools.rose
 
-import model.{ExPart, ExParts, ExerciseContent, SampleSolution}
-import model.tools._
 import model.tools.programming.ProgDataType
+import model.{ExPart, ExParts, ExerciseContent, SampleSolution}
 
 abstract sealed class RoseExPart(val partName: String, val id: String) extends ExPart
 
@@ -20,7 +19,9 @@ final case class RoseExerciseContent(
   isMultiplayer: Boolean,
   inputTypes: Seq[RoseInputType],
   sampleSolutions: Seq[SampleSolution[String]]
-) extends ExerciseContent[String] {
+) extends ExerciseContent {
+
+  override protected type S = String
 
   override def parts: Seq[ExPart] = RoseExPart.values
 

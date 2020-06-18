@@ -1,8 +1,8 @@
 package model.graphql
 
+import model._
 import model.tools.CollectionTool
 import model.tools.Helper.UntypedExercise
-import model.{Exercise, ExerciseCollection, ExerciseContent, MongoClientQueries}
 import sangria.schema._
 
 trait CollectionGraphQLModel
@@ -11,14 +11,13 @@ trait CollectionGraphQLModel
     with GraphQLArguments
     with MongoClientQueries {
 
-  protected def untypedExercises(exercises: Seq[Exercise[_, _ <: ExerciseContent[_]]]): Seq[UntypedExercise] = exercises
+  protected def untypedExercises(exercises: Seq[Exercise[_ <: ExerciseContent]]): Seq[UntypedExercise] = exercises
 
-  private def untypedMaybeExercise(exercise: Option[Exercise[_, _ <: ExerciseContent[_]]]): Option[UntypedExercise] =
-    exercise
+  private def untypedMaybeExercise(exercise: Option[Exercise[_ <: ExerciseContent]]): Option[UntypedExercise] = exercise
 
-  protected val collectionType: ObjectType[Unit, (CollectionTool, ExerciseCollection)] = ObjectType(
+  protected val collectionType: ObjectType[Unit, ((LoggedInUser, CollectionTool), ExerciseCollection)] = ObjectType(
     "ExerciseCollection",
-    fields[Unit, (CollectionTool, ExerciseCollection)](
+    fields[Unit, ((LoggedInUser, CollectionTool), ExerciseCollection)](
       Field("collectionId", IntType, resolve = _.value._2.collectionId),
       Field("title", StringType, resolve = _.value._2.title),
       Field("authors", ListType(StringType), resolve = _.value._2.authors),
@@ -26,26 +25,30 @@ trait CollectionGraphQLModel
       Field(
         "exerciseCount",
         LongType,
-        resolve = context => getExerciseCountForCollection(context.value._1.id, context.value._2.collectionId)
+        resolve = context => getExerciseCountForCollection(context.value._1._2.id, context.value._2.collectionId)
       ),
       Field(
         "exercises",
         ListType(exerciseType),
-        resolve = context =>
-          getExercisesForCollection(context.value._1, context.value._2.collectionId)
-            .map(untypedExercises)
+        resolve = context => {
+          val tool = context.value._1._2
+
+          getExercisesForCollection(context.value._1._2, context.value._2.collectionId)
+            .map(exes => exes.map(ex => (context.value._1._1, ex.asInstanceOf[UntypedExercise])))
+          //            .map(exes => untypedExercises(exes))
+        }
       ),
       Field(
         "exercise",
         OptionType(exerciseType),
         arguments = exIdArgument :: Nil,
-        resolve = context =>
-          getExercise(
-            context.value._1.id,
-            context.value._2.collectionId,
-            context.arg(exIdArgument),
-            context.value._1.jsonFormats.exerciseFormat
-          ).map(untypedMaybeExercise)
+        resolve = context => {
+          val tool         = context.value._1._2
+          val collectionId = context.value._2.collectionId
+
+          getExercise(tool.id, collectionId, context.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
+            .map(maybeEx => maybeEx.map(ex => (context.value._1._1, ex.asInstanceOf[UntypedExercise])))
+        }
       )
     )
   )

@@ -27,10 +27,10 @@ import initialData.programming.coll_5.ProgrammingColl5Ex4.programmingColl5Ex4
 import initialData.programming.coll_6.ProgrammingColl6Ex1.programmingColl6Ex1
 import initialData.programming.coll_6.ProgrammingColl6Ex2.programmingColl6Ex2
 import model.ExerciseCollection
+import model.tools.programming.ProgrammingExerciseContent
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
-import model.tools.programming.{ProgSolution, ProgrammingExerciseContent}
 
-object ProgrammingInitialData extends InitialData[ProgSolution, ProgrammingExerciseContent] {
+object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
 
   override protected val toolId = "programming"
 

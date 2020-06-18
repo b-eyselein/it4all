@@ -3,8 +3,8 @@ package model.tools.sql
 import model.SampleSolution
 import model.core.result.InternalErrorResult
 import model.points._
-import model.tools.sql.matcher._
 import model.tools.AbstractCorrector
+import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
@@ -34,49 +34,50 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
     learnerSolution: String,
     sampleSolutions: Seq[SampleSolution[String]],
     solutionSaved: Boolean
-  )(implicit ec: ExecutionContext): SqlAbstractResult = parseStatement(learnerSolution).fold(
-    exception => SqlInternalErrorResult("Your query could not be parsed: " + exception.getMessage, solutionSaved),
-    userQ =>
-      checkStatement(userQ).fold(
-        _ => SqlInternalErrorResult("Wrong type of statement!", solutionSaved),
-        userQ => {
-          val userColumns         = getColumnWrappers(userQ)
-          val userTables          = getTables(userQ)
-          val userJoinExpressions = getJoinExpressions(userQ)
-          val userExpressions     = getExpressions(userQ)
-          val userTableAliases    = resolveAliases(userTables)
+  )(implicit ec: ExecutionContext): SqlAbstractResult =
+    parseStatement(learnerSolution).fold(
+      exception => SqlInternalErrorResult("Your query could not be parsed: " + exception.getMessage, solutionSaved),
+      userQ =>
+        checkStatement(userQ).fold(
+          _ => SqlInternalErrorResult("Wrong type of statement!", solutionSaved),
+          userQ => {
+            val userColumns         = getColumnWrappers(userQ)
+            val userTables          = getTables(userQ)
+            val userJoinExpressions = getJoinExpressions(userQ)
+            val userExpressions     = getExpressions(userQ)
+            val userTableAliases    = resolveAliases(userTables)
 
-          val maybeStaticComparison: Option[(Q, SqlQueriesStaticComparison)] =
-            sampleSolutions
-              .flatMap { sqlSample =>
-                parseStatement(sqlSample.sample).toOption
-                  .flatMap(ps => checkStatement(ps).toOption)
-                  .map { sampleQ =>
-                    val staticComp = performStaticComparison(
-                      userQ,
-                      sampleQ,
-                      userColumns,
-                      userTables,
-                      userJoinExpressions,
-                      userExpressions,
-                      userTableAliases
-                    )
-                    (sampleQ, staticComp)
-                  }
+            val maybeStaticComparison: Option[(Q, SqlQueriesStaticComparison)] =
+              sampleSolutions
+                .flatMap { sqlSample =>
+                  parseStatement(sqlSample.sample).toOption
+                    .flatMap(ps => checkStatement(ps).toOption)
+                    .map { sampleQ =>
+                      val staticComp = performStaticComparison(
+                        userQ,
+                        sampleQ,
+                        userColumns,
+                        userTables,
+                        userJoinExpressions,
+                        userExpressions,
+                        userTableAliases
+                      )
+                      (sampleQ, staticComp)
+                    }
 
-              }
-              .minOption(queryAndStaticCompOrdering)
+                }
+                .minOption(queryAndStaticCompOrdering)
 
-          maybeStaticComparison match {
-            case None => ???
-            case Some((sampleQ, sc)) =>
-              val executionResult = database.executeQueries(schemaName, userQ, sampleQ)
+            maybeStaticComparison match {
+              case None => ???
+              case Some((sampleQ, sc)) =>
+                val executionResult = database.executeQueries(schemaName, userQ, sampleQ)
 
-              SqlResult(sc, executionResult, solutionSaved)
+                SqlResult(sc, executionResult, solutionSaved)
+            }
           }
-        }
-      )
-  )
+        )
+    )
 
   private def performStaticComparison(
     userQ: Q,
@@ -102,10 +103,11 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
     )
   }
 
-  private def getExpressions(statement: Q): Seq[BinaryExpression] = getWhere(statement) match {
-    case None             => Seq[BinaryExpression]()
-    case Some(expression) => new ExpressionExtractor(expression).extracted
-  }
+  private def getExpressions(statement: Q): Seq[BinaryExpression] =
+    getWhere(statement) match {
+      case None             => Seq[BinaryExpression]()
+      case Some(expression) => new ExpressionExtractor(expression).extracted
+    }
 
   private def resolveAliases(tables: Seq[Table]): Map[String, String] =
     tables
@@ -125,10 +127,11 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
 
   // Parsing
 
-  private def parseStatement(str: String): Try[Statement] = Try(CCJSqlParserUtil.parse(str)) match {
-    case Failure(e) => Failure(new SqlStatementException(e))
-    case other      => other
-  }
+  private def parseStatement(str: String): Try[Statement] =
+    Try(CCJSqlParserUtil.parse(str)) match {
+      case Failure(e) => Failure(new SqlStatementException(e))
+      case other      => other
+    }
 
   protected def checkStatement(statement: Statement): Try[Q] // FIXME: Failure!?!
 

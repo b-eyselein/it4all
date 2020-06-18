@@ -71,11 +71,11 @@ export class SqlExerciseComponent
   // Result types
 
   get sqlInternalErrorResult(): SqlInternalErrorResult | undefined {
-    return this.resultQuery?.correctSql.__typename === 'SqlInternalErrorResult' ? this.resultQuery.correctSql : undefined;
+    return this.resultQuery?.me.correctSql.__typename === 'SqlInternalErrorResult' ? this.resultQuery.me.correctSql : undefined;
   }
 
   get sqlResult(): SqlResultFragment | undefined {
-    return this.resultQuery?.correctSql.__typename === 'SqlResult' ? this.resultQuery.correctSql : undefined;
+    return this.resultQuery?.me.correctSql.__typename === 'SqlResult' ? this.resultQuery.me.correctSql : undefined;
   }
 
   // Correction

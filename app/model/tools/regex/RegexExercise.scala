@@ -31,7 +31,9 @@ final case class RegexExerciseContent(
   matchTestData: Seq[RegexMatchTestData],
   extractionTestData: Seq[RegexExtractionTestData] = Seq.empty,
   sampleSolutions: Seq[SampleSolution[String]]
-) extends ExerciseContent[String] {
+) extends ExerciseContent {
+
+  override protected type S = String
 
   override def parts: Seq[ExPart] = RegexExPart.values
 

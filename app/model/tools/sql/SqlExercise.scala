@@ -61,7 +61,9 @@ final case class SqlExerciseContent(
   schemaName: String,
   sampleSolutions: Seq[SampleSolution[String]],
   hint: Option[String] = None
-) extends ExerciseContent[String] {
+) extends ExerciseContent {
+
+  override protected type S = String
 
   override def parts: Seq[ExPart] = SqlExPart.values
 

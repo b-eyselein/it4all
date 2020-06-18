@@ -15,14 +15,17 @@ export type WebCorrectionMutationVariables = {
 
 export type WebCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctWeb: (
-    { __typename: 'WebInternalErrorResult' }
-    & Pick<Types.WebInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
-  ) | (
-    { __typename: 'WebResult' }
-    & Pick<Types.WebResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & WebResultFragment
-  ) }
+  & { me?: Types.Maybe<(
+    { __typename?: 'UserMutations' }
+    & { correctWeb: (
+      { __typename: 'WebInternalErrorResult' }
+      & Pick<Types.WebInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+    ) | (
+      { __typename: 'WebResult' }
+      & Pick<Types.WebResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & WebResultFragment
+    ) }
+  )> }
 );
 
 export type WebInternalErrorResultFragment = (
@@ -161,12 +164,14 @@ export const WebResultFragmentDoc = gql`
 ${GradedJsTaskResultFragmentDoc}`;
 export const WebCorrectionDocument = gql`
     mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
-  correctWeb(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    __typename
-    solutionSaved
-    points
-    maxPoints
-    ...WebResult
+  me(userJwt: $userJwt) {
+    correctWeb(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+      __typename
+      solutionSaved
+      points
+      maxPoints
+      ...WebResult
+    }
   }
 }
     ${WebResultFragmentDoc}`;

@@ -13,7 +13,9 @@ final case class ProgrammingExerciseContent(
   implementationPart: ImplementationPart,
   sampleTestData: Seq[ProgTestData] = Seq.empty,
   override val sampleSolutions: Seq[SampleSolution[ProgSolution]]
-) extends ExerciseContent[ProgSolution] {
+) extends ExerciseContent {
+
+  override protected type S = ProgSolution
 
   def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
     ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(completeTestData)

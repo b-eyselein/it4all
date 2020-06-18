@@ -19,7 +19,7 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
   override type PartType      = RegexExPart
   override type ResType       = RegexAbstractResult
 
-  type RegexExercise = Exercise[String, RegexExerciseContent]
+  type RegexExercise = Exercise[RegexExerciseContent]
 
   type ExtractedValuesComparison = MatchingResult[RegexMatch, RegexMatchMatch]
 
@@ -39,25 +39,26 @@ object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
     exercise: RegexExercise,
     part: RegexExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[RegexAbstractResult] = Future.successful {
-    Try(solution.r).fold(
-      error =>
-        RegexInternalErrorResult(
-          "Your regex could not be parsed: " + error.getMessage,
-          solutionSaved,
-          exercise.content.maxPoints.points
-        ),
-      userRegex =>
-        exercise.content.correctionType match {
-          case RegexCorrectionType.MATCHING =>
-            RegexMatchingCorrector.correctMatching(exercise.content, userRegex, solutionSaved)
+  )(implicit executionContext: ExecutionContext): Future[RegexAbstractResult] =
+    Future.successful {
+      Try(solution.r).fold(
+        error =>
+          RegexInternalErrorResult(
+            "Your regex could not be parsed: " + error.getMessage,
+            solutionSaved,
+            exercise.content.maxPoints.points
+          ),
+        userRegex =>
+          exercise.content.correctionType match {
+            case RegexCorrectionType.MATCHING =>
+              RegexMatchingCorrector.correctMatching(exercise.content, userRegex, solutionSaved)
 
-          case RegexCorrectionType.EXTRACTION =>
-            RegexExtractionCorrector.correctExtraction(exercise.content, userRegex, solutionSaved)
-        }
-    )
-  }
+            case RegexCorrectionType.EXTRACTION =>
+              RegexExtractionCorrector.correctExtraction(exercise.content, userRegex, solutionSaved)
+          }
+      )
+    }
 
-  override val initialData: InitialData[String, RegexExerciseContent] = RegexInitialData
+  override val initialData: InitialData[RegexExerciseContent] = RegexInitialData
 
 }

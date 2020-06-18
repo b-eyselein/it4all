@@ -17,14 +17,13 @@ object XmlTool extends CollectionTool("xml", "Xml") {
   override type PartType      = XmlExPart
   override type ResType       = XmlAbstractResult
 
-  type XmlExercise = Exercise[XmlSolution, XmlExerciseContent]
+  type XmlExercise = Exercise[XmlExerciseContent]
 
   type ElementLineComparison = MatchingResult[ElementLine, ElementLineMatch]
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: ToolJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] =
-    XmlToolJsonProtocol
+  override val jsonFormats: ToolJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] = XmlToolJsonProtocol
 
   override val graphQlModels: ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlAbstractResult] =
     XmlGraphQLModels
@@ -37,21 +36,22 @@ object XmlTool extends CollectionTool("xml", "Xml") {
     exercise: XmlExercise,
     part: XmlExPart,
     solutionSaved: Boolean
-  )(implicit executionContext: ExecutionContext): Future[XmlAbstractResult] = Future.successful {
-    part match {
-      case XmlExPart.GrammarCreationXmlPart =>
-        XmlCorrector.correctGrammar(solution, exercise.content.sampleSolutions, solutionSaved)
+  )(implicit executionContext: ExecutionContext): Future[XmlAbstractResult] =
+    Future.successful {
+      part match {
+        case XmlExPart.GrammarCreationXmlPart =>
+          XmlCorrector.correctGrammar(solution, exercise.content.sampleSolutions, solutionSaved)
 
-      case XmlExPart.DocumentCreationXmlPart =>
-        XmlCorrector.correctDocument(
-          solution,
-          solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId).createDirectories(),
-          exercise.content,
-          solutionSaved
-        )
+        case XmlExPart.DocumentCreationXmlPart =>
+          XmlCorrector.correctDocument(
+            solution,
+            solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId).createDirectories(),
+            exercise.content,
+            solutionSaved
+          )
+      }
     }
-  }
 
-  override val initialData: InitialData[XmlSolution, XmlExerciseContent] = XmlInitialData
+  override val initialData: InitialData[XmlExerciseContent] = XmlInitialData
 
 }

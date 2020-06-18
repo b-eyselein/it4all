@@ -40,13 +40,13 @@
 
           <ng-container *ngIf="result">
 
-            <it4all-solution-saved [saved]="resultQuery.correctWeb.solutionSaved"></it4all-solution-saved>
+            <it4all-solution-saved [saved]="resultQuery.me.correctWeb.solutionSaved"></it4all-solution-saved>
 
             <br>
 
             <it4all-points-notification
-              [points]="resultQuery.correctWeb.points"
-              [maxPoints]="resultQuery.correctWeb.maxPoints">
+              [points]="resultQuery.me.correctWeb.points"
+              [maxPoints]="resultQuery.me.correctWeb.maxPoints">
             </it4all-points-notification>
 
             <br>

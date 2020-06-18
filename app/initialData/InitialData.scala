@@ -11,11 +11,11 @@ import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait InitialData[S, EC <: ExerciseContent[S]] {
+trait InitialData[EC <: ExerciseContent] {
 
   protected val toolId: String
 
-  val data: Seq[(ExerciseCollection, Seq[Exercise[S, EC]])]
+  val data: Seq[(ExerciseCollection, Seq[Exercise[EC]])]
 
 }
 
@@ -59,9 +59,9 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
     }
   }
 
-  private def insertInitialExercise[S, EC <: ExerciseContent[S]](
-    ex: Exercise[S, EC],
-    exFormat: OFormat[Exercise[S, EC]]
+  private def insertInitialExercise[EC <: ExerciseContent](
+    ex: Exercise[EC],
+    exFormat: OFormat[Exercise[EC]]
   ): Future[Unit] = {
 
     val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"

@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Jun 17 2020 14:32:07 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Thu Jun 18 2020 11:54:17 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -229,22 +229,17 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_USER
-  ONLY_SAMPLE
   SUCCESSFUL_MATCH
-  UNSUCCESSFUL_MATCH
+  ONLY_USER
   PARTIAL_MATCH
+  ONLY_SAMPLE
+  UNSUCCESSFUL_MATCH
 }
 
 type Mutation {
   register(registerValues: RegisterValues!): String
   login(credentials: UserCredentials!): LoggedInUserWithToken
-  correctProgramming(userJwt: String!, collId: Int!, exId: Int!, part: ProgExPart!, solution: ProgSolutionInput!): ProgrammingAbstractResult!
-  correctRegex(userJwt: String!, collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): RegexAbstractResult!
-  correctSql(userJwt: String!, collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlAbstractResult!
-  correctUml(userJwt: String!, collId: Int!, exId: Int!, part: UmlExPart!, solution: UmlClassDiagramInput!): UmlAbstractResult!
-  correctWeb(userJwt: String!, collId: Int!, exId: Int!, part: WebExPart!, solution: WebSolutionInput!): WebAbstractResult!
-  correctXml(userJwt: String!, collId: Int!, exId: Int!, part: XmlExPart!, solution: XmlSolutionInput!): XmlAbstractResult!
+  me(userJwt: String!): UserMutations
 }
 
 interface NewMatch {
@@ -483,11 +478,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  INSERT
-  SELECT
-  UPDATE
   DELETE
+  SELECT
+  INSERT
   CREATE
+  UPDATE
 }
 
 enum SqlExPart {
@@ -942,6 +937,15 @@ type User {
 input UserCredentials {
   username: String!
   password: String!
+}
+
+type UserMutations {
+  correctProgramming(collId: Int!, exId: Int!, part: ProgExPart!, solution: ProgSolutionInput!): ProgrammingAbstractResult!
+  correctRegex(collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): RegexAbstractResult!
+  correctSql(collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlAbstractResult!
+  correctUml(collId: Int!, exId: Int!, part: UmlExPart!, solution: UmlClassDiagramInput!): UmlAbstractResult!
+  correctWeb(collId: Int!, exId: Int!, part: WebExPart!, solution: WebSolutionInput!): WebAbstractResult!
+  correctXml(collId: Int!, exId: Int!, part: XmlExPart!, solution: XmlSolutionInput!): XmlAbstractResult!
 }
 
 type UserProficiency {

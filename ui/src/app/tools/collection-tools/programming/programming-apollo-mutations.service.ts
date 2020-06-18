@@ -15,15 +15,18 @@ export type ProgrammingCorrectionMutationVariables = {
 
 export type ProgrammingCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctProgramming: (
-    { __typename: 'ProgrammingInternalErrorResult' }
-    & Pick<Types.ProgrammingInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & ProgrammingInternalErrorResultFragment
-  ) | (
-    { __typename: 'ProgrammingResult' }
-    & Pick<Types.ProgrammingResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & ProgrammingResultFragment
-  ) }
+  & { me?: Types.Maybe<(
+    { __typename?: 'UserMutations' }
+    & { correctProgramming: (
+      { __typename: 'ProgrammingInternalErrorResult' }
+      & Pick<Types.ProgrammingInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & ProgrammingInternalErrorResultFragment
+    ) | (
+      { __typename: 'ProgrammingResult' }
+      & Pick<Types.ProgrammingResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & ProgrammingResultFragment
+    ) }
+  )> }
 );
 
 export type ProgrammingInternalErrorResultFragment = (
@@ -115,13 +118,15 @@ ${NormalExecutionResultFragmentDoc}
 ${UnitTestCorrectionResultFragmentDoc}`;
 export const ProgrammingCorrectionDocument = gql`
     mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
-  correctProgramming(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    __typename
-    solutionSaved
-    points
-    maxPoints
-    ...ProgrammingInternalErrorResult
-    ...ProgrammingResult
+  me(userJwt: $userJwt) {
+    correctProgramming(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+      __typename
+      solutionSaved
+      points
+      maxPoints
+      ...ProgrammingInternalErrorResult
+      ...ProgrammingResult
+    }
   }
 }
     ${ProgrammingInternalErrorResultFragmentDoc}

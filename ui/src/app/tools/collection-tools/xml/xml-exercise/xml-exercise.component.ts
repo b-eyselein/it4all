@@ -125,7 +125,7 @@ export class XmlExerciseComponent
   }
 
   private get xmlResult(): XmlResultFragment | null {
-    return this.resultQuery?.correctXml.__typename === 'XmlResult' ? this.resultQuery?.correctXml : null;
+    return this.resultQuery?.me.correctXml.__typename === 'XmlResult' ? this.resultQuery?.me.correctXml : null;
   }
 
   get grammarResult(): XmlGrammarResultFragment | null {

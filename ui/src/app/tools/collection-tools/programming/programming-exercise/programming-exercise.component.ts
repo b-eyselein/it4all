@@ -91,7 +91,7 @@ export class ProgrammingExerciseComponent
   }
 
   get result(): ProgrammingResultFragment | null {
-    return this.resultQuery.correctProgramming.__typename === 'ProgrammingResult' ? this.resultQuery.correctProgramming : null;
+    return this.resultQuery.me.correctProgramming.__typename === 'ProgrammingResult' ? this.resultQuery.me.correctProgramming : null;
   }
 
   get simplifiedResults(): SimplifiedExecutionResultFragment[] {

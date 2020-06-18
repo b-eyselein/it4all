@@ -7,7 +7,7 @@ import model.ExerciseCollection
 import model.tools.rose.RoseExerciseContent
 import model.tools.rose.RoseTool.RoseExercise
 
-object RoseInitialData extends InitialData[String, RoseExerciseContent] {
+object RoseInitialData extends InitialData[RoseExerciseContent] {
 
   override protected val toolId: String = "rose"
 

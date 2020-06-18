@@ -28,7 +28,9 @@ final case class UmlExerciseContent(
   toIgnore: Seq[String],
   mappings: Map[String, String],
   sampleSolutions: Seq[SampleSolution[UmlClassDiagram]]
-) extends ExerciseContent[UmlClassDiagram] {
+) extends ExerciseContent {
+
+  override protected type S = UmlClassDiagram
 
   override def parts: Seq[ExPart] = UmlExPart.values
 

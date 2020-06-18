@@ -4,6 +4,6 @@ import model.{Exercise, ExerciseContent}
 
 object Helper {
 
-  type UntypedExercise = Exercise[_, _ <: ExerciseContent[_]]
+  type UntypedExercise = Exercise[_ <: ExerciseContent]
 
 }

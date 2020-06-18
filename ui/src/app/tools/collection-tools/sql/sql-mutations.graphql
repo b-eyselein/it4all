@@ -1,11 +1,13 @@
 mutation SqlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
-  correctSql(userJwt: $userJwt, collId: $collId, exId: $exId,part: $part, solution: $solution) {
-    __typename
-    solutionSaved
-    points
-    maxPoints
-    ...SqlInternalErrorResult
-    ...SqlResult
+  me(userJwt: $userJwt) {
+    correctSql(collId: $collId, exId: $exId,part: $part, solution: $solution) {
+      __typename
+      solutionSaved
+      points
+      maxPoints
+      ...SqlInternalErrorResult
+      ...SqlResult
+    }
   }
 }
 

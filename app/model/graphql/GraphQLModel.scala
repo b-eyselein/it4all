@@ -1,9 +1,12 @@
 package model.graphql
 
+import model.tools.Helper.UntypedExercise
 import model.tools._
 import model.{LoggedInUser, MongoClientQueries}
 import play.api.libs.json._
 import sangria.schema._
+
+import scala.concurrent.Future
 
 final case class GraphQLRequest(
   query: String,
@@ -46,7 +49,7 @@ trait GraphQLModel
         ListType(collectionType),
         resolve = context =>
           getExerciseCollections(context.value._2.id)
-            .map(futureExerciseCollections => futureExerciseCollections.map(coll => (context.value._2, coll)))
+            .map(futureExerciseCollections => futureExerciseCollections.map(coll => (context.value, coll)))
       ),
       Field(
         "collection",
@@ -54,14 +57,16 @@ trait GraphQLModel
         arguments = collIdArgument :: Nil,
         resolve = context =>
           getExerciseCollection(context.value._2.id, context.arg(collIdArgument))
-            .map(futureMaybeExerciseCollection => futureMaybeExerciseCollection.map(coll => (context.value._2, coll)))
+            .map(futureMaybeExerciseCollection => futureMaybeExerciseCollection.map(coll => (context.value, coll)))
       ),
       // Special fields for exercises
       Field("exerciseCount", LongType, resolve = context => getExerciseCountForTool(context.value._2.id)),
       Field(
         "allExercises",
         ListType(exerciseType),
-        resolve = context => getExercisesForTool(context.value._2).map(untypedExercises)
+        resolve = context =>
+          getExercisesForTool(context.value._2)
+            .map(exes => exes.map(ex => (context.value._1, ex.asInstanceOf[UntypedExercise])))
       ),
       // Fields for users
       Field(

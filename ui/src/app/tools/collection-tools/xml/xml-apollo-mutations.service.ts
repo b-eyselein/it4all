@@ -15,15 +15,18 @@ export type XmlCorrectionMutationVariables = {
 
 export type XmlCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctXml: (
-    { __typename: 'XmlInternalErrorResult' }
-    & Pick<Types.XmlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & XmlInternalErrorResultFragment
-  ) | (
-    { __typename: 'XmlResult' }
-    & Pick<Types.XmlResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & XmlResultFragment
-  ) }
+  & { me?: Types.Maybe<(
+    { __typename?: 'UserMutations' }
+    & { correctXml: (
+      { __typename: 'XmlInternalErrorResult' }
+      & Pick<Types.XmlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & XmlInternalErrorResultFragment
+    ) | (
+      { __typename: 'XmlResult' }
+      & Pick<Types.XmlResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & XmlResultFragment
+    ) }
+  )> }
 );
 
 export type XmlInternalErrorResultFragment = (
@@ -198,13 +201,15 @@ export const XmlResultFragmentDoc = gql`
 ${XmlDocumentResultFragmentDoc}`;
 export const XmlCorrectionDocument = gql`
     mutation XmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
-  correctXml(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    __typename
-    solutionSaved
-    points
-    maxPoints
-    ...XmlInternalErrorResult
-    ...XmlResult
+  me(userJwt: $userJwt) {
+    correctXml(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+      __typename
+      solutionSaved
+      points
+      maxPoints
+      ...XmlInternalErrorResult
+      ...XmlResult
+    }
   }
 }
     ${XmlInternalErrorResultFragmentDoc}

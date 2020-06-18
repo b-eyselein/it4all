@@ -10,10 +10,10 @@ import initialData.web.coll_2.WebColl2Ex1.webColl2Ex1
 import initialData.web.coll_2.WebColl2Ex2.webColl2Ex2
 import initialData.web.coll_2.WebColl2Ex3.webColl2Ex3
 import model.ExerciseCollection
+import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.tools.web.{WebExerciseContent, WebSolution}
 
-object WebInitialData extends InitialData[WebSolution, WebExerciseContent] {
+object WebInitialData extends InitialData[WebExerciseContent] {
 
   override protected val toolId = "web"
 

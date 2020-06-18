@@ -1,7 +1,6 @@
 package model.tools.xml
 
 import model.{ExPart, ExParts, ExerciseContent, SampleSolution}
-import model.tools._
 
 sealed abstract class XmlExPart(val partName: String, val id: String) extends ExPart
 
@@ -21,7 +20,9 @@ final case class XmlExerciseContent(
   grammarDescription: String,
   rootNode: String,
   sampleSolutions: Seq[SampleSolution[XmlSolution]]
-) extends ExerciseContent[XmlSolution] {
+) extends ExerciseContent {
+
+  override protected type S = XmlSolution
 
   override def parts: Seq[ExPart] = XmlExPart.values
 

@@ -15,15 +15,18 @@ export type SqlCorrectionMutationVariables = {
 
 export type SqlCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { correctSql: (
-    { __typename: 'SqlInternalErrorResult' }
-    & Pick<Types.SqlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & SqlInternalErrorResultFragment
-  ) | (
-    { __typename: 'SqlResult' }
-    & Pick<Types.SqlResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    & SqlResultFragment
-  ) }
+  & { me?: Types.Maybe<(
+    { __typename?: 'UserMutations' }
+    & { correctSql: (
+      { __typename: 'SqlInternalErrorResult' }
+      & Pick<Types.SqlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & SqlInternalErrorResultFragment
+    ) | (
+      { __typename: 'SqlResult' }
+      & Pick<Types.SqlResult, 'solutionSaved' | 'points' | 'maxPoints'>
+      & SqlResultFragment
+    ) }
+  )> }
 );
 
 export type SqlInternalErrorResultFragment = (
@@ -579,13 +582,15 @@ ${InsertComparisonFragmentDoc}
 ${SqlExecutionResultFragmentDoc}`;
 export const SqlCorrectionDocument = gql`
     mutation SqlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
-  correctSql(userJwt: $userJwt, collId: $collId, exId: $exId, part: $part, solution: $solution) {
-    __typename
-    solutionSaved
-    points
-    maxPoints
-    ...SqlInternalErrorResult
-    ...SqlResult
+  me(userJwt: $userJwt) {
+    correctSql(collId: $collId, exId: $exId, part: $part, solution: $solution) {
+      __typename
+      solutionSaved
+      points
+      maxPoints
+      ...SqlInternalErrorResult
+      ...SqlResult
+    }
   }
 }
     ${SqlInternalErrorResultFragmentDoc}

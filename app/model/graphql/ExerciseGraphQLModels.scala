@@ -1,6 +1,6 @@
 package model.graphql
 
-import model.ExPart
+import model.{ExPart, LoggedInUser}
 import model.tools.Helper.UntypedExercise
 import model.tools.programming.{ProgrammingExerciseContent, ProgrammingGraphQLModels}
 import model.tools.regex.{RegexExerciseContent, RegexGraphQLModels}
@@ -21,46 +21,46 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
     )
   )
 
-  protected val exerciseType: ObjectType[Unit, UntypedExercise] = ObjectType(
+  protected val exerciseType: ObjectType[Unit, (LoggedInUser, UntypedExercise)] = ObjectType(
     "Exercise",
-    fields[Unit, UntypedExercise](
-      Field("exerciseId", IntType, resolve = _.value.exerciseId),
-      Field("collectionId", IntType, resolve = _.value.collectionId),
-      Field("toolId", StringType, resolve = _.value.toolId),
-      Field("title", StringType, resolve = _.value.title),
-      Field("authors", ListType(StringType), resolve = _.value.authors),
-      Field("text", StringType, resolve = _.value.text),
-      Field("topicsWithLevels", ListType(topicWithLevelType), resolve = _.value.topicsWithLevels),
-      Field("difficulty", IntType, resolve = _.value.difficulty),
+    fields[Unit, (LoggedInUser, UntypedExercise)](
+      Field("exerciseId", IntType, resolve = _.value._2.exerciseId),
+      Field("collectionId", IntType, resolve = _.value._2.collectionId),
+      Field("toolId", StringType, resolve = _.value._2.toolId),
+      Field("title", StringType, resolve = _.value._2.title),
+      Field("authors", ListType(StringType), resolve = _.value._2.authors),
+      Field("text", StringType, resolve = _.value._2.text),
+      Field("topicsWithLevels", ListType(topicWithLevelType), resolve = _.value._2.topicsWithLevels),
+      Field("difficulty", IntType, resolve = _.value._2.difficulty),
       Field(
         "programmingContent",
         OptionType(ProgrammingGraphQLModels.exerciseContentType),
-        resolve = _.value.content match {
+        resolve = _.value._2.content match {
           case x: ProgrammingExerciseContent => Some(x)
           case _                             => None
         }
       ),
-      Field("regexContent", OptionType(RegexGraphQLModels.exerciseContentType), resolve = _.value.content match {
+      Field("regexContent", OptionType(RegexGraphQLModels.exerciseContentType), resolve = _.value._2.content match {
         case x: RegexExerciseContent => Some(x)
         case _                       => None
       }),
-      Field("sqlContent", OptionType(SqlGraphQLModels.exerciseContentType), resolve = _.value.content match {
+      Field("sqlContent", OptionType(SqlGraphQLModels.exerciseContentType), resolve = _.value._2.content match {
         case x: SqlExerciseContent => Some(x)
         case _                     => None
       }),
-      Field("umlContent", OptionType(UmlGraphQLModels.exerciseContentType), resolve = _.value.content match {
+      Field("umlContent", OptionType(UmlGraphQLModels.exerciseContentType), resolve = _.value._2.content match {
         case x: UmlExerciseContent => Some(x)
         case _                     => None
       }),
-      Field("webContent", OptionType(WebGraphQLModels.exerciseContentType), resolve = _.value.content match {
+      Field("webContent", OptionType(WebGraphQLModels.exerciseContentType), resolve = _.value._2.content match {
         case x: WebExerciseContent => Some(x)
         case _                     => None
       }),
-      Field("xmlContent", OptionType(XmlGraphQLModels.exerciseContentType), resolve = _.value.content match {
+      Field("xmlContent", OptionType(XmlGraphQLModels.exerciseContentType), resolve = _.value._2.content match {
         case x: XmlExerciseContent => Some(x)
         case _                     => None
       }),
-      Field("parts", ListType(exPartType), resolve = context => context.value.content.parts)
+      Field("parts", ListType(exPartType), resolve = context => context.value._2.content.parts)
     )
   )
 

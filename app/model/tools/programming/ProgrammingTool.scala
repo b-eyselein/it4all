@@ -16,7 +16,7 @@ object ProgrammingTool extends CollectionTool("programming", "Programmierung", T
   override type PartType      = ProgExPart
   override type ResType       = ProgrammingAbstractResult
 
-  type ProgrammingExercise = Exercise[ProgSolution, ProgrammingExerciseContent]
+  type ProgrammingExercise = Exercise[ProgrammingExerciseContent]
 
   // Yaml, Html Forms, Json
 
@@ -78,6 +78,6 @@ object ProgrammingTool extends CollectionTool("programming", "Programmierung", T
     }
   }
 
-  override val initialData: InitialData[ProgSolution, ProgrammingExerciseContent] = ProgrammingInitialData
+  override val initialData: InitialData[ProgrammingExerciseContent] = ProgrammingInitialData
 
 }

@@ -7,7 +7,7 @@ import model.tools.xml.XmlTool.XmlExercise
 import model.tools.xml.{XmlExerciseContent, XmlSolution}
 import model.{Exercise, ExerciseCollection, SampleSolution}
 
-object XmlInitialData extends InitialData[XmlSolution, XmlExerciseContent] {
+object XmlInitialData extends InitialData[XmlExerciseContent] {
 
   override protected val toolId = "xml"
 

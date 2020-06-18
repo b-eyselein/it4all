@@ -25,34 +25,39 @@ trait MongoClientQueries extends ReactiveMongoComponents {
   private implicit val topicFormat: OFormat[Topic]                           = JsonProtocols.topicFormat
   private implicit val userProficiencyFormat: OFormat[UserProficiency]       = JsonProtocols.userProficiencyFormat
 
-  private def userFilter(username: String): JsObject = Json.obj(
-    "username" -> username
-  )
+  private def userFilter(username: String): JsObject =
+    Json.obj(
+      "username" -> username
+    )
 
-  private def toolFilter(toolId: String): JsObject = Json.obj(
-    "toolId" -> toolId
-  )
-  private def lessonFilter(toolId: String, lessonId: Int): JsObject = Json.obj(
-    "toolId"   -> toolId,
-    "lessonId" -> lessonId
-  )
+  private def toolFilter(toolId: String): JsObject =
+    Json.obj(
+      "toolId" -> toolId
+    )
+  private def lessonFilter(toolId: String, lessonId: Int): JsObject =
+    Json.obj(
+      "toolId"   -> toolId,
+      "lessonId" -> lessonId
+    )
 
-  private def collectionFilter(toolId: String, collectionId: Int): JsObject = Json.obj(
-    "toolId"       -> toolId,
-    "collectionId" -> collectionId
-  )
+  private def collectionFilter(toolId: String, collectionId: Int): JsObject =
+    Json.obj(
+      "toolId"       -> toolId,
+      "collectionId" -> collectionId
+    )
 
   private def exercisePartFilter[P](
     toolId: String,
     collectionId: Int,
     exerciseId: Int,
     part: P
-  )(implicit pf: Format[P]): JsObject = Json.obj(
-    "toolId"       -> toolId,
-    "collectionId" -> collectionId,
-    "exerciseId"   -> exerciseId,
-    "part"         -> part
-  )
+  )(implicit pf: Format[P]): JsObject =
+    Json.obj(
+      "toolId"       -> toolId,
+      "collectionId" -> collectionId,
+      "exerciseId"   -> exerciseId,
+      "part"         -> part
+    )
 
   // Collections
 
@@ -77,9 +82,10 @@ trait MongoClientQueries extends ReactiveMongoComponents {
   protected def getUser(username: String): Future[Option[User]] =
     for {
       usersCollection <- futureUsersCollection
-      maybeUser <- usersCollection
-        .find(userFilter(username), Option.empty[JsObject])
-        .one[User]
+      maybeUser <-
+        usersCollection
+          .find(userFilter(username), Option.empty[JsObject])
+          .one[User]
     } yield maybeUser
 
   protected def insertUser(user: User): Future[Boolean] =
@@ -99,18 +105,20 @@ trait MongoClientQueries extends ReactiveMongoComponents {
   protected def lessonsForTool(toolId: String): Future[Seq[Lesson]] =
     for {
       lessonsCollection <- futureLessonsCollection
-      lessons <- lessonsCollection
-        .find(toolFilter(toolId), Option.empty[JsObject])
-        .cursor[Lesson]()
-        .collect[Seq](-1, Cursor.FailOnError())
+      lessons <-
+        lessonsCollection
+          .find(toolFilter(toolId), Option.empty[JsObject])
+          .cursor[Lesson]()
+          .collect[Seq](-1, Cursor.FailOnError())
     } yield lessons
 
   protected def getLesson(toolId: String, lessonId: Int): Future[Option[Lesson]] =
     for {
       lessonsCollection <- futureLessonsCollection
-      maybeLesson <- lessonsCollection
-        .find(lessonFilter(toolId, lessonId), Option.empty[JsObject])
-        .one[Lesson]
+      maybeLesson <-
+        lessonsCollection
+          .find(lessonFilter(toolId, lessonId), Option.empty[JsObject])
+          .one[Lesson]
     } yield maybeLesson
 
   // Collection queries
@@ -124,11 +132,12 @@ trait MongoClientQueries extends ReactiveMongoComponents {
   protected def getExerciseCollections(toolId: String): Future[Seq[ExerciseCollection]] =
     for {
       collectionsCollection <- futureCollectionsCollection
-      collections <- collectionsCollection
-        .find(toolFilter(toolId), Option.empty[JsObject])
-        .sort(Json.obj("collectionId" -> 1))
-        .cursor[ExerciseCollection]()
-        .collect[Seq](-1, Cursor.FailOnError())
+      collections <-
+        collectionsCollection
+          .find(toolFilter(toolId), Option.empty[JsObject])
+          .sort(Json.obj("collectionId" -> 1))
+          .cursor[ExerciseCollection]()
+          .collect[Seq](-1, Cursor.FailOnError())
     } yield collections
 
   protected def getExerciseCollection(toolId: String, collectionId: Int): Future[Option[ExerciseCollection]] = {
@@ -137,9 +146,10 @@ trait MongoClientQueries extends ReactiveMongoComponents {
 
     for {
       collectionCollection <- futureCollectionsCollection
-      maybeCollection <- collectionCollection
-        .find(key, Option.empty[JsObject])
-        .one[ExerciseCollection]
+      maybeCollection <-
+        collectionCollection
+          .find(key, Option.empty[JsObject])
+          .one[ExerciseCollection]
     } yield maybeCollection
   }
 
@@ -157,64 +167,68 @@ trait MongoClientQueries extends ReactiveMongoComponents {
       exerciseCount       <- exercisesCollection.count(Some(toolFilter(toolId)), None, 0, None, ReadConcern.Local)
     } yield exerciseCount
 
-  protected def getExercisesForTool(tool: CollectionTool): Future[Seq[Exercise[tool.SolType, tool.ExContentType]]] = {
-    implicit val ef: Format[Exercise[tool.SolType, tool.ExContentType]] = tool.jsonFormats.exerciseFormat
+  protected def getExercisesForTool(tool: CollectionTool): Future[Seq[Exercise[tool.ExContentType]]] = {
+    implicit val ef: Format[Exercise[tool.ExContentType]] = tool.jsonFormats.exerciseFormat
 
     for {
       exercisesCollection <- futureExercisesCollection
-      exercises <- exercisesCollection
-        .find(toolFilter(tool.id), Option.empty[JsObject])
-        .cursor[Exercise[tool.SolType, tool.ExContentType]]()
-        .collect[Seq](-1, Cursor.FailOnError())
+      exercises <-
+        exercisesCollection
+          .find(toolFilter(tool.id), Option.empty[JsObject])
+          .cursor[Exercise[tool.ExContentType]]()
+          .collect[Seq](-1, Cursor.FailOnError())
     } yield exercises
   }
 
   protected def getExerciseCountForCollection(toolId: String, collectionId: Int): Future[Long] =
     for {
       exercisesCollection <- futureExercisesCollection
-      exerciseCount <- exercisesCollection
-        .count(Some(collectionFilter(toolId, collectionId)), None, 0, None, ReadConcern.Local)
+      exerciseCount <-
+        exercisesCollection
+          .count(Some(collectionFilter(toolId, collectionId)), None, 0, None, ReadConcern.Local)
     } yield exerciseCount
 
   protected def getExercisesForCollection(
     tool: CollectionTool,
     collectionId: Int
-  ): Future[Seq[Exercise[tool.SolType, tool.ExContentType]]] = {
-    implicit val ef: Format[Exercise[tool.SolType, tool.ExContentType]] = tool.jsonFormats.exerciseFormat
+  ): Future[Seq[Exercise[tool.ExContentType]]] = {
+    implicit val ef: Format[Exercise[tool.ExContentType]] = tool.jsonFormats.exerciseFormat
 
     for {
       exercisesCollection <- futureExercisesCollection
-      exercises <- exercisesCollection
-        .find(collectionFilter(tool.id, collectionId), Option.empty[JsObject])
-        .sort(Json.obj("exerciseId" -> 1))
-        .cursor[Exercise[tool.SolType, tool.ExContentType]]()
-        .collect[Seq](-1, Cursor.FailOnError())
+      exercises <-
+        exercisesCollection
+          .find(collectionFilter(tool.id, collectionId), Option.empty[JsObject])
+          .sort(Json.obj("exerciseId" -> 1))
+          .cursor[Exercise[tool.ExContentType]]()
+          .collect[Seq](-1, Cursor.FailOnError())
     } yield exercises
   }
 
-  protected def getExercise[S, EC <: ExerciseContent[S]](
+  protected def getExercise[EC <: ExerciseContent](
     toolId: String,
     collectionId: Int,
     exerciseId: Int,
-    exerciseFormat: OFormat[Exercise[S, EC]]
-  ): Future[Option[Exercise[S, EC]]] = {
-    implicit val ef: OFormat[Exercise[S, EC]] = exerciseFormat
+    exerciseFormat: OFormat[Exercise[EC]]
+  ): Future[Option[Exercise[EC]]] = {
+    implicit val ef: OFormat[Exercise[EC]] = exerciseFormat
 
     val exKey = ExerciseKey(exerciseId, collectionId, toolId)
 
     for {
       exercisesCollection <- futureExercisesCollection
-      maybeExercise <- exercisesCollection
-        .find(exKey, Option.empty[JsObject])
-        .one[Exercise[S, EC]]
+      maybeExercise <-
+        exercisesCollection
+          .find(exKey, Option.empty[JsObject])
+          .one[Exercise[EC]]
     } yield maybeExercise
   }
 
-  protected def insertExercise[S, EC <: ExerciseContent[S]](
-    exercise: Exercise[S, EC],
-    exerciseFormat: OFormat[Exercise[S, EC]]
+  protected def insertExercise[EC <: ExerciseContent](
+    exercise: Exercise[EC],
+    exerciseFormat: OFormat[Exercise[EC]]
   ): Future[Boolean] = {
-    implicit val ef: OFormat[Exercise[S, EC]] = exerciseFormat
+    implicit val ef: OFormat[Exercise[EC]] = exerciseFormat
 
     for {
       exercisesCollection <- futureExercisesCollection
@@ -233,10 +247,11 @@ trait MongoClientQueries extends ReactiveMongoComponents {
 
     for {
       userSolutionsCollection <- futureUserSolutionsCollection
-      x <- userSolutionsCollection
-        .find(exFilter, Some(Json.obj("solutionId" -> 1, "_id" -> 0)))
-        .sort(Json.obj("solutionId" -> -1))
-        .one[ThisResult]
+      x <-
+        userSolutionsCollection
+          .find(exFilter, Some(Json.obj("solutionId" -> 1, "_id" -> 0)))
+          .sort(Json.obj("solutionId" -> -1))
+          .one[ThisResult]
     } yield x match {
       case None        => 1
       case Some(jsObj) => jsObj.solutionId + 1
@@ -265,21 +280,24 @@ trait MongoClientQueries extends ReactiveMongoComponents {
 
     for {
       userProficienciesCollection <- futureUserProficienciesCollection
-      userProfs <- userProficienciesCollection
-        .find(filter, Option.empty[JsObject])
-        .cursor[UserProficiency]()
-        .collect[Seq](-1, Cursor.FailOnError())
+      userProfs <-
+        userProficienciesCollection
+          .find(filter, Option.empty[JsObject])
+          .cursor[UserProficiency]()
+          .collect[Seq](-1, Cursor.FailOnError())
     } yield userProfs
   }
 
   protected def allTopicsWithLevelForTool(username: String, tool: CollectionTool): Future[Seq[TopicWithLevel]] =
     for {
       dbUserProficiencies <- userProficienciesForTool(username, tool.id)
-      userProficiencies = dbUserProficiencies
-        .map(up => (up.topic, TopicWithLevel(up.topic, up.getLevel)))
-        .toMap
-      allUserProficiencies = tool.allTopics
-        .map { t => userProficiencies.getOrElse(t, TopicWithLevel(t, Level.Beginner)) }
+      userProficiencies =
+        dbUserProficiencies
+          .map(up => (up.topic, TopicWithLevel(up.topic, up.getLevel)))
+          .toMap
+      allUserProficiencies =
+        tool.allTopics
+          .map { t => userProficiencies.getOrElse(t, TopicWithLevel(t, Level.Beginner)) }
     } yield allUserProficiencies
 
   protected def updateUserProficiencies(
@@ -303,18 +321,20 @@ trait MongoClientQueries extends ReactiveMongoComponents {
     for {
       userProficienciesCollection <- futureUserProficienciesCollection
 
-      oldUserProficiency: UserProficiency <- userProficienciesCollection
-        .find(filter, Option.empty[JsObject])
-        .one[UserProficiency]
-        .map(_.getOrElse(UserProficiency(username, topicWithLevel.topic)))
+      oldUserProficiency: UserProficiency <-
+        userProficienciesCollection
+          .find(filter, Option.empty[JsObject])
+          .one[UserProficiency]
+          .map(_.getOrElse(UserProficiency(username, topicWithLevel.topic)))
 
       newUserProficiency: UserProficiency = oldUserProficiency.copy(
         pointsForExercises = oldUserProficiency.pointsForExercises + levelForExerciseToAdd
       )
 
-      updateResult <- userProficienciesCollection
-        .update(true)
-        .one(filter, newUserProficiency, upsert = true)
+      updateResult <-
+        userProficienciesCollection
+          .update(true)
+          .one(filter, newUserProficiency, upsert = true)
 
     } yield updateResult.ok
   }

@@ -16,12 +16,11 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
   override type PartType      = RoseExPart
   override type ResType       = RoseAbstractResult
 
-  type RoseExercise = Exercise[String, RoseExerciseContent]
+  type RoseExercise = Exercise[RoseExerciseContent]
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: ToolJsonProtocol[String, RoseExerciseContent, RoseExPart] =
-    RoseToolJsonProtocol
+  override val jsonFormats: ToolJsonProtocol[String, RoseExerciseContent, RoseExPart] = RoseToolJsonProtocol
 
   override val graphQlModels: ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExPart, RoseAbstractResult] =
     RoseGraphQLModels
@@ -41,6 +40,6 @@ object RoseTool extends CollectionTool("rose", "Rose", ToolState.PRE_ALPHA) {
     RoseCorrector.correct(solution, exercise, ProgLanguages.StandardLanguage, solDir, solutionSaved)
   }
 
-  override val initialData: InitialData[String, RoseExerciseContent] = RoseInitialData
+  override val initialData: InitialData[RoseExerciseContent] = RoseInitialData
 
 }

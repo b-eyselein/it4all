@@ -22,7 +22,7 @@ abstract class CollectionTool(
   // Abstract types
 
   type SolType
-  type ExContentType <: ExerciseContent[SolType]
+  type ExContentType <: ExerciseContent
   type PartType <: ExPart
   type ResType <: AbstractCorrectionResult
 
@@ -37,13 +37,13 @@ abstract class CollectionTool(
   def correctAbstract(
     user: LoggedInUser,
     solution: SolType,
-    exercise: Exercise[SolType, ExContentType],
+    exercise: Exercise[ExContentType],
     part: PartType,
     solutionSaved: Boolean
   )(implicit executionContext: ExecutionContext): Future[ResType]
 
   val allTopics: Seq[Topic] = Seq.empty
 
-  val initialData: InitialData[SolType, ExContentType]
+  val initialData: InitialData[ExContentType]
 
 }
