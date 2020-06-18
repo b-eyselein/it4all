@@ -276,11 +276,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlyUser = 'ONLY_USER',
   PartialMatch = 'PARTIAL_MATCH',
-  OnlySample = 'ONLY_SAMPLE',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlyUser = 'ONLY_USER',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE'
 }
 
 export type Mutation = {
@@ -589,10 +589,10 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Delete = 'DELETE',
-  Select = 'SELECT',
-  Insert = 'INSERT',
   Create = 'CREATE',
+  Insert = 'INSERT',
+  Select = 'SELECT',
+  Delete = 'DELETE',
   Update = 'UPDATE'
 }
 
