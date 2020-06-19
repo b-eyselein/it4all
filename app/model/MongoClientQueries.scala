@@ -26,14 +26,10 @@ trait MongoClientQueries extends ReactiveMongoComponents {
   private implicit val userProficiencyFormat: OFormat[UserProficiency]       = JsonProtocols.userProficiencyFormat
 
   private def userFilter(username: String): JsObject =
-    Json.obj(
-      "username" -> username
-    )
+    Json.obj("username" -> username)
 
   private def toolFilter(toolId: String): JsObject =
-    Json.obj(
-      "toolId" -> toolId
-    )
+    Json.obj("toolId" -> toolId)
   private def lessonFilter(toolId: String, lessonId: Int): JsObject =
     Json.obj(
       "toolId"   -> toolId,

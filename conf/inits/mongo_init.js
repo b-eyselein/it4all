@@ -1,18 +1,31 @@
-db.auth('root', 'example');
+db.auth('root', '1234');
 
 const newUserName = 'it4all';
 const newUserPassword = '1234'
 
-
 db.createUser({
     user: newUserName,
     pwd: newUserPassword,
-    roles: [
-        {role: 'readWrite', db: 'it4all'}
-    ]
+    roles: [{role: 'readWrite', db: 'it4all'}]
 });
 
-// instantiate unique index for users
+// instantiate collection with validation and unique index for users
+db.createCollection('users', {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            properties: {
+                _id: {bsonType: "objectId"},
+                username: {bsonType: "string"},
+                pwHash: {bsonType: ["string", "null"]},
+                isAdmin: {bsonType: "bool"}
+            },
+            required: ["username"],
+            additionalProperties: false
+        }
+    }
+});
+
 const usersCollection = db.getCollection('users');
 
 const usersIndex = {username: 1};
