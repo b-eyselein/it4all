@@ -49,7 +49,7 @@ db.createCollection('exerciseCollections', {
                 text: {bsonType: "string"}
             },
             required: ["_id", "collectionId", "toolId", "title", "authors", "text"],
-            additionalProperties: true
+            additionalProperties: false
         }
     }
 });
@@ -62,6 +62,49 @@ const exCollectionsUniqueIndexName = exCollectionsCollection.createIndex(exColle
 print(`Created unique index on ${exCollectionsCollection.name}: ${exCollectionsUniqueIndexName}`);
 
 // instantiate unique index for exercises
+db.createCollection('exercises', {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            properties: {
+                _id: {bsonType: "objectId"},
+                exerciseId: {bsonType: "int"},
+                collectionId: {bsonType: "int"},
+                toolId: {bsonType: "string"},
+                title: {bsonType: "string"},
+                authors: {bsonType: "array", "items": {bsonType: "string"}},
+                text: {bsonType: "string"},
+                topicsWithLevels: {
+                    bsonType: "array",
+                    items: {
+                        bsonType: "object",
+                        properties: {
+                            topic: {
+                                bsonType: "object",
+                                properties: {
+                                    abbreviation: {bsonType: "string"},
+                                    toolId: {bsonType: "string"},
+                                    title: {bsonType: "string"},
+                                    maxLevel: {enum: ["Beginner", "Intermediate", "Advanced", "Expert"]}
+                                },
+                                required: ["abbrevation", "toolId", "title", "maxLevel"],
+                                additionalProperties: false
+                            },
+                            level: {enum: ["Beginner", "Intermediate", "Advanced", "Expert"]}
+                        },
+                        required: ["topic", "level"],
+                        additionalProperties: false
+                    }
+                },
+                difficulty: {bsonType: "int"},
+                content: {}
+            },
+            required: [],
+            additionalProperties: false
+        }
+    }
+});
+
 const exercisesCollection = db.getCollection('exercises');
 
 const exercisesIndex = {...exCollectionsIndex, exerciseId: 1};
