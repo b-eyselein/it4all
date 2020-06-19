@@ -20,7 +20,7 @@ db.createCollection('users', {
                 pwHash: {bsonType: ["string", "null"]},
                 isAdmin: {bsonType: "bool"}
             },
-            required: ["username"],
+            required: ["_id", "username"],
             additionalProperties: false
         }
     }
@@ -36,6 +36,24 @@ print(`Created unique index on ${usersCollection.name}: ${usersUniqueIndexName}`
 // TODO: instantiate unique index for lessons
 
 // instantiate unique index for exercise collections
+db.createCollection('exerciseCollections', {
+    validators: {
+        $jsonSchema: {
+            bsonType: "object",
+            properties: {
+                _id: {bsonType: "objectId"},
+                collectionId: {bsonType: "int"},
+                toolId: {bsonType: "string"},
+                title: {bsonType: "string"},
+                authors: {bsonType: "array", "items": {bsonType: "string"}},
+                text: {bsonType: "string"}
+            },
+            required: ["_id", "collectionId", "toolId", "title", "authors", "text"],
+            additionalProperties: true
+        }
+    }
+});
+
 const exCollectionsCollection = db.getCollection('exerciseCollections');
 
 const exCollectionsIndex = {toolId: 1, collectionId: 1};
