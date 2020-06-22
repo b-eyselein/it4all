@@ -1,16 +1,39 @@
 package model.graphql
 
+import java.time.Clock
+
 import com.github.t3hnar.bcrypt._
-import controllers.JwtHelpers
 import model._
+import model.json.JsonProtocols
 import model.tools.ToolList
+import pdi.jwt.JwtSession
+import play.api.Configuration
 import play.api.libs.json._
 import sangria.marshalling.playJson._
 import sangria.schema._
 
 import scala.concurrent.Future
 
-trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries with JwtHelpers {
+trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries {
+
+  private val userFieldName = "user"
+  private val clock         = Clock.systemDefaultZone()
+
+  private implicit val userFormat: OFormat[LoggedInUser] = JsonProtocols.loggedInUserFormat
+
+  protected val configuration: Configuration
+
+  protected def createJwtSession(user: LoggedInUser): JwtSession = {
+    JwtSession()(configuration, clock) + (userFieldName, user)
+  }
+
+  protected def writeJsonWebToken(user: LoggedInUserWithToken): JsValue =
+    JsonProtocols.loggedInUserWithTokenFormat.writes(user)
+
+  protected def deserializeJwt(jwtString: String): Option[LoggedInUser] =
+    JwtSession
+      .deserialize(jwtString)(configuration, clock)
+      .getAs[LoggedInUser](userFieldName)
 
   private val correctionFields = ToolList.tools.map[Field[Unit, LoggedInUser]] { tool =>
     implicit val solTypeFormat: Format[tool.SolType] = tool.jsonFormats.solutionFormat

@@ -1,14 +1,14 @@
 # Client
-GET         /                                  controllers.FrontendController.index
+GET         /                                  controllers.Controller.index
 
 # LTI
-POST        /api/lti                           controllers.ApiLoginController.ltiHoneypot
-GET         /api/claimWebToken/:uuidStr        controllers.ApiLoginController.claimJsonWebToken(uuidStr: String)
+POST        /api/lti                           controllers.Controller.ltiHoneypot
+GET         /api/claimWebToken/:uuidStr        controllers.Controller.claimJsonWebToken(uuidStr: String)
 
 # GraphQL
-GET         /graphiql                          controllers.FrontendController.graphiql
-POST        /api/graphql                       controllers.ApiController.graphql
+GET         /graphiql                          controllers.Controller.graphiql
+POST        /api/graphql                       controllers.Controller.graphql
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /*file                             controllers.FrontendController.assetOrDefault(file)
+GET         /*file                             controllers.Controller.assetOrDefault(file)
 GET         /assets/*file                      controllers.Assets.versioned(path="/public", file: Asset)
