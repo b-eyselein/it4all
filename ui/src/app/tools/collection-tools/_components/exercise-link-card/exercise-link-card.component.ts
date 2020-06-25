@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {FieldsForLinkFragment} from "../../../../_services/apollo_services";
+import {FieldsForLinkFragment} from '../../../../_services/apollo_services';
 
 @Component({
   selector: 'it4all-exercise-link-card',

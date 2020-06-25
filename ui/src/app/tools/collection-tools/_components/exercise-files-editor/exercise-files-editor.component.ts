@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
-import {ExerciseFileFragment} from "../../../../_services/apollo_services";
+import {ExerciseFileFragment} from '../../../../_services/apollo_services';
 
 interface ActivatableExerciseFile {
   file: ExerciseFileFragment;
@@ -48,7 +48,7 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     this.activatableExerciseFiles = this.exerciseFileFragments.map((file) => {
       // Delete __typename field that was added by apollo
       delete file.__typename;
-      return {file, active: false}
+      return {file, active: false};
     });
 
     this.updateFirstFile();
@@ -56,10 +56,11 @@ export class ExerciseFilesEditorComponent implements OnChanges {
 
   private updateFirstFile(): void {
     if (this.activatableExerciseFiles && this.activatableExerciseFiles.length > 0) {
-      console.info(this.currentFileName);
+      console.log(this.currentFileName);
 
       if (!this.currentFileName) {
-        const editableExerciseFile: ActivatableExerciseFile | undefined = this.activatableExerciseFiles.find((ef) => ef.file.editable);
+        const editableExerciseFile: ActivatableExerciseFile | undefined =
+          this.activatableExerciseFiles.find((ef) => ef.file.editable);
 
         if (editableExerciseFile) {
           this.updateEditor(editableExerciseFile, false);

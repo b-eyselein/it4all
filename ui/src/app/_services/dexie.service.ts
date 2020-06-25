@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import Dexie from 'dexie';
 import {DbSolution} from '../_interfaces/exercise';
-import {ExerciseSolveFieldsFragment} from "./apollo_services";
+import {ExerciseSolveFieldsFragment} from './apollo_services';
 
 @Injectable({providedIn: 'root'})
 export class DexieService extends Dexie {
@@ -22,7 +22,11 @@ export class DexieService extends Dexie {
     return this.solutions.get([exerciseFragment.toolId, exerciseFragment.collectionId, exerciseFragment.exerciseId, partId]);
   }
 
-  upsertSolution<T>(exerciseFragment: ExerciseSolveFieldsFragment, partId: string, solution: T): Dexie.Promise<[string, number, number, string]> {
+  upsertSolution<T>(
+    exerciseFragment: ExerciseSolveFieldsFragment,
+    partId: string,
+    solution: T
+  ): Dexie.Promise<[string, number, number, string]> {
     return this.solutions.put({
       exId: exerciseFragment.exerciseId,
       collId: exerciseFragment.collectionId,

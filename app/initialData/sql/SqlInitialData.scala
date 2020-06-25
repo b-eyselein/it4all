@@ -8,6 +8,7 @@ import initialData.sql.SqlColl2Exes21To30.sqlColl2Exes21To30
 import initialData.sql.SqlColl2Exes31To40.sqlColl2Exes31To40
 import initialData.sql.SqlColl2Exes41To50.sqlColl2Exes41To50
 import model.ExerciseCollection
+import model.lesson.Lesson
 import model.tools.sql.SqlExerciseContent
 import model.tools.sql.SqlTool.SqlExercise
 
@@ -31,5 +32,15 @@ object SqlInitialData extends InitialData[SqlExerciseContent] {
     (sqlCollection01, sqlColl01To10),
     (sqlCollection02, sql_coll_2_exes)
   )
+
+  private val sqlLesson01 = Lesson(
+    1,
+    toolId,
+    "title",
+    "description",
+    content = Seq.empty
+  )
+
+  override val lessons: Seq[Lesson] = Seq(sqlLesson01)
 
 }
