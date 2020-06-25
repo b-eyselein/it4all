@@ -2,10 +2,7 @@ import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {DexieService} from '../../../../_services/dexie.service';
 import {RegexExercisePart} from '../regex-tool';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
-import {
-  ExerciseSolveFieldsFragment,
-  RegexExerciseContentSolveFieldsFragment
-} from '../../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, RegexExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
 import {
   RegexCorrectionGQL,
   RegexCorrectionMutation,
@@ -15,8 +12,7 @@ import {
   RegexMatchingResultFragment
 } from '../regex-apollo-mutations.service';
 import {RegexExPart} from '../../../../_interfaces/graphql-types';
-import {AuthenticationService} from "../../../../_services/authentication.service";
-
+import {AuthenticationService} from '../../../../_services/authentication.service';
 
 @Component({
   selector: 'it4all-regex-exercise',

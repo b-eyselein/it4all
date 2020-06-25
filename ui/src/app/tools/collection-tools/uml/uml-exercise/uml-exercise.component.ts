@@ -1,9 +1,6 @@
 import {Component, Input} from '@angular/core';
-import {
-  ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment
-} from '../../../../_services/apollo_services';
-import {UmlExPart} from "../../../../_interfaces/graphql-types";
+import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {UmlExPart} from '../../../../_interfaces/graphql-types';
 
 @Component({
   selector: 'it4all-uml-exercise',

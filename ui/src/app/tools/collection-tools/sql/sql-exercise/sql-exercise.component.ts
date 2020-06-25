@@ -4,21 +4,13 @@ import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
 import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {
-  ExerciseSolveFieldsFragment,
-  SqlExerciseContentSolveFieldsFragment
-} from '../../../../_services/apollo_services';
-import {
-  SqlCorrectionGQL,
-  SqlCorrectionMutation,
-  SqlCorrectionMutationVariables,
-  SqlResultFragment,
-} from '../sql-apollo-mutations.service';
+import {ExerciseSolveFieldsFragment, SqlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {SqlCorrectionGQL, SqlCorrectionMutation, SqlCorrectionMutationVariables, SqlResultFragment} from '../sql-apollo-mutations.service';
 import {SqlExPart, SqlInternalErrorResult} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/sql/sql';
-import {SqlCreateQueryPart} from "../sql-tool";
-import {AuthenticationService} from "../../../../_services/authentication.service";
+import {SqlCreateQueryPart} from '../sql-tool';
+import {AuthenticationService} from '../../../../_services/authentication.service';
 
 
 @Component({

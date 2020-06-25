@@ -3,7 +3,7 @@ import {distinctStringArray} from '../../../helpers';
 import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../_services/apollo_services';
 import {KeyValueObject} from '../../../_interfaces/graphql-types';
 
-export const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
+const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
 
 export const UmlDiagramDrawingHelpPart: ToolPart = {
   name: 'Diagramm zeichnen mit Hilfe',

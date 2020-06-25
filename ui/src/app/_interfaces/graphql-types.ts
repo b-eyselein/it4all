@@ -276,8 +276,8 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  PartialMatch = 'PARTIAL_MATCH',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH',
   OnlyUser = 'ONLY_USER',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
   OnlySample = 'ONLY_SAMPLE'
@@ -589,11 +589,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Create = 'CREATE',
-  Insert = 'INSERT',
   Select = 'SELECT',
-  Delete = 'DELETE',
-  Update = 'UPDATE'
+  Insert = 'INSERT',
+  Update = 'UPDATE',
+  Create = 'CREATE',
+  Delete = 'DELETE'
 }
 
 export enum SqlExPart {

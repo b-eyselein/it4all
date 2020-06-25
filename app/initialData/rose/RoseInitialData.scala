@@ -11,17 +11,12 @@ object RoseInitialData extends InitialData[RoseExerciseContent] {
 
   override protected val toolId: String = "rose"
 
+  private val roseColl01 = ExerciseCollection(1, toolId, title = "Rose Basics", authors = Seq("bje40dc"))
+
+  private val roseColl01Exes = Seq(roseColl1Ex1, roseColl1Ex2)
+
   override val data: Seq[(ExerciseCollection, Seq[RoseExercise])] = Seq(
-    (
-      ExerciseCollection(
-        collectionId = 1,
-        toolId,
-        title = "Rose Basics",
-        authors = Seq("bje40dc"),
-        text = "Einfache Aufgaben um den Umgang mit diesem Tool zu lernen"
-      ),
-      Seq(roseColl1Ex1, roseColl1Ex2)
-    )
+    (roseColl01, roseColl01Exes)
   )
 
 }

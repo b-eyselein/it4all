@@ -12,9 +12,7 @@ const routes: Routes = [
   {path: 'registerForm', component: RegisterFormComponent},
   {path: 'loginForm', component: LoginFormComponent},
 
-  {path: 'lti/:uuid', component: LtiComponent},
-
-  {path: 'lessons', loadChildren: () => import('./lessons/lessons.module').then(m => m.LessonsModule)}
+  {path: 'lti/:uuid', component: LtiComponent}
 ];
 
 @NgModule({

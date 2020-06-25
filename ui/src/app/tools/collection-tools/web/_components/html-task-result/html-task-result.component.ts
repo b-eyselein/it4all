@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {GradedHtmlTaskResultFragment} from "../../web-apollo-mutations.service";
+import {GradedHtmlTaskResultFragment} from '../../web-apollo-mutations.service';
 
 @Component({
   selector: 'it4all-html-task-result',

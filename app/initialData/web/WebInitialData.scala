@@ -17,15 +17,18 @@ object WebInitialData extends InitialData[WebExerciseContent] {
 
   override protected val toolId = "web"
 
+  private val webColl01 =
+    ExerciseCollection(collectionId = 1, toolId, title = "Html Elemente", authors = Seq("bje40dc"))
+
+  private val webColl01Exes = Seq(webColl1Ex1, webColl1Ex2, webColl1Ex3, webColl1Ex4, webColl1Ex5)
+
+  private val webColl02 = ExerciseCollection(collectionId = 2, toolId, title = "Js Basics", authors = Seq("bje40dc"))
+
+  private val webColl02Exes = Seq(webColl2Ex1, webColl2Ex2, webColl2Ex3)
+
   override val data: Seq[(ExerciseCollection, Seq[WebExercise])] = Seq(
-    (
-      ExerciseCollection(collectionId = 1, toolId, title = "Html Elemente", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(webColl1Ex1, webColl1Ex2, webColl1Ex3, webColl1Ex4, webColl1Ex5)
-    ),
-    (
-      ExerciseCollection(collectionId = 2, toolId, title = "Js Basics", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(webColl2Ex1, webColl2Ex2, webColl2Ex3)
-    )
+    (webColl01, webColl01Exes),
+    (webColl02, webColl02Exes)
   )
 
 }

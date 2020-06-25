@@ -38,7 +38,8 @@
         </div>
       </div>
 
-      <div class="column" *ngIf="collectionToolOverviewQuery.me.tool.lessonCount > 0">
+      <!--  *ngIf="collectionToolOverviewQuery.me.tool.lessonCount > 0" -->
+      <div class="column">
         <div class="card">
           <header class="card-header">
             <p class="card-header-title is-centered">Lektionen</p>
@@ -47,7 +48,7 @@
             {{collectionToolOverviewQuery.me.tool.lessonCount}} Lektionen
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item" [routerLink]="['/lessons', toolId]">Zu den Lektionen</a>
+            <a class="card-footer-item" [routerLink]="['lessons']">Zu den Lektionen</a>
           </footer>
         </div>
       </div>

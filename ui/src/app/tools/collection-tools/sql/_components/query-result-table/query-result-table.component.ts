@@ -29,7 +29,7 @@ export class QueryResultTableComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  getCell(row: SqlRowFragment, key: String): SqlCellFragment | undefined {
+  getCell(row: SqlRowFragment, key: string): SqlCellFragment | undefined {
     return row.cells.find((r) => r.key === key).value;
   }
 

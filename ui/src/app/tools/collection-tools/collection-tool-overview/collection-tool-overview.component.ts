@@ -1,18 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {CollectionToolOverviewGQL, CollectionToolOverviewQuery, UserProficiencyFragment} from '../../../_services/apollo_services';
-import {Subscription} from "rxjs";
-import {AuthenticationService} from "../../../_services/authentication.service";
+import {Subscription} from 'rxjs';
+import {AuthenticationService} from '../../../_services/authentication.service';
 
 @Component({templateUrl: './collection-tool-overview.component.html'})
 export class CollectionToolOverviewComponent implements OnInit, OnDestroy {
 
   private sub: Subscription;
 
-  /**
-   * @deprecated
-   */
-  toolId: string;
   collectionToolOverviewQuery: CollectionToolOverviewQuery;
 
   constructor(
@@ -24,10 +20,10 @@ export class CollectionToolOverviewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.sub = this.route.paramMap.subscribe((paramMap) => {
-      this.toolId = paramMap.get('toolId');
+      const toolId = paramMap.get('toolId');
 
       this.collectionToolOverviewGQL
-        .watch({toolId: this.toolId, userJwt: this.authenticationService.currentUserValue.jwt})
+        .watch({toolId, userJwt: this.authenticationService.currentUserValue.jwt})
         .valueChanges
         .subscribe(({data}) => this.collectionToolOverviewQuery = data);
     });

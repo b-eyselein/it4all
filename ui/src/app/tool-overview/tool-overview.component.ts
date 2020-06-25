@@ -32,7 +32,11 @@ export class ToolOverviewComponent implements OnInit {
   }
 
   get collectionTools(): CollectionToolFragment[] {
-    return this.toolOverviewQuery.me.tools;
+    if (this.toolOverviewQuery) {
+      return this.toolOverviewQuery.me.tools;
+    } else {
+      return [];
+    }
   }
 
 }

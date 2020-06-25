@@ -3,6 +3,7 @@ package initialData
 import better.files.File
 import com.google.inject.AbstractModule
 import javax.inject.{Inject, Singleton}
+import model.lesson.Lesson
 import model.tools.ToolList
 import model.{Exercise, ExerciseCollection, ExerciseContent, MongoClientQueries}
 import play.api.Logger
@@ -14,6 +15,8 @@ import scala.concurrent.{ExecutionContext, Future}
 trait InitialData[EC <: ExerciseContent] {
 
   protected val toolId: String
+
+  val lessons: Seq[Lesson] = Seq.empty
 
   val data: Seq[(ExerciseCollection, Seq[Exercise[EC]])]
 
@@ -78,11 +81,17 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
   }
 
   ToolList.tools.foreach { tool =>
-    tool.initialData.data.map {
+    // Insert all collections and exercises
+    tool.initialData.data.foreach {
       case (coll, exes) =>
         insertInitialCollection(coll)
 
         exes.foreach(ex => insertInitialExercise(ex, tool.jsonFormats.exerciseFormat))
+    }
+
+    // Insert all lessons
+    tool.initialData.lessons.foreach { lesson =>
+      println(lesson)
     }
   }
 

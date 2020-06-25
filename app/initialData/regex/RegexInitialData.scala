@@ -16,15 +16,17 @@ object RegexInitialData extends InitialData[RegexExerciseContent] {
 
   override protected val toolId: String = "regex"
 
+  private val regexColl01 = ExerciseCollection(1, toolId, title = "Zahlen und Fakten", authors = Seq("bje40dc"))
+
+  private val regexColl01Exes = Seq(regexColl1Ex1, regexColl1Ex2, regexColl1Ex3, regexColl1Ex4, regexColl1Ex5)
+
+  private val regexColl02 = ExerciseCollection(2, toolId, title = "Informationsextraktion", authors = Seq("bje40dc"))
+
+  private val regexColl02Exes = Seq(regexColl2Ex1, RegexColl2Ex2)
+
   override val data: Seq[(ExerciseCollection, Seq[RegexExercise])] = Seq(
-    (
-      ExerciseCollection(1, toolId, title = "Zahlen und Fakten", authors = Seq("bje40dc"), text = ""),
-      Seq(regexColl1Ex1, regexColl1Ex2, regexColl1Ex3, regexColl1Ex4, regexColl1Ex5)
-    ),
-    (
-      ExerciseCollection(2, toolId, title = "Informationsextraktion", authors = Seq("bje40dc"), text = ""),
-      Seq(regexColl2Ex1, RegexColl2Ex2)
-    )
+    (regexColl01, regexColl01Exes),
+    (regexColl02, regexColl02Exes)
   )
 
 }

@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {LessonAnswer, LessonQuestion, LessonQuestionsContent} from '../../../_interfaces/lesson';
+import {LessonAnswer, LessonQuestion, LessonQuestionsContent} from '../../../../../_interfaces/lesson';
 
 @Component({
   selector: 'it4all-lesson-questions-content',

@@ -29,11 +29,7 @@ object JsonProtocols extends LessonJsonProtocol {
     Json.format
   }
 
-  val exerciseCollectionKeyFormat: OFormat[ExerciseCollectionKey] = Json.format
-
   val exerciseCollectionFormat: OFormat[ExerciseCollection] = Json.format
-
-  val exerciseKeyFormat: OFormat[ExerciseKey] = Json.format
 
   val exerciseFileFormat: OFormat[ExerciseFile] = Json.format
 

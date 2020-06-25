@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {SimplifiedExecutionResultFragment} from "../../programming-apollo-mutations.service";
-import {SuccessType} from "../../../../../_interfaces/graphql-types";
+import {SimplifiedExecutionResultFragment} from '../../programming-apollo-mutations.service';
+import {SuccessType} from '../../../../../_interfaces/graphql-types';
 
 @Component({
   selector: 'it4all-programming-simplified-result',

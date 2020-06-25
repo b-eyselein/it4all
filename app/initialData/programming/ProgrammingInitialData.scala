@@ -34,48 +34,58 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
 
   override protected val toolId = "programming"
 
+  private val progColl01 = ExerciseCollection(collectionId = 1, toolId, title = "Zahlen", authors = Seq("bje40dc"))
+
+  private val progColl01Exes = Seq(programmingColl1Ex1, programmingColl1Ex2, programmingColl1Ex3, programmingColl1Ex4)
+
+  private val progColl02 = ExerciseCollection(collectionId = 2, toolId, title = "Strings", authors = Seq("bje40dc"))
+
+  private val progColl02Exes = Seq(
+    programmingColl2Ex1,
+    programmingColl2Ex2,
+    programmingColl2Ex3,
+    programmingColl2Ex4,
+    programmingColl2Ex5,
+    programmingColl2Ex6,
+    programmingColl2Ex7,
+    programmingColl2Ex8
+  )
+
+  private val progColl03 = ExerciseCollection(collectionId = 3, toolId, title = "Bedingungen", authors = Seq("bje40dc"))
+
+  private val progColl03Exes = Seq(programmingColl3Ex1, programmingColl3Ex2, programmingColl3Ex3)
+
+  private val progColl04 = ExerciseCollection(collectionId = 4, toolId, title = "Listen", authors = Seq("bje40dc"))
+
+  private val progColl04Exes = Seq(programmingColl4Ex1, programmingColl4Ex2, programmingColl4Ex3, programmingColl4Ex4)
+
+  private val progColl05 =
+    ExerciseCollection(collectionId = 5, toolId, title = "Tupel und Dicts", authors = Seq("bje40dc"))
+
+  private val progColl05Exes = Seq(programmingColl5Ex1, programmingColl5Ex2, programmingColl5Ex3, programmingColl5Ex4)
+
+  private val progColl06 = ExerciseCollection(collectionId = 6, toolId, title = "Funktionen", authors = Seq("bje40dc"))
+
+  private val progColl06Exes = Seq(programmingColl6Ex1, programmingColl6Ex2)
+
+  private val progColl07 = ExerciseCollection(collectionId = 7, toolId, title = "Klassen", authors = Seq("bje40dc"))
+
+  private val progColl07Exes = Seq.empty
+
+  private val progColl08 =
+    ExerciseCollection(collectionId = 8, toolId, title = "Unit Testing", authors = Seq("bje40dc"))
+
+  private val progColl08Exes = Seq.empty
+
   override val data: Seq[(ExerciseCollection, Seq[ProgrammingExercise])] = Seq(
-    (
-      ExerciseCollection(collectionId = 1, toolId, title = "Zahlen", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(programmingColl1Ex1, programmingColl1Ex2, programmingColl1Ex3, programmingColl1Ex4)
-    ),
-    (
-      ExerciseCollection(collectionId = 2, toolId, title = "Strings", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(
-        programmingColl2Ex1,
-        programmingColl2Ex2,
-        programmingColl2Ex3,
-        programmingColl2Ex4,
-        programmingColl2Ex5,
-        programmingColl2Ex6,
-        programmingColl2Ex7,
-        programmingColl2Ex8
-      )
-    ),
-    (
-      ExerciseCollection(collectionId = 3, toolId, title = "Bedingungen", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(programmingColl3Ex1, programmingColl3Ex2, programmingColl3Ex3)
-    ),
-    (
-      ExerciseCollection(collectionId = 4, toolId, title = "Listen", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(programmingColl4Ex1, programmingColl4Ex2, programmingColl4Ex3, programmingColl4Ex4)
-    ),
-    (
-      ExerciseCollection(collectionId = 5, toolId, title = "Tupel und Dicts", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(programmingColl5Ex1, programmingColl5Ex2, programmingColl5Ex3, programmingColl5Ex4)
-    ),
-    (
-      ExerciseCollection(collectionId = 6, toolId, title = "Funktionen", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(programmingColl6Ex1, programmingColl6Ex2)
-    ),
-    (
-      ExerciseCollection(collectionId = 7, toolId, title = "Klassen", authors = Seq("bje40dc"), text = "TODO"),
-      Seq.empty
-    ),
-    (
-      ExerciseCollection(collectionId = 8, toolId, title = "Unit Testing", authors = Seq("bje40dc"), text = "TODO"),
-      Seq.empty
-    )
+    (progColl01, progColl01Exes),
+    (progColl02, progColl02Exes),
+    (progColl03, progColl03Exes),
+    (progColl04, progColl04Exes),
+    (progColl05, progColl05Exes),
+    (progColl06, progColl06Exes),
+    (progColl07, progColl07Exes),
+    (progColl08, progColl08Exes)
   )
 
 }

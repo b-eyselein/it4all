@@ -9,7 +9,6 @@ import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {RandomToolsModule} from './tools/random-tools/random-tools.module';
 import {SharedModule} from './shared/shared.module';
 import {CollectionToolsModule} from './tools/collection-tools/collection-tools.module';
-import {LessonsModule} from './lessons/lessons.module';
 import {GraphQLModule} from './graphql.module';
 
 
@@ -26,7 +25,6 @@ import {GraphQLModule} from './graphql.module';
     SharedModule,
     CollectionToolsModule,
     RandomToolsModule,
-    LessonsModule,
     GraphQLModule
   ],
   providers: [

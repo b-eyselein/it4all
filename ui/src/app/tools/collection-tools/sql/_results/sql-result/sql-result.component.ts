@@ -45,9 +45,11 @@ export class SqlResultComponent implements OnChanges {
     const insertPointsQuarters = insertComp ? insertComp.points : 0;
     const insertMaxPointsQuarters = insertComp ? insertComp.maxPoints : 0;
 
-    this.points = columnPointsQuarters + tablePointsQuarters + wherePointsQuarters + joinPointsQuarters + groupByPointsQuarters + orderByPointsQuarters + limitPointsQuarters + insertPointsQuarters;
+    this.points = columnPointsQuarters + tablePointsQuarters + wherePointsQuarters + joinPointsQuarters
+      + groupByPointsQuarters + orderByPointsQuarters + limitPointsQuarters + insertPointsQuarters;
 
-    this.maxPoints = columnMaxPointsQuarters + tableMaxPointsQuarters + whereMaxPointsQuarters + joinMaxPointsQuarters + groupByMaxPointsQuarters + orderByMaxPointsQuarters + limitMaxPointsQuarters + insertMaxPointsQuarters;
+    this.maxPoints = columnMaxPointsQuarters + tableMaxPointsQuarters + whereMaxPointsQuarters + joinMaxPointsQuarters
+      + groupByMaxPointsQuarters + orderByMaxPointsQuarters + limitMaxPointsQuarters + insertMaxPointsQuarters;
   }
 
 }

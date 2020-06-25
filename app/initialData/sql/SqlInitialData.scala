@@ -15,6 +15,10 @@ object SqlInitialData extends InitialData[SqlExerciseContent] {
 
   override protected val toolId: String = "sql"
 
+  private val sqlCollection01 = ExerciseCollection(1, toolId, title = "Angestellte", authors = Seq("bje40dc"))
+
+  private val sqlCollection02 = ExerciseCollection(2, toolId, title = "Amazon", authors = Seq("bje40dc"))
+
   private val sql_coll_2_exes: Seq[SqlExercise] = Seq(
     sqlColl2Exes01To10,
     sqlColl2Exes11To20,
@@ -24,20 +28,8 @@ object SqlInitialData extends InitialData[SqlExerciseContent] {
   ).flatten
 
   override val data: Seq[(ExerciseCollection, Seq[SqlExercise])] = Seq(
-    (
-      ExerciseCollection(
-        1,
-        toolId,
-        title = "Angestellte",
-        authors = Seq("bje40dc"),
-        text = "Dieses Szenario beschreibt die Datenbank einer kleinen Firma."
-      ),
-      sqlColl01To10
-    ),
-    (
-      ExerciseCollection(2, toolId, title = "Amazon", authors = Seq("bje40dc"), text = ""),
-      sql_coll_2_exes
-    )
+    (sqlCollection01, sqlColl01To10),
+    (sqlCollection02, sql_coll_2_exes)
   )
 
 }

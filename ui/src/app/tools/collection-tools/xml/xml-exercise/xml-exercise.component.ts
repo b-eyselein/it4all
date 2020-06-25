@@ -20,7 +20,7 @@ import {XmlExPart, XmlSolution, XmlSolutionInput} from '../../../../_interfaces/
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
 import {XmlDocumentCreation, XmlGrammarCreation} from '../xml-tool';
-import {AuthenticationService} from "../../../../_services/authentication.service";
+import {AuthenticationService} from '../../../../_services/authentication.service';
 
 function getXmlGrammarContent(rootNode: string): string {
   return `<!ELEMENT ${rootNode} (EMPTY)>`;

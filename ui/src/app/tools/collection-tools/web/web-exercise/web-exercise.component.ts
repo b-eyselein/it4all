@@ -7,17 +7,12 @@ import {
   ExerciseSolveFieldsFragment,
   WebExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
-import {
-  WebCorrectionGQL,
-  WebCorrectionMutation,
-  WebCorrectionMutationVariables,
-  WebResultFragment
-} from '../web-apollo-mutations.service';
+import {WebCorrectionGQL, WebCorrectionMutation, WebCorrectionMutationVariables, WebResultFragment} from '../web-apollo-mutations.service';
 import {WebExPart, WebSolution, WebSolutionInput} from '../../../../_interfaces/graphql-types';
-import {HtmlPart, JsPart} from "../web-tool";
+import {HtmlPart, JsPart} from '../web-tool';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
-import {AuthenticationService} from "../../../../_services/authentication.service";
+import {AuthenticationService} from '../../../../_services/authentication.service';
 
 @Component({
   selector: 'it4all-web-exercise',
@@ -62,12 +57,6 @@ export class WebExerciseComponent
   }
 
   protected getSolution(): WebSolutionInput {
-    console.info(
-      this.exerciseFileFragments
-        .find((ef) => ef.name === this.contentFragment.siteSpec.fileName)
-        .content
-    );
-
     return {files: this.exerciseFileFragments};
   }
 

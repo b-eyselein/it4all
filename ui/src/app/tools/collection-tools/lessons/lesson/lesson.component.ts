@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Lesson, LessonContentBase} from '../../_interfaces/lesson';
-import {LessonGQL, LessonQuery} from '../../_services/apollo_services';
-import {AuthenticationService} from '../../_services/authentication.service';
+import {LessonContentBase} from '../../../../_interfaces/lesson';
+import {LessonGQL, LessonQuery} from '../../../../_services/apollo_services';
+import {AuthenticationService} from '../../../../_services/authentication.service';
 
 interface SolvableLessonContent extends LessonContentBase {
   priorSolved?: boolean;
@@ -11,7 +11,6 @@ interface SolvableLessonContent extends LessonContentBase {
 @Component({templateUrl: './lesson.component.html'})
 export class LessonComponent implements OnInit {
 
-  lesson: Lesson;
   contents: SolvableLessonContent[];
 
   lessonQuery: LessonQuery;
@@ -43,7 +42,7 @@ export class LessonComponent implements OnInit {
   }
 
   update(): void {
-    console.info(this.contents.length + ' :: ' + this.currentIndex);
+    console.log(this.contents.length + ' :: ' + this.currentIndex);
 
     if (this.contents.length > this.currentIndex) {
       this.contents[this.currentIndex].priorSolved = true;

@@ -3,7 +3,6 @@ import {GRID_SIZE} from './uml-consts';
 import {MyJointClass, STD_CLASS_HEIGHT, STD_CLASS_WIDTH} from './joint-class-diag-elements';
 import {UmlAttributeInput, UmlMethodInput} from '../../../../_interfaces/graphql-types';
 
-
 function findFreePositionForNextClass(paper: joint.dia.Paper): joint.dia.Point {
 
   const maxRows = Math.floor((paper.getArea().height - GRID_SIZE) / (STD_CLASS_HEIGHT + GRID_SIZE));
@@ -28,7 +27,7 @@ function findFreePositionForNextClass(paper: joint.dia.Paper): joint.dia.Point {
 export function addClassToGraph(
   name: string,
   paper: joint.dia.Paper,
-  maybePosition: joint.dia.Point | undefined = undefined,
+  maybePosition?: joint.dia.Point,
   attributes: UmlAttributeInput[] = [],
   methods: UmlMethodInput[] = []
 ): void {

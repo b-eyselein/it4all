@@ -20,7 +20,7 @@ import {
 import {ProgExPart, ProgSolution, ProgSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/python/python';
-import {AuthenticationService} from "../../../../_services/authentication.service";
+import {AuthenticationService} from '../../../../_services/authentication.service';
 
 @Component({
   selector: 'it4all-programming-exercise',
@@ -38,7 +38,11 @@ export class ProgrammingExerciseComponent
 
   exerciseFiles: ExerciseFileFragment[] = [];
 
-  constructor(private authenticationService: AuthenticationService, programmingCorrectionGQL: ProgrammingCorrectionGQL, dexieService: DexieService) {
+  constructor(
+    private authenticationService: AuthenticationService,
+    programmingCorrectionGQL: ProgrammingCorrectionGQL,
+    dexieService: DexieService
+  ) {
     super(programmingCorrectionGQL, dexieService);
   }
 
@@ -66,7 +70,7 @@ export class ProgrammingExerciseComponent
 
   loadOldSolution(): void {
     this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id, (maybeOldSolution: ProgSolutionInput) => {
-      console.info(JSON.stringify(maybeOldSolution));
+      console.log(JSON.stringify(maybeOldSolution));
       // TODO: deactivated for now...
       // this.exerciseFiles = maybeOldSolution.files;
     });

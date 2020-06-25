@@ -27,14 +27,6 @@ describe('LessonComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LessonComponent);
     component = fixture.componentInstance;
-    component.lesson = {
-      id: 1,
-      toolId: 'web',
-      title: '',
-      content: [],
-      description: '',
-      dependsOn: []
-    };
     fixture.detectChanges();
   });
 

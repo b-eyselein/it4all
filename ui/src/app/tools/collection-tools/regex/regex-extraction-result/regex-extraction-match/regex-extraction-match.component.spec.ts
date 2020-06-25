@@ -1,7 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {RegexExtractionMatchComponent} from './regex-extraction-match.component';
-import {MatchType} from "../../../../../_interfaces/graphql-types";
+import {MatchType} from '../../../../../_interfaces/graphql-types';
 
 describe('RegexExtractionMatchComponent', () => {
   let component: RegexExtractionMatchComponent;

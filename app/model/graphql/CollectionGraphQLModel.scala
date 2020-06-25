@@ -21,7 +21,6 @@ trait CollectionGraphQLModel
       Field("collectionId", IntType, resolve = _.value._2.collectionId),
       Field("title", StringType, resolve = _.value._2.title),
       Field("authors", ListType(StringType), resolve = _.value._2.authors),
-      Field("text", StringType, resolve = _.value._2.text),
       Field(
         "exerciseCount",
         LongType,

@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {NormalExecutionResultFragment} from "../../programming-apollo-mutations.service";
-import {SuccessType} from "../../../../../_interfaces/graphql-types";
+import {NormalExecutionResultFragment} from '../../programming-apollo-mutations.service';
+import {SuccessType} from '../../../../../_interfaces/graphql-types';
 
 @Component({
   selector: 'it4all-programming-normal-result',

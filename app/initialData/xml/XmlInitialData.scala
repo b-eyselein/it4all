@@ -161,11 +161,12 @@ object XmlInitialData extends InitialData[XmlExerciseContent] {
 
   }
 
+  private val xmlColl01 = ExerciseCollection(1, toolId, title = "Xml Basics", authors = Seq("bje40dc"))
+
+  private val xmlColl01Exes = Seq(xmlColl1Ex1, xmlColl1Ex2, xmlColl1Ex3, xmlColl1Ex4, xmlColl1Ex5)
+
   override val data: Seq[(ExerciseCollection, Seq[XmlExercise])] = Seq(
-    (
-      ExerciseCollection(1, toolId, title = "Xml Basics", authors = Seq("bje40dc"), text = "TODO"),
-      Seq(xmlColl1Ex1, xmlColl1Ex2, xmlColl1Ex3, xmlColl1Ex4, xmlColl1Ex5)
-    )
+    (xmlColl01, xmlColl01Exes)
   )
 
 }

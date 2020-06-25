@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {LessonTextContent} from '../../_interfaces/lesson';
+import {LessonTextContent} from '../../../../_interfaces/lesson';
 
 @Component({
   selector: 'it4all-lesson-text-content',

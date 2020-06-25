@@ -43,7 +43,7 @@ export class LoginFormComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
-    const username = this.f.username.value
+    const username = this.f.username.value;
     const password = this.f.password.value;
 
     if (this.loginForm.invalid) {
@@ -59,7 +59,7 @@ export class LoginFormComponent implements OnInit {
         (data) => {
           if (data) {
             // noinspection JSIgnoredPromiseFromCall
-            this.router.navigate([this.returnUrl])
+            this.router.navigate([this.returnUrl]);
           } else {
             this.inValid = true;
           }

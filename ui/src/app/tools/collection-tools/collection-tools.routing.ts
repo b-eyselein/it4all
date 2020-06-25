@@ -7,6 +7,8 @@ import {ExerciseOverviewComponent} from './exercise-overview/exercise-overview.c
 import {ExerciseComponent} from './exercise/exercise.component';
 import {AllExercisesOverviewComponent} from './all-exercises-overview/all-exercises-overview.component';
 import {CollectionsListComponent} from './collections-list/collections-list.component';
+import {LessonsForToolOverviewComponent} from './lessons/lessons-overview/lessons-for-tool-overview.component';
+import {LessonComponent} from './lessons/lesson/lesson.component';
 
 const collectionRoutes: Routes = [
   {path: '', component: CollectionOverviewComponent},
@@ -29,6 +31,12 @@ const collectionToolRoutes: Routes = [
           {path: '', component: CollectionToolOverviewComponent},
           {path: 'allExercises', component: AllExercisesOverviewComponent},
           {path: 'collections', children: collectionsRoutes},
+          {
+            path: 'lessons', children: [
+              {path: '', component: LessonsForToolOverviewComponent},
+              {path: ':lessonId', component: LessonComponent},
+            ]
+          }
         ]
       },
     ]
@@ -44,9 +52,14 @@ export class CollectionToolRoutingModule {
 
 export const collectionToolRoutingComponents = [
   CollectionToolOverviewComponent,
+  // Lesssons
+  LessonsForToolOverviewComponent,
+  LessonComponent,
+  // Collections
   CollectionsListComponent,
-  AllExercisesOverviewComponent,
   CollectionOverviewComponent,
+  // Exercises
+  AllExercisesOverviewComponent,
   ExerciseOverviewComponent,
   ExerciseComponent,
 ];

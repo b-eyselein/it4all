@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {RegisterGQL} from "../../_services/apollo_services";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Router} from "@angular/router";
-import {AuthenticationService} from "../../_services/authentication.service";
-import {first} from "rxjs/operators";
+import {RegisterGQL} from '../../_services/apollo_services';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {AuthenticationService} from '../../_services/authentication.service';
+import {first} from 'rxjs/operators';
 
-@Component({templateUrl: './register-form.component.html',})
+@Component({templateUrl: './register-form.component.html'})
 export class RegisterFormComponent implements OnInit {
 
   registerForm: FormGroup;
@@ -23,7 +23,7 @@ export class RegisterFormComponent implements OnInit {
 
     if (this.authenticationService.currentUserValue) {
       // noinspection JSIgnoredPromiseFromCall
-      this.router.navigate(['/'])
+      this.router.navigate(['/']);
     }
   }
 
@@ -32,7 +32,7 @@ export class RegisterFormComponent implements OnInit {
       username: ['', Validators.required],
       firstPassword: ['', Validators.required],
       secondPassword: ['', Validators.required],
-    })
+    });
   }
 
   private get f() {

@@ -16,31 +16,27 @@ trait MongoClientQueries extends ReactiveMongoComponents {
 
   protected implicit val ec: ExecutionContext
 
-  private implicit val userFormat: OFormat[User]     = Json.format
-  private implicit val lessonFormat: OFormat[Lesson] = JsonProtocols.lessonFormat
-  private implicit val exerciseCollectionKeyFormat: OFormat[ExerciseCollectionKey] =
-    JsonProtocols.exerciseCollectionKeyFormat
-  private implicit val exerciseKeyFormat: OFormat[ExerciseKey]               = JsonProtocols.exerciseKeyFormat
+  private implicit val userFormat: OFormat[User]                             = Json.format
+  private implicit val lessonFormat: OFormat[Lesson]                         = JsonProtocols.lessonFormat
   private implicit val exerciseCollectionFormat: OFormat[ExerciseCollection] = JsonProtocols.exerciseCollectionFormat
   private implicit val topicFormat: OFormat[Topic]                           = JsonProtocols.topicFormat
   private implicit val userProficiencyFormat: OFormat[UserProficiency]       = JsonProtocols.userProficiencyFormat
 
-  private def userFilter(username: String): JsObject =
-    Json.obj("username" -> username)
+  private def userFilter(username: String): JsObject = Json.obj("username" -> username)
 
-  private def toolFilter(toolId: String): JsObject =
-    Json.obj("toolId" -> toolId)
+  private def toolFilter(toolId: String): JsObject = Json.obj("toolId" -> toolId)
+
   private def lessonFilter(toolId: String, lessonId: Int): JsObject =
-    Json.obj(
-      "toolId"   -> toolId,
-      "lessonId" -> lessonId
-    )
+    Json.obj("toolId" -> toolId, "lessonId" -> lessonId)
 
   private def collectionFilter(toolId: String, collectionId: Int): JsObject =
     Json.obj(
       "toolId"       -> toolId,
       "collectionId" -> collectionId
     )
+
+  private def exerciseFilter(toolId: String, collectionId: Int, exerciseId: Int): JsObject =
+    Json.obj("toolId" -> toolId, "collectionId" -> collectionId, "exerciseId" -> exerciseId)
 
   private def exercisePartFilter[P](
     toolId: String,
@@ -136,18 +132,14 @@ trait MongoClientQueries extends ReactiveMongoComponents {
           .collect[Seq](-1, Cursor.FailOnError())
     } yield collections
 
-  protected def getExerciseCollection(toolId: String, collectionId: Int): Future[Option[ExerciseCollection]] = {
-
-    val key = ExerciseCollectionKey(collectionId, toolId)
-
+  protected def getExerciseCollection(toolId: String, collectionId: Int): Future[Option[ExerciseCollection]] =
     for {
       collectionCollection <- futureCollectionsCollection
       maybeCollection <-
         collectionCollection
-          .find(key, Option.empty[JsObject])
+          .find(collectionFilter(toolId, collectionId), Option.empty[JsObject])
           .one[ExerciseCollection]
     } yield maybeCollection
-  }
 
   protected def insertCollection(exerciseCollection: ExerciseCollection): Future[Boolean] =
     for {
@@ -209,13 +201,11 @@ trait MongoClientQueries extends ReactiveMongoComponents {
   ): Future[Option[Exercise[EC]]] = {
     implicit val ef: OFormat[Exercise[EC]] = exerciseFormat
 
-    val exKey = ExerciseKey(exerciseId, collectionId, toolId)
-
     for {
       exercisesCollection <- futureExercisesCollection
       maybeExercise <-
         exercisesCollection
-          .find(exKey, Option.empty[JsObject])
+          .find(exerciseFilter(toolId, collectionId, exerciseId), Option.empty[JsObject])
           .one[Exercise[EC]]
     } yield maybeExercise
   }

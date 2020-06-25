@@ -179,7 +179,7 @@ export class UmlDiagramDrawingComponent
           this.markedClass = undefined;
         }
       } else {
-        console.info(cellView.model);
+        // console.info(cellView.model);
         event.preventDefault();
         event.stopImmediatePropagation();
         event.stopPropagation();
@@ -202,7 +202,7 @@ export class UmlDiagramDrawingComponent
           this.editedClass = undefined;
         }
       } else {
-        console.info(cellView.model);
+        console.log(cellView.model);
       }
     });
   }

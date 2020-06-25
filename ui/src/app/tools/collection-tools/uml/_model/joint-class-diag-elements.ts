@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 
 import {calcRectHeight, COLORS, fontSize, STD_ELEMENT_WIDTH, STD_PADDING} from './uml-consts';
 import {buildAttributeString, buildMethodString, CLASS_TYPES, ExportedUmlClass} from './my-uml-interfaces';
-import {UmlAttribute, UmlClassType, UmlMethod} from "../../../../_interfaces/graphql-types";
+import {UmlAttribute, UmlClassType, UmlMethod} from '../../../../_interfaces/graphql-types';
 
 export const STD_CLASS_HEIGHT = 160;
 export const STD_CLASS_WIDTH = 200;
@@ -26,7 +26,7 @@ export class MyJointClass extends joint.shapes.basic.Generic {
   initialize(): void {
 
     this.on('change:classType change:className change:attributes change:methods', () => {
-      console.info('Update...');
+      console.log('Update...');
       this.updateRectangles();
     });
 

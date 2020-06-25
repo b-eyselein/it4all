@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {LessonsForToolGQL, LessonsForToolQuery} from '../../_services/apollo_services';
+import {LessonsForToolGQL, LessonsForToolQuery} from '../../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
-import {AuthenticationService} from '../../_services/authentication.service';
+import {AuthenticationService} from '../../../../_services/authentication.service';
 
 @Component({templateUrl: './lessons-for-tool-overview.component.html'})
 export class LessonsForToolOverviewComponent implements OnInit, OnDestroy {

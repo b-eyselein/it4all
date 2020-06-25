@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {GradedTextContentResultFragment} from "../../web-apollo-mutations.service";
+import {GradedTextContentResultFragment} from '../../web-apollo-mutations.service';
 
 @Component({
   selector: 'it4all-html-attribute-result',

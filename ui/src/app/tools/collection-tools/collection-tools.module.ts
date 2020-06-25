@@ -41,8 +41,10 @@ import {ProgrammingUnitTestResultComponent} from './programming/_results/program
 import {ProgrammingNormalResultComponent} from './programming/_results/programming-normal-result/programming-normal-result.component';
 import {HtmlTaskResultComponent} from './web/_components/html-task-result/html-task-result.component';
 import {HtmlAttributeResultComponent} from './web/_components/html-attribute-result/html-attribute-result.component';
-import { FilledPointsComponent } from './_components/filled-points/filled-points.component';
-import { ProficiencyCardComponent } from './_components/proficiency-card/proficiency-card.component';
+import {FilledPointsComponent} from './_components/filled-points/filled-points.component';
+import {ProficiencyCardComponent} from './_components/proficiency-card/proficiency-card.component';
+import {LessonTextContentComponent} from './lessons/lesson-text-content/lesson-text-content.component';
+import {LessonQuestionsContentComponent} from './lessons/_content-types/lesson-questions/lesson-questions-content.component';
 
 
 @NgModule({
@@ -51,6 +53,7 @@ import { ProficiencyCardComponent } from './_components/proficiency-card/profici
 
     ExerciseFilesEditorComponent, ExerciseFileCardComponent,
 
+    LessonTextContentComponent, LessonQuestionsContentComponent,
 
     AllExercisesOverviewComponent,
     ExerciseOverviewComponent,
