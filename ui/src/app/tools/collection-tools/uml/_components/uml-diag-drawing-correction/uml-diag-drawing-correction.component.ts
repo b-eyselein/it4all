@@ -1,6 +1,7 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {MatchType, UmlAssociationMatch, UmlImplementationMatch} from '../../../../../_interfaces/graphql-types';
+import {MatchType, UmlImplementationMatch} from '../../../../../_interfaces/graphql-types';
 import {
+  UmlAssociationMatchFragment,
   UmlAssociationMatchingResultFragment,
   UmlImplementationMatchingResultFragment,
   UmlResultFragment
@@ -27,12 +28,12 @@ export class UmlDiagDrawingCorrectionComponent implements OnChanges {
     }
   }
 
-  assocMatchIsCorrect(m: UmlAssociationMatch): boolean {
+  assocMatchIsCorrect(m: UmlAssociationMatchFragment): boolean {
     return m.matchType === MatchType.SuccessfulMatch;
   }
 
   associationResultSuccessful(assocResult: UmlAssociationMatchingResultFragment): boolean {
-    return assocResult.allMatches.every(this.assocMatchIsCorrect);
+    return assocResult.allMatches.every((x) => this.assocMatchIsCorrect(x));
   }
 
 
