@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {LessonsForToolGQL, LessonsForToolQuery} from '../../../../_services/apollo_services';
+import {LessonIdentifierFragment, LessonsForToolGQL, LessonsForToolQuery} from '../../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
@@ -29,6 +29,10 @@ export class LessonsForToolOverviewComponent implements OnInit, OnDestroy {
         .valueChanges
         .subscribe(({data}) => this.lessonsForToolQuery = data);
     });
+  }
+
+  get lessons(): LessonIdentifierFragment[] {
+    return this.lessonsForToolQuery ? this.lessonsForToolQuery.me.tool.lessons : [];
   }
 
   ngOnDestroy() {

@@ -32,7 +32,7 @@ final case class LessonQuestionsContent(
 ) extends LessonContent
 
 final case class Lesson(
-  id: Int,
+  lessonId: Int,
   toolId: String,
   title: String,
   description: String,

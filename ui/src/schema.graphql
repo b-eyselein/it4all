@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Jun 25 2020 14:17:52 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Thu Jun 25 2020 14:52:00 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -93,7 +93,6 @@ type ExerciseCollection {
   collectionId: Int!
   title: String!
   authors: [String!]!
-  text: String!
   exerciseCount: Long!
   exercises: [Exercise!]!
   exercise(exId: Int!): Exercise
@@ -195,7 +194,7 @@ type KeyValueObject {
 }
 
 type Lesson {
-  id: Int!
+  lessonId: Int!
   toolId: String!
   title: String!
   description: String!

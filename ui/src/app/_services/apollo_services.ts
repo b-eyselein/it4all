@@ -247,6 +247,11 @@ export type ExerciseQuery = (
   )> }
 );
 
+export type LessonIdentifierFragment = (
+  { __typename?: 'Lesson' }
+  & Pick<Types.Lesson, 'lessonId' | 'title' | 'description'>
+);
+
 export type LessonsForToolQueryVariables = {
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
@@ -262,7 +267,7 @@ export type LessonsForToolQuery = (
       & Pick<Types.CollectionTool, 'name'>
       & { lessons: Array<(
         { __typename?: 'Lesson' }
-        & Pick<Types.Lesson, 'id' | 'title' | 'description'>
+        & LessonIdentifierFragment
       )> }
     )> }
   )> }
@@ -284,7 +289,7 @@ export type LessonQuery = (
       & Pick<Types.CollectionTool, 'name'>
       & { lesson?: Types.Maybe<(
         { __typename?: 'Lesson' }
-        & Pick<Types.Lesson, 'id' | 'title' | 'description'>
+        & LessonIdentifierFragment
       )> }
     )> }
   )> }
@@ -535,11 +540,6 @@ export type XmlSampleSolutionFragment = (
 export type ExerciseFileFragment = (
   { __typename?: 'ExerciseFile' }
   & Pick<Types.ExerciseFile, 'name' | 'fileType' | 'content' | 'editable'>
-);
-
-export type LessonFragment = (
-  { __typename?: 'Lesson' }
-  & Pick<Types.Lesson, 'id' | 'title'>
 );
 
 export const LoggedInUserWithTokenFragmentDoc = gql`
@@ -858,6 +858,13 @@ ${SqlExerciseContentSolveFieldsFragmentDoc}
 ${UmlExerciseContentSolveFieldsFragmentDoc}
 ${WebExerciseContentSolveFieldsFragmentDoc}
 ${XmlExerciseContentSolveFieldsFragmentDoc}`;
+export const LessonIdentifierFragmentDoc = gql`
+    fragment LessonIdentifier on Lesson {
+  lessonId
+  title
+  description
+}
+    `;
 export const PartFragmentDoc = gql`
     fragment Part on ExPart {
   id
@@ -888,12 +895,6 @@ export const FieldsForLinkFragmentDoc = gql`
   }
 }
     ${TopicWithLevelFragmentDoc}`;
-export const LessonFragmentDoc = gql`
-    fragment Lesson on Lesson {
-  id
-  title
-}
-    `;
 export const RegisterDocument = gql`
     mutation Register($username: String!, $firstPassword: String!, $secondPassword: String!) {
   register(registerValues: {username: $username, firstPassword: $firstPassword, secondPassword: $secondPassword})
@@ -1080,14 +1081,12 @@ export const LessonsForToolDocument = gql`
     tool(toolId: $toolId) {
       name
       lessons {
-        id
-        title
-        description
+        ...LessonIdentifier
       }
     }
   }
 }
-    `;
+    ${LessonIdentifierFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
@@ -1102,14 +1101,12 @@ export const LessonDocument = gql`
     tool(toolId: $toolId) {
       name
       lesson(lessonId: $lessonId) {
-        id
-        title
-        description
+        ...LessonIdentifier
       }
     }
   }
 }
-    `;
+    ${LessonIdentifierFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

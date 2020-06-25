@@ -125,7 +125,6 @@ export type ExerciseCollection = {
   collectionId: Scalars['Int'];
   title: Scalars['String'];
   authors: Array<Scalars['String']>;
-  text: Scalars['String'];
   exerciseCount: Scalars['Long'];
   exercises: Array<Exercise>;
   exercise?: Maybe<Exercise>;
@@ -244,7 +243,7 @@ export type KeyValueObject = {
 
 export type Lesson = {
   __typename?: 'Lesson';
-  id: Scalars['Int'];
+  lessonId: Scalars['Int'];
   toolId: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];

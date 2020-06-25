@@ -80,6 +80,19 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
     }
   }
 
+  private def insertInitialLesson(lesson: Lesson): Future[Unit] = {
+    val key = s"(${lesson.toolId}, ${lesson.lessonId})"
+
+    getLesson(lesson.toolId, lesson.lessonId).flatMap {
+      case Some(_) => Future.successful(logger.info(s"Lesson $key already exists."))
+      case None =>
+        insertLesson(lesson).map {
+          case false => logger.error(s"Could not insert lesson $key")
+          case true  => logger.info(s"Inserted lesson $key")
+        }
+    }
+  }
+
   ToolList.tools.foreach { tool =>
     // Insert all collections and exercises
     tool.initialData.data.foreach {
@@ -91,7 +104,7 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
 
     // Insert all lessons
     tool.initialData.lessons.foreach { lesson =>
-      println(lesson)
+      insertInitialLesson(lesson)
     }
   }
 

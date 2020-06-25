@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {UserProficiencyFragment} from "../../../../_services/apollo_services";
+import {UserProficiencyFragment} from '../../../../_services/apollo_services';
 
 @Component({
   selector: 'it4all-proficiency-card',

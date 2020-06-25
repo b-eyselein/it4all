@@ -172,14 +172,18 @@ query Exercise($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!, 
 
 # Lesson queries
 
+fragment LessonIdentifier on Lesson {
+  lessonId
+  title
+  description
+}
+
 query LessonsForTool($userJwt: String!, $toolId: String!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
       name
       lessons {
-        id
-        title
-        description
+        ...LessonIdentifier
       }
     }
   }
@@ -190,9 +194,7 @@ query Lesson($userJwt: String!,$toolId: String!, $lessonId: Int!) {
     tool(toolId: $toolId) {
       name
       lesson(lessonId: $lessonId){
-        id
-        title
-        description
+        ...LessonIdentifier
       }
     }
   }
@@ -433,16 +435,9 @@ fragment XmlSampleSolution on XmlSampleSolution {
   }
 }
 
-
 fragment ExerciseFile on ExerciseFile {
   name
   fileType
   content
   editable
 }
-
-fragment Lesson on Lesson {
-  id
-  title
-}
-

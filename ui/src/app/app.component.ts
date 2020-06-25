@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {AuthenticationService} from './_services/authentication.service';
-import {LoggedInUserWithTokenFragment} from "./_services/apollo_services";
+import {LoggedInUserWithTokenFragment} from './_services/apollo_services';
 
 @Component({
   selector: 'it4all-root',

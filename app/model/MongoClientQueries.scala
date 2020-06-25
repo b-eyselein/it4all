@@ -113,6 +113,12 @@ trait MongoClientQueries extends ReactiveMongoComponents {
           .one[Lesson]
     } yield maybeLesson
 
+  protected def insertLesson(lesson: Lesson): Future[Boolean] =
+    for {
+      lessonsCollection <- futureLessonsCollection
+      insertResult      <- lessonsCollection.insert(true).one(lesson)
+    } yield insertResult.ok
+
   // Collection queries
 
   protected def getCollectionCount(toolId: String): Future[Long] =

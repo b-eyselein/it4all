@@ -3,16 +3,15 @@
 
     <h1 class="title is-3 has-text-centered">Lektionen für {{lessonsForToolQuery.me.tool.name}}</h1>
 
-    <div class="columns is-multiline" *ngIf="lessonsForToolQuery.me.tool.lessons.length > 0; else noLessonsFoundBlock">
-      <div class="column is-half-desktop" *ngFor="let lesson of lessonsForToolQuery.me.tool.lessons">
+    <div class="columns is-multiline" *ngIf="lessons.length > 0; else noLessonsFoundBlock">
+      <div class="column is-half-desktop" *ngFor="let lesson of lessons">
         <div class="card">
           <header class="card-header">
-            <p class="card-header-title">{{lesson.id}}. {{lesson.title}}</p>
+            <p class="card-header-title">{{lesson.lessonId}}. {{lesson.title}}</p>
           </header>
           <div class="card-content">{{lesson.description}}</div>
           <div class="card-footer">
-            <a href="" class="card-footer-item" [routerLink]="['lessons', lesson.id]">
-              Lektion beginnen</a>
+            <a href="" class="card-footer-item" [routerLink]="[lesson.lessonId]">Lektion beginnen</a>
           </div>
         </div>
       </div>

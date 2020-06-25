@@ -17,7 +17,7 @@ export class FilledPointsComponent {
   }
 
   get nonFilledDifficultyStars(): number[] {
-    return Array(this.maxPoints - this.filledPoints).fill(0)
+    return Array(this.maxPoints - this.filledPoints).fill(0);
   }
 
 }
