@@ -20,20 +20,15 @@ object SqlInitialData extends InitialData[SqlExerciseContent] {
 
   private val sqlCollection02 = ExerciseCollection(2, toolId, title = "Amazon", authors = Seq("bje40dc"))
 
-  private val sql_coll_2_exes: Seq[SqlExercise] = Seq(
-    sqlColl2Exes01To10,
-    sqlColl2Exes11To20,
-    sqlColl2Exes21To30,
-    sqlColl2Exes31To40,
-    sqlColl2Exes41To50
-  ).flatten
+  private val sql_coll_2_exes: Seq[SqlExercise] =
+    Seq(sqlColl2Exes01To10, sqlColl2Exes11To20, sqlColl2Exes21To30, sqlColl2Exes31To40, sqlColl2Exes41To50).flatten
 
   override val exerciseData: Seq[(ExerciseCollection, Seq[SqlExercise])] = Seq(
     (sqlCollection01, sqlColl01To10),
     (sqlCollection02, sql_coll_2_exes)
   )
 
-  private val sqlLesson01 = Lesson(1, toolId, "Grundlagen SQL", "description")
+  private val sqlLesson01 = Lesson(1, toolId, "Grundlagen SQL", "In dieser Lektion geht es um die Grundlagen von SQL.")
 
   private val sqlLesson01Content = Seq()
 

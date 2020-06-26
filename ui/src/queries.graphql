@@ -198,12 +198,39 @@ fragment LessonContent on LessonContent {
   contentId
 }
 
+fragment LessonTextContent on LessonTextContent {
+  content
+}
+
+fragment LessonMultipleChoiceQuestionAnswer on LessonMultipleChoiceQuestionAnswer {
+  answer
+  isCorrect
+}
+
+fragment LessonMultipleChoiceQuestion on LessonMultipleChoiceQuestion {
+  id
+  question
+  answers {
+    ...LessonMultipleChoiceQuestionAnswer
+  }
+}
+
+fragment LessonMultipleChoiceQuestionContent on LessonMultipleChoiceQuestionsContent {
+  questions {
+    ...LessonMultipleChoiceQuestion
+  }
+}
+
 fragment Lesson on Lesson {
   lessonId
   title
   description
   contents  {
-    ...LessonContent
+    __typename
+    contentId
+#    ...LessonContent
+    ...LessonTextContent
+    ...LessonMultipleChoiceQuestionContent
   }
 }
 

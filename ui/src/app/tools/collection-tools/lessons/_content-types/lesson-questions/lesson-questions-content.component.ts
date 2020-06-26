@@ -1,18 +1,19 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {LessonAnswer, LessonQuestion, LessonQuestionsContent} from '../../../../../_interfaces/lesson';
+import {Component, Input} from '@angular/core';
+import {
+  LessonMultipleChoiceQuestionAnswerFragment,
+  LessonMultipleChoiceQuestionContentFragment,
+  LessonMultipleChoiceQuestionFragment
+} from '../../../../../_services/apollo_services';
 
 @Component({
   selector: 'it4all-lesson-questions-content',
   templateUrl: './lesson-questions-content.component.html'
 })
-export class LessonQuestionsContentComponent implements OnInit {
+export class LessonQuestionsContentComponent {
 
-  @Input() content: LessonQuestionsContent;
+  @Input() content: LessonMultipleChoiceQuestionContentFragment;
 
-  ngOnInit() {
-  }
-
-  correct(question: LessonQuestion, answer: LessonAnswer): void {
+  correct(question: LessonMultipleChoiceQuestionFragment, answer: LessonMultipleChoiceQuestionAnswerFragment): void {
     console.info(question);
     console.info(answer);
   }

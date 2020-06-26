@@ -8,32 +8,27 @@
 
       <ng-container *ngIf="content.priorSolved">
 
-        <ng-container [ngSwitch]="content.contentFragment.__typename">
-          <it4all-lesson-text-content
-            *ngSwitchCase="'Text'"
-            [content]="content.contentFragment">
+        <it4all-lesson-text-content
+          *ngIf="asLessonTextContentFragment(content.contentFragment)"
+          [content]="content.contentFragment">
+        </it4all-lesson-text-content>
 
-          </it4all-lesson-text-content>
-
-          <it4all-lesson-questions-content
-            *ngSwitchCase="'Questions'"
-            [content]="content.contentFragment">
-          </it4all-lesson-questions-content>
-
-          <div *ngSwitchDefault class="notification is-danger">{{content | json}}</div>
-        </ng-container>
-
-        <br>
+        <it4all-lesson-questions-content
+          *ngIf="asMultipleChoiceQuestionContentFragment(content.contentFragment)"
+          [content]="content.contentFragment">
+        </it4all-lesson-questions-content>
 
       </ng-container>
 
+      <br>
+
     </ng-container>
 
-    <div class="buttons">
-      <button class="button is-link is-fullwidth" (click)="update()">Nächster Inhalt</button>
-    </div>
-
   </ng-container>
+
+  <div class="buttons">
+    <button class="button is-link is-fullwidth" (click)="update()">Nächster Inhalt</button>
+  </div>
 
 </div>
 

@@ -285,15 +285,44 @@ type LessonContent_LessonTextContent_Fragment = (
 
 export type LessonContentFragment = LessonContent_LessonMultipleChoiceQuestionsContent_Fragment | LessonContent_LessonTextContent_Fragment;
 
+export type LessonTextContentFragment = (
+  { __typename?: 'LessonTextContent' }
+  & Pick<Types.LessonTextContent, 'content'>
+);
+
+export type LessonMultipleChoiceQuestionAnswerFragment = (
+  { __typename?: 'LessonMultipleChoiceQuestionAnswer' }
+  & Pick<Types.LessonMultipleChoiceQuestionAnswer, 'answer' | 'isCorrect'>
+);
+
+export type LessonMultipleChoiceQuestionFragment = (
+  { __typename?: 'LessonMultipleChoiceQuestion' }
+  & Pick<Types.LessonMultipleChoiceQuestion, 'id' | 'question'>
+  & { answers: Array<(
+    { __typename?: 'LessonMultipleChoiceQuestionAnswer' }
+    & LessonMultipleChoiceQuestionAnswerFragment
+  )> }
+);
+
+export type LessonMultipleChoiceQuestionContentFragment = (
+  { __typename?: 'LessonMultipleChoiceQuestionsContent' }
+  & { questions: Array<(
+    { __typename?: 'LessonMultipleChoiceQuestion' }
+    & LessonMultipleChoiceQuestionFragment
+  )> }
+);
+
 export type LessonFragment = (
   { __typename?: 'Lesson' }
   & Pick<Types.Lesson, 'lessonId' | 'title' | 'description'>
   & { contents: Array<(
-    { __typename?: 'LessonMultipleChoiceQuestionsContent' }
-    & LessonContent_LessonMultipleChoiceQuestionsContent_Fragment
+    { __typename: 'LessonMultipleChoiceQuestionsContent' }
+    & Pick<Types.LessonMultipleChoiceQuestionsContent, 'contentId'>
+    & LessonMultipleChoiceQuestionContentFragment
   ) | (
-    { __typename?: 'LessonTextContent' }
-    & LessonContent_LessonTextContent_Fragment
+    { __typename: 'LessonTextContent' }
+    & Pick<Types.LessonTextContent, 'contentId'>
+    & LessonTextContentFragment
   )> }
 );
 
@@ -895,16 +924,47 @@ export const LessonContentFragmentDoc = gql`
   contentId
 }
     `;
+export const LessonTextContentFragmentDoc = gql`
+    fragment LessonTextContent on LessonTextContent {
+  content
+}
+    `;
+export const LessonMultipleChoiceQuestionAnswerFragmentDoc = gql`
+    fragment LessonMultipleChoiceQuestionAnswer on LessonMultipleChoiceQuestionAnswer {
+  answer
+  isCorrect
+}
+    `;
+export const LessonMultipleChoiceQuestionFragmentDoc = gql`
+    fragment LessonMultipleChoiceQuestion on LessonMultipleChoiceQuestion {
+  id
+  question
+  answers {
+    ...LessonMultipleChoiceQuestionAnswer
+  }
+}
+    ${LessonMultipleChoiceQuestionAnswerFragmentDoc}`;
+export const LessonMultipleChoiceQuestionContentFragmentDoc = gql`
+    fragment LessonMultipleChoiceQuestionContent on LessonMultipleChoiceQuestionsContent {
+  questions {
+    ...LessonMultipleChoiceQuestion
+  }
+}
+    ${LessonMultipleChoiceQuestionFragmentDoc}`;
 export const LessonFragmentDoc = gql`
     fragment Lesson on Lesson {
   lessonId
   title
   description
   contents {
-    ...LessonContent
+    __typename
+    contentId
+    ...LessonTextContent
+    ...LessonMultipleChoiceQuestionContent
   }
 }
-    ${LessonContentFragmentDoc}`;
+    ${LessonTextContentFragmentDoc}
+${LessonMultipleChoiceQuestionContentFragmentDoc}`;
 export const PartFragmentDoc = gql`
     fragment Part on ExPart {
   id
