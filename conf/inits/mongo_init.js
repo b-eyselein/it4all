@@ -33,6 +33,13 @@ const usersUniqueIndexName = usersCollection.createIndex(usersIndex, {unique: tr
 
 print(`Created unique index on ${usersCollection.name}: ${usersUniqueIndexName}`);
 
+// Create default user
+usersCollection.insertOne({
+    username: "developer",
+    pwHash: "$2a$10$v92Jgbo0hB.2fOmhcrjgzO8SO.xp6Q7i38lVF/ko0ag4.evDpJt4u",
+    isAdmin: true
+});
+
 // instantiate unique index for lessons
 
 db.createCollection('lessons', {
