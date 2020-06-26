@@ -5,6 +5,7 @@ import java.time.Clock
 import com.github.t3hnar.bcrypt._
 import model._
 import model.json.JsonProtocols
+import model.mongo.MongoClientQueries
 import model.tools.ToolList
 import pdi.jwt.JwtSession
 import play.api.Configuration
@@ -52,7 +53,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
         val part     = context.arg(PartTypeInputArg)
         val solution = context.arg(SolTypeInputArg)
 
-        getExercise(tool.id, context.arg(collIdArgument), context.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
+        futureExerciseById(tool.id, context.arg(collIdArgument), context.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
           .flatMap {
             case Some(exercise) =>
               for {
@@ -87,12 +88,12 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
     if (registerValues.isInvalid) {
       Future.successful(None)
     } else {
-      getUser(registerValues.username).flatMap {
+      futureUserByUsername(registerValues.username).flatMap {
         case Some(_) => Future.successful(None)
         case None =>
           val newUser = User(registerValues.username, Some(registerValues.firstPassword.bcrypt))
 
-          insertUser(newUser).map {
+          futureInsertUser(newUser).map {
             case false => None
             case true  => Some(newUser.username)
           }
@@ -100,7 +101,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
     }
 
   private def authenticate(credentials: UserCredentials): Future[Option[LoggedInUserWithToken]] =
-    getUser(credentials.username).map { maybeUser =>
+    futureUserByUsername(credentials.username).map { maybeUser =>
       for {
         user: User      <- maybeUser
         pwHash: String  <- user.pwHash

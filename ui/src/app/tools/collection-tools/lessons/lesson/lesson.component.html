@@ -8,16 +8,16 @@
 
       <ng-container *ngIf="content.priorSolved">
 
-        <ng-container [ngSwitch]="content._type">
+        <ng-container [ngSwitch]="content.contentFragment.__typename">
           <it4all-lesson-text-content
             *ngSwitchCase="'Text'"
-            [content]="content">
+            [content]="content.contentFragment">
 
           </it4all-lesson-text-content>
 
           <it4all-lesson-questions-content
             *ngSwitchCase="'Questions'"
-            [content]="content">
+            [content]="content.contentFragment">
           </it4all-lesson-questions-content>
 
           <div *ngSwitchDefault class="notification is-danger">{{content | json}}</div>

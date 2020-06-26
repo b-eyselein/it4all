@@ -5,6 +5,8 @@ import play.api.libs.json._
 
 trait LessonJsonProtocol {
 
+  private val lessonTextContentFormat: OFormat[LessonTextContent] = Json.format
+
   val lessonContentFormat: OFormat[LessonContent] = {
 
     implicit val cfg: JsonConfiguration = JsonConfiguration(
@@ -18,10 +20,11 @@ trait LessonJsonProtocol {
       }
     )
 
-    implicit val ltcf: Format[LessonTextContent] = Json.format
-    implicit val lqcf: Format[LessonQuestionsContent] = {
-      implicit val quf: Format[QuestionAnswer] = Json.format
-      implicit val qf: Format[Question]        = Json.format
+    implicit val ltcf: Format[LessonTextContent] = lessonTextContentFormat
+
+    implicit val lqcf: Format[LessonMultipleChoiceQuestionsContent] = {
+      implicit val quf: Format[LessonMultipleChoiceQuestionAnswer] = Json.format
+      implicit val qf: Format[LessonMultipleChoiceQuestion]        = Json.format
 
       Json.format
     }
@@ -29,10 +32,6 @@ trait LessonJsonProtocol {
     Json.format
   }
 
-  val lessonFormat: OFormat[Lesson] = {
-    implicit val lcf: OFormat[LessonContent] = lessonContentFormat
-
-    Json.format
-  }
+  val lessonFormat: OFormat[Lesson] = Json.format
 
 }

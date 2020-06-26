@@ -15,6 +15,18 @@
     "types": [
       {
         "kind": "INTERFACE",
+        "name": "LessonContent",
+        "possibleTypes": [
+          {
+            "name": "LessonMultipleChoiceQuestionsContent"
+          },
+          {
+            "name": "LessonTextContent"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
         "name": "ProgrammingAbstractResult",
         "possibleTypes": [
           {

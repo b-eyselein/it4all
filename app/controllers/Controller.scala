@@ -76,12 +76,12 @@ class Controller @Inject() (
   private val jwtHashesToClaim: MutableMap[UUID, (JwtSession, LoggedInUser)] = MutableMap.empty
 
   private def getOrCreateUser(username: String): Future[LoggedInUser] =
-    getUser(username)
+    futureUserByUsername(username)
       .flatMap {
         case Some(u) => Future(u)
         case None =>
           val newUser = User(username)
-          insertUser(newUser).map { _ => newUser }
+          futureInsertUser(newUser).map { _ => newUser }
       }
       .map { user => LoggedInUser(user.username) }
 
@@ -117,7 +117,7 @@ class Controller @Inject() (
 
   def apiAuthenticate: Action[UserCredentials] =
     Action.async(parse.json[UserCredentials](JsonProtocols.userCredentialsFormat)) { implicit request =>
-      getUser(request.body.username).map {
+      futureUserByUsername(request.body.username).map {
         case None => BadRequest("Invalid username!")
         case Some(user) =>
           user.pwHash match {

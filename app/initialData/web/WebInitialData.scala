@@ -26,7 +26,7 @@ object WebInitialData extends InitialData[WebExerciseContent] {
 
   private val webColl02Exes = Seq(webColl2Ex1, webColl2Ex2, webColl2Ex3)
 
-  override val data: Seq[(ExerciseCollection, Seq[WebExercise])] = Seq(
+  override val exerciseData: Seq[(ExerciseCollection, Seq[WebExercise])] = Seq(
     (webColl01, webColl01Exes),
     (webColl02, webColl02Exes)
   )

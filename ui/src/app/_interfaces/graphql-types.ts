@@ -247,6 +247,49 @@ export type Lesson = {
   toolId: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
+  contentCount: Scalars['Long'];
+  contents: Array<LessonContent>;
+  content?: Maybe<LessonContent>;
+};
+
+
+export type LessonContentArgs = {
+  lessonId: Scalars['Int'];
+};
+
+export type LessonContent = {
+  contentId: Scalars['Int'];
+  lessonId: Scalars['Int'];
+  toolId: Scalars['String'];
+};
+
+export type LessonMultipleChoiceQuestion = {
+  __typename?: 'LessonMultipleChoiceQuestion';
+  id: Scalars['Int'];
+  question: Scalars['String'];
+  answers: Array<LessonMultipleChoiceQuestionAnswer>;
+};
+
+export type LessonMultipleChoiceQuestionAnswer = {
+  __typename?: 'LessonMultipleChoiceQuestionAnswer';
+  answer: Scalars['String'];
+  isCorrect: Scalars['Boolean'];
+};
+
+export type LessonMultipleChoiceQuestionsContent = LessonContent & {
+  __typename?: 'LessonMultipleChoiceQuestionsContent';
+  contentId: Scalars['Int'];
+  lessonId: Scalars['Int'];
+  toolId: Scalars['String'];
+  questions: Array<LessonMultipleChoiceQuestion>;
+};
+
+export type LessonTextContent = LessonContent & {
+  __typename?: 'LessonTextContent';
+  contentId: Scalars['Int'];
+  lessonId: Scalars['Int'];
+  toolId: Scalars['String'];
+  content: Scalars['String'];
 };
 
 export type Level = {
@@ -275,11 +318,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
   PartialMatch = 'PARTIAL_MATCH',
-  OnlyUser = 'ONLY_USER',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlySample = 'ONLY_SAMPLE'
+  OnlyUser = 'ONLY_USER'
 }
 
 export type Mutation = {
@@ -588,11 +631,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
-  Insert = 'INSERT',
   Update = 'UPDATE',
   Create = 'CREATE',
-  Delete = 'DELETE'
+  Delete = 'DELETE',
+  Insert = 'INSERT',
+  Select = 'SELECT'
 }
 
 export enum SqlExPart {

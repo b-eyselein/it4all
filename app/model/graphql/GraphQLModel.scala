@@ -1,12 +1,11 @@
 package model.graphql
 
+import model.LoggedInUser
+import model.mongo.MongoClientQueries
 import model.tools.Helper.UntypedExercise
 import model.tools._
-import model.{LoggedInUser, MongoClientQueries}
 import play.api.libs.json._
 import sangria.schema._
-
-import scala.concurrent.Future
 
 final case class GraphQLRequest(
   query: String,
@@ -18,6 +17,7 @@ trait GraphQLModel
     extends BasicGraphQLModels
     with CollectionGraphQLModel
     with ExerciseGraphQLModels
+    with LessonGraphQLModel
     with GraphQLMutations
     with MongoClientQueries {
 
@@ -30,25 +30,29 @@ trait GraphQLModel
       Field("name", StringType, resolve = _.value._2.name),
       Field("state", toolStateType, resolve = _.value._2.toolState),
       // Lesson fields
-      Field("lessonCount", LongType, resolve = context => lessonCountForTool(context.value._2.id)),
+      Field("lessonCount", LongType, resolve = context => futureLessonCountForTool(context.value._2.id)),
       Field(
         "lessons",
-        ListType(LessonGraphQLModel.LessonType),
-        resolve = context => lessonsForTool(context.value._2.id)
+        ListType(lessonType),
+        resolve = context =>
+          futureLessonsForTool(context.value._2.id)
+            .map(lessons => lessons.map(lesson => (context.value._1, lesson)))
       ),
       Field(
         "lesson",
-        OptionType(LessonGraphQLModel.LessonType),
+        OptionType(lessonType),
         arguments = lessonIdArgument :: Nil,
-        resolve = context => getLesson(context.value._2.id, context.arg(lessonIdArgument))
+        resolve = context =>
+          futureLessonById(context.value._2.id, context.arg(lessonIdArgument))
+            .map(maybeLesson => maybeLesson.map(lesson => (context.value._1, lesson)))
       ),
       // Collection fields
-      Field("collectionCount", LongType, resolve = context => getCollectionCount(context.value._2.id)),
+      Field("collectionCount", LongType, resolve = context => futureCollectionCountForTool(context.value._2.id)),
       Field(
         "collections",
         ListType(collectionType),
         resolve = context =>
-          getExerciseCollections(context.value._2.id)
+          futureCollectionsForTool(context.value._2.id)
             .map(futureExerciseCollections => futureExerciseCollections.map(coll => (context.value, coll)))
       ),
       Field(
@@ -56,16 +60,16 @@ trait GraphQLModel
         OptionType(collectionType),
         arguments = collIdArgument :: Nil,
         resolve = context =>
-          getExerciseCollection(context.value._2.id, context.arg(collIdArgument))
+          futureCollectionById(context.value._2.id, context.arg(collIdArgument))
             .map(futureMaybeExerciseCollection => futureMaybeExerciseCollection.map(coll => (context.value, coll)))
       ),
       // Special fields for exercises
-      Field("exerciseCount", LongType, resolve = context => getExerciseCountForTool(context.value._2.id)),
+      Field("exerciseCount", LongType, resolve = context => futureExerciseCountForTool(context.value._2.id)),
       Field(
         "allExercises",
         ListType(exerciseType),
         resolve = context =>
-          getExercisesForTool(context.value._2)
+          futureExercisesForTool(context.value._2)
             .map(exes => exes.map(ex => (context.value._1, ex.asInstanceOf[UntypedExercise])))
       ),
       // Fields for users

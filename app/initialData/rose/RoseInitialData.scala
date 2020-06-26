@@ -15,7 +15,7 @@ object RoseInitialData extends InitialData[RoseExerciseContent] {
 
   private val roseColl01Exes = Seq(roseColl1Ex1, roseColl1Ex2)
 
-  override val data: Seq[(ExerciseCollection, Seq[RoseExercise])] = Seq(
+  override val exerciseData: Seq[(ExerciseCollection, Seq[RoseExercise])] = Seq(
     (roseColl01, roseColl01Exes)
   )
 

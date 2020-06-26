@@ -33,10 +33,10 @@ const usersUniqueIndexName = usersCollection.createIndex(usersIndex, {unique: tr
 
 print(`Created unique index on ${usersCollection.name}: ${usersUniqueIndexName}`);
 
-// TODO: instantiate unique index for lessons
+// instantiate unique index for lessons
 
 db.createCollection('lessons', {
-    validators: {
+    validator: {
         $jsonSchema: {
             bsonType: "object",
             properties: {
@@ -47,7 +47,7 @@ db.createCollection('lessons', {
                 description: {bsonType: "string"}
             },
             required: ["_id", "lessonId", "toolId", "title", "description"],
-            additionalProperties: true
+            additionalProperties: false
         }
     }
 });
@@ -58,6 +58,29 @@ const lessonsIndex = {toolId: 1, lessonId: 1};
 const lessonsUniqueIndexName = lessonsCollection.createIndex(lessonsIndex, {unique: true});
 
 print(`Created unique index on ${lessonsCollection}: ${lessonsUniqueIndexName}`);
+
+db.createCollection('lessonContents', {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            properties: {
+                _id: {bsonType: "objectId"},
+                contentId: {bsonType: "int"},
+                lessonId: {bsonType: "int"},
+                toolId: {bsonType: "string"}
+            },
+            required: ["_id", "contentId", "lessonId", "toolId"],
+            additionalProperties: true
+        }
+    }
+});
+
+const lessonContentsCollection = db.getCollection('lessonContents');
+
+const lessonContentsIndex = {toolId: 1, lessonId: 1, contentId: 1};
+const lessonContentsUniqueIndexName = lessonsContentsCollection.createIndex(lessonContentsIndex, {unique: true});
+
+print(`Created unique index on ${lessonsContentsCollection}: ${lessonContentsUniqueIndexName}`);
 
 // instantiate unique index for exercise collections
 db.createCollection('exerciseCollections', {

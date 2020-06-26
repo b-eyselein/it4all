@@ -77,7 +77,7 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
 
   private val progColl08Exes = Seq.empty
 
-  override val data: Seq[(ExerciseCollection, Seq[ProgrammingExercise])] = Seq(
+  override val exerciseData: Seq[(ExerciseCollection, Seq[ProgrammingExercise])] = Seq(
     (progColl01, progColl01Exes),
     (progColl02, progColl02Exes),
     (progColl03, progColl03Exes),

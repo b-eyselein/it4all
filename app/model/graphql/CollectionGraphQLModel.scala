@@ -1,6 +1,7 @@
 package model.graphql
 
 import model._
+import model.mongo.MongoClientQueries
 import model.tools.CollectionTool
 import model.tools.Helper.UntypedExercise
 import sangria.schema._
@@ -24,7 +25,7 @@ trait CollectionGraphQLModel
       Field(
         "exerciseCount",
         LongType,
-        resolve = context => getExerciseCountForCollection(context.value._1._2.id, context.value._2.collectionId)
+        resolve = context => futureExerciseCountForCollection(context.value._1._2.id, context.value._2.collectionId)
       ),
       Field(
         "exercises",
@@ -32,7 +33,7 @@ trait CollectionGraphQLModel
         resolve = context => {
           val tool = context.value._1._2
 
-          getExercisesForCollection(context.value._1._2, context.value._2.collectionId)
+          futureExercisesForCollection(context.value._1._2, context.value._2.collectionId)
             .map(exes => exes.map(ex => (context.value._1._1, ex.asInstanceOf[UntypedExercise])))
           //            .map(exes => untypedExercises(exes))
         }
@@ -45,7 +46,7 @@ trait CollectionGraphQLModel
           val tool         = context.value._1._2
           val collectionId = context.value._2.collectionId
 
-          getExercise(tool.id, collectionId, context.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
+          futureExerciseById(tool.id, collectionId, context.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
             .map(maybeEx => maybeEx.map(ex => (context.value._1._1, ex.asInstanceOf[UntypedExercise])))
         }
       )

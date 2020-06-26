@@ -3,9 +3,10 @@ package initialData
 import better.files.File
 import com.google.inject.AbstractModule
 import javax.inject.{Inject, Singleton}
-import model.lesson.Lesson
+import model.lesson.{Lesson, LessonContent}
+import model.mongo.MongoClientQueries
 import model.tools.ToolList
-import model.{Exercise, ExerciseCollection, ExerciseContent, MongoClientQueries}
+import model.{Exercise, ExerciseCollection, ExerciseContent}
 import play.api.Logger
 import play.api.libs.json.OFormat
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
@@ -16,9 +17,9 @@ trait InitialData[EC <: ExerciseContent] {
 
   protected val toolId: String
 
-  val lessons: Seq[Lesson] = Seq.empty
+  val lessonData: Seq[(Lesson, Seq[LessonContent])] = Seq.empty
 
-  val data: Seq[(ExerciseCollection, Seq[Exercise[EC]])]
+  val exerciseData: Seq[(ExerciseCollection, Seq[Exercise[EC]])]
 
 }
 
@@ -51,11 +52,11 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
 
     val key = s"(${coll.toolId}, ${coll.collectionId})"
 
-    getExerciseCollection(coll.toolId, coll.collectionId).flatMap {
+    futureCollectionById(coll.toolId, coll.collectionId).flatMap {
       case Some(_) =>
         Future.successful(logger.info(s"Collection $key already exists."))
       case None =>
-        insertCollection(coll).map {
+        futureInsertCollection(coll).map {
           case false => logger.error(s"Could not insert collection $key!")
           case true  => logger.info(s"Inserted collection $key.")
         }
@@ -69,11 +70,11 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
 
     val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"
 
-    getExercise(ex.toolId, ex.collectionId, ex.exerciseId, exFormat).flatMap {
+    futureExerciseById(ex.toolId, ex.collectionId, ex.exerciseId, exFormat).flatMap {
       case Some(_) =>
         Future.successful(logger.info(s"Exercise $key already exists."))
       case None =>
-        insertExercise(ex, exFormat).map {
+        futureInsertExercise(ex, exFormat).map {
           case false => logger.error(s"Exercise $key could not be inserted!")
           case true  => logger.info(s"Inserted exercise $key.")
         }
@@ -83,19 +84,32 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
   private def insertInitialLesson(lesson: Lesson): Future[Unit] = {
     val key = s"(${lesson.toolId}, ${lesson.lessonId})"
 
-    getLesson(lesson.toolId, lesson.lessonId).flatMap {
+    futureLessonById(lesson.toolId, lesson.lessonId).flatMap {
       case Some(_) => Future.successful(logger.info(s"Lesson $key already exists."))
       case None =>
-        insertLesson(lesson).map {
+        futureInsertLesson(lesson).map {
           case false => logger.error(s"Could not insert lesson $key")
           case true  => logger.info(s"Inserted lesson $key")
         }
     }
   }
 
+  private def insertInitialLessonContent(content: LessonContent): Future[Unit] = {
+    val key = s"(${content.toolId}, ${content.lessonId}, ${content.contentId})"
+
+    futureLessonContentById(content.toolId, content.lessonId, content.contentId).flatMap {
+      case Some(_) => Future.successful(logger.info(s"LessonContent $key already exists."))
+      case None =>
+        futureInsertLessonContent(content).map {
+          case false => logger.error(s"Could not insert lesson content $key")
+          case true  => logger.info(s"Insert lesson content $key")
+        }
+    }
+  }
+
   ToolList.tools.foreach { tool =>
     // Insert all collections and exercises
-    tool.initialData.data.foreach {
+    tool.initialData.exerciseData.foreach {
       case (coll, exes) =>
         insertInitialCollection(coll)
 
@@ -103,8 +117,11 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
     }
 
     // Insert all lessons
-    tool.initialData.lessons.foreach { lesson =>
-      insertInitialLesson(lesson)
+    tool.initialData.lessonData.foreach {
+      case (lesson, lessonContents) =>
+        insertInitialLesson(lesson)
+
+        lessonContents.foreach(lessonContent => insertInitialLessonContent(lessonContent))
     }
   }
 

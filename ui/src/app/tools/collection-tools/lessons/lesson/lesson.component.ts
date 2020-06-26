@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {LessonContentBase} from '../../../../_interfaces/lesson';
-import {LessonGQL, LessonQuery} from '../../../../_services/apollo_services';
+import {LessonContentFragment, LessonFragment, LessonGQL, LessonQuery} from '../../../../_services/apollo_services';
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
-interface SolvableLessonContent extends LessonContentBase {
-  priorSolved?: boolean;
+interface SolvableLessonContent {
+  contentFragment: LessonContentFragment;
+  priorSolved: boolean;
 }
 
 @Component({templateUrl: './lesson.component.html'})
@@ -48,6 +48,16 @@ export class LessonComponent implements OnInit {
       this.contents[this.currentIndex].priorSolved = true;
       this.currentIndex++;
     }
+  }
+
+  get lesson(): LessonFragment {
+    return this.lessonQuery ? this.lessonQuery.me.tool.lesson : null;
+  }
+
+  get lessonContents(): SolvableLessonContent[] {
+    return this.lesson ? this.lesson.contents.map((contentFragment) => {
+      return {contentFragment, priorSolved: false};
+    }) : [];
   }
 
   /*

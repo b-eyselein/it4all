@@ -24,7 +24,7 @@ object RegexInitialData extends InitialData[RegexExerciseContent] {
 
   private val regexColl02Exes = Seq(regexColl2Ex1, RegexColl2Ex2)
 
-  override val data: Seq[(ExerciseCollection, Seq[RegexExercise])] = Seq(
+  override val exerciseData: Seq[(ExerciseCollection, Seq[RegexExercise])] = Seq(
     (regexColl01, regexColl01Exes),
     (regexColl02, regexColl02Exes)
   )

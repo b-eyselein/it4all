@@ -15,7 +15,7 @@ object UmlInitialData extends InitialData[UmlExerciseContent] {
 
   private val umlColl01Exes = Seq(umlColl1Ex1, umlColl1Ex2)
 
-  override val data: Seq[(ExerciseCollection, Seq[UmlExercise])] = Seq(
+  override val exerciseData: Seq[(ExerciseCollection, Seq[UmlExercise])] = Seq(
     (umlColl01, umlColl01Exes)
   )
 

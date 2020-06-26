@@ -273,6 +273,30 @@ export type LessonsForToolQuery = (
   )> }
 );
 
+type LessonContent_LessonMultipleChoiceQuestionsContent_Fragment = (
+  { __typename: 'LessonMultipleChoiceQuestionsContent' }
+  & Pick<Types.LessonMultipleChoiceQuestionsContent, 'contentId'>
+);
+
+type LessonContent_LessonTextContent_Fragment = (
+  { __typename: 'LessonTextContent' }
+  & Pick<Types.LessonTextContent, 'contentId'>
+);
+
+export type LessonContentFragment = LessonContent_LessonMultipleChoiceQuestionsContent_Fragment | LessonContent_LessonTextContent_Fragment;
+
+export type LessonFragment = (
+  { __typename?: 'Lesson' }
+  & Pick<Types.Lesson, 'lessonId' | 'title' | 'description'>
+  & { contents: Array<(
+    { __typename?: 'LessonMultipleChoiceQuestionsContent' }
+    & LessonContent_LessonMultipleChoiceQuestionsContent_Fragment
+  ) | (
+    { __typename?: 'LessonTextContent' }
+    & LessonContent_LessonTextContent_Fragment
+  )> }
+);
+
 export type LessonQueryVariables = {
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
@@ -289,7 +313,7 @@ export type LessonQuery = (
       & Pick<Types.CollectionTool, 'name'>
       & { lesson?: Types.Maybe<(
         { __typename?: 'Lesson' }
-        & LessonIdentifierFragment
+        & LessonFragment
       )> }
     )> }
   )> }
@@ -865,6 +889,22 @@ export const LessonIdentifierFragmentDoc = gql`
   description
 }
     `;
+export const LessonContentFragmentDoc = gql`
+    fragment LessonContent on LessonContent {
+  __typename
+  contentId
+}
+    `;
+export const LessonFragmentDoc = gql`
+    fragment Lesson on Lesson {
+  lessonId
+  title
+  description
+  contents {
+    ...LessonContent
+  }
+}
+    ${LessonContentFragmentDoc}`;
 export const PartFragmentDoc = gql`
     fragment Part on ExPart {
   id
@@ -1101,12 +1141,12 @@ export const LessonDocument = gql`
     tool(toolId: $toolId) {
       name
       lesson(lessonId: $lessonId) {
-        ...LessonIdentifier
+        ...Lesson
       }
     }
   }
 }
-    ${LessonIdentifierFragmentDoc}`;
+    ${LessonFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

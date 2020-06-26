@@ -178,6 +178,8 @@ fragment LessonIdentifier on Lesson {
   description
 }
 
+# /tools/:toolId/lessons
+
 query LessonsForTool($userJwt: String!, $toolId: String!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
@@ -189,12 +191,28 @@ query LessonsForTool($userJwt: String!, $toolId: String!) {
   }
 }
 
+# /tools/:toolId/lessons/:lessonId
+
+fragment LessonContent on LessonContent {
+  __typename
+  contentId
+}
+
+fragment Lesson on Lesson {
+  lessonId
+  title
+  description
+  contents  {
+    ...LessonContent
+  }
+}
+
 query Lesson($userJwt: String!,$toolId: String!, $lessonId: Int!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
       name
-      lesson(lessonId: $lessonId){
-        ...LessonIdentifier
+      lesson(lessonId: $lessonId) {
+        ...Lesson
       }
     }
   }
