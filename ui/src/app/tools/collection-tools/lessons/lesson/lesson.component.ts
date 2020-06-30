@@ -1,34 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {
-  LessonFragment,
   LessonGQL,
-  LessonMultipleChoiceQuestionFragment,
+  LessonMultipleChoiceQuestionContentFragment,
   LessonQuery,
   LessonTextContentFragment
 } from '../../../../_services/apollo_services';
 import {AuthenticationService} from '../../../../_services/authentication.service';
-import {LessonTextContent} from '../../../../_interfaces/graphql-types';
+import {isSolvableLessonMultipleChoiceQuestionContentFragment, isSolvableLessonTextContentFragment,} from '../solvable-lesson-content';
 
-type LessonContentFragmentTypes = LessonTextContentFragment | LessonMultipleChoiceQuestionFragment;
-
-interface SolvableLessonContent<T extends LessonContentFragmentTypes> {
-  contentFragment: T;
-  priorSolved: boolean;
-}
-
-function isSolvableLessonTextContentFragment(lessonContentFragment: SolvableLessonContent<LessonContentFragmentTypes>): lessonContentFragment is SolvableLessonContent<LessonTextContentFragment> {
-  return lessonContentFragment.contentFragment.__typename === 'LessonTextContent';
-}
-
-function isSolvableLessonMultipleChoiceQuestionFragment(lessonContentFragment: SolvableLessonContent<LessonContentFragmentTypes>): lessonContentFragment is SolvableLessonContent<LessonMultipleChoiceQuestionFragment> {
-  return lessonContentFragment.contentFragment.__typename === 'LessonMultipleChoiceQuestion';
-}
 
 @Component({templateUrl: './lesson.component.html'})
 export class LessonComponent implements OnInit {
-
-  contents: SolvableLessonContent<any>[];
 
   lessonQuery: LessonQuery;
 
@@ -51,48 +34,36 @@ export class LessonComponent implements OnInit {
       this.lessonGQL
         .watch({userJwt, toolId, lessonId})
         .valueChanges
-        .subscribe(({data}) => {
-          this.lessonQuery = data;
-          this.contents = [];
-        });
+        .subscribe(({data}) => this.lessonQuery = data);
     });
   }
 
-  update(): void {
-    console.log(this.contents.length + ' :: ' + this.currentIndex);
+  get currentTextContentFragment(): LessonTextContentFragment | undefined {
+    const currentContent = this.lessonQuery.me.tool.lesson.contents[this.currentIndex];
 
-    if (this.contents.length > this.currentIndex) {
-      this.contents[this.currentIndex].priorSolved = true;
+    return isSolvableLessonTextContentFragment(currentContent) ? currentContent : undefined;
+  }
+
+  get currentMultipleChoiceFragment(): LessonMultipleChoiceQuestionContentFragment | undefined {
+    const currentContent = this.lessonQuery.me.tool.lesson.contents[this.currentIndex];
+
+    return isSolvableLessonMultipleChoiceQuestionContentFragment(currentContent) ? currentContent : undefined;
+  }
+
+  hasMoreContent(): boolean {
+    return this.lessonQuery && this.currentIndex < (this.lessonQuery.me.tool.lesson.contents.length - 1);
+  }
+
+  previousContent(): void {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    }
+  }
+
+  nextContent(): void {
+    if (this.currentIndex <= this.lessonQuery.me.tool.lesson.contents.length) {
       this.currentIndex++;
     }
   }
-
-  get lesson(): LessonFragment {
-    return this.lessonQuery ? this.lessonQuery.me.tool.lesson : null;
-  }
-
-  get lessonContents(): SolvableLessonContent<any>[] {
-    return this.lesson ? this.lesson.contents.map((contentFragment) => {
-      return {contentFragment, priorSolved: false};
-    }) : [];
-  }
-
-  asLessonTextContentFragment(lessonContentFragment: SolvableLessonContent<LessonContentFragmentTypes>): SolvableLessonContent<LessonTextContentFragment> | undefined {
-    return isSolvableLessonTextContentFragment(lessonContentFragment) ? lessonContentFragment : undefined;
-  }
-
-  asMultipleChoiceQuestionContentFragment(lessonContentFragment: SolvableLessonContent<LessonContentFragmentTypes>): SolvableLessonContent<LessonMultipleChoiceQuestionFragment> | undefined {
-    return isSolvableLessonMultipleChoiceQuestionFragment(lessonContentFragment) ? lessonContentFragment : undefined;
-  }
-
-  /*
-  asTextContent(content: LessonContentBase): LessonTextContent | undefined {
-    if (isLessonTextContent(content)) {
-      return content;
-    } else {
-      return undefined;
-    }
-  }
-   */
 
 }

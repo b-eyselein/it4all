@@ -25,8 +25,13 @@ trait InitialData[EC <: ExerciseContent] {
 
 object InitialData {
 
+  private val baseResourcesPath = File.currentWorkingDirectory / "conf" / "resources"
+
+  def lessonResourcesPath(toolId: String, lessonId: Int): File =
+    baseResourcesPath / toolId / s"lesson_$lessonId"
+
   def exerciseResourcesPath(toolId: String, collectionId: Int, exerciseId: Int): File =
-    File.currentWorkingDirectory / "conf" / "resources" / toolId / s"coll_$collectionId" / s"ex_$exerciseId"
+    baseResourcesPath / toolId / s"coll_$collectionId" / s"ex_$exerciseId"
 
   @deprecated
   def ex_resources_path(toolId: String, collectionId: Int, exerciseId: Int): File =

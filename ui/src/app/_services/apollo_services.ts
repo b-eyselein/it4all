@@ -273,21 +273,9 @@ export type LessonsForToolQuery = (
   )> }
 );
 
-type LessonContent_LessonMultipleChoiceQuestionsContent_Fragment = (
-  { __typename: 'LessonMultipleChoiceQuestionsContent' }
-  & Pick<Types.LessonMultipleChoiceQuestionsContent, 'contentId'>
-);
-
-type LessonContent_LessonTextContent_Fragment = (
-  { __typename: 'LessonTextContent' }
-  & Pick<Types.LessonTextContent, 'contentId'>
-);
-
-export type LessonContentFragment = LessonContent_LessonMultipleChoiceQuestionsContent_Fragment | LessonContent_LessonTextContent_Fragment;
-
 export type LessonTextContentFragment = (
-  { __typename?: 'LessonTextContent' }
-  & Pick<Types.LessonTextContent, 'content'>
+  { __typename: 'LessonTextContent' }
+  & Pick<Types.LessonTextContent, 'contentId' | 'content'>
 );
 
 export type LessonMultipleChoiceQuestionAnswerFragment = (
@@ -305,7 +293,8 @@ export type LessonMultipleChoiceQuestionFragment = (
 );
 
 export type LessonMultipleChoiceQuestionContentFragment = (
-  { __typename?: 'LessonMultipleChoiceQuestionsContent' }
+  { __typename: 'LessonMultipleChoiceQuestionsContent' }
+  & Pick<Types.LessonMultipleChoiceQuestionsContent, 'contentId'>
   & { questions: Array<(
     { __typename?: 'LessonMultipleChoiceQuestion' }
     & LessonMultipleChoiceQuestionFragment
@@ -316,12 +305,10 @@ export type LessonFragment = (
   { __typename?: 'Lesson' }
   & Pick<Types.Lesson, 'lessonId' | 'title' | 'description'>
   & { contents: Array<(
-    { __typename: 'LessonMultipleChoiceQuestionsContent' }
-    & Pick<Types.LessonMultipleChoiceQuestionsContent, 'contentId'>
+    { __typename?: 'LessonMultipleChoiceQuestionsContent' }
     & LessonMultipleChoiceQuestionContentFragment
   ) | (
-    { __typename: 'LessonTextContent' }
-    & Pick<Types.LessonTextContent, 'contentId'>
+    { __typename?: 'LessonTextContent' }
     & LessonTextContentFragment
   )> }
 );
@@ -918,14 +905,10 @@ export const LessonIdentifierFragmentDoc = gql`
   description
 }
     `;
-export const LessonContentFragmentDoc = gql`
-    fragment LessonContent on LessonContent {
-  __typename
-  contentId
-}
-    `;
 export const LessonTextContentFragmentDoc = gql`
     fragment LessonTextContent on LessonTextContent {
+  __typename
+  contentId
   content
 }
     `;
@@ -946,6 +929,8 @@ export const LessonMultipleChoiceQuestionFragmentDoc = gql`
     ${LessonMultipleChoiceQuestionAnswerFragmentDoc}`;
 export const LessonMultipleChoiceQuestionContentFragmentDoc = gql`
     fragment LessonMultipleChoiceQuestionContent on LessonMultipleChoiceQuestionsContent {
+  __typename
+  contentId
   questions {
     ...LessonMultipleChoiceQuestion
   }
@@ -957,10 +942,12 @@ export const LessonFragmentDoc = gql`
   title
   description
   contents {
-    __typename
-    contentId
-    ...LessonTextContent
-    ...LessonMultipleChoiceQuestionContent
+    ... on LessonTextContent {
+      ...LessonTextContent
+    }
+    ... on LessonMultipleChoiceQuestionsContent {
+      ...LessonMultipleChoiceQuestionContent
+    }
   }
 }
     ${LessonTextContentFragmentDoc}

@@ -4,30 +4,23 @@
 
     <h1 class="title is-3 has-text-centered">Lektion: {{lessonQuery.me.tool.lesson.title}}</h1>
 
-    <ng-container *ngFor="let content of contents">
+    <div class="content box">
+      <it4all-lesson-text-content
+        *ngIf="currentTextContentFragment"
+        [content]="currentTextContentFragment">
+      </it4all-lesson-text-content>
 
-      <ng-container *ngIf="content.priorSolved">
-
-        <it4all-lesson-text-content
-          *ngIf="asLessonTextContentFragment(content.contentFragment)"
-          [content]="content.contentFragment">
-        </it4all-lesson-text-content>
-
-        <it4all-lesson-questions-content
-          *ngIf="asMultipleChoiceQuestionContentFragment(content.contentFragment)"
-          [content]="content.contentFragment">
-        </it4all-lesson-questions-content>
-
-      </ng-container>
-
-      <br>
-
-    </ng-container>
+      <it4all-lesson-questions-content
+        *ngIf="currentMultipleChoiceFragment"
+        [content]="currentMultipleChoiceFragment">
+      </it4all-lesson-questions-content>
+    </div>
 
   </ng-container>
 
-  <div class="buttons">
-    <button class="button is-link is-fullwidth" (click)="update()">Nächster Inhalt</button>
+  <div class="buttons is-centered">
+    <button class="button" (click)="previousContent()" [disabled]="currentIndex <= 0">Vorheriger Inhalt</button>
+    <button class="button is-link" (click)="nextContent()" [disabled]="!hasMoreContent()">Nächster Inhalt</button>
   </div>
 
 </div>

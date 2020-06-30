@@ -193,12 +193,9 @@ query LessonsForTool($userJwt: String!, $toolId: String!) {
 
 # /tools/:toolId/lessons/:lessonId
 
-fragment LessonContent on LessonContent {
+fragment LessonTextContent on LessonTextContent {
   __typename
   contentId
-}
-
-fragment LessonTextContent on LessonTextContent {
   content
 }
 
@@ -216,6 +213,8 @@ fragment LessonMultipleChoiceQuestion on LessonMultipleChoiceQuestion {
 }
 
 fragment LessonMultipleChoiceQuestionContent on LessonMultipleChoiceQuestionsContent {
+  __typename
+  contentId
   questions {
     ...LessonMultipleChoiceQuestion
   }
@@ -226,11 +225,12 @@ fragment Lesson on Lesson {
   title
   description
   contents  {
-    __typename
-    contentId
-#    ...LessonContent
-    ...LessonTextContent
-    ...LessonMultipleChoiceQuestionContent
+    ...on LessonTextContent {
+      ...LessonTextContent
+    }
+    ... on LessonMultipleChoiceQuestionsContent {
+      ...LessonMultipleChoiceQuestionContent
+    }
   }
 }
 

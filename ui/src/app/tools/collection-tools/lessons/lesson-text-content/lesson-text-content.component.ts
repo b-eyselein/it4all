@@ -3,7 +3,7 @@ import {LessonTextContentFragment} from '../../../../_services/apollo_services';
 
 @Component({
   selector: 'it4all-lesson-text-content',
-  template: '<div class="content box" [innerHTML]="content.content"></div>'
+  template: '<div [innerHTML]="content.content"></div>'
 })
 export class LessonTextContentComponent {
 

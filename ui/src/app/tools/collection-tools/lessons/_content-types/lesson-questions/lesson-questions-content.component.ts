@@ -7,7 +7,16 @@ import {
 
 @Component({
   selector: 'it4all-lesson-questions-content',
-  templateUrl: './lesson-questions-content.component.html'
+  template: `
+    <div *ngFor="let question of content.questions">
+      <p [innerHTML]="question.question"></p>
+      <div class="columns">
+        <div class="column" *ngFor="let answer of question.answers">
+          <button class="button is-fullwidth is-info" (click)="correct(question, answer)" [innerHTML]="answer.answer"></button>
+        </div>
+      </div>
+    </div>
+  `
 })
 export class LessonQuestionsContentComponent {
 

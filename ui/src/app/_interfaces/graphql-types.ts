@@ -1,4 +1,5 @@
 export type Maybe<T> = T | null;
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -318,11 +319,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlySample = 'ONLY_SAMPLE',
   PartialMatch = 'PARTIAL_MATCH',
+  OnlyUser = 'ONLY_USER',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlyUser = 'ONLY_USER'
+  OnlySample = 'ONLY_SAMPLE'
 }
 
 export type Mutation = {
@@ -631,11 +632,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Update = 'UPDATE',
   Create = 'CREATE',
   Delete = 'DELETE',
-  Insert = 'INSERT',
-  Select = 'SELECT'
+  Update = 'UPDATE',
+  Select = 'SELECT',
+  Insert = 'INSERT'
 }
 
 export enum SqlExPart {
