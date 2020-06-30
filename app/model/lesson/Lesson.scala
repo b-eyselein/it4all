@@ -14,6 +14,7 @@ final case class LessonTextContent(
 ) extends LessonContent
 
 final case class LessonMultipleChoiceQuestionAnswer(
+  id: Int,
   answer: String,
   isCorrect: Boolean
 )

@@ -280,7 +280,7 @@ export type LessonTextContentFragment = (
 
 export type LessonMultipleChoiceQuestionAnswerFragment = (
   { __typename?: 'LessonMultipleChoiceQuestionAnswer' }
-  & Pick<Types.LessonMultipleChoiceQuestionAnswer, 'answer' | 'isCorrect'>
+  & Pick<Types.LessonMultipleChoiceQuestionAnswer, 'id' | 'answer' | 'isCorrect'>
 );
 
 export type LessonMultipleChoiceQuestionFragment = (
@@ -914,6 +914,7 @@ export const LessonTextContentFragmentDoc = gql`
     `;
 export const LessonMultipleChoiceQuestionAnswerFragmentDoc = gql`
     fragment LessonMultipleChoiceQuestionAnswer on LessonMultipleChoiceQuestionAnswer {
+  id
   answer
   isCorrect
 }

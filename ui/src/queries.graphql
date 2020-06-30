@@ -200,6 +200,7 @@ fragment LessonTextContent on LessonTextContent {
 }
 
 fragment LessonMultipleChoiceQuestionAnswer on LessonMultipleChoiceQuestionAnswer {
+  id
   answer
   isCorrect
 }

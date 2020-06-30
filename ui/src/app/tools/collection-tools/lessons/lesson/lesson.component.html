@@ -4,16 +4,13 @@
 
     <h1 class="title is-3 has-text-centered">Lektion: {{lessonQuery.me.tool.lesson.title}}</h1>
 
-    <div class="content box">
-      <it4all-lesson-text-content
-        *ngIf="currentTextContentFragment"
-        [content]="currentTextContentFragment">
-      </it4all-lesson-text-content>
+    <div class="content box" *ngIf="currentTextContentFragment">
+      <div [innerHTML]="currentTextContentFragment.content"></div>
+    </div>
 
-      <it4all-lesson-questions-content
-        *ngIf="currentMultipleChoiceFragment"
-        [content]="currentMultipleChoiceFragment">
-      </it4all-lesson-questions-content>
+   <!-- class="content box" -->
+    <div *ngIf="currentMultipleChoiceFragment">
+      <it4all-lesson-questions-content [content]="currentMultipleChoiceFragment"></it4all-lesson-questions-content>
     </div>
 
   </ng-container>

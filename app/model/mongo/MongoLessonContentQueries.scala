@@ -32,15 +32,17 @@ trait MongoLessonContentQueries {
       )
     } yield lessonContentCount
 
-  def futureLessonContentsForLesson(toolId: String, lessonId: Int): Future[Seq[LessonContent]] =
+  def futureLessonContentsForLesson(toolId: String, lessonId: Int): Future[Seq[LessonContent]] = {
     for {
       lessonContentsCollection <- futureLessonContentsCollection
       lessonContents <-
         lessonContentsCollection
           .find(Json.obj("toolId" -> toolId, "lessonId" -> lessonId), Option.empty[JsObject])
+          .sort(Json.obj("contentId" -> 1))
           .cursor[LessonContent]()
           .collect[Seq](-1, Cursor.FailOnError())
     } yield lessonContents
+  }
 
   def futureLessonContentById(toolId: String, lessonId: Int, contentId: Int): Future[Option[LessonContent]] =
     for {

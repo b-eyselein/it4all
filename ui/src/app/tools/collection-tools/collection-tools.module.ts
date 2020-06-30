@@ -43,7 +43,6 @@ import {HtmlTaskResultComponent} from './web/_components/html-task-result/html-t
 import {HtmlAttributeResultComponent} from './web/_components/html-attribute-result/html-attribute-result.component';
 import {FilledPointsComponent} from './_components/filled-points/filled-points.component';
 import {ProficiencyCardComponent} from './_components/proficiency-card/proficiency-card.component';
-import {LessonTextContentComponent} from './lessons/lesson-text-content/lesson-text-content.component';
 import {LessonQuestionsContentComponent} from './lessons/_content-types/lesson-questions/lesson-questions-content.component';
 
 
@@ -53,7 +52,7 @@ import {LessonQuestionsContentComponent} from './lessons/_content-types/lesson-q
 
     ExerciseFilesEditorComponent, ExerciseFileCardComponent,
 
-    LessonTextContentComponent, LessonQuestionsContentComponent,
+    LessonQuestionsContentComponent,
 
     AllExercisesOverviewComponent,
     ExerciseOverviewComponent,

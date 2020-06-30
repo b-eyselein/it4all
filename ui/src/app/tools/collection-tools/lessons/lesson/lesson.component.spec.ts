@@ -1,7 +1,5 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {LessonComponent} from './lesson.component';
-import {LessonTextContentComponent} from '../lesson-text-content/lesson-text-content.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -14,7 +12,7 @@ describe('LessonComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
-      declarations: [LessonComponent, LessonTextContentComponent],
+      declarations: [LessonComponent],
       providers: [
         {
           provide: ActivatedRoute,

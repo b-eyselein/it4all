@@ -273,6 +273,7 @@ export type LessonMultipleChoiceQuestion = {
 
 export type LessonMultipleChoiceQuestionAnswer = {
   __typename?: 'LessonMultipleChoiceQuestionAnswer';
+  id: Scalars['Int'];
   answer: Scalars['String'];
   isCorrect: Scalars['Boolean'];
 };
@@ -319,11 +320,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
   OnlyUser = 'ONLY_USER',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlySample = 'ONLY_SAMPLE'
+  OnlySample = 'ONLY_SAMPLE',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -632,11 +633,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Create = 'CREATE',
-  Delete = 'DELETE',
   Update = 'UPDATE',
+  Create = 'CREATE',
+  Insert = 'INSERT',
   Select = 'SELECT',
-  Insert = 'INSERT'
+  Delete = 'DELETE'
 }
 
 export enum SqlExPart {
