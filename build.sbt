@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.1"
 
-scalaVersion := "2.13.2"
+scalaVersion := "2.13.3"
 
 scalacOptions ++= CompilerOptions.allOptions
 
@@ -74,7 +74,7 @@ libraryDependencies ++= Seq(
   // Sql
   "mysql"                 % "mysql-connector-java" % "8.0.20", // GPL 2.0
   "com.typesafe.play"    %% "play-slick"           % "5.0.0", // Apache 2.0
-  "com.github.jsqlparser" % "jsqlparser"           % "3.1", // Apache 2.0
+  "com.github.jsqlparser" % "jsqlparser"           % "3.2", // Apache 2.0
 
   // DTD Parser
   "de.uniwue" %% "it4all_dtd_parser" % "0.5.0",
