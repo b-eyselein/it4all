@@ -26,6 +26,10 @@ import initialData.programming.coll_5.ProgrammingColl5Ex3.programmingColl5Ex3
 import initialData.programming.coll_5.ProgrammingColl5Ex4.programmingColl5Ex4
 import initialData.programming.coll_6.ProgrammingColl6Ex1.programmingColl6Ex1
 import initialData.programming.coll_6.ProgrammingColl6Ex2.programmingColl6Ex2
+import initialData.programming.coll_7.ProgrammingColl7Ex1.programmingColl7Ex1
+import initialData.programming.coll_7.ProgrammingColl7Ex2.programmingColl7Ex2
+import initialData.programming.coll_7.ProgrammingColl7Ex3.programmingColl7Ex3
+import initialData.programming.coll_8.ProgrammingColl8Ex1.programmingColl8Ex1
 import model.ExerciseCollection
 import model.tools.programming.ProgrammingExerciseContent
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
@@ -70,7 +74,7 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
 
   private val progColl07 = ExerciseCollection(collectionId = 7, toolId, title = "Klassen", authors = Seq("bje40dc"))
 
-  private val progColl07Exes = Seq.empty
+  private val progColl07Exes = Seq(programmingColl7Ex1, programmingColl7Ex2, programmingColl7Ex3)
 
   private val progColl08 =
     ExerciseCollection(collectionId = 8, toolId, title = "Unit Testing", authors = Seq("bje40dc"))
