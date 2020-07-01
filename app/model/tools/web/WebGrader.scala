@@ -128,7 +128,7 @@ object WebGrader {
       gradedPostResults.map(_.maxPoints)
     )
 
-    val success: SuccessType = SuccessType.ofBool(preResultsSuccessful && actionSuccessful && postResultsSuccessful)
+    val success: SuccessType = if (preResultsSuccessful && actionSuccessful && postResultsSuccessful) SuccessType.COMPLETE else SuccessType.PARTIALLY
 
     GradedJsTaskResult(
       jtr.jsTask.id,

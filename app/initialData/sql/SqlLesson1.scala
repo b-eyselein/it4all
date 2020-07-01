@@ -1,7 +1,7 @@
 package initialData.sql
 
 import initialData.InitialData.{lessonResourcesPath, loadTextFromFile}
-import model.lesson._
+import model._
 
 object SqlLesson1 {
 

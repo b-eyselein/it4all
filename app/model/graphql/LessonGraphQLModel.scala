@@ -1,8 +1,7 @@
 package model.graphql
 
-import model.LoggedInUser
-import model.lesson._
 import model.mongo.MongoClientQueries
+import model._
 import sangria.macros.derive._
 import sangria.schema._
 

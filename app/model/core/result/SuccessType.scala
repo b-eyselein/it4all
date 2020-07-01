@@ -16,6 +16,4 @@ object SuccessType extends PlayEnum[SuccessType] {
 
   case object COMPLETE extends SuccessType
 
-  def ofBool(success: Boolean): SuccessType = if (success) COMPLETE else NONE
-
 }

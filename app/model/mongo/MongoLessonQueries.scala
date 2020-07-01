@@ -1,7 +1,7 @@
 package model.mongo
 
+import model.Lesson
 import model.json.JsonProtocols
-import model.lesson.Lesson
 import play.api.libs.json.{JsObject, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.{Cursor, ReadConcern}

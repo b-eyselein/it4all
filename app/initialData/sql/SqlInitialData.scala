@@ -8,10 +8,9 @@ import initialData.sql.SqlColl2Exes21To30.sqlColl2Exes21To30
 import initialData.sql.SqlColl2Exes31To40.sqlColl2Exes31To40
 import initialData.sql.SqlColl2Exes41To50.sqlColl2Exes41To50
 import initialData.sql.SqlLesson1.{sqlLesson01, sqlLesson01Content}
-import model.ExerciseCollection
-import model.lesson.{Lesson, LessonContent}
 import model.tools.sql.SqlExerciseContent
 import model.tools.sql.SqlTool.SqlExercise
+import model.{ExerciseCollection, Lesson, LessonContent}
 
 object SqlInitialData extends InitialData[SqlExerciseContent] {
 

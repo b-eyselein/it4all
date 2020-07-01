@@ -1,6 +1,6 @@
 package model.json
 
-import model.lesson._
+import model._
 import play.api.libs.json._
 
 trait LessonJsonProtocol {

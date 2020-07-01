@@ -1,4 +1,4 @@
-package model.lesson
+package model
 
 sealed trait LessonContent {
   val contentId: Int

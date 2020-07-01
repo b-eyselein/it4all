@@ -3,10 +3,9 @@ package initialData
 import better.files.File
 import com.google.inject.AbstractModule
 import javax.inject.{Inject, Singleton}
-import model.lesson.{Lesson, LessonContent}
 import model.mongo.MongoClientQueries
 import model.tools.ToolList
-import model.{Exercise, ExerciseCollection, ExerciseContent}
+import model._
 import play.api.Logger
 import play.api.libs.json.OFormat
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}

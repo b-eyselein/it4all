@@ -5,6 +5,7 @@ import model.points._
 trait Match[T] {
 
   val matchType: MatchType
+
   val userArg: Option[T]
   val sampleArg: Option[T]
 
