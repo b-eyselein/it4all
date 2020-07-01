@@ -12,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-object RegexTool extends CollectionTool("regex", "Reguläre Ausdrücke") {
+object RegexTool extends Tool("regex", "Reguläre Ausdrücke") {
 
   override type SolType       = String
   override type ExContentType = RegexExerciseContent

@@ -1,6 +1,6 @@
 package model.mongo
 
-import model.tools.CollectionTool
+import model.tools.Tool
 import model.{Exercise, ExerciseContent}
 import play.api.libs.json.{Format, JsObject, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
@@ -24,7 +24,7 @@ trait MongoExerciseQueries {
       exerciseCount       <- exercisesCollection.count(Some(Json.obj("toolId" -> toolId)), None, 0, None, ReadConcern.Local)
     } yield exerciseCount
 
-  protected def futureExercisesForTool(tool: CollectionTool): Future[Seq[Exercise[tool.ExContentType]]] = {
+  protected def futureExercisesForTool(tool: Tool): Future[Seq[Exercise[tool.ExContentType]]] = {
     implicit val ef: Format[Exercise[tool.ExContentType]] = tool.jsonFormats.exerciseFormat
 
     for {
@@ -46,7 +46,7 @@ trait MongoExerciseQueries {
     } yield exerciseCount
 
   protected def futureExercisesForCollection(
-    tool: CollectionTool,
+    tool: Tool,
     collectionId: Int
   ): Future[Seq[Exercise[tool.ExContentType]]] = {
     implicit val ef: Format[Exercise[tool.ExContentType]] = tool.jsonFormats.exerciseFormat

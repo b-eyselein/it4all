@@ -15,7 +15,7 @@ import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object SqlTool extends CollectionTool("sql", "Sql") {
+object SqlTool extends Tool("sql", "Sql") {
 
   private val correctorsAndDaos: Map[SqlExerciseType, (QueryCorrector, SqlExecutionDAO)] = Map(
     SqlExerciseType.SELECT -> ((SelectCorrector, SelectDAO)),

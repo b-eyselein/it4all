@@ -17,7 +17,7 @@ import play.api.Logger
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-object WebTool extends CollectionTool("web", "Web") {
+object WebTool extends Tool("web", "Web") {
 
   private val logger = Logger(WebTool.getClass)
 

@@ -10,7 +10,7 @@ import model.{Exercise, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object UmlTool extends CollectionTool("uml", "Uml", ToolState.BETA) {
+object UmlTool extends Tool("uml", "Uml", ToolState.BETA) {
 
   override type SolType       = UmlClassDiagram
   override type ExContentType = UmlExerciseContent

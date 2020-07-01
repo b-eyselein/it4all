@@ -2,7 +2,7 @@ package model.mongo
 
 import model._
 import model.json.JsonProtocols
-import model.tools.CollectionTool
+import model.tools.Tool
 import model.tools.Helper.UntypedExercise
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoComponents
@@ -99,7 +99,7 @@ trait MongoClientQueries
     } yield userProfs
   }
 
-  protected def allTopicsWithLevelForTool(username: String, tool: CollectionTool): Future[Seq[TopicWithLevel]] =
+  protected def allTopicsWithLevelForTool(username: String, tool: Tool): Future[Seq[TopicWithLevel]] =
     for {
       dbUserProficiencies <- userProficienciesForTool(username, tool.id)
       userProficiencies =

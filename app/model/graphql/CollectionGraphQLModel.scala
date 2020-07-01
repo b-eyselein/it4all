@@ -2,7 +2,7 @@ package model.graphql
 
 import model._
 import model.mongo.MongoClientQueries
-import model.tools.CollectionTool
+import model.tools.Tool
 import model.tools.Helper.UntypedExercise
 import sangria.schema._
 
@@ -16,9 +16,9 @@ trait CollectionGraphQLModel
 
   private def untypedMaybeExercise(exercise: Option[Exercise[_ <: ExerciseContent]]): Option[UntypedExercise] = exercise
 
-  protected val collectionType: ObjectType[Unit, ((LoggedInUser, CollectionTool), ExerciseCollection)] = ObjectType(
+  protected val collectionType: ObjectType[Unit, ((LoggedInUser, Tool), ExerciseCollection)] = ObjectType(
     "ExerciseCollection",
-    fields[Unit, ((LoggedInUser, CollectionTool), ExerciseCollection)](
+    fields[Unit, ((LoggedInUser, Tool), ExerciseCollection)](
       Field("collectionId", IntType, resolve = _.value._2.collectionId),
       Field("title", StringType, resolve = _.value._2.title),
       Field("authors", ListType(StringType), resolve = _.value._2.authors),

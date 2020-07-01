@@ -10,7 +10,7 @@ import model.{Exercise, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object XmlTool extends CollectionTool("xml", "Xml") {
+object XmlTool extends Tool("xml", "Xml") {
 
   override type SolType       = XmlSolution
   override type ExContentType = XmlExerciseContent

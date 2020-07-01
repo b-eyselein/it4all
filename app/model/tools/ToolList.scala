@@ -9,7 +9,7 @@ import model.tools.xml.XmlTool
 
 object ToolList {
 
-  val tools: List[CollectionTool] = List(
+  val tools: List[Tool] = List(
     ProgrammingTool,
     RegexTool,
     //    RoseToolMain,

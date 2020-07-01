@@ -9,7 +9,7 @@ import model.{Exercise, ExerciseFile, LoggedInUser, Topic}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object ProgrammingTool extends CollectionTool("programming", "Programmierung", ToolState.ALPHA) {
+object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.ALPHA) {
 
   override type SolType       = ProgSolution
   override type ExContentType = ProgrammingExerciseContent

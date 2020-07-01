@@ -23,9 +23,9 @@ trait GraphQLModel
 
   // Types
 
-  private val ToolType: ObjectType[Unit, (LoggedInUser, CollectionTool)] = ObjectType(
+  private val ToolType: ObjectType[Unit, (LoggedInUser, Tool)] = ObjectType(
     "CollectionTool",
-    fields[Unit, (LoggedInUser, CollectionTool)](
+    fields[Unit, (LoggedInUser, Tool)](
       Field("id", IDType, resolve = _.value._2.id),
       Field("name", StringType, resolve = _.value._2.name),
       Field("state", toolStateType, resolve = _.value._2.toolState),

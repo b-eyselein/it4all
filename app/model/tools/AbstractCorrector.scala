@@ -16,7 +16,7 @@ trait AbstractCorrector {
     maxPoints: Points
   ): AbstractResult with InternalErrorResult
 
-  def onError(
+  protected def onError(
     internalMsg: String,
     solutionSaved: Boolean,
     externalMsg: Option[String] = None,
