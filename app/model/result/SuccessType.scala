@@ -1,4 +1,4 @@
-package model.core.result
+package model.result
 
 import enumeratum.{EnumEntry, PlayEnum}
 

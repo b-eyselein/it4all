@@ -1,10 +1,9 @@
 package model.tools.programming
 
-import model.json.JsonProtocols
 import model.tools._
 import model.tools.programming.ProgDataTypes.{GenericProgDataType, NonGenericProgDataType}
 import model.tools.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
-import model.{ExerciseFile, SampleSolution}
+import model.{ExerciseFile, JsonProtocols, SampleSolution}
 import play.api.libs.json._
 
 object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, ProgrammingExerciseContent, ProgExPart] {

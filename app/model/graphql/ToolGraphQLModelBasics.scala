@@ -1,7 +1,7 @@
 package model.graphql
 
-import model.core.matching.{Match, MatchType, MatchingResult}
-import model.core.result.AbstractCorrectionResult
+import model.matching.{Match, MatchType, MatchingResult}
+import model.result.AbstractCorrectionResult
 import model.{ExPart, SampleSolution}
 import sangria.macros.derive._
 import sangria.schema._

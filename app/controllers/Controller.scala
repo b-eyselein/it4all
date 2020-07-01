@@ -5,9 +5,8 @@ import java.util.UUID
 import com.github.t3hnar.bcrypt._
 import javax.inject.{Inject, Singleton}
 import model.graphql.{GraphQLModel, GraphQLRequest}
-import model.json.JsonProtocols
 import model.lti.BasicLtiLaunchRequest
-import model.{LoggedInUser, LoggedInUserWithToken, User, UserCredentials}
+import model.{JsonProtocols, LoggedInUser, LoggedInUserWithToken, User, UserCredentials}
 import pdi.jwt.JwtSession
 import play.api.Configuration
 import play.api.http.HttpErrorHandler

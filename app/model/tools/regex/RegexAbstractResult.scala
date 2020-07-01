@@ -1,6 +1,6 @@
 package model.tools.regex
 
-import model.core.result.{AbstractCorrectionResult, InternalErrorResult}
+import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
 import model.tools.regex.RegexTool.ExtractedValuesComparison
 

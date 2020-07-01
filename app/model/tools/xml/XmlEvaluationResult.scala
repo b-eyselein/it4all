@@ -2,8 +2,8 @@ package model.tools.xml
 
 import de.uniwue.dtd.model._
 import enumeratum.{EnumEntry, PlayEnum}
-import model.core.matching.{Match, MatchType}
-import model.core.result.SuccessType
+import model.matching.{Match, MatchType}
+import model.result.SuccessType
 import model.points._
 import org.xml.sax.SAXParseException
 

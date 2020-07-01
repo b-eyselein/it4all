@@ -1,9 +1,8 @@
 package model.tools.web
 
 import de.uniwue.webtester.sitespec._
-import model.json.JsonProtocols
 import model.tools._
-import model.{ExerciseFile, SampleSolution}
+import model.{ExerciseFile, JsonProtocols, SampleSolution}
 import play.api.libs.json.{Format, Json, OFormat}
 
 object WebToolJsonProtocol extends ToolJsonProtocol[WebSolution, WebExerciseContent, WebExPart] {

@@ -1,6 +1,6 @@
 package model.tools
 
-import model.core.result.{AbstractCorrectionResult, InternalErrorResult}
+import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
 import play.api.Logger
 

@@ -1,7 +1,6 @@
 package model.graphql
 
-import model.json.JsonProtocols
-import model.{RegisterValues, UserCredentials}
+import model.{JsonProtocols, RegisterValues, UserCredentials}
 import play.api.libs.json.OFormat
 import sangria.macros.derive.deriveInputObjectType
 import sangria.marshalling.playJson._

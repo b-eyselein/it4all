@@ -1,7 +1,7 @@
 package model.tools.web
 
 import de.uniwue.webtester.sitespec.{JsAction, JsActionType}
-import model.core.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
+import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import model.points._
 
 sealed trait WebAbstractResult extends AbstractCorrectionResult

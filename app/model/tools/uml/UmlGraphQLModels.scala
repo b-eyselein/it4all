@@ -1,9 +1,8 @@
 package model.tools.uml
 
-import model.SampleSolution
-import model.core.matching.{MatchType, MatchingResult}
+import model.{KeyValueObject, SampleSolution}
+import model.matching.{MatchType, MatchingResult}
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
-import model.json.KeyValueObject
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
 import play.api.libs.json.OFormat

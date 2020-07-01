@@ -4,7 +4,7 @@ import better.files.File
 import enumeratum.{EnumEntry, PlayEnum}
 import initialData.InitialData
 import model._
-import model.core.result.AbstractCorrectionResult
+import model.result.AbstractCorrectionResult
 import model.graphql.ToolGraphQLModelBasics
 
 import scala.concurrent.{ExecutionContext, Future}

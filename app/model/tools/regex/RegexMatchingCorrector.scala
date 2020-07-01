@@ -1,6 +1,6 @@
 package model.tools.regex
 
-import model.core.matching._
+import model.matching._
 import model.points._
 import model.tools.AbstractCorrector
 import play.api.Logger

@@ -1,6 +1,6 @@
 package model.tools.sql
 
-import model.core.matching.MatchingResult
+import model.matching.MatchingResult
 import model.tools.sql.matcher.{ExpressionListMatch, ExpressionListMatcher}
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.expression.operators.relational.{ExpressionList, MultiExpressionList}

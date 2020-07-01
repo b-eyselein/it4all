@@ -1,6 +1,6 @@
 package model.tools.uml.matcher
 
-import model.core.matching._
+import model.matching._
 import model.tools.uml.{UmlAttribute, UmlClassMember, UmlMethod, UmlVisibility}
 
 sealed trait UmlClassMemberMatch[Mem <: UmlClassMember] extends Match[Mem]

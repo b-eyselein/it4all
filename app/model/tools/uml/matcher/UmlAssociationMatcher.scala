@@ -1,6 +1,6 @@
 package model.tools.uml.matcher
 
-import model.core.matching._
+import model.matching._
 import model.tools.uml.{UmlAssociation, UmlAssociationType}
 
 final case class UmlAssociationAnalysisResult(

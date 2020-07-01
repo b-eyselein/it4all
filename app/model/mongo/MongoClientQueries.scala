@@ -1,7 +1,6 @@
 package model.mongo
 
-import model._
-import model.json.JsonProtocols
+import model.{JsonProtocols, _}
 import model.tools.Tool
 import model.tools.Helper.UntypedExercise
 import play.api.libs.json._

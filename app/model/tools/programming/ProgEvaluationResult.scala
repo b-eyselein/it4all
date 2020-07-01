@@ -1,6 +1,6 @@
 package model.tools.programming
 
-import model.core.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
+import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import model.points._
 import play.api.libs.json.JsValue
 

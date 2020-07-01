@@ -1,7 +1,7 @@
 package model.tools.sql
 
 import model.SampleSolution
-import model.core.result.InternalErrorResult
+import model.result.InternalErrorResult
 import model.points._
 import model.tools.AbstractCorrector
 import model.tools.sql.matcher._

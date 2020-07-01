@@ -1,6 +1,6 @@
 package model.tools.sql.matcher
 
-import model.core.matching.{Match, MatchType, Matcher}
+import model.matching.{Match, MatchType, Matcher}
 import model.points._
 import net.sf.jsqlparser.statement.select.Limit
 

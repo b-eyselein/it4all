@@ -3,7 +3,7 @@ package model.tools.xml
 import de.uniwue.dtd.model.ElementLine
 import initialData.InitialData
 import initialData.xml.XmlInitialData
-import model.core.matching.MatchingResult
+import model.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
 import model.tools._
 import model.{Exercise, LoggedInUser}

@@ -1,7 +1,7 @@
 package model.tools.xml
 
 import de.uniwue.dtd.model.ElementLine
-import model.core.matching.{MatchType, Matcher}
+import model.matching.{MatchType, Matcher}
 
 final case class ElementLineAnalysisResult(
   contentCorrect: Boolean,

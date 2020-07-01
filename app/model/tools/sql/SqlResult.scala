@@ -1,6 +1,6 @@
 package model.tools.sql
 
-import model.core.result.{AbstractCorrectionResult, InternalErrorResult}
+import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
 import model.tools.sql.SqlTool._
 

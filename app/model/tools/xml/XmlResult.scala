@@ -1,8 +1,8 @@
 package model.tools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
-import model.core.matching.MatchType
-import model.core.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
+import model.matching.MatchType
+import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import model.points._
 import model.tools.xml.XmlTool.ElementLineComparison
 

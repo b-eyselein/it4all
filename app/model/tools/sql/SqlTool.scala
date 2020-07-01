@@ -2,7 +2,7 @@ package model.tools.sql
 
 import initialData.InitialData
 import initialData.sql.SqlInitialData
-import model.core.matching.MatchingResult
+import model.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
 import model.points._
 import model.tools._

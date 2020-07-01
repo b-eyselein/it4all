@@ -1,6 +1,6 @@
 package model.tools.sql.matcher
 
-import model.core.matching.{Match, MatchType, Matcher}
+import model.matching.{Match, MatchType, Matcher}
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
 
 final case class ExpressionListMatch(

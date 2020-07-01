@@ -1,7 +1,7 @@
 package model.tools.uml
 
-import model.core.matching.MatchType
-import model.core.result.{AbstractCorrectionResult, InternalErrorResult}
+import model.matching.MatchType
+import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 

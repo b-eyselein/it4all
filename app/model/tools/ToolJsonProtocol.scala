@@ -1,12 +1,7 @@
 package model.tools
 
 import model._
-import model.json.{JsonProtocols, KeyValueObject}
 import play.api.libs.json._
-
-final case class ReadExercisesMessage[C <: ExerciseContent](
-  exercises: Seq[Exercise[C]]
-)
 
 trait ToolJsonProtocol[S, C <: ExerciseContent, PartType <: ExPart] {
 
@@ -44,25 +39,6 @@ trait ToolJsonProtocol[S, C <: ExerciseContent, PartType <: ExPart] {
     implicit val fc: OFormat[C]                = exerciseContentFormat
 
     Json.format
-  }
-
-  lazy val readExercisesMessageReads: Reads[ReadExercisesMessage[C]] = {
-    implicit val ef: Format[Exercise[C]] = exerciseFormat
-
-    Json.reads
-  }
-
-  def validateAndWriteReadExerciseMessage(message: JsValue): Seq[String] = {
-    val readExercises: Seq[Exercise[C]] = readExercisesMessageReads.reads(message) match {
-      case JsSuccess(readExercisesMessage, _) => readExercisesMessage.exercises
-      case JsError(errors) =>
-        errors.foreach(println)
-        Seq.empty
-    }
-
-    readExercises
-      .map(exerciseFormat.writes)
-      .map(Json.stringify)
   }
 
 }

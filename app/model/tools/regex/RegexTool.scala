@@ -2,7 +2,7 @@ package model.tools.regex
 
 import initialData.InitialData
 import initialData.regex.RegexInitialData
-import model.core.matching.MatchingResult
+import model.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
 import model.points._
 import model.tools._

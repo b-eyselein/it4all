@@ -1,6 +1,6 @@
 package model.tools.sql
 
-import model.core.matching.MatchType
+import model.matching.MatchType
 import net.sf.jsqlparser.expression.Alias
 import net.sf.jsqlparser.schema.Column
 import net.sf.jsqlparser.statement.create.table.ColumnDefinition

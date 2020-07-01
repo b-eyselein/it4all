@@ -3,8 +3,7 @@ package model.graphql
 import java.time.Clock
 
 import com.github.t3hnar.bcrypt._
-import model._
-import model.json.JsonProtocols
+import model.{JsonProtocols, _}
 import model.mongo.MongoClientQueries
 import model.tools.ToolList
 import pdi.jwt.JwtSession

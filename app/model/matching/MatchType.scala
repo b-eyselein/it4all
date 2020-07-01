@@ -1,4 +1,4 @@
-package model.core.matching
+package model.matching
 
 import enumeratum.{EnumEntry, PlayEnum}
 

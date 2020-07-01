@@ -1,8 +1,7 @@
 package model.graphql
 
-import model._
-import model.core.result.SuccessType
-import model.json.KeyValueObject
+import model.{KeyValueObject, _}
+import model.result.SuccessType
 import model.tools.ToolState
 import sangria.macros.derive._
 import sangria.schema._

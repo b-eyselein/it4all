@@ -2,7 +2,7 @@ package model.tools.uml
 
 import initialData.InitialData
 import initialData.uml.UmlInitialData
-import model.core.matching.MatchingResult
+import model.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
 import model.tools._
 import model.tools.uml.matcher._

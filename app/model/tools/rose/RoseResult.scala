@@ -1,6 +1,6 @@
 package model.tools.rose
 
-import model.core.result.{AbstractCorrectionResult, InternalErrorResult}
+import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
 
 sealed trait RoseAbstractResult extends AbstractCorrectionResult

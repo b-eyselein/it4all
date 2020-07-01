@@ -2,7 +2,7 @@ package model.tools.web
 
 import de.uniwue.webtester.result._
 import de.uniwue.webtester.sitespec.HtmlElementSpec
-import model.core.result.SuccessType
+import model.result.SuccessType
 import model.points._
 
 object WebGrader {
