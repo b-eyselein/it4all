@@ -7,7 +7,7 @@ import {
   LessonTextContentFragment
 } from '../../../../_services/apollo_services';
 import {AuthenticationService} from '../../../../_services/authentication.service';
-import {isSolvableLessonMultipleChoiceQuestionContentFragment, isSolvableLessonTextContentFragment,} from '../solvable-lesson-content';
+import {isSolvableLessonMultipleChoiceQuestionContentFragment, isSolvableLessonTextContentFragment} from '../solvable-lesson-content';
 
 
 @Component({templateUrl: './lesson.component.html'})

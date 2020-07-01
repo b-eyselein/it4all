@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
+import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {DexieService} from '../../../../_services/dexie.service';
 import {
   ExerciseFileFragment,
@@ -39,7 +39,7 @@ function getXmlDocumentContent(rootNode: string): string {
   templateUrl: './xml-exercise.component.html'
 })
 export class XmlExerciseComponent
-  extends ComponentWithExercise<XmlSolution, XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionMutationVariables, XmlCorrectionGQL>
+  extends ComponentWithExerciseDirective<XmlSolution, XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionMutationVariables, XmlCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;

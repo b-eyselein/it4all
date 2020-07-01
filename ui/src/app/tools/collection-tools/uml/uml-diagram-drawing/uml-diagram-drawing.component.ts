@@ -11,7 +11,7 @@ import {
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
 import {ExportedUmlClassDiagram, umlAssocfromConnection, umlImplfromConnection} from '../_model/my-uml-interfaces';
-import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
+import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
@@ -47,7 +47,7 @@ interface SelectableClassDiagramObject {
   `]
 })
 export class UmlDiagramDrawingComponent
-  extends ComponentWithExercise<UmlClassDiagram, UmlClassDiagramInput, UmlCorrectionMutation, UmlExPart, UmlCorrectionMutationVariables, UmlCorrectionGQL>
+  extends ComponentWithExerciseDirective<UmlClassDiagram, UmlClassDiagramInput, UmlCorrectionMutation, UmlExPart, UmlCorrectionMutationVariables, UmlCorrectionGQL>
   implements OnInit {
 
   readonly nextPart = UmlMemberAllocationPart;

@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {DexieService} from '../../../../_services/dexie.service';
 import {ProgrammingImplementationToolPart, ProgrammingTestCreationPart} from '../programming-tool';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
+import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {
   ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
@@ -28,7 +28,7 @@ import {AuthenticationService} from '../../../../_services/authentication.servic
   styleUrls: ['./programming-exercise.component.sass']
 })
 export class ProgrammingExerciseComponent
-  extends ComponentWithExercise<ProgSolution, ProgSolutionInput, ProgrammingCorrectionMutation, ProgExPart, ProgrammingCorrectionMutationVariables, ProgrammingCorrectionGQL>
+  extends ComponentWithExerciseDirective<ProgSolution, ProgSolutionInput, ProgrammingCorrectionMutation, ProgExPart, ProgrammingCorrectionMutationVariables, ProgrammingCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;

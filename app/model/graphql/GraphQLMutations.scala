@@ -3,9 +3,9 @@ package model.graphql
 import java.time.Clock
 
 import com.github.t3hnar.bcrypt._
-import model.{JsonProtocols, _}
 import model.mongo.MongoClientQueries
 import model.tools.ToolList
+import model.{JsonProtocols, _}
 import pdi.jwt.JwtSession
 import play.api.Configuration
 import play.api.libs.json._
@@ -52,7 +52,12 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
         val part     = context.arg(PartTypeInputArg)
         val solution = context.arg(SolTypeInputArg)
 
-        futureExerciseById(tool.id, context.arg(collIdArgument), context.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
+        futureExerciseById(
+          tool.id,
+          context.arg(collIdArgument),
+          context.arg(exIdArgument),
+          tool.jsonFormats.exerciseFormat
+        )
           .flatMap {
             case Some(exercise) =>
               for {
@@ -61,6 +66,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
                   UserSolution.forExercise(nextUserSolutionId, exercise, user.username, solution, part),
                   tool.jsonFormats.userSolutionFormat
                 )
+
                 result <- tool.correctAbstract(user, solution, exercise, part, solutionSaved)
 
                 _ <-

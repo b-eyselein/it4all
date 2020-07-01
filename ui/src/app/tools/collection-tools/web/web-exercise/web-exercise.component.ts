@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ToolPart} from '../../../../_interfaces/tool';
-import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
+import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {DexieService} from '../../../../_services/dexie.service';
 import {
   ExerciseFileFragment,
@@ -19,7 +19,7 @@ import {AuthenticationService} from '../../../../_services/authentication.servic
   templateUrl: './web-exercise.component.html'
 })
 export class WebExerciseComponent
-  extends ComponentWithExercise<WebSolution, WebSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionMutationVariables, WebCorrectionGQL>
+  extends ComponentWithExerciseDirective<WebSolution, WebSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionMutationVariables, WebCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;

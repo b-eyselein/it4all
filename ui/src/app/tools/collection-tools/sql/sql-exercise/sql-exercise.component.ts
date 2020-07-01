@@ -2,7 +2,7 @@ import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
-import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
+import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ExerciseSolveFieldsFragment, SqlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
 import {SqlCorrectionGQL, SqlCorrectionMutation, SqlCorrectionMutationVariables, SqlResultFragment} from '../sql-apollo-mutations.service';
@@ -20,7 +20,7 @@ import {AuthenticationService} from '../../../../_services/authentication.servic
   encapsulation: ViewEncapsulation.None // style editor also
 })
 export class SqlExerciseComponent
-  extends ComponentWithExercise<string, string, SqlCorrectionMutation, SqlExPart, SqlCorrectionMutationVariables, SqlCorrectionGQL>
+  extends ComponentWithExerciseDirective<string, string, SqlCorrectionMutation, SqlExPart, SqlCorrectionMutationVariables, SqlCorrectionGQL>
   implements OnInit {
 
   readonly editorOptions = getDefaultEditorOptions('sql');

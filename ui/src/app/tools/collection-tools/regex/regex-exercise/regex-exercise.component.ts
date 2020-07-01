@@ -1,7 +1,7 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {DexieService} from '../../../../_services/dexie.service';
 import {RegexExercisePart} from '../regex-tool';
-import {ComponentWithExercise} from '../../_helpers/component-with-exercise';
+import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {ExerciseSolveFieldsFragment, RegexExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
 import {
   RegexCorrectionGQL,
@@ -19,7 +19,7 @@ import {AuthenticationService} from '../../../../_services/authentication.servic
   templateUrl: './regex-exercise.component.html'
 })
 export class RegexExerciseComponent
-  extends ComponentWithExercise<string, string, RegexCorrectionMutation, RegexExPart, RegexCorrectionMutationVariables, RegexCorrectionGQL>
+  extends ComponentWithExerciseDirective<string, string, RegexCorrectionMutation, RegexExPart, RegexCorrectionMutationVariables, RegexCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;

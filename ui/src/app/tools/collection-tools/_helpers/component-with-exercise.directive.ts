@@ -6,7 +6,7 @@ import {ExerciseSolveFieldsFragment} from '../../../_services/apollo_services';
 import {Mutation} from 'apollo-angular';
 
 @Directive()
-export abstract class ComponentWithExercise<SolutionType,
+export abstract class ComponentWithExerciseDirective<SolutionType,
   SolutionInputType,
   MutationQueryType,
   PartType,
