@@ -267,7 +267,7 @@ export type LessonContent = {
 export type LessonMultipleChoiceQuestion = {
   __typename?: 'LessonMultipleChoiceQuestion';
   id: Scalars['Int'];
-  question: Scalars['String'];
+  questionText: Scalars['String'];
   answers: Array<LessonMultipleChoiceQuestionAnswer>;
 };
 

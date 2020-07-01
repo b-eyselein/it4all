@@ -35,7 +35,8 @@ object SqlLesson1 {
   val sqlLesson01Content: Seq[LessonContent] = Seq(
     LessonTextContent(1, 1, toolId, loadTextFromFile(lessonResPath / "content_01.html")),
     LessonMultipleChoiceQuestionsContent(2, 1, toolId, content02Questions),
-    LessonTextContent(3, 1, toolId, loadTextFromFile(lessonResPath / "content_02.html"))
+    LessonTextContent(3, 1, toolId, loadTextFromFile(lessonResPath / "content_02.html")),
+    LessonMultipleChoiceQuestionsContent(4, 1, toolId, Seq())
   )
 
 }

@@ -15,6 +15,45 @@
     "types": [
       {
         "kind": "INTERFACE",
+        "name": "AbstractCorrectionResult",
+        "possibleTypes": [
+          {
+            "name": "ProgrammingInternalErrorResult"
+          },
+          {
+            "name": "ProgrammingResult"
+          },
+          {
+            "name": "RegexExtractionResult"
+          },
+          {
+            "name": "RegexInternalErrorResult"
+          },
+          {
+            "name": "RegexMatchingResult"
+          },
+          {
+            "name": "SqlInternalErrorResult"
+          },
+          {
+            "name": "SqlResult"
+          },
+          {
+            "name": "WebInternalErrorResult"
+          },
+          {
+            "name": "WebResult"
+          },
+          {
+            "name": "XmlInternalErrorResult"
+          },
+          {
+            "name": "XmlResult"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
         "name": "LessonContent",
         "possibleTypes": [
           {
@@ -22,6 +61,102 @@
           },
           {
             "name": "LessonTextContent"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "MatchingResult",
+        "possibleTypes": [
+          {
+            "name": "RegexExtractedValuesComparisonMatchingResult"
+          },
+          {
+            "name": "SqlBinaryExpressionComparisonMatchingResult"
+          },
+          {
+            "name": "SqlColumnComparisonMatchingResult"
+          },
+          {
+            "name": "SqlGroupByComparisonMatchingResult"
+          },
+          {
+            "name": "SqlInsertComparisonMatchingResult"
+          },
+          {
+            "name": "SqlLimitComparisonMatchingResult"
+          },
+          {
+            "name": "SqlOrderByComparisonMatchingResult"
+          },
+          {
+            "name": "SqlTableComparisonMatchingResult"
+          },
+          {
+            "name": "UmlAssociationMatchingResult"
+          },
+          {
+            "name": "UmlAttributeMatchingResult"
+          },
+          {
+            "name": "UmlClassMatchingResult"
+          },
+          {
+            "name": "UmlImplementationMatchingResult"
+          },
+          {
+            "name": "UmlMethodMatchingResult"
+          },
+          {
+            "name": "XmlElementLineComparisonMatchingResult"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "NewMatch",
+        "possibleTypes": [
+          {
+            "name": "ElementLineMatch"
+          },
+          {
+            "name": "RegexMatchMatch"
+          },
+          {
+            "name": "SqlBinaryExpressionMatch"
+          },
+          {
+            "name": "SqlColumnMatch"
+          },
+          {
+            "name": "SqlGroupByMatch"
+          },
+          {
+            "name": "SqlInsertMatch"
+          },
+          {
+            "name": "SqlLimitMatch"
+          },
+          {
+            "name": "SqlOrderByMatch"
+          },
+          {
+            "name": "SqlTableMatch"
+          },
+          {
+            "name": "UmlAssociationMatch"
+          },
+          {
+            "name": "UmlAttributeMatch"
+          },
+          {
+            "name": "UmlClassMatch"
+          },
+          {
+            "name": "UmlImplementationMatch"
+          },
+          {
+            "name": "UmlMethodMatch"
           }
         ]
       },
@@ -97,141 +232,6 @@
           },
           {
             "name": "XmlResult"
-          }
-        ]
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "AbstractCorrectionResult",
-        "possibleTypes": [
-          {
-            "name": "ProgrammingInternalErrorResult"
-          },
-          {
-            "name": "ProgrammingResult"
-          },
-          {
-            "name": "RegexExtractionResult"
-          },
-          {
-            "name": "RegexInternalErrorResult"
-          },
-          {
-            "name": "RegexMatchingResult"
-          },
-          {
-            "name": "SqlInternalErrorResult"
-          },
-          {
-            "name": "SqlResult"
-          },
-          {
-            "name": "WebInternalErrorResult"
-          },
-          {
-            "name": "WebResult"
-          },
-          {
-            "name": "XmlInternalErrorResult"
-          },
-          {
-            "name": "XmlResult"
-          }
-        ]
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "MatchingResult",
-        "possibleTypes": [
-          {
-            "name": "SqlGroupByComparisonMatchingResult"
-          },
-          {
-            "name": "SqlOrderByComparisonMatchingResult"
-          },
-          {
-            "name": "SqlLimitComparisonMatchingResult"
-          },
-          {
-            "name": "SqlInsertComparisonMatchingResult"
-          },
-          {
-            "name": "RegexExtractedValuesComparisonMatchingResult"
-          },
-          {
-            "name": "SqlBinaryExpressionComparisonMatchingResult"
-          },
-          {
-            "name": "SqlColumnComparisonMatchingResult"
-          },
-          {
-            "name": "SqlTableComparisonMatchingResult"
-          },
-          {
-            "name": "UmlAssociationMatchingResult"
-          },
-          {
-            "name": "UmlAttributeMatchingResult"
-          },
-          {
-            "name": "UmlMethodMatchingResult"
-          },
-          {
-            "name": "UmlClassMatchingResult"
-          },
-          {
-            "name": "UmlImplementationMatchingResult"
-          },
-          {
-            "name": "XmlElementLineComparisonMatchingResult"
-          }
-        ]
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "NewMatch",
-        "possibleTypes": [
-          {
-            "name": "SqlGroupByMatch"
-          },
-          {
-            "name": "SqlOrderByMatch"
-          },
-          {
-            "name": "SqlLimitMatch"
-          },
-          {
-            "name": "SqlInsertMatch"
-          },
-          {
-            "name": "ElementLineMatch"
-          },
-          {
-            "name": "RegexMatchMatch"
-          },
-          {
-            "name": "SqlBinaryExpressionMatch"
-          },
-          {
-            "name": "SqlColumnMatch"
-          },
-          {
-            "name": "SqlTableMatch"
-          },
-          {
-            "name": "UmlAssociationMatch"
-          },
-          {
-            "name": "UmlAttributeMatch"
-          },
-          {
-            "name": "UmlClassMatch"
-          },
-          {
-            "name": "UmlMethodMatch"
-          },
-          {
-            "name": "UmlImplementationMatch"
           }
         ]
       }

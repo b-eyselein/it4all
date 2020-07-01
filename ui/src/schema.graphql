@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue Jun 30 2020 16:45:54 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Jul 01 2020 09:04:08 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -211,7 +211,7 @@ interface LessonContent {
 
 type LessonMultipleChoiceQuestion {
   id: Int!
-  question: String!
+  questionText: String!
   answers: [LessonMultipleChoiceQuestionAnswer!]!
 }
 

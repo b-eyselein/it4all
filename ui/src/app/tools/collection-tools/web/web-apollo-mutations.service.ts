@@ -4,13 +4,13 @@ import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
-export type WebCorrectionMutationVariables = {
+export type WebCorrectionMutationVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.WebExPart;
   solution: Types.WebSolutionInput;
-};
+}>;
 
 
 export type WebCorrectionMutation = (

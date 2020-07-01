@@ -4,14 +4,18 @@
 
     <h1 class="title is-3 has-text-centered">Lektion: {{lessonQuery.me.tool.lesson.title}}</h1>
 
-    <div class="content box" *ngIf="currentTextContentFragment">
-      <div [innerHTML]="currentTextContentFragment.content"></div>
-    </div>
+    <ng-container *ngIf="lessonQuery.me.tool.lesson.contents.length > 0; else noContentBlock">
 
-   <!-- class="content box" -->
-    <div *ngIf="currentMultipleChoiceFragment">
-      <it4all-lesson-questions-content [content]="currentMultipleChoiceFragment"></it4all-lesson-questions-content>
-    </div>
+      <div class="content box" *ngIf="currentTextContentFragment">
+        <div [innerHTML]="currentTextContentFragment.content"></div>
+      </div>
+
+      <!-- class="content box" -->
+      <div *ngIf="currentMultipleChoiceFragment">
+        <it4all-lesson-questions-content [content]="currentMultipleChoiceFragment"></it4all-lesson-questions-content>
+      </div>
+
+    </ng-container>
 
   </ng-container>
 
@@ -24,4 +28,8 @@
 
 <ng-template #loadingDataBlock>
   <div class="notification is-primary has-text-centered">Lade Daten...</div>
+</ng-template>
+
+<ng-template #noContentBlock>
+  <div class="notification is-warning has-text-centered">Kein Inhalt gefunden!</div>
 </ng-template>

@@ -4,13 +4,13 @@ import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
-export type SqlCorrectionMutationVariables = {
+export type SqlCorrectionMutationVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.SqlExPart;
   solution: Types.Scalars['String'];
-};
+}>;
 
 
 export type SqlCorrectionMutation = (
@@ -188,26 +188,6 @@ export type SqlCellFragment = (
   & Pick<Types.SqlCell, 'colName' | 'content' | 'different'>
 );
 
-type NewMatch_SqlGroupByMatch_Fragment = (
-  { __typename?: 'SqlGroupByMatch' }
-  & Pick<Types.SqlGroupByMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
-
-type NewMatch_SqlOrderByMatch_Fragment = (
-  { __typename?: 'SqlOrderByMatch' }
-  & Pick<Types.SqlOrderByMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
-
-type NewMatch_SqlLimitMatch_Fragment = (
-  { __typename?: 'SqlLimitMatch' }
-  & Pick<Types.SqlLimitMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
-
-type NewMatch_SqlInsertMatch_Fragment = (
-  { __typename?: 'SqlInsertMatch' }
-  & Pick<Types.SqlInsertMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
-
 type NewMatch_ElementLineMatch_Fragment = (
   { __typename?: 'ElementLineMatch' }
   & Pick<Types.ElementLineMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
@@ -226,6 +206,26 @@ type NewMatch_SqlBinaryExpressionMatch_Fragment = (
 type NewMatch_SqlColumnMatch_Fragment = (
   { __typename?: 'SqlColumnMatch' }
   & Pick<Types.SqlColumnMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlGroupByMatch_Fragment = (
+  { __typename?: 'SqlGroupByMatch' }
+  & Pick<Types.SqlGroupByMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlInsertMatch_Fragment = (
+  { __typename?: 'SqlInsertMatch' }
+  & Pick<Types.SqlInsertMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlLimitMatch_Fragment = (
+  { __typename?: 'SqlLimitMatch' }
+  & Pick<Types.SqlLimitMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlOrderByMatch_Fragment = (
+  { __typename?: 'SqlOrderByMatch' }
+  & Pick<Types.SqlOrderByMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
 );
 
 type NewMatch_SqlTableMatch_Fragment = (
@@ -248,53 +248,17 @@ type NewMatch_UmlClassMatch_Fragment = (
   & Pick<Types.UmlClassMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
 );
 
-type NewMatch_UmlMethodMatch_Fragment = (
-  { __typename?: 'UmlMethodMatch' }
-  & Pick<Types.UmlMethodMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
-
 type NewMatch_UmlImplementationMatch_Fragment = (
   { __typename?: 'UmlImplementationMatch' }
   & Pick<Types.UmlImplementationMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
 );
 
-export type NewMatchFragment = NewMatch_SqlGroupByMatch_Fragment | NewMatch_SqlOrderByMatch_Fragment | NewMatch_SqlLimitMatch_Fragment | NewMatch_SqlInsertMatch_Fragment | NewMatch_ElementLineMatch_Fragment | NewMatch_RegexMatchMatch_Fragment | NewMatch_SqlBinaryExpressionMatch_Fragment | NewMatch_SqlColumnMatch_Fragment | NewMatch_SqlTableMatch_Fragment | NewMatch_UmlAssociationMatch_Fragment | NewMatch_UmlAttributeMatch_Fragment | NewMatch_UmlClassMatch_Fragment | NewMatch_UmlMethodMatch_Fragment | NewMatch_UmlImplementationMatch_Fragment;
-
-type Mr_SqlGroupByComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlGroupByComparisonMatchingResult' }
-  & Pick<Types.SqlGroupByComparisonMatchingResult, 'points' | 'maxPoints'>
-  & { allMatches: Array<(
-    { __typename?: 'SqlGroupByMatch' }
-    & NewMatch_SqlGroupByMatch_Fragment
-  )> }
+type NewMatch_UmlMethodMatch_Fragment = (
+  { __typename?: 'UmlMethodMatch' }
+  & Pick<Types.UmlMethodMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
 );
 
-type Mr_SqlOrderByComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlOrderByComparisonMatchingResult' }
-  & Pick<Types.SqlOrderByComparisonMatchingResult, 'points' | 'maxPoints'>
-  & { allMatches: Array<(
-    { __typename?: 'SqlOrderByMatch' }
-    & NewMatch_SqlOrderByMatch_Fragment
-  )> }
-);
-
-type Mr_SqlLimitComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlLimitComparisonMatchingResult' }
-  & Pick<Types.SqlLimitComparisonMatchingResult, 'points' | 'maxPoints'>
-  & { allMatches: Array<(
-    { __typename?: 'SqlLimitMatch' }
-    & NewMatch_SqlLimitMatch_Fragment
-  )> }
-);
-
-type Mr_SqlInsertComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlInsertComparisonMatchingResult' }
-  & Pick<Types.SqlInsertComparisonMatchingResult, 'points' | 'maxPoints'>
-  & { allMatches: Array<(
-    { __typename?: 'SqlInsertMatch' }
-    & NewMatch_SqlInsertMatch_Fragment
-  )> }
-);
+export type NewMatchFragment = NewMatch_ElementLineMatch_Fragment | NewMatch_RegexMatchMatch_Fragment | NewMatch_SqlBinaryExpressionMatch_Fragment | NewMatch_SqlColumnMatch_Fragment | NewMatch_SqlGroupByMatch_Fragment | NewMatch_SqlInsertMatch_Fragment | NewMatch_SqlLimitMatch_Fragment | NewMatch_SqlOrderByMatch_Fragment | NewMatch_SqlTableMatch_Fragment | NewMatch_UmlAssociationMatch_Fragment | NewMatch_UmlAttributeMatch_Fragment | NewMatch_UmlClassMatch_Fragment | NewMatch_UmlImplementationMatch_Fragment | NewMatch_UmlMethodMatch_Fragment;
 
 type Mr_RegexExtractedValuesComparisonMatchingResult_Fragment = (
   { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
@@ -320,6 +284,42 @@ type Mr_SqlColumnComparisonMatchingResult_Fragment = (
   & { allMatches: Array<(
     { __typename?: 'SqlColumnMatch' }
     & NewMatch_SqlColumnMatch_Fragment
+  )> }
+);
+
+type Mr_SqlGroupByComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlGroupByComparisonMatchingResult' }
+  & Pick<Types.SqlGroupByComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlGroupByMatch' }
+    & NewMatch_SqlGroupByMatch_Fragment
+  )> }
+);
+
+type Mr_SqlInsertComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlInsertComparisonMatchingResult' }
+  & Pick<Types.SqlInsertComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlInsertMatch' }
+    & NewMatch_SqlInsertMatch_Fragment
+  )> }
+);
+
+type Mr_SqlLimitComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlLimitComparisonMatchingResult' }
+  & Pick<Types.SqlLimitComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlLimitMatch' }
+    & NewMatch_SqlLimitMatch_Fragment
+  )> }
+);
+
+type Mr_SqlOrderByComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlOrderByComparisonMatchingResult' }
+  & Pick<Types.SqlOrderByComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlOrderByMatch' }
+    & NewMatch_SqlOrderByMatch_Fragment
   )> }
 );
 
@@ -350,15 +350,6 @@ type Mr_UmlAttributeMatchingResult_Fragment = (
   )> }
 );
 
-type Mr_UmlMethodMatchingResult_Fragment = (
-  { __typename?: 'UmlMethodMatchingResult' }
-  & Pick<Types.UmlMethodMatchingResult, 'points' | 'maxPoints'>
-  & { allMatches: Array<(
-    { __typename?: 'UmlMethodMatch' }
-    & NewMatch_UmlMethodMatch_Fragment
-  )> }
-);
-
 type Mr_UmlClassMatchingResult_Fragment = (
   { __typename?: 'UmlClassMatchingResult' }
   & Pick<Types.UmlClassMatchingResult, 'points' | 'maxPoints'>
@@ -377,6 +368,15 @@ type Mr_UmlImplementationMatchingResult_Fragment = (
   )> }
 );
 
+type Mr_UmlMethodMatchingResult_Fragment = (
+  { __typename?: 'UmlMethodMatchingResult' }
+  & Pick<Types.UmlMethodMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlMethodMatch' }
+    & NewMatch_UmlMethodMatch_Fragment
+  )> }
+);
+
 type Mr_XmlElementLineComparisonMatchingResult_Fragment = (
   { __typename?: 'XmlElementLineComparisonMatchingResult' }
   & Pick<Types.XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints'>
@@ -386,7 +386,7 @@ type Mr_XmlElementLineComparisonMatchingResult_Fragment = (
   )> }
 );
 
-export type MrFragment = Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_UmlAssociationMatchingResult_Fragment | Mr_UmlAttributeMatchingResult_Fragment | Mr_UmlMethodMatchingResult_Fragment | Mr_UmlClassMatchingResult_Fragment | Mr_UmlImplementationMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
+export type MrFragment = Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_UmlAssociationMatchingResult_Fragment | Mr_UmlAttributeMatchingResult_Fragment | Mr_UmlClassMatchingResult_Fragment | Mr_UmlImplementationMatchingResult_Fragment | Mr_UmlMethodMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
 
 export const SqlInternalErrorResultFragmentDoc = gql`
     fragment SqlInternalErrorResult on SqlInternalErrorResult {

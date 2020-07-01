@@ -6,12 +6,16 @@ sealed trait LessonContent {
   val toolId: String
 }
 
+// Text content
+
 final case class LessonTextContent(
   contentId: Int,
   lessonId: Int,
   toolId: String,
   content: String
 ) extends LessonContent
+
+// MC question content
 
 final case class LessonMultipleChoiceQuestionAnswer(
   id: Int,
@@ -21,7 +25,7 @@ final case class LessonMultipleChoiceQuestionAnswer(
 
 final case class LessonMultipleChoiceQuestion(
   id: Int,
-  question: String,
+  questionText: String,
   answers: Seq[LessonMultipleChoiceQuestionAnswer]
 )
 
@@ -31,6 +35,8 @@ final case class LessonMultipleChoiceQuestionsContent(
   toolId: String,
   questions: Seq[LessonMultipleChoiceQuestion]
 ) extends LessonContent
+
+// Lesson
 
 final case class Lesson(
   lessonId: Int,

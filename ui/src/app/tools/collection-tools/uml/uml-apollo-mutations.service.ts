@@ -4,13 +4,13 @@ import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
-export type UmlCorrectionMutationVariables = {
+export type UmlCorrectionMutationVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.UmlExPart;
   solution: Types.UmlClassDiagramInput;
-};
+}>;
 
 
 export type UmlCorrectionMutation = (

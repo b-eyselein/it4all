@@ -4,11 +4,11 @@ import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
-export type RegisterMutationVariables = {
+export type RegisterMutationVariables = Types.Exact<{
   username: Types.Scalars['String'];
   firstPassword: Types.Scalars['String'];
   secondPassword: Types.Scalars['String'];
-};
+}>;
 
 
 export type RegisterMutation = (
@@ -25,10 +25,10 @@ export type LoggedInUserWithTokenFragment = (
   ) }
 );
 
-export type LoginMutationVariables = {
+export type LoginMutationVariables = Types.Exact<{
   username: Types.Scalars['String'];
   password: Types.Scalars['String'];
-};
+}>;
 
 
 export type LoginMutation = (
@@ -44,9 +44,9 @@ export type CollectionToolFragment = (
   & Pick<Types.CollectionTool, 'id' | 'name' | 'state' | 'collectionCount' | 'lessonCount' | 'exerciseCount'>
 );
 
-export type ToolOverviewQueryVariables = {
+export type ToolOverviewQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
-};
+}>;
 
 
 export type ToolOverviewQuery = (
@@ -60,10 +60,10 @@ export type ToolOverviewQuery = (
   )> }
 );
 
-export type CollectionToolOverviewQueryVariables = {
+export type CollectionToolOverviewQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
-};
+}>;
 
 
 export type CollectionToolOverviewQuery = (
@@ -93,10 +93,10 @@ export type UserProficiencyFragment = (
   ) }
 );
 
-export type AllExercisesOverviewQueryVariables = {
+export type AllExercisesOverviewQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
-};
+}>;
 
 
 export type AllExercisesOverviewQuery = (
@@ -122,10 +122,10 @@ export type CollectionValuesFragment = (
   & Pick<Types.ExerciseCollection, 'collectionId' | 'title' | 'exerciseCount'>
 );
 
-export type CollectionListQueryVariables = {
+export type CollectionListQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
-};
+}>;
 
 
 export type CollectionListQuery = (
@@ -143,11 +143,11 @@ export type CollectionListQuery = (
   )> }
 );
 
-export type CollectionOverviewQueryVariables = {
+export type CollectionOverviewQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
-};
+}>;
 
 
 export type CollectionOverviewQuery = (
@@ -168,12 +168,12 @@ export type CollectionOverviewQuery = (
   )> }
 );
 
-export type ExerciseOverviewQueryVariables = {
+export type ExerciseOverviewQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
-};
+}>;
 
 
 export type ExerciseOverviewQuery = (
@@ -221,13 +221,13 @@ export type ExerciseSolveFieldsFragment = (
   )> }
 );
 
-export type ExerciseQueryVariables = {
+export type ExerciseQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   partId: Types.Scalars['String'];
-};
+}>;
 
 
 export type ExerciseQuery = (
@@ -252,10 +252,10 @@ export type LessonIdentifierFragment = (
   & Pick<Types.Lesson, 'lessonId' | 'title' | 'description'>
 );
 
-export type LessonsForToolQueryVariables = {
+export type LessonsForToolQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
-};
+}>;
 
 
 export type LessonsForToolQuery = (
@@ -285,7 +285,7 @@ export type LessonMultipleChoiceQuestionAnswerFragment = (
 
 export type LessonMultipleChoiceQuestionFragment = (
   { __typename?: 'LessonMultipleChoiceQuestion' }
-  & Pick<Types.LessonMultipleChoiceQuestion, 'id' | 'question'>
+  & Pick<Types.LessonMultipleChoiceQuestion, 'id' | 'questionText'>
   & { answers: Array<(
     { __typename?: 'LessonMultipleChoiceQuestionAnswer' }
     & LessonMultipleChoiceQuestionAnswerFragment
@@ -313,11 +313,11 @@ export type LessonFragment = (
   )> }
 );
 
-export type LessonQueryVariables = {
+export type LessonQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
   lessonId: Types.Scalars['Int'];
-};
+}>;
 
 
 export type LessonQuery = (
@@ -922,7 +922,7 @@ export const LessonMultipleChoiceQuestionAnswerFragmentDoc = gql`
 export const LessonMultipleChoiceQuestionFragmentDoc = gql`
     fragment LessonMultipleChoiceQuestion on LessonMultipleChoiceQuestion {
   id
-  question
+  questionText
   answers {
     ...LessonMultipleChoiceQuestionAnswer
   }

@@ -207,7 +207,7 @@ fragment LessonMultipleChoiceQuestionAnswer on LessonMultipleChoiceQuestionAnswe
 
 fragment LessonMultipleChoiceQuestion on LessonMultipleChoiceQuestion {
   id
-  question
+  questionText
   answers {
     ...LessonMultipleChoiceQuestionAnswer
   }
