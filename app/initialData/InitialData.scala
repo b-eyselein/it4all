@@ -7,7 +7,7 @@ import model._
 import model.mongo.MongoClientQueries
 import model.tools.ToolList
 import play.api.Logger
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.OFormat
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,10 +52,14 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
         case None =>
           val key = s"(${coll.toolId}, ${coll.collectionId})"
 
-          futureInsertCollection(coll).map {
-            case false => logger.error(s"Could not insert collection $key!")
-            case true  => logger.debug(s"Inserted collection $key.")
-          }
+          futureInsertCollection(coll)
+            .map {
+              case false => logger.error(s"Could not insert collection $key!")
+              case true  => logger.debug(s"Inserted collection $key.")
+            }
+            .recover {
+              case e => logger.error("Error while inserting collection", e)
+            }
       }
 
   private def insertInitialExercise[EC <: ExerciseContent](
@@ -68,10 +72,15 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
         case None =>
           val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"
 
-          futureInsertExercise(ex, exFormat).map {
-            case false => logger.error(s"Exercise $key could not be inserted!")
-            case true  => logger.debug(s"Inserted exercise $key.")
-          }
+          futureInsertExercise(ex, exFormat)
+            .map {
+              case false => logger.error(s"Exercise $key could not be inserted!")
+              case true  => logger.debug(s"Inserted exercise $key.")
+            }
+            .recover {
+              case e => logger.error("Error while inserting exercise", e)
+            }
+
       }
 
   private def insertInitialLesson(lesson: Lesson): Future[Unit] =
@@ -87,9 +96,7 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
               case true  => logger.debug(s"Inserted lesson $key")
             }
             .recover {
-              case e =>
-                println(Json.toJson(lesson)(JsonProtocols.lessonFormat))
-                logger.error("Error while inserting lesson", e)
+              case e => logger.error("Error while inserting lesson", e)
             }
       }
 
@@ -122,8 +129,6 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
     // Insert all lessons
     tool.initialData.lessonData.foreach {
       case (lesson, lessonContents) =>
-        logger.warn(s"Inserting lesson $lesson")
-
         insertInitialLesson(lesson)
 
         lessonContents.foreach(lessonContent => insertInitialLessonContent(lessonContent))
