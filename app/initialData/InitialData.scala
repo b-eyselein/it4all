@@ -3,11 +3,11 @@ package initialData
 import better.files.File
 import com.google.inject.AbstractModule
 import javax.inject.{Inject, Singleton}
+import model._
 import model.mongo.MongoClientQueries
 import model.tools.ToolList
-import model._
 import play.api.Logger
-import play.api.libs.json.OFormat
+import play.api.libs.json.{Json, OFormat}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,14 +32,7 @@ object InitialData {
   def exerciseResourcesPath(toolId: String, collectionId: Int, exerciseId: Int): File =
     baseResourcesPath / toolId / s"coll_$collectionId" / s"ex_$exerciseId"
 
-  @deprecated
-  def ex_resources_path(toolId: String, collectionId: Int, exerciseId: Int): File =
-    exerciseResourcesPath(toolId, collectionId, exerciseId)
-
   def loadTextFromFile(file: File): String = file.contentAsString
-
-  @deprecated
-  def load_text_from_file(file: File): String = loadTextFromFile(file)
 
 }
 
@@ -52,64 +45,70 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
 
   override protected implicit val ec: ExecutionContext = ExecutionContext.global
 
-  private def insertInitialCollection(coll: ExerciseCollection): Future[Unit] = {
+  private def insertInitialCollection(coll: ExerciseCollection): Future[Unit] =
+    futureCollectionById(coll.toolId, coll.collectionId)
+      .flatMap {
+        case Some(_) => Future.successful()
+        case None =>
+          val key = s"(${coll.toolId}, ${coll.collectionId})"
 
-    val key = s"(${coll.toolId}, ${coll.collectionId})"
-
-    futureCollectionById(coll.toolId, coll.collectionId).flatMap {
-      case Some(_) =>
-        Future.successful(logger.info(s"Collection $key already exists."))
-      case None =>
-        futureInsertCollection(coll).map {
-          case false => logger.error(s"Could not insert collection $key!")
-          case true  => logger.info(s"Inserted collection $key.")
-        }
-    }
-  }
+          futureInsertCollection(coll).map {
+            case false => logger.error(s"Could not insert collection $key!")
+            case true  => logger.debug(s"Inserted collection $key.")
+          }
+      }
 
   private def insertInitialExercise[EC <: ExerciseContent](
     ex: Exercise[EC],
     exFormat: OFormat[Exercise[EC]]
-  ): Future[Unit] = {
+  ): Future[Unit] =
+    futureExerciseById(ex.toolId, ex.collectionId, ex.exerciseId, exFormat)
+      .flatMap {
+        case Some(_) => Future.successful()
+        case None =>
+          val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"
 
-    val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"
+          futureInsertExercise(ex, exFormat).map {
+            case false => logger.error(s"Exercise $key could not be inserted!")
+            case true  => logger.debug(s"Inserted exercise $key.")
+          }
+      }
 
-    futureExerciseById(ex.toolId, ex.collectionId, ex.exerciseId, exFormat).flatMap {
-      case Some(_) =>
-        Future.successful(logger.info(s"Exercise $key already exists."))
-      case None =>
-        futureInsertExercise(ex, exFormat).map {
-          case false => logger.error(s"Exercise $key could not be inserted!")
-          case true  => logger.info(s"Inserted exercise $key.")
-        }
-    }
-  }
+  private def insertInitialLesson(lesson: Lesson): Future[Unit] =
+    futureLessonById(lesson.toolId, lesson.lessonId)
+      .flatMap {
+        case Some(_) => Future.successful()
+        case None =>
+          val key = s"(${lesson.toolId}, ${lesson.lessonId})"
 
-  private def insertInitialLesson(lesson: Lesson): Future[Unit] = {
-    val key = s"(${lesson.toolId}, ${lesson.lessonId})"
+          futureInsertLesson(lesson)
+            .map {
+              case false => logger.error(s"Could not insert lesson $key")
+              case true  => logger.debug(s"Inserted lesson $key")
+            }
+            .recover {
+              case e =>
+                println(Json.toJson(lesson)(JsonProtocols.lessonFormat))
+                logger.error("Error while inserting lesson", e)
+            }
+      }
 
-    futureLessonById(lesson.toolId, lesson.lessonId).flatMap {
-      case Some(_) => Future.successful(logger.info(s"Lesson $key already exists."))
-      case None =>
-        futureInsertLesson(lesson).map {
-          case false => logger.error(s"Could not insert lesson $key")
-          case true  => logger.info(s"Inserted lesson $key")
-        }
-    }
-  }
+  private def insertInitialLessonContent(content: LessonContent): Future[Unit] =
+    futureLessonContentById(content.toolId, content.lessonId, content.contentId)
+      .flatMap {
+        case Some(_) => Future.successful()
+        case None =>
+          val key = s"(${content.toolId}, ${content.lessonId}, ${content.contentId})"
 
-  private def insertInitialLessonContent(content: LessonContent): Future[Unit] = {
-    val key = s"(${content.toolId}, ${content.lessonId}, ${content.contentId})"
-
-    futureLessonContentById(content.toolId, content.lessonId, content.contentId).flatMap {
-      case Some(_) => Future.successful(logger.info(s"LessonContent $key already exists."))
-      case None =>
-        futureInsertLessonContent(content).map {
-          case false => logger.error(s"Could not insert lesson content $key")
-          case true  => logger.info(s"Insert lesson content $key")
-        }
-    }
-  }
+          futureInsertLessonContent(content)
+            .map {
+              case false => logger.error(s"Could not insert lesson content $key")
+              case true  => logger.debug(s"Insert lesson content $key")
+            }
+            .recover {
+              case e => logger.error("Error while inserting lesson", e)
+            }
+      }
 
   ToolList.tools.foreach { tool =>
     // Insert all collections and exercises
@@ -123,6 +122,8 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
     // Insert all lessons
     tool.initialData.lessonData.foreach {
       case (lesson, lessonContents) =>
+        logger.warn(s"Inserting lesson $lesson")
+
         insertInitialLesson(lesson)
 
         lessonContents.foreach(lessonContent => insertInitialLessonContent(lessonContent))

@@ -51,7 +51,8 @@ db.createCollection('lessons', {
                 lessonId: {bsonType: "int"},
                 toolId: {bsonType: "string"},
                 title: {bsonType: "string"},
-                description: {bsonType: "string"}
+                description: {bsonType: "string"},
+                video: {bsonType: "string"}
             },
             required: ["_id", "lessonId", "toolId", "title", "description"],
             additionalProperties: false

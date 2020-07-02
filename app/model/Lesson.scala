@@ -42,5 +42,6 @@ final case class Lesson(
   lessonId: Int,
   toolId: String,
   title: String,
-  description: String
+  description: String,
+  video: Option[String] = None
 )
