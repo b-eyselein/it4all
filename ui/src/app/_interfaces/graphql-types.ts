@@ -248,6 +248,7 @@ export type Lesson = {
   toolId: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
+  video?: Maybe<Scalars['String']>;
   contentCount: Scalars['Long'];
   contents: Array<LessonContent>;
   content?: Maybe<LessonContent>;
@@ -320,11 +321,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  PartialMatch = 'PARTIAL_MATCH',
   OnlyUser = 'ONLY_USER',
-  OnlySample = 'ONLY_SAMPLE',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH',
+  OnlySample = 'ONLY_SAMPLE'
 }
 
 export type Mutation = {
@@ -633,11 +634,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Update = 'UPDATE',
-  Create = 'CREATE',
+  Delete = 'DELETE',
   Insert = 'INSERT',
   Select = 'SELECT',
-  Delete = 'DELETE'
+  Create = 'CREATE',
+  Update = 'UPDATE'
 }
 
 export enum SqlExPart {

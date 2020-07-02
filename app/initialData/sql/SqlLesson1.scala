@@ -9,7 +9,13 @@ object SqlLesson1 {
 
   private val lessonResPath = lessonResourcesPath(toolId, 1)
 
-  val sqlLesson01: Lesson = Lesson(1, toolId, "Grundlagen SQL", "In dieser Lektion geht es um die Grundlagen von SQL.")
+  val sqlLesson01: Lesson = Lesson(
+    1,
+    toolId,
+    "Grundlagen SQL",
+    "In dieser Lektion geht es um die Grundlagen von SQL.",
+    video = Some("https://www.youtube.com/watch?v=fgOiWEGNJ-o")
+  )
 
   private val content02Questions = Seq(
     LessonMultipleChoiceQuestion(

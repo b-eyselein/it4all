@@ -11,7 +11,8 @@
           </header>
           <div class="card-content">{{lesson.description}}</div>
           <div class="card-footer">
-            <a href="" class="card-footer-item" [routerLink]="[lesson.lessonId]">Lektion beginnen</a>
+            <a class="card-footer-item" [routerLink]="" *ngIf="lesson.video">Als Video</a>
+            <a class="card-footer-item" [routerLink]="[lesson.lessonId]">Lektion beginnen</a>
           </div>
         </div>
       </div>

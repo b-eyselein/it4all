@@ -4,6 +4,95 @@ import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
+
+export type LessonIdentifierFragment = (
+  { __typename?: 'Lesson' }
+  & Pick<Types.Lesson, 'lessonId' | 'title' | 'description' | 'video'>
+);
+
+export type LessonsForToolQueryVariables = Types.Exact<{
+  userJwt: Types.Scalars['String'];
+  toolId: Types.Scalars['String'];
+}>;
+
+
+export type LessonsForToolQuery = (
+  { __typename?: 'Query' }
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & Pick<Types.CollectionTool, 'name'>
+      & { lessons: Array<(
+        { __typename?: 'Lesson' }
+        & LessonIdentifierFragment
+      )> }
+    )> }
+  )> }
+);
+
+export type LessonTextContentFragment = (
+  { __typename: 'LessonTextContent' }
+  & Pick<Types.LessonTextContent, 'contentId' | 'content'>
+);
+
+export type LessonMultipleChoiceQuestionAnswerFragment = (
+  { __typename?: 'LessonMultipleChoiceQuestionAnswer' }
+  & Pick<Types.LessonMultipleChoiceQuestionAnswer, 'id' | 'answer' | 'isCorrect'>
+);
+
+export type LessonMultipleChoiceQuestionFragment = (
+  { __typename?: 'LessonMultipleChoiceQuestion' }
+  & Pick<Types.LessonMultipleChoiceQuestion, 'id' | 'questionText'>
+  & { answers: Array<(
+    { __typename?: 'LessonMultipleChoiceQuestionAnswer' }
+    & LessonMultipleChoiceQuestionAnswerFragment
+  )> }
+);
+
+export type LessonMultipleChoiceQuestionContentFragment = (
+  { __typename: 'LessonMultipleChoiceQuestionsContent' }
+  & Pick<Types.LessonMultipleChoiceQuestionsContent, 'contentId'>
+  & { questions: Array<(
+    { __typename?: 'LessonMultipleChoiceQuestion' }
+    & LessonMultipleChoiceQuestionFragment
+  )> }
+);
+
+export type LessonFragment = (
+  { __typename?: 'Lesson' }
+  & Pick<Types.Lesson, 'lessonId' | 'title' | 'description' | 'video'>
+  & { contents: Array<(
+    { __typename?: 'LessonMultipleChoiceQuestionsContent' }
+    & LessonMultipleChoiceQuestionContentFragment
+  ) | (
+    { __typename?: 'LessonTextContent' }
+    & LessonTextContentFragment
+  )> }
+);
+
+export type LessonQueryVariables = Types.Exact<{
+  userJwt: Types.Scalars['String'];
+  toolId: Types.Scalars['String'];
+  lessonId: Types.Scalars['Int'];
+}>;
+
+
+export type LessonQuery = (
+  { __typename?: 'Query' }
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & Pick<Types.CollectionTool, 'name'>
+      & { lesson?: Types.Maybe<(
+        { __typename?: 'Lesson' }
+        & LessonFragment
+      )> }
+    )> }
+  )> }
+);
+
 export type RegisterMutationVariables = Types.Exact<{
   username: Types.Scalars['String'];
   firstPassword: Types.Scalars['String'];
@@ -242,94 +331,6 @@ export type ExerciseQuery = (
           { __typename?: 'Exercise' }
           & ExerciseSolveFieldsFragment
         )> }
-      )> }
-    )> }
-  )> }
-);
-
-export type LessonIdentifierFragment = (
-  { __typename?: 'Lesson' }
-  & Pick<Types.Lesson, 'lessonId' | 'title' | 'description'>
-);
-
-export type LessonsForToolQueryVariables = Types.Exact<{
-  userJwt: Types.Scalars['String'];
-  toolId: Types.Scalars['String'];
-}>;
-
-
-export type LessonsForToolQuery = (
-  { __typename?: 'Query' }
-  & { me?: Types.Maybe<(
-    { __typename?: 'User' }
-    & { tool?: Types.Maybe<(
-      { __typename?: 'CollectionTool' }
-      & Pick<Types.CollectionTool, 'name'>
-      & { lessons: Array<(
-        { __typename?: 'Lesson' }
-        & LessonIdentifierFragment
-      )> }
-    )> }
-  )> }
-);
-
-export type LessonTextContentFragment = (
-  { __typename: 'LessonTextContent' }
-  & Pick<Types.LessonTextContent, 'contentId' | 'content'>
-);
-
-export type LessonMultipleChoiceQuestionAnswerFragment = (
-  { __typename?: 'LessonMultipleChoiceQuestionAnswer' }
-  & Pick<Types.LessonMultipleChoiceQuestionAnswer, 'id' | 'answer' | 'isCorrect'>
-);
-
-export type LessonMultipleChoiceQuestionFragment = (
-  { __typename?: 'LessonMultipleChoiceQuestion' }
-  & Pick<Types.LessonMultipleChoiceQuestion, 'id' | 'questionText'>
-  & { answers: Array<(
-    { __typename?: 'LessonMultipleChoiceQuestionAnswer' }
-    & LessonMultipleChoiceQuestionAnswerFragment
-  )> }
-);
-
-export type LessonMultipleChoiceQuestionContentFragment = (
-  { __typename: 'LessonMultipleChoiceQuestionsContent' }
-  & Pick<Types.LessonMultipleChoiceQuestionsContent, 'contentId'>
-  & { questions: Array<(
-    { __typename?: 'LessonMultipleChoiceQuestion' }
-    & LessonMultipleChoiceQuestionFragment
-  )> }
-);
-
-export type LessonFragment = (
-  { __typename?: 'Lesson' }
-  & Pick<Types.Lesson, 'lessonId' | 'title' | 'description'>
-  & { contents: Array<(
-    { __typename?: 'LessonMultipleChoiceQuestionsContent' }
-    & LessonMultipleChoiceQuestionContentFragment
-  ) | (
-    { __typename?: 'LessonTextContent' }
-    & LessonTextContentFragment
-  )> }
-);
-
-export type LessonQueryVariables = Types.Exact<{
-  userJwt: Types.Scalars['String'];
-  toolId: Types.Scalars['String'];
-  lessonId: Types.Scalars['Int'];
-}>;
-
-
-export type LessonQuery = (
-  { __typename?: 'Query' }
-  & { me?: Types.Maybe<(
-    { __typename?: 'User' }
-    & { tool?: Types.Maybe<(
-      { __typename?: 'CollectionTool' }
-      & Pick<Types.CollectionTool, 'name'>
-      & { lesson?: Types.Maybe<(
-        { __typename?: 'Lesson' }
-        & LessonFragment
       )> }
     )> }
   )> }
@@ -582,6 +583,63 @@ export type ExerciseFileFragment = (
   & Pick<Types.ExerciseFile, 'name' | 'fileType' | 'content' | 'editable'>
 );
 
+export const LessonIdentifierFragmentDoc = gql`
+    fragment LessonIdentifier on Lesson {
+  lessonId
+  title
+  description
+  video
+}
+    `;
+export const LessonTextContentFragmentDoc = gql`
+    fragment LessonTextContent on LessonTextContent {
+  __typename
+  contentId
+  content
+}
+    `;
+export const LessonMultipleChoiceQuestionAnswerFragmentDoc = gql`
+    fragment LessonMultipleChoiceQuestionAnswer on LessonMultipleChoiceQuestionAnswer {
+  id
+  answer
+  isCorrect
+}
+    `;
+export const LessonMultipleChoiceQuestionFragmentDoc = gql`
+    fragment LessonMultipleChoiceQuestion on LessonMultipleChoiceQuestion {
+  id
+  questionText
+  answers {
+    ...LessonMultipleChoiceQuestionAnswer
+  }
+}
+    ${LessonMultipleChoiceQuestionAnswerFragmentDoc}`;
+export const LessonMultipleChoiceQuestionContentFragmentDoc = gql`
+    fragment LessonMultipleChoiceQuestionContent on LessonMultipleChoiceQuestionsContent {
+  __typename
+  contentId
+  questions {
+    ...LessonMultipleChoiceQuestion
+  }
+}
+    ${LessonMultipleChoiceQuestionFragmentDoc}`;
+export const LessonFragmentDoc = gql`
+    fragment Lesson on Lesson {
+  lessonId
+  title
+  description
+  video
+  contents {
+    ... on LessonTextContent {
+      ...LessonTextContent
+    }
+    ... on LessonMultipleChoiceQuestionsContent {
+      ...LessonMultipleChoiceQuestionContent
+    }
+  }
+}
+    ${LessonTextContentFragmentDoc}
+${LessonMultipleChoiceQuestionContentFragmentDoc}`;
 export const LoggedInUserWithTokenFragmentDoc = gql`
     fragment LoggedInUserWithToken on LoggedInUserWithToken {
   loggedInUser {
@@ -898,61 +956,6 @@ ${SqlExerciseContentSolveFieldsFragmentDoc}
 ${UmlExerciseContentSolveFieldsFragmentDoc}
 ${WebExerciseContentSolveFieldsFragmentDoc}
 ${XmlExerciseContentSolveFieldsFragmentDoc}`;
-export const LessonIdentifierFragmentDoc = gql`
-    fragment LessonIdentifier on Lesson {
-  lessonId
-  title
-  description
-}
-    `;
-export const LessonTextContentFragmentDoc = gql`
-    fragment LessonTextContent on LessonTextContent {
-  __typename
-  contentId
-  content
-}
-    `;
-export const LessonMultipleChoiceQuestionAnswerFragmentDoc = gql`
-    fragment LessonMultipleChoiceQuestionAnswer on LessonMultipleChoiceQuestionAnswer {
-  id
-  answer
-  isCorrect
-}
-    `;
-export const LessonMultipleChoiceQuestionFragmentDoc = gql`
-    fragment LessonMultipleChoiceQuestion on LessonMultipleChoiceQuestion {
-  id
-  questionText
-  answers {
-    ...LessonMultipleChoiceQuestionAnswer
-  }
-}
-    ${LessonMultipleChoiceQuestionAnswerFragmentDoc}`;
-export const LessonMultipleChoiceQuestionContentFragmentDoc = gql`
-    fragment LessonMultipleChoiceQuestionContent on LessonMultipleChoiceQuestionsContent {
-  __typename
-  contentId
-  questions {
-    ...LessonMultipleChoiceQuestion
-  }
-}
-    ${LessonMultipleChoiceQuestionFragmentDoc}`;
-export const LessonFragmentDoc = gql`
-    fragment Lesson on Lesson {
-  lessonId
-  title
-  description
-  contents {
-    ... on LessonTextContent {
-      ...LessonTextContent
-    }
-    ... on LessonMultipleChoiceQuestionsContent {
-      ...LessonMultipleChoiceQuestionContent
-    }
-  }
-}
-    ${LessonTextContentFragmentDoc}
-${LessonMultipleChoiceQuestionContentFragmentDoc}`;
 export const PartFragmentDoc = gql`
     fragment Part on ExPart {
   id
@@ -983,6 +986,46 @@ export const FieldsForLinkFragmentDoc = gql`
   }
 }
     ${TopicWithLevelFragmentDoc}`;
+export const LessonsForToolDocument = gql`
+    query LessonsForTool($userJwt: String!, $toolId: String!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      name
+      lessons {
+        ...LessonIdentifier
+      }
+    }
+  }
+}
+    ${LessonIdentifierFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class LessonsForToolGQL extends Apollo.Query<LessonsForToolQuery, LessonsForToolQueryVariables> {
+    document = LessonsForToolDocument;
+    
+  }
+export const LessonDocument = gql`
+    query Lesson($userJwt: String!, $toolId: String!, $lessonId: Int!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      name
+      lesson(lessonId: $lessonId) {
+        ...Lesson
+      }
+    }
+  }
+}
+    ${LessonFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class LessonGQL extends Apollo.Query<LessonQuery, LessonQueryVariables> {
+    document = LessonDocument;
+    
+  }
 export const RegisterDocument = gql`
     mutation Register($username: String!, $firstPassword: String!, $secondPassword: String!) {
   register(registerValues: {username: $username, firstPassword: $firstPassword, secondPassword: $secondPassword})
@@ -1161,45 +1204,5 @@ export const ExerciseDocument = gql`
   })
   export class ExerciseGQL extends Apollo.Query<ExerciseQuery, ExerciseQueryVariables> {
     document = ExerciseDocument;
-    
-  }
-export const LessonsForToolDocument = gql`
-    query LessonsForTool($userJwt: String!, $toolId: String!) {
-  me(userJwt: $userJwt) {
-    tool(toolId: $toolId) {
-      name
-      lessons {
-        ...LessonIdentifier
-      }
-    }
-  }
-}
-    ${LessonIdentifierFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class LessonsForToolGQL extends Apollo.Query<LessonsForToolQuery, LessonsForToolQueryVariables> {
-    document = LessonsForToolDocument;
-    
-  }
-export const LessonDocument = gql`
-    query Lesson($userJwt: String!, $toolId: String!, $lessonId: Int!) {
-  me(userJwt: $userJwt) {
-    tool(toolId: $toolId) {
-      name
-      lesson(lessonId: $lessonId) {
-        ...Lesson
-      }
-    }
-  }
-}
-    ${LessonFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class LessonGQL extends Apollo.Query<LessonQuery, LessonQueryVariables> {
-    document = LessonDocument;
     
   }

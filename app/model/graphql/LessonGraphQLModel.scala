@@ -44,6 +44,7 @@ trait LessonGraphQLModel extends GraphQLArguments with MongoClientQueries {
       Field("toolId", StringType, resolve = _.value._2.toolId),
       Field("title", StringType, resolve = _.value._2.title),
       Field("description", StringType, resolve = _.value._2.description),
+      Field("video", OptionType(StringType), resolve = _.value._2.video),
       Field(
         "contentCount",
         LongType,

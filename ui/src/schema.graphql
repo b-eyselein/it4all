@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Jul 01 2020 09:04:08 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Thu Jul 02 2020 11:08:25 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -198,6 +198,7 @@ type Lesson {
   toolId: String!
   title: String!
   description: String!
+  video: String
   contentCount: Long!
   contents: [LessonContent!]!
   content(lessonId: Int!): LessonContent
@@ -263,11 +264,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  UNSUCCESSFUL_MATCH
-  PARTIAL_MATCH
   ONLY_USER
-  ONLY_SAMPLE
+  UNSUCCESSFUL_MATCH
   SUCCESSFUL_MATCH
+  PARTIAL_MATCH
+  ONLY_SAMPLE
 }
 
 type Mutation {
@@ -512,11 +513,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  UPDATE
-  CREATE
+  DELETE
   INSERT
   SELECT
-  DELETE
+  CREATE
+  UPDATE
 }
 
 enum SqlExPart {

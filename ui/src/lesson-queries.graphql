@@ -1,0 +1,75 @@
+fragment LessonIdentifier on Lesson {
+  lessonId
+  title
+  description
+  video
+}
+
+# /tools/:toolId/lessons
+
+query LessonsForTool($userJwt: String!, $toolId: String!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      name
+      lessons {
+        ...LessonIdentifier
+      }
+    }
+  }
+}
+
+# /tools/:toolId/lessons/:lessonId
+
+fragment LessonTextContent on LessonTextContent {
+  __typename
+  contentId
+  content
+}
+
+fragment LessonMultipleChoiceQuestionAnswer on LessonMultipleChoiceQuestionAnswer {
+  id
+  answer
+  isCorrect
+}
+
+fragment LessonMultipleChoiceQuestion on LessonMultipleChoiceQuestion {
+  id
+  questionText
+  answers {
+    ...LessonMultipleChoiceQuestionAnswer
+  }
+}
+
+fragment LessonMultipleChoiceQuestionContent on LessonMultipleChoiceQuestionsContent {
+  __typename
+  contentId
+  questions {
+    ...LessonMultipleChoiceQuestion
+  }
+}
+
+fragment Lesson on Lesson {
+  lessonId
+  title
+  description
+  video
+  contents  {
+    ...on LessonTextContent {
+      ...LessonTextContent
+    }
+    ... on LessonMultipleChoiceQuestionsContent {
+      ...LessonMultipleChoiceQuestionContent
+    }
+  }
+}
+
+query Lesson($userJwt: String!,$toolId: String!, $lessonId: Int!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      name
+      lesson(lessonId: $lessonId) {
+        ...Lesson
+      }
+    }
+  }
+}
