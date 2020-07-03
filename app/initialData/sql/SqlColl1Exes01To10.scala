@@ -259,7 +259,7 @@ object SqlColl1Exes01To10 {
     )
   )
 
-  val sqlColl01To10: Seq[SqlExercise] = Seq(
+  val sqlColl01Exes01To10: Seq[SqlExercise] = Seq(
     sql_coll_1_ex_1,
     sql_coll_1_ex_2,
     sql_coll_1_ex_3,

@@ -7,8 +7,9 @@ import model._
 import model.mongo.MongoClientQueries
 import model.tools.ToolList
 import play.api.Logger
-import play.api.libs.json.OFormat
+import play.api.libs.json.{Json, OFormat}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
+import reactivemongo.play.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -83,39 +84,49 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
 
       }
 
-  private def insertInitialLesson(lesson: Lesson): Future[Unit] =
-    futureLessonById(lesson.toolId, lesson.lessonId)
-      .flatMap {
-        case Some(_) => Future.successful()
-        case None =>
-          val key = s"(${lesson.toolId}, ${lesson.lessonId})"
+  private def upsertInitialLesson(lesson: Lesson): Future[Unit] = {
+    implicit val lessonFormat: OFormat[Lesson] = JsonProtocols.lessonFormat
 
-          futureInsertLesson(lesson)
-            .map {
-              case false => logger.error(s"Could not insert lesson $key")
-              case true  => logger.debug(s"Inserted lesson $key")
-            }
-            .recover {
-              case e => logger.error("Error while inserting lesson", e)
-            }
+    val key = Json.obj("toolId" -> lesson.toolId, "lessonId" -> lesson.lessonId)
+
+    val lessonInsertResult = for {
+      lessonsCollection <- futureLessonsCollection
+      insertResult      <- lessonsCollection.update(true).one(key, lesson, upsert = true)
+    } yield insertResult.ok
+
+    lessonInsertResult
+      .map {
+        case false => logger.error(s"Could not insert lesson $key")
+        case true  => logger.debug(s"Inserted lesson $key")
       }
-
-  private def insertInitialLessonContent(content: LessonContent): Future[Unit] =
-    futureLessonContentById(content.toolId, content.lessonId, content.contentId)
-      .flatMap {
-        case Some(_) => Future.successful()
-        case None =>
-          val key = s"(${content.toolId}, ${content.lessonId}, ${content.contentId})"
-
-          futureInsertLessonContent(content)
-            .map {
-              case false => logger.error(s"Could not insert lesson content $key")
-              case true  => logger.debug(s"Insert lesson content $key")
-            }
-            .recover {
-              case e => logger.error("Error while inserting lesson", e)
-            }
+      .recover {
+        case e => logger.error("Error while inserting lesson", e)
       }
+  }
+
+  private def upsertInitialLessonContent(lessonContent: LessonContent): Future[Unit] = {
+    implicit val lessonContentFormat: OFormat[LessonContent] = JsonProtocols.lessonContentFormat
+
+    val key = Json.obj(
+      "toolId"    -> lessonContent.toolId,
+      "lessonId"  -> lessonContent.lessonId,
+      "contentId" -> lessonContent.contentId
+    )
+
+    val lessonContentInsertResult = for {
+      lessonContentCollection <- futureLessonContentsCollection
+      insertResult            <- lessonContentCollection.update(true).one(key, lessonContent, upsert = true)
+    } yield insertResult.ok
+
+    lessonContentInsertResult
+      .map {
+        case false => logger.error(s"Could not insert lesson content $key")
+        case true  => logger.debug(s"Insert lesson content $key")
+      }
+      .recover {
+        case e => logger.error("Error while inserting lesson", e)
+      }
+  }
 
   ToolList.tools.foreach { tool =>
     // Insert all collections and exercises
@@ -129,9 +140,9 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
     // Insert all lessons
     tool.initialData.lessonData.foreach {
       case (lesson, lessonContents) =>
-        insertInitialLesson(lesson)
+        upsertInitialLesson(lesson)
 
-        lessonContents.foreach(lessonContent => insertInitialLessonContent(lessonContent))
+        lessonContents.foreach(lessonContent => upsertInitialLessonContent(lessonContent))
     }
   }
 

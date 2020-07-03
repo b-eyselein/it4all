@@ -7,38 +7,40 @@ import {ExerciseOverviewComponent} from './exercise-overview/exercise-overview.c
 import {ExerciseComponent} from './exercise/exercise.component';
 import {AllExercisesOverviewComponent} from './all-exercises-overview/all-exercises-overview.component';
 import {CollectionsListComponent} from './collections-list/collections-list.component';
-import {LessonsForToolOverviewComponent} from './lessons/lessons-overview/lessons-for-tool-overview.component';
-import {LessonComponent} from './lessons/lesson/lesson.component';
-
-const collectionRoutes: Routes = [
-  {path: '', component: CollectionOverviewComponent},
-  {path: 'exercises/:exId', component: ExerciseOverviewComponent},
-  {path: 'exercises/:exId/parts/:partId', component: ExerciseComponent},
-];
-
-const collectionsRoutes: Routes = [
-  {path: '', component: CollectionsListComponent},
-  {path: ':collId', children: collectionRoutes},
-];
-
+import {LessonsForToolOverviewComponent} from './lessons/lessons-for-tool-overview/lessons-for-tool-overview.component';
+import {LessonAsTextComponent} from './lessons/lesson-as-text/lesson-as-text.component';
+import {LessonAsVideoComponent} from './lessons/lesson-as-video/lesson-as-video.component';
+import {LessonOverviewComponent} from './lessons/lesson-overview/lesson-overview.component';
 
 const collectionToolRoutes: Routes = [
   {
-    path: '', canActivate: [AuthGuard],
-    children: [
+    path: 'tools/:toolId', canActivate: [AuthGuard], children: [
+      {path: '', component: CollectionToolOverviewComponent},
       {
-        path: 'tools/:toolId', children: [
-          {path: '', component: CollectionToolOverviewComponent},
-          {path: 'allExercises', component: AllExercisesOverviewComponent},
-          {path: 'collections', children: collectionsRoutes},
+        path: 'lessons', children: [
+          {path: '', component: LessonsForToolOverviewComponent},
           {
-            path: 'lessons', children: [
-              {path: '', component: LessonsForToolOverviewComponent},
-              {path: ':lessonId', component: LessonComponent},
+            path: ':lessonId', children: [
+              {path: '', component: LessonOverviewComponent},
+              {path: 'text', component: LessonAsTextComponent},
+              {path: 'video', component: LessonAsVideoComponent}
             ]
           }
         ]
       },
+      {
+        path: 'collections', children: [
+          {path: '', component: CollectionsListComponent},
+          {
+            path: ':collId', children: [
+              {path: '', component: CollectionOverviewComponent},
+              {path: 'exercises/:exId', component: ExerciseOverviewComponent},
+              {path: 'exercises/:exId/parts/:partId', component: ExerciseComponent},
+            ]
+          },
+        ]
+      },
+      {path: 'allExercises', component: AllExercisesOverviewComponent}
     ]
   }
 ];
@@ -54,12 +56,15 @@ export const collectionToolRoutingComponents = [
   CollectionToolOverviewComponent,
   // Lesssons
   LessonsForToolOverviewComponent,
-  LessonComponent,
+  LessonOverviewComponent,
+  LessonAsTextComponent,
+  LessonAsVideoComponent,
   // Collections
   CollectionsListComponent,
   CollectionOverviewComponent,
   // Exercises
-  AllExercisesOverviewComponent,
   ExerciseOverviewComponent,
   ExerciseComponent,
+  // AllExercises
+  AllExercisesOverviewComponent,
 ];

@@ -31,6 +31,32 @@ export type LessonsForToolQuery = (
   )> }
 );
 
+export type LessonOverviewFragment = (
+  { __typename?: 'Lesson' }
+  & Pick<Types.Lesson, 'title' | 'description' | 'video' | 'contentCount'>
+);
+
+export type LessonOverviewQueryVariables = Types.Exact<{
+  userJwt: Types.Scalars['String'];
+  toolId: Types.Scalars['String'];
+  lessonId: Types.Scalars['Int'];
+}>;
+
+
+export type LessonOverviewQuery = (
+  { __typename?: 'Query' }
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & { lesson?: Types.Maybe<(
+        { __typename?: 'Lesson' }
+        & LessonOverviewFragment
+      )> }
+    )> }
+  )> }
+);
+
 export type LessonTextContentFragment = (
   { __typename: 'LessonTextContent' }
   & Pick<Types.LessonTextContent, 'contentId' | 'content'>
@@ -59,9 +85,9 @@ export type LessonMultipleChoiceQuestionContentFragment = (
   )> }
 );
 
-export type LessonFragment = (
+export type LessonAsTextFragment = (
   { __typename?: 'Lesson' }
-  & Pick<Types.Lesson, 'lessonId' | 'title' | 'description' | 'video'>
+  & Pick<Types.Lesson, 'lessonId' | 'title' | 'description'>
   & { contents: Array<(
     { __typename?: 'LessonMultipleChoiceQuestionsContent' }
     & LessonMultipleChoiceQuestionContentFragment
@@ -71,23 +97,43 @@ export type LessonFragment = (
   )> }
 );
 
-export type LessonQueryVariables = Types.Exact<{
+export type LessonAsTextQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
   lessonId: Types.Scalars['Int'];
 }>;
 
 
-export type LessonQuery = (
+export type LessonAsTextQuery = (
   { __typename?: 'Query' }
   & { me?: Types.Maybe<(
     { __typename?: 'User' }
     & { tool?: Types.Maybe<(
       { __typename?: 'CollectionTool' }
-      & Pick<Types.CollectionTool, 'name'>
       & { lesson?: Types.Maybe<(
         { __typename?: 'Lesson' }
-        & LessonFragment
+        & LessonAsTextFragment
+      )> }
+    )> }
+  )> }
+);
+
+export type LessonAsVideoQueryVariables = Types.Exact<{
+  userJwt: Types.Scalars['String'];
+  toolId: Types.Scalars['String'];
+  lessonId: Types.Scalars['Int'];
+}>;
+
+
+export type LessonAsVideoQuery = (
+  { __typename?: 'Query' }
+  & { me?: Types.Maybe<(
+    { __typename?: 'User' }
+    & { tool?: Types.Maybe<(
+      { __typename?: 'CollectionTool' }
+      & { lesson?: Types.Maybe<(
+        { __typename?: 'Lesson' }
+        & Pick<Types.Lesson, 'video'>
       )> }
     )> }
   )> }
@@ -591,6 +637,14 @@ export const LessonIdentifierFragmentDoc = gql`
   video
 }
     `;
+export const LessonOverviewFragmentDoc = gql`
+    fragment LessonOverview on Lesson {
+  title
+  description
+  video
+  contentCount
+}
+    `;
 export const LessonTextContentFragmentDoc = gql`
     fragment LessonTextContent on LessonTextContent {
   __typename
@@ -623,12 +677,11 @@ export const LessonMultipleChoiceQuestionContentFragmentDoc = gql`
   }
 }
     ${LessonMultipleChoiceQuestionFragmentDoc}`;
-export const LessonFragmentDoc = gql`
-    fragment Lesson on Lesson {
+export const LessonAsTextFragmentDoc = gql`
+    fragment LessonAsText on Lesson {
   lessonId
   title
   description
-  video
   contents {
     ... on LessonTextContent {
       ...LessonTextContent
@@ -1006,24 +1059,61 @@ export const LessonsForToolDocument = gql`
     document = LessonsForToolDocument;
     
   }
-export const LessonDocument = gql`
-    query Lesson($userJwt: String!, $toolId: String!, $lessonId: Int!) {
+export const LessonOverviewDocument = gql`
+    query LessonOverview($userJwt: String!, $toolId: String!, $lessonId: Int!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
-      name
       lesson(lessonId: $lessonId) {
-        ...Lesson
+        ...LessonOverview
       }
     }
   }
 }
-    ${LessonFragmentDoc}`;
+    ${LessonOverviewFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'
   })
-  export class LessonGQL extends Apollo.Query<LessonQuery, LessonQueryVariables> {
-    document = LessonDocument;
+  export class LessonOverviewGQL extends Apollo.Query<LessonOverviewQuery, LessonOverviewQueryVariables> {
+    document = LessonOverviewDocument;
+    
+  }
+export const LessonAsTextDocument = gql`
+    query LessonAsText($userJwt: String!, $toolId: String!, $lessonId: Int!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      lesson(lessonId: $lessonId) {
+        ...LessonAsText
+      }
+    }
+  }
+}
+    ${LessonAsTextFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class LessonAsTextGQL extends Apollo.Query<LessonAsTextQuery, LessonAsTextQueryVariables> {
+    document = LessonAsTextDocument;
+    
+  }
+export const LessonAsVideoDocument = gql`
+    query LessonAsVideo($userJwt: String!, $toolId: String!, $lessonId: Int!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      lesson(lessonId: $lessonId) {
+        video
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class LessonAsVideoGQL extends Apollo.Query<LessonAsVideoQuery, LessonAsVideoQueryVariables> {
+    document = LessonAsVideoDocument;
     
   }
 export const RegisterDocument = gql`

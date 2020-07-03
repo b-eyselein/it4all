@@ -1,0 +1,62 @@
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {LessonOverviewFragment, LessonOverviewGQL, LessonOverviewQuery} from '../../../../_services/apollo_services';
+import {Subscription} from 'rxjs';
+import {AuthenticationService} from '../../../../_services/authentication.service';
+
+@Component({
+  selector: 'it4all-lesson-overview',
+  template: `
+    <div class="container">
+
+      <ng-container *ngIf="lessonOverviewQuery; else loadingDataBlock">
+
+        <h1 class="title is-2 has-text-centered">{{lessonOverviewFragment.title}}</h1>
+
+        <p>{{lessonOverviewFragment.description}}</p>
+
+      </ng-container>
+
+    </div>
+
+    <ng-template #loadingDataBlock>
+      <div class="notification is-primary has-text-centered">Lade Daten...</div>
+    </ng-template>
+  `,
+})
+export class LessonOverviewComponent implements OnInit, OnDestroy {
+
+  private sub: Subscription;
+
+  lessonOverviewQuery: LessonOverviewQuery;
+
+  constructor(
+    private authenticationService: AuthenticationService,
+    private route: ActivatedRoute,
+    private lessonOverviewGQL: LessonOverviewGQL
+  ) {
+  }
+
+  ngOnInit(): void {
+    const userJwt = this.authenticationService.currentUserValue.jwt;
+
+    this.sub = this.route.paramMap.subscribe((paramMap) => {
+      const toolId = paramMap.get('toolId');
+      const lessonId = parseInt(paramMap.get('lessonId'), 10);
+
+      this.lessonOverviewGQL
+        .watch({userJwt, toolId, lessonId})
+        .valueChanges
+        .subscribe(({data}) => this.lessonOverviewQuery = data);
+    });
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
+
+  get lessonOverviewFragment(): LessonOverviewFragment | null {
+    return this.lessonOverviewQuery ? this.lessonOverviewQuery.me.tool.lesson : undefined;
+  }
+
+}

@@ -58,23 +58,25 @@ import {LessonQuestionsContentComponent} from './lessons/_content-types/lesson-q
     ExerciseOverviewComponent,
     ExerciseLinkCardComponent,
 
+    ProficiencyCardComponent,
+
     ExerciseComponent,
 
-    StringSampleSolComponent,
+    StringSampleSolComponent, FilledPointsComponent,
 
     RegexExerciseComponent, RegexMatchingResultComponent, RegexExtractionResultComponent, RegexExtractionMatchComponent,
     RegexCheatsheetComponent,
 
-    ProgrammingExerciseComponent, ProgrammingSimplifiedResultComponent,
+    ProgrammingExerciseComponent, ProgrammingSimplifiedResultComponent, ProgrammingUnitTestResultComponent, ProgrammingNormalResultComponent,
 
-    SqlExerciseComponent, SqlResultComponent, SqlMatchingResultComponent, SqlExecutionResultComponent, SqlTableContentsComponent,
+    SqlExerciseComponent, SqlResultComponent, SqlMatchingResultComponent, SqlExecutionResultComponent, SqlTableContentsComponent, QueryResultTableComponent,
 
     UmlDiagramDrawingComponent, UmlClassEditComponent, UmlAssocEditComponent, UmlExerciseComponent, UmlClassSelectionComponent,
     UmlDiagDrawingCorrectionComponent, UmlAssocMatchComponent, UmlImplMatchComponent, UmlMemberAllocationComponent,
 
-    WebExerciseComponent,
+    WebExerciseComponent, HtmlTaskResultComponent, HtmlAttributeResultComponent,
 
-    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent, QueryResultTableComponent, ProgrammingUnitTestResultComponent, ProgrammingNormalResultComponent, HtmlTaskResultComponent, HtmlAttributeResultComponent, FilledPointsComponent, ProficiencyCardComponent
+    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent
   ],
   providers: [],
   imports: [

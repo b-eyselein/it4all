@@ -1,33 +1,36 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {
-  LessonGQL,
+  LessonAsTextGQL,
+  LessonAsTextQuery,
   LessonMultipleChoiceQuestionContentFragment,
-  LessonQuery,
   LessonTextContentFragment
 } from '../../../../_services/apollo_services';
 import {AuthenticationService} from '../../../../_services/authentication.service';
 import {isSolvableLessonMultipleChoiceQuestionContentFragment, isSolvableLessonTextContentFragment} from '../solvable-lesson-content';
+import {Subscription} from 'rxjs';
 
 
-@Component({templateUrl: './lesson.component.html'})
-export class LessonComponent implements OnInit {
+@Component({templateUrl: './lesson-as-text.component.html'})
+export class LessonAsTextComponent implements OnInit, OnDestroy {
 
-  lessonQuery: LessonQuery;
+  private sub: Subscription;
+
+  lessonQuery: LessonAsTextQuery;
 
   currentIndex = 0;
 
   constructor(
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
-    private lessonGQL: LessonGQL
+    private lessonGQL: LessonAsTextGQL,
   ) {
   }
 
   ngOnInit() {
     const userJwt = this.authenticationService.currentUserValue.jwt;
 
-    this.route.paramMap.subscribe((paramMap) => {
+    this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
       const lessonId = parseInt(paramMap.get('lessonId'), 10);
 
@@ -36,6 +39,10 @@ export class LessonComponent implements OnInit {
         .valueChanges
         .subscribe(({data}) => this.lessonQuery = data);
     });
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 
   get currentTextContentFragment(): LessonTextContentFragment | undefined {

@@ -20,6 +20,25 @@ query LessonsForTool($userJwt: String!, $toolId: String!) {
 
 # /tools/:toolId/lessons/:lessonId
 
+fragment LessonOverview on Lesson {
+  title
+  description
+  video
+  contentCount
+}
+
+query LessonOverview($userJwt: String!, $toolId: String!, $lessonId: Int!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      lesson(lessonId: $lessonId) {
+        ...LessonOverview
+      }
+    }
+  }
+}
+
+# /tools/:toolId/lessons/:lessonId/asText
+
 fragment LessonTextContent on LessonTextContent {
   __typename
   contentId
@@ -48,11 +67,10 @@ fragment LessonMultipleChoiceQuestionContent on LessonMultipleChoiceQuestionsCon
   }
 }
 
-fragment Lesson on Lesson {
+fragment LessonAsText on Lesson {
   lessonId
   title
   description
-  video
   contents  {
     ...on LessonTextContent {
       ...LessonTextContent
@@ -63,12 +81,23 @@ fragment Lesson on Lesson {
   }
 }
 
-query Lesson($userJwt: String!,$toolId: String!, $lessonId: Int!) {
+query LessonAsText($userJwt: String!, $toolId: String!, $lessonId: Int!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
-      name
       lesson(lessonId: $lessonId) {
-        ...Lesson
+        ...LessonAsText
+      }
+    }
+  }
+}
+
+# /tools/:toolId/lesson/:lessonId/asVideo
+
+query LessonAsVideo($userJwt: String!, $toolId: String!, $lessonId: Int!) {
+  me(userJwt: $userJwt) {
+    tool(toolId: $toolId) {
+      lesson(lessonId: $lessonId) {
+        video
       }
     }
   }

@@ -16,7 +16,7 @@ trait MongoLessonQueries {
 
   private implicit val lessonFormat: OFormat[Lesson] = JsonProtocols.lessonFormat
 
-  private def futureLessonsCollection: Future[JSONCollection] = reactiveMongoApi.database.map(_.collection("lessons"))
+  protected def futureLessonsCollection: Future[JSONCollection] = reactiveMongoApi.database.map(_.collection("lessons"))
 
   protected def futureLessonCountForTool(toolId: String): Future[Long] =
     for {

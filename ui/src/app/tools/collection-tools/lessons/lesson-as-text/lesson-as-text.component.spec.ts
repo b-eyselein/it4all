@@ -1,18 +1,18 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {LessonComponent} from './lesson.component';
+import {LessonAsTextComponent} from './lesson-as-text.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {ActivatedRoute} from '@angular/router';
 
 describe('LessonComponent', () => {
-  let component: LessonComponent;
-  let fixture: ComponentFixture<LessonComponent>;
+  let component: LessonAsTextComponent;
+  let fixture: ComponentFixture<LessonAsTextComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
-      declarations: [LessonComponent],
+      declarations: [LessonAsTextComponent],
       providers: [
         {
           provide: ActivatedRoute,
@@ -23,7 +23,7 @@ describe('LessonComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LessonComponent);
+    fixture = TestBed.createComponent(LessonAsTextComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
