@@ -13,7 +13,16 @@ import {AuthenticationService} from '../../../../_services/authentication.servic
 
         <h1 class="title is-2 has-text-centered">{{lessonOverviewFragment.title}}</h1>
 
-        <p>{{lessonOverviewFragment.description}}</p>
+        <div class="content box">{{lessonOverviewFragment.description}}</div>
+
+        <div class="columns">
+          <div class="column">
+            <a class="button is-fullwidth" *ngIf="lessonOverviewFragment.video" routerLink="video">Als Video</a>
+          </div>
+          <div class="column">
+            <a class="button is-fullwidth" *ngIf="lessonOverviewFragment.contentCount > 0" routerLink="text">Als Text</a>
+          </div>
+        </div>
 
       </ng-container>
 

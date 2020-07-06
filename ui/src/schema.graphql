@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Fri Jul 03 2020 10:28:31 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon Jul 06 2020 14:42:37 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -264,11 +264,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  UNSUCCESSFUL_MATCH
-  PARTIAL_MATCH
-  SUCCESSFUL_MATCH
   ONLY_SAMPLE
   ONLY_USER
+  SUCCESSFUL_MATCH
+  PARTIAL_MATCH
+  UNSUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -513,11 +513,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
+  CREATE
+  UPDATE
+  SELECT
   INSERT
   DELETE
-  UPDATE
-  CREATE
-  SELECT
 }
 
 enum SqlExPart {

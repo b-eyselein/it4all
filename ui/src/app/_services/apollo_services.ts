@@ -133,7 +133,7 @@ export type LessonAsVideoQuery = (
       { __typename?: 'CollectionTool' }
       & { lesson?: Types.Maybe<(
         { __typename?: 'Lesson' }
-        & Pick<Types.Lesson, 'video'>
+        & Pick<Types.Lesson, 'title' | 'video'>
       )> }
     )> }
   )> }
@@ -1102,6 +1102,7 @@ export const LessonAsVideoDocument = gql`
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
       lesson(lessonId: $lessonId) {
+        title
         video
       }
     }

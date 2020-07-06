@@ -10,13 +10,14 @@ import {ActivatedRoute} from '@angular/router';
   template: `
     <div class="container">
 
-      <div class="content box my-3" *ngIf="lessonAsVideoQuery.me.tool.lesson.video">
-        <figure class="image is-16by9">
-          <iframe [src]="sanitizeUrl(lessonAsVideoQuery.me.tool.lesson.video)" frameborder="0" width="560" height="315"
-                  class="has-ratio" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen></iframe>
-        </figure>
-      </div>
+      <h1 class="title is-3 has-text-centered">{{lessonAsVideoQuery.me.tool.lesson.title}}</h1>
+
+      <figure class="image is-16by9" *ngIf="lessonAsVideoQuery.me.tool.lesson.video">
+        <iframe [src]="sanitizeUrl(lessonAsVideoQuery.me.tool.lesson.video)"
+                frameborder="0" width="560" height="315" class="has-ratio"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+      </figure>
     </div>
   `
 })
