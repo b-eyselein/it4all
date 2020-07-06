@@ -70,6 +70,7 @@ export class LessonQuestionsContentComponent implements OnInit {
   }
 
   isCorrectedAndCorrect(questionWithSelectableAnswer: QuestionWithSelectableAnswer, answer: SelectableAnswer): string {
+    // FIXME: implement!
     if (questionWithSelectableAnswer.corrected) {
       return 'TODO!';
     } else {
