@@ -1,7 +1,6 @@
 package model.tools.sql
 
 import model.SampleSolution
-import model.result.InternalErrorResult
 import model.points._
 import model.tools.AbstractCorrector
 import model.tools.sql.matcher._
@@ -17,11 +16,8 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
 
   override type AbstractResult = SqlAbstractResult
 
-  override protected def buildInternalError(
-    msg: String,
-    solutionSaved: Boolean,
-    maxPoints: Points
-  ): SqlAbstractResult with InternalErrorResult = SqlInternalErrorResult(msg, solutionSaved, maxPoints)
+  override protected def buildInternalError(msg: String, maxPoints: Points): SqlInternalErrorResult =
+    SqlInternalErrorResult(msg, maxPoints)
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
@@ -32,14 +28,13 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
     database: SqlExecutionDAO,
     schemaName: String,
     learnerSolution: String,
-    sampleSolutions: Seq[SampleSolution[String]],
-    solutionSaved: Boolean
+    sampleSolutions: Seq[SampleSolution[String]]
   )(implicit ec: ExecutionContext): SqlAbstractResult =
     parseStatement(learnerSolution).fold(
-      exception => SqlInternalErrorResult("Your query could not be parsed: " + exception.getMessage, solutionSaved),
+      exception => SqlInternalErrorResult("Your query could not be parsed: " + exception.getMessage),
       userQ =>
         checkStatement(userQ).fold(
-          _ => SqlInternalErrorResult("Wrong type of statement!", solutionSaved),
+          _ => SqlInternalErrorResult("Wrong type of statement!"),
           userQ => {
             val userColumns         = getColumnWrappers(userQ)
             val userTables          = getTables(userQ)
@@ -73,7 +68,7 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
               case Some((sampleQ, sc)) =>
                 val executionResult = database.executeQueries(schemaName, userQ, sampleQ)
 
-                SqlResult(sc, executionResult, solutionSaved)
+                SqlResult(sc, executionResult)
             }
           }
         )

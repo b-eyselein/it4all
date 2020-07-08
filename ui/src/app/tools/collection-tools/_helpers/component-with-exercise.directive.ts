@@ -19,7 +19,7 @@ export abstract class ComponentWithExerciseDirective<SolutionType,
 
   isCorrecting = false;
 
-  resultQuery: MutationQueryType;
+  resultQuery: MutationQueryType | undefined;
 
   displaySampleSolutions = false;
 

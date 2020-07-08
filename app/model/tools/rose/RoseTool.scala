@@ -31,13 +31,12 @@ object RoseTool extends Tool("rose", "Rose", ToolState.PRE_ALPHA) {
     user: LoggedInUser,
     solution: String,
     exercise: RoseExercise,
-    part: RoseExPart,
-    solutionSaved: Boolean
+    part: RoseExPart
   )(implicit executionContext: ExecutionContext): Future[RoseAbstractResult] = {
 
     val solDir = solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId)
 
-    RoseCorrector.correct(solution, exercise, ProgLanguages.StandardLanguage, solDir, solutionSaved)
+    RoseCorrector.correct(solution, exercise, ProgLanguages.StandardLanguage, solDir)
   }
 
   override val initialData: InitialData[RoseExerciseContent] = RoseInitialData

@@ -16,7 +16,14 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
 import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
-import {UmlCorrectionGQL, UmlCorrectionMutation, UmlCorrectionMutationVariables, UmlResultFragment} from '../uml-apollo-mutations.service';
+import {
+  UmlAbstractResultFragment,
+  UmlCorrectionGQL,
+  UmlCorrectionMutation,
+  UmlCorrectionMutationVariables,
+  UmlInternalErrorResultFragment,
+  UmlResultFragment
+} from '../uml-apollo-mutations.service';
 import {UmlClassDiagram, UmlClassDiagramInput, UmlExPart} from '../../../../_interfaces/graphql-types';
 
 import * as joint from 'jointjs';
@@ -270,8 +277,12 @@ export class UmlDiagramDrawingComponent
     };
   }
 
+  get umlAbstractResult(): UmlAbstractResultFragment & (UmlInternalErrorResultFragment | UmlResultFragment) | null {
+    return this.resultQuery?.me.umlExercise?.correct;
+  }
+
   get result(): UmlResultFragment | null {
-    return this.resultQuery.me.correctUml.__typename === 'UmlResult' ? this.resultQuery.me.correctUml : null;
+    return this.umlAbstractResult?.__typename === 'UmlResult' ? this.umlAbstractResult : null;
   }
 
   correct(): void {

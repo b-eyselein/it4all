@@ -3,15 +3,18 @@ package model.tools.xml
 import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
 import model.SampleSolution
+import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.matching.MatchType
 import model.result.SuccessType
-import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
+import model.tools.ToolJsonProtocol
 import sangria.macros.derive._
 import sangria.schema._
 
 object XmlGraphQLModels
     extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlAbstractResult]
     with GraphQLArguments {
+
+  override protected val jsonFormats: ToolJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] = XmlToolJsonProtocol
 
   override val partEnumType: EnumType[XmlExPart] = EnumType(
     "XmlExPart",

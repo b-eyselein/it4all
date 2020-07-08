@@ -17,17 +17,32 @@ export type ProgrammingCorrectionMutation = (
   { __typename?: 'Mutation' }
   & { me?: Types.Maybe<(
     { __typename?: 'UserMutations' }
-    & { correctProgramming: (
-      { __typename: 'ProgrammingInternalErrorResult' }
-      & Pick<Types.ProgrammingInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
-      & ProgrammingInternalErrorResultFragment
-    ) | (
-      { __typename: 'ProgrammingResult' }
-      & Pick<Types.ProgrammingResult, 'solutionSaved' | 'points' | 'maxPoints'>
-      & ProgrammingResultFragment
-    ) }
+    & { programmingExercise?: Types.Maybe<(
+      { __typename?: 'ProgrammingExerciseMutations' }
+      & { correct: (
+        { __typename?: 'ProgrammingInternalErrorResult' }
+        & ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment
+        & ProgrammingInternalErrorResultFragment
+      ) | (
+        { __typename?: 'ProgrammingResult' }
+        & ProgrammingAbstractResult_ProgrammingResult_Fragment
+        & ProgrammingResultFragment
+      ) }
+    )> }
   )> }
 );
+
+type ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment = (
+  { __typename: 'ProgrammingInternalErrorResult' }
+  & Pick<Types.ProgrammingInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type ProgrammingAbstractResult_ProgrammingResult_Fragment = (
+  { __typename: 'ProgrammingResult' }
+  & Pick<Types.ProgrammingResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+export type ProgrammingAbstractResultFragment = ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment | ProgrammingAbstractResult_ProgrammingResult_Fragment;
 
 export type ProgrammingInternalErrorResultFragment = (
   { __typename?: 'ProgrammingInternalErrorResult' }
@@ -67,6 +82,14 @@ export type UnitTestCorrectionResultFragment = (
   ) }
 );
 
+export const ProgrammingAbstractResultFragmentDoc = gql`
+    fragment ProgrammingAbstractResult on ProgrammingAbstractResult {
+  __typename
+  solutionSaved
+  points
+  maxPoints
+}
+    `;
 export const ProgrammingInternalErrorResultFragmentDoc = gql`
     fragment ProgrammingInternalErrorResult on ProgrammingInternalErrorResult {
   msg
@@ -119,17 +142,17 @@ ${UnitTestCorrectionResultFragmentDoc}`;
 export const ProgrammingCorrectionDocument = gql`
     mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
   me(userJwt: $userJwt) {
-    correctProgramming(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-      __typename
-      solutionSaved
-      points
-      maxPoints
-      ...ProgrammingInternalErrorResult
-      ...ProgrammingResult
+    programmingExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...ProgrammingAbstractResult
+        ...ProgrammingInternalErrorResult
+        ...ProgrammingResult
+      }
     }
   }
 }
-    ${ProgrammingInternalErrorResultFragmentDoc}
+    ${ProgrammingAbstractResultFragmentDoc}
+${ProgrammingInternalErrorResultFragmentDoc}
 ${ProgrammingResultFragmentDoc}`;
 
   @Injectable({

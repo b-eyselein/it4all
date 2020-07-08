@@ -40,14 +40,14 @@
 
           <ng-container *ngIf="resultQuery">
 
-            <it4all-solution-saved [saved]="resultQuery.me.correctXml.solutionSaved"></it4all-solution-saved>
+            <it4all-solution-saved [saved]="xmlAbstractResult.solutionSaved"></it4all-solution-saved>
 
             <br>
 
             <it4all-points-notification
-              *ngIf="isGrammarPart"
-              [points]="resultQuery.me.correctXml.points"
-              [maxPoints]="resultQuery.me.correctXml.maxPoints">
+              *ngIf="isGrammarPart && xmlAbstractResult"
+              [points]="xmlAbstractResult.points"
+              [maxPoints]="xmlAbstractResult.maxPoints">
             </it4all-points-notification>
 
             <br>

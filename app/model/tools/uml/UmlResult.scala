@@ -1,18 +1,23 @@
 package model.tools.uml
 
 import model.matching.MatchType
-import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
+import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 
-trait UmlAbstractResult extends AbstractCorrectionResult
+trait UmlAbstractResult extends AbstractCorrectionResult[UmlAbstractResult]
 
 final case class UmlInternalErrorResult(
   msg: String,
-  solutionSaved: Boolean,
-  maxPoints: Points
+  maxPoints: Points,
+  solutionSaved: Boolean = false
 ) extends UmlAbstractResult
-    with InternalErrorResult
+    with InternalErrorResult[UmlAbstractResult] {
+
+  override def updateSolutionSaved(solutionSaved: Boolean): UmlAbstractResult =
+    this.copy(solutionSaved = solutionSaved)
+
+}
 
 final case class UmlResult(
   classResult: Option[ClassComparison],
@@ -20,7 +25,7 @@ final case class UmlResult(
   implResult: Option[ImplementationComparison],
   points: Points,
   maxPoints: Points,
-  solutionSaved: Boolean
+  solutionSaved: Boolean = false
 ) extends UmlAbstractResult {
 
   override def isCompletelyCorrect: Boolean = {
@@ -34,5 +39,7 @@ final case class UmlResult(
     classResultOk && assocResultOk && implResultOk
 
   }
+
+  override def updateSolutionSaved(solutionSaved: Boolean): UmlAbstractResult = this.copy(solutionSaved = solutionSaved)
 
 }

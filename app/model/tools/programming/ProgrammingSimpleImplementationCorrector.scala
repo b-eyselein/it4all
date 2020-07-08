@@ -19,11 +19,10 @@ object ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorre
     solTargetDir: File,
     exerciseContent: ProgrammingExerciseContent,
     progSolutionFilesMounts: Seq[DockerBind],
-    resultFile: File,
-    solutionSaved: Boolean
+    resultFile: File
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] =
     exerciseContent.unitTestPart.simplifiedTestMainFile.map(_.content) match {
-      case None => Future.successful(onError("Die not find simplified execution main content", solutionSaved))
+      case None => Future.successful(onError("Die not find simplified execution main content"))
       case Some(simplifiedMainContent) =>
         val testMainFile = solTargetDir / testMainFileName
         createFileAndWrite(testMainFile, simplifiedMainContent)
@@ -47,16 +46,14 @@ object ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorre
             case Failure(exception) =>
               onError(
                 "Error while running programming simplified execution docker image",
-                solutionSaved,
                 maybeException = Some(exception)
               )
             case Success(_) =>
               ResultsFileJsonFormat
                 .readSimplifiedExecutionResultFile(resultFile)
                 .fold(
-                  exception =>
-                    onError("Error while reading result file", solutionSaved, maybeException = Some(exception)),
-                  results => ProgrammingResult(solutionSaved, simplifiedResults = results)
+                  exception => onError("Error while reading result file", maybeException = Some(exception)),
+                  results => ProgrammingResult(simplifiedResults = results)
                 )
           }
     }

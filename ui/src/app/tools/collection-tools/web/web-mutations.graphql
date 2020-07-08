@@ -1,13 +1,20 @@
-mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!,$part: WebExPart!, $solution: WebSolutionInput!) {
+mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
   me(userJwt:$userJwt) {
-    correctWeb(collId: $collId, exId: $exId,part: $part, solution: $solution) {
-      __typename
-      solutionSaved
-      points
-      maxPoints
-      ...WebResult
+    webExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...WebAbstractResult
+        ...WebResult
+        ...WebInternalErrorResult
+      }
     }
   }
+}
+
+fragment WebAbstractResult on WebAbstractResult{
+  __typename
+  solutionSaved
+  points
+  maxPoints
 }
 
 fragment WebInternalErrorResult on WebInternalErrorResult {

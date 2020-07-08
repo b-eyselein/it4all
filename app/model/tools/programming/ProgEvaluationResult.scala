@@ -1,7 +1,7 @@
 package model.tools.programming
 
-import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import model.points._
+import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import play.api.libs.json.JsValue
 
 sealed trait ProgEvalResult {
@@ -10,17 +10,22 @@ sealed trait ProgEvalResult {
 
 }
 
-trait ProgrammingAbstractResult extends AbstractCorrectionResult
+trait ProgrammingAbstractResult extends AbstractCorrectionResult[ProgrammingAbstractResult]
 
 final case class ProgrammingInternalErrorResult(
   msg: String,
-  solutionSaved: Boolean,
-  maxPoints: Points
+  maxPoints: Points,
+  solutionSaved: Boolean = false
 ) extends ProgrammingAbstractResult
-    with InternalErrorResult
+    with InternalErrorResult[ProgrammingAbstractResult] {
+
+  override def updateSolutionSaved(solutionSaved: Boolean): ProgrammingAbstractResult =
+    this.copy(solutionSaved = solutionSaved)
+
+}
 
 final case class ProgrammingResult(
-  solutionSaved: Boolean,
+  solutionSaved: Boolean = false,
   simplifiedResults: Seq[SimplifiedExecutionResult] = Seq.empty,
   normalResult: Option[NormalExecutionResult] = None,
   unitTestResults: Seq[UnitTestCorrectionResult] = Seq.empty
@@ -42,6 +47,9 @@ final case class ProgrammingResult(
 
     simplifiedResultOk && normalResultOk && unitTestResultsOk
   }
+
+  override def updateSolutionSaved(solutionSaved: Boolean): ProgrammingAbstractResult =
+    this.copy(solutionSaved = solutionSaved)
 
 }
 

@@ -2,12 +2,15 @@ package model.tools.rose
 
 import model.SampleSolution
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
+import model.tools.ToolJsonProtocol
 import sangria.macros.derive.{ExcludeFields, Interfaces, deriveObjectType}
 import sangria.schema._
 
 object RoseGraphQLModels
     extends ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExPart, RoseAbstractResult]
     with GraphQLArguments {
+
+  override protected val jsonFormats: ToolJsonProtocol[String, RoseExerciseContent, RoseExPart] = RoseToolJsonProtocol
 
   override val partEnumType: EnumType[RoseExPart] = EnumType(
     "RoseExPart",

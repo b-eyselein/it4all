@@ -1,8 +1,9 @@
 package model.tools.programming
 
-import model.{ExerciseFile, SampleSolution}
-import model.result.SuccessType
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
+import model.result.SuccessType
+import model.tools.ToolJsonProtocol
+import model.{ExerciseFile, SampleSolution}
 import play.api.libs.json.Json
 import sangria.macros.derive._
 import sangria.schema._
@@ -10,6 +11,9 @@ import sangria.schema._
 object ProgrammingGraphQLModels
     extends ToolGraphQLModelBasics[ProgSolution, ProgrammingExerciseContent, ProgExPart, ProgrammingAbstractResult]
     with GraphQLArguments {
+
+  override protected val jsonFormats: ToolJsonProtocol[ProgSolution, ProgrammingExerciseContent, ProgExPart] =
+    ProgrammingToolJsonProtocol
 
   override val partEnumType: EnumType[ProgExPart] = EnumType(
     "ProgExPart",

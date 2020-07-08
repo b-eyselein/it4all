@@ -1,24 +1,22 @@
 package model.tools
 
-import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
+import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import play.api.Logger
 
 trait AbstractCorrector {
 
-  type AbstractResult <: AbstractCorrectionResult
+  type AbstractResult <: AbstractCorrectionResult[AbstractResult]
 
   protected val logger: Logger
 
   protected def buildInternalError(
     msg: String,
-    solutionSaved: Boolean,
     maxPoints: Points
-  ): AbstractResult with InternalErrorResult
+  ): AbstractResult with InternalErrorResult[AbstractResult]
 
   protected def onError(
     internalMsg: String,
-    solutionSaved: Boolean,
     externalMsg: Option[String] = None,
     maybeException: Option[Throwable] = None,
     maxPoints: Points = (-1).points
@@ -28,7 +26,7 @@ trait AbstractCorrector {
       case Some(exception) => logger.error(internalMsg, exception)
     }
 
-    buildInternalError(externalMsg.getOrElse(internalMsg), solutionSaved, maxPoints)
+    buildInternalError(externalMsg.getOrElse(internalMsg), maxPoints)
   }
 
 }

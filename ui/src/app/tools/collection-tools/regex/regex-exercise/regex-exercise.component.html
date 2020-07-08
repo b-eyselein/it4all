@@ -37,13 +37,11 @@
         <it4all-tab [title]="correctionTabTitle">
           <ng-container *ngIf="resultQuery">
 
-            <it4all-solution-saved [saved]="resultQuery.me.correctRegex.solutionSaved"></it4all-solution-saved>
+            <it4all-solution-saved *ngIf="basicResult" [saved]="basicResult.solutionSaved"></it4all-solution-saved>
 
             <br>
 
-            <it4all-points-notification
-              [points]="resultQuery.me.correctRegex.points"
-              [maxPoints]="resultQuery.me.correctRegex.maxPoints">
+            <it4all-points-notification [points]="basicResult.points" [maxPoints]="basicResult.maxPoints">
             </it4all-points-notification>
 
             <br>

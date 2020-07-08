@@ -20,9 +20,8 @@ object RoseCorrector extends AbstractCorrector {
 
   override protected def buildInternalError(
     msg: String,
-    solutionSaved: Boolean,
     maxPoints: Points
-  ): RoseInternalErrorResult = RoseInternalErrorResult(msg, solutionSaved, maxPoints)
+  ): RoseInternalErrorResult = RoseInternalErrorResult(msg, maxPoints)
 
   val roseCorrectionDockerImageName: ScalaDockerImage = ScalaDockerImage("beyselein", "rose")
 
@@ -35,71 +34,65 @@ object RoseCorrector extends AbstractCorrector {
     learnerSolution: String,
     exercise: RoseExercise,
     language: ProgLanguage,
-    solutionTargetDir: File,
-    solutionSaved: Boolean
-  )(implicit ec: ExecutionContext): Future[RoseAbstractResult] = exercise.content.sampleSolutions.headOption match {
-    case None => Future.successful(onError("No sample solution for rose exercise!", solutionSaved))
-    case Some(completeSampleSolution) =>
-      val sampleSolution = completeSampleSolution.sample
+    solutionTargetDir: File
+  )(implicit ec: ExecutionContext): Future[RoseAbstractResult] =
+    exercise.content.sampleSolutions.headOption match {
+      case None => Future.successful(onError("No sample solution for rose exercise!"))
+      case Some(completeSampleSolution) =>
+        val sampleSolution = completeSampleSolution.sample
 
-      // Check if image exists
-      val futureImageExists = Future(DockerConnector.imageExists(roseCorrectionDockerImageName.name))
+        // Check if image exists
+        val futureImageExists = Future(DockerConnector.imageExists(roseCorrectionDockerImageName.name))
 
-      val solutionFileName = s"solution_robot.${language.fileEnding}"
-      val sampleFileName   = s"sample_robot.${language.fileEnding}"
+        val solutionFileName = s"solution_robot.${language.fileEnding}"
+        val sampleFileName   = s"sample_robot.${language.fileEnding}"
 
-      val solutionFilePath: File = solutionTargetDir / solutionFileName
-      val sampleFilePath: File   = solutionTargetDir / sampleFileName
+        val solutionFilePath: File = solutionTargetDir / solutionFileName
+        val sampleFilePath: File   = solutionTargetDir / sampleFileName
 
-      val actionFilePath: File  = solutionTargetDir / actionsFileName
-      val optionsFilePath: File = solutionTargetDir / optionsFileName
+        val actionFilePath: File  = solutionTargetDir / actionsFileName
+        val optionsFilePath: File = solutionTargetDir / optionsFileName
 
-      // FIXME: write exercise options file...
-      solutionFilePath.createFileIfNotExists(createParents = true).write(learnerSolution)
-      sampleFilePath.createFileIfNotExists(createParents = true).write(buildSampleFileContent(sampleSolution))
+        // FIXME: write exercise options file...
+        solutionFilePath.createFileIfNotExists(createParents = true).write(learnerSolution)
+        sampleFilePath.createFileIfNotExists(createParents = true).write(buildSampleFileContent(sampleSolution))
 
-      actionFilePath.createIfNotExists()
-      optionsFilePath.createFileIfNotExists(createParents = true).write(buildOptionFileContent())
+        actionFilePath.createIfNotExists()
+        optionsFilePath.createFileIfNotExists(createParents = true).write(buildOptionFileContent())
 
-      val dockerBinds: Seq[DockerBind] = Seq(
-        DockerBind(solutionFilePath, s"${DockerConnector.DefaultWorkingDir}/$solutionFileName"),
-        DockerBind(sampleFilePath, s"${DockerConnector.DefaultWorkingDir}/$sampleFileName"),
-        DockerBind(actionFilePath, s"${DockerConnector.DefaultWorkingDir}/$actionsFileName"),
-        DockerBind(optionsFilePath, s"${DockerConnector.DefaultWorkingDir}/$optionsFileName")
-      )
+        val dockerBinds: Seq[DockerBind] = Seq(
+          DockerBind(solutionFilePath, s"${DockerConnector.DefaultWorkingDir}/$solutionFileName"),
+          DockerBind(sampleFilePath, s"${DockerConnector.DefaultWorkingDir}/$sampleFileName"),
+          DockerBind(actionFilePath, s"${DockerConnector.DefaultWorkingDir}/$actionsFileName"),
+          DockerBind(optionsFilePath, s"${DockerConnector.DefaultWorkingDir}/$optionsFileName")
+        )
 
-      futureImageExists.flatMap {
-        case false => Future.successful(onError("The docker image does not exist!", solutionSaved))
-        case true =>
-          DockerConnector
-            .runContainer(roseCorrectionDockerImageName.name, maybeDockerBinds = dockerBinds)
-            .map {
-              case Failure(exception) =>
-                onError("Error while running docker container", solutionSaved, maybeException = Some(exception))
-              case Success(runContainerResult) =>
-                runContainerResult.statusCode match {
-                  case 0 =>
-                    Try(Json.parse(actionFilePath.contentAsString))
-                      .fold(
-                        error =>
-                          onError("Error while reading result file", solutionSaved, maybeException = Some(error)),
-                        jsValue =>
-                          RoseToolJsonProtocol.roseExecutionResultFormat.reads(jsValue) match {
-                            case JsSuccess(value, _) =>
-                              RoseResult(value, (-1).points, (-1).points, solutionSaved)
-                            case JsError(errors) =>
-                              onError(
-                                s"Error while reading json\n${errors.map(_.toString).mkString("\n")}",
-                                solutionSaved
-                              )
-
-                          }
-                      )
-                  case _ => onError("Error while running container", solutionSaved)
-                }
-            }
-      }
-  }
+        futureImageExists.flatMap {
+          case false => Future.successful(onError("The docker image does not exist!"))
+          case true =>
+            DockerConnector
+              .runContainer(roseCorrectionDockerImageName.name, maybeDockerBinds = dockerBinds)
+              .map {
+                case Failure(exception) =>
+                  onError("Error while running docker container", maybeException = Some(exception))
+                case Success(runContainerResult) =>
+                  runContainerResult.statusCode match {
+                    case 0 =>
+                      Try(Json.parse(actionFilePath.contentAsString))
+                        .fold(
+                          error => onError("Error while reading result file", maybeException = Some(error)),
+                          jsValue =>
+                            RoseToolJsonProtocol.roseExecutionResultFormat.reads(jsValue) match {
+                              case JsSuccess(value, _) => RoseResult(value, (-1).points, (-1).points)
+                              case JsError(errors) =>
+                                onError(s"Error while reading json\n${errors.map(_.toString).mkString("\n")}")
+                            }
+                        )
+                    case _ => onError("Error while running container")
+                  }
+              }
+        }
+    }
 
   private def indent(str: String): String = str.split(NewLine).map(" " * 4 * 2 + _).mkString(NewLine)
 

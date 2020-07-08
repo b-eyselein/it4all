@@ -8,31 +8,21 @@ import {
   XmlExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {
+  XmlAbstractResultFragment,
   XmlCorrectionGQL,
   XmlCorrectionMutation,
   XmlCorrectionMutationVariables,
   XmlDocumentResultFragment,
   XmlGrammarResultFragment,
+  XmlInternalErrorResultFragment,
   XmlResultFragment
 } from '../xml-apollo-mutations.service';
 import {XmlExPart, XmlSolution, XmlSolutionInput} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
-import {XmlDocumentCreation, XmlGrammarCreation} from '../xml-tool';
+import {getXmlDocumentContent, getXmlGrammarContent, XmlDocumentCreation, XmlGrammarCreation} from '../xml-tool';
 import {AuthenticationService} from '../../../../_services/authentication.service';
-
-function getXmlGrammarContent(rootNode: string): string {
-  return `<!ELEMENT ${rootNode} (EMPTY)>`;
-}
-
-function getXmlDocumentContent(rootNode: string): string {
-  return `
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE ${rootNode} SYSTEM "${rootNode}.dtd">
-<${rootNode}>
-</${rootNode}>`.trim();
-}
 
 @Component({
   selector: 'it4all-xml-exercise',
@@ -124,8 +114,12 @@ export class XmlExerciseComponent
     };
   }
 
+  get xmlAbstractResult(): XmlAbstractResultFragment & (XmlResultFragment | XmlInternalErrorResultFragment) | null {
+    return this.resultQuery?.me.xmlExercise?.correct;
+  }
+
   private get xmlResult(): XmlResultFragment | null {
-    return this.resultQuery?.me.correctXml.__typename === 'XmlResult' ? this.resultQuery?.me.correctXml : null;
+    return this.xmlAbstractResult?.__typename === 'XmlResult' ? this.xmlAbstractResult : null;
   }
 
   get grammarResult(): XmlGrammarResultFragment | null {

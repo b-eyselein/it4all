@@ -17,21 +17,41 @@ export type RegexCorrectionMutation = (
   { __typename?: 'Mutation' }
   & { me?: Types.Maybe<(
     { __typename?: 'UserMutations' }
-    & { correctRegex: (
-      { __typename: 'RegexExtractionResult' }
-      & Pick<Types.RegexExtractionResult, 'solutionSaved' | 'points' | 'maxPoints'>
-      & RegexExtractionResultFragment
-    ) | (
-      { __typename: 'RegexInternalErrorResult' }
-      & Pick<Types.RegexInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
-      & RegexInternalErrorResultFragment
-    ) | (
-      { __typename: 'RegexMatchingResult' }
-      & Pick<Types.RegexMatchingResult, 'solutionSaved' | 'points' | 'maxPoints'>
-      & RegexMatchingResultFragment
-    ) }
+    & { regexExercise?: Types.Maybe<(
+      { __typename?: 'RegexExerciseMutations' }
+      & { correct: (
+        { __typename?: 'RegexExtractionResult' }
+        & RegexAbstractResult_RegexExtractionResult_Fragment
+        & RegexExtractionResultFragment
+      ) | (
+        { __typename?: 'RegexInternalErrorResult' }
+        & RegexAbstractResult_RegexInternalErrorResult_Fragment
+        & RegexInternalErrorResultFragment
+      ) | (
+        { __typename?: 'RegexMatchingResult' }
+        & RegexAbstractResult_RegexMatchingResult_Fragment
+        & RegexMatchingResultFragment
+      ) }
+    )> }
   )> }
 );
+
+type RegexAbstractResult_RegexExtractionResult_Fragment = (
+  { __typename: 'RegexExtractionResult' }
+  & Pick<Types.RegexExtractionResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type RegexAbstractResult_RegexInternalErrorResult_Fragment = (
+  { __typename: 'RegexInternalErrorResult' }
+  & Pick<Types.RegexInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type RegexAbstractResult_RegexMatchingResult_Fragment = (
+  { __typename: 'RegexMatchingResult' }
+  & Pick<Types.RegexMatchingResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+export type RegexAbstractResultFragment = RegexAbstractResult_RegexExtractionResult_Fragment | RegexAbstractResult_RegexInternalErrorResult_Fragment | RegexAbstractResult_RegexMatchingResult_Fragment;
 
 export type RegexInternalErrorResultFragment = (
   { __typename?: 'RegexInternalErrorResult' }
@@ -82,6 +102,14 @@ export type RegexExtractionResultFragment = (
   )> }
 );
 
+export const RegexAbstractResultFragmentDoc = gql`
+    fragment RegexAbstractResult on RegexAbstractResult {
+  __typename
+  solutionSaved
+  points
+  maxPoints
+}
+    `;
 export const RegexInternalErrorResultFragmentDoc = gql`
     fragment RegexInternalErrorResult on RegexInternalErrorResult {
   msg
@@ -135,18 +163,18 @@ export const RegexExtractionResultFragmentDoc = gql`
 export const RegexCorrectionDocument = gql`
     mutation RegexCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
   me(userJwt: $userJwt) {
-    correctRegex(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-      __typename
-      solutionSaved
-      points
-      maxPoints
-      ...RegexInternalErrorResult
-      ...RegexMatchingResult
-      ...RegexExtractionResult
+    regexExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...RegexAbstractResult
+        ...RegexInternalErrorResult
+        ...RegexMatchingResult
+        ...RegexExtractionResult
+      }
     }
   }
 }
-    ${RegexInternalErrorResultFragmentDoc}
+    ${RegexAbstractResultFragmentDoc}
+${RegexInternalErrorResultFragmentDoc}
 ${RegexMatchingResultFragmentDoc}
 ${RegexExtractionResultFragmentDoc}`;
 

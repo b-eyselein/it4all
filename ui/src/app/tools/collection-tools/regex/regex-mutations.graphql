@@ -1,15 +1,21 @@
 mutation RegexCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
   me(userJwt: $userJwt) {
-    correctRegex(collId: $collId, exId: $exId,part:$part, solution: $solution) {
-      __typename
-      solutionSaved
-      points
-      maxPoints
-      ...RegexInternalErrorResult
-      ...RegexMatchingResult
-      ...RegexExtractionResult
+    regexExercise(collId: $collId, exId: $exId) {
+      correct(part:$part, solution: $solution) {
+        ...RegexAbstractResult
+        ...RegexInternalErrorResult
+        ...RegexMatchingResult
+        ...RegexExtractionResult
+      }
     }
   }
+}
+
+fragment RegexAbstractResult on RegexAbstractResult {
+  __typename
+  solutionSaved
+  points
+  maxPoints
 }
 
 fragment RegexInternalErrorResult on RegexInternalErrorResult {

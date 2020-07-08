@@ -17,17 +17,32 @@ export type SqlCorrectionMutation = (
   { __typename?: 'Mutation' }
   & { me?: Types.Maybe<(
     { __typename?: 'UserMutations' }
-    & { correctSql: (
-      { __typename: 'SqlInternalErrorResult' }
-      & Pick<Types.SqlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
-      & SqlInternalErrorResultFragment
-    ) | (
-      { __typename: 'SqlResult' }
-      & Pick<Types.SqlResult, 'solutionSaved' | 'points' | 'maxPoints'>
-      & SqlResultFragment
-    ) }
+    & { sqlExercise?: Types.Maybe<(
+      { __typename?: 'SqlExerciseMutations' }
+      & { correct: (
+        { __typename?: 'SqlInternalErrorResult' }
+        & SqlAbstractResult_SqlInternalErrorResult_Fragment
+        & SqlInternalErrorResultFragment
+      ) | (
+        { __typename?: 'SqlResult' }
+        & SqlAbstractResult_SqlResult_Fragment
+        & SqlResultFragment
+      ) }
+    )> }
   )> }
 );
+
+type SqlAbstractResult_SqlInternalErrorResult_Fragment = (
+  { __typename: 'SqlInternalErrorResult' }
+  & Pick<Types.SqlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type SqlAbstractResult_SqlResult_Fragment = (
+  { __typename: 'SqlResult' }
+  & Pick<Types.SqlResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+export type SqlAbstractResultFragment = SqlAbstractResult_SqlInternalErrorResult_Fragment | SqlAbstractResult_SqlResult_Fragment;
 
 export type SqlInternalErrorResultFragment = (
   { __typename?: 'SqlInternalErrorResult' }
@@ -388,6 +403,14 @@ type Mr_XmlElementLineComparisonMatchingResult_Fragment = (
 
 export type MrFragment = Mr_RegexExtractedValuesComparisonMatchingResult_Fragment | Mr_SqlBinaryExpressionComparisonMatchingResult_Fragment | Mr_SqlColumnComparisonMatchingResult_Fragment | Mr_SqlGroupByComparisonMatchingResult_Fragment | Mr_SqlInsertComparisonMatchingResult_Fragment | Mr_SqlLimitComparisonMatchingResult_Fragment | Mr_SqlOrderByComparisonMatchingResult_Fragment | Mr_SqlTableComparisonMatchingResult_Fragment | Mr_UmlAssociationMatchingResult_Fragment | Mr_UmlAttributeMatchingResult_Fragment | Mr_UmlClassMatchingResult_Fragment | Mr_UmlImplementationMatchingResult_Fragment | Mr_UmlMethodMatchingResult_Fragment | Mr_XmlElementLineComparisonMatchingResult_Fragment;
 
+export const SqlAbstractResultFragmentDoc = gql`
+    fragment SqlAbstractResult on SqlAbstractResult {
+  __typename
+  solutionSaved
+  points
+  maxPoints
+}
+    `;
 export const SqlInternalErrorResultFragmentDoc = gql`
     fragment SqlInternalErrorResult on SqlInternalErrorResult {
   msg
@@ -583,17 +606,17 @@ ${SqlExecutionResultFragmentDoc}`;
 export const SqlCorrectionDocument = gql`
     mutation SqlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
   me(userJwt: $userJwt) {
-    correctSql(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-      __typename
-      solutionSaved
-      points
-      maxPoints
-      ...SqlInternalErrorResult
-      ...SqlResult
+    sqlExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...SqlAbstractResult
+        ...SqlInternalErrorResult
+        ...SqlResult
+      }
     }
   }
 }
-    ${SqlInternalErrorResultFragmentDoc}
+    ${SqlAbstractResultFragmentDoc}
+${SqlInternalErrorResultFragmentDoc}
 ${SqlResultFragmentDoc}`;
 
   @Injectable({

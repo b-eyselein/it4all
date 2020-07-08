@@ -2,7 +2,6 @@ package model.tools.regex
 
 import model.matching._
 import model.points._
-import model.tools.AbstractCorrector
 import play.api.Logger
 
 import scala.util.matching.Regex
@@ -33,22 +32,13 @@ object RegexMatchMatcher extends Matcher[RegexMatch, RegexMatchMatch] {
     RegexMatchMatch(MatchType.SUCCESSFUL_MATCH, Some(ua), Some(sa))
 }
 
-object RegexMatchingCorrector extends AbstractCorrector {
-
-  override type AbstractResult = RegexAbstractResult
+object RegexMatchingCorrector extends RegexAbstractCorrector {
 
   override protected val logger: Logger = Logger(RegexMatchingCorrector.getClass)
 
-  override protected def buildInternalError(
-    msg: String,
-    solutionSaved: Boolean,
-    maxPoints: Points
-  ): RegexInternalErrorResult = RegexInternalErrorResult(msg, solutionSaved, maxPoints)
-
   def correctMatching(
     exerciseContent: RegexExerciseContent,
-    userRegex: Regex,
-    solutionSaved: Boolean
+    userRegex: Regex
   ): RegexAbstractResult = {
 
     val matchResults = exerciseContent.matchTestData.map { matchTestData =>
@@ -70,7 +60,6 @@ object RegexMatchingCorrector extends AbstractCorrector {
       (correctResultsCount.toDouble / exerciseContent.matchTestData.size.toDouble * exerciseContent.maxPoints * 4).toInt.quarterPoints
 
     RegexMatchingResult(
-      solutionSaved,
       matchResults,
       points,
       exerciseContent.maxPoints.points

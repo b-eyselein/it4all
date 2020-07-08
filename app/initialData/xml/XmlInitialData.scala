@@ -18,12 +18,12 @@ object XmlInitialData extends InitialData[XmlExerciseContent] {
       exerciseId = 1,
       collectionId = 1,
       toolId,
-      title = "Part",
+      title = "Party",
       authors = Seq("bje40dc"),
       text = "Erstellen Sie zu dieser DTD ein passendes Xml-Dokument",
       difficulty = 1,
       content = XmlExerciseContent(
-        rootNode = "part",
+        rootNode = "party",
         grammarDescription = loadTextFromFile(exResPath / "grammarDescription.txt"),
         sampleSolutions = Seq(
           SampleSolution(

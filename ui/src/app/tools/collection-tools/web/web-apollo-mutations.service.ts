@@ -17,16 +17,32 @@ export type WebCorrectionMutation = (
   { __typename?: 'Mutation' }
   & { me?: Types.Maybe<(
     { __typename?: 'UserMutations' }
-    & { correctWeb: (
-      { __typename: 'WebInternalErrorResult' }
-      & Pick<Types.WebInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
-    ) | (
-      { __typename: 'WebResult' }
-      & Pick<Types.WebResult, 'solutionSaved' | 'points' | 'maxPoints'>
-      & WebResultFragment
-    ) }
+    & { webExercise?: Types.Maybe<(
+      { __typename?: 'WebExerciseMutations' }
+      & { correct: (
+        { __typename?: 'WebInternalErrorResult' }
+        & WebAbstractResult_WebInternalErrorResult_Fragment
+        & WebInternalErrorResultFragment
+      ) | (
+        { __typename?: 'WebResult' }
+        & WebAbstractResult_WebResult_Fragment
+        & WebResultFragment
+      ) }
+    )> }
   )> }
 );
+
+type WebAbstractResult_WebInternalErrorResult_Fragment = (
+  { __typename: 'WebInternalErrorResult' }
+  & Pick<Types.WebInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+type WebAbstractResult_WebResult_Fragment = (
+  { __typename: 'WebResult' }
+  & Pick<Types.WebResult, 'solutionSaved' | 'points' | 'maxPoints'>
+);
+
+export type WebAbstractResultFragment = WebAbstractResult_WebInternalErrorResult_Fragment | WebAbstractResult_WebResult_Fragment;
 
 export type WebInternalErrorResultFragment = (
   { __typename?: 'WebInternalErrorResult' }
@@ -87,6 +103,14 @@ export type GradedJsActionResultFragment = (
   & { jsAction: { __typename: 'JsAction' } }
 );
 
+export const WebAbstractResultFragmentDoc = gql`
+    fragment WebAbstractResult on WebAbstractResult {
+  __typename
+  solutionSaved
+  points
+  maxPoints
+}
+    `;
 export const WebInternalErrorResultFragmentDoc = gql`
     fragment WebInternalErrorResult on WebInternalErrorResult {
   msg
@@ -165,16 +189,18 @@ ${GradedJsTaskResultFragmentDoc}`;
 export const WebCorrectionDocument = gql`
     mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
   me(userJwt: $userJwt) {
-    correctWeb(collId: $collId, exId: $exId, part: $part, solution: $solution) {
-      __typename
-      solutionSaved
-      points
-      maxPoints
-      ...WebResult
+    webExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...WebAbstractResult
+        ...WebResult
+        ...WebInternalErrorResult
+      }
     }
   }
 }
-    ${WebResultFragmentDoc}`;
+    ${WebAbstractResultFragmentDoc}
+${WebResultFragmentDoc}
+${WebInternalErrorResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

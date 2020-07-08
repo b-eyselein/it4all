@@ -12,11 +12,8 @@ object UmlCorrector extends AbstractCorrector {
 
   override protected val logger: Logger = Logger(UmlCorrector.getClass)
 
-  override protected def buildInternalError(
-    msg: String,
-    solutionSaved: Boolean,
-    maxPoints: Points
-  ): UmlInternalErrorResult = UmlInternalErrorResult(msg, solutionSaved, maxPoints)
+  override protected def buildInternalError(msg: String, maxPoints: Points): UmlInternalErrorResult =
+    UmlInternalErrorResult(msg, maxPoints)
 
   /*
    * FIXME: compare against every sample solution, take best?
@@ -24,42 +21,42 @@ object UmlCorrector extends AbstractCorrector {
   def correct(
     userClassDiagram: UmlClassDiagram,
     exercise: UmlExercise,
-    part: UmlExPart,
-    solutionSaved: Boolean
-  ): UmlAbstractResult = exercise.content.sampleSolutions.headOption match {
-    case None => onError("There is no sample solution!", solutionSaved)
-    case Some(sampleSolution) =>
-      val sampleClassDiagram = sampleSolution.sample
+    part: UmlExPart
+  ): UmlAbstractResult =
+    exercise.content.sampleSolutions.headOption match {
+      case None => onError("There is no sample solution!")
+      case Some(sampleSolution) =>
+        val sampleClassDiagram = sampleSolution.sample
 
-      val classResult = part match {
-        case UmlExPart.DiagramDrawingHelp => None
+        val classResult = part match {
+          case UmlExPart.DiagramDrawingHelp => None
 
-        case UmlExPart.ClassSelection =>
-          Some(UmlClassMatcher(false).doMatch(userClassDiagram.classes, sampleClassDiagram.classes))
+          case UmlExPart.ClassSelection =>
+            Some(UmlClassMatcher(false).doMatch(userClassDiagram.classes, sampleClassDiagram.classes))
 
-        case UmlExPart.DiagramDrawing | UmlExPart.MemberAllocation =>
-          Some(UmlClassMatcher(true).doMatch(userClassDiagram.classes, sampleClassDiagram.classes))
-      }
+          case UmlExPart.DiagramDrawing | UmlExPart.MemberAllocation =>
+            Some(UmlClassMatcher(true).doMatch(userClassDiagram.classes, sampleClassDiagram.classes))
+        }
 
-      val assocResult = part match {
-        case UmlExPart.DiagramDrawingHelp | UmlExPart.DiagramDrawing =>
-          Some(UmlAssociationMatcher.doMatch(userClassDiagram.associations, sampleClassDiagram.associations))
+        val assocResult = part match {
+          case UmlExPart.DiagramDrawingHelp | UmlExPart.DiagramDrawing =>
+            Some(UmlAssociationMatcher.doMatch(userClassDiagram.associations, sampleClassDiagram.associations))
 
-        case _ => None
-      }
+          case _ => None
+        }
 
-      val implResult = part match {
-        case UmlExPart.DiagramDrawingHelp | UmlExPart.DiagramDrawing =>
-          Some(UmlImplementationMatcher.doMatch(userClassDiagram.implementations, sampleClassDiagram.implementations))
+        val implResult = part match {
+          case UmlExPart.DiagramDrawingHelp | UmlExPart.DiagramDrawing =>
+            Some(UmlImplementationMatcher.doMatch(userClassDiagram.implementations, sampleClassDiagram.implementations))
 
-        case _ => None
-      }
+          case _ => None
+        }
 
-      val points: Points = (-1).points
+        val points: Points = (-1).points
 
-      val maxPoints: Points = (-1).points
+        val maxPoints: Points = (-1).points
 
-      UmlResult(classResult, assocResult, implResult, points, maxPoints, solutionSaved)
-  }
+        UmlResult(classResult, assocResult, implResult, points, maxPoints)
+    }
 
 }

@@ -7,7 +7,14 @@ import {
   ExerciseSolveFieldsFragment,
   WebExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
-import {WebCorrectionGQL, WebCorrectionMutation, WebCorrectionMutationVariables, WebResultFragment} from '../web-apollo-mutations.service';
+import {
+  WebAbstractResultFragment,
+  WebCorrectionGQL,
+  WebCorrectionMutation,
+  WebCorrectionMutationVariables,
+  WebInternalErrorResultFragment,
+  WebResultFragment
+} from '../web-apollo-mutations.service';
 import {WebExPart, WebSolution, WebSolutionInput} from '../../../../_interfaces/graphql-types';
 import {HtmlPart, JsPart} from '../web-tool';
 
@@ -74,8 +81,12 @@ export class WebExerciseComponent
     };
   }
 
+  get basicResult(): WebAbstractResultFragment & (WebInternalErrorResultFragment | WebResultFragment) | null {
+    return this.resultQuery?.me.webExercise?.correct;
+  }
+
   get result(): WebResultFragment | null {
-    return this.resultQuery?.me.correctWeb.__typename === 'WebResult' ? this.resultQuery.me.correctWeb : null;
+    return this.basicResult?.__typename === 'WebResult' ? this.basicResult : null;
   }
 
 }

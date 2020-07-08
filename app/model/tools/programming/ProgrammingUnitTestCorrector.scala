@@ -20,11 +20,10 @@ object ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
     solTargetDir: File,
     solution: ProgSolution,
     exerciseContent: ProgrammingExerciseContent,
-    resultFile: File,
-    solutionSaved: Boolean
+    resultFile: File
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] =
     solution.files.find(_.name == exerciseContent.unitTestPart.testFileName) match {
-      case None               => Future.successful(onError("Could not find test main file", solutionSaved))
+      case None               => Future.successful(onError("Could not find test main file"))
       case Some(testMainFile) =>
         // write unit test file
         val testFileName = exerciseContent.unitTestPart.testFileName
@@ -90,7 +89,6 @@ object ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
             case Failure(exception) =>
               onError(
                 "Error while running programming unit test correction image",
-                solutionSaved,
                 maybeException = Some(exception)
               )
             case Success(_) =>
@@ -100,10 +98,9 @@ object ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
                   exception =>
                     onError(
                       "Error while reading unit test correction result file",
-                      solutionSaved,
                       maybeException = Some(exception)
                     ),
-                  results => ProgrammingResult(solutionSaved, unitTestResults = results)
+                  results => ProgrammingResult(unitTestResults = results)
                 )
           }
     }

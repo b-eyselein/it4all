@@ -2,16 +2,39 @@ package model.graphql
 
 import model.matching.{Match, MatchType, MatchingResult}
 import model.result.AbstractCorrectionResult
-import model.{ExPart, SampleSolution}
+import model.tools.ToolJsonProtocol
+import model.{ExPart, ExerciseContent, SampleSolution}
+import play.api.libs.json.Format
 import sangria.macros.derive._
+import sangria.marshalling.playJson._
 import sangria.schema._
 
 import scala.reflect.ClassTag
 
-trait ToolGraphQLModelBasics[SolType, ContentType, PartType <: ExPart, ResType <: AbstractCorrectionResult]
+trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: AbstractCorrectionResult[ResType]]
     extends BasicGraphQLModels {
 
-  protected def buildSampleSolutionType[S](
+  protected val jsonFormats: ToolJsonProtocol[S, C, PT]
+
+  // Arguments
+
+  val SolTypeInputType: InputType[S]
+
+  val partEnumType: EnumType[PT]
+
+  lazy val solTypeInputArg: Argument[S] = {
+    implicit val solTypeFormat: Format[S] = jsonFormats.solutionFormat
+
+    Argument("solution", SolTypeInputType)
+  }
+
+  lazy val partTypeInputArg: Argument[PT] = {
+    implicit val partFormat: Format[PT] = jsonFormats.partTypeFormat
+
+    Argument("part", partEnumType)
+  }
+
+  protected def buildSampleSolutionType(
     name: String,
     solTypeType: OutputType[S]
   ): ObjectType[Unit, SampleSolution[S]] =
@@ -67,23 +90,19 @@ trait ToolGraphQLModelBasics[SolType, ContentType, PartType <: ExPart, ResType <
       ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches))
     )
 
-  protected val abstractResultInterfaceType: InterfaceType[Unit, AbstractCorrectionResult] = InterfaceType(
+  protected val abstractResultInterfaceType: InterfaceType[Unit, AbstractCorrectionResult[_]] = InterfaceType(
     "AbstractCorrectionResult",
-    fields[Unit, AbstractCorrectionResult](
+    fields[Unit, AbstractCorrectionResult[_]](
       Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
       Field("points", FloatType, resolve = _.value.points.asDouble),
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     )
   )
 
-  val exerciseContentType: OutputType[ContentType]
+  val exerciseContentType: OutputType[C]
 
   val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, ResType]
 
-  val sampleSolutionType: ObjectType[Unit, SampleSolution[SolType]]
-
-  val SolTypeInputType: InputType[SolType]
-
-  val partEnumType: EnumType[PartType]
+  val sampleSolutionType: ObjectType[Unit, SampleSolution[S]]
 
 }

@@ -2,24 +2,29 @@ package model.tools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
 import model.matching.MatchType
-import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import model.points._
+import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import model.tools.xml.XmlTool.ElementLineComparison
 
-trait XmlAbstractResult extends AbstractCorrectionResult
+trait XmlAbstractResult extends AbstractCorrectionResult[XmlAbstractResult]
 
 final case class XmlInternalErrorResult(
   msg: String,
-  solutionSaved: Boolean,
-  maxPoints: Points
+  maxPoints: Points,
+  solutionSaved: Boolean = false
 ) extends XmlAbstractResult
-    with InternalErrorResult
+    with InternalErrorResult[XmlAbstractResult] {
+
+  override def updateSolutionSaved(solutionSaved: Boolean): XmlAbstractResult =
+    this.copy(solutionSaved = solutionSaved)
+
+}
 
 final case class XmlResult(
   successType: SuccessType,
   points: Points,
   maxPoints: Points,
-  solutionSaved: Boolean,
+  solutionSaved: Boolean = false,
   documentResult: Option[XmlDocumentResult] = None,
   grammarResult: Option[XmlGrammarResult] = None
 ) extends XmlAbstractResult {
@@ -33,6 +38,9 @@ final case class XmlResult(
 
     documentResultCorrect && grammarResultCorrect
   }
+
+  override def updateSolutionSaved(solutionSaved: Boolean): XmlAbstractResult =
+    this.copy(solutionSaved = solutionSaved)
 
 }
 

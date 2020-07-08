@@ -10,9 +10,11 @@ import {
 } from '../../../../_services/apollo_services';
 import {
   NormalExecutionResultFragment,
+  ProgrammingAbstractResultFragment,
   ProgrammingCorrectionGQL,
   ProgrammingCorrectionMutation,
   ProgrammingCorrectionMutationVariables,
+  ProgrammingInternalErrorResultFragment,
   ProgrammingResultFragment,
   SimplifiedExecutionResultFragment,
   UnitTestCorrectionResultFragment
@@ -94,8 +96,12 @@ export class ProgrammingExerciseComponent
     };
   }
 
+  get basicResult(): ProgrammingAbstractResultFragment & (ProgrammingResultFragment | ProgrammingInternalErrorResultFragment) {
+    return this.resultQuery?.me.programmingExercise?.correct;
+  }
+
   get result(): ProgrammingResultFragment | null {
-    return this.resultQuery.me.correctProgramming.__typename === 'ProgrammingResult' ? this.resultQuery.me.correctProgramming : null;
+    return this.basicResult?.__typename === 'ProgrammingResult' ? this.basicResult : null;
   }
 
   get simplifiedResults(): SimplifiedExecutionResultFragment[] {

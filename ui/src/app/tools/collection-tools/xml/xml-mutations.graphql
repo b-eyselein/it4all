@@ -1,14 +1,20 @@
 mutation XmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!,$part: XmlExPart!, $solution: XmlSolutionInput!) {
   me(userJwt: $userJwt ) {
-    correctXml(collId: $collId, exId: $exId,part: $part, solution: $solution) {
-      __typename
-      solutionSaved
-      points
-      maxPoints
-      ...XmlInternalErrorResult
-      ...XmlResult
+    xmlExercise(collId: $collId, exId: $exId)  {
+      correct(part: $part, solution: $solution) {
+        ...XmlAbstractResult
+        ...XmlInternalErrorResult
+        ...XmlResult
+      }
     }
   }
+}
+
+fragment XmlAbstractResult on XmlAbstractResult {
+  __typename
+  solutionSaved
+  points
+  maxPoints
 }
 
 fragment XmlInternalErrorResult on XmlInternalErrorResult {

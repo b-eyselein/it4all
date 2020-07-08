@@ -33,10 +33,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  TruePositive = 'TruePositive',
-  FalsePositive = 'FalsePositive',
   FalseNegative = 'FalseNegative',
-  TrueNegative = 'TrueNegative'
+  FalsePositive = 'FalsePositive',
+  TrueNegative = 'TrueNegative',
+  TruePositive = 'TruePositive'
 }
 
 export type CollectionTool = {
@@ -321,10 +321,10 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlySample = 'ONLY_SAMPLE',
-  OnlyUser = 'ONLY_USER',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  OnlyUser = 'ONLY_USER',
   PartialMatch = 'PARTIAL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
@@ -390,6 +390,17 @@ export type ProgrammingExerciseContentPartArgs = {
   partId: Scalars['String'];
 };
 
+export type ProgrammingExerciseMutations = {
+  __typename?: 'ProgrammingExerciseMutations';
+  correct: ProgrammingAbstractResult;
+};
+
+
+export type ProgrammingExerciseMutationsCorrectArgs = {
+  part: ProgExPart;
+  solution: ProgSolutionInput;
+};
+
 export type ProgrammingInternalErrorResult = ProgrammingAbstractResult & AbstractCorrectionResult & {
   __typename?: 'ProgrammingInternalErrorResult';
   msg: Scalars['String'];
@@ -440,8 +451,8 @@ export type RegexAbstractResult = {
 };
 
 export enum RegexCorrectionType {
-  Matching = 'MATCHING',
-  Extraction = 'EXTRACTION'
+  Extraction = 'EXTRACTION',
+  Matching = 'MATCHING'
 }
 
 export type RegexExerciseContent = {
@@ -457,6 +468,17 @@ export type RegexExerciseContent = {
 
 export type RegexExerciseContentPartArgs = {
   partId: Scalars['String'];
+};
+
+export type RegexExerciseMutations = {
+  __typename?: 'RegexExerciseMutations';
+  correct: RegexAbstractResult;
+};
+
+
+export type RegexExerciseMutationsCorrectArgs = {
+  part: RegexExPart;
+  solution: Scalars['String'];
 };
 
 export enum RegexExPart {
@@ -633,12 +655,23 @@ export type SqlExerciseContentPartArgs = {
   partId: Scalars['String'];
 };
 
+export type SqlExerciseMutations = {
+  __typename?: 'SqlExerciseMutations';
+  correct: SqlAbstractResult;
+};
+
+
+export type SqlExerciseMutationsCorrectArgs = {
+  part: SqlExPart;
+  solution: Scalars['String'];
+};
+
 export enum SqlExerciseType {
+  Delete = 'DELETE',
   Create = 'CREATE',
   Update = 'UPDATE',
   Select = 'SELECT',
-  Insert = 'INSERT',
-  Delete = 'DELETE'
+  Insert = 'INSERT'
 }
 
 export enum SqlExPart {
@@ -854,8 +887,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
 };
 
 export enum UmlAssociationType {
-  Association = 'ASSOCIATION',
   Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
   Composition = 'COMPOSITION'
 }
 
@@ -982,6 +1015,17 @@ export type UmlExerciseContentPartArgs = {
   partId: Scalars['String'];
 };
 
+export type UmlExerciseMutations = {
+  __typename?: 'UmlExerciseMutations';
+  correct: UmlAbstractResult;
+};
+
+
+export type UmlExerciseMutationsCorrectArgs = {
+  part: UmlExPart;
+  solution: UmlClassDiagramInput;
+};
+
 export enum UmlExPart {
   ClassSelection = 'ClassSelection',
   DiagramDrawingHelp = 'DiagramDrawingHelp',
@@ -1096,10 +1140,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
-  Public = 'PUBLIC',
   Package = 'PACKAGE',
+  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Private = 'PRIVATE'
+  Public = 'PUBLIC'
 }
 
 export type UnitTestCorrectionResult = {
@@ -1132,8 +1176,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Simplified = 'Simplified',
-  Normal = 'Normal'
+  Normal = 'Normal',
+  Simplified = 'Simplified'
 }
 
 export type User = {
@@ -1154,60 +1198,48 @@ export type UserCredentials = {
 
 export type UserMutations = {
   __typename?: 'UserMutations';
-  correctProgramming: ProgrammingAbstractResult;
-  correctRegex: RegexAbstractResult;
-  correctSql: SqlAbstractResult;
-  correctUml: UmlAbstractResult;
-  correctWeb: WebAbstractResult;
-  correctXml: XmlAbstractResult;
+  programmingExercise?: Maybe<ProgrammingExerciseMutations>;
+  regexExercise?: Maybe<RegexExerciseMutations>;
+  sqlExercise?: Maybe<SqlExerciseMutations>;
+  umlExercise?: Maybe<UmlExerciseMutations>;
+  webExercise?: Maybe<WebExerciseMutations>;
+  xmlExercise?: Maybe<XmlExerciseMutations>;
 };
 
 
-export type UserMutationsCorrectProgrammingArgs = {
+export type UserMutationsProgrammingExerciseArgs = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
-  part: ProgExPart;
-  solution: ProgSolutionInput;
 };
 
 
-export type UserMutationsCorrectRegexArgs = {
+export type UserMutationsRegexExerciseArgs = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
-  part: RegexExPart;
-  solution: Scalars['String'];
 };
 
 
-export type UserMutationsCorrectSqlArgs = {
+export type UserMutationsSqlExerciseArgs = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
-  part: SqlExPart;
-  solution: Scalars['String'];
 };
 
 
-export type UserMutationsCorrectUmlArgs = {
+export type UserMutationsUmlExerciseArgs = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
-  part: UmlExPart;
-  solution: UmlClassDiagramInput;
 };
 
 
-export type UserMutationsCorrectWebArgs = {
+export type UserMutationsWebExerciseArgs = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
-  part: WebExPart;
-  solution: WebSolutionInput;
 };
 
 
-export type UserMutationsCorrectXmlArgs = {
+export type UserMutationsXmlExerciseArgs = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
-  part: XmlExPart;
-  solution: XmlSolutionInput;
 };
 
 export type UserProficiency = {
@@ -1238,6 +1270,17 @@ export type WebExerciseContent = {
 
 export type WebExerciseContentPartArgs = {
   partId: Scalars['String'];
+};
+
+export type WebExerciseMutations = {
+  __typename?: 'WebExerciseMutations';
+  correct: WebAbstractResult;
+};
+
+
+export type WebExerciseMutationsCorrectArgs = {
+  part: WebExPart;
+  solution: WebSolutionInput;
 };
 
 export enum WebExPart {
@@ -1320,6 +1363,17 @@ export type XmlExerciseContent = {
 
 export type XmlExerciseContentPartArgs = {
   partId: Scalars['String'];
+};
+
+export type XmlExerciseMutations = {
+  __typename?: 'XmlExerciseMutations';
+  correct: XmlAbstractResult;
+};
+
+
+export type XmlExerciseMutationsCorrectArgs = {
+  part: XmlExPart;
+  solution: XmlSolutionInput;
 };
 
 export enum XmlExPart {

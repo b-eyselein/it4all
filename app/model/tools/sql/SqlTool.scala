@@ -2,9 +2,8 @@ package model.tools.sql
 
 import initialData.InitialData
 import initialData.sql.SqlInitialData
-import model.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
-import model.points._
+import model.matching.MatchingResult
 import model.tools._
 import model.tools.sql.matcher._
 import model.{Exercise, LoggedInUser, Topic}
@@ -60,14 +59,13 @@ object SqlTool extends Tool("sql", "Sql") {
     user: LoggedInUser,
     solution: SolType,
     exercise: SqlExercise,
-    part: SqlExPart,
-    solutionSaved: Boolean
+    part: SqlExPart
   )(implicit executionContext: ExecutionContext): Future[SqlAbstractResult] =
     Future {
       correctorsAndDaos.get(exercise.content.exerciseType) match {
-        case None => SqlInternalErrorResult("There has been an internal error", solutionSaved, (-1).points)
+        case None => SqlInternalErrorResult("There has been an internal error")
         case Some((corrector, dao)) =>
-          corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions, solutionSaved)
+          corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions)
       }
     }
 

@@ -1,25 +1,33 @@
 package model.tools.rose
 
-import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
+import model.result.{AbstractCorrectionResult, InternalErrorResult}
 
-sealed trait RoseAbstractResult extends AbstractCorrectionResult
+sealed trait RoseAbstractResult extends AbstractCorrectionResult[RoseAbstractResult]
 
 final case class RoseInternalErrorResult(
   msg: String,
-  solutionSaved: Boolean,
-  maxPoints: Points
+  maxPoints: Points,
+  solutionSaved: Boolean = false
 ) extends RoseAbstractResult
-    with InternalErrorResult
+    with InternalErrorResult[RoseAbstractResult] {
+
+  override def updateSolutionSaved(solutionSaved: Boolean): RoseAbstractResult =
+    this.copy(solutionSaved = solutionSaved)
+
+}
 
 final case class RoseResult(
   result: RoseExecutionResult,
   points: Points = (-1).points,
   maxPoints: Points = (-1).points,
-  solutionSaved: Boolean
+  solutionSaved: Boolean = false
 ) extends RoseAbstractResult {
 
   override def isCompletelyCorrect: Boolean = ???
+
+  override def updateSolutionSaved(solutionSaved: Boolean): RoseAbstractResult =
+    this.copy(solutionSaved = solutionSaved)
 
 }
 

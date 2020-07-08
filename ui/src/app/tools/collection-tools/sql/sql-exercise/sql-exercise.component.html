@@ -29,7 +29,11 @@
         <it4all-tab [title]="correctionTabTitle">
           <ng-container *ngIf="resultQuery">
 
-            <it4all-solution-saved [saved]="resultQuery.me.correctSql.solutionSaved"></it4all-solution-saved>
+            <it4all-solution-saved *ngIf="sqlAbstractResult" [saved]="sqlAbstractResult.solutionSaved">
+            </it4all-solution-saved>
+
+            <it4all-points-notification *ngIf="sqlAbstractResult" [points]="sqlAbstractResult.points">
+            </it4all-points-notification>
 
             <div class="message" *ngIf="sqlInternalErrorResult">
               <div class="message-header">Es gab einen Fehler bei der Korrektur:</div>

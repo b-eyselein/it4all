@@ -5,7 +5,14 @@ import {DbSolution} from '../../../../_interfaces/exercise';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {ToolPart} from '../../../../_interfaces/tool';
 import {ExerciseSolveFieldsFragment, SqlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
-import {SqlCorrectionGQL, SqlCorrectionMutation, SqlCorrectionMutationVariables, SqlResultFragment} from '../sql-apollo-mutations.service';
+import {
+  SqlAbstractResultFragment,
+  SqlCorrectionGQL,
+  SqlCorrectionMutation,
+  SqlCorrectionMutationVariables,
+  SqlInternalErrorResultFragment,
+  SqlResultFragment
+} from '../sql-apollo-mutations.service';
 import {SqlExPart, SqlInternalErrorResult} from '../../../../_interfaces/graphql-types';
 
 import 'codemirror/mode/sql/sql';
@@ -62,12 +69,16 @@ export class SqlExerciseComponent
 
   // Result types
 
-  get sqlInternalErrorResult(): SqlInternalErrorResult | undefined {
-    return this.resultQuery?.me.correctSql.__typename === 'SqlInternalErrorResult' ? this.resultQuery.me.correctSql : undefined;
+  get sqlAbstractResult(): SqlAbstractResultFragment & (SqlInternalErrorResultFragment | SqlResultFragment) | null {
+    return this.resultQuery?.me.sqlExercise?.correct;
   }
 
-  get sqlResult(): SqlResultFragment | undefined {
-    return this.resultQuery?.me.correctSql.__typename === 'SqlResult' ? this.resultQuery.me.correctSql : undefined;
+  get sqlInternalErrorResult(): SqlInternalErrorResult | null {
+    return this.sqlAbstractResult?.__typename === 'SqlInternalErrorResult' ? this.sqlAbstractResult : null;
+  }
+
+  get sqlResult(): SqlResultFragment | null {
+    return this.sqlAbstractResult?.__typename === 'SqlResult' ? this.sqlAbstractResult : null;
   }
 
   // Correction

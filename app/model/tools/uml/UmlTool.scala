@@ -2,8 +2,8 @@ package model.tools.uml
 
 import initialData.InitialData
 import initialData.uml.UmlInitialData
-import model.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
+import model.matching.MatchingResult
 import model.tools._
 import model.tools.uml.matcher._
 import model.{Exercise, LoggedInUser}
@@ -39,12 +39,9 @@ object UmlTool extends Tool("uml", "Uml", ToolState.BETA) {
     user: LoggedInUser,
     solution: UmlClassDiagram,
     exercise: UmlExercise,
-    part: UmlExPart,
-    solutionSaved: Boolean
+    part: UmlExPart
   )(implicit executionContext: ExecutionContext): Future[UmlAbstractResult] =
-    Future.successful {
-      UmlCorrector.correct(solution, exercise, part, solutionSaved)
-    }
+    Future.successful { UmlCorrector.correct(solution, exercise, part) }
 
   override val initialData: InitialData[UmlExerciseContent] = UmlInitialData
 

@@ -2,7 +2,8 @@ package model.result
 
 import model.points._
 
-trait AbstractCorrectionResult {
+trait AbstractCorrectionResult[R <: AbstractCorrectionResult[R]] {
+  self: R =>
 
   def solutionSaved: Boolean
 
@@ -12,10 +13,12 @@ trait AbstractCorrectionResult {
 
   def isCompletelyCorrect: Boolean
 
+  def updateSolutionSaved(solutionSaved: Boolean): R
+
 }
 
-trait InternalErrorResult {
-  self: AbstractCorrectionResult =>
+trait InternalErrorResult[R <: AbstractCorrectionResult[R]] {
+  self: AbstractCorrectionResult[R] =>
 
   val msg: String
 

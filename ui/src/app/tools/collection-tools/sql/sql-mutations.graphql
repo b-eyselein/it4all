@@ -1,14 +1,20 @@
 mutation SqlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
   me(userJwt: $userJwt) {
-    correctSql(collId: $collId, exId: $exId,part: $part, solution: $solution) {
-      __typename
-      solutionSaved
-      points
-      maxPoints
-      ...SqlInternalErrorResult
-      ...SqlResult
+    sqlExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...SqlAbstractResult
+        ...SqlInternalErrorResult
+        ...SqlResult
+      }
     }
   }
+}
+
+fragment SqlAbstractResult on SqlAbstractResult {
+  __typename
+  solutionSaved
+  points
+  maxPoints
 }
 
 fragment SqlInternalErrorResult on SqlInternalErrorResult {

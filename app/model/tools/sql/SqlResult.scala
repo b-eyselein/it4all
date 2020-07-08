@@ -1,7 +1,7 @@
 package model.tools.sql
 
-import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.points._
+import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.tools.sql.SqlTool._
 
 final case class WrongStatementTypeException(awaited: String, gotten: String)
@@ -80,19 +80,23 @@ final case class SqlQueriesStaticComparison(
 
 // Complete result
 
-sealed trait SqlAbstractResult extends AbstractCorrectionResult
+sealed trait SqlAbstractResult extends AbstractCorrectionResult[SqlAbstractResult]
 
 final case class SqlInternalErrorResult(
   msg: String,
-  solutionSaved: Boolean,
-  maxPoints: Points = (-1).points
+  maxPoints: Points = (-1).points,
+  solutionSaved: Boolean = false
 ) extends SqlAbstractResult
-    with InternalErrorResult
+    with InternalErrorResult[SqlAbstractResult] {
+
+  override def updateSolutionSaved(solutionSaved: Boolean): SqlAbstractResult = this.copy(solutionSaved = solutionSaved)
+
+}
 
 final case class SqlResult(
   staticComparison: SqlQueriesStaticComparison,
   executionResult: SqlExecutionResult,
-  solutionSaved: Boolean
+  solutionSaved: Boolean = false
 ) extends SqlAbstractResult {
 
   override def points: Points = staticComparison.points
@@ -100,6 +104,8 @@ final case class SqlResult(
   override def maxPoints: Points = staticComparison.maxPoints
 
   override def isCompletelyCorrect: Boolean = points == maxPoints
+
+  override def updateSolutionSaved(solutionSaved: Boolean): SqlAbstractResult = this.copy(solutionSaved = solutionSaved)
 
 }
 

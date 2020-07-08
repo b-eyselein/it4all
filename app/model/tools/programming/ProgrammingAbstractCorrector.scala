@@ -12,11 +12,8 @@ trait ProgrammingAbstractCorrector extends AbstractCorrector {
 
   override type AbstractResult = ProgrammingAbstractResult
 
-  override protected def buildInternalError(
-    msg: String,
-    solutionSaved: Boolean,
-    maxPoints: Points
-  ): ProgrammingInternalErrorResult = ProgrammingInternalErrorResult(msg, solutionSaved, maxPoints)
+  override protected def buildInternalError(msg: String, maxPoints: Points): ProgrammingInternalErrorResult =
+    ProgrammingInternalErrorResult(msg, maxPoints)
 
   val resultFileName = "result.json"
 

@@ -1,24 +1,29 @@
 package model.tools.web
 
 import de.uniwue.webtester.sitespec.{JsAction, JsActionType}
-import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import model.points._
+import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 
-sealed trait WebAbstractResult extends AbstractCorrectionResult
+sealed trait WebAbstractResult extends AbstractCorrectionResult[WebAbstractResult]
 
 final case class WebInternalErrorResult(
   msg: String,
-  solutionSaved: Boolean,
-  maxPoints: Points
+  maxPoints: Points,
+  solutionSaved: Boolean = false
 ) extends WebAbstractResult
-    with InternalErrorResult
+    with InternalErrorResult[WebAbstractResult] {
+
+  override def updateSolutionSaved(solutionSaved: Boolean): WebAbstractResult =
+    this.copy(solutionSaved = solutionSaved)
+
+}
 
 final case class WebResult(
   gradedHtmlTaskResults: Seq[GradedHtmlTaskResult],
   gradedJsTaskResults: Seq[GradedJsTaskResult],
   points: Points,
   maxPoints: Points,
-  solutionSaved: Boolean
+  solutionSaved: Boolean = false
 ) extends WebAbstractResult {
 
   override def isCompletelyCorrect: Boolean = {
@@ -28,6 +33,8 @@ final case class WebResult(
 
     htmlTasksOk && jsTasksOk
   }
+
+  override def updateSolutionSaved(solutionSaved: Boolean): WebAbstractResult = this.copy(solutionSaved = solutionSaved)
 
 }
 
@@ -71,11 +78,12 @@ final case class GradedHtmlTaskResult(
 
 final case class GradedJsActionResult(actionPerformed: Boolean, jsAction: JsAction, points: Points, maxPoints: Points) {
 
-  def actionDescription: String = jsAction.actionType match {
-    case JsActionType.Click => s"Klicke auf Element mit XPath Query <code>${jsAction.xpathQuery}</code>"
-    case JsActionType.FillOut =>
-      s"Sende Keys '${jsAction.keysToSend.getOrElse("")}' an Element mit XPath Query ${jsAction.xpathQuery}"
-  }
+  def actionDescription: String =
+    jsAction.actionType match {
+      case JsActionType.Click => s"Klicke auf Element mit XPath Query <code>${jsAction.xpathQuery}</code>"
+      case JsActionType.FillOut =>
+        s"Sende Keys '${jsAction.keysToSend.getOrElse("")}' an Element mit XPath Query ${jsAction.xpathQuery}"
+    }
 
 }
 

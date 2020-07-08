@@ -2,6 +2,7 @@ package model.tools.sql
 
 import model.SampleSolution
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
+import model.tools.ToolJsonProtocol
 import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList
@@ -14,6 +15,8 @@ import sangria.schema._
 object SqlGraphQLModels
     extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlAbstractResult]
     with GraphQLArguments {
+
+  override protected val jsonFormats: ToolJsonProtocol[String, SqlExerciseContent, SqlExPart] = SqlToolJsonProtocols
 
   override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = buildSampleSolutionType("Sql", StringType)
 

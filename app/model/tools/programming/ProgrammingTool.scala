@@ -35,8 +35,7 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.A
     user: LoggedInUser,
     solution: ProgSolution,
     exercise: ProgrammingExercise,
-    part: ProgExPart,
-    solutionSaved: Boolean
+    part: ProgExPart
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
 
     val solutionTargetDir: File =
@@ -51,8 +50,7 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.A
 
     part match {
       case ProgExPart.TestCreation =>
-        ProgrammingUnitTestCorrector
-          .correctUnitTestPart(solutionTargetDir, solution, exercise.content, resultFile, solutionSaved)
+        ProgrammingUnitTestCorrector.correctUnitTestPart(solutionTargetDir, solution, exercise.content, resultFile)
       case _ =>
         val programmingSolutionFilesMounts = solution.files.map { exerciseFile: ExerciseFile =>
           ProgrammingNormalImplementationCorrector.writeExerciseFileAndMount(exerciseFile, solutionTargetDir)
@@ -64,15 +62,13 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.A
               solutionTargetDir,
               exercise.content,
               programmingSolutionFilesMounts,
-              resultFile,
-              solutionSaved
+              resultFile
             )
           case UnitTestType.Normal =>
             ProgrammingNormalImplementationCorrector.correctNormalImplementation(
               solutionTargetDir,
               exercise.content,
-              programmingSolutionFilesMounts,
-              solutionSaved
+              programmingSolutionFilesMounts
             )
         }
     }

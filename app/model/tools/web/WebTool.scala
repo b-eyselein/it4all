@@ -57,8 +57,7 @@ object WebTool extends Tool("web", "Web") {
   private def onDriverGetSuccess(
     exContent: WebExerciseContent,
     part: WebExPart,
-    driver: HtmlUnitDriver,
-    solutionSaved: Boolean
+    driver: HtmlUnitDriver
   ): Unit => WebResult =
     _ => {
       part match {
@@ -70,7 +69,7 @@ object WebTool extends Tool("web", "Web") {
           val points    = addUp(gradedHtmlTaskResults.map(_.points))
           val maxPoints = addUp(gradedHtmlTaskResults.map(_.maxPoints))
 
-          WebResult(gradedHtmlTaskResults, Seq.empty, points, maxPoints, solutionSaved)
+          WebResult(gradedHtmlTaskResults, Seq.empty, points, maxPoints)
 
         case WebExPart.JsPart =>
           val gradedJsTaskResults: Seq[GradedJsTaskResult] = exContent.siteSpec.jsTasks
@@ -80,32 +79,27 @@ object WebTool extends Tool("web", "Web") {
           val points    = addUp(gradedJsTaskResults.map(_.points))
           val maxPoints = addUp(gradedJsTaskResults.map(_.maxPoints))
 
-          WebResult(Seq.empty, gradedJsTaskResults, points, maxPoints, solutionSaved)
+          WebResult(Seq.empty, gradedJsTaskResults, points, maxPoints)
       }
     }
 
-  def onCorrectionError(
-    msg: String,
-    solutionSaved: Boolean,
-    maxPoints: Points = (-1).points
-  ): Throwable => WebAbstractResult =
+  def onCorrectionError(msg: String): Throwable => WebAbstractResult =
     error => {
       logger.error(msg, error)
 
-      WebInternalErrorResult(msg, solutionSaved, maxPoints)
+      WebInternalErrorResult(msg, maxPoints = (-1).points)
     }
 
   override def correctAbstract(
     user: LoggedInUser,
     solution: WebSolution,
     exercise: WebExercise,
-    part: WebExPart,
-    solutionSaved: Boolean
+    part: WebExPart
   )(implicit executionContext: ExecutionContext): Future[WebAbstractResult] =
     Future {
       writeWebSolutionFiles(solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId), solution)
         .fold(
-          onCorrectionError("Error while writing user solution", solutionSaved),
+          onCorrectionError("Error while writing user solution"),
           _ => {
             val driver = new HtmlUnitDriver(true)
 
@@ -114,8 +108,8 @@ object WebTool extends Tool("web", "Web") {
               s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.exerciseId}/$fileName"
 
             Try(driver.get(solutionUrl)).fold(
-              onCorrectionError(s"Error while looking up url $solutionUrl", solutionSaved),
-              onDriverGetSuccess(exercise.content, part, driver, solutionSaved)
+              onCorrectionError(s"Error while looking up url $solutionUrl"),
+              onDriverGetSuccess(exercise.content, part, driver)
             )
           }
         )

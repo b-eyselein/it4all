@@ -2,8 +2,8 @@ package model.tools.regex
 
 import initialData.InitialData
 import initialData.regex.RegexInitialData
-import model.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
+import model.matching.MatchingResult
 import model.points._
 import model.tools._
 import model.{Exercise, LoggedInUser}
@@ -37,24 +37,20 @@ object RegexTool extends Tool("regex", "Reguläre Ausdrücke") {
     user: LoggedInUser,
     solution: String,
     exercise: RegexExercise,
-    part: RegexExPart,
-    solutionSaved: Boolean
+    part: RegexExPart
   )(implicit executionContext: ExecutionContext): Future[RegexAbstractResult] =
     Future.successful {
       Try(solution.r).fold(
         error =>
           RegexInternalErrorResult(
             "Your regex could not be parsed: " + error.getMessage,
-            solutionSaved,
             exercise.content.maxPoints.points
           ),
         userRegex =>
           exercise.content.correctionType match {
-            case RegexCorrectionType.MATCHING =>
-              RegexMatchingCorrector.correctMatching(exercise.content, userRegex, solutionSaved)
-
+            case RegexCorrectionType.MATCHING => RegexMatchingCorrector.correctMatching(exercise.content, userRegex)
             case RegexCorrectionType.EXTRACTION =>
-              RegexExtractionCorrector.correctExtraction(exercise.content, userRegex, solutionSaved)
+              RegexExtractionCorrector.correctExtraction(exercise.content, userRegex)
           }
       )
     }

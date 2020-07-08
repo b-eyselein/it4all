@@ -4,6 +4,7 @@ import {RegexExercisePart} from '../regex-tool';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {ExerciseSolveFieldsFragment, RegexExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
 import {
+  RegexAbstractResultFragment,
   RegexCorrectionGQL,
   RegexCorrectionMutation,
   RegexCorrectionMutationVariables,
@@ -55,16 +56,20 @@ export class RegexExerciseComponent
     };
   }
 
-  get regexInternalErrorResult(): RegexInternalErrorResultFragment | undefined {
-    return this.resultQuery?.me.correctRegex.__typename === 'RegexInternalErrorResult' ? this.resultQuery.me.correctRegex : undefined;
+  get basicResult(): RegexAbstractResultFragment & (RegexInternalErrorResultFragment | RegexMatchingResultFragment | RegexExtractionResultFragment) {
+    return this.resultQuery?.me.regexExercise?.correct;
   }
 
-  get regexMatchingResult(): RegexMatchingResultFragment | undefined {
-    return this.resultQuery?.me.correctRegex.__typename === 'RegexMatchingResult' ? this.resultQuery.me.correctRegex : undefined;
+  get regexInternalErrorResult(): RegexInternalErrorResultFragment | null {
+    return this.basicResult?.__typename === 'RegexInternalErrorResult' ? this.basicResult : null;
+  }
+
+  get regexMatchingResult(): RegexMatchingResultFragment | null {
+    return this.basicResult?.__typename === 'RegexMatchingResult' ? this.basicResult : null;
   }
 
   get regexExtractionResult(): RegexExtractionResultFragment | undefined {
-    return this.resultQuery?.me.correctRegex.__typename === 'RegexExtractionResult' ? this.resultQuery.me.correctRegex : undefined;
+    return this.basicResult?.__typename === 'RegexExtractionResult' ? this.basicResult : undefined;
   }
 
   correct(): void {

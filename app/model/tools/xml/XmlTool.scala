@@ -3,8 +3,8 @@ package model.tools.xml
 import de.uniwue.dtd.model.ElementLine
 import initialData.InitialData
 import initialData.xml.XmlInitialData
-import model.matching.MatchingResult
 import model.graphql.ToolGraphQLModelBasics
+import model.matching.MatchingResult
 import model.tools._
 import model.{Exercise, LoggedInUser}
 
@@ -34,20 +34,17 @@ object XmlTool extends Tool("xml", "Xml") {
     user: LoggedInUser,
     solution: XmlSolution,
     exercise: XmlExercise,
-    part: XmlExPart,
-    solutionSaved: Boolean
+    part: XmlExPart
   )(implicit executionContext: ExecutionContext): Future[XmlAbstractResult] =
     Future.successful {
       part match {
-        case XmlExPart.GrammarCreationXmlPart =>
-          XmlCorrector.correctGrammar(solution, exercise.content.sampleSolutions, solutionSaved)
+        case XmlExPart.GrammarCreationXmlPart => XmlCorrector.correctGrammar(solution, exercise.content.sampleSolutions)
 
         case XmlExPart.DocumentCreationXmlPart =>
           XmlCorrector.correctDocument(
             solution,
             solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId).createDirectories(),
-            exercise.content,
-            solutionSaved
+            exercise.content
           )
       }
     }

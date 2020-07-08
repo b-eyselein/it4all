@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Jul 06 2020 14:42:37 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Jul 08 2020 15:59:01 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -18,10 +18,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  TruePositive
-  FalsePositive
   FalseNegative
+  FalsePositive
   TrueNegative
+  TruePositive
 }
 
 type CollectionTool {
@@ -264,10 +264,10 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_SAMPLE
-  ONLY_USER
   SUCCESSFUL_MATCH
+  ONLY_USER
   PARTIAL_MATCH
+  ONLY_SAMPLE
   UNSUCCESSFUL_MATCH
 }
 
@@ -310,6 +310,10 @@ type ProgrammingExerciseContent {
   part(partId: String!): ProgExPart
 }
 
+type ProgrammingExerciseMutations {
+  correct(part: ProgExPart!, solution: ProgSolutionInput!): ProgrammingAbstractResult!
+}
+
 type ProgrammingInternalErrorResult implements ProgrammingAbstractResult & AbstractCorrectionResult {
   msg: String!
   solutionSaved: Boolean!
@@ -350,8 +354,8 @@ interface RegexAbstractResult {
 }
 
 enum RegexCorrectionType {
-  MATCHING
   EXTRACTION
+  MATCHING
 }
 
 type RegexExerciseContent {
@@ -361,6 +365,10 @@ type RegexExerciseContent {
   extractionTestData: [RegexExtractionTestData!]!
   sampleSolutions: [RegexSampleSolution!]!
   part(partId: String!): RegexExPart
+}
+
+type RegexExerciseMutations {
+  correct(part: RegexExPart!, solution: String!): RegexAbstractResult!
 }
 
 enum RegexExPart {
@@ -512,12 +520,16 @@ type SqlExerciseContent {
   sqlDbContents: [SqlQueryResult!]!
 }
 
+type SqlExerciseMutations {
+  correct(part: SqlExPart!, solution: String!): SqlAbstractResult!
+}
+
 enum SqlExerciseType {
+  DELETE
   CREATE
   UPDATE
   SELECT
   INSERT
-  DELETE
 }
 
 enum SqlExPart {
@@ -710,8 +722,8 @@ type UmlAssociationMatchingResult implements MatchingResult {
 }
 
 enum UmlAssociationType {
-  ASSOCIATION
   AGGREGATION
+  ASSOCIATION
   COMPOSITION
 }
 
@@ -823,6 +835,10 @@ type UmlExerciseContent {
   mappings: [KeyValueObject!]!
 }
 
+type UmlExerciseMutations {
+  correct(part: UmlExPart!, solution: UmlClassDiagramInput!): UmlAbstractResult!
+}
+
 enum UmlExPart {
   ClassSelection
   DiagramDrawingHelp
@@ -927,10 +943,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PUBLIC
   PACKAGE
-  PROTECTED
   PRIVATE
+  PROTECTED
+  PUBLIC
 }
 
 type UnitTestCorrectionResult {
@@ -960,8 +976,8 @@ type UnitTestTestConfig {
 }
 
 enum UnitTestType {
-  Simplified
   Normal
+  Simplified
 }
 
 type User {
@@ -975,12 +991,12 @@ input UserCredentials {
 }
 
 type UserMutations {
-  correctProgramming(collId: Int!, exId: Int!, part: ProgExPart!, solution: ProgSolutionInput!): ProgrammingAbstractResult!
-  correctRegex(collId: Int!, exId: Int!, part: RegexExPart!, solution: String!): RegexAbstractResult!
-  correctSql(collId: Int!, exId: Int!, part: SqlExPart!, solution: String!): SqlAbstractResult!
-  correctUml(collId: Int!, exId: Int!, part: UmlExPart!, solution: UmlClassDiagramInput!): UmlAbstractResult!
-  correctWeb(collId: Int!, exId: Int!, part: WebExPart!, solution: WebSolutionInput!): WebAbstractResult!
-  correctXml(collId: Int!, exId: Int!, part: XmlExPart!, solution: XmlSolutionInput!): XmlAbstractResult!
+  programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
+  regexExercise(collId: Int!, exId: Int!): RegexExerciseMutations
+  sqlExercise(collId: Int!, exId: Int!): SqlExerciseMutations
+  umlExercise(collId: Int!, exId: Int!): UmlExerciseMutations
+  webExercise(collId: Int!, exId: Int!): WebExerciseMutations
+  xmlExercise(collId: Int!, exId: Int!): XmlExerciseMutations
 }
 
 type UserProficiency {
@@ -1004,6 +1020,10 @@ type WebExerciseContent {
   files: [ExerciseFile!]!
   sampleSolutions: [WebSampleSolution!]!
   part(partId: String!): WebExPart
+}
+
+type WebExerciseMutations {
+  correct(part: WebExPart!, solution: WebSolutionInput!): WebAbstractResult!
 }
 
 enum WebExPart {
@@ -1073,6 +1093,10 @@ type XmlExerciseContent {
   rootNode: String!
   sampleSolutions: [XmlSampleSolution!]!
   part(partId: String!): XmlExPart
+}
+
+type XmlExerciseMutations {
+  correct(part: XmlExPart!, solution: XmlSolutionInput!): XmlAbstractResult!
 }
 
 enum XmlExPart {
