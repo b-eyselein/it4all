@@ -34,15 +34,16 @@ abstract class SqlExecutionDAO(port: Int) {
       }
     }
 
-  protected def db(maybeSchemaName: Option[String]): Database = Database.forURL(
-    url = maybeSchemaName match {
-      case None             => s"jdbc:mysql://localhost:$port?useSSL=false"
-      case Some(schemaName) => s"jdbc:mysql://localhost:$port/$schemaName?useSSL=false"
-    },
-    user = "it4all",
-    password = "sT8aV#k7",
-    driver = "com.mysql.cj.jdbc.Driver"
-  )
+  protected def db(maybeSchemaName: Option[String]): Database =
+    Database.forURL(
+      url = maybeSchemaName match {
+        case None             => s"jdbc:mysql://localhost:$port?useSSL=false"
+        case Some(schemaName) => s"jdbc:mysql://localhost:$port/$schemaName?useSSL=false"
+      },
+      user = "it4all",
+      password = "sT8aV#k7",
+      driver = "com.mysql.cj.jdbc.Driver"
+    )
 
   def executeQueries(
     schemaName: String,
@@ -87,43 +88,45 @@ abstract class SqlExecutionDAO(port: Int) {
 
 object SelectDAO extends SqlExecutionDAO(3107) {
 
-  override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = query match {
-    case sel: Select =>
-      using(db(Some(schemaName)).source.createConnection()) { connection =>
-        using(connection.prepareStatement(sel.toString)) { statement =>
-          SqlQueryResult.fromResultSet(statement.executeQuery())
-        }
-      }.flatten
-    case _ => Failure(null)
-  }
+  override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] =
+    query match {
+      case sel: Select =>
+        using(db(Some(schemaName)).source.createConnection()) { connection =>
+          using(connection.prepareStatement(sel.toString)) { statement =>
+            SqlQueryResult.fromResultSet(statement.executeQuery())
+          }
+        }.flatten
+      case _ => Failure(null)
+    }
 }
 
 object ChangeDAO extends SqlExecutionDAO(3108) {
 
-  override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = query match {
-    case change @ (_: Update | _: Insert | _: Delete) =>
-      using(db(Some(schemaName)).source.createConnection()) { connection =>
-        connection.setAutoCommit(false)
-        using(connection.prepareStatement(change.toString)) { statement =>
-          statement.executeUpdate()
-        } flatMap { _ =>
-          val validationQuery = "SELECT * FROM " + (change match {
-            case upd: Update => upd.getTable
-            case ins: Insert => ins.getTable
-            case del: Delete => del.getTable
-          }).getName
+  override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] =
+    query match {
+      case change @ (_: Update | _: Insert | _: Delete) =>
+        using(db(Some(schemaName)).source.createConnection()) { connection =>
+          connection.setAutoCommit(false)
+          using(connection.prepareStatement(change.toString)) { statement =>
+            statement.executeUpdate()
+          } flatMap { _ =>
+            val validationQuery = "SELECT * FROM " + (change match {
+              case upd: Update => upd.getTable
+              case ins: Insert => ins.getTable
+              case del: Delete => del.getTable
+            }).getName
 
-          val res = using(connection.prepareStatement(validationQuery)) { statement =>
-            SqlQueryResult.fromResultSet(statement.executeQuery())
+            val res = using(connection.prepareStatement(validationQuery)) { statement =>
+              SqlQueryResult.fromResultSet(statement.executeQuery())
+            }
+
+            connection.rollback()
+
+            res
           }
-
-          connection.rollback()
-
-          res
-        }
-      }.flatten
-    case _ => Failure(null)
-  }
+        }.flatten
+      case _ => Failure(null)
+    }
 
 }
 

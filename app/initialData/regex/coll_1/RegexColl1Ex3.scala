@@ -12,12 +12,13 @@ object RegexColl1Ex3 {
     toolId = "regex",
     title = "Komplexe Datumsangaben",
     authors = Seq("bje40dc"),
-    text = """Schreiben Sie einen regulären Ausdruck, der eine komplexere Version von Datumsangaben überprüfen kann.
-             |Dabei sollen der Tag und der Monat jeweils aus ein oder zwei und die Jahresangabe aus zwei bis vier Ziffern
-             |bestehen.
-             |Als Trennzeichen soll jeweils ein Punkt verwendet werden.
-             |Eine Validierung auf kalendarische Korrektheit ist nicht erforderlich.
-             |Führende Nullen sind erlaubt.""".stripMargin.replace("\n", " "),
+    text =
+      """Schreiben Sie einen regulären Ausdruck, der eine komplexere Version von Datumsangaben überprüfen kann.
+        |Dabei sollen der Tag und der Monat jeweils aus ein oder zwei und die Jahresangabe aus zwei bis vier Ziffern
+        |bestehen.
+        |Als Trennzeichen soll jeweils ein Punkt verwendet werden.
+        |Eine Validierung auf kalendarische Korrektheit ist nicht erforderlich.
+        |Führende Nullen sind erlaubt.""".stripMargin.replace("\n", " "),
     difficulty = 3,
     content = RegexExerciseContent(
       maxPoints = 3,

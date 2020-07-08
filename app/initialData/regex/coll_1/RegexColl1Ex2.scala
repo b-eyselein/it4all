@@ -12,13 +12,14 @@ object RegexColl1Ex2 {
     toolId = "regex",
     title = "Einfache Datumsangaben",
     authors = Seq("bje40dc"),
-    text = """\
+    text =
+      """\
         Schreiben Sie einen regulären Ausdruck, der eine einfache Version von Datumsangaben findet.
-             |Dabei sollen der Tag und der Monat jeweils aus zwei und die Jahresangabe aus vier Zahlen bestehen.
-             |Als Trennzeichen soll jeweils ein Punkt verwendet werden.
-             |Eine Validierung auf kalendarische Korrektheit (zum Beispiel, dass der 30.02.2019 oder der 99.17.3005 nicht
-             |existieren) ist nicht erforderlich.
-             |Außerdem sind führende Nullen erlaubt.""".stripMargin.replace("\n", " "),
+        |Dabei sollen der Tag und der Monat jeweils aus zwei und die Jahresangabe aus vier Zahlen bestehen.
+        |Als Trennzeichen soll jeweils ein Punkt verwendet werden.
+        |Eine Validierung auf kalendarische Korrektheit (zum Beispiel, dass der 30.02.2019 oder der 99.17.3005 nicht
+        |existieren) ist nicht erforderlich.
+        |Außerdem sind führende Nullen erlaubt.""".stripMargin.replace("\n", " "),
     difficulty = 2,
     content = RegexExerciseContent(
       maxPoints = 2,

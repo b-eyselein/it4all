@@ -13,23 +13,25 @@ final case class GroupByMatch(
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
-  override def maxPoints: Points = sampleArg match {
-    case None    => zeroPoints
-    case Some(_) => singleHalfPoint
-  }
+  override def maxPoints: Points =
+    sampleArg match {
+      case None    => zeroPoints
+      case Some(_) => singleHalfPoint
+    }
 
 }
 
 object GroupByMatcher extends Matcher[Expression, GroupByMatch] {
 
-  override protected def canMatch(e1: Expression, e2: Expression): Boolean = e1 match {
-    case column1: Column =>
-      e2 match {
-        case column2: Column => column1.getColumnName == column2.getColumnName
-        case _               => false
-      }
-    case _ => false
-  }
+  override protected def canMatch(e1: Expression, e2: Expression): Boolean =
+    e1 match {
+      case column1: Column =>
+        e2 match {
+          case column2: Column => column1.getColumnName == column2.getColumnName
+          case _               => false
+        }
+      case _ => false
+    }
 
   override protected def instantiateOnlySampleMatch(sa: Expression): GroupByMatch =
     GroupByMatch(MatchType.ONLY_SAMPLE, None, Some(sa))

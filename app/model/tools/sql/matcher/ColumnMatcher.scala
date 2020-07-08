@@ -14,10 +14,11 @@ final case class ColumnMatch(
 
   override def points: Points = if (matchType == MatchType.SUCCESSFUL_MATCH) singleHalfPoint else zeroPoints
 
-  override def maxPoints: Points = sampleArg match {
-    case None    => zeroPoints
-    case Some(_) => singleHalfPoint
-  }
+  override def maxPoints: Points =
+    sampleArg match {
+      case None    => zeroPoints
+      case Some(_) => singleHalfPoint
+    }
 
 }
 

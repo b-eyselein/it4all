@@ -38,8 +38,8 @@ final case class UmlClassMatcher(
 
     val methodsResult = UmlMethodMatcher.doMatch(ua.methods, sa.methods)
 
-    val membersCorrect
-      : Boolean = false // TODO: attributesResult.success == SuccessType.COMPLETE && methodsResult.success == SuccessType.COMPLETE
+    val membersCorrect: Boolean =
+      false // TODO: attributesResult.success == SuccessType.COMPLETE && methodsResult.success == SuccessType.COMPLETE
 
     val matchType: MatchType = (classTypeCorrect, membersCorrect) match {
       case (true, true)  => MatchType.SUCCESSFUL_MATCH

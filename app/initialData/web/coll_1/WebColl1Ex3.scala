@@ -29,12 +29,13 @@ object WebColl1Ex3 {
     ),
     HtmlTask(
       id = 3,
-      text = """Erstellen Sie im Link das Bild des Ford Mustang.
-               |Geben Sie als Quelle des Bildes die URL
-               |'https=//upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative
-               |Beschreibung 'Ford Mustang' an.
-               |Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu skalieren.""".stripMargin
-        .replace("\n", " "),
+      text =
+        """Erstellen Sie im Link das Bild des Ford Mustang.
+          |Geben Sie als Quelle des Bildes die URL
+          |'https=//upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative
+          |Beschreibung 'Ford Mustang' an.
+          |Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu skalieren.""".stripMargin
+          .replace("\n", " "),
       xpathQuery = "/html/body//a//img",
       awaitedTagName = "img",
       attributes = Map(

@@ -111,32 +111,33 @@ object DockerConnector {
     maybeCmd: Option[Seq[String]] = None,
     maybeDockerBinds: Seq[DockerBind] = Seq.empty,
     deleteContainerAfterRun: Boolean = true
-  )(implicit ec: ExecutionContext): Future[Try[RunContainerResult]] = Future {
+  )(implicit ec: ExecutionContext): Future[Try[RunContainerResult]] =
+    Future {
 
-    createContainer(imageName, maybeWorkingDir, maybeEntryPoint, maybeCmd, maybeDockerBinds).flatMap {
-      containerCreation: ContainerCreation =>
-        val containerId = containerCreation.id
+      createContainer(imageName, maybeWorkingDir, maybeEntryPoint, maybeCmd, maybeDockerBinds).flatMap {
+        containerCreation: ContainerCreation =>
+          val containerId = containerCreation.id
 
-        startContainer(containerId).flatMap { _ =>
-          waitForContainer(containerId).map { containerExit =>
-            val statusCode = containerExit.statusCode.toInt
+          startContainer(containerId).flatMap { _ =>
+            waitForContainer(containerId).map { containerExit =>
+              val statusCode = containerExit.statusCode.toInt
 
-            val result: RunContainerResult =
-              RunContainerResult(statusCode, getContainerLogs(containerId))
+              val result: RunContainerResult =
+                RunContainerResult(statusCode, getContainerLogs(containerId))
 
-            if (deleteContainerAfterRun && statusCode == SuccessStatusCode) {
-              // Do not delete failed containers for now
-              val containerDeleted = deleteContainer(containerId)
-              if (containerDeleted.isFailure) logger.error("Could not delete container!")
-            } else {
-              logger.debug("NOT Deleting container...")
+              if (deleteContainerAfterRun && statusCode == SuccessStatusCode) {
+                // Do not delete failed containers for now
+                val containerDeleted = deleteContainer(containerId)
+                if (containerDeleted.isFailure) logger.error("Could not delete container!")
+              } else {
+                logger.debug("NOT Deleting container...")
+              }
+
+              result
             }
-
-            result
           }
-        }
+      }
     }
-  }
 
   private def getContainerLogs(containerId: String): String =
     dockerClient

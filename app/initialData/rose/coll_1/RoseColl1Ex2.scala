@@ -25,7 +25,7 @@ object RoseColl1Ex2 {
         /*
             {"id": 1, "name": "rabbit_x", "type": "int"},
             {"id": 2, "name": "rabbit_y", "type": "int"}
-       */
+         */
       ),
       sampleSolutions = Seq(
         SampleSolution(

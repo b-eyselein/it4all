@@ -87,8 +87,9 @@ object SqlColl2Exes41To50 {
       sampleSolutions = Seq(
         SampleSolution(
           id = 1,
-          sample = """INSERT INTO customers (first_name, family_name, birthday, email, password, address)
-                     |VALUES ('Ferdinandus', 'Merkle', '1990 - 11 - 24', 'ferdinandus_1856@yahoo.com','','');""".stripMargin
+          sample =
+            """INSERT INTO customers (first_name, family_name, birthday, email, password, address)
+              |VALUES ('Ferdinandus', 'Merkle', '1990 - 11 - 24', 'ferdinandus_1856@yahoo.com','','');""".stripMargin
         ),
         SampleSolution(
           id = 2,
@@ -216,8 +217,9 @@ object SqlColl2Exes41To50 {
       sampleSolutions = Seq(
         SampleSolution(
           id = 1,
-          sample = """INSERT INTO books (title, author_id, year, publisher_id, isbn, stock, price)
-                     |    VALUES('Applied Statistical Genetics with R', 2, 2010, 12, 'PF/520-Y/2', 289, 24.99);""".stripMargin
+          sample =
+            """INSERT INTO books (title, author_id, year, publisher_id, isbn, stock, price)
+              |    VALUES('Applied Statistical Genetics with R', 2, 2010, 12, 'PF/520-Y/2', 289, 24.99);""".stripMargin
         )
       )
     )

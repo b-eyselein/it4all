@@ -26,7 +26,7 @@ object RoseColl1Ex1 {
             {"id": 1, "name": "width", "type": "int"},
             {"id": 2, "name": "height", "type": "int"}
 
-       */
+         */
       ),
       sampleSolutions = Seq(
         SampleSolution(

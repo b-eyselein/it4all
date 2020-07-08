@@ -100,10 +100,11 @@ object WebGrader {
     GradedJsActionResult(success, result.jsAction, points, maxPointsForAction)
   }
 
-  def gradeHtmlTaskResult(htr: HtmlTaskResult): GradedHtmlTaskResult = gradeElementSpecResult(
-    htr.elementSpecResult,
-    GradedHtmlTaskResult(htr.elementSpecResult.elementSpec.id, _, _, _, _, _, _, _)
-  )
+  def gradeHtmlTaskResult(htr: HtmlTaskResult): GradedHtmlTaskResult =
+    gradeElementSpecResult(
+      htr.elementSpecResult,
+      GradedHtmlTaskResult(htr.elementSpecResult.elementSpec.id, _, _, _, _, _, _, _)
+    )
 
   def gradeJsTaskResult(jtr: JsTaskResult): GradedJsTaskResult = {
 
@@ -128,7 +129,9 @@ object WebGrader {
       gradedPostResults.map(_.maxPoints)
     )
 
-    val success: SuccessType = if (preResultsSuccessful && actionSuccessful && postResultsSuccessful) SuccessType.COMPLETE else SuccessType.PARTIALLY
+    val success: SuccessType =
+      if (preResultsSuccessful && actionSuccessful && postResultsSuccessful) SuccessType.COMPLETE
+      else SuccessType.PARTIALLY
 
     GradedJsTaskResult(
       jtr.jsTask.id,

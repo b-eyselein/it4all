@@ -28,10 +28,15 @@ object XmlErrorType extends PlayEnum[XmlErrorType] {
 object XmlError {
 
   def fromSAXParseException(errorType: XmlErrorType, e: SAXParseException): XmlError =
-    XmlError(errorType, e.getMessage, e.getLineNumber, errorType match {
-      case XmlErrorType.WARNING => SuccessType.PARTIALLY
-      case _                    => SuccessType.NONE
-    })
+    XmlError(
+      errorType,
+      e.getMessage,
+      e.getLineNumber,
+      errorType match {
+        case XmlErrorType.WARNING => SuccessType.PARTIALLY
+        case _                    => SuccessType.NONE
+      }
+    )
 
 }
 
@@ -71,27 +76,29 @@ final case class ElementLineMatch(
       SuccessType.NONE
     }
 
-  override def maxPoints: Points = sampleArg match {
-    case None     => zeroPoints
-    case Some(sa) => pointsForElement + pointsForElementLine(sa)
-  }
+  override def maxPoints: Points =
+    sampleArg match {
+      case None     => zeroPoints
+      case Some(sa) => pointsForElement + pointsForElementLine(sa)
+    }
 
-  override def points: Points = matchType match {
-    case MatchType.SUCCESSFUL_MATCH                             => maxPoints
-    case MatchType.ONLY_SAMPLE | MatchType.ONLY_USER            => zeroPoints
-    case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH =>
-      // FIXME: calculate...
+  override def points: Points =
+    matchType match {
+      case MatchType.SUCCESSFUL_MATCH                             => maxPoints
+      case MatchType.ONLY_SAMPLE | MatchType.ONLY_USER            => zeroPoints
+      case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH =>
+        // FIXME: calculate...
 
-      val pointsForContent = maybeAnalysisResult match {
-        case None => zeroPoints
-        case Some(ar) =>
-          val pointsForElemContent = if (ar.contentCorrect) singlePoint else zeroPoints
-          val pointsForAttributes  = if (ar.attributesCorrect) singlePoint else zeroPoints
-          pointsForElemContent + pointsForAttributes
-      }
+        val pointsForContent = maybeAnalysisResult match {
+          case None => zeroPoints
+          case Some(ar) =>
+            val pointsForElemContent = if (ar.contentCorrect) singlePoint else zeroPoints
+            val pointsForAttributes  = if (ar.attributesCorrect) singlePoint else zeroPoints
+            pointsForElemContent + pointsForAttributes
+        }
 
-      pointsForElement + pointsForContent
-  }
+        pointsForElement + pointsForContent
+    }
 
   private def pointsForElementLine(elementLine: ElementLine): Points = {
     val pointsForElemContent: Points = pointsForElementContent(elementLine.elementDefinition.content)
@@ -100,12 +107,13 @@ final case class ElementLineMatch(
     pointsForElemContent + pointsForAttrs
   }
 
-  private def pointsForElementContent(elementContent: ElementContent): Points = elementContent match {
-    case _: StaticElementContent        => pointsForElement
-    case _: ChildElementContent         => pointsForElement
-    case u: UnaryOperatorElementContent => pointsForElement + pointsForElementContent(u.childContent)
-    case m: MultiElementContent         => addUp(m.children.map(pointsForElementContent))
-  }
+  private def pointsForElementContent(elementContent: ElementContent): Points =
+    elementContent match {
+      case _: StaticElementContent        => pointsForElement
+      case _: ChildElementContent         => pointsForElement
+      case u: UnaryOperatorElementContent => pointsForElement + pointsForElementContent(u.childContent)
+      case m: MultiElementContent         => addUp(m.children.map(pointsForElementContent))
+    }
 
   private def pointsForAttributes(attributeList: AttributeList): Points =
     pointsForAttribute * attributeList.attributeDefinitions.size

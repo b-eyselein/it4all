@@ -15,18 +15,19 @@ trait Matcher[T, M <: Match[T]] {
   private def findMatchInSecondCollection(firstHead: T, secondCollection: List[T]): (M, List[T]) = {
 
     @annotation.tailrec
-    def go(firstHead: T, secondCollection: List[T], notMatched: List[T]): (M, List[T]) = secondCollection match {
-      case Nil => (instantiateOnlyUserMatch(firstHead), notMatched)
-      case secondHead :: secondTail =>
-        if (canMatch(firstHead, secondHead)) {
-          val m = instantiateCompleteMatch(firstHead, secondHead)
+    def go(firstHead: T, secondCollection: List[T], notMatched: List[T]): (M, List[T]) =
+      secondCollection match {
+        case Nil => (instantiateOnlyUserMatch(firstHead), notMatched)
+        case secondHead :: secondTail =>
+          if (canMatch(firstHead, secondHead)) {
+            val m = instantiateCompleteMatch(firstHead, secondHead)
 
-          (m, notMatched ++ secondTail)
-        } else {
-          go(firstHead, secondTail, notMatched :+ secondHead)
-        }
+            (m, notMatched ++ secondTail)
+          } else {
+            go(firstHead, secondTail, notMatched :+ secondHead)
+          }
 
-    }
+      }
 
     go(firstHead, secondCollection, List.empty)
   }

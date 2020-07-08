@@ -83,9 +83,10 @@ object SqlColl1Exes01To10 {
         ),
         SampleSolution(
           id = 2,
-          sample = """SELECT emailaddress
-                     |    FROM employee, emailaddress
-                     |    WHERE employee.id = emailaddress.employee_id AND firstname = 'Max' AND lastname = 'Becker';""".stripMargin
+          sample =
+            """SELECT emailaddress
+              |    FROM employee, emailaddress
+              |    WHERE employee.id = emailaddress.employee_id AND firstname = 'Max' AND lastname = 'Becker';""".stripMargin
         ),
         SampleSolution(
           id = 3,

@@ -33,8 +33,8 @@ object ResultsFileJsonFormat {
       ProgrammingToolJsonProtocol.unitTestCorrectionResultsFileJsonReads.reads(jsValue) match {
         case JsSuccess(result, _) => Success(result.results)
         case JsError(errors) =>
-          errors.foreach(
-            error => logger.error(s"There has been an error reading a json programming result file: $error")
+          errors.foreach(error =>
+            logger.error(s"There has been an error reading a json programming result file: $error")
           )
           Failure(new Exception("There has been an error reading a json programming result file!"))
       }

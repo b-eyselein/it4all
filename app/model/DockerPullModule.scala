@@ -2,7 +2,11 @@ package model
 
 import com.google.inject.AbstractModule
 import model.core.{DockerConnector, ScalaDockerImage}
-import model.tools.programming.{ProgrammingNormalImplementationCorrector, ProgrammingSimpleImplementationCorrector, ProgrammingUnitTestCorrector}
+import model.tools.programming.{
+  ProgrammingNormalImplementationCorrector,
+  ProgrammingSimpleImplementationCorrector,
+  ProgrammingUnitTestCorrector
+}
 import model.tools.rose.RoseCorrector
 import play.api.Logger
 

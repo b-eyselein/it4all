@@ -40,9 +40,10 @@ object WebColl2Ex2 {
     ),
     HtmlTask(
       id = 2,
-      text = """Erstellen Sie ein Passworteingabefeld mit der ID 'password'.
-               |Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.""".stripMargin
-        .replace("\n", " "),
+      text =
+        """Erstellen Sie ein Passworteingabefeld mit der ID 'password'.
+          |Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.""".stripMargin
+          .replace("\n", " "),
       xpathQuery = """/html/body//input[@id='password']""",
       awaitedTagName = "input",
       attributes = Map("type" -> "password", "onchange" -> "passwordStrength()")

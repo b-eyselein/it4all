@@ -34,7 +34,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
     JwtSession
       .deserialize(jwtString)(configuration, clock)
       .getAs[LoggedInUser](userFieldName)
- 
+
   private def register(registerValues: RegisterValues): Future[Option[String]] =
     if (registerValues.isInvalid) {
       Future.successful(None)

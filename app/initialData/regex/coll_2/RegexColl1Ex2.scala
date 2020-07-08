@@ -29,9 +29,10 @@ object RegexColl1Ex2 {
         ),
         RegexExtractionTestData(
           id = 2,
-          base = """Smart fort two, Mhd, EZ 2014, 39 TKm, schw./silber, 71 PS, TÜV neu, Navi, 8-f. Alu, Unfallfrei,
-                   |Klima, Benzin, Panoramadach, Cockpituhr, Drehzahlmesser, VB 6 490.- EUR. Tel. 0175/1119771""".stripMargin
-            .replace("\n", " ")
+          base =
+            """Smart fort two, Mhd, EZ 2014, 39 TKm, schw./silber, 71 PS, TÜV neu, Navi, 8-f. Alu, Unfallfrei,
+              |Klima, Benzin, Panoramadach, Cockpituhr, Drehzahlmesser, VB 6 490.- EUR. Tel. 0175/1119771""".stripMargin
+              .replace("\n", " ")
         ),
         RegexExtractionTestData(
           id = 3,

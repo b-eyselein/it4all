@@ -11,16 +11,18 @@ final case class BinaryExpressionMatch(
   sampleArg: Option[BinaryExpression]
 ) extends Match[BinaryExpression] {
 
-  override def points: Points = matchType match {
-    case MatchType.SUCCESSFUL_MATCH   => singlePoint
-    case MatchType.UNSUCCESSFUL_MATCH => singleHalfPoint
-    case _                            => zeroPoints
-  }
+  override def points: Points =
+    matchType match {
+      case MatchType.SUCCESSFUL_MATCH   => singlePoint
+      case MatchType.UNSUCCESSFUL_MATCH => singleHalfPoint
+      case _                            => zeroPoints
+    }
 
-  override def maxPoints: Points = sampleArg match {
-    case None    => zeroPoints
-    case Some(_) => singlePoint
-  }
+  override def maxPoints: Points =
+    sampleArg match {
+      case None    => zeroPoints
+      case Some(_) => singlePoint
+    }
 
 }
 
@@ -29,18 +31,19 @@ final case class BinaryExpressionMatcher(
   sampleTAliases: Map[String, String]
 ) extends Matcher[BinaryExpression, BinaryExpressionMatch] {
 
-  private def getColToCompare(expression: BinaryExpression): Option[Column] = expression.getLeftExpression match {
-    case left: Column =>
-      Some(expression.getRightExpression match {
-        case right: Column => if (left.toString < right.toString) left else right
-        case _             => left
-      })
-    case _ =>
-      expression.getRightExpression match {
-        case right: Column => Some(right)
-        case _             => None
-      }
-  }
+  private def getColToCompare(expression: BinaryExpression): Option[Column] =
+    expression.getLeftExpression match {
+      case left: Column =>
+        Some(expression.getRightExpression match {
+          case right: Column => if (left.toString < right.toString) left else right
+          case _             => left
+        })
+      case _ =>
+        expression.getRightExpression match {
+          case right: Column => Some(right)
+          case _             => None
+        }
+    }
 
   override protected def canMatch(binEx1: BinaryExpression, binEx2: BinaryExpression): Boolean = {
 

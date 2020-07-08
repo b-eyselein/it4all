@@ -13,9 +13,10 @@ object WebColl1Ex4 {
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
       id = 1,
-      text = """Erstellen Sie das Formular - Tag.
-               |Geben Sie für die Attribute 'action' und 'method' jeweils die Werte '/test.php' und 'post' an.""".stripMargin
-        .replace('\n', ' '),
+      text =
+        """Erstellen Sie das Formular - Tag.
+          |Geben Sie für die Attribute 'action' und 'method' jeweils die Werte '/test.php' und 'post' an.""".stripMargin
+          .replace('\n', ' '),
       xpathQuery = "/html/body//form",
       awaitedTagName = "form",
       attributes = Map("action" -> "/test.php", "method" -> "post")
@@ -29,10 +30,11 @@ object WebColl1Ex4 {
     ),
     HtmlTask(
       id = 3,
-      text = """Erstellen Sie ein Feld zur Eingabe der Emailadresse.
-               |Benutzen Sie den in der Vorlesung gezeigten Typen und geben Sie den Attributen 'name' und 'id' jeweils den
-               |Wert 'email'.
-               |Die Eingabe soll eines Wertes soll außerdem verpflichtend sein.""".stripMargin.replace('\n', ' '),
+      text =
+        """Erstellen Sie ein Feld zur Eingabe der Emailadresse.
+          |Benutzen Sie den in der Vorlesung gezeigten Typen und geben Sie den Attributen 'name' und 'id' jeweils den
+          |Wert 'email'.
+          |Die Eingabe soll eines Wertes soll außerdem verpflichtend sein.""".stripMargin.replace('\n', ' '),
       xpathQuery = """/html/body//form//input[@type='email']""",
       awaitedTagName = "input",
       attributes = Map("name" -> "email", "id" -> "email", "required" -> "true")
@@ -46,9 +48,10 @@ object WebColl1Ex4 {
     ),
     HtmlTask(
       id = 5,
-      text = """Erstellen Sie ein Feld zur Eingabe des Passworts.Benutzen Sie den in der Vorlesung gezeigten Typen und
-               |geben Sie dem Attribut 'name' den Wert 'passwort'.Die Eingabe soll außerdem verpflichtend sein.""".stripMargin
-        .replace('\n', ' '),
+      text =
+        """Erstellen Sie ein Feld zur Eingabe des Passworts.Benutzen Sie den in der Vorlesung gezeigten Typen und
+          |geben Sie dem Attribut 'name' den Wert 'passwort'.Die Eingabe soll außerdem verpflichtend sein.""".stripMargin
+          .replace('\n', ' '),
       xpathQuery = """/html/body//form//input[@type='password']""",
       awaitedTagName = "input",
       attributes = Map("name" -> "passwort", "id" -> "passwort", "required" -> "true")
