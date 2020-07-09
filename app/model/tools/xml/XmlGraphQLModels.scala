@@ -6,15 +6,12 @@ import model.SampleSolution
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.matching.MatchType
 import model.result.SuccessType
-import model.tools.ToolJsonProtocol
 import sangria.macros.derive._
 import sangria.schema._
 
 object XmlGraphQLModels
     extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlAbstractResult]
     with GraphQLArguments {
-
-  override protected val jsonFormats: ToolJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] = XmlToolJsonProtocol
 
   override val partEnumType: EnumType[XmlExPart] = EnumType(
     "XmlExPart",

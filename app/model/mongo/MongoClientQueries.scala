@@ -1,8 +1,8 @@
 package model.mongo
 
-import model.{JsonProtocols, _}
-import model.tools.Tool
 import model.tools.Helper.UntypedExercise
+import model.tools.Tool
+import model.{JsonProtocols, _}
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
@@ -23,33 +23,18 @@ trait MongoClientQueries
 
   private implicit val topicFormat: OFormat[Topic] = JsonProtocols.topicFormat
 
-  private implicit val userProficiencyFormat: OFormat[UserProficiency] = JsonProtocols.userProficiencyFormat
-
-  private def exercisePartFilter[P](
-    toolId: String,
-    collectionId: Int,
-    exerciseId: Int,
-    part: P
-  )(implicit pf: Format[P]): JsObject =
-    Json.obj(
-      "toolId"       -> toolId,
-      "collectionId" -> collectionId,
-      "exerciseId"   -> exerciseId,
-      "part"         -> part
-    )
-
-  // Collections
-
-  private def futureUserProficienciesCollection: Future[JSONCollection] =
-    reactiveMongoApi.database.map(_.collection("userProficiencies"))
-
   // Solution queries
 
   private def futureUserSolutionsCollection: Future[JSONCollection] =
     reactiveMongoApi.database.map(_.collection("userSolutions"))
 
   protected def nextUserSolutionId[P](exercise: UntypedExercise, part: P)(implicit pf: Format[P]): Future[Int] = {
-    val exFilter = exercisePartFilter(exercise.toolId, exercise.collectionId, exercise.exerciseId, part)
+    val exFilter = Json.obj(
+      "toolId"       -> exercise.toolId,
+      "collectionId" -> exercise.collectionId,
+      "exerciseId"   -> exercise.exerciseId,
+      "part"         -> part
+    )
 
     final case class ThisResult(solutionId: Int)
 
@@ -82,21 +67,20 @@ trait MongoClientQueries
 
   // Update user proficiencies
 
-  protected def userProficienciesForTool(username: String, toolId: String): Future[Seq[UserProficiency]] = {
-    val filter = Json.obj(
-      "username"     -> username,
-      "topic.toolId" -> toolId
-    )
+  private def futureUserProficienciesCollection: Future[JSONCollection] =
+    reactiveMongoApi.database.map(_.collection("userProficiencies"))
 
+  private implicit val userProficiencyFormat: OFormat[UserProficiency] = JsonProtocols.userProficiencyFormat
+
+  protected def userProficienciesForTool(username: String, toolId: String): Future[Seq[UserProficiency]] =
     for {
       userProficienciesCollection <- futureUserProficienciesCollection
       userProfs <-
         userProficienciesCollection
-          .find(filter, Option.empty[JsObject])
+          .find(Json.obj("username" -> username, "topic.toolId" -> toolId), Option.empty[JsObject])
           .cursor[UserProficiency]()
           .collect[Seq](-1, Cursor.FailOnError())
     } yield userProfs
-  }
 
   protected def allTopicsWithLevelForTool(username: String, tool: Tool): Future[Seq[TopicWithLevel]] =
     for {

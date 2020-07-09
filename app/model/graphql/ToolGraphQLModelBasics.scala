@@ -2,9 +2,7 @@ package model.graphql
 
 import model.matching.{Match, MatchType, MatchingResult}
 import model.result.AbstractCorrectionResult
-import model.tools.ToolJsonProtocol
 import model.{ExPart, ExerciseContent, SampleSolution}
-import play.api.libs.json.Format
 import sangria.macros.derive._
 import sangria.marshalling.playJson._
 import sangria.schema._
@@ -14,25 +12,11 @@ import scala.reflect.ClassTag
 trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: AbstractCorrectionResult[ResType]]
     extends BasicGraphQLModels {
 
-  protected val jsonFormats: ToolJsonProtocol[S, C, PT]
-
   // Arguments
 
   val SolTypeInputType: InputType[S]
 
   val partEnumType: EnumType[PT]
-
-  lazy val solTypeInputArg: Argument[S] = {
-    implicit val solTypeFormat: Format[S] = jsonFormats.solutionFormat
-
-    Argument("solution", SolTypeInputType)
-  }
-
-  lazy val partTypeInputArg: Argument[PT] = {
-    implicit val partFormat: Format[PT] = jsonFormats.partTypeFormat
-
-    Argument("part", partEnumType)
-  }
 
   protected def buildSampleSolutionType(
     name: String,
@@ -67,9 +51,9 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
     )
   )
 
-  protected def buildStringMatchTypeType[T, M <: Match[T]](name: String)(implicit
-    _x: ClassTag[M]
-  ): ObjectType[Unit, M] =
+  protected def buildStringMatchTypeType[T, M <: Match[T]](
+    name: String
+  )(implicit _x: ClassTag[M]): ObjectType[Unit, M] =
     ObjectType(
       name,
       interfaces[Unit, M](newMatchInterface),

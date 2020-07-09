@@ -2,7 +2,6 @@ package model.tools.regex
 
 import model.SampleSolution
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
-import model.tools.ToolJsonProtocol
 import model.tools.regex.RegexTool.ExtractedValuesComparison
 import sangria.macros.derive._
 import sangria.schema._
@@ -12,9 +11,6 @@ import scala.util.matching.Regex.{Match => RegexMatch}
 object RegexGraphQLModels
     extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart, RegexAbstractResult]
     with GraphQLArguments {
-
-  override protected val jsonFormats: ToolJsonProtocol[String, RegexExerciseContent, RegexExPart] =
-    RegexToolJsonProtocol
 
   override val partEnumType: EnumType[RegexExPart] = EnumType(
     "RegexExPart",

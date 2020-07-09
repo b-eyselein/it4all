@@ -3,7 +3,6 @@ package model.tools.web
 import de.uniwue.webtester.sitespec.{HtmlTask, JsAction, JsActionType, SiteSpec}
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.result.SuccessType
-import model.tools.ToolJsonProtocol
 import model.{ExerciseFile, SampleSolution}
 import sangria.macros.derive._
 import sangria.schema._
@@ -11,8 +10,6 @@ import sangria.schema._
 object WebGraphQLModels
     extends ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExPart, WebAbstractResult]
     with GraphQLArguments {
-
-  override protected val jsonFormats: ToolJsonProtocol[WebSolution, WebExerciseContent, WebExPart] = WebToolJsonProtocol
 
   override val partEnumType: EnumType[WebExPart] = EnumType(
     "WebExPart",

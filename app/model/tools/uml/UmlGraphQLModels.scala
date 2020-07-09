@@ -2,7 +2,6 @@ package model.tools.uml
 
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.matching.{MatchType, MatchingResult}
-import model.tools.ToolJsonProtocol
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
 import model.{KeyValueObject, SampleSolution}
@@ -14,9 +13,6 @@ import sangria.schema._
 object UmlGraphQLModels
     extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlAbstractResult]
     with GraphQLArguments {
-
-  override protected val jsonFormats: ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] =
-    UmlToolJsonProtocol
 
   override val partEnumType: EnumType[UmlExPart] = EnumType(
     "UmlExPart",

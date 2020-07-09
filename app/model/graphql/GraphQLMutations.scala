@@ -70,22 +70,27 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
   private val loggedInUserMutationType: ObjectType[Unit, LoggedInUser] = ObjectType(
     "UserMutations",
     fields = ToolList.tools.map { tool =>
+      implicit val partFormat: Format[tool.PartType]   = tool.jsonFormats.partTypeFormat
+      implicit val solTypeFormat: Format[tool.SolType] = tool.jsonFormats.solutionFormat
+
+      val partTypeInputArg: Argument[tool.PartType] = Argument("part", tool.graphQlModels.partEnumType)
+      val solTypeInputArg: Argument[tool.SolType]   = Argument("solution", tool.graphQlModels.SolTypeInputType)
+
       def correct(
         user: LoggedInUser,
         exercise: Exercise[tool.ExContentType],
         part: tool.PartType,
         solution: tool.SolType
-      ): Future[tool.ResType] = {
-
+      ): Future[tool.ResType] =
         for {
-          nextUserSolutionId <- nextUserSolutionId(exercise, part)(tool.jsonFormats.partTypeFormat)
+          result <- tool.correctAbstract(user, solution, exercise, part)
+
+          nextUserSolutionId <- nextUserSolutionId(exercise, part)
 
           solutionSaved <- insertSolution(
             UserSolution.forExercise(nextUserSolutionId, exercise, user.username, solution, part),
             tool.jsonFormats.userSolutionFormat
           )
-
-          result <- tool.correctAbstract(user, solution, exercise, part)
 
           _ <-
             if (result.isCompletelyCorrect) {
@@ -100,7 +105,6 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
               Future.successful(())
             }
         } yield result.updateSolutionSaved(solutionSaved)
-      }
 
       val toolExerciseMutationsType = ObjectType(
         s"${tool.id.capitalize}ExerciseMutations",
@@ -108,13 +112,13 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
           Field(
             "correct",
             tool.graphQlModels.toolAbstractResultTypeInterfaceType,
-            arguments = tool.graphQlModels.partTypeInputArg :: tool.graphQlModels.solTypeInputArg :: Nil,
+            arguments = partTypeInputArg :: solTypeInputArg :: Nil,
             resolve = context =>
               correct(
                 context.value._1,
                 context.value._2,
-                context.arg(tool.graphQlModels.partTypeInputArg),
-                context.arg(tool.graphQlModels.solTypeInputArg)
+                context.arg(partTypeInputArg),
+                context.arg(solTypeInputArg)
               )
           )
         )
