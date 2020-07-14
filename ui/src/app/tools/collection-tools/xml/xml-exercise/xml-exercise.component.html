@@ -85,9 +85,17 @@
         </it4all-tab>
         <it4all-tab [title]="sampleSolutionsTabTitle">
           <div class="buttons">
-            <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()" disabled>
+            <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
               Musterlösung {{displaySampleSolutions ? 'ausblenden' : 'anzeigen'}}
             </button>
+          </div>
+
+          <div class="overflowHiddenDiv" *ngIf="displaySampleSolutions">
+            <div *ngFor="let sampleSolution of sampleSolutions; let last = last">
+              <pre>{{isGrammarPart ? sampleSolution.grammar : sampleSolution.document}}</pre>
+
+              <br *ngIf="!last">
+            </div>
           </div>
 
         </it4all-tab>
