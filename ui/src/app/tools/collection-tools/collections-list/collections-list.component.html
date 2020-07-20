@@ -1,13 +1,7 @@
 <div class="container">
   <ng-container *ngIf="collectionListQuery; else loadingDataBlock">
 
-    <h1 class="title is-3 has-text-centered">Tool &quot;{{collectionListQuery.me.tool.name}}&quot;: Sammlungen</h1>
-
-    <div class="buttons">
-      <a class="button is-primary is-fullwidth" routerLink="..">Zurück zum Tool</a>
-    </div>
-
-    <br>
+    <h1 class="title is-3 has-text-centered">Tool {{collectionListQuery.me.tool.name}}: Sammlungen</h1>
 
     <div class="columns is-multiline">
       <div class="column is-one-quarter" *ngFor="let coll of collections">

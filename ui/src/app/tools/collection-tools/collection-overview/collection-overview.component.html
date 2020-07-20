@@ -1,17 +1,27 @@
 <div class="container">
   <ng-container *ngIf="collectionOverviewQuery; else loadingDataBlock">
-    <h1 class="title is-3 has-text-centered">Sammlung &quot;{{collectionOverviewQuery.me.tool.collection.title}}&quot;</h1>
+    <h1 class="title is-3 has-text-centered">
+      Sammlung &quot;{{collectionOverviewQuery.me.tool.collection.title}}&quot; - Aufgaben
+    </h1>
 
-    <div class="buttons">
-      <a class="button is-primary is-fullwidth" [routerLink]="['..']">Zurück zur Sammlungübersicht</a>
-    </div>
-
-    <br>
-
-    <h2 class="subtitle is-3 has-text-centered">Aufgaben</h2>
+    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+      <button class="pagination-previous" (click)="currentPage = currentPage - 1" [disabled]="currentPage < 1">
+        Vorherige
+      </button>
+      <ul class="pagination-list">
+        <li *ngFor="let page of pages">
+          <button class="pagination-link" [class.is-current]="page === currentPage" (click)="currentPage = page">
+            {{page}}
+          </button>
+        </li>
+      </ul>
+      <button class="pagination-next" (click)="currentPage = currentPage + 1" [disabled]="currentPage >= maxPage - 1">
+        Nächste
+      </button>
+    </nav>
 
     <div class="columns is-multiline" *ngIf="exercises.length > 0; else noExercisesFoundBlock">
-      <div *ngFor="let exercise of exercises" class="column is-one-quarter-desktop is-half">
+      <div *ngFor="let exercise of getExercisesPaginated()" class="column is-one-third-desktop is-half">
         <it4all-exercise-link-card [exercise]="exercise"></it4all-exercise-link-card>
       </div>
     </div>

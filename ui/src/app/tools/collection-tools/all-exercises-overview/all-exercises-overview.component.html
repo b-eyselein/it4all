@@ -5,7 +5,7 @@
       <h2 class="title is-3 has-text-centered">Filter</h2>
 
       <div class="columns is-multiline">
-        <div class="column" *ngFor="let topicWithLevel of distinctTopicWithLevels">
+        <div class="column is-one-fifth" *ngFor="let topicWithLevel of distinctTopicWithLevels">
           <button class="button is-fullwidth" [class.is-link]="filtersActivated.get(topicWithLevel.topic)"
                   (click)="toggleFilter(topicWithLevel)">
             {{topicWithLevel.topic.title}}
@@ -19,7 +19,7 @@
     <h1 class="title is-3 has-text-centered">Alle Aufgaben</h1>
 
     <div class="columns is-multiline">
-      <div class="column is-one-quarter-desktop" *ngFor="let metaData of filteredExercises">
+      <div class="column is-one-third-desktop" *ngFor="let metaData of filteredExercises">
         <it4all-exercise-link-card [exercise]="metaData"></it4all-exercise-link-card>
       </div>
     </div>

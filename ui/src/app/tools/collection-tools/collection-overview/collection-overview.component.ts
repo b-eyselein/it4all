@@ -4,12 +4,19 @@ import {CollectionOverviewGQL, CollectionOverviewQuery, FieldsForLinkFragment} f
 import {Subscription} from 'rxjs';
 import {AuthenticationService} from '../../../_services/authentication.service';
 
+const SLICE_COUNT: number = 12;
+
 @Component({templateUrl: './collection-overview.component.html'})
 export class CollectionOverviewComponent implements OnInit, OnDestroy {
 
   private sub: Subscription;
 
   collectionOverviewQuery: CollectionOverviewQuery;
+
+  maxPage: number = 0;
+  currentPage: number = 0;
+
+  pages: number[] = [];
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -28,7 +35,15 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
       this.collectionOverviewGQL
         .watch({userJwt, toolId, collId})
         .valueChanges
-        .subscribe(({data}) => this.collectionOverviewQuery = data);
+        .subscribe(({data}) => {
+          this.collectionOverviewQuery = data;
+
+          this.maxPage = this.collectionOverviewQuery.me.tool.collection.exercises.length / SLICE_COUNT;
+
+          this.pages = Array(this.maxPage).fill(0).map((value, index) => index);
+
+          console.info(this.pages);
+        });
     });
   }
 
@@ -38,6 +53,10 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
 
   get exercises(): FieldsForLinkFragment[] {
     return this.collectionOverviewQuery.me.tool.collection.exercises;
+  }
+
+  getExercisesPaginated(): FieldsForLinkFragment[] {
+    return this.exercises.slice(this.currentPage * SLICE_COUNT, (this.currentPage + 1) * SLICE_COUNT);
   }
 
 }
