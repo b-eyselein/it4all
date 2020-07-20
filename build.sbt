@@ -56,7 +56,7 @@ libraryDependencies ++= Seq(
 
   // Mongo database
   "org.reactivemongo" %% "play2-reactivemongo"            % "0.20.12-play28-fix1", // Apache 2.0
-  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "0.20.12-play29-fix1", // Apache 2.0
+  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "0.20.12-play28-fix1", // Apache 2.0
 
   // Other helpers
   "com.beachape"         %% "enumeratum-play"      % "1.6.0", // MIT
@@ -72,7 +72,7 @@ libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.1", // Apache 2.0
 
   // Sql
-  "mysql"                 % "mysql-connector-java" % "8.0.20", // GPL 2.0
+  "mysql"                 % "mysql-connector-java" % "8.0.21", // GPL 2.0
   "com.typesafe.play"    %% "play-slick"           % "5.0.0", // Apache 2.0
   "com.github.jsqlparser" % "jsqlparser"           % "3.2", // Apache 2.0
 
