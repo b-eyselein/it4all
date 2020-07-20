@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Jul 08 2020 15:59:01 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon Jul 20 2020 11:05:04 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   solutionSaved: Boolean!
@@ -18,10 +18,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  FalseNegative
-  FalsePositive
-  TrueNegative
   TruePositive
+  FalsePositive
+  FalseNegative
+  TrueNegative
 }
 
 type CollectionTool {
@@ -264,11 +264,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  SUCCESSFUL_MATCH
+  UNSUCCESSFUL_MATCH
   ONLY_USER
+  SUCCESSFUL_MATCH
   PARTIAL_MATCH
   ONLY_SAMPLE
-  UNSUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -354,8 +354,8 @@ interface RegexAbstractResult {
 }
 
 enum RegexCorrectionType {
-  EXTRACTION
   MATCHING
+  EXTRACTION
 }
 
 type RegexExerciseContent {
@@ -722,8 +722,8 @@ type UmlAssociationMatchingResult implements MatchingResult {
 }
 
 enum UmlAssociationType {
-  AGGREGATION
   ASSOCIATION
+  AGGREGATION
   COMPOSITION
 }
 
@@ -943,10 +943,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PACKAGE
-  PRIVATE
-  PROTECTED
   PUBLIC
+  PACKAGE
+  PROTECTED
+  PRIVATE
 }
 
 type UnitTestCorrectionResult {
@@ -976,8 +976,8 @@ type UnitTestTestConfig {
 }
 
 enum UnitTestType {
-  Normal
   Simplified
+  Normal
 }
 
 type User {
