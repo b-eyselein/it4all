@@ -3,7 +3,7 @@ import {
   LessonMultipleChoiceQuestionAnswerFragment,
   LessonMultipleChoiceQuestionContentFragment,
   LessonMultipleChoiceQuestionFragment
-} from '../../../../../_services/apollo_services';
+} from '../../../../_services/apollo_services';
 
 interface SelectableAnswer extends LessonMultipleChoiceQuestionAnswerFragment {
   selected: boolean;
