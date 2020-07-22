@@ -10,22 +10,16 @@ sealed trait ProgEvalResult {
 
 }
 
-trait ProgrammingAbstractResult extends AbstractCorrectionResult[ProgrammingAbstractResult]
+trait ProgrammingAbstractResult extends AbstractCorrectionResult
 
 final case class ProgrammingInternalErrorResult(
   msg: String,
-  maxPoints: Points,
-  solutionSaved: Boolean = false
+  maxPoints: Points
 ) extends ProgrammingAbstractResult
-    with InternalErrorResult[ProgrammingAbstractResult] {
-
-  override def updateSolutionSaved(solutionSaved: Boolean): ProgrammingAbstractResult =
-    this.copy(solutionSaved = solutionSaved)
-
-}
+    with InternalErrorResult
 
 final case class ProgrammingResult(
-  solutionSaved: Boolean = false,
+  proficienciesUpdated: Option[Boolean] = None,
   simplifiedResults: Seq[SimplifiedExecutionResult] = Seq.empty,
   normalResult: Option[NormalExecutionResult] = None,
   unitTestResults: Seq[UnitTestCorrectionResult] = Seq.empty
@@ -47,9 +41,6 @@ final case class ProgrammingResult(
 
     simplifiedResultOk && normalResultOk && unitTestResultsOk
   }
-
-  override def updateSolutionSaved(solutionSaved: Boolean): ProgrammingAbstractResult =
-    this.copy(solutionSaved = solutionSaved)
 
 }
 

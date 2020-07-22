@@ -6,14 +6,14 @@ import play.api.Logger
 
 trait AbstractCorrector {
 
-  type AbstractResult <: AbstractCorrectionResult[AbstractResult]
+  type AbstractResult <: AbstractCorrectionResult
 
   protected val logger: Logger
 
   protected def buildInternalError(
     msg: String,
     maxPoints: Points
-  ): AbstractResult with InternalErrorResult[AbstractResult]
+  ): AbstractResult with InternalErrorResult
 
   protected def onError(
     internalMsg: String,

@@ -1,8 +1,7 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Jul 20 2020 11:05:04 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Jul 22 2020 11:33:21 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -18,10 +17,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  TruePositive
-  FalsePositive
   FalseNegative
+  FalsePositive
   TrueNegative
+  TruePositive
 }
 
 type CollectionTool {
@@ -264,11 +263,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
+  SUCCESSFUL_MATCH
+  ONLY_SAMPLE
   UNSUCCESSFUL_MATCH
   ONLY_USER
-  SUCCESSFUL_MATCH
   PARTIAL_MATCH
-  ONLY_SAMPLE
 }
 
 type Mutation {
@@ -295,9 +294,14 @@ enum ProgExPart {
 }
 
 interface ProgrammingAbstractResult {
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
+}
+
+type ProgrammingCorrectionResult {
+  solutionSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: ProgrammingAbstractResult!
 }
 
 type ProgrammingExerciseContent {
@@ -311,18 +315,17 @@ type ProgrammingExerciseContent {
 }
 
 type ProgrammingExerciseMutations {
-  correct(part: ProgExPart!, solution: ProgSolutionInput!): ProgrammingAbstractResult!
+  correct(part: ProgExPart!, solution: ProgSolutionInput!): ProgrammingCorrectionResult!
 }
 
 type ProgrammingInternalErrorResult implements ProgrammingAbstractResult & AbstractCorrectionResult {
   msg: String!
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
 
 type ProgrammingResult implements ProgrammingAbstractResult & AbstractCorrectionResult {
-  solutionSaved: Boolean!
+  proficienciesUpdated: Boolean
   simplifiedResults: [SimplifiedExecutionResult!]!
   normalResult: NormalExecutionResult
   unitTestResults: [UnitTestCorrectionResult!]!
@@ -348,14 +351,19 @@ type Query {
 }
 
 interface RegexAbstractResult {
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
 
+type RegexCorrectionResult {
+  solutionSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: RegexAbstractResult!
+}
+
 enum RegexCorrectionType {
-  MATCHING
   EXTRACTION
+  MATCHING
 }
 
 type RegexExerciseContent {
@@ -368,7 +376,7 @@ type RegexExerciseContent {
 }
 
 type RegexExerciseMutations {
-  correct(part: RegexExPart!, solution: String!): RegexAbstractResult!
+  correct(part: RegexExPart!, solution: String!): RegexCorrectionResult!
 }
 
 enum RegexExPart {
@@ -383,7 +391,6 @@ type RegexExtractedValuesComparisonMatchingResult implements MatchingResult {
 
 type RegexExtractionResult implements RegexAbstractResult & AbstractCorrectionResult {
   extractionResults: [RegexExtractionSingleResult!]!
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -401,14 +408,12 @@ type RegexExtractionTestData {
 
 type RegexInternalErrorResult implements RegexAbstractResult & AbstractCorrectionResult {
   msg: String!
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
 
 type RegexMatchingResult implements RegexAbstractResult & AbstractCorrectionResult {
   matchingResults: [RegexMatchingSingleResult!]!
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -467,7 +472,6 @@ type SiteSpec {
 }
 
 interface SqlAbstractResult {
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -506,6 +510,12 @@ type SqlColumnMatch implements NewMatch {
   sampleArgDescription: String
 }
 
+type SqlCorrectionResult {
+  solutionSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: SqlAbstractResult!
+}
+
 type SqlExecutionResult {
   userResult: SqlQueryResult
   sampleResult: SqlQueryResult
@@ -521,15 +531,15 @@ type SqlExerciseContent {
 }
 
 type SqlExerciseMutations {
-  correct(part: SqlExPart!, solution: String!): SqlAbstractResult!
+  correct(part: SqlExPart!, solution: String!): SqlCorrectionResult!
 }
 
 enum SqlExerciseType {
-  DELETE
-  CREATE
-  UPDATE
   SELECT
+  DELETE
+  UPDATE
   INSERT
+  CREATE
 }
 
 enum SqlExPart {
@@ -566,7 +576,6 @@ type SqlInsertMatch implements NewMatch {
 
 type SqlInternalErrorResult implements SqlAbstractResult & AbstractCorrectionResult {
   msg: String!
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -621,7 +630,6 @@ type SqlQueryResult {
 type SqlResult implements SqlAbstractResult & AbstractCorrectionResult {
   staticComparison: SqlQueriesStaticComparison!
   executionResult: SqlExecutionResult!
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -676,7 +684,6 @@ type TopicWithLevel {
 }
 
 interface UmlAbstractResult {
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -722,8 +729,8 @@ type UmlAssociationMatchingResult implements MatchingResult {
 }
 
 enum UmlAssociationType {
-  ASSOCIATION
   AGGREGATION
+  ASSOCIATION
   COMPOSITION
 }
 
@@ -828,6 +835,12 @@ enum UmlClassType {
   INTERFACE
 }
 
+type UmlCorrectionResult {
+  solutionSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: UmlAbstractResult!
+}
+
 type UmlExerciseContent {
   toIgnore: [String!]!
   sampleSolutions: [UmlSampleSolution!]!
@@ -836,7 +849,7 @@ type UmlExerciseContent {
 }
 
 type UmlExerciseMutations {
-  correct(part: UmlExPart!, solution: UmlClassDiagramInput!): UmlAbstractResult!
+  correct(part: UmlExPart!, solution: UmlClassDiagramInput!): UmlCorrectionResult!
 }
 
 enum UmlExPart {
@@ -872,7 +885,6 @@ type UmlImplementationMatchingResult implements MatchingResult {
 
 type UmlInternalErrorResult implements UmlAbstractResult {
   msg: String!
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -932,7 +944,6 @@ type UmlResult implements UmlAbstractResult {
   classResult: UmlClassMatchingResult
   assocResult: UmlAssociationMatchingResult
   implResult: UmlImplementationMatchingResult
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -943,10 +954,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PUBLIC
   PACKAGE
-  PROTECTED
   PRIVATE
+  PROTECTED
+  PUBLIC
 }
 
 type UnitTestCorrectionResult {
@@ -976,8 +987,8 @@ type UnitTestTestConfig {
 }
 
 enum UnitTestType {
-  Simplified
   Normal
+  Simplified
 }
 
 type User {
@@ -1008,9 +1019,14 @@ type UserProficiency {
 }
 
 interface WebAbstractResult {
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
+}
+
+type WebCorrectionResult {
+  solutionSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: WebAbstractResult!
 }
 
 type WebExerciseContent {
@@ -1023,7 +1039,7 @@ type WebExerciseContent {
 }
 
 type WebExerciseMutations {
-  correct(part: WebExPart!, solution: WebSolutionInput!): WebAbstractResult!
+  correct(part: WebExPart!, solution: WebSolutionInput!): WebCorrectionResult!
 }
 
 enum WebExPart {
@@ -1033,7 +1049,6 @@ enum WebExPart {
 
 type WebInternalErrorResult implements WebAbstractResult & AbstractCorrectionResult {
   msg: String!
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -1041,7 +1056,6 @@ type WebInternalErrorResult implements WebAbstractResult & AbstractCorrectionRes
 type WebResult implements WebAbstractResult & AbstractCorrectionResult {
   gradedHtmlTaskResults: [GradedHtmlTaskResult!]!
   gradedJsTaskResults: [GradedJsTaskResult!]!
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -1060,9 +1074,14 @@ input WebSolutionInput {
 }
 
 interface XmlAbstractResult {
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
+}
+
+type XmlCorrectionResult {
+  solutionSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: XmlAbstractResult!
 }
 
 type XmlDocumentResult {
@@ -1096,7 +1115,7 @@ type XmlExerciseContent {
 }
 
 type XmlExerciseMutations {
-  correct(part: XmlExPart!, solution: XmlSolutionInput!): XmlAbstractResult!
+  correct(part: XmlExPart!, solution: XmlSolutionInput!): XmlCorrectionResult!
 }
 
 enum XmlExPart {
@@ -1111,7 +1130,6 @@ type XmlGrammarResult {
 
 type XmlInternalErrorResult implements XmlAbstractResult & AbstractCorrectionResult {
   msg: String!
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }
@@ -1120,7 +1138,6 @@ type XmlResult implements XmlAbstractResult & AbstractCorrectionResult {
   successType: SuccessType!
   documentResult: XmlDocumentResult
   grammarResult: XmlGrammarResult
-  solutionSaved: Boolean!
   points: Float!
   maxPoints: Float!
 }

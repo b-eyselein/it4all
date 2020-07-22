@@ -73,7 +73,6 @@ object RegexGraphQLModels
   private val regexAbstractResultType: InterfaceType[Unit, RegexAbstractResult] = InterfaceType(
     "RegexAbstractResult",
     fields[Unit, RegexAbstractResult](
-      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
       Field("points", FloatType, resolve = _.value.points.asDouble),
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     ),
@@ -82,7 +81,7 @@ object RegexGraphQLModels
 
   private val regexInternalErrorResultType: ObjectType[Unit, RegexInternalErrorResult] = deriveObjectType(
     Interfaces(regexAbstractResultType),
-    ExcludeFields("solutionSaved", "maxPoints")
+    ExcludeFields("maxPoints")
   )
 
   private val regexMatchingResultType: ObjectType[Unit, RegexMatchingResult] = {
@@ -90,7 +89,7 @@ object RegexGraphQLModels
 
     deriveObjectType(
       Interfaces(regexAbstractResultType),
-      ExcludeFields("solutionSaved", "points", "maxPoints")
+      ExcludeFields("points", "maxPoints")
     )
   }
 
@@ -99,7 +98,7 @@ object RegexGraphQLModels
 
     deriveObjectType(
       Interfaces(regexAbstractResultType),
-      ExcludeFields("solutionSaved", "points", "maxPoints")
+      ExcludeFields("points", "maxPoints")
     )
   }
 

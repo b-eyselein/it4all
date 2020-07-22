@@ -4,6 +4,7 @@ import java.time.Clock
 
 import com.github.t3hnar.bcrypt._
 import model.mongo.MongoClientQueries
+import model.result.CorrectionResult
 import model.tools.ToolList
 import model.{JsonProtocols, _}
 import pdi.jwt.JwtSession
@@ -67,21 +68,34 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
       } yield maybeUser
     }
 
+  private def updateAllUserProficiencies[EC <: ExerciseContent](
+    username: String,
+    exercise: Exercise[EC]
+  ): Future[Boolean] =
+    Future
+      .sequence {
+        exercise.topicsWithLevels.map { topicWithLevel =>
+          updateUserProficiency(username, exercise, topicWithLevel)
+            .recover { _ => false }
+        }
+      }
+      .map { updateResults => updateResults.forall(identity) }
+
   private val loggedInUserMutationType: ObjectType[Unit, LoggedInUser] = ObjectType(
     "UserMutations",
     fields = ToolList.tools.map { tool =>
-      implicit val partFormat: Format[tool.PartType]   = tool.jsonFormats.partTypeFormat
-      implicit val solTypeFormat: Format[tool.SolType] = tool.jsonFormats.solutionFormat
+      type P = tool.PartType
+      type S = tool.SolType
+      type E = tool.ExContentType
+      type R = tool.ResType
 
-      val partTypeInputArg: Argument[tool.PartType] = Argument("part", tool.graphQlModels.partEnumType)
-      val solTypeInputArg: Argument[tool.SolType]   = Argument("solution", tool.graphQlModels.SolTypeInputType)
+      implicit val partFormat: Format[P]    = tool.jsonFormats.partTypeFormat
+      implicit val solTypeFormat: Format[S] = tool.jsonFormats.solutionFormat
 
-      def correct(
-        user: LoggedInUser,
-        exercise: Exercise[tool.ExContentType],
-        part: tool.PartType,
-        solution: tool.SolType
-      ): Future[tool.ResType] =
+      val partTypeInputArg: Argument[P] = Argument("part", tool.graphQlModels.partEnumType)
+      val solTypeInputArg: Argument[S]  = Argument("solution", tool.graphQlModels.SolTypeInputType)
+
+      def correct(user: LoggedInUser, exercise: Exercise[E], part: P, solution: S): Future[CorrectionResult[R]] =
         for {
           result <- tool.correctAbstract(user, solution, exercise, part)
 
@@ -92,26 +106,27 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
             tool.jsonFormats.userSolutionFormat
           )
 
-          _ <-
-            if (result.isCompletelyCorrect) {
-              Future
-                .sequence(
-                  exercise.topicsWithLevels.map { topicWithLevel =>
-                    updateUserProficiencies(user.username, exercise, topicWithLevel)
-                  }
-                )
-                .recover { _ => println("Could not update user proficiencies!") }
-            } else {
-              Future.successful(())
-            }
-        } yield result.updateSolutionSaved(solutionSaved)
+          proficienciesUpdated <-
+            if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, exercise).map(Some.apply)
+            else Future.successful(None)
+
+        } yield CorrectionResult(solutionSaved, proficienciesUpdated, result)
+
+      val correctionResultType = ObjectType(
+        s"${tool.id.capitalize}CorrectionResult",
+        fields[Unit, CorrectionResult[R]](
+          Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
+          Field("proficienciesUpdated", OptionType(BooleanType), resolve = _.value.proficienciesUpdated),
+          Field("result", tool.graphQlModels.toolAbstractResultTypeInterfaceType, resolve = _.value.result)
+        )
+      )
 
       val toolExerciseMutationsType = ObjectType(
         s"${tool.id.capitalize}ExerciseMutations",
         fields[Unit, (LoggedInUser, Exercise[tool.ExContentType])](
           Field(
             "correct",
-            tool.graphQlModels.toolAbstractResultTypeInterfaceType,
+            correctionResultType,
             arguments = partTypeInputArg :: solTypeInputArg :: Nil,
             resolve = context =>
               correct(

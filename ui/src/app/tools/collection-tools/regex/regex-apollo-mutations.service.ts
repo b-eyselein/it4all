@@ -20,35 +20,44 @@ export type RegexCorrectionMutation = (
     & { regexExercise?: Types.Maybe<(
       { __typename?: 'RegexExerciseMutations' }
       & { correct: (
-        { __typename?: 'RegexExtractionResult' }
-        & RegexAbstractResult_RegexExtractionResult_Fragment
-        & RegexExtractionResultFragment
-      ) | (
-        { __typename?: 'RegexInternalErrorResult' }
-        & RegexAbstractResult_RegexInternalErrorResult_Fragment
-        & RegexInternalErrorResultFragment
-      ) | (
-        { __typename?: 'RegexMatchingResult' }
-        & RegexAbstractResult_RegexMatchingResult_Fragment
-        & RegexMatchingResultFragment
+        { __typename?: 'RegexCorrectionResult' }
+        & RegexCorrectionResultFragment
       ) }
     )> }
   )> }
 );
 
+export type RegexCorrectionResultFragment = (
+  { __typename?: 'RegexCorrectionResult' }
+  & Pick<Types.RegexCorrectionResult, 'solutionSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'RegexExtractionResult' }
+    & RegexAbstractResult_RegexExtractionResult_Fragment
+    & RegexExtractionResultFragment
+  ) | (
+    { __typename?: 'RegexInternalErrorResult' }
+    & RegexAbstractResult_RegexInternalErrorResult_Fragment
+    & RegexInternalErrorResultFragment
+  ) | (
+    { __typename?: 'RegexMatchingResult' }
+    & RegexAbstractResult_RegexMatchingResult_Fragment
+    & RegexMatchingResultFragment
+  ) }
+);
+
 type RegexAbstractResult_RegexExtractionResult_Fragment = (
   { __typename: 'RegexExtractionResult' }
-  & Pick<Types.RegexExtractionResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.RegexExtractionResult, 'points' | 'maxPoints'>
 );
 
 type RegexAbstractResult_RegexInternalErrorResult_Fragment = (
   { __typename: 'RegexInternalErrorResult' }
-  & Pick<Types.RegexInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.RegexInternalErrorResult, 'points' | 'maxPoints'>
 );
 
 type RegexAbstractResult_RegexMatchingResult_Fragment = (
   { __typename: 'RegexMatchingResult' }
-  & Pick<Types.RegexMatchingResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.RegexMatchingResult, 'points' | 'maxPoints'>
 );
 
 export type RegexAbstractResultFragment = RegexAbstractResult_RegexExtractionResult_Fragment | RegexAbstractResult_RegexInternalErrorResult_Fragment | RegexAbstractResult_RegexMatchingResult_Fragment;
@@ -105,7 +114,6 @@ export type RegexExtractionResultFragment = (
 export const RegexAbstractResultFragmentDoc = gql`
     fragment RegexAbstractResult on RegexAbstractResult {
   __typename
-  solutionSaved
   points
   maxPoints
 }
@@ -160,23 +168,32 @@ export const RegexExtractionResultFragmentDoc = gql`
   }
 }
     ${RegexExtractionSingleResultFragmentDoc}`;
-export const RegexCorrectionDocument = gql`
-    mutation RegexCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
-  me(userJwt: $userJwt) {
-    regexExercise(collId: $collId, exId: $exId) {
-      correct(part: $part, solution: $solution) {
-        ...RegexAbstractResult
-        ...RegexInternalErrorResult
-        ...RegexMatchingResult
-        ...RegexExtractionResult
-      }
-    }
+export const RegexCorrectionResultFragmentDoc = gql`
+    fragment RegexCorrectionResult on RegexCorrectionResult {
+  solutionSaved
+  proficienciesUpdated
+  result {
+    ...RegexAbstractResult
+    ...RegexInternalErrorResult
+    ...RegexMatchingResult
+    ...RegexExtractionResult
   }
 }
     ${RegexAbstractResultFragmentDoc}
 ${RegexInternalErrorResultFragmentDoc}
 ${RegexMatchingResultFragmentDoc}
 ${RegexExtractionResultFragmentDoc}`;
+export const RegexCorrectionDocument = gql`
+    mutation RegexCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
+  me(userJwt: $userJwt) {
+    regexExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...RegexCorrectionResult
+      }
+    }
+  }
+}
+    ${RegexCorrectionResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

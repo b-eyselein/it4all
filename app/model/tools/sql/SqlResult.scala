@@ -80,23 +80,17 @@ final case class SqlQueriesStaticComparison(
 
 // Complete result
 
-sealed trait SqlAbstractResult extends AbstractCorrectionResult[SqlAbstractResult]
+sealed trait SqlAbstractResult extends AbstractCorrectionResult
 
 final case class SqlInternalErrorResult(
   msg: String,
-  maxPoints: Points = (-1).points,
-  solutionSaved: Boolean = false
+  maxPoints: Points = (-1).points
 ) extends SqlAbstractResult
-    with InternalErrorResult[SqlAbstractResult] {
-
-  override def updateSolutionSaved(solutionSaved: Boolean): SqlAbstractResult = this.copy(solutionSaved = solutionSaved)
-
-}
+    with InternalErrorResult
 
 final case class SqlResult(
   staticComparison: SqlQueriesStaticComparison,
-  executionResult: SqlExecutionResult,
-  solutionSaved: Boolean = false
+  executionResult: SqlExecutionResult
 ) extends SqlAbstractResult {
 
   override def points: Points = staticComparison.points
@@ -104,8 +98,6 @@ final case class SqlResult(
   override def maxPoints: Points = staticComparison.maxPoints
 
   override def isCompletelyCorrect: Boolean = points == maxPoints
-
-  override def updateSolutionSaved(solutionSaved: Boolean): SqlAbstractResult = this.copy(solutionSaved = solutionSaved)
 
 }
 

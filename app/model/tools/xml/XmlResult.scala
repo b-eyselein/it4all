@@ -6,25 +6,18 @@ import model.points._
 import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import model.tools.xml.XmlTool.ElementLineComparison
 
-trait XmlAbstractResult extends AbstractCorrectionResult[XmlAbstractResult]
+trait XmlAbstractResult extends AbstractCorrectionResult
 
 final case class XmlInternalErrorResult(
   msg: String,
-  maxPoints: Points,
-  solutionSaved: Boolean = false
+  maxPoints: Points
 ) extends XmlAbstractResult
-    with InternalErrorResult[XmlAbstractResult] {
-
-  override def updateSolutionSaved(solutionSaved: Boolean): XmlAbstractResult =
-    this.copy(solutionSaved = solutionSaved)
-
-}
+    with InternalErrorResult
 
 final case class XmlResult(
   successType: SuccessType,
   points: Points,
   maxPoints: Points,
-  solutionSaved: Boolean = false,
   documentResult: Option[XmlDocumentResult] = None,
   grammarResult: Option[XmlGrammarResult] = None
 ) extends XmlAbstractResult {
@@ -38,9 +31,6 @@ final case class XmlResult(
 
     documentResultCorrect && grammarResultCorrect
   }
-
-  override def updateSolutionSaved(solutionSaved: Boolean): XmlAbstractResult =
-    this.copy(solutionSaved = solutionSaved)
 
 }
 

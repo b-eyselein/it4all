@@ -5,27 +5,20 @@ import model.points._
 import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 
-trait UmlAbstractResult extends AbstractCorrectionResult[UmlAbstractResult]
+trait UmlAbstractResult extends AbstractCorrectionResult
 
 final case class UmlInternalErrorResult(
   msg: String,
-  maxPoints: Points,
-  solutionSaved: Boolean = false
+  maxPoints: Points
 ) extends UmlAbstractResult
-    with InternalErrorResult[UmlAbstractResult] {
-
-  override def updateSolutionSaved(solutionSaved: Boolean): UmlAbstractResult =
-    this.copy(solutionSaved = solutionSaved)
-
-}
+    with InternalErrorResult
 
 final case class UmlResult(
   classResult: Option[ClassComparison],
   assocResult: Option[AssociationComparison],
   implResult: Option[ImplementationComparison],
   points: Points,
-  maxPoints: Points,
-  solutionSaved: Boolean = false
+  maxPoints: Points
 ) extends UmlAbstractResult {
 
   override def isCompletelyCorrect: Boolean = {
@@ -39,7 +32,5 @@ final case class UmlResult(
     classResultOk && assocResultOk && implResultOk
 
   }
-
-  override def updateSolutionSaved(solutionSaved: Boolean): UmlAbstractResult = this.copy(solutionSaved = solutionSaved)
 
 }

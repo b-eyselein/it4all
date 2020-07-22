@@ -2,7 +2,7 @@ package model.tools.rose
 
 import model.SampleSolution
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
-import sangria.macros.derive.{ExcludeFields, Interfaces, deriveObjectType}
+import sangria.macros.derive._
 import sangria.schema._
 
 object RoseGraphQLModels
@@ -32,7 +32,6 @@ object RoseGraphQLModels
   private val roseAbstractResultType: InterfaceType[Unit, RoseAbstractResult] = InterfaceType(
     "RoseAbstractResult",
     fields[Unit, RoseAbstractResult](
-      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
       Field("points", FloatType, resolve = _.value.points.asDouble),
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     ),
@@ -41,7 +40,10 @@ object RoseGraphQLModels
 
   private val roseResultType: ObjectType[Unit, RoseResult] = deriveObjectType[Unit, RoseResult](
     Interfaces(roseAbstractResultType),
-    ExcludeFields("points", "maxPoints", "result")
+    ExcludeFields("points", "maxPoints", "result"),
+    AddFields(
+      Field("_x", BooleanType, resolve = _ => false)
+    )
   )
 
   private val roseInternalErrorResultType: ObjectType[Unit, RoseInternalErrorResult] = deriveObjectType(

@@ -8,6 +8,7 @@ import {
   RegexCorrectionGQL,
   RegexCorrectionMutation,
   RegexCorrectionMutationVariables,
+  RegexCorrectionResultFragment,
   RegexExtractionResultFragment,
   RegexInternalErrorResultFragment,
   RegexMatchingResultFragment
@@ -56,20 +57,24 @@ export class RegexExerciseComponent
     };
   }
 
-  get basicResult(): RegexAbstractResultFragment & (RegexInternalErrorResultFragment | RegexMatchingResultFragment | RegexExtractionResultFragment) {
+  get correctionResult(): RegexCorrectionResultFragment | null {
     return this.resultQuery?.me.regexExercise?.correct;
   }
 
+  get abstractResult(): RegexAbstractResultFragment & (RegexInternalErrorResultFragment | RegexMatchingResultFragment | RegexExtractionResultFragment) {
+    return this.correctionResult?.result;
+  }
+
   get regexInternalErrorResult(): RegexInternalErrorResultFragment | null {
-    return this.basicResult?.__typename === 'RegexInternalErrorResult' ? this.basicResult : null;
+    return this.abstractResult?.__typename === 'RegexInternalErrorResult' ? this.abstractResult : null;
   }
 
   get regexMatchingResult(): RegexMatchingResultFragment | null {
-    return this.basicResult?.__typename === 'RegexMatchingResult' ? this.basicResult : null;
+    return this.abstractResult?.__typename === 'RegexMatchingResult' ? this.abstractResult : null;
   }
 
   get regexExtractionResult(): RegexExtractionResultFragment | undefined {
-    return this.basicResult?.__typename === 'RegexExtractionResult' ? this.basicResult : undefined;
+    return this.abstractResult?.__typename === 'RegexExtractionResult' ? this.abstractResult : undefined;
   }
 
   correct(): void {

@@ -20,26 +20,35 @@ export type XmlCorrectionMutation = (
     & { xmlExercise?: Types.Maybe<(
       { __typename?: 'XmlExerciseMutations' }
       & { correct: (
-        { __typename?: 'XmlInternalErrorResult' }
-        & XmlAbstractResult_XmlInternalErrorResult_Fragment
-        & XmlInternalErrorResultFragment
-      ) | (
-        { __typename?: 'XmlResult' }
-        & XmlAbstractResult_XmlResult_Fragment
-        & XmlResultFragment
+        { __typename?: 'XmlCorrectionResult' }
+        & XmlCorrectionResultFragment
       ) }
     )> }
   )> }
 );
 
+export type XmlCorrectionResultFragment = (
+  { __typename?: 'XmlCorrectionResult' }
+  & Pick<Types.XmlCorrectionResult, 'solutionSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'XmlInternalErrorResult' }
+    & XmlAbstractResult_XmlInternalErrorResult_Fragment
+    & XmlInternalErrorResultFragment
+  ) | (
+    { __typename?: 'XmlResult' }
+    & XmlAbstractResult_XmlResult_Fragment
+    & XmlResultFragment
+  ) }
+);
+
 type XmlAbstractResult_XmlInternalErrorResult_Fragment = (
   { __typename: 'XmlInternalErrorResult' }
-  & Pick<Types.XmlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.XmlInternalErrorResult, 'points' | 'maxPoints'>
 );
 
 type XmlAbstractResult_XmlResult_Fragment = (
   { __typename: 'XmlResult' }
-  & Pick<Types.XmlResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.XmlResult, 'points' | 'maxPoints'>
 );
 
 export type XmlAbstractResultFragment = XmlAbstractResult_XmlInternalErrorResult_Fragment | XmlAbstractResult_XmlResult_Fragment;
@@ -129,7 +138,6 @@ export type XmlErrorFragment = (
 export const XmlAbstractResultFragmentDoc = gql`
     fragment XmlAbstractResult on XmlAbstractResult {
   __typename
-  solutionSaved
   points
   maxPoints
 }
@@ -222,21 +230,30 @@ export const XmlResultFragmentDoc = gql`
 }
     ${XmlGrammarResultFragmentDoc}
 ${XmlDocumentResultFragmentDoc}`;
-export const XmlCorrectionDocument = gql`
-    mutation XmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
-  me(userJwt: $userJwt) {
-    xmlExercise(collId: $collId, exId: $exId) {
-      correct(part: $part, solution: $solution) {
-        ...XmlAbstractResult
-        ...XmlInternalErrorResult
-        ...XmlResult
-      }
-    }
+export const XmlCorrectionResultFragmentDoc = gql`
+    fragment XmlCorrectionResult on XmlCorrectionResult {
+  solutionSaved
+  proficienciesUpdated
+  result {
+    ...XmlAbstractResult
+    ...XmlInternalErrorResult
+    ...XmlResult
   }
 }
     ${XmlAbstractResultFragmentDoc}
 ${XmlInternalErrorResultFragmentDoc}
 ${XmlResultFragmentDoc}`;
+export const XmlCorrectionDocument = gql`
+    mutation XmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
+  me(userJwt: $userJwt) {
+    xmlExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...XmlCorrectionResult
+      }
+    }
+  }
+}
+    ${XmlCorrectionResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

@@ -12,17 +12,18 @@ import {
   XmlCorrectionGQL,
   XmlCorrectionMutation,
   XmlCorrectionMutationVariables,
+  XmlCorrectionResultFragment,
   XmlDocumentResultFragment,
   XmlGrammarResultFragment,
   XmlInternalErrorResultFragment,
   XmlResultFragment
 } from '../xml-apollo-mutations.service';
 import {XmlExPart, XmlSolution, XmlSolutionInput} from '../../../../_interfaces/graphql-types';
+import {getXmlDocumentContent, getXmlGrammarContent, XmlDocumentCreation, XmlGrammarCreation} from '../xml-tool';
+import {AuthenticationService} from '../../../../_services/authentication.service';
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
-import {getXmlDocumentContent, getXmlGrammarContent, XmlDocumentCreation, XmlGrammarCreation} from '../xml-tool';
-import {AuthenticationService} from '../../../../_services/authentication.service';
 
 @Component({
   selector: 'it4all-xml-exercise',
@@ -114,8 +115,12 @@ export class XmlExerciseComponent
     };
   }
 
-  get xmlAbstractResult(): XmlAbstractResultFragment & (XmlResultFragment | XmlInternalErrorResultFragment) | null {
+  get correctionResult(): XmlCorrectionResultFragment | null {
     return this.resultQuery?.me.xmlExercise?.correct;
+  }
+
+  get xmlAbstractResult(): XmlAbstractResultFragment & (XmlResultFragment | XmlInternalErrorResultFragment) | null {
+    return this.correctionResult?.result;
   }
 
   private get xmlResult(): XmlResultFragment | null {

@@ -21,6 +21,7 @@ import {
   UmlCorrectionGQL,
   UmlCorrectionMutation,
   UmlCorrectionMutationVariables,
+  UmlCorrectionResultFragment,
   UmlInternalErrorResultFragment,
   UmlResultFragment
 } from '../uml-apollo-mutations.service';
@@ -277,8 +278,12 @@ export class UmlDiagramDrawingComponent
     };
   }
 
-  get umlAbstractResult(): UmlAbstractResultFragment & (UmlInternalErrorResultFragment | UmlResultFragment) | null {
+  get correctionResult(): UmlCorrectionResultFragment | null {
     return this.resultQuery?.me.umlExercise?.correct;
+  }
+
+  get umlAbstractResult(): UmlAbstractResultFragment & (UmlInternalErrorResultFragment | UmlResultFragment) | null {
+    return this.correctionResult?.result;
   }
 
   get result(): UmlResultFragment | null {

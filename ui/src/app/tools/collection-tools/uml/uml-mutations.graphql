@@ -2,17 +2,24 @@ mutation UmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: Uml
   me(userJwt: $userJwt) {
     umlExercise(collId: $collId, exId: $exId) {
       correct(part: $part, solution: $solution) {
-        ...UmlAbstractResult
-        ...UmlInternalErrorResult
-        ...UmlResult
+        ...UmlCorrectionResult
       }
     }
   }
 }
 
+fragment UmlCorrectionResult on UmlCorrectionResult {
+  solutionSaved
+  proficienciesUpdated
+  result {
+    ...UmlAbstractResult
+    ...UmlInternalErrorResult
+    ...UmlResult
+  }
+}
+
 fragment UmlAbstractResult on UmlAbstractResult {
   __typename
-  solutionSaved
   points
   maxPoints
 }

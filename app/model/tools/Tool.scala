@@ -36,7 +36,7 @@ abstract class Tool(val id: String, val name: String, val toolState: ToolState =
   type SolType
   type ExContentType <: ExerciseContent
   type PartType <: ExPart
-  type ResType <: AbstractCorrectionResult[ResType]
+  type ResType <: AbstractCorrectionResult
 
   // Yaml, Html forms, Json, GraphQL
 

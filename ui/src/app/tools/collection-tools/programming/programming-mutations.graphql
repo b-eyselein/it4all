@@ -2,17 +2,24 @@ mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $p
   me(userJwt: $userJwt) {
     programmingExercise(collId: $collId, exId: $exId) {
       correct(part: $part, solution: $solution) {
-        ...ProgrammingAbstractResult
-        ...ProgrammingInternalErrorResult
-        ...ProgrammingResult
+        ...ProgrammingCorrectionResult
       }
     }
   }
 }
 
+fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
+  solutionSaved
+  proficienciesUpdated
+  result {
+    ...ProgrammingAbstractResult
+    ...ProgrammingInternalErrorResult
+    ...ProgrammingResult
+  }
+}
+
 fragment ProgrammingAbstractResult on ProgrammingAbstractResult {
   __typename
-  solutionSaved
   points
   maxPoints
 }

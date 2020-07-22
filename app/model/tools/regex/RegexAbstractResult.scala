@@ -22,44 +22,30 @@ final case class RegexExtractionSingleResult(
 
 // complete result
 
-sealed trait RegexAbstractResult extends AbstractCorrectionResult[RegexAbstractResult]
+sealed trait RegexAbstractResult extends AbstractCorrectionResult
 
 final case class RegexInternalErrorResult(
   msg: String,
-  maxPoints: Points = (-1).points,
-  solutionSaved: Boolean = false
+  maxPoints: Points = (-1).points
 ) extends RegexAbstractResult
-    with InternalErrorResult[RegexAbstractResult] {
-
-  override def updateSolutionSaved(solutionSaved: Boolean): RegexAbstractResult =
-    this.copy(solutionSaved = solutionSaved)
-
-}
+    with InternalErrorResult
 
 final case class RegexMatchingResult(
   matchingResults: Seq[RegexMatchingSingleResult],
   points: Points,
-  maxPoints: Points,
-  solutionSaved: Boolean = false
+  maxPoints: Points
 ) extends RegexAbstractResult {
 
   override def isCompletelyCorrect: Boolean = matchingResults.forall(_.resultType.correct)
-
-  override def updateSolutionSaved(solutionSaved: Boolean): RegexAbstractResult =
-    this.copy(solutionSaved = solutionSaved)
 
 }
 
 final case class RegexExtractionResult(
   extractionResults: Seq[RegexExtractionSingleResult],
   points: Points,
-  maxPoints: Points,
-  solutionSaved: Boolean = false
+  maxPoints: Points
 ) extends RegexAbstractResult {
 
   override def isCompletelyCorrect: Boolean = extractionResults.forall(_.correct)
-
-  override def updateSolutionSaved(solutionSaved: Boolean): RegexAbstractResult =
-    this.copy(solutionSaved = solutionSaved)
 
 }

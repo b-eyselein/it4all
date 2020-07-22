@@ -2,18 +2,25 @@ mutation RegexCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: R
   me(userJwt: $userJwt) {
     regexExercise(collId: $collId, exId: $exId) {
       correct(part:$part, solution: $solution) {
-        ...RegexAbstractResult
-        ...RegexInternalErrorResult
-        ...RegexMatchingResult
-        ...RegexExtractionResult
+        ...RegexCorrectionResult
       }
     }
   }
 }
 
+fragment RegexCorrectionResult on RegexCorrectionResult {
+  solutionSaved
+  proficienciesUpdated
+  result {
+    ...RegexAbstractResult
+    ...RegexInternalErrorResult
+    ...RegexMatchingResult
+    ...RegexExtractionResult
+  }
+}
+
 fragment RegexAbstractResult on RegexAbstractResult {
   __typename
-  solutionSaved
   points
   maxPoints
 }

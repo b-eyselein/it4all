@@ -94,7 +94,7 @@ trait MongoClientQueries
           .map { t => userProficiencies.getOrElse(t, TopicWithLevel(t, Level.Beginner)) }
     } yield allUserProficiencies
 
-  protected def updateUserProficiencies(
+  protected def updateUserProficiency(
     username: String,
     exercise: UntypedExercise,
     topicWithLevel: TopicWithLevel

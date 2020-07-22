@@ -103,7 +103,6 @@ object ProgrammingGraphQLModels
   private val programmingAbstractResultType: InterfaceType[Unit, ProgrammingAbstractResult] = InterfaceType(
     "ProgrammingAbstractResult",
     fields[Unit, ProgrammingAbstractResult](
-      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
       Field("points", FloatType, resolve = _.value.points.asDouble),
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     ),

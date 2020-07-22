@@ -4,26 +4,19 @@ import de.uniwue.webtester.sitespec.{JsAction, JsActionType}
 import model.points._
 import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 
-sealed trait WebAbstractResult extends AbstractCorrectionResult[WebAbstractResult]
+sealed trait WebAbstractResult extends AbstractCorrectionResult
 
 final case class WebInternalErrorResult(
   msg: String,
-  maxPoints: Points,
-  solutionSaved: Boolean = false
+  maxPoints: Points
 ) extends WebAbstractResult
-    with InternalErrorResult[WebAbstractResult] {
-
-  override def updateSolutionSaved(solutionSaved: Boolean): WebAbstractResult =
-    this.copy(solutionSaved = solutionSaved)
-
-}
+    with InternalErrorResult
 
 final case class WebResult(
   gradedHtmlTaskResults: Seq[GradedHtmlTaskResult],
   gradedJsTaskResults: Seq[GradedJsTaskResult],
   points: Points,
-  maxPoints: Points,
-  solutionSaved: Boolean = false
+  maxPoints: Points
 ) extends WebAbstractResult {
 
   override def isCompletelyCorrect: Boolean = {
@@ -33,8 +26,6 @@ final case class WebResult(
 
     htmlTasksOk && jsTasksOk
   }
-
-  override def updateSolutionSaved(solutionSaved: Boolean): WebAbstractResult = this.copy(solutionSaved = solutionSaved)
 
 }
 

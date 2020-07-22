@@ -2,10 +2,13 @@ package model.result
 
 import model.points._
 
-trait AbstractCorrectionResult[R <: AbstractCorrectionResult[R]] {
-  self: R =>
+final case class CorrectionResult[R <: AbstractCorrectionResult](
+  solutionSaved: Boolean,
+  proficienciesUpdated: Option[Boolean],
+  result: R
+)
 
-  def solutionSaved: Boolean
+trait AbstractCorrectionResult {
 
   def points: Points
 
@@ -13,12 +16,9 @@ trait AbstractCorrectionResult[R <: AbstractCorrectionResult[R]] {
 
   def isCompletelyCorrect: Boolean
 
-  def updateSolutionSaved(solutionSaved: Boolean): R
-
 }
 
-trait InternalErrorResult[R <: AbstractCorrectionResult[R]] {
-  self: AbstractCorrectionResult[R] =>
+trait InternalErrorResult extends AbstractCorrectionResult {
 
   val msg: String
 

@@ -9,7 +9,7 @@ import sangria.schema._
 
 import scala.reflect.ClassTag
 
-trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: AbstractCorrectionResult[ResType]]
+trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: AbstractCorrectionResult]
     extends BasicGraphQLModels {
 
   // Arguments
@@ -74,10 +74,9 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
       ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches))
     )
 
-  protected val abstractResultInterfaceType: InterfaceType[Unit, AbstractCorrectionResult[_]] = InterfaceType(
+  protected val abstractResultInterfaceType: InterfaceType[Unit, AbstractCorrectionResult] = InterfaceType(
     "AbstractCorrectionResult",
-    fields[Unit, AbstractCorrectionResult[_]](
-      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
+    fields[Unit, AbstractCorrectionResult](
       Field("points", FloatType, resolve = _.value.points.asDouble),
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     )

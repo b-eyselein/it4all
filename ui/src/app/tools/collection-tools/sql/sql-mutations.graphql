@@ -2,17 +2,24 @@ mutation SqlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: Sql
   me(userJwt: $userJwt) {
     sqlExercise(collId: $collId, exId: $exId) {
       correct(part: $part, solution: $solution) {
-        ...SqlAbstractResult
-        ...SqlInternalErrorResult
-        ...SqlResult
+        ...SqlCorrectionResult
       }
     }
   }
 }
 
+fragment SqlCorrectionResult on SqlCorrectionResult {
+  solutionSaved
+  proficienciesUpdated
+  result {
+    ...SqlAbstractResult
+    ...SqlInternalErrorResult
+    ...SqlResult
+  }
+}
+
 fragment SqlAbstractResult on SqlAbstractResult {
   __typename
-  solutionSaved
   points
   maxPoints
 }

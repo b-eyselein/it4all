@@ -2,17 +2,24 @@ mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: Web
   me(userJwt:$userJwt) {
     webExercise(collId: $collId, exId: $exId) {
       correct(part: $part, solution: $solution) {
-        ...WebAbstractResult
-        ...WebResult
-        ...WebInternalErrorResult
+        ...WebCorrectionResult
       }
     }
   }
 }
 
+fragment WebCorrectionResult on WebCorrectionResult {
+  solutionSaved
+  proficienciesUpdated
+  result {
+    ...WebAbstractResult
+    ...WebResult
+    ...WebInternalErrorResult
+  }
+}
+
 fragment WebAbstractResult on WebAbstractResult{
   __typename
-  solutionSaved
   points
   maxPoints
 }

@@ -14,6 +14,7 @@ import {
   ProgrammingCorrectionGQL,
   ProgrammingCorrectionMutation,
   ProgrammingCorrectionMutationVariables,
+  ProgrammingCorrectionResultFragment,
   ProgrammingInternalErrorResultFragment,
   ProgrammingResultFragment,
   SimplifiedExecutionResultFragment,
@@ -96,12 +97,16 @@ export class ProgrammingExerciseComponent
     };
   }
 
-  get basicResult(): ProgrammingAbstractResultFragment & (ProgrammingResultFragment | ProgrammingInternalErrorResultFragment) {
+  get correctionResult(): ProgrammingCorrectionResultFragment | null {
     return this.resultQuery?.me.programmingExercise?.correct;
   }
 
+  get abstractResult(): ProgrammingAbstractResultFragment & (ProgrammingResultFragment | ProgrammingInternalErrorResultFragment) {
+    return this.correctionResult?.result;
+  }
+
   get result(): ProgrammingResultFragment | null {
-    return this.basicResult?.__typename === 'ProgrammingResult' ? this.basicResult : null;
+    return this.abstractResult?.__typename === 'ProgrammingResult' ? this.abstractResult : null;
   }
 
   get simplifiedResults(): SimplifiedExecutionResultFragment[] {

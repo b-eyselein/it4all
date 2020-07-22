@@ -103,7 +103,6 @@ object XmlGraphQLModels
   private val xmlAbstractResultType: InterfaceType[Unit, XmlAbstractResult] = InterfaceType(
     "XmlAbstractResult",
     fields[Unit, XmlAbstractResult](
-      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
       Field("points", FloatType, resolve = _.value.points.asDouble),
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     ),
@@ -117,7 +116,7 @@ object XmlGraphQLModels
 
     deriveObjectType[Unit, XmlResult](
       Interfaces(xmlAbstractResultType),
-      ExcludeFields("solutionSaved", "points", "maxPoints")
+      ExcludeFields("points", "maxPoints")
     )
   }
 

@@ -12,14 +12,16 @@ import {
   WebCorrectionGQL,
   WebCorrectionMutation,
   WebCorrectionMutationVariables,
+  WebCorrectionResultFragment,
   WebInternalErrorResultFragment,
   WebResultFragment
 } from '../web-apollo-mutations.service';
 import {WebExPart, WebSolution, WebSolutionInput} from '../../../../_interfaces/graphql-types';
 import {HtmlPart, JsPart} from '../web-tool';
+import {AuthenticationService} from '../../../../_services/authentication.service';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
-import {AuthenticationService} from '../../../../_services/authentication.service';
+
 
 @Component({
   selector: 'it4all-web-exercise',
@@ -81,12 +83,16 @@ export class WebExerciseComponent
     };
   }
 
-  get basicResult(): WebAbstractResultFragment & (WebInternalErrorResultFragment | WebResultFragment) | null {
+  get correctionResult(): WebCorrectionResultFragment | null {
     return this.resultQuery?.me.webExercise?.correct;
   }
 
+  get abstractResult(): WebAbstractResultFragment & (WebInternalErrorResultFragment | WebResultFragment) | null {
+    return this.correctionResult?.result;
+  }
+
   get result(): WebResultFragment | null {
-    return this.basicResult?.__typename === 'WebResult' ? this.basicResult : null;
+    return this.abstractResult?.__typename === 'WebResult' ? this.abstractResult : null;
   }
 
 }

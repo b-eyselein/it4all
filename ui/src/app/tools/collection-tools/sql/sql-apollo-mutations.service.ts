@@ -20,26 +20,35 @@ export type SqlCorrectionMutation = (
     & { sqlExercise?: Types.Maybe<(
       { __typename?: 'SqlExerciseMutations' }
       & { correct: (
-        { __typename?: 'SqlInternalErrorResult' }
-        & SqlAbstractResult_SqlInternalErrorResult_Fragment
-        & SqlInternalErrorResultFragment
-      ) | (
-        { __typename?: 'SqlResult' }
-        & SqlAbstractResult_SqlResult_Fragment
-        & SqlResultFragment
+        { __typename?: 'SqlCorrectionResult' }
+        & SqlCorrectionResultFragment
       ) }
     )> }
   )> }
 );
 
+export type SqlCorrectionResultFragment = (
+  { __typename?: 'SqlCorrectionResult' }
+  & Pick<Types.SqlCorrectionResult, 'solutionSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'SqlInternalErrorResult' }
+    & SqlAbstractResult_SqlInternalErrorResult_Fragment
+    & SqlInternalErrorResultFragment
+  ) | (
+    { __typename?: 'SqlResult' }
+    & SqlAbstractResult_SqlResult_Fragment
+    & SqlResultFragment
+  ) }
+);
+
 type SqlAbstractResult_SqlInternalErrorResult_Fragment = (
   { __typename: 'SqlInternalErrorResult' }
-  & Pick<Types.SqlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.SqlInternalErrorResult, 'points' | 'maxPoints'>
 );
 
 type SqlAbstractResult_SqlResult_Fragment = (
   { __typename: 'SqlResult' }
-  & Pick<Types.SqlResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.SqlResult, 'points' | 'maxPoints'>
 );
 
 export type SqlAbstractResultFragment = SqlAbstractResult_SqlInternalErrorResult_Fragment | SqlAbstractResult_SqlResult_Fragment;
@@ -406,7 +415,6 @@ export type MrFragment = Mr_RegexExtractedValuesComparisonMatchingResult_Fragmen
 export const SqlAbstractResultFragmentDoc = gql`
     fragment SqlAbstractResult on SqlAbstractResult {
   __typename
-  solutionSaved
   points
   maxPoints
 }
@@ -414,55 +422,6 @@ export const SqlAbstractResultFragmentDoc = gql`
 export const SqlInternalErrorResultFragmentDoc = gql`
     fragment SqlInternalErrorResult on SqlInternalErrorResult {
   msg
-}
-    `;
-export const ColumnMatchFragmentDoc = gql`
-    fragment ColumnMatch on SqlColumnMatch {
-  matchType
-  userArg
-  sampleArg
-}
-    `;
-export const TableMatchFragmentDoc = gql`
-    fragment TableMatch on SqlTableMatch {
-  matchType
-  userArg
-  sampleArg
-}
-    `;
-export const BinaryExpressionMatchFragmentDoc = gql`
-    fragment BinaryExpressionMatch on SqlBinaryExpressionMatch {
-  matchType
-  userArg
-  sampleArg
-}
-    `;
-export const InsertMatchFragmentDoc = gql`
-    fragment InsertMatch on SqlInsertMatch {
-  matchType
-  userArg
-  sampleArg
-}
-    `;
-export const GroupByMatchFragmentDoc = gql`
-    fragment GroupByMatch on SqlGroupByMatch {
-  matchType
-  sampleArg
-  userArg
-}
-    `;
-export const OrderByMatchFragmentDoc = gql`
-    fragment OrderByMatch on SqlOrderByMatch {
-  matchType
-  sampleArg
-  userArg
-}
-    `;
-export const LimitMatchFragmentDoc = gql`
-    fragment LimitMatch on SqlLimitMatch {
-  matchType
-  sampleArg
-  userArg
 }
     `;
 export const NewMatchFragmentDoc = gql`
@@ -603,21 +562,79 @@ ${BinaryExpressionComparisonFragmentDoc}
 ${SelectAdditionalComparisonFragmentDoc}
 ${InsertComparisonFragmentDoc}
 ${SqlExecutionResultFragmentDoc}`;
-export const SqlCorrectionDocument = gql`
-    mutation SqlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
-  me(userJwt: $userJwt) {
-    sqlExercise(collId: $collId, exId: $exId) {
-      correct(part: $part, solution: $solution) {
-        ...SqlAbstractResult
-        ...SqlInternalErrorResult
-        ...SqlResult
-      }
-    }
+export const SqlCorrectionResultFragmentDoc = gql`
+    fragment SqlCorrectionResult on SqlCorrectionResult {
+  solutionSaved
+  proficienciesUpdated
+  result {
+    ...SqlAbstractResult
+    ...SqlInternalErrorResult
+    ...SqlResult
   }
 }
     ${SqlAbstractResultFragmentDoc}
 ${SqlInternalErrorResultFragmentDoc}
 ${SqlResultFragmentDoc}`;
+export const ColumnMatchFragmentDoc = gql`
+    fragment ColumnMatch on SqlColumnMatch {
+  matchType
+  userArg
+  sampleArg
+}
+    `;
+export const TableMatchFragmentDoc = gql`
+    fragment TableMatch on SqlTableMatch {
+  matchType
+  userArg
+  sampleArg
+}
+    `;
+export const BinaryExpressionMatchFragmentDoc = gql`
+    fragment BinaryExpressionMatch on SqlBinaryExpressionMatch {
+  matchType
+  userArg
+  sampleArg
+}
+    `;
+export const InsertMatchFragmentDoc = gql`
+    fragment InsertMatch on SqlInsertMatch {
+  matchType
+  userArg
+  sampleArg
+}
+    `;
+export const GroupByMatchFragmentDoc = gql`
+    fragment GroupByMatch on SqlGroupByMatch {
+  matchType
+  sampleArg
+  userArg
+}
+    `;
+export const OrderByMatchFragmentDoc = gql`
+    fragment OrderByMatch on SqlOrderByMatch {
+  matchType
+  sampleArg
+  userArg
+}
+    `;
+export const LimitMatchFragmentDoc = gql`
+    fragment LimitMatch on SqlLimitMatch {
+  matchType
+  sampleArg
+  userArg
+}
+    `;
+export const SqlCorrectionDocument = gql`
+    mutation SqlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
+  me(userJwt: $userJwt) {
+    sqlExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...SqlCorrectionResult
+      }
+    }
+  }
+}
+    ${SqlCorrectionResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

@@ -11,14 +11,14 @@ import {
   SqlCorrectionMutation,
   SqlCorrectionMutationVariables,
   SqlInternalErrorResultFragment,
-  SqlResultFragment
+  SqlResultFragment,
+  SqlCorrectionResultFragment
 } from '../sql-apollo-mutations.service';
 import {SqlExPart, SqlInternalErrorResult} from '../../../../_interfaces/graphql-types';
-
-import 'codemirror/mode/sql/sql';
 import {SqlCreateQueryPart} from '../sql-tool';
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
+import 'codemirror/mode/sql/sql';
 
 @Component({
   selector: 'it4all-sql-exercise',
@@ -69,16 +69,20 @@ export class SqlExerciseComponent
 
   // Result types
 
-  get sqlAbstractResult(): SqlAbstractResultFragment & (SqlInternalErrorResultFragment | SqlResultFragment) | null {
+  get correctionResult(): SqlCorrectionResultFragment | null {
     return this.resultQuery?.me.sqlExercise?.correct;
   }
 
+  get abstractResult(): SqlAbstractResultFragment & (SqlInternalErrorResultFragment | SqlResultFragment) | null {
+    return this.correctionResult?.result;
+  }
+
   get sqlInternalErrorResult(): SqlInternalErrorResult | null {
-    return this.sqlAbstractResult?.__typename === 'SqlInternalErrorResult' ? this.sqlAbstractResult : null;
+    return this.abstractResult?.__typename === 'SqlInternalErrorResult' ? this.abstractResult : null;
   }
 
   get sqlResult(): SqlResultFragment | null {
-    return this.sqlAbstractResult?.__typename === 'SqlResult' ? this.sqlAbstractResult : null;
+    return this.abstractResult?.__typename === 'SqlResult' ? this.abstractResult : null;
   }
 
   // Correction

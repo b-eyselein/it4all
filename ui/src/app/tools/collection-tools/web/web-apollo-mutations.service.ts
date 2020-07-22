@@ -20,26 +20,35 @@ export type WebCorrectionMutation = (
     & { webExercise?: Types.Maybe<(
       { __typename?: 'WebExerciseMutations' }
       & { correct: (
-        { __typename?: 'WebInternalErrorResult' }
-        & WebAbstractResult_WebInternalErrorResult_Fragment
-        & WebInternalErrorResultFragment
-      ) | (
-        { __typename?: 'WebResult' }
-        & WebAbstractResult_WebResult_Fragment
-        & WebResultFragment
+        { __typename?: 'WebCorrectionResult' }
+        & WebCorrectionResultFragment
       ) }
     )> }
   )> }
 );
 
+export type WebCorrectionResultFragment = (
+  { __typename?: 'WebCorrectionResult' }
+  & Pick<Types.WebCorrectionResult, 'solutionSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'WebInternalErrorResult' }
+    & WebAbstractResult_WebInternalErrorResult_Fragment
+    & WebInternalErrorResultFragment
+  ) | (
+    { __typename?: 'WebResult' }
+    & WebAbstractResult_WebResult_Fragment
+    & WebResultFragment
+  ) }
+);
+
 type WebAbstractResult_WebInternalErrorResult_Fragment = (
   { __typename: 'WebInternalErrorResult' }
-  & Pick<Types.WebInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.WebInternalErrorResult, 'points' | 'maxPoints'>
 );
 
 type WebAbstractResult_WebResult_Fragment = (
   { __typename: 'WebResult' }
-  & Pick<Types.WebResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.WebResult, 'points' | 'maxPoints'>
 );
 
 export type WebAbstractResultFragment = WebAbstractResult_WebInternalErrorResult_Fragment | WebAbstractResult_WebResult_Fragment;
@@ -106,14 +115,8 @@ export type GradedJsActionResultFragment = (
 export const WebAbstractResultFragmentDoc = gql`
     fragment WebAbstractResult on WebAbstractResult {
   __typename
-  solutionSaved
   points
   maxPoints
-}
-    `;
-export const WebInternalErrorResultFragmentDoc = gql`
-    fragment WebInternalErrorResult on WebInternalErrorResult {
-  msg
 }
     `;
 export const GradedTextContentResultFragmentDoc = gql`
@@ -186,21 +189,35 @@ export const WebResultFragmentDoc = gql`
 }
     ${GradedHtmlTaskResultFragmentDoc}
 ${GradedJsTaskResultFragmentDoc}`;
-export const WebCorrectionDocument = gql`
-    mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
-  me(userJwt: $userJwt) {
-    webExercise(collId: $collId, exId: $exId) {
-      correct(part: $part, solution: $solution) {
-        ...WebAbstractResult
-        ...WebResult
-        ...WebInternalErrorResult
-      }
-    }
+export const WebInternalErrorResultFragmentDoc = gql`
+    fragment WebInternalErrorResult on WebInternalErrorResult {
+  msg
+}
+    `;
+export const WebCorrectionResultFragmentDoc = gql`
+    fragment WebCorrectionResult on WebCorrectionResult {
+  solutionSaved
+  proficienciesUpdated
+  result {
+    ...WebAbstractResult
+    ...WebResult
+    ...WebInternalErrorResult
   }
 }
     ${WebAbstractResultFragmentDoc}
 ${WebResultFragmentDoc}
 ${WebInternalErrorResultFragmentDoc}`;
+export const WebCorrectionDocument = gql`
+    mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
+  me(userJwt: $userJwt) {
+    webExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...WebCorrectionResult
+      }
+    }
+  }
+}
+    ${WebCorrectionResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

@@ -20,26 +20,35 @@ export type UmlCorrectionMutation = (
     & { umlExercise?: Types.Maybe<(
       { __typename?: 'UmlExerciseMutations' }
       & { correct: (
-        { __typename?: 'UmlInternalErrorResult' }
-        & UmlAbstractResult_UmlInternalErrorResult_Fragment
-        & UmlInternalErrorResultFragment
-      ) | (
-        { __typename?: 'UmlResult' }
-        & UmlAbstractResult_UmlResult_Fragment
-        & UmlResultFragment
+        { __typename?: 'UmlCorrectionResult' }
+        & UmlCorrectionResultFragment
       ) }
     )> }
   )> }
 );
 
+export type UmlCorrectionResultFragment = (
+  { __typename?: 'UmlCorrectionResult' }
+  & Pick<Types.UmlCorrectionResult, 'solutionSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'UmlInternalErrorResult' }
+    & UmlAbstractResult_UmlInternalErrorResult_Fragment
+    & UmlInternalErrorResultFragment
+  ) | (
+    { __typename?: 'UmlResult' }
+    & UmlAbstractResult_UmlResult_Fragment
+    & UmlResultFragment
+  ) }
+);
+
 type UmlAbstractResult_UmlInternalErrorResult_Fragment = (
   { __typename: 'UmlInternalErrorResult' }
-  & Pick<Types.UmlInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.UmlInternalErrorResult, 'points' | 'maxPoints'>
 );
 
 type UmlAbstractResult_UmlResult_Fragment = (
   { __typename: 'UmlResult' }
-  & Pick<Types.UmlResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.UmlResult, 'points' | 'maxPoints'>
 );
 
 export type UmlAbstractResultFragment = UmlAbstractResult_UmlInternalErrorResult_Fragment | UmlAbstractResult_UmlResult_Fragment;
@@ -145,7 +154,6 @@ export type UmlImplementationFragment = (
 export const UmlAbstractResultFragmentDoc = gql`
     fragment UmlAbstractResult on UmlAbstractResult {
   __typename
-  solutionSaved
   points
   maxPoints
 }
@@ -264,21 +272,30 @@ export const UmlResultFragmentDoc = gql`
     ${UmlClassMatchingResultFragmentDoc}
 ${UmlAssociationMatchingResultFragmentDoc}
 ${UmlImplementationMatchingResultFragmentDoc}`;
-export const UmlCorrectionDocument = gql`
-    mutation UmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
-  me(userJwt: $userJwt) {
-    umlExercise(collId: $collId, exId: $exId) {
-      correct(part: $part, solution: $solution) {
-        ...UmlAbstractResult
-        ...UmlInternalErrorResult
-        ...UmlResult
-      }
-    }
+export const UmlCorrectionResultFragmentDoc = gql`
+    fragment UmlCorrectionResult on UmlCorrectionResult {
+  solutionSaved
+  proficienciesUpdated
+  result {
+    ...UmlAbstractResult
+    ...UmlInternalErrorResult
+    ...UmlResult
   }
 }
     ${UmlAbstractResultFragmentDoc}
 ${UmlInternalErrorResultFragmentDoc}
 ${UmlResultFragmentDoc}`;
+export const UmlCorrectionDocument = gql`
+    mutation UmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
+  me(userJwt: $userJwt) {
+    umlExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...UmlCorrectionResult
+      }
+    }
+  }
+}
+    ${UmlCorrectionResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

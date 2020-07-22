@@ -30,9 +30,9 @@
             Die Korrektur läuft gerade...
           </div>
 
-          <div class="overflowHiddenDiv" *ngIf="resultQuery && result">
+          <div class="overflowHiddenDiv" *ngIf="resultQuery && correctionResult">
 
-            <it4all-solution-saved [saved]="basicResult.solutionSaved"></it4all-solution-saved>
+            <it4all-solution-saved [saved]="correctionResult.solutionSaved"></it4all-solution-saved>
 
             <br>
 

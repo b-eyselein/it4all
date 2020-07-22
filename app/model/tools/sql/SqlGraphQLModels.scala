@@ -115,7 +115,6 @@ object SqlGraphQLModels
   private val sqlAbstractResultType: InterfaceType[Unit, SqlAbstractResult] = InterfaceType(
     "SqlAbstractResult",
     fields[Unit, SqlAbstractResult](
-      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
       Field("points", FloatType, resolve = _.value.points.asDouble),
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     ),

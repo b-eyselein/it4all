@@ -20,26 +20,35 @@ export type ProgrammingCorrectionMutation = (
     & { programmingExercise?: Types.Maybe<(
       { __typename?: 'ProgrammingExerciseMutations' }
       & { correct: (
-        { __typename?: 'ProgrammingInternalErrorResult' }
-        & ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment
-        & ProgrammingInternalErrorResultFragment
-      ) | (
-        { __typename?: 'ProgrammingResult' }
-        & ProgrammingAbstractResult_ProgrammingResult_Fragment
-        & ProgrammingResultFragment
+        { __typename?: 'ProgrammingCorrectionResult' }
+        & ProgrammingCorrectionResultFragment
       ) }
     )> }
   )> }
 );
 
+export type ProgrammingCorrectionResultFragment = (
+  { __typename?: 'ProgrammingCorrectionResult' }
+  & Pick<Types.ProgrammingCorrectionResult, 'solutionSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'ProgrammingInternalErrorResult' }
+    & ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment
+    & ProgrammingInternalErrorResultFragment
+  ) | (
+    { __typename?: 'ProgrammingResult' }
+    & ProgrammingAbstractResult_ProgrammingResult_Fragment
+    & ProgrammingResultFragment
+  ) }
+);
+
 type ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment = (
   { __typename: 'ProgrammingInternalErrorResult' }
-  & Pick<Types.ProgrammingInternalErrorResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.ProgrammingInternalErrorResult, 'points' | 'maxPoints'>
 );
 
 type ProgrammingAbstractResult_ProgrammingResult_Fragment = (
   { __typename: 'ProgrammingResult' }
-  & Pick<Types.ProgrammingResult, 'solutionSaved' | 'points' | 'maxPoints'>
+  & Pick<Types.ProgrammingResult, 'points' | 'maxPoints'>
 );
 
 export type ProgrammingAbstractResultFragment = ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment | ProgrammingAbstractResult_ProgrammingResult_Fragment;
@@ -85,7 +94,6 @@ export type UnitTestCorrectionResultFragment = (
 export const ProgrammingAbstractResultFragmentDoc = gql`
     fragment ProgrammingAbstractResult on ProgrammingAbstractResult {
   __typename
-  solutionSaved
   points
   maxPoints
 }
@@ -139,21 +147,30 @@ export const ProgrammingResultFragmentDoc = gql`
     ${SimplifiedExecutionResultFragmentDoc}
 ${NormalExecutionResultFragmentDoc}
 ${UnitTestCorrectionResultFragmentDoc}`;
-export const ProgrammingCorrectionDocument = gql`
-    mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
-  me(userJwt: $userJwt) {
-    programmingExercise(collId: $collId, exId: $exId) {
-      correct(part: $part, solution: $solution) {
-        ...ProgrammingAbstractResult
-        ...ProgrammingInternalErrorResult
-        ...ProgrammingResult
-      }
-    }
+export const ProgrammingCorrectionResultFragmentDoc = gql`
+    fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
+  solutionSaved
+  proficienciesUpdated
+  result {
+    ...ProgrammingAbstractResult
+    ...ProgrammingInternalErrorResult
+    ...ProgrammingResult
   }
 }
     ${ProgrammingAbstractResultFragmentDoc}
 ${ProgrammingInternalErrorResultFragmentDoc}
 ${ProgrammingResultFragmentDoc}`;
+export const ProgrammingCorrectionDocument = gql`
+    mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
+  me(userJwt: $userJwt) {
+    programmingExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...ProgrammingCorrectionResult
+      }
+    }
+  }
+}
+    ${ProgrammingCorrectionResultFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

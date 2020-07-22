@@ -136,7 +136,6 @@ object WebGraphQLModels
   private val webAbstractResultType: InterfaceType[Unit, WebAbstractResult] = InterfaceType(
     "WebAbstractResult",
     fields[Unit, WebAbstractResult](
-      Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
       Field("points", FloatType, resolve = _.value.points.asDouble),
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     ),
@@ -154,7 +153,7 @@ object WebGraphQLModels
 
     deriveObjectType(
       Interfaces(webAbstractResultType),
-      ExcludeFields("solutionSaved", "points", "maxPoints")
+      ExcludeFields("points", "maxPoints")
     )
   }
 
