@@ -4,8 +4,8 @@ import model.{JsonProtocols, Lesson}
 import play.api.libs.json.{JsObject, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.{Cursor, ReadConcern}
-import reactivemongo.play.json._
 import reactivemongo.play.json.collection.JSONCollection
+import reactivemongo.play.json.compat._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -30,6 +30,7 @@ trait MongoLessonQueries {
       lessons <-
         lessonsCollection
           .find(Json.obj("toolId" -> toolId), Option.empty[JsObject])
+          .sort(Json.obj("lessonId" -> 1))
           .cursor[Lesson]()
           .collect[Seq](-1, Cursor.FailOnError())
     } yield lessons
