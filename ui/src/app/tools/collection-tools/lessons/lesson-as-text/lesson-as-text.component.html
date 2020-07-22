@@ -4,7 +4,24 @@
 
     <h1 class="title is-3 has-text-centered">Lektion: {{lessonQuery.me.tool.lesson.title}}</h1>
 
-    <ng-container *ngIf="lessonQuery.me.tool.lesson.contents.length > 0; else noContentBlock">
+    <ng-container *ngIf="contents.length > 0; else noContentBlock">
+
+      <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+        <button class="button pagination-previous" (click)="currentIndex = currentIndex - 1" [disabled]="currentIndex < 1">
+          Vorheriger Inhalt
+        </button>
+        <ul class="pagination-list">
+          <li *ngFor="let page of contentIndexes">
+            <button class="button pagination-link" [class.is-current]="page === currentIndex" (click)="currentIndex = page">
+              {{page}}
+            </button>
+          </li>
+        </ul>
+        <button class="button pagination-next" (click)="currentIndex = currentIndex + 1"
+                [disabled]="currentIndex >= contents.length - 1">
+          Nächster Inhalt
+        </button>
+      </nav>
 
       <div class="content box" *ngIf="currentTextContentFragment">
         <div [innerHTML]="currentTextContentFragment.content"></div>
@@ -18,11 +35,6 @@
     </ng-container>
 
   </ng-container>
-
-  <div class="buttons is-centered">
-    <button class="button" (click)="previousContent()" [disabled]="currentIndex <= 0">Vorheriger Inhalt</button>
-    <button class="button is-link" (click)="nextContent()" [disabled]="!hasMoreContent()">Nächster Inhalt</button>
-  </div>
 
 </div>
 

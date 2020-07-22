@@ -95,19 +95,19 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
       val partTypeInputArg: Argument[P] = Argument("part", tool.graphQlModels.partEnumType)
       val solTypeInputArg: Argument[S]  = Argument("solution", tool.graphQlModels.SolTypeInputType)
 
-      def correct(user: LoggedInUser, exercise: Exercise[E], part: P, solution: S): Future[CorrectionResult[R]] =
+      def correct(user: LoggedInUser, ex: Exercise[E], part: P, solution: S): Future[CorrectionResult[R]] =
         for {
-          result <- tool.correctAbstract(user, solution, exercise, part)
+          result <- tool.correctAbstract(user, solution, ex, part)
 
-          nextUserSolutionId <- nextUserSolutionId(exercise, part)
+          nextUserSolutionId <- nextUserSolutionId(ex, part)
 
           solutionSaved <- insertSolution(
-            UserSolution.forExercise(nextUserSolutionId, exercise, user.username, solution, part),
+            UserSolution(nextUserSolutionId, ex.exerciseId, ex.collectionId, ex.toolId, user.username, solution, part),
             tool.jsonFormats.userSolutionFormat
           )
 
           proficienciesUpdated <-
-            if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, exercise).map(Some.apply)
+            if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, ex).map(Some.apply)
             else Future.successful(None)
 
         } yield CorrectionResult(solutionSaved, proficienciesUpdated, result)

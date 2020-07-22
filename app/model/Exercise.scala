@@ -67,19 +67,6 @@ final case class SampleSolution[SolType](
   sample: SolType
 )
 
-object UserSolution {
-
-  def forExercise[S, P <: ExPart](
-    solutionId: Int,
-    exercise: Exercise[_ <: ExerciseContent],
-    username: String,
-    solution: S,
-    part: P
-  ): UserSolution[S, P] =
-    UserSolution(solutionId, exercise.exerciseId, exercise.collectionId, exercise.toolId, username, solution, part)
-
-}
-
 final case class UserSolution[SolType, PartType <: ExPart](
   solutionId: Int,
   exerciseId: Int,

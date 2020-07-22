@@ -10,6 +10,7 @@ import {AuthenticationService} from '../../../../_services/authentication.servic
 import {isSolvableLessonMultipleChoiceQuestionContentFragment, isSolvableLessonTextContentFragment} from '../solvable-lesson-content';
 import {Subscription} from 'rxjs';
 
+type ContentFragment = LessonTextContentFragment | LessonMultipleChoiceQuestionContentFragment;
 
 @Component({templateUrl: './lesson-as-text.component.html'})
 export class LessonAsTextComponent implements OnInit, OnDestroy {
@@ -17,7 +18,6 @@ export class LessonAsTextComponent implements OnInit, OnDestroy {
   private sub: Subscription;
 
   lessonQuery: LessonAsTextQuery;
-
   currentIndex = 0;
 
   constructor(
@@ -45,16 +45,24 @@ export class LessonAsTextComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  get currentTextContentFragment(): LessonTextContentFragment | undefined {
-    const currentContent = this.lessonQuery.me.tool.lesson.contents[this.currentIndex];
+  get contents(): ContentFragment[] | null {
+    return this.lessonQuery?.me.tool.lesson.contents;
+  }
 
-    return isSolvableLessonTextContentFragment(currentContent) ? currentContent : undefined;
+  get contentIndexes(): number[] {
+    return this.contents?.map((value: ContentFragment, index: number) => index);
+  }
+
+  get currentContent(): ContentFragment | null {
+    return this.contents ? this.contents[this.currentIndex] : null;
+  }
+
+  get currentTextContentFragment(): LessonTextContentFragment | undefined {
+    return this.currentContent && isSolvableLessonTextContentFragment(this.currentContent) ? this.currentContent : undefined;
   }
 
   get currentMultipleChoiceFragment(): LessonMultipleChoiceQuestionContentFragment | undefined {
-    const currentContent = this.lessonQuery.me.tool.lesson.contents[this.currentIndex];
-
-    return isSolvableLessonMultipleChoiceQuestionContentFragment(currentContent) ? currentContent : undefined;
+    return this.currentContent && isSolvableLessonMultipleChoiceQuestionContentFragment(this.currentContent) ? this.currentContent : undefined;
   }
 
   hasMoreContent(): boolean {

@@ -5,17 +5,17 @@
     </h1>
 
     <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-      <button class="pagination-previous" (click)="currentPage = currentPage - 1" [disabled]="currentPage < 1">
+      <button class="button pagination-previous" (click)="currentPage = currentPage - 1" [disabled]="currentPage < 1">
         Vorherige
       </button>
       <ul class="pagination-list">
         <li *ngFor="let page of pages">
-          <button class="pagination-link" [class.is-current]="page === currentPage" (click)="currentPage = page">
+          <button class="button pagination-link" [class.is-current]="page === currentPage" (click)="currentPage = page">
             {{page}}
           </button>
         </li>
       </ul>
-      <button class="pagination-next" (click)="currentPage = currentPage + 1" [disabled]="currentPage >= maxPage - 1">
+      <button class="button pagination-next" (click)="currentPage = currentPage + 1" [disabled]="currentPage >= maxPage - 1">
         Nächste
       </button>
     </nav>
