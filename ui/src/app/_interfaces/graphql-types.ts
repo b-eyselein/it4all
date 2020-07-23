@@ -32,10 +32,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  FalseNegative = 'FalseNegative',
+  TruePositive = 'TruePositive',
   FalsePositive = 'FalsePositive',
-  TrueNegative = 'TrueNegative',
-  TruePositive = 'TruePositive'
+  FalseNegative = 'FalseNegative',
+  TrueNegative = 'TrueNegative'
 }
 
 export type CollectionTool = {
@@ -320,11 +320,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlySample = 'ONLY_SAMPLE',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
+  PartialMatch = 'PARTIAL_MATCH',
   OnlyUser = 'ONLY_USER',
-  PartialMatch = 'PARTIAL_MATCH'
+  SuccessfulMatch = 'SUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -461,8 +461,8 @@ export type RegexCorrectionResult = {
 };
 
 export enum RegexCorrectionType {
-  Extraction = 'EXTRACTION',
-  Matching = 'MATCHING'
+  Matching = 'MATCHING',
+  Extraction = 'EXTRACTION'
 }
 
 export type RegexExerciseContent = {
@@ -681,10 +681,10 @@ export type SqlExerciseMutationsCorrectArgs = {
 
 export enum SqlExerciseType {
   Select = 'SELECT',
-  Delete = 'DELETE',
+  Create = 'CREATE',
   Update = 'UPDATE',
   Insert = 'INSERT',
-  Create = 'CREATE'
+  Delete = 'DELETE'
 }
 
 export enum SqlExPart {
@@ -897,8 +897,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
 };
 
 export enum UmlAssociationType {
-  Aggregation = 'AGGREGATION',
   Association = 'ASSOCIATION',
+  Aggregation = 'AGGREGATION',
   Composition = 'COMPOSITION'
 }
 
@@ -1155,10 +1155,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
+  Public = 'PUBLIC',
   Package = 'PACKAGE',
-  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Public = 'PUBLIC'
+  Private = 'PRIVATE'
 }
 
 export type UnitTestCorrectionResult = {
@@ -1191,8 +1191,8 @@ export type UnitTestTestConfig = {
 };
 
 export enum UnitTestType {
-  Normal = 'Normal',
-  Simplified = 'Simplified'
+  Simplified = 'Simplified',
+  Normal = 'Normal'
 }
 
 export type User = {

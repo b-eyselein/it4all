@@ -1,0 +1,21 @@
+# /registerForm
+
+mutation Register($username: String!, $firstPassword: String!, $secondPassword: String!) {
+  register(registerValues: {username: $username, firstPassword: $firstPassword, secondPassword: $secondPassword})
+}
+
+# /loginForm
+
+fragment LoggedInUserWithToken on LoggedInUserWithToken {
+  loggedInUser {
+    username
+    isAdmin
+  }
+  jwt
+}
+
+mutation Login($username: String!, $password: String!) {
+  login(credentials: {username: $username, password: $password}) {
+    ...LoggedInUserWithToken
+  }
+}

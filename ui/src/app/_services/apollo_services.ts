@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 
 
+
 export type LessonIdentifierFragment = (
   { __typename?: 'Lesson' }
   & Pick<Types.Lesson, 'lessonId' | 'title' | 'description' | 'video'>
@@ -136,41 +137,6 @@ export type LessonAsVideoQuery = (
         & Pick<Types.Lesson, 'title' | 'video'>
       )> }
     )> }
-  )> }
-);
-
-export type RegisterMutationVariables = Types.Exact<{
-  username: Types.Scalars['String'];
-  firstPassword: Types.Scalars['String'];
-  secondPassword: Types.Scalars['String'];
-}>;
-
-
-export type RegisterMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Types.Mutation, 'register'>
-);
-
-export type LoggedInUserWithTokenFragment = (
-  { __typename?: 'LoggedInUserWithToken' }
-  & Pick<Types.LoggedInUserWithToken, 'jwt'>
-  & { loggedInUser: (
-    { __typename?: 'LoggedInUser' }
-    & Pick<Types.LoggedInUser, 'username' | 'isAdmin'>
-  ) }
-);
-
-export type LoginMutationVariables = Types.Exact<{
-  username: Types.Scalars['String'];
-  password: Types.Scalars['String'];
-}>;
-
-
-export type LoginMutation = (
-  { __typename?: 'Mutation' }
-  & { login?: Types.Maybe<(
-    { __typename?: 'LoggedInUserWithToken' }
-    & LoggedInUserWithTokenFragment
   )> }
 );
 
@@ -629,6 +595,41 @@ export type ExerciseFileFragment = (
   & Pick<Types.ExerciseFile, 'name' | 'fileType' | 'content' | 'editable'>
 );
 
+export type RegisterMutationVariables = Types.Exact<{
+  username: Types.Scalars['String'];
+  firstPassword: Types.Scalars['String'];
+  secondPassword: Types.Scalars['String'];
+}>;
+
+
+export type RegisterMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Types.Mutation, 'register'>
+);
+
+export type LoggedInUserWithTokenFragment = (
+  { __typename?: 'LoggedInUserWithToken' }
+  & Pick<Types.LoggedInUserWithToken, 'jwt'>
+  & { loggedInUser: (
+    { __typename?: 'LoggedInUser' }
+    & Pick<Types.LoggedInUser, 'username' | 'isAdmin'>
+  ) }
+);
+
+export type LoginMutationVariables = Types.Exact<{
+  username: Types.Scalars['String'];
+  password: Types.Scalars['String'];
+}>;
+
+
+export type LoginMutation = (
+  { __typename?: 'Mutation' }
+  & { login?: Types.Maybe<(
+    { __typename?: 'LoggedInUserWithToken' }
+    & LoggedInUserWithTokenFragment
+  )> }
+);
+
 export const LessonIdentifierFragmentDoc = gql`
     fragment LessonIdentifier on Lesson {
   lessonId
@@ -693,15 +694,6 @@ export const LessonAsTextFragmentDoc = gql`
 }
     ${LessonTextContentFragmentDoc}
 ${LessonMultipleChoiceQuestionContentFragmentDoc}`;
-export const LoggedInUserWithTokenFragmentDoc = gql`
-    fragment LoggedInUserWithToken on LoggedInUserWithToken {
-  loggedInUser {
-    username
-    isAdmin
-  }
-  jwt
-}
-    `;
 export const CollectionToolFragmentDoc = gql`
     fragment CollectionTool on CollectionTool {
   id
@@ -1039,6 +1031,15 @@ export const FieldsForLinkFragmentDoc = gql`
   }
 }
     ${TopicWithLevelFragmentDoc}`;
+export const LoggedInUserWithTokenFragmentDoc = gql`
+    fragment LoggedInUserWithToken on LoggedInUserWithToken {
+  loggedInUser {
+    username
+    isAdmin
+  }
+  jwt
+}
+    `;
 export const LessonsForToolDocument = gql`
     query LessonsForTool($userJwt: String!, $toolId: String!) {
   me(userJwt: $userJwt) {
@@ -1115,34 +1116,6 @@ export const LessonAsVideoDocument = gql`
   })
   export class LessonAsVideoGQL extends Apollo.Query<LessonAsVideoQuery, LessonAsVideoQueryVariables> {
     document = LessonAsVideoDocument;
-    
-  }
-export const RegisterDocument = gql`
-    mutation Register($username: String!, $firstPassword: String!, $secondPassword: String!) {
-  register(registerValues: {username: $username, firstPassword: $firstPassword, secondPassword: $secondPassword})
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class RegisterGQL extends Apollo.Mutation<RegisterMutation, RegisterMutationVariables> {
-    document = RegisterDocument;
-    
-  }
-export const LoginDocument = gql`
-    mutation Login($username: String!, $password: String!) {
-  login(credentials: {username: $username, password: $password}) {
-    ...LoggedInUserWithToken
-  }
-}
-    ${LoggedInUserWithTokenFragmentDoc}`;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class LoginGQL extends Apollo.Mutation<LoginMutation, LoginMutationVariables> {
-    document = LoginDocument;
     
   }
 export const ToolOverviewDocument = gql`
@@ -1295,5 +1268,33 @@ export const ExerciseDocument = gql`
   })
   export class ExerciseGQL extends Apollo.Query<ExerciseQuery, ExerciseQueryVariables> {
     document = ExerciseDocument;
+    
+  }
+export const RegisterDocument = gql`
+    mutation Register($username: String!, $firstPassword: String!, $secondPassword: String!) {
+  register(registerValues: {username: $username, firstPassword: $firstPassword, secondPassword: $secondPassword})
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RegisterGQL extends Apollo.Mutation<RegisterMutation, RegisterMutationVariables> {
+    document = RegisterDocument;
+    
+  }
+export const LoginDocument = gql`
+    mutation Login($username: String!, $password: String!) {
+  login(credentials: {username: $username, password: $password}) {
+    ...LoggedInUserWithToken
+  }
+}
+    ${LoggedInUserWithTokenFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class LoginGQL extends Apollo.Mutation<LoginMutation, LoginMutationVariables> {
+    document = LoginDocument;
     
   }
