@@ -1,9 +1,11 @@
 package model.tools
 
 import model._
+import model.points.Points
+import model.result.BasicExerciseResult
 import play.api.libs.json._
 
-trait ToolJsonProtocol[S, C <: ExerciseContent, PartType <: ExPart] {
+trait ToolJsonProtocol[S, C <: ExerciseContent, P <: ExPart] {
 
   protected val keyValueObjectMapFormat: Format[Map[String, String]] = {
 
@@ -15,7 +17,7 @@ trait ToolJsonProtocol[S, C <: ExerciseContent, PartType <: ExPart] {
     )
   }
 
-  val partTypeFormat: Format[PartType]
+  val partTypeFormat: Format[P]
 
   val solutionFormat: Format[S]
 
@@ -25,9 +27,9 @@ trait ToolJsonProtocol[S, C <: ExerciseContent, PartType <: ExPart] {
     Json.format
   }
 
-  lazy val userSolutionFormat: OFormat[UserSolution[S, PartType]] = {
-    implicit val ptf: Format[PartType] = partTypeFormat
-    implicit val sf: Format[S]         = solutionFormat
+  lazy val userSolutionFormat: OFormat[UserSolution[S, P]] = {
+    implicit val ptf: Format[P] = partTypeFormat
+    implicit val sf: Format[S]  = solutionFormat
 
     Json.format
   }
@@ -37,6 +39,13 @@ trait ToolJsonProtocol[S, C <: ExerciseContent, PartType <: ExPart] {
   final lazy val exerciseFormat: OFormat[Exercise[C]] = {
     implicit val twlf: OFormat[TopicWithLevel] = JsonProtocols.topicWithLevelFormat
     implicit val fc: OFormat[C]                = exerciseContentFormat
+
+    Json.format
+  }
+
+  final lazy val basicExerciseResultFormat: OFormat[BasicExerciseResult[P]] = {
+    implicit val pt: Format[P]      = partTypeFormat
+    implicit val pf: Format[Points] = Json.format
 
     Json.format
   }

@@ -29,7 +29,7 @@ export type ProgrammingCorrectionMutation = (
 
 export type ProgrammingCorrectionResultFragment = (
   { __typename?: 'ProgrammingCorrectionResult' }
-  & Pick<Types.ProgrammingCorrectionResult, 'solutionSaved' | 'proficienciesUpdated'>
+  & Pick<Types.ProgrammingCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
     { __typename?: 'ProgrammingInternalErrorResult' }
     & ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment
@@ -150,6 +150,7 @@ ${UnitTestCorrectionResultFragmentDoc}`;
 export const ProgrammingCorrectionResultFragmentDoc = gql`
     fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
   solutionSaved
+  resultSaved
   proficienciesUpdated
   result {
     ...ProgrammingAbstractResult

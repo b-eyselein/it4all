@@ -29,7 +29,7 @@ export type UmlCorrectionMutation = (
 
 export type UmlCorrectionResultFragment = (
   { __typename?: 'UmlCorrectionResult' }
-  & Pick<Types.UmlCorrectionResult, 'solutionSaved' | 'proficienciesUpdated'>
+  & Pick<Types.UmlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
     { __typename?: 'UmlInternalErrorResult' }
     & UmlAbstractResult_UmlInternalErrorResult_Fragment
@@ -275,6 +275,7 @@ ${UmlImplementationMatchingResultFragmentDoc}`;
 export const UmlCorrectionResultFragmentDoc = gql`
     fragment UmlCorrectionResult on UmlCorrectionResult {
   solutionSaved
+  resultSaved
   proficienciesUpdated
   result {
     ...UmlAbstractResult

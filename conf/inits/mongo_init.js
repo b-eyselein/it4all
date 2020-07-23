@@ -152,8 +152,10 @@ db.createCollection('exercises', {
     }
 });
 
+const exercisesIndex = {...exCollectionsIndex, exerciseId: 1};
+
 db.getCollection('exercises')
-    .createIndex({...exCollectionsIndex, exerciseId: 1}, {unique: true});
+    .createIndex(exercisesIndex, {unique: true});
 
 // instantiate collection and unique index for user solutions (TODO: with validation)
 
@@ -164,3 +166,9 @@ db.getCollection('userSolutions')
 
 db.getCollection('userProficiencies')
     .createIndex({username: 1, topic: 1}, {unique: true});
+
+// instantiate collection and unique index for user results (TODO: validation?)
+
+db.getCollection('exerciseResults')
+    .createIndex({username: 1, ...exercisesIndex, part: 1}, {unique: true});
+

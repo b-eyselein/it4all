@@ -29,7 +29,7 @@ export type XmlCorrectionMutation = (
 
 export type XmlCorrectionResultFragment = (
   { __typename?: 'XmlCorrectionResult' }
-  & Pick<Types.XmlCorrectionResult, 'solutionSaved' | 'proficienciesUpdated'>
+  & Pick<Types.XmlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
     { __typename?: 'XmlInternalErrorResult' }
     & XmlAbstractResult_XmlInternalErrorResult_Fragment
@@ -233,6 +233,7 @@ ${XmlDocumentResultFragmentDoc}`;
 export const XmlCorrectionResultFragmentDoc = gql`
     fragment XmlCorrectionResult on XmlCorrectionResult {
   solutionSaved
+  resultSaved
   proficienciesUpdated
   result {
     ...XmlAbstractResult

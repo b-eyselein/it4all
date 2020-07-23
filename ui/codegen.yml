@@ -15,7 +15,7 @@ generates:
       - typescript
 
   src/app/_services/apollo_services.ts:
-    documents: src/*queries.graphql
+    documents: src/**queries.graphql
     preset: import-types
     presetConfig:
       typesPath: ../_interfaces/graphql-types

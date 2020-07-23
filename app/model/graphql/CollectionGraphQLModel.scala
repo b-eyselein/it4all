@@ -2,8 +2,8 @@ package model.graphql
 
 import model._
 import model.mongo.MongoClientQueries
-import model.tools.Tool
 import model.tools.Helper.UntypedExercise
+import model.tools.Tool
 import sangria.schema._
 
 trait CollectionGraphQLModel
@@ -11,10 +11,6 @@ trait CollectionGraphQLModel
     with ExerciseGraphQLModels
     with GraphQLArguments
     with MongoClientQueries {
-
-  protected def untypedExercises(exercises: Seq[Exercise[_ <: ExerciseContent]]): Seq[UntypedExercise] = exercises
-
-  private def untypedMaybeExercise(exercise: Option[Exercise[_ <: ExerciseContent]]): Option[UntypedExercise] = exercise
 
   protected val collectionType: ObjectType[Unit, ((LoggedInUser, Tool), ExerciseCollection)] = ObjectType(
     "ExerciseCollection",
@@ -30,23 +26,18 @@ trait CollectionGraphQLModel
       Field(
         "exercises",
         ListType(exerciseType),
-        resolve = context => {
-          val tool = context.value._1._2
-
+        resolve = context =>
           futureExercisesForCollection(context.value._1._2, context.value._2.collectionId)
             .map(exes => exes.map(ex => (context.value._1._1, ex.asInstanceOf[UntypedExercise])))
-          //            .map(exes => untypedExercises(exes))
-        }
       ),
       Field(
         "exercise",
         OptionType(exerciseType),
         arguments = exIdArgument :: Nil,
         resolve = context => {
-          val tool         = context.value._1._2
           val collectionId = context.value._2.collectionId
 
-          futureExerciseById(tool.id, collectionId, context.arg(exIdArgument), tool.jsonFormats.exerciseFormat)
+          futureExerciseById(context.value._1._2, collectionId, context.arg(exIdArgument))
             .map(maybeEx => maybeEx.map(ex => (context.value._1._1, ex.asInstanceOf[UntypedExercise])))
         }
       )

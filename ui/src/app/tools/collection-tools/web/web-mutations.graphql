@@ -10,6 +10,7 @@ mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: Web
 
 fragment WebCorrectionResult on WebCorrectionResult {
   solutionSaved
+  resultSaved
   proficienciesUpdated
   result {
     ...WebAbstractResult

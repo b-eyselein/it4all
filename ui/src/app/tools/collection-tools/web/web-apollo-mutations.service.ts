@@ -29,7 +29,7 @@ export type WebCorrectionMutation = (
 
 export type WebCorrectionResultFragment = (
   { __typename?: 'WebCorrectionResult' }
-  & Pick<Types.WebCorrectionResult, 'solutionSaved' | 'proficienciesUpdated'>
+  & Pick<Types.WebCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
     { __typename?: 'WebInternalErrorResult' }
     & WebAbstractResult_WebInternalErrorResult_Fragment
@@ -197,6 +197,7 @@ export const WebInternalErrorResultFragmentDoc = gql`
 export const WebCorrectionResultFragmentDoc = gql`
     fragment WebCorrectionResult on WebCorrectionResult {
   solutionSaved
+  resultSaved
   proficienciesUpdated
   result {
     ...WebAbstractResult

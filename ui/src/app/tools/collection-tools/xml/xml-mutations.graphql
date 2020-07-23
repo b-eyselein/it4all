@@ -10,6 +10,7 @@ mutation XmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!,$part: XmlE
 
 fragment XmlCorrectionResult on XmlCorrectionResult {
   solutionSaved
+  resultSaved
   proficienciesUpdated
   result {
     ...XmlAbstractResult

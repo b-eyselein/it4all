@@ -3,8 +3,8 @@ package model.mongo
 import model.User
 import play.api.libs.json.{JsObject, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
-import reactivemongo.play.json._
 import reactivemongo.play.json.collection.JSONCollection
+import reactivemongo.play.json.compat._
 
 import scala.concurrent.{ExecutionContext, Future}
 

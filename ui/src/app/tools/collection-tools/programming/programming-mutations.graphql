@@ -10,6 +10,7 @@ mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $p
 
 fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
   solutionSaved
+  resultSaved
   proficienciesUpdated
   result {
     ...ProgrammingAbstractResult

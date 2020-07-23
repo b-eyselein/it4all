@@ -6,7 +6,7 @@ import model.{JsonProtocols, _}
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
-import reactivemongo.play.json._
+import reactivemongo.play.json.compat._
 import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -16,6 +16,7 @@ trait MongoClientQueries
     with MongoUserQueries
     with MongoCollectionQueries
     with MongoExerciseQueries
+    with MongoResultQueries
     with MongoLessonQueries
     with MongoLessonContentQueries {
 

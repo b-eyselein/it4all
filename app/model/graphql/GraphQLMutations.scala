@@ -3,13 +3,14 @@ package model.graphql
 import java.time.Clock
 
 import com.github.t3hnar.bcrypt._
+import model._
 import model.mongo.MongoClientQueries
-import model.result.CorrectionResult
+import model.result.{BasicExerciseResult, CorrectionResult}
 import model.tools.ToolList
-import model.{JsonProtocols, _}
 import pdi.jwt.JwtSession
 import play.api.Configuration
 import play.api.libs.json._
+import sangria.macros.derive._
 import sangria.marshalling.playJson._
 import sangria.schema._
 
@@ -106,17 +107,20 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
             tool.jsonFormats.userSolutionFormat
           )
 
+          basicExerciseResult = BasicExerciseResult.forExerciseAndResult(user.username, ex, part, result)
+
+          resultSaved <- futureUpsertExerciseResult(tool)(basicExerciseResult)
+
           proficienciesUpdated <-
             if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, ex).map(Some.apply)
             else Future.successful(None)
 
-        } yield CorrectionResult(solutionSaved, proficienciesUpdated, result)
+        } yield CorrectionResult(solutionSaved, resultSaved, proficienciesUpdated, result)
 
-      val correctionResultType = ObjectType(
-        s"${tool.id.capitalize}CorrectionResult",
-        fields[Unit, CorrectionResult[R]](
-          Field("solutionSaved", BooleanType, resolve = _.value.solutionSaved),
-          Field("proficienciesUpdated", OptionType(BooleanType), resolve = _.value.proficienciesUpdated),
+      val correctionResultType: ObjectType[Unit, CorrectionResult[R]] = deriveObjectType(
+        ObjectTypeName(s"${tool.id.capitalize}CorrectionResult"),
+        ReplaceField(
+          "result",
           Field("result", tool.graphQlModels.toolAbstractResultTypeInterfaceType, resolve = _.value.result)
         )
       )
@@ -143,13 +147,9 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
         s"${tool.id}Exercise",
         OptionType(toolExerciseMutationsType),
         arguments = collIdArgument :: exIdArgument :: Nil,
-        resolve = (context: Context[Unit, LoggedInUser]) => {
-          val collId = context.arg(collIdArgument)
-          val exId   = context.arg(exIdArgument)
-
-          futureExerciseById(tool.id, collId, exId, tool.jsonFormats.exerciseFormat)
+        resolve = (context: Context[Unit, LoggedInUser]) =>
+          futureExerciseById(tool, context.arg(collIdArgument), context.arg(exIdArgument))
             .map(maybeExercise => maybeExercise.map(exercise => (context.value, exercise)))
-        }
       )
     }
   )

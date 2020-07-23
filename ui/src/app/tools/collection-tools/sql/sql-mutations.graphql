@@ -10,6 +10,7 @@ mutation SqlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: Sql
 
 fragment SqlCorrectionResult on SqlCorrectionResult {
   solutionSaved
+  resultSaved
   proficienciesUpdated
   result {
     ...SqlAbstractResult
@@ -30,107 +31,44 @@ fragment SqlInternalErrorResult on SqlInternalErrorResult {
 
 # Column comparison
 
-fragment ColumnMatch on SqlColumnMatch {
-  matchType
-  userArg
-  sampleArg
-}
-
 fragment ColumnComparison on SqlColumnComparisonMatchingResult {
-  ...MR
-  #  allMatches {
-  #    ...ColumnMatch
-  #  }
+  ...SqlMatchingResult
 }
 
 # Table comparison
 
-fragment TableMatch on SqlTableMatch {
-  matchType
-  userArg
-  sampleArg
-}
-
 fragment TableComparison on SqlTableComparisonMatchingResult {
-  ...MR
-  #  allMatches {
-  #    ...TableMatch
-  #  }
+  ...SqlMatchingResult
 }
 
 # JoinExpression / Where Comparison
 
-fragment BinaryExpressionMatch on SqlBinaryExpressionMatch {
-  matchType
-  userArg
-  sampleArg
-}
-
 fragment BinaryExpressionComparison on SqlBinaryExpressionComparisonMatchingResult {
-  ...MR
-  #  allMatches {
-  #    ...BinaryExpressionMatch
-  #  }
+  ...SqlMatchingResult
 }
 
 # Insert comparison
 
-fragment InsertMatch on SqlInsertMatch {
-  matchType
-  userArg
-  sampleArg
-}
-
 fragment InsertComparison on SqlInsertComparisonMatchingResult {
-  ...MR
-  #  allMatches {
-  #    ...InsertMatch
-  #  }
+  ...SqlMatchingResult
 }
 
 # Group by comparison
 
-fragment GroupByMatch on SqlGroupByMatch {
-  matchType
-  sampleArg
-  userArg
-}
-
 fragment  GroupByComparison on SqlGroupByComparisonMatchingResult {
-  ...MR
-  #  allMatches  {
-  #    ...GroupByMatch
-  #  }
+  ...SqlMatchingResult
 }
 
 # Order By comparison
 
-fragment OrderByMatch on SqlOrderByMatch {
-  matchType
-  sampleArg
-  userArg
-}
-
 fragment OrderByComparison on SqlOrderByComparisonMatchingResult {
-  ...MR
-  #  allMatches {
-  #    ...OrderByMatch
-  #  }
+  ...SqlMatchingResult
 }
 
 # Limit comparison
 
-fragment LimitMatch on SqlLimitMatch {
-  matchType
-  sampleArg
-  userArg
-}
-
 fragment LimitComparison on SqlLimitComparisonMatchingResult {
-  ...MR
-  #  allMatches {
-  #    ...LimitMatch
-  #  }
+  ...SqlMatchingResult
 }
 
 # Select additional comparisons
@@ -155,7 +93,7 @@ fragment SqlResult on SqlResult {
       ...ColumnComparison
     }
     tableComparison {
-      ...MR
+      ...SqlMatchingResult
       ...TableComparison
     }
     joinExpressionComparison {
@@ -218,7 +156,7 @@ fragment NewMatch on NewMatch {
   userArgDescription
 }
 
-fragment MR on MatchingResult  {
+fragment SqlMatchingResult on MatchingResult  {
   points
   maxPoints
   allMatches {

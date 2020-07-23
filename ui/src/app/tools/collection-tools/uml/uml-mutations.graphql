@@ -10,6 +10,7 @@ mutation UmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: Uml
 
 fragment UmlCorrectionResult on UmlCorrectionResult {
   solutionSaved
+  resultSaved
   proficienciesUpdated
   result {
     ...UmlAbstractResult

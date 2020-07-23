@@ -9,7 +9,6 @@ import model.tools.ToolList
 import play.api.Logger
 import play.api.libs.json.{Json, OFormat}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
-import reactivemongo.play.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -67,10 +66,10 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
     ex: Exercise[EC],
     exFormat: OFormat[Exercise[EC]]
   ): Future[Unit] =
-    futureExerciseById(ex.toolId, ex.collectionId, ex.exerciseId, exFormat)
+    futureExerciseExists(ex.toolId, ex.collectionId, ex.exerciseId)
       .flatMap {
-        case Some(_) => Future.successful()
-        case None =>
+        case true => Future.successful()
+        case false =>
           val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"
 
           futureInsertExercise(ex, exFormat)
@@ -81,20 +80,12 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
             .recover {
               case e => logger.error("Error while inserting exercise", e)
             }
-
       }
 
   private def upsertInitialLesson(lesson: Lesson): Future[Unit] = {
-    implicit val lessonFormat: OFormat[Lesson] = JsonProtocols.lessonFormat
-
     val key = Json.obj("toolId" -> lesson.toolId, "lessonId" -> lesson.lessonId)
 
-    val lessonInsertResult = for {
-      lessonsCollection <- futureLessonsCollection
-      insertResult      <- lessonsCollection.update(true).one(key, lesson, upsert = true)
-    } yield insertResult.ok
-
-    lessonInsertResult
+    futureUpsertLesson(lesson)
       .map {
         case false => logger.error(s"Could not insert lesson $key")
         case true  => logger.debug(s"Inserted lesson $key")
@@ -105,20 +96,13 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
   }
 
   private def upsertInitialLessonContent(lessonContent: LessonContent): Future[Unit] = {
-    implicit val lessonContentFormat: OFormat[LessonContent] = JsonProtocols.lessonContentFormat
-
     val key = Json.obj(
       "toolId"    -> lessonContent.toolId,
       "lessonId"  -> lessonContent.lessonId,
       "contentId" -> lessonContent.contentId
     )
 
-    val lessonContentInsertResult = for {
-      lessonContentCollection <- futureLessonContentsCollection
-      insertResult            <- lessonContentCollection.update(true).one(key, lessonContent, upsert = true)
-    } yield insertResult.ok
-
-    lessonContentInsertResult
+    futureUpsertLessonContent(lessonContent)
       .map {
         case false => logger.error(s"Could not insert lesson content $key")
         case true  => logger.debug(s"Insert lesson content $key")

@@ -1,94 +1,64 @@
-<it4all-points-notification [points]="points" [maxPoints]="maxPoints"></it4all-points-notification>
+<it4all-sql-matching-result
+  matchName="Spalten"
+  matchSingularName="der Spalte"
+  [matchingResult]="columnComparison">
+</it4all-sql-matching-result>
 
 <br>
 
-<p>
+<it4all-sql-matching-result
+  matchName="Tabellen"
+  matchSingularName="der Tabelle"
+  [matchingResult]="tableComparison">
+</it4all-sql-matching-result>
+
+<br>
+
+<it4all-sql-matching-result
+  matchName="Join-Bedingungen"
+  matchSingularName="der Join-Bedingung"
+  [matchingResult]="joinExpressionComparison">
+</it4all-sql-matching-result>
+
+<br>
+
+<it4all-sql-matching-result
+  matchName="Bedingungen"
+  matchSingularName="der Bedingung"
+  [matchingResult]="whereComparison">
+</it4all-sql-matching-result>
+
+<br>
+
+<ng-container *ngIf="selectAdditionalComparisons">
   <it4all-sql-matching-result
-    matchName="Spalten"
-    matchSingularName="der Spalte"
-    [matchingResult]="result.staticComparison.columnComparison">
+    matchName="Order Bys"
+    matchSingularName="des Order By-Statements"
+    [matchingResult]="selectAdditionalComparisons.orderByComparison">
   </it4all-sql-matching-result>
-</p>
-
-<br>
-
-<p>
-  <it4all-sql-matching-result
-    matchName="Tabellen"
-    matchSingularName="der Tabelle"
-    [matchingResult]="result.staticComparison.tableComparison">
-  </it4all-sql-matching-result>
-</p>
-
-<br>
-
-<p>
-  <it4all-sql-matching-result
-    matchName="Join-Bedingungen"
-    matchSingularName="der Join-Bedingung"
-    [matchingResult]="result.staticComparison.joinExpressionComparison">
-  </it4all-sql-matching-result>
-</p>
-
-<br>
-
-<p>
-  <it4all-sql-matching-result
-    matchName="Bedingungen"
-    matchSingularName="der Bedingung"
-    [matchingResult]="result.staticComparison.whereComparison">
-  </it4all-sql-matching-result>
-</p>
-
-<br>
-
-<ng-container *ngIf="result.staticComparison.additionalComparisons.selectComparisons">
-  <p>
-    <it4all-sql-matching-result
-      matchName="Order Bys"
-      matchSingularName="des Order By-Statements"
-      [matchingResult]="result.staticComparison.additionalComparisons.selectComparisons.orderByComparison">
-    </it4all-sql-matching-result>
-  </p>
 
   <br>
 
-  <p>
-    <it4all-sql-matching-result
-      matchName="Group Bys"
-      matchSingularName="des Group By-Statements"
-      [matchingResult]="result.staticComparison.additionalComparisons.selectComparisons.groupByComparison">
-    </it4all-sql-matching-result>
-  </p>
+  <it4all-sql-matching-result
+    matchName="Group Bys"
+    matchSingularName="des Group By-Statements"
+    [matchingResult]="selectAdditionalComparisons.groupByComparison">
+  </it4all-sql-matching-result>
 
   <br>
 
-  <p>
-    <it4all-sql-matching-result
-      matchName="Limits"
-      matchSingularName="des Limit-Statements"
-      [matchingResult]="result.staticComparison.additionalComparisons.selectComparisons.limitComparison">
-    </it4all-sql-matching-result>
-  </p>
-
-  <br>
+  <it4all-sql-matching-result
+    matchName="Limits"
+    matchSingularName="des Limit-Statements"
+    [matchingResult]="selectAdditionalComparisons.limitComparison">
+  </it4all-sql-matching-result>
 </ng-container>
 
-<ng-container *ngIf="result.staticComparison.additionalComparisons.insertComparison">
-  <it4all-sql-matching-result
-    matchName="Inserts"
-    matchSingularName="Insert"
-    [matchingResult]="result.staticComparison.additionalComparisons.insertComparison">
-  </it4all-sql-matching-result>
+<br>
 
-  <br>
-</ng-container>
-
-<!-- TODO: check!
-<p>
-  <span [ngClass]="result.results.executionResults.success ? 'has-text-success' : 'has-text-danger'">
-  Der Vergleich der Ergebnistabellen war <ng-container
-    *ngIf="!result.results.executionResults.success">nicht</ng-container> erfolgreich.
-</span>
-</p>
--->
+<it4all-sql-matching-result
+  *ngIf="insertAdditionalComparisons"
+  matchName="Inserts"
+  matchSingularName="Insert"
+  [matchingResult]="insertAdditionalComparisons">
+</it4all-sql-matching-result>

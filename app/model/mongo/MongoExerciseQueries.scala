@@ -5,8 +5,8 @@ import model.{Exercise, ExerciseContent}
 import play.api.libs.json.{Format, JsObject, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.{Cursor, ReadConcern}
-import reactivemongo.play.json._
 import reactivemongo.play.json.collection.JSONCollection
+import reactivemongo.play.json.compat._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -62,14 +62,7 @@ trait MongoExerciseQueries {
     } yield exercises
   }
 
-  protected def futureExerciseById[EC <: ExerciseContent](
-    toolId: String,
-    collectionId: Int,
-    exerciseId: Int,
-    exerciseFormat: OFormat[Exercise[EC]]
-  ): Future[Option[Exercise[EC]]] = {
-    implicit val ef: OFormat[Exercise[EC]] = exerciseFormat
-
+  protected def futureExerciseExists(toolId: String, collectionId: Int, exerciseId: Int): Future[Boolean] =
     for {
       exercisesCollection <- futureExercisesCollection
       maybeExercise <-
@@ -78,7 +71,25 @@ trait MongoExerciseQueries {
             Json.obj("toolId" -> toolId, "collectionId" -> collectionId, "exerciseId" -> exerciseId),
             Option.empty[JsObject]
           )
-          .one[Exercise[EC]]
+          .one[JsObject]
+    } yield maybeExercise.isDefined
+
+  protected def futureExerciseById(
+    tool: Tool,
+    collectionId: Int,
+    exerciseId: Int
+  ): Future[Option[Exercise[tool.ExContentType]]] = {
+    implicit val ef: OFormat[Exercise[tool.ExContentType]] = tool.jsonFormats.exerciseFormat
+
+    for {
+      exercisesCollection <- futureExercisesCollection
+      maybeExercise <-
+        exercisesCollection
+          .find(
+            Json.obj("toolId" -> tool.id, "collectionId" -> collectionId, "exerciseId" -> exerciseId),
+            Option.empty[JsObject]
+          )
+          .one[Exercise[tool.ExContentType]]
     } yield maybeExercise
   }
 

@@ -4,7 +4,7 @@ import model.{ExerciseCollection, JsonProtocols}
 import play.api.libs.json.{JsObject, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.{Cursor, ReadConcern}
-import reactivemongo.play.json._
+import reactivemongo.play.json.compat._
 import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.{ExecutionContext, Future}

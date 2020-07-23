@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Jul 23 2020 09:44:09 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Thu Jul 23 2020 14:23:36 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -300,6 +300,7 @@ interface ProgrammingAbstractResult {
 
 type ProgrammingCorrectionResult {
   solutionSaved: Boolean!
+  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: ProgrammingAbstractResult!
 }
@@ -357,6 +358,7 @@ interface RegexAbstractResult {
 
 type RegexCorrectionResult {
   solutionSaved: Boolean!
+  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: RegexAbstractResult!
 }
@@ -512,6 +514,7 @@ type SqlColumnMatch implements NewMatch {
 
 type SqlCorrectionResult {
   solutionSaved: Boolean!
+  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: SqlAbstractResult!
 }
@@ -837,6 +840,7 @@ enum UmlClassType {
 
 type UmlCorrectionResult {
   solutionSaved: Boolean!
+  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: UmlAbstractResult!
 }
@@ -1025,6 +1029,7 @@ interface WebAbstractResult {
 
 type WebCorrectionResult {
   solutionSaved: Boolean!
+  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: WebAbstractResult!
 }
@@ -1080,6 +1085,7 @@ interface XmlAbstractResult {
 
 type XmlCorrectionResult {
   solutionSaved: Boolean!
+  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: XmlAbstractResult!
 }

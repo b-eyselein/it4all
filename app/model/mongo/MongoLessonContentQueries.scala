@@ -4,7 +4,7 @@ import model.{JsonProtocols, LessonContent}
 import play.api.libs.json.{JsObject, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.{Cursor, ReadConcern}
-import reactivemongo.play.json._
+import reactivemongo.play.json.compat._
 import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -16,10 +16,10 @@ trait MongoLessonContentQueries {
 
   private implicit val lessonContentFormat: OFormat[LessonContent] = JsonProtocols.lessonContentFormat
 
-  protected def futureLessonContentsCollection: Future[JSONCollection] =
+  private def futureLessonContentsCollection: Future[JSONCollection] =
     reactiveMongoApi.database.map(_.collection("lessonContents"))
 
-  def futureLessonContentCountForLesson(toolId: String, lessonId: Int): Future[Long] =
+  protected def futureLessonContentCountForLesson(toolId: String, lessonId: Int): Future[Long] =
     for {
       lessonContentsCollection <- futureLessonContentsCollection
       lessonContentCount <- lessonContentsCollection.count(
@@ -31,7 +31,7 @@ trait MongoLessonContentQueries {
       )
     } yield lessonContentCount
 
-  def futureLessonContentsForLesson(toolId: String, lessonId: Int): Future[Seq[LessonContent]] = {
+  protected def futureLessonContentsForLesson(toolId: String, lessonId: Int): Future[Seq[LessonContent]] = {
     for {
       lessonContentsCollection <- futureLessonContentsCollection
       lessonContents <-
@@ -43,7 +43,7 @@ trait MongoLessonContentQueries {
     } yield lessonContents
   }
 
-  def futureLessonContentById(toolId: String, lessonId: Int, contentId: Int): Future[Option[LessonContent]] =
+  protected def futureLessonContentById(toolId: String, lessonId: Int, contentId: Int): Future[Option[LessonContent]] =
     for {
       lessonContentsCollection <- futureLessonContentsCollection
       maybeLessonContent <-
@@ -52,10 +52,23 @@ trait MongoLessonContentQueries {
           .one[LessonContent]
     } yield maybeLessonContent
 
-  def futureInsertLessonContent(lessonContent: LessonContent): Future[Boolean] =
+  protected def futureInsertLessonContent(lessonContent: LessonContent): Future[Boolean] =
     for {
       lessonContentCollection <- futureLessonContentsCollection
       insertResult            <- lessonContentCollection.insert(true).one(lessonContent)
     } yield insertResult.ok
+
+  protected def futureUpsertLessonContent(lessonContent: LessonContent): Future[Boolean] = {
+    val key = Json.obj(
+      "toolId"    -> lessonContent.toolId,
+      "lessonId"  -> lessonContent.lessonId,
+      "contentId" -> lessonContent.contentId
+    )
+
+    for {
+      lessonContentCollection <- futureLessonContentsCollection
+      insertResult            <- lessonContentCollection.update(true).one(key, lessonContent, upsert = true)
+    } yield insertResult.ok
+  }
 
 }

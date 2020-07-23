@@ -16,7 +16,7 @@ trait MongoLessonQueries {
 
   private implicit val lessonFormat: OFormat[Lesson] = JsonProtocols.lessonFormat
 
-  protected def futureLessonsCollection: Future[JSONCollection] = reactiveMongoApi.database.map(_.collection("lessons"))
+  private def futureLessonsCollection: Future[JSONCollection] = reactiveMongoApi.database.map(_.collection("lessons"))
 
   protected def futureLessonCountForTool(toolId: String): Future[Long] =
     for {
@@ -49,5 +49,15 @@ trait MongoLessonQueries {
       lessonsCollection <- futureLessonsCollection
       insertResult      <- lessonsCollection.insert(true).one(lesson)
     } yield insertResult.ok
+
+  protected def futureUpsertLesson(lesson: Lesson): Future[Boolean] = {
+
+    val key = Json.obj("toolId" -> lesson.toolId, "lessonId" -> lesson.lessonId)
+
+    for {
+      lessonsCollection <- futureLessonsCollection
+      insertResult      <- lessonsCollection.update(true).one(key, lesson, upsert = true)
+    } yield insertResult.ok
+  }
 
 }

@@ -29,7 +29,7 @@ export type RegexCorrectionMutation = (
 
 export type RegexCorrectionResultFragment = (
   { __typename?: 'RegexCorrectionResult' }
-  & Pick<Types.RegexCorrectionResult, 'solutionSaved' | 'proficienciesUpdated'>
+  & Pick<Types.RegexCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
     { __typename?: 'RegexExtractionResult' }
     & RegexAbstractResult_RegexExtractionResult_Fragment
@@ -171,6 +171,7 @@ export const RegexExtractionResultFragmentDoc = gql`
 export const RegexCorrectionResultFragmentDoc = gql`
     fragment RegexCorrectionResult on RegexCorrectionResult {
   solutionSaved
+  resultSaved
   proficienciesUpdated
   result {
     ...RegexAbstractResult

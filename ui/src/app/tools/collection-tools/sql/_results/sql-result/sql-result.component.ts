@@ -1,55 +1,47 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {InsertComparisonFragment, SelectAdditionalComparisonFragment, SqlResultFragment} from '../../sql-apollo-mutations.service';
+import {Component, Input, ViewEncapsulation} from '@angular/core';
+import {
+  BinaryExpressionComparisonFragment,
+  ColumnComparisonFragment,
+  InsertComparisonFragment,
+  SelectAdditionalComparisonFragment,
+  SqlResultFragment,
+  TableComparisonFragment
+} from '../../sql-apollo-mutations.service';
 
 @Component({
   selector: 'it4all-sql-result',
-  templateUrl: './sql-result.component.html'
+  templateUrl: './sql-result.component.html',
+  encapsulation: ViewEncapsulation.None
 })
-export class SqlResultComponent implements OnChanges {
+export class SqlResultComponent {
 
   @Input() result: SqlResultFragment;
 
   points: number;
   maxPoints: number;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    const staticComp = this.result.staticComparison;
+  get columnComparison(): ColumnComparisonFragment {
+    return this.result.staticComparison.columnComparison;
+  }
 
-    const columnPointsQuarters = staticComp.columnComparison.points;
-    const columnMaxPointsQuarters = staticComp.columnComparison.maxPoints;
+  get tableComparison(): TableComparisonFragment {
+    return this.result.staticComparison.tableComparison;
+  }
 
-    const tablePointsQuarters = staticComp.tableComparison.points;
-    const tableMaxPointsQuarters = staticComp.tableComparison.maxPoints;
+  get whereComparison(): BinaryExpressionComparisonFragment {
+    return this.result.staticComparison.whereComparison;
+  }
 
-    const wherePointsQuarters = staticComp.whereComparison.points;
-    const whereMaxPointsQuarters = staticComp.whereComparison.maxPoints;
+  get joinExpressionComparison(): BinaryExpressionComparisonFragment {
+    return this.result.staticComparison.joinExpressionComparison;
+  }
 
-    const joinPointsQuarters = staticComp.joinExpressionComparison.points;
-    const joinMaxPointsQuarters = staticComp.joinExpressionComparison.maxPoints;
+  get selectAdditionalComparisons(): SelectAdditionalComparisonFragment {
+    return this.result.staticComparison.additionalComparisons.selectComparisons;
+  }
 
-
-    const selectComp: SelectAdditionalComparisonFragment | undefined = staticComp.additionalComparisons.selectComparisons;
-
-    const groupByPointsQuarters = selectComp ? selectComp.groupByComparison.points : 0;
-    const groupByMaxPointsQuarters = selectComp ? selectComp.groupByComparison.maxPoints : 0;
-
-    const orderByPointsQuarters = selectComp ? selectComp.orderByComparison.points : 0;
-    const orderByMaxPointsQuarters = selectComp ? selectComp.orderByComparison.maxPoints : 0;
-
-    const limitPointsQuarters = selectComp ? selectComp.limitComparison.points : 0;
-    const limitMaxPointsQuarters = selectComp ? selectComp.limitComparison.maxPoints : 0;
-
-
-    const insertComp: InsertComparisonFragment | undefined = staticComp.additionalComparisons.insertComparison;
-
-    const insertPointsQuarters = insertComp ? insertComp.points : 0;
-    const insertMaxPointsQuarters = insertComp ? insertComp.maxPoints : 0;
-
-    this.points = columnPointsQuarters + tablePointsQuarters + wherePointsQuarters + joinPointsQuarters
-      + groupByPointsQuarters + orderByPointsQuarters + limitPointsQuarters + insertPointsQuarters;
-
-    this.maxPoints = columnMaxPointsQuarters + tableMaxPointsQuarters + whereMaxPointsQuarters + joinMaxPointsQuarters
-      + groupByMaxPointsQuarters + orderByMaxPointsQuarters + limitMaxPointsQuarters + insertMaxPointsQuarters;
+  get insertAdditionalComparisons(): InsertComparisonFragment {
+    return this.result.staticComparison.additionalComparisons.insertComparison;
   }
 
 }

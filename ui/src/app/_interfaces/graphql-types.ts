@@ -375,6 +375,7 @@ export type ProgrammingAbstractResult = {
 export type ProgrammingCorrectionResult = {
   __typename?: 'ProgrammingCorrectionResult';
   solutionSaved: Scalars['Boolean'];
+  resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: ProgrammingAbstractResult;
 };
@@ -456,6 +457,7 @@ export type RegexAbstractResult = {
 export type RegexCorrectionResult = {
   __typename?: 'RegexCorrectionResult';
   solutionSaved: Scalars['Boolean'];
+  resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: RegexAbstractResult;
 };
@@ -643,6 +645,7 @@ export type SqlColumnMatch = NewMatch & {
 export type SqlCorrectionResult = {
   __typename?: 'SqlCorrectionResult';
   solutionSaved: Scalars['Boolean'];
+  resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: SqlAbstractResult;
 };
@@ -1015,6 +1018,7 @@ export enum UmlClassType {
 export type UmlCorrectionResult = {
   __typename?: 'UmlCorrectionResult';
   solutionSaved: Scalars['Boolean'];
+  resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: UmlAbstractResult;
 };
@@ -1274,6 +1278,7 @@ export type WebAbstractResult = {
 export type WebCorrectionResult = {
   __typename?: 'WebCorrectionResult';
   solutionSaved: Scalars['Boolean'];
+  resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: WebAbstractResult;
 };
@@ -1347,6 +1352,7 @@ export type XmlAbstractResult = {
 export type XmlCorrectionResult = {
   __typename?: 'XmlCorrectionResult';
   solutionSaved: Scalars['Boolean'];
+  resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: XmlAbstractResult;
 };

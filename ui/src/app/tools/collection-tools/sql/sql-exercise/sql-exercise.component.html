@@ -26,14 +26,18 @@
         <it4all-tab [title]="'Datenbankinhalt'">
           <it4all-sql-table-contents [dbContents]="contentFragment.sqlDbContents"></it4all-sql-table-contents>
         </it4all-tab>
+
         <it4all-tab [title]="correctionTabTitle">
           <ng-container *ngIf="resultQuery">
 
-            <it4all-solution-saved *ngIf="correctionResult" [saved]="correctionResult.solutionSaved">
-            </it4all-solution-saved>
+            <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
 
-            <it4all-points-notification *ngIf="abstractResult" [points]="abstractResult.points">
+            <br>
+
+            <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
             </it4all-points-notification>
+
+            <br>
 
             <div class="message" *ngIf="sqlInternalErrorResult">
               <div class="message-header">Es gab einen Fehler bei der Korrektur:</div>
@@ -46,6 +50,7 @@
 
           </ng-container>
         </it4all-tab>
+
         <it4all-tab [title]="sampleSolutionsTabTitle">
           <div class="buttons">
             <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
