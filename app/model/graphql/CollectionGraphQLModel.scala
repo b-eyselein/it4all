@@ -28,7 +28,7 @@ trait CollectionGraphQLModel
         ListType(exerciseType),
         resolve = context =>
           futureExercisesForCollection(context.value._1._2, context.value._2.collectionId)
-            .map(exes => exes.map(ex => (context.value._1._1, ex.asInstanceOf[UntypedExercise])))
+            .map(exes => exes.map(ex => (context.value._1._1, context.value._1._2, ex.asInstanceOf[UntypedExercise])))
       ),
       Field(
         "exercise",
@@ -38,7 +38,9 @@ trait CollectionGraphQLModel
           val collectionId = context.value._2.collectionId
 
           futureExerciseById(context.value._1._2, collectionId, context.arg(exIdArgument))
-            .map(maybeEx => maybeEx.map(ex => (context.value._1._1, ex.asInstanceOf[UntypedExercise])))
+            .map(maybeEx =>
+              maybeEx.map(ex => (context.value._1._1, context.value._1._2, ex.asInstanceOf[UntypedExercise]))
+            )
         }
       )
     )

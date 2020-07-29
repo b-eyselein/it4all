@@ -13,8 +13,7 @@ object ProgrammingColl2Ex5 {
 
   private val exResPath = exerciseResourcesPath(toolId, 2, 5)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
     unitTestFiles = Seq(
       ExerciseFile(
@@ -154,6 +153,7 @@ object ProgrammingColl2Ex5 {
       )
     ),
     testFileName = "test_three_chinese.py",
+    foldername = "three_chinese",
     sampleSolFileNames = Seq("test_three_chinese.py")
   )
 
@@ -214,14 +214,9 @@ object ProgrammingColl2Ex5 {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      functionName = "three_chinese",
-      foldername = "three_chinese",
       filename = "three_chinese",
-      inputTypes = Seq.empty,
-      outputType = ProgDataTypes.NonGenericProgDataType.VOID,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

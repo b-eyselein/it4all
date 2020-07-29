@@ -14,13 +14,21 @@ object ProgrammingColl2Ex1 {
 
   private val exResPath = exerciseResourcesPath(toolId, 2, 1)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Simplified,
-    unitTestsDescription = "",
-    unitTestFiles = Seq.empty,
-    unitTestTestConfigs = Seq.empty,
-    testFileName = "test_palindrome.py",
-    sampleSolFileNames = Seq.empty
+  private val unitTestPart = SimplifiedUnitTestPart(
+    simplifiedTestMainFile = ExerciseFile(
+      name = "test_main.py",
+      fileType,
+      editable = false,
+      content = loadTextFromFile(exResPath / "test_main.py")
+    ),
+    sampleTestData = Seq(
+      ProgTestData(id = 1, input = JsString("anna"), output = JsBoolean(true)),
+      ProgTestData(id = 2, input = JsString("ananas"), output = JsBoolean(false)),
+      ProgTestData(id = 3, input = JsString(""), output = JsBoolean(true)),
+      ProgTestData(id = 4, input = JsString("qwertzuiiuztrewq"), output = JsBoolean(true)),
+      ProgTestData(id = 5, input = JsString("qwertzuiyiuztrewq"), output = JsBoolean(true)),
+      ProgTestData(id = 6, input = JsString("Tacocat"), output = JsBoolean(true))
+    )
   )
 
   private val implementationPart = ImplementationPart(
@@ -36,15 +44,6 @@ object ProgrammingColl2Ex1 {
     ),
     implFileName = "palindrome.py",
     sampleSolFileNames = Seq("palindrome.py")
-  )
-
-  private val sampleTestData = Seq(
-    ProgTestData(id = 1, input = JsString("anna"), output = JsBoolean(true)),
-    ProgTestData(id = 2, input = JsString("ananas"), output = JsBoolean(false)),
-    ProgTestData(id = 3, input = JsString(""), output = JsBoolean(true)),
-    ProgTestData(id = 4, input = JsString("qwertzuiiuztrewq"), output = JsBoolean(true)),
-    ProgTestData(id = 5, input = JsString("qwertzuiyiuztrewq"), output = JsBoolean(true)),
-    ProgTestData(id = 6, input = JsString("Tacocat"), output = JsBoolean(true))
   )
 
   private val sampleSolutions = Seq(
@@ -76,16 +75,9 @@ object ProgrammingColl2Ex1 {
     ),
     difficulty = 1,
     content = ProgrammingExerciseContent(
-      functionName = "is_palindrome",
-      foldername = "palindrome",
       filename = "palindrome",
-      inputTypes = Seq(
-        ProgInput(id = 1, inputName = "word", inputType = ProgDataTypes.NonGenericProgDataType.STRING)
-      ),
-      outputType = ProgDataTypes.NonGenericProgDataType.BOOLEAN,
       unitTestPart,
       implementationPart,
-      sampleTestData,
       sampleSolutions
     )
   )

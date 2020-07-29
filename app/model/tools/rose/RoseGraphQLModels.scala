@@ -20,9 +20,7 @@ object RoseGraphQLModels
   override val exerciseContentType: ObjectType[Unit, RoseExerciseContent] = {
     implicit val sst: ObjectType[Unit, SampleSolution[String]] = sampleSolutionType
 
-    deriveObjectType(
-      ExcludeFields("inputTypes")
-    )
+    deriveObjectType()
   }
 
   override val SolTypeInputType: InputType[String] = StringType

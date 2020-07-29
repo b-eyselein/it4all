@@ -8,7 +8,7 @@ import model.{Exercise, ExerciseFile, SampleSolution}
 
 object WebColl2Ex2 {
 
-  private val ex_res_path = exerciseResourcesPath("web", 2, 2)
+  private val exResPath = exerciseResourcesPath("web", 2, 2)
 
   private val sampleSolution: SampleSolution[WebSolution] = SampleSolution(
     id = 1,
@@ -18,13 +18,13 @@ object WebColl2Ex2 {
           name = "pwChecker.html",
           fileType = "htmlmixed",
           editable = false,
-          content = loadTextFromFile(ex_res_path / "sol_1" / "branchesStrings.html")
+          content = loadTextFromFile(exResPath / "sol_1" / "branchesStrings.html")
         ),
         ExerciseFile(
           name = "pwChecker.js",
           fileType = "javascript",
           editable = false,
-          content = loadTextFromFile(ex_res_path / "sol_1" / "branchesStrings.js")
+          content = loadTextFromFile(exResPath / "sol_1" / "branchesStrings.js")
         )
       )
     )
@@ -128,7 +128,7 @@ object WebColl2Ex2 {
     toolId = "web",
     title = "Verzweigungen und Strings",
     authors = Seq("alg81dm"),
-    text = loadTextFromFile(ex_res_path / "text.html"),
+    text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 3,
     content = WebExerciseContent(
       files = Seq(
@@ -136,13 +136,13 @@ object WebColl2Ex2 {
           name = "pwChecker.html",
           fileType = "htmlmixed",
           editable = true,
-          content = loadTextFromFile(ex_res_path / "branchesStrings.html")
+          content = loadTextFromFile(exResPath / "branchesStrings.html")
         ),
         ExerciseFile(
           name = "pwChecker.js",
           fileType = "javascript",
           editable = true,
-          content = loadTextFromFile(ex_res_path / "branchesStrings.js")
+          content = loadTextFromFile(exResPath / "branchesStrings.js")
         )
       ),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),

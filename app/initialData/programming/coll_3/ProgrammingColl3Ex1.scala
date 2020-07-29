@@ -1,18 +1,9 @@
 package initialData.programming.coll_3
 
-import model.{Exercise, ExerciseFile, Level, SampleSolution, TopicWithLevel}
 import initialData.InitialData._
+import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
-import model.tools.programming.{
-  ImplementationPart,
-  ProgDataTypes,
-  ProgSolution,
-  ProgrammingExerciseContent,
-  ProgrammingTopics,
-  UnitTestPart,
-  UnitTestTestConfig,
-  UnitTestType
-}
+import model.tools.programming._
 
 object ProgrammingColl3Ex1 {
 
@@ -22,8 +13,7 @@ object ProgrammingColl3Ex1 {
 
   private val exResPath = exerciseResourcesPath(toolId, 3, 1)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
     unitTestFiles = Seq(
       ExerciseFile(
@@ -130,6 +120,7 @@ object ProgrammingColl3Ex1 {
       )
     ),
     testFileName = "test_lottery.py",
+    foldername = "lottery",
     sampleSolFileNames = Seq("test_lottery.py")
   )
 
@@ -190,14 +181,9 @@ object ProgrammingColl3Ex1 {
     ),
     difficulty = 1,
     content = ProgrammingExerciseContent(
-      functionName = "lottery",
-      foldername = "lottery",
       filename = "lottery",
-      inputTypes = Seq.empty,
-      outputType = ProgDataTypes.NonGenericProgDataType.VOID,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

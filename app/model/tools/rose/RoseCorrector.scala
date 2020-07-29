@@ -4,7 +4,6 @@ import better.files._
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.points._
 import model.tools.AbstractCorrector
-import model.tools.programming.ProgLanguage
 import model.tools.rose.RoseTool.RoseExercise
 import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -33,7 +32,6 @@ object RoseCorrector extends AbstractCorrector {
   def correct(
     learnerSolution: String,
     exercise: RoseExercise,
-    language: ProgLanguage,
     solutionTargetDir: File
   )(implicit ec: ExecutionContext): Future[RoseAbstractResult] =
     exercise.content.sampleSolutions.headOption match {
@@ -44,8 +42,8 @@ object RoseCorrector extends AbstractCorrector {
         // Check if image exists
         val futureImageExists = Future(DockerConnector.imageExists(roseCorrectionDockerImageName.name))
 
-        val solutionFileName = s"solution_robot.${language.fileEnding}"
-        val sampleFileName   = s"sample_robot.${language.fileEnding}"
+        val solutionFileName = s"solution_robot.py"
+        val sampleFileName   = s"sample_robot.py"
 
         val solutionFilePath: File = solutionTargetDir / solutionFileName
         val sampleFilePath: File   = solutionTargetDir / sampleFileName

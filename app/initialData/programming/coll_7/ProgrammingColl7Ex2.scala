@@ -1,9 +1,9 @@
 package initialData.programming.coll_7
 
 import initialData.InitialData._
+import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
-import model._
 
 object ProgrammingColl7Ex2 {
 
@@ -13,8 +13,7 @@ object ProgrammingColl7Ex2 {
 
   private val exResPath = exerciseResourcesPath(toolId, 7, 2)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
     unitTestFiles = Seq(
       ExerciseFile(
@@ -138,6 +137,7 @@ object ProgrammingColl7Ex2 {
       )
     ),
     testFileName = "test_maumau.py",
+    foldername = "maumau",
     sampleSolFileNames = Seq("test_maumau.py")
   )
 
@@ -198,14 +198,9 @@ object ProgrammingColl7Ex2 {
     ),
     difficulty = 1,
     content = ProgrammingExerciseContent(
-      functionName = "maumau",
-      foldername = "maumau",
       filename = "maumau",
-      inputTypes = Seq(),
-      outputType = ProgDataTypes.NonGenericProgDataType.VOID,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

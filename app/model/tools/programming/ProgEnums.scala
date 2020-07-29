@@ -54,8 +54,10 @@ object ProgrammingTopics {
 
 // Unit Test Types
 
+@deprecated
 sealed trait UnitTestType extends EnumEntry
 
+@deprecated
 case object UnitTestType extends PlayEnum[UnitTestType] {
 
   override val values: IndexedSeq[UnitTestType] = findValues

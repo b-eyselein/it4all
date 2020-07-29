@@ -50,24 +50,35 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.A
 
     part match {
       case ProgExPart.TestCreation =>
-        ProgrammingUnitTestCorrector.correctUnitTestPart(solutionTargetDir, solution, exercise.content, resultFile)
+        exercise.content.unitTestPart match {
+          case nutp: NormalUnitTestPart =>
+            ProgrammingUnitTestCorrector.correctUnitTestPart(
+              solutionTargetDir,
+              solution,
+              exercise.content,
+              nutp,
+              resultFile
+            )
+          case _ => ???
+        }
       case _ =>
         val programmingSolutionFilesMounts = solution.files.map { exerciseFile: ExerciseFile =>
           ProgrammingNormalImplementationCorrector.writeExerciseFileAndMount(exerciseFile, solutionTargetDir)
         }
 
-        exercise.content.unitTestPart.unitTestType match {
-          case UnitTestType.Simplified =>
+        exercise.content.unitTestPart match {
+          case sutp: SimplifiedUnitTestPart =>
             ProgrammingSimpleImplementationCorrector.correctSimplifiedImplementation(
               solutionTargetDir,
-              exercise.content,
+              sutp,
               programmingSolutionFilesMounts,
               resultFile
             )
-          case UnitTestType.Normal =>
+          case nutp: NormalUnitTestPart =>
             ProgrammingNormalImplementationCorrector.correctNormalImplementation(
               solutionTargetDir,
               exercise.content,
+              nutp,
               programmingSolutionFilesMounts
             )
         }

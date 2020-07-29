@@ -58,7 +58,6 @@ query AllExercisesOverview($userJwt: String!, $toolId: String!) {
 }
 
 # /tools/:toolId/collections
-
 fragment CollectionValues on ExerciseCollection {
   collectionId
   title
@@ -91,6 +90,13 @@ query CollectionOverview($userJwt: String!, $toolId: String!, $collId: Int!) {
 }
 
 # /tools/:toolId/collections/:collId/exercises/:exId
+fragment Part on ExPart {
+  id
+  name
+  isEntryPart
+  solved
+}
+
 query ExerciseOverview($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!) {
   me (userJwt: $userJwt) {
     tool(toolId: $toolId) {
@@ -150,6 +156,14 @@ query Exercise($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!, 
 
 # Fragments
 
+fragment ExerciseFile on ExerciseFile {
+  name
+  fileType
+  content
+  editable
+}
+
+
 fragment Level on Level {
   title
   levelIndex
@@ -172,12 +186,6 @@ fragment TopicWithLevel on TopicWithLevel{
   }
 }
 
-fragment Part on ExPart {
-  id
-  name
-  isEntryPart
-}
-
 fragment FieldsForLink on Exercise {
   exerciseId
   collectionId
@@ -187,16 +195,32 @@ fragment FieldsForLink on Exercise {
   topicsWithLevels {
     ...TopicWithLevel
   }
+  parts {
+    ...Part
+  }
+  # TODO: activate!
+  # solved
 }
 
 # Programming
 
+fragment SimplifiedUnitTestPart on SimplifiedUnitTestPart {
+  simplifiedTestMainFile {
+    ...ExerciseFile
+  }
+}
+
+fragment NormalUnitTestPart on NormalUnitTestPart {
+  unitTestFiles {
+    ...ExerciseFile
+  }
+}
+
 fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {
   unitTestPart {
-    unitTestType
-    unitTestFiles {
-      ...ExerciseFile
-    }
+    __typename
+    ...NormalUnitTestPart
+    ...SimplifiedUnitTestPart
   }
   implementationPart {
     files {
@@ -394,11 +418,4 @@ fragment XmlSampleSolution on XmlSampleSolution {
     document
     grammar
   }
-}
-
-fragment ExerciseFile on ExerciseFile {
-  name
-  fileType
-  content
-  editable
 }

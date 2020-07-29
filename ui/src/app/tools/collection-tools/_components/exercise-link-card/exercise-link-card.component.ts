@@ -16,18 +16,19 @@ import {FieldsForLinkFragment} from '../../../../_services/apollo_services';
       </header>
 
       <div class="card-content">
-       <div class="columns is-multiline" *ngIf="exercise.topicsWithLevels.length > 0; else noTagsBlock">
-          <div class="column is-one-third" *ngFor="let topicWithLevel of exercise.topicsWithLevels" [title]="topicWithLevel.topic.title">
-            <div class="tag">
-              {{topicWithLevel.topic.abbreviation}}
-              &nbsp; - &nbsp;
-              <it4all-filled-points
-                [filledPoints]="topicWithLevel.level.levelIndex"
-                [maxPoints]="topicWithLevel.topic.maxLevel.levelIndex">
-              </it4all-filled-points>
-            </div>
+
+        <div class="tags">
+          <div class="tag" [class.is-success]="part.solved" *ngFor="let part of exercise.parts">{{part.name}}</div>
+        </div>
+
+        <div class="tags" *ngIf="exercise.topicsWithLevels.length > 0; else noTagsBlock">
+          <div *ngFor="let topicWithLevel of exercise.topicsWithLevels" class="tag" [title]="topicWithLevel.topic">
+            {{topicWithLevel.topic.abbreviation}}&nbsp; - &nbsp;
+            <it4all-filled-points [filledPoints]="topicWithLevel.level.levelIndex" [maxPoints]="topicWithLevel.topic.maxLevel.levelIndex">
+            </it4all-filled-points>
           </div>
         </div>
+
       </div>
 
       <footer class="card-footer">

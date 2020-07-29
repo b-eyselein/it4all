@@ -2,7 +2,6 @@ package model.tools.rose
 
 import model.SampleSolution
 import model.tools.StringSampleSolutionToolJsonProtocol
-import model.tools.programming.{ProgDataType, ProgrammingToolJsonProtocol}
 import play.api.libs.json._
 
 object RoseToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RoseExerciseContent, RoseExPart] {
@@ -11,14 +10,7 @@ object RoseToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RoseExe
 
   override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)
 
-  val roseInputTypeFormat: Format[RoseInputType] = {
-    implicit val pdtf: Format[ProgDataType] = ProgrammingToolJsonProtocol.progDataTypeFormat
-
-    Json.format[RoseInputType]
-  }
-
-  override val exerciseContentFormat: OFormat[RoseExerciseContent] = {
-    implicit val ritf: Format[RoseInputType]         = roseInputTypeFormat
+  override protected val exerciseContentFormat: OFormat[RoseExerciseContent] = {
     implicit val ssf: Format[SampleSolution[String]] = sampleSolutionFormat
 
     Json.format

@@ -13,8 +13,7 @@ object ProgrammingColl7Ex3 {
 
   private val exResPath = exerciseResourcesPath(toolId, 7, 3)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "TODO!",
     unitTestFiles = Seq(
       ExerciseFile(
@@ -240,6 +239,7 @@ object ProgrammingColl7Ex3 {
       )
     ),
     testFileName = "test_vector2d.py",
+    foldername = "vector2d",
     sampleSolFileNames = Seq("test_vector2d.py")
   )
 
@@ -299,14 +299,9 @@ object ProgrammingColl7Ex3 {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      functionName = "vector2d",
-      foldername = "vector2d",
       filename = "vector2d",
-      inputTypes = Seq.empty,
-      outputType = ProgDataTypes.NonGenericProgDataType.VOID,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

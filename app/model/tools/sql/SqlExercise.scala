@@ -9,7 +9,7 @@ object SqlExPart extends ExParts[SqlExPart] {
 
   val values: IndexedSeq[SqlExPart] = findValues
 
-  case object SqlSingleExPart extends SqlExPart(partName = "Bearbeiten", id = "solve")
+  case object SqlSingleExPart extends SqlExPart(partName = "Abfrage erstellen", id = "solve")
 
 }
 

@@ -269,6 +269,11 @@ export type CollectionOverviewQuery = (
   )> }
 );
 
+export type PartFragment = (
+  { __typename?: 'ExPart' }
+  & Pick<Types.ExPart, 'id' | 'name' | 'isEntryPart' | 'solved'>
+);
+
 export type ExerciseOverviewQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
@@ -348,6 +353,11 @@ export type ExerciseQuery = (
   )> }
 );
 
+export type ExerciseFileFragment = (
+  { __typename?: 'ExerciseFile' }
+  & Pick<Types.ExerciseFile, 'name' | 'fileType' | 'content' | 'editable'>
+);
+
 export type LevelFragment = (
   { __typename?: 'Level' }
   & Pick<Types.Level, 'title' | 'levelIndex'>
@@ -373,17 +383,31 @@ export type TopicWithLevelFragment = (
   ) }
 );
 
-export type PartFragment = (
-  { __typename?: 'ExPart' }
-  & Pick<Types.ExPart, 'id' | 'name' | 'isEntryPart'>
-);
-
 export type FieldsForLinkFragment = (
   { __typename?: 'Exercise' }
   & Pick<Types.Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
   & { topicsWithLevels: Array<(
     { __typename?: 'TopicWithLevel' }
     & TopicWithLevelFragment
+  )>, parts: Array<(
+    { __typename?: 'ExPart' }
+    & PartFragment
+  )> }
+);
+
+export type SimplifiedUnitTestPartFragment = (
+  { __typename?: 'SimplifiedUnitTestPart' }
+  & { simplifiedTestMainFile: (
+    { __typename?: 'ExerciseFile' }
+    & ExerciseFileFragment
+  ) }
+);
+
+export type NormalUnitTestPartFragment = (
+  { __typename?: 'NormalUnitTestPart' }
+  & { unitTestFiles: Array<(
+    { __typename?: 'ExerciseFile' }
+    & ExerciseFileFragment
   )> }
 );
 
@@ -391,12 +415,11 @@ export type ProgExerciseContentSolveFieldsFragment = (
   { __typename?: 'ProgrammingExerciseContent' }
   & Pick<Types.ProgrammingExerciseContent, 'part'>
   & { unitTestPart: (
-    { __typename?: 'UnitTestPart' }
-    & Pick<Types.UnitTestPart, 'unitTestType'>
-    & { unitTestFiles: Array<(
-      { __typename?: 'ExerciseFile' }
-      & ExerciseFileFragment
-    )> }
+    { __typename: 'SimplifiedUnitTestPart' }
+    & SimplifiedUnitTestPartFragment
+  ) | (
+    { __typename: 'NormalUnitTestPart' }
+    & NormalUnitTestPartFragment
   ), implementationPart: (
     { __typename?: 'ImplementationPart' }
     & { files: Array<(
@@ -590,11 +613,6 @@ export type XmlSampleSolutionFragment = (
   ) }
 );
 
-export type ExerciseFileFragment = (
-  { __typename?: 'ExerciseFile' }
-  & Pick<Types.ExerciseFile, 'name' | 'fileType' | 'content' | 'editable'>
-);
-
 export type RegisterMutationVariables = Types.Exact<{
   username: Types.Scalars['String'];
   firstPassword: Types.Scalars['String'];
@@ -747,6 +765,20 @@ export const ExerciseFileFragmentDoc = gql`
   editable
 }
     `;
+export const NormalUnitTestPartFragmentDoc = gql`
+    fragment NormalUnitTestPart on NormalUnitTestPart {
+  unitTestFiles {
+    ...ExerciseFile
+  }
+}
+    ${ExerciseFileFragmentDoc}`;
+export const SimplifiedUnitTestPartFragmentDoc = gql`
+    fragment SimplifiedUnitTestPart on SimplifiedUnitTestPart {
+  simplifiedTestMainFile {
+    ...ExerciseFile
+  }
+}
+    ${ExerciseFileFragmentDoc}`;
 export const ProgrammingSampleSolutionFragmentDoc = gql`
     fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
   __typename
@@ -760,10 +792,9 @@ export const ProgrammingSampleSolutionFragmentDoc = gql`
 export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
     fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {
   unitTestPart {
-    unitTestType
-    unitTestFiles {
-      ...ExerciseFile
-    }
+    __typename
+    ...NormalUnitTestPart
+    ...SimplifiedUnitTestPart
   }
   implementationPart {
     files {
@@ -775,7 +806,9 @@ export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
   }
   part(partId: $partId)
 }
-    ${ExerciseFileFragmentDoc}
+    ${NormalUnitTestPartFragmentDoc}
+${SimplifiedUnitTestPartFragmentDoc}
+${ExerciseFileFragmentDoc}
 ${ProgrammingSampleSolutionFragmentDoc}`;
 export const RegexSampleSolutionFragmentDoc = gql`
     fragment RegexSampleSolution on RegexSampleSolution {
@@ -1001,13 +1034,6 @@ ${SqlExerciseContentSolveFieldsFragmentDoc}
 ${UmlExerciseContentSolveFieldsFragmentDoc}
 ${WebExerciseContentSolveFieldsFragmentDoc}
 ${XmlExerciseContentSolveFieldsFragmentDoc}`;
-export const PartFragmentDoc = gql`
-    fragment Part on ExPart {
-  id
-  name
-  isEntryPart
-}
-    `;
 export const TopicWithLevelFragmentDoc = gql`
     fragment TopicWithLevel on TopicWithLevel {
   topic {
@@ -1019,6 +1045,14 @@ export const TopicWithLevelFragmentDoc = gql`
 }
     ${TopicFragmentDoc}
 ${LevelFragmentDoc}`;
+export const PartFragmentDoc = gql`
+    fragment Part on ExPart {
+  id
+  name
+  isEntryPart
+  solved
+}
+    `;
 export const FieldsForLinkFragmentDoc = gql`
     fragment FieldsForLink on Exercise {
   exerciseId
@@ -1029,8 +1063,12 @@ export const FieldsForLinkFragmentDoc = gql`
   topicsWithLevels {
     ...TopicWithLevel
   }
+  parts {
+    ...Part
+  }
 }
-    ${TopicWithLevelFragmentDoc}`;
+    ${TopicWithLevelFragmentDoc}
+${PartFragmentDoc}`;
 export const LoggedInUserWithTokenFragmentDoc = gql`
     fragment LoggedInUserWithToken on LoggedInUserWithToken {
   loggedInUser {

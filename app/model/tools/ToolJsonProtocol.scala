@@ -2,7 +2,7 @@ package model.tools
 
 import model._
 import model.points.Points
-import model.result.BasicExerciseResult
+import model.result.BasicExercisePartResult
 import play.api.libs.json._
 
 trait ToolJsonProtocol[S, C <: ExerciseContent, P <: ExPart] {
@@ -34,7 +34,7 @@ trait ToolJsonProtocol[S, C <: ExerciseContent, P <: ExPart] {
     Json.format
   }
 
-  val exerciseContentFormat: OFormat[C]
+  protected val exerciseContentFormat: OFormat[C]
 
   final lazy val exerciseFormat: OFormat[Exercise[C]] = {
     implicit val twlf: OFormat[TopicWithLevel] = JsonProtocols.topicWithLevelFormat
@@ -43,7 +43,7 @@ trait ToolJsonProtocol[S, C <: ExerciseContent, P <: ExPart] {
     Json.format
   }
 
-  final lazy val basicExerciseResultFormat: OFormat[BasicExerciseResult[P]] = {
+  final lazy val basicExerciseResultFormat: OFormat[BasicExercisePartResult[P]] = {
     implicit val pt: Format[P]      = partTypeFormat
     implicit val pf: Format[Points] = Json.format
 

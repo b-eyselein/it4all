@@ -1,9 +1,9 @@
 package initialData.programming.coll_4
 
 import initialData.InitialData._
+import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
-import model._
 import play.api.libs.json.{JsArray, JsNull, JsNumber, Json}
 
 object ProgrammingColl4Ex1 {
@@ -30,19 +30,18 @@ object ProgrammingColl4Ex1 {
     )
   )
 
-  private val sampleTestData = Seq(
-    ProgTestData(id = 1, input = JsArray(), output = JsNull),
-    ProgTestData(id = 2, input = Json.arr(1), output = JsNumber(1.0)),
-    ProgTestData(id = 3, input = Json.arr(3, 5, 7), output = JsNumber(5.0))
-  )
-
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Simplified,
-    unitTestsDescription = "",
-    unitTestFiles = Seq.empty,
-    unitTestTestConfigs = Seq.empty,
-    testFileName = "test_average.py",
-    sampleSolFileNames = Seq.empty
+  private val unitTestPart = SimplifiedUnitTestPart(
+    simplifiedTestMainFile = ExerciseFile(
+      name = "test_main.py",
+      fileType,
+      editable = false,
+      content = loadTextFromFile(exResPath / "test_main.py")
+    ),
+    sampleTestData = Seq(
+      ProgTestData(id = 1, input = JsArray(), output = JsNull),
+      ProgTestData(id = 2, input = Json.arr(1), output = JsNumber(1.0)),
+      ProgTestData(id = 3, input = Json.arr(3, 5, 7), output = JsNumber(5.0))
+    )
   )
 
   private val implementationPart = ImplementationPart(
@@ -75,20 +74,9 @@ object ProgrammingColl4Ex1 {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      functionName = "average",
-      foldername = "average",
       filename = "average",
-      inputTypes = Seq(
-        ProgInput(
-          id = 1,
-          inputName = "my_list",
-          inputType = ProgDataTypes.LIST(ProgDataTypes.NonGenericProgDataType.INTEGER)
-        )
-      ),
-      outputType = ProgDataTypes.NonGenericProgDataType.FLOAT,
       unitTestPart,
       implementationPart,
-      sampleTestData,
       sampleSolutions
     )
   )

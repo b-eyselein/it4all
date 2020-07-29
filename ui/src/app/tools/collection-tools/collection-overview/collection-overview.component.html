@@ -4,7 +4,7 @@
       Sammlung &quot;{{collectionOverviewQuery.me.tool.collection.title}}&quot; - Aufgaben
     </h1>
 
-    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+    <nav class="pagination is-centered" role="navigation" aria-label="pagination" *ngIf="paginationNeeded">
       <button class="button pagination-previous" (click)="currentPage = currentPage - 1" [disabled]="currentPage < 1">
         Vorherige
       </button>

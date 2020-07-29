@@ -5,7 +5,7 @@ import java.time.Clock
 import com.github.t3hnar.bcrypt._
 import model._
 import model.mongo.MongoClientQueries
-import model.result.{BasicExerciseResult, CorrectionResult}
+import model.result.{BasicExercisePartResult, CorrectionResult}
 import model.tools.ToolList
 import pdi.jwt.JwtSession
 import play.api.Configuration
@@ -44,7 +44,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
       futureUserByUsername(registerValues.username).flatMap {
         case Some(_) => Future.successful(None)
         case None =>
-          val newUser = User(registerValues.username, Some(registerValues.firstPassword.bcrypt))
+          val newUser = User(registerValues.username, Some(registerValues.firstPassword.boundedBcrypt))
 
           futureInsertUser(newUser).map {
             case false => None
@@ -58,7 +58,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
       for {
         user: User      <- maybeUser
         pwHash: String  <- user.pwHash
-        pwOkay: Boolean <- credentials.password.isBcryptedSafe(pwHash).toOption
+        pwOkay: Boolean <- credentials.password.isBcryptedSafeBounded(pwHash).toOption
         maybeUser <-
           if (pwOkay) {
             val loggedInUser = LoggedInUser(user.username, user.isAdmin)
@@ -107,7 +107,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
             tool.jsonFormats.userSolutionFormat
           )
 
-          basicExerciseResult = BasicExerciseResult.forExerciseAndResult(user.username, ex, part, result)
+          basicExerciseResult = BasicExercisePartResult.forExerciseAndResult(user.username, ex, part, result)
 
           resultSaved <- futureUpsertExerciseResult(tool)(basicExerciseResult)
 

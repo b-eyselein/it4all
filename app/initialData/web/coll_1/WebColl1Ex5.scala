@@ -8,7 +8,7 @@ import model.{Exercise, ExerciseFile, SampleSolution}
 
 object WebColl1Ex5 {
 
-  private val ex_res_path = exerciseResourcesPath("web", 1, 5)
+  private val exResPath = exerciseResourcesPath("web", 1, 5)
 
   private val sampleSolution = SampleSolution(
     id = 1,
@@ -18,7 +18,7 @@ object WebColl1Ex5 {
           name = "audio.html",
           fileType = "htmlmixed",
           editable = false,
-          content = loadTextFromFile(ex_res_path / "sol_1" / "audio.html")
+          content = loadTextFromFile(exResPath / "sol_1" / "audio.html")
         )
       )
     )
@@ -64,7 +64,7 @@ object WebColl1Ex5 {
     toolId = "web",
     title = "Audio in HTML 5",
     authors = Seq("bje40dc"),
-    text = loadTextFromFile(ex_res_path / "text.html"),
+    text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 1,
     content = WebExerciseContent(
       files = Seq(
@@ -72,7 +72,7 @@ object WebColl1Ex5 {
           name = "audio.html",
           fileType = "htmlmixed",
           editable = true,
-          content = loadTextFromFile(ex_res_path / "audio.html")
+          content = loadTextFromFile(exResPath / "audio.html")
         )
       ),
       siteSpec = SiteSpec(

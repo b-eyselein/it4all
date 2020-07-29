@@ -5,7 +5,7 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {
   ExerciseFileFragment,
-  ExerciseSolveFieldsFragment,
+  ExerciseSolveFieldsFragment, NormalUnitTestPartFragment,
   ProgExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {
@@ -66,14 +66,14 @@ export class ProgrammingExerciseComponent
 
     this.exerciseFiles = (this.contentFragment.part === ProgExPart.Implementation) ?
       this.contentFragment.implementationPart.files :
-      this.contentFragment.unitTestPart.unitTestFiles;
+      (this.contentFragment.unitTestPart as NormalUnitTestPartFragment).unitTestFiles;
 
     this.loadOldSolution();
   }
 
   loadOldSolution(): void {
     this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id, (maybeOldSolution: ProgSolutionInput) => {
-      console.log(JSON.stringify(maybeOldSolution));
+      //console.log(JSON.stringify(maybeOldSolution));
       // TODO: deactivated for now...
       // this.exerciseFiles = maybeOldSolution.files;
     });
@@ -105,7 +105,11 @@ export class ProgrammingExerciseComponent
     return this.correctionResult?.result;
   }
 
-  get result(): ProgrammingResultFragment | null {
+  get internalErrorResult(): ProgrammingInternalErrorResultFragment | null {
+    return this.abstractResult?.__typename === 'ProgrammingInternalErrorResult' ? this.abstractResult : null;
+  }
+
+  private get result(): ProgrammingResultFragment | null {
     return this.abstractResult?.__typename === 'ProgrammingResult' ? this.abstractResult : null;
   }
 

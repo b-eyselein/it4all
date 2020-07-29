@@ -13,8 +13,7 @@ object ProgrammingColl1Ex4 {
 
   private val exResPath = exerciseResourcesPath(toolId, 1, 4)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
     unitTestFiles = Seq(
       ExerciseFile(
@@ -99,6 +98,7 @@ object ProgrammingColl1Ex4 {
       )
     ),
     testFileName = "test_fibonacci.py",
+    foldername = "fibonacci",
     sampleSolFileNames = Seq("test_fibonacci.py")
   )
 
@@ -157,16 +157,9 @@ object ProgrammingColl1Ex4 {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      functionName = "fibonacci",
-      foldername = "fibonacci",
       filename = "fibonacci",
-      inputTypes = Seq(
-        ProgInput(id = 1, inputName = "number", inputType = ProgDataTypes.NonGenericProgDataType.INTEGER)
-      ),
-      outputType = ProgDataTypes.NonGenericProgDataType.INTEGER,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

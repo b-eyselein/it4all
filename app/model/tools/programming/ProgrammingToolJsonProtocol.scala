@@ -1,7 +1,6 @@
 package model.tools.programming
 
 import model.tools._
-import model.tools.programming.ProgDataTypes.{GenericProgDataType, NonGenericProgDataType}
 import model.tools.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
 import model.{ExerciseFile, JsonProtocols, SampleSolution}
 import play.api.libs.json._
@@ -19,45 +18,6 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
     Json.format
   }
 
-  lazy val progDataTypeFormat: Format[ProgDataType] = {
-
-    val genericProgDataTypeFormat: Format[GenericProgDataType] = {
-      implicit lazy val lf: Format[ProgDataTypes.LIST] = {
-        implicit lazy val pdtf: Format[ProgDataType] = progDataTypeFormat
-
-        Json.format
-      }
-
-      implicit lazy val tf: Format[ProgDataTypes.TUPLE] = {
-        implicit lazy val pdtf: Format[ProgDataType] = progDataTypeFormat
-
-        Json.format
-      }
-
-      implicit lazy val df: Format[ProgDataTypes.DICTIONARY] = {
-        implicit lazy val pdtf: Format[ProgDataType] = progDataTypeFormat
-
-        Json.format
-      }
-
-      Json.format
-    }
-
-    val reads: Reads[ProgDataType] = {
-      case jsString: JsString => NonGenericProgDataType.jsonFormat.reads(jsString)
-      case jsObject: JsObject => genericProgDataTypeFormat.reads(jsObject)
-      case other              => JsError(s"Wrong json type: ${other.getClass}")
-    }
-
-    val writes: Writes[ProgDataType] = {
-      case nonGenericProgDataType: NonGenericProgDataType =>
-        NonGenericProgDataType.jsonFormat.writes(nonGenericProgDataType)
-      case genericProgDataType: GenericProgDataType => genericProgDataTypeFormat.writes(genericProgDataType)
-    }
-
-    Format(reads, writes)
-  }
-
   // Exercise
 
   private val unitTestTestConfigFormat: Format[UnitTestTestConfig] = {
@@ -66,18 +26,24 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
     Json.format
   }
 
-  val progInputFormat: Format[ProgInput] = {
-    implicit val pdtf: Format[ProgDataType] = progDataTypeFormat
+  private val normalUnitTestPartFormat: Format[NormalUnitTestPart] = {
+    implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
+
+    implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
 
     Json.format
   }
 
-  val unitTestPartFormat: Format[UnitTestPart] = {
-    implicit val uttf: Format[UnitTestType] = UnitTestType.jsonFormat
+  private val simplifiedUnitTestPartFormat: Format[SimplifiedUnitTestPart] = {
+    implicit val eff: Format[ExerciseFile]  = JsonProtocols.exerciseFileFormat
+    implicit val stdf: Format[ProgTestData] = progTestDataFormat
 
-    implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
+    Json.format
+  }
 
-    implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
+  private val unitTestPartFormat: Format[UnitTestPart] = {
+    implicit val nutpf: Format[NormalUnitTestPart]     = normalUnitTestPartFormat
+    implicit val sutpf: Format[SimplifiedUnitTestPart] = simplifiedUnitTestPartFormat
 
     Json.format
   }
@@ -89,11 +55,9 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
   }
 
   val exerciseContentFormat: OFormat[ProgrammingExerciseContent] = {
-    implicit val pif: Format[ProgInput]                    = progInputFormat
-    implicit val pdtf: Format[ProgDataType]                = progDataTypeFormat
-    implicit val utf: Format[UnitTestPart]                 = unitTestPartFormat
-    implicit val ipf: Format[ImplementationPart]           = implementationPartFormat
-    implicit val pstdf: Format[ProgTestData]               = progTestDataFormat
+    implicit val utf: Format[UnitTestPart]       = unitTestPartFormat
+    implicit val ipf: Format[ImplementationPart] = implementationPartFormat
+    // implicit val pstdf: Format[ProgTestData]               = progTestDataFormat
     implicit val ucdf: Format[UmlClassDiagram]             = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
     implicit val ssf: Format[SampleSolution[ProgSolution]] = sampleSolutionFormat
 

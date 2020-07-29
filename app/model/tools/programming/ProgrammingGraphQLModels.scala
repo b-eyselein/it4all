@@ -22,9 +22,13 @@ object ProgrammingGraphQLModels
     deriveObjectType()
   }
 
-  private val unitTestPartType: ObjectType[Unit, UnitTestPart] = {
-    implicit val unitTestTypeType: EnumType[UnitTestType] = deriveEnumType()
+  private val simplifiedUnitTestPartType: ObjectType[Unit, SimplifiedUnitTestPart] = {
+    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
 
+    deriveObjectType(ExcludeFields("sampleTestData"))
+  }
+
+  private val normalUnitTestPartType: ObjectType[Unit, NormalUnitTestPart] = {
     implicit val uttct: ObjectType[Unit, UnitTestTestConfig] = unitTestTestConfigType
 
     implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
@@ -44,15 +48,26 @@ object ProgrammingGraphQLModels
     deriveObjectType()
   }
 
+  private val unitTestPartType: UnionType[Unit] = UnionType(
+    "UnitTestPart",
+    types = List(simplifiedUnitTestPartType, normalUnitTestPartType)
+  )
+
   override val sampleSolutionType: ObjectType[Unit, SampleSolution[ProgSolution]] =
     buildSampleSolutionType("Programming", progSolutionType)
 
   override val exerciseContentType: ObjectType[Unit, ProgrammingExerciseContent] = {
-    implicit val utpt: ObjectType[Unit, UnitTestPart]                = unitTestPartType
+    /*
+    implicit val sutpt: ObjectType[Unit, SimplifiedUnitTestPart]     = simplifiedUnitTestPartType
+    implicit val nutpt: ObjectType[Unit, NormalUnitTestPart]         = normalUnitTestPartType
+     */
+
+    implicit val utpt: UnionType[Unit]                               = unitTestPartType
     implicit val ipt: ObjectType[Unit, ImplementationPart]           = implementationPartType
     implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType
 
     deriveObjectType(
+      ReplaceField("unitTestPart", Field("unitTestPart", unitTestPartType, resolve = _.value.unitTestPart)),
       AddFields(
         Field(
           "part",
@@ -60,9 +75,7 @@ object ProgrammingGraphQLModels
           arguments = partIdArgument :: Nil,
           resolve = context => ProgExPart.values.find(_.id == context.arg(partIdArgument))
         )
-      ),
-      // TODO: include fields !?!
-      ExcludeFields("inputTypes", "outputType", "sampleTestData")
+      )
     )
   }
 

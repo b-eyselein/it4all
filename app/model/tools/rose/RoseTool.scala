@@ -4,7 +4,6 @@ import initialData.InitialData
 import initialData.rose.RoseInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.tools._
-import model.tools.programming.ProgLanguages
 import model.{Exercise, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +35,7 @@ object RoseTool extends Tool("rose", "Rose", ToolState.PRE_ALPHA) {
 
     val solDir = solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId)
 
-    RoseCorrector.correct(solution, exercise, ProgLanguages.StandardLanguage, solDir)
+    RoseCorrector.correct(solution, exercise, solDir)
   }
 
   override val initialData: InitialData[RoseExerciseContent] = RoseInitialData

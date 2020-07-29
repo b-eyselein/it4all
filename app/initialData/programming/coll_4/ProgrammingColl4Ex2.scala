@@ -1,9 +1,9 @@
 package initialData.programming.coll_4
 
 import initialData.InitialData._
+import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
-import model._
 import play.api.libs.json.{JsNull, JsString, Json}
 
 object ProgrammingColl4Ex2 {
@@ -30,13 +30,6 @@ object ProgrammingColl4Ex2 {
     )
   )
 
-  private val sampleTestData = Seq(
-    ProgTestData(id = 1, input = Json.arr(), output = JsNull),
-    ProgTestData(id = 2, input = Json.arr("0"), output = JsString("0")),
-    ProgTestData(id = 3, input = Json.arr("1", "11", "111"), output = JsString("111")),
-    ProgTestData(id = 4, input = Json.arr("1", "121", "12321", "232", "3"), output = JsString("12321"))
-  )
-
   private val implementationPart = ImplementationPart(
     base = """from typing import List
              |
@@ -55,13 +48,19 @@ object ProgrammingColl4Ex2 {
     sampleSolFileNames = Seq("longest_string.py")
   )
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Simplified,
-    unitTestsDescription = "",
-    unitTestFiles = Seq.empty,
-    unitTestTestConfigs = Seq.empty,
-    testFileName = "test_longest_string.py",
-    sampleSolFileNames = Seq.empty
+  private val unitTestPart = SimplifiedUnitTestPart(
+    simplifiedTestMainFile = ExerciseFile(
+      name = "test_main.py",
+      fileType,
+      editable = false,
+      content = loadTextFromFile(exResPath / "test_main.py")
+    ),
+    sampleTestData = Seq(
+      ProgTestData(id = 1, input = Json.arr(), output = JsNull),
+      ProgTestData(id = 2, input = Json.arr("0"), output = JsString("0")),
+      ProgTestData(id = 3, input = Json.arr("1", "11", "111"), output = JsString("111")),
+      ProgTestData(id = 4, input = Json.arr("1", "121", "12321", "232", "3"), output = JsString("12321"))
+    )
   )
 
   val programmingColl4Ex2: ProgrammingExercise = Exercise(
@@ -79,20 +78,9 @@ object ProgrammingColl4Ex2 {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      functionName = "longest_string",
-      foldername = "longest_string",
       filename = "longest_string",
-      inputTypes = Seq(
-        ProgInput(
-          id = 1,
-          inputName = "my_list",
-          inputType = ProgDataTypes.LIST(ProgDataTypes.NonGenericProgDataType.STRING)
-        )
-      ),
-      outputType = ProgDataTypes.NonGenericProgDataType.STRING,
       unitTestPart,
       implementationPart,
-      sampleTestData,
       sampleSolutions
     )
   )

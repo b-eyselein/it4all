@@ -13,8 +13,10 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
 
   collectionOverviewQuery: CollectionOverviewQuery;
 
-  maxPage: number = 0;
-  currentPage: number = 0;
+  paginationNeeded = false;
+
+  maxPage= 0;
+  currentPage = 0;
 
   pages: number[] = [];
 
@@ -37,6 +39,8 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
         .valueChanges
         .subscribe(({data}) => {
           this.collectionOverviewQuery = data;
+
+          this.paginationNeeded = this.exercises.length > SLICE_COUNT;
 
           this.maxPage = this.collectionOverviewQuery.me.tool.collection.exercises.length / SLICE_COUNT;
 

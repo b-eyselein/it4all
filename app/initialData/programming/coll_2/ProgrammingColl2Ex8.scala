@@ -13,8 +13,7 @@ object ProgrammingColl2Ex8 {
 
   private val exResPath = exerciseResourcesPath(toolId, 2, 8)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
     unitTestFiles = Seq(
       ExerciseFile(
@@ -44,6 +43,7 @@ object ProgrammingColl2Ex8 {
       )
     ),
     testFileName = "test_ceasar.py",
+    foldername = "ceasar",
     sampleSolFileNames = Seq("test_ceasar.py")
   )
 
@@ -103,14 +103,9 @@ object ProgrammingColl2Ex8 {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      functionName = "ceasar",
-      foldername = "ceasar",
       filename = "ceasar",
-      inputTypes = Seq.empty,
-      outputType = ProgDataTypes.NonGenericProgDataType.VOID,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

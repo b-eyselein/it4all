@@ -13,8 +13,7 @@ object ProgrammingColl8Ex1 {
 
   private val exResPath = exerciseResourcesPath(toolId, 8, 1)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = loadTextFromFile(exResPath / "unit_test_description.html"),
     unitTestFiles = Seq(
       ExerciseFile(
@@ -118,6 +117,7 @@ object ProgrammingColl8Ex1 {
       )
     ),
     testFileName = "test_table.py",
+    foldername = "pysql",
     sampleSolFileNames = Seq("test_table.py")
   )
 
@@ -184,14 +184,9 @@ object ProgrammingColl8Ex1 {
     ),
     difficulty = 4,
     content = ProgrammingExerciseContent(
-      functionName = "insert",
-      foldername = "pysql",
       filename = "table",
-      inputTypes = Seq.empty,
-      outputType = ProgDataTypes.NonGenericProgDataType.VOID,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

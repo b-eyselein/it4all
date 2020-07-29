@@ -30,34 +30,36 @@ trait InternalErrorResult extends AbstractCorrectionResult {
 
 }
 
-object BasicExerciseResult {
+object BasicExercisePartResult {
 
   def forExerciseAndResult[P <: ExPart](
     username: String,
     exercise: Exercise[_ <: ExerciseContent],
     part: P,
     result: AbstractCorrectionResult
-  ): BasicExerciseResult[P] =
-    BasicExerciseResult(
+  ): BasicExercisePartResult[P] =
+    BasicExercisePartResult(
       username,
       exercise.exerciseId,
       exercise.collectionId,
       exercise.toolId,
       part,
       result.points,
-      result.maxPoints,
-      result.isCompletelyCorrect
+      result.maxPoints
     )
 
 }
 
-final case class BasicExerciseResult[P <: ExPart](
+final case class BasicExercisePartResult[P <: ExPart](
   username: String,
   exerciseId: Int,
   collectionId: Int,
   toolId: String,
   part: P,
   points: Points,
-  maxPoints: Points,
-  isCorrect: Boolean
-)
+  maxPoints: Points
+) {
+
+  def isCorrect: Boolean = points.asDouble == maxPoints.asDouble
+
+}

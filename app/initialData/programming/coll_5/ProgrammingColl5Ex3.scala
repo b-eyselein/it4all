@@ -1,9 +1,9 @@
 package initialData.programming.coll_5
 
 import initialData.InitialData.{exerciseResourcesPath, loadTextFromFile}
+import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
-import model._
 
 object ProgrammingColl5Ex3 {
 
@@ -13,8 +13,7 @@ object ProgrammingColl5Ex3 {
 
   private val exResPath = exerciseResourcesPath(toolId, 5, 3)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
     unitTestFiles = Seq(
       ExerciseFile(
@@ -116,6 +115,7 @@ object ProgrammingColl5Ex3 {
       )
     ),
     testFileName = "test_tuples_and_dicts.py",
+    foldername = "tuples_and_dicts",
     sampleSolFileNames = Seq("test_tuples_and_dicts.py")
   )
 
@@ -177,14 +177,9 @@ object ProgrammingColl5Ex3 {
     ),
     difficulty = 3,
     content = ProgrammingExerciseContent(
-      functionName = "tuples_and_dicts",
-      foldername = "tuples_and_dicts",
       filename = "tuples_and_dicts",
-      inputTypes = Seq.empty,
-      outputType = ProgDataTypes.NonGenericProgDataType.VOID,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

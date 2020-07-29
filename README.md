@@ -10,8 +10,7 @@ it4all is a web correction framework for
 - Nary Numbers, Boolean Algebra
 - Regular Expressions
 
-[![build status](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/badges/master/build.svg)](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/commits/master)
-
+[![pipeline status](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/badges/master/pipeline.svg)](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/-/commits/master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2941021ee993484db0cab405aa03b209)](https://www.codacy.com/app/it4all/it4all?utm_source=gitlab2.informatik.uni-wuerzburg.de&amp;utm_medium=referral&amp;utm_content=bje40dc/it4all&amp;utm_campaign=Badge_Grade)
 
 ## Development

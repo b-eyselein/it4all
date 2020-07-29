@@ -8,7 +8,7 @@ import model.{Exercise, ExerciseFile, SampleSolution}
 
 object WebColl1Ex4 {
 
-  private val ex_res_path = exerciseResourcesPath("web", 1, 4)
+  private val exResPath = exerciseResourcesPath("web", 1, 4)
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -82,7 +82,7 @@ object WebColl1Ex4 {
           name = "login.html",
           fileType = "htmlmixed",
           editable = false,
-          content = loadTextFromFile(ex_res_path / "sol_1" / "login.html")
+          content = loadTextFromFile(exResPath / "sol_1" / "login.html")
         )
       )
     )
@@ -94,7 +94,7 @@ object WebColl1Ex4 {
     toolId = "web",
     title = "Login-Formular",
     authors = Seq("bje40dc"),
-    text = loadTextFromFile(ex_res_path / "text.html"),
+    text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 3,
     content = WebExerciseContent(
       files = Seq(
@@ -102,13 +102,13 @@ object WebColl1Ex4 {
           name = "login.html",
           fileType = "htmlmixed",
           editable = true,
-          content = loadTextFromFile(ex_res_path / "login.html")
+          content = loadTextFromFile(exResPath / "login.html")
         ),
         ExerciseFile(
           name = "loginStyle.css",
           fileType = "css",
           editable = false,
-          content = loadTextFromFile(ex_res_path / "loginStyle.css")
+          content = loadTextFromFile(exResPath / "loginStyle.css")
         )
       ),
       siteSpec = SiteSpec(

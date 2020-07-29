@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Jul 23 2020 14:23:36 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Jul 29 2020 14:14:34 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -115,6 +115,7 @@ type ExPart {
   id: String!
   name: String!
   isEntryPart: Boolean!
+  solved: Boolean!
 }
 
 type GradedHtmlTaskResult {
@@ -263,11 +264,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  UNSUCCESSFUL_MATCH
   ONLY_SAMPLE
   PARTIAL_MATCH
-  ONLY_USER
   SUCCESSFUL_MATCH
+  UNSUCCESSFUL_MATCH
+  ONLY_USER
 }
 
 type Mutation {
@@ -285,6 +286,16 @@ interface NewMatch {
 type NormalExecutionResult {
   success: SuccessType!
   logs: String!
+}
+
+type NormalUnitTestPart {
+  unitTestsDescription: String!
+  unitTestFiles: [ExerciseFile!]!
+  unitTestTestConfigs: [UnitTestTestConfig!]!
+  testFileName: String!
+  foldername: String!
+  sampleSolFileNames: [String!]!
+  simplifiedTestMainFile: ExerciseFile
 }
 
 enum ProgExPart {
@@ -306,12 +317,10 @@ type ProgrammingCorrectionResult {
 }
 
 type ProgrammingExerciseContent {
-  functionName: String!
-  foldername: String!
   filename: String!
-  unitTestPart: UnitTestPart!
   implementationPart: ImplementationPart!
   sampleSolutions: [ProgrammingSampleSolution!]!
+  unitTestPart: UnitTestPart!
   part(partId: String!): ProgExPart
 }
 
@@ -466,6 +475,10 @@ type SimplifiedExecutionResult {
   gotten: String!
 }
 
+type SimplifiedUnitTestPart {
+  simplifiedTestMainFile: ExerciseFile!
+}
+
 type SiteSpec {
   fileName: String!
   htmlTasks: [HtmlTask!]!
@@ -538,11 +551,11 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  SELECT
-  CREATE
-  UPDATE
   INSERT
   DELETE
+  SELECT
+  UPDATE
+  CREATE
 }
 
 enum SqlExPart {
@@ -973,26 +986,13 @@ type UnitTestCorrectionResult {
   stderr: [String!]!
 }
 
-type UnitTestPart {
-  unitTestType: UnitTestType!
-  unitTestsDescription: String!
-  unitTestFiles: [ExerciseFile!]!
-  unitTestTestConfigs: [UnitTestTestConfig!]!
-  testFileName: String!
-  sampleSolFileNames: [String!]!
-  simplifiedTestMainFile: ExerciseFile
-}
+union UnitTestPart = SimplifiedUnitTestPart | NormalUnitTestPart
 
 type UnitTestTestConfig {
   id: Int!
   shouldFail: Boolean!
   description: String!
   file: ExerciseFile!
-}
-
-enum UnitTestType {
-  Simplified
-  Normal
 }
 
 type User {

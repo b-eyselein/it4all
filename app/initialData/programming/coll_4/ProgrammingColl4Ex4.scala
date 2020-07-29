@@ -13,8 +13,7 @@ object ProgrammingColl4Ex4 {
 
   private val exResPath = exerciseResourcesPath(toolId, 4, 4)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
     unitTestFiles = Seq(
       ExerciseFile(
@@ -147,6 +146,7 @@ object ProgrammingColl4Ex4 {
       )
     ),
     testFileName = "test_slicing.py",
+    foldername = "slicing",
     sampleSolFileNames = Seq("test_slicing.py")
   )
 
@@ -205,14 +205,9 @@ object ProgrammingColl4Ex4 {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      functionName = "slicing",
-      foldername = "slicing",
       filename = "slicing",
-      inputTypes = Seq.empty,
-      outputType = ProgDataTypes.NonGenericProgDataType.VOID,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

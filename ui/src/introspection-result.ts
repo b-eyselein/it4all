@@ -212,6 +212,18 @@
         ]
       },
       {
+        "kind": "UNION",
+        "name": "UnitTestPart",
+        "possibleTypes": [
+          {
+            "name": "SimplifiedUnitTestPart"
+          },
+          {
+            "name": "NormalUnitTestPart"
+          }
+        ]
+      },
+      {
         "kind": "INTERFACE",
         "name": "WebAbstractResult",
         "possibleTypes": [

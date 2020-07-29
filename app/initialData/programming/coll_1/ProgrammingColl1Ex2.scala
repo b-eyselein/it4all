@@ -11,10 +11,9 @@ object ProgrammingColl1Ex2 {
 
   private val fileType = "python"
 
-  private val ex_res_path = exerciseResourcesPath(toolId, 1, 2)
+  private val exResPath = exerciseResourcesPath(toolId, 1, 2)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = """Schreiben Sie Unittests für die Funktion <code>factorial(n= int) -> int</code>.
                              |Diese soll die Fakultät der Zahl <code>n</code> berechnen.
                              |Der Funktionsparameter <code>n</code> soll größer als 0 sein.""".stripMargin
@@ -24,13 +23,13 @@ object ProgrammingColl1Ex2 {
         name = "factorial.py",
         fileType,
         editable = false,
-        content = loadTextFromFile(ex_res_path / "factorial_declaration.py")
+        content = loadTextFromFile(exResPath / "factorial_declaration.py")
       ),
       ExerciseFile(
         name = "test_factorial.py",
         fileType,
         editable = true,
-        content = loadTextFromFile(ex_res_path / "test_factorial_declaration.py")
+        content = loadTextFromFile(exResPath / "test_factorial_declaration.py")
       )
     ),
     unitTestTestConfigs = Seq(
@@ -42,7 +41,7 @@ object ProgrammingColl1Ex2 {
           name = "factorial_0.py",
           fileType,
           editable = false,
-          content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_0.py")
+          content = loadTextFromFile(exResPath / "unit_test_sols" / "factorial_0.py")
         )
       ),
       UnitTestTestConfig(
@@ -53,7 +52,7 @@ object ProgrammingColl1Ex2 {
           name = "factorial_1.py",
           fileType,
           editable = false,
-          content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_1.py")
+          content = loadTextFromFile(exResPath / "unit_test_sols" / "factorial_1.py")
         )
       ),
       UnitTestTestConfig(
@@ -64,7 +63,7 @@ object ProgrammingColl1Ex2 {
           name = "factorial_2.py",
           fileType,
           editable = false,
-          content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_2.py")
+          content = loadTextFromFile(exResPath / "unit_test_sols" / "factorial_2.py")
         )
       ),
       UnitTestTestConfig(
@@ -75,11 +74,12 @@ object ProgrammingColl1Ex2 {
           name = "factorial_3.py",
           fileType,
           editable = false,
-          content = loadTextFromFile(ex_res_path / "unit_test_sols" / "factorial_3.py")
+          content = loadTextFromFile(exResPath / "unit_test_sols" / "factorial_3.py")
         )
       )
     ),
     testFileName = "test_factorial.py",
+    foldername = "factorial",
     sampleSolFileNames = Seq("test_factorial.py")
   )
 
@@ -92,13 +92,13 @@ object ProgrammingColl1Ex2 {
         name = "test_factorial.py",
         fileType,
         editable = false,
-        content = loadTextFromFile(ex_res_path / "test_factorial.py")
+        content = loadTextFromFile(exResPath / "test_factorial.py")
       ),
       ExerciseFile(
         name = "factorial.py",
         fileType,
         editable = true,
-        content = loadTextFromFile(ex_res_path / "factorial_declaration.py")
+        content = loadTextFromFile(exResPath / "factorial_declaration.py")
       )
     ),
     implFileName = "factorial.py",
@@ -114,13 +114,13 @@ object ProgrammingColl1Ex2 {
             name = "test_factorial.py",
             fileType,
             editable = false,
-            content = loadTextFromFile(ex_res_path / "test_factorial.py")
+            content = loadTextFromFile(exResPath / "test_factorial.py")
           ),
           ExerciseFile(
             name = "factorial.py",
             fileType,
             editable = false,
-            content = loadTextFromFile(ex_res_path / "factorial.py")
+            content = loadTextFromFile(exResPath / "factorial.py")
           )
         )
       )
@@ -133,7 +133,7 @@ object ProgrammingColl1Ex2 {
     toolId = "programming",
     title = "Fakultät",
     authors = Seq("bje40dc"),
-    text = loadTextFromFile(ex_res_path / "text.html"),
+    text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 1,
     topicsWithLevels = Seq(
       TopicWithLevel(ProgrammingTopics.Exceptions, Level.Beginner),
@@ -141,14 +141,9 @@ object ProgrammingColl1Ex2 {
       TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner)
     ),
     content = ProgrammingExerciseContent(
-      functionName = "factorial",
-      foldername = "factorial",
       filename = "factorial",
-      inputTypes = Seq(ProgInput(id = 1, inputName = "n", inputType = ProgDataTypes.NonGenericProgDataType.INTEGER)),
-      outputType = ProgDataTypes.NonGenericProgDataType.INTEGER,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

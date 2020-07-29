@@ -13,8 +13,7 @@ object ProgrammingColl2Ex2 {
 
   private val exResPath = exerciseResourcesPath(toolId, 2, 2)
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
     unitTestFiles = Seq(
       ExerciseFile(
@@ -89,6 +88,7 @@ object ProgrammingColl2Ex2 {
       )
     ),
     testFileName = "test_floating_point_exponential.py",
+    foldername = "floating_point_exponential",
     sampleSolFileNames = Seq("test_floating_point_exponential.py")
   )
 
@@ -151,14 +151,9 @@ object ProgrammingColl2Ex2 {
     ),
     difficulty = 1,
     content = ProgrammingExerciseContent(
-      functionName = "floating_point_exponential",
-      foldername = "floating_point_exponential",
       filename = "floating_point_exponential",
-      inputTypes = Seq.empty,
-      outputType = ProgDataTypes.NonGenericProgDataType.VOID,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

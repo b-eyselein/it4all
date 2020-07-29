@@ -70,7 +70,7 @@ trait GraphQLModel
         ListType(exerciseType),
         resolve = context =>
           futureExercisesForTool(context.value._2)
-            .map(exes => exes.map(ex => (context.value._1, ex.asInstanceOf[UntypedExercise])))
+            .map(exes => exes.map(ex => (context.value._1, context.value._2, ex.asInstanceOf[UntypedExercise])))
       ),
       // Fields for users
       Field(

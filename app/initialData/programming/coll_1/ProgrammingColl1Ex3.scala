@@ -83,8 +83,7 @@ object ProgrammingColl1Ex3 {
     )
   )
 
-  private val unitTestPart = UnitTestPart(
-    unitTestType = UnitTestType.Normal,
+  private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
     unitTestFiles = Seq(
       ExerciseFile(
@@ -102,6 +101,7 @@ object ProgrammingColl1Ex3 {
     ),
     unitTestTestConfigs,
     testFileName = "test_babylonian_root.py",
+    foldername = "babylonian_root",
     sampleSolFileNames = Seq("test_babylonian_root.py")
   )
 
@@ -161,17 +161,9 @@ object ProgrammingColl1Ex3 {
       TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner)
     ),
     content = ProgrammingExerciseContent(
-      functionName = "babylonian_root",
-      foldername = "babylonian_root",
       filename = "babylonian_root",
-      inputTypes = Seq(
-        ProgInput(id = 1, inputName = "number", inputType = ProgDataTypes.NonGenericProgDataType.FLOAT),
-        ProgInput(id = 2, inputName = "count", inputType = ProgDataTypes.NonGenericProgDataType.INTEGER)
-      ),
-      outputType = ProgDataTypes.NonGenericProgDataType.FLOAT,
       unitTestPart,
       implementationPart,
-      sampleTestData = Seq.empty,
       sampleSolutions
     )
   )

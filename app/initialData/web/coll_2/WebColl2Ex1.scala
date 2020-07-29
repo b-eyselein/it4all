@@ -8,7 +8,7 @@ import model.{Exercise, ExerciseFile, SampleSolution}
 
 object WebColl2Ex1 {
 
-  private val ex_res_path = exerciseResourcesPath("web", 2, 1)
+  private val exResPath = exerciseResourcesPath("web", 2, 1)
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -73,13 +73,13 @@ object WebColl2Ex1 {
           name = "clickCounter.html",
           fileType = "htmlmixed",
           editable = false,
-          content = loadTextFromFile(ex_res_path / "sol_1" / "clickCounter.html")
+          content = loadTextFromFile(exResPath / "sol_1" / "clickCounter.html")
         ),
         ExerciseFile(
           name = "clickCounter.js",
           fileType = "javascript",
           editable = false,
-          content = loadTextFromFile(ex_res_path / "sol_1" / "clickCounter.js")
+          content = loadTextFromFile(exResPath / "sol_1" / "clickCounter.js")
         )
       )
     )
@@ -91,7 +91,7 @@ object WebColl2Ex1 {
     toolId = "web",
     title = "Klickzähler",
     authors = Seq("bje40dc"),
-    text = loadTextFromFile(ex_res_path / "text.html"),
+    text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 2,
     content = WebExerciseContent(
       files = Seq(
@@ -99,13 +99,13 @@ object WebColl2Ex1 {
           name = "clickCounter.html",
           fileType = "htmlmixed",
           editable = true,
-          content = loadTextFromFile(ex_res_path / "clickCounter.html")
+          content = loadTextFromFile(exResPath / "clickCounter.html")
         ),
         ExerciseFile(
           name = "clickCounter.js",
           fileType = "javascript",
           editable = true,
-          content = loadTextFromFile(ex_res_path / "clickCounter.js")
+          content = loadTextFromFile(exResPath / "clickCounter.js")
         )
       ),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),

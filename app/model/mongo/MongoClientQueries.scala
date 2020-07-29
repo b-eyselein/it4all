@@ -16,7 +16,7 @@ trait MongoClientQueries
     with MongoUserQueries
     with MongoCollectionQueries
     with MongoExerciseQueries
-    with MongoResultQueries
+    with MongoExercisePartResultQueries
     with MongoLessonQueries
     with MongoLessonContentQueries {
 

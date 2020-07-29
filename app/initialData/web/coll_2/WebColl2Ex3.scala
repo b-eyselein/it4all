@@ -8,7 +8,7 @@ import model.{Exercise, ExerciseFile, SampleSolution}
 
 object WebColl2Ex3 {
 
-  private val ex_res_path = exerciseResourcesPath("web", 2, 3)
+  private val exResPath = exerciseResourcesPath("web", 2, 3)
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -119,13 +119,13 @@ object WebColl2Ex3 {
           name = "factorial.html",
           fileType = "htmlmixed",
           editable = false,
-          content = loadTextFromFile(ex_res_path / "sol_1" / "factorial.html")
+          content = loadTextFromFile(exResPath / "sol_1" / "factorial.html")
         ),
         ExerciseFile(
           name = "factorial.js",
           fileType = "javascript",
           editable = false,
-          content = loadTextFromFile(ex_res_path / "sol_1" / "factorial.js")
+          content = loadTextFromFile(exResPath / "sol_1" / "factorial.js")
         )
       )
     )
@@ -137,7 +137,7 @@ object WebColl2Ex3 {
     toolId = "web",
     title = "Schleifen",
     authors = Seq("alg81dm"),
-    text = loadTextFromFile(ex_res_path / "text.html"),
+    text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 2,
     content = WebExerciseContent(
       files = Seq(
@@ -145,13 +145,13 @@ object WebColl2Ex3 {
           name = "factorial.html",
           fileType = "htmlmixed",
           editable = true,
-          content = loadTextFromFile(ex_res_path / "factorial.html")
+          content = loadTextFromFile(exResPath / "factorial.html")
         ),
         ExerciseFile(
           name = "factorial.js",
           fileType = "javascript",
           editable = true,
-          content = loadTextFromFile(ex_res_path / "factorial.js")
+          content = loadTextFromFile(exResPath / "factorial.js")
         )
       ),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),

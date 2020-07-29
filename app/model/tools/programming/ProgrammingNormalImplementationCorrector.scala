@@ -19,12 +19,13 @@ object ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorre
   def correctNormalImplementation(
     solTargetDir: File,
     exerciseContent: ProgrammingExerciseContent,
+    normalUnitTestPart: NormalUnitTestPart,
     programmingSolutionFilesMounts: Seq[DockerBind]
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] =
     exerciseContent.sampleSolutions.headOption match {
       case None => Future.successful(onError("No sample solution found!"))
       case Some(SampleSolution(_, ProgSolution(files))) =>
-        files.find(_.name == exerciseContent.unitTestPart.testFileName).map(_.content) match {
+        files.find(_.name == normalUnitTestPart.testFileName).map(_.content) match {
           case None => Future.successful(onError("No content for unit test file found!"))
           case Some(unitTestFileContent) =>
             val unitTestFileName = s"${exerciseContent.filename}_test.py"

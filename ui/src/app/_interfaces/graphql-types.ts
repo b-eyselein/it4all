@@ -155,6 +155,7 @@ export type ExPart = {
   id: Scalars['String'];
   name: Scalars['String'];
   isEntryPart: Scalars['Boolean'];
+  solved: Scalars['Boolean'];
 };
 
 export type GradedHtmlTaskResult = {
@@ -320,11 +321,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   OnlySample = 'ONLY_SAMPLE',
   PartialMatch = 'PARTIAL_MATCH',
-  OnlyUser = 'ONLY_USER',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH'
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlyUser = 'ONLY_USER'
 }
 
 export type Mutation = {
@@ -361,6 +362,17 @@ export type NormalExecutionResult = {
   logs: Scalars['String'];
 };
 
+export type NormalUnitTestPart = {
+  __typename?: 'NormalUnitTestPart';
+  unitTestsDescription: Scalars['String'];
+  unitTestFiles: Array<ExerciseFile>;
+  unitTestTestConfigs: Array<UnitTestTestConfig>;
+  testFileName: Scalars['String'];
+  foldername: Scalars['String'];
+  sampleSolFileNames: Array<Scalars['String']>;
+  simplifiedTestMainFile?: Maybe<ExerciseFile>;
+};
+
 export enum ProgExPart {
   TestCreation = 'TestCreation',
   Implementation = 'Implementation',
@@ -382,12 +394,10 @@ export type ProgrammingCorrectionResult = {
 
 export type ProgrammingExerciseContent = {
   __typename?: 'ProgrammingExerciseContent';
-  functionName: Scalars['String'];
-  foldername: Scalars['String'];
   filename: Scalars['String'];
-  unitTestPart: UnitTestPart;
   implementationPart: ImplementationPart;
   sampleSolutions: Array<ProgrammingSampleSolution>;
+  unitTestPart: UnitTestPart;
   part?: Maybe<ProgExPart>;
 };
 
@@ -590,6 +600,11 @@ export type SimplifiedExecutionResult = {
   gotten: Scalars['String'];
 };
 
+export type SimplifiedUnitTestPart = {
+  __typename?: 'SimplifiedUnitTestPart';
+  simplifiedTestMainFile: ExerciseFile;
+};
+
 export type SiteSpec = {
   __typename?: 'SiteSpec';
   fileName: Scalars['String'];
@@ -683,11 +698,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
-  Create = 'CREATE',
-  Update = 'UPDATE',
   Insert = 'INSERT',
-  Delete = 'DELETE'
+  Delete = 'DELETE',
+  Select = 'SELECT',
+  Update = 'UPDATE',
+  Create = 'CREATE'
 }
 
 export enum SqlExPart {
@@ -1175,16 +1190,7 @@ export type UnitTestCorrectionResult = {
   stderr: Array<Scalars['String']>;
 };
 
-export type UnitTestPart = {
-  __typename?: 'UnitTestPart';
-  unitTestType: UnitTestType;
-  unitTestsDescription: Scalars['String'];
-  unitTestFiles: Array<ExerciseFile>;
-  unitTestTestConfigs: Array<UnitTestTestConfig>;
-  testFileName: Scalars['String'];
-  sampleSolFileNames: Array<Scalars['String']>;
-  simplifiedTestMainFile?: Maybe<ExerciseFile>;
-};
+export type UnitTestPart = SimplifiedUnitTestPart | NormalUnitTestPart;
 
 export type UnitTestTestConfig = {
   __typename?: 'UnitTestTestConfig';
@@ -1193,11 +1199,6 @@ export type UnitTestTestConfig = {
   description: Scalars['String'];
   file: ExerciseFile;
 };
-
-export enum UnitTestType {
-  Simplified = 'Simplified',
-  Normal = 'Normal'
-}
 
 export type User = {
   __typename?: 'User';
