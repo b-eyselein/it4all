@@ -22,9 +22,12 @@ object UmlCorrector extends AbstractCorrector {
     userClassDiagram: UmlClassDiagram,
     exercise: UmlExercise,
     part: UmlExPart
-  ): UmlAbstractResult =
+  ): UmlAbstractResult = {
+
+    val maxPoints = ???
+
     exercise.content.sampleSolutions.headOption match {
-      case None => onError("There is no sample solution!")
+      case None => onError("There is no sample solution!", maxPoints)
       case Some(sampleSolution) =>
         val sampleClassDiagram = sampleSolution.sample
 
@@ -52,11 +55,10 @@ object UmlCorrector extends AbstractCorrector {
           case _ => None
         }
 
-        val points: Points = (-1).points
-
-        val maxPoints: Points = (-1).points
+        val points: Points = ???
 
         UmlResult(classResult, assocResult, implResult, points, maxPoints)
     }
+  }
 
 }

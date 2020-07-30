@@ -219,7 +219,7 @@ object ProgrammingColl6Ex2 {
       )
     ),
     testFileName = "test_distances.py",
-    foldername = "distances",
+    folderName = "distances",
     sampleSolFileNames = Seq("test_distances.py")
   )
 

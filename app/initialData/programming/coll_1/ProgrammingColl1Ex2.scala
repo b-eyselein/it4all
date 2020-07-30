@@ -79,7 +79,7 @@ object ProgrammingColl1Ex2 {
       )
     ),
     testFileName = "test_factorial.py",
-    foldername = "factorial",
+    folderName = "factorial",
     sampleSolFileNames = Seq("test_factorial.py")
   )
 

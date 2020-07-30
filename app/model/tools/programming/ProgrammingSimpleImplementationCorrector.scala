@@ -2,6 +2,8 @@ package model.tools.programming
 
 import better.files.File
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
+import model.points._
+import model.result.SuccessType
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 
@@ -25,40 +27,46 @@ object ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorre
     resultFile: File
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
 
+    val maxPoints = simplifiedUnitTestPart.sampleTestData.size.points
+
     val testMainFile = solTargetDir / testMainFileName
-    createFileAndWrite(testMainFile, simplifiedUnitTestPart.simplifiedTestMainFile.content)
+    testMainFile
+      .createIfNotExists(createParents = true)
+      .write(simplifiedUnitTestPart.simplifiedTestMainFile.content)
 
     val testDataFile = solTargetDir / testDataFileName
-    createFileAndWrite(
-      testDataFile,
-      Json.prettyPrint(buildSimpleTestDataFileContent(simplifiedUnitTestPart.sampleTestData))
+    testDataFile
+      .createIfNotExists(createParents = true)
+      .write(Json.prettyPrint(buildSimpleTestDataFileContent(simplifiedUnitTestPart.sampleTestData)))
+
+    val dockerBindPath = DockerConnector.DefaultWorkingDir
+
+    val otherDockerBinds = Seq(
+      DockerBind(testDataFile, s"$dockerBindPath/$testDataFileName", isReadOnly = true),
+      DockerBind(testMainFile, s"$dockerBindPath/$testMainFileName", isReadOnly = true),
+      DockerBind(resultFile, s"$dockerBindPath/$resultFileName")
     )
 
     DockerConnector
       .runContainer(
         imageName = programmingSimplifiedCorrectionDockerImageName.name,
-        maybeDockerBinds = progSolutionFilesMounts ++ Seq(
-          DockerBind(testDataFile, s"${DockerConnector.DefaultWorkingDir}/$testDataFileName", isReadOnly = true),
-          DockerBind(testMainFile, s"${DockerConnector.DefaultWorkingDir}/$testMainFileName", isReadOnly = true),
-          DockerBind(solTargetDir / resultFileName, s"${DockerConnector.DefaultWorkingDir}/$resultFileName")
-        )
+        maybeDockerBinds = progSolutionFilesMounts ++ otherDockerBinds
       )
       .map {
         case Failure(exception) =>
-          onError(
-            "Error while running programming simplified execution docker image",
-            maybeException = Some(exception)
-          )
+          onError("Error while running programming simplified execution docker image", maxPoints, Some(exception))
         case Success(_) =>
           ResultsFileJsonFormat
             .readSimplifiedExecutionResultFile(resultFile)
             .fold(
-              exception => onError("Error while reading result file", maybeException = Some(exception)),
-              results => ProgrammingResult(simplifiedResults = results)
+              exception => onError("Error while reading result file", maxPoints, Some(exception)),
+              simplifiedResults => {
+
+                val points = simplifiedResults.count(ser => ser.success == SuccessType.COMPLETE).points
+
+                ProgrammingResult(simplifiedResults = simplifiedResults, points = points, maxPoints = maxPoints)
+              }
             )
       }
-    /*
-    }
-     */
   }
 }

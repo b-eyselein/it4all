@@ -38,6 +38,22 @@
               "node_modules/lodash/lodash.js",
               "node_modules/backbone/backbone-min.js",
               "node_modules/jointjs/dist/joint.js"
+            ],
+            "allowedCommonJsDependencies": [
+              // TODO: disable warnings for commonjs dependencies
+              "lodash",
+              "jquery",
+              "backbone",
+              "regexp-to-ast",
+              "zen-observable",
+              "jointjs",
+              "@ctrl/ngx-codemirror",
+              "graphql-tag",
+              "codemirror/mode/sql/sql",
+              "codemirror/mode/xml/xml",
+              "codemirror/mode/dtd/dtd",
+              "codemirror/mode/htmlmixed/htmlmixed",
+              "codemirror/mode/python/python"
             ]
           },
           "configurations": {

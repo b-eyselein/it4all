@@ -21,7 +21,19 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
       Field("id", StringType, resolve = _.value._2.id),
       Field("name", StringType, resolve = _.value._2.partName),
       Field("isEntryPart", BooleanType, resolve = _.value._2.isEntryPart),
-      Field("solved", BooleanType, resolve = context => false)
+      Field(
+        "solved",
+        BooleanType,
+        resolve = context => {
+          val exercise = context.value._1
+
+          futureExerciseResultById(exercise.toolId, exercise.collectionId, exercise.exerciseId, context.value._2.id)
+            .map {
+              case None                          => false
+              case Some(basicExercisePartResult) => basicExercisePartResult.isCorrect
+            }
+        }
+      )
     )
   )
 
@@ -88,11 +100,7 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
       Field(
         "parts",
         ListType(exPartType),
-        resolve = context => {
-          val exercise = context.value._3
-
-          exercise.content.parts.map { exPart => (exercise, exPart) }
-        }
+        resolve = context => context.value._3.content.parts.map { exPart => (context.value._3, exPart) }
       )
     )
   )

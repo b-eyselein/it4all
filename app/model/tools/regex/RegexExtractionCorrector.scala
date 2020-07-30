@@ -15,12 +15,15 @@ object RegexExtractionCorrector extends RegexAbstractCorrector {
   def correctExtraction(
     exerciseContent: RegexExerciseContent,
     userRegex: Regex
-  ): RegexAbstractResult =
+  ): RegexAbstractResult = {
+
+    val maxPoints = exerciseContent.maxPoints.points
+
     exerciseContent.sampleSolutions.headOption match {
-      case None => onError("No sample solution found")
+      case None => onError("No sample solution found", maxPoints)
       case Some(SampleSolution(_, sample)) =>
         Try(sample.r).fold(
-          exception => onError("Error while building sample regex", maybeException = Some(exception)),
+          exception => onError("Error while building sample regex", maxPoints, Some(exception)),
           sampleRegex => {
 
             val extractionResults = exerciseContent.extractionTestData.map {
@@ -37,16 +40,14 @@ object RegexExtractionCorrector extends RegexAbstractCorrector {
 
             val correctResultsCount: Int = extractionResults.count(_.correct)
 
-            val points: Points =
-              (correctResultsCount.toDouble / exerciseContent.extractionTestData.size.toDouble * exerciseContent.maxPoints * 4).toInt.quarterPoints
+            val correctPercentage = correctResultsCount.toDouble / exerciseContent.extractionTestData.size.toDouble
 
-            RegexExtractionResult(
-              extractionResults,
-              points,
-              exerciseContent.maxPoints.points
-            )
+            val points: Points = (correctPercentage * exerciseContent.maxPoints * 4).toInt.quarterPoints
+
+            RegexExtractionResult(extractionResults, points, maxPoints)
           }
         )
     }
+  }
 
 }

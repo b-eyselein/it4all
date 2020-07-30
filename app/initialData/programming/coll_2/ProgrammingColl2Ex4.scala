@@ -87,7 +87,7 @@ object ProgrammingColl2Ex4 {
       )
     ),
     testFileName = "test_name_search.py",
-    foldername = "name_search",
+    folderName = "name_search",
     sampleSolFileNames = Seq("test_name_search.py")
   )
 

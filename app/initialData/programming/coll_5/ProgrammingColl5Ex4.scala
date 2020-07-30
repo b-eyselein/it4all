@@ -110,7 +110,7 @@ object ProgrammingColl5Ex4 {
       )
     ),
     testFileName = "test_reindeers.py",
-    foldername = "reindeers",
+    folderName = "reindeers",
     sampleSolFileNames = Seq("test_reindeers.py")
   )
 

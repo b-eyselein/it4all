@@ -2,20 +2,19 @@
 
   <div class="columns">
     <div class="column is-half-desktop">
-      <it4all-exercise-files-editor [exerciseFileFragments]="exerciseFiles" [mode]="'python'"></it4all-exercise-files-editor>
+      <it4all-exercise-files-editor [exerciseFileFragments]="exerciseFiles"
+                                    [mode]="'python'"></it4all-exercise-files-editor>
     </div>
-
     <div class="column is-half-desktop">
 
       <it4all-tabs>
         <it4all-tab [title]="'Aufgabenstellung'">
-          <div class="notification is-light-grey" [innerHTML]="exerciseFragment.text"></div>
-
-          <hr>
+          <div class="notification mb-3 is-light-grey" [innerHTML]="exerciseFragment.text"></div>
 
           <div class="columns">
             <div class="column">
-              <button class="button is-link is-fullwidth" [class.is-loading]="isCorrecting" (click)="correct()">
+              <button class="button is-link is-fullwidth" [class.is-loading]="isCorrecting"
+                      (click)="performCorrection()">
                 Korrektur
               </button>
             </div>
@@ -30,14 +29,20 @@
             Die Korrektur läuft gerade...
           </div>
 
-          <div class="overflowHiddenDiv" *ngIf="resultQuery && correctionResult">
+          <!-- class="overflowHiddenDiv" -->
+          <div  *ngIf="resultQuery && correctionResult">
 
             <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
 
             <br>
 
-            <!-- TODO: points nofitication programming! -->
-            <!--            <it4all-points-notification [result]="result"></it4all-points-notification>-->
+            <!-- TODO: points notification programming! -->
+            <it4all-points-notification
+              [points]="correctionResult.result.points"
+              [maxPoints]="correctionResult.result.maxPoints">
+            </it4all-points-notification>
+
+            <br>
 
             <div class="message is-danger" *ngIf="internalErrorResult">
               <div class="message-header">Es gab einen internen Fehler bei der Korrektur:</div>

@@ -1,7 +1,7 @@
 package model.result
 
 import model.points._
-import model.{ExPart, Exercise, ExerciseContent}
+import model.{Exercise, ExerciseContent}
 
 final case class CorrectionResult[R <: AbstractCorrectionResult](
   solutionSaved: Boolean,
@@ -32,30 +32,30 @@ trait InternalErrorResult extends AbstractCorrectionResult {
 
 object BasicExercisePartResult {
 
-  def forExerciseAndResult[P <: ExPart](
+  def forExerciseAndResult(
     username: String,
     exercise: Exercise[_ <: ExerciseContent],
-    part: P,
+    partId: String,
     result: AbstractCorrectionResult
-  ): BasicExercisePartResult[P] =
+  ): BasicExercisePartResult =
     BasicExercisePartResult(
       username,
       exercise.exerciseId,
       exercise.collectionId,
       exercise.toolId,
-      part,
+      partId,
       result.points,
       result.maxPoints
     )
 
 }
 
-final case class BasicExercisePartResult[P <: ExPart](
+final case class BasicExercisePartResult(
   username: String,
   exerciseId: Int,
   collectionId: Int,
   toolId: String,
-  part: P,
+  partId: String,
   points: Points,
   maxPoints: Points
 ) {

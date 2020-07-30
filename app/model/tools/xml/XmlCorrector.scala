@@ -62,9 +62,12 @@ object XmlCorrector extends AbstractCorrector {
     solution: XmlSolution,
     solutionBaseDir: File,
     exerciseContent: XmlExerciseContent
-  ): XmlAbstractResult =
+  ): XmlAbstractResult = {
+
+    val maxPoints = ???
+
     exerciseContent.sampleSolutions.headOption match {
-      case None            => onError("There is no sample solution!")
+      case None            => onError("There is no sample solution!", maxPoints)
       case Some(xmlSample) =>
         // Write grammar
         (solutionBaseDir / s"${exerciseContent.rootNode}.dtd")
@@ -79,11 +82,12 @@ object XmlCorrector extends AbstractCorrector {
 
         XmlResult(
           successType = if (xmlErrors.isEmpty) SuccessType.COMPLETE else SuccessType.PARTIALLY,
-          points = (-1).points,
-          maxPoints = (-1).points,
+          points = ???,
+          maxPoints = maxPoints,
           documentResult = Some(XmlDocumentResult(xmlErrors))
         )
     }
+  }
 
   // Grammar correction
 
@@ -101,14 +105,17 @@ object XmlCorrector extends AbstractCorrector {
   def correctGrammar(
     solution: XmlSolution,
     sampleSolutions: Seq[SampleSolution[XmlSolution]]
-  ): XmlAbstractResult =
+  ): XmlAbstractResult = {
+
+    val maxPoints = ???
+
     findNearestGrammarSample(solution.grammar, sampleSolutions) match {
-      case None => onError("Could not find a sample grammar!")
+      case None => onError("Could not find a sample grammar!", maxPoints)
       case Some(sampleSolution) =>
         DocTypeDefParser
           .tryParseDTD(sampleSolution.sample.grammar)
           .fold(
-            error => onError("Error while parsing dtd", maybeException = Some(error)),
+            error => onError("Error while parsing dtd", maxPoints, Some(error)),
             sampleGrammar => {
               val dtdParseResult = DocTypeDefParser.parseDTD(solution.grammar)
 
@@ -135,5 +142,6 @@ object XmlCorrector extends AbstractCorrector {
             }
           )
     }
+  }
 
 }

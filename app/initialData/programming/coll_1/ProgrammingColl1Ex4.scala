@@ -98,7 +98,7 @@ object ProgrammingColl1Ex4 {
       )
     ),
     testFileName = "test_fibonacci.py",
-    foldername = "fibonacci",
+    folderName = "fibonacci",
     sampleSolFileNames = Seq("test_fibonacci.py")
   )
 

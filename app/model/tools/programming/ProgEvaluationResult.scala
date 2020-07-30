@@ -22,22 +22,18 @@ final case class ProgrammingResult(
   proficienciesUpdated: Option[Boolean] = None,
   simplifiedResults: Seq[SimplifiedExecutionResult] = Seq.empty,
   normalResult: Option[NormalExecutionResult] = None,
-  unitTestResults: Seq[UnitTestCorrectionResult] = Seq.empty
+  unitTestResults: Seq[UnitTestCorrectionResult] = Seq.empty,
+  points: Points,
+  maxPoints: Points
 ) extends ProgrammingAbstractResult {
-
-  private def results: Seq[ProgEvalResult] = simplifiedResults ++ unitTestResults
-
-  override val points: Points = results.count(_.success == SuccessType.COMPLETE).points
-
-  override val maxPoints: Points = results.length.points
 
   override def isCompletelyCorrect: Boolean = {
 
-    val simplifiedResultOk = simplifiedResults.forall(_.success == SuccessType.COMPLETE)
+    val simplifiedResultOk = simplifiedResults.isEmpty || simplifiedResults.forall(_.success == SuccessType.COMPLETE)
 
-    val normalResultOk = normalResult.forall(_.success == SuccessType.COMPLETE)
+    val normalResultOk = normalResult.isEmpty || normalResult.forall(_.success == SuccessType.COMPLETE)
 
-    val unitTestResultsOk = unitTestResults.forall(_.successful)
+    val unitTestResultsOk = unitTestResults.isEmpty || unitTestResults.forall(_.successful)
 
     simplifiedResultOk && normalResultOk && unitTestResultsOk
   }

@@ -88,7 +88,7 @@ object ProgrammingColl2Ex2 {
       )
     ),
     testFileName = "test_floating_point_exponential.py",
-    foldername = "floating_point_exponential",
+    folderName = "floating_point_exponential",
     sampleSolFileNames = Seq("test_floating_point_exponential.py")
   )
 

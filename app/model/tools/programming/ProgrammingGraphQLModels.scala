@@ -30,8 +30,7 @@ object ProgrammingGraphQLModels
 
   private val normalUnitTestPartType: ObjectType[Unit, NormalUnitTestPart] = {
     implicit val uttct: ObjectType[Unit, UnitTestTestConfig] = unitTestTestConfigType
-
-    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
+    implicit val exFileType: ObjectType[Unit, ExerciseFile]  = exerciseFileType
 
     deriveObjectType()
   }
@@ -128,7 +127,8 @@ object ProgrammingGraphQLModels
     implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = unitTestCorrectionResultType
 
     deriveObjectType[Unit, ProgrammingResult](
-      Interfaces(programmingAbstractResultType)
+      Interfaces(programmingAbstractResultType),
+      ExcludeFields("points", "maxPoints")
     )
   }
 

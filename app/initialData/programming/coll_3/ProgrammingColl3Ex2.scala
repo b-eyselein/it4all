@@ -109,7 +109,7 @@ object ProgrammingColl3Ex2 {
       )
     ),
     testFileName = "test_discount.py",
-    foldername = "discount",
+    folderName = "discount",
     sampleSolFileNames = Seq("test_discount.py")
   )
 

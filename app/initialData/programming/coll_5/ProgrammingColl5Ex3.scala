@@ -115,7 +115,7 @@ object ProgrammingColl5Ex3 {
       )
     ),
     testFileName = "test_tuples_and_dicts.py",
-    foldername = "tuples_and_dicts",
+    folderName = "tuples_and_dicts",
     sampleSolFileNames = Seq("test_tuples_and_dicts.py")
   )
 

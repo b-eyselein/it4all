@@ -15,7 +15,7 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
 
   paginationNeeded = false;
 
-  maxPage= 0;
+  maxPage = 0;
   currentPage = 0;
 
   pages: number[] = [];
@@ -42,11 +42,9 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
 
           this.paginationNeeded = this.exercises.length > SLICE_COUNT;
 
-          this.maxPage = this.collectionOverviewQuery.me.tool.collection.exercises.length / SLICE_COUNT;
+          this.maxPage = Math.ceil(this.collectionOverviewQuery.me.tool.collection.exercises.length / SLICE_COUNT);
 
           this.pages = Array(this.maxPage).fill(0).map((value, index) => index);
-
-          console.info(this.pages);
         });
     });
   }

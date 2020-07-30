@@ -117,7 +117,7 @@ object ProgrammingColl8Ex1 {
       )
     ),
     testFileName = "test_table.py",
-    foldername = "pysql",
+    folderName = "pysql",
     sampleSolFileNames = Seq("test_table.py")
   )
 

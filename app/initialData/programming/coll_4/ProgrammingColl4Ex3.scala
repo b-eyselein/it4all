@@ -282,7 +282,7 @@ object ProgrammingColl4Ex3 {
       )
     ),
     testFileName = "test_general.py",
-    foldername = "general",
+    folderName = "general",
     sampleSolFileNames = Seq("test_general.py")
   )
 

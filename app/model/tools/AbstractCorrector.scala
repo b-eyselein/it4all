@@ -17,16 +17,15 @@ trait AbstractCorrector {
 
   protected def onError(
     internalMsg: String,
-    externalMsg: Option[String] = None,
-    maybeException: Option[Throwable] = None,
-    maxPoints: Points = (-1).points
+    maxPoints: Points,
+    maybeException: Option[Throwable] = None
   ): AbstractResult = {
     maybeException match {
       case None            => logger.error(internalMsg)
       case Some(exception) => logger.error(internalMsg, exception)
     }
 
-    buildInternalError(externalMsg.getOrElse(internalMsg), maxPoints)
+    buildInternalError(internalMsg, maxPoints)
   }
 
 }

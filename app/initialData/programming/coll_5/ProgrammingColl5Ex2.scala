@@ -146,7 +146,7 @@ object ProgrammingColl5Ex2 {
       )
     ),
     testFileName = "test_dicts.py",
-    foldername = "dicts",
+    folderName = "dicts",
     sampleSolFileNames = Seq("test_dicts.py")
   )
 

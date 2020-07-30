@@ -203,7 +203,7 @@ object ProgrammingColl2Ex6 {
       )
     ),
     testFileName = "test_xmas_tree.py",
-    foldername = "xmas_tree",
+    folderName = "xmas_tree",
     sampleSolFileNames = Seq("test_xmas_tree.py")
   )
 

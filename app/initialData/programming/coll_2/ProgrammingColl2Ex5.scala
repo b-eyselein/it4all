@@ -153,7 +153,7 @@ object ProgrammingColl2Ex5 {
       )
     ),
     testFileName = "test_three_chinese.py",
-    foldername = "three_chinese",
+    folderName = "three_chinese",
     sampleSolFileNames = Seq("test_three_chinese.py")
   )
 

@@ -32,7 +32,7 @@ final case class NormalUnitTestPart(
   unitTestFiles: Seq[ExerciseFile],
   unitTestTestConfigs: Seq[UnitTestTestConfig],
   testFileName: String,
-  foldername: String,
+  folderName: String,
   sampleSolFileNames: Seq[String],
   simplifiedTestMainFile: Option[ExerciseFile] = None
 ) extends UnitTestPart

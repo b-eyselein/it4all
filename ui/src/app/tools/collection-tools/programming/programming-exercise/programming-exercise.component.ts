@@ -5,7 +5,8 @@ import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {
   ExerciseFileFragment,
-  ExerciseSolveFieldsFragment, NormalUnitTestPartFragment,
+  ExerciseSolveFieldsFragment,
+  NormalUnitTestPartFragment,
   ProgExerciseContentSolveFieldsFragment
 } from '../../../../_services/apollo_services';
 import {
@@ -21,9 +22,9 @@ import {
   UnitTestCorrectionResultFragment
 } from '../programming-apollo-mutations.service';
 import {ProgExPart, ProgSolution, ProgSolutionInput} from '../../../../_interfaces/graphql-types';
+import {AuthenticationService} from '../../../../_services/authentication.service';
 
 import 'codemirror/mode/python/python';
-import {AuthenticationService} from '../../../../_services/authentication.service';
 
 @Component({
   selector: 'it4all-programming-exercise',
@@ -31,7 +32,12 @@ import {AuthenticationService} from '../../../../_services/authentication.servic
   styleUrls: ['./programming-exercise.component.sass']
 })
 export class ProgrammingExerciseComponent
-  extends ComponentWithExerciseDirective<ProgSolution, ProgSolutionInput, ProgrammingCorrectionMutation, ProgExPart, ProgrammingCorrectionMutationVariables, ProgrammingCorrectionGQL>
+  extends ComponentWithExerciseDirective<ProgSolution,
+    ProgSolutionInput,
+    ProgrammingCorrectionMutation,
+    ProgExPart,
+    ProgrammingCorrectionMutationVariables,
+    ProgrammingCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
@@ -125,7 +131,7 @@ export class ProgrammingExerciseComponent
     return this.result?.normalResult;
   }
 
-  correct(): void {
+  performCorrection(): void {
     this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.oldPart.id);
   }
 

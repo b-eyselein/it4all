@@ -134,7 +134,7 @@ object ProgrammingColl7Ex1 {
       )
     ),
     testFileName = "test_circle.py",
-    foldername = "circle",
+    folderName = "circle",
     sampleSolFileNames = Seq("test_circle.py")
   )
 

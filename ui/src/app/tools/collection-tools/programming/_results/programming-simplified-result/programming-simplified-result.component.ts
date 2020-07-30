@@ -13,7 +13,7 @@ import {SuccessType} from '../../../../../_interfaces/graphql-types';
         <p>Erwartet: <code>{{result.awaited}}</code></p>
 
         <div *ngIf="isError">Fehlerausgabe:
-          <pre>{{result.gotten}}</pre>
+          <pre>{{errorOutput}}</pre>
         </div>
         <p *ngIf="!isError">Bekommen: <code>{{result.gotten}}</code></p>
       </div>
@@ -29,6 +29,14 @@ export class ProgrammingSimplifiedResultComponent implements OnInit {
   ngOnInit(): void {
     this.correct = this.result.success === SuccessType.Complete;
     this.isError = this.result.success === SuccessType.Error;
+
+    if(this.isError) {
+      console.info(this.result.gotten);
+    }
+  }
+
+  get errorOutput() {
+    return this.result.gotten.split('\\n').join('\n');
   }
 
 }

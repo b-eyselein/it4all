@@ -101,7 +101,7 @@ object ProgrammingColl1Ex3 {
     ),
     unitTestTestConfigs,
     testFileName = "test_babylonian_root.py",
-    foldername = "babylonian_root",
+    folderName = "babylonian_root",
     sampleSolFileNames = Seq("test_babylonian_root.py")
   )
 

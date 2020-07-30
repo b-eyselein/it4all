@@ -22,6 +22,7 @@ trait ProgrammingAbstractCorrector extends AbstractCorrector {
 
   protected val implFileRegex: Regex = """.*_\d*\.py""".r
 
+  @deprecated
   protected def createFileAndWrite(file: File, content: String): Unit =
     file
       .createFileIfNotExists(createParents = true)

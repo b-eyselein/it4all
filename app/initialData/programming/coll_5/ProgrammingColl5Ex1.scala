@@ -177,7 +177,7 @@ object ProgrammingColl5Ex1 {
       )
     ),
     testFileName = "test_tuples.py",
-    foldername = "tuples",
+    folderName = "tuples",
     sampleSolFileNames = Seq("test_tuples.py")
   )
 

@@ -107,9 +107,9 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
             tool.jsonFormats.userSolutionFormat
           )
 
-          basicExerciseResult = BasicExercisePartResult.forExerciseAndResult(user.username, ex, part, result)
-
-          resultSaved <- futureUpsertExerciseResult(tool)(basicExerciseResult)
+          resultSaved <- futureUpsertExerciseResult(
+            BasicExercisePartResult.forExerciseAndResult(user.username, ex, part.id, result)
+          )
 
           proficienciesUpdated <-
             if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, ex).map(Some.apply)

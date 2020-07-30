@@ -43,13 +43,6 @@ trait ToolJsonProtocol[S, C <: ExerciseContent, P <: ExPart] {
     Json.format
   }
 
-  final lazy val basicExerciseResultFormat: OFormat[BasicExercisePartResult[P]] = {
-    implicit val pt: Format[P]      = partTypeFormat
-    implicit val pf: Format[Points] = Json.format
-
-    Json.format
-  }
-
 }
 
 abstract class StringSampleSolutionToolJsonProtocol[C <: ExerciseContent, PartType <: ExPart]

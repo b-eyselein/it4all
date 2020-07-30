@@ -43,7 +43,7 @@ object ProgrammingColl2Ex8 {
       )
     ),
     testFileName = "test_ceasar.py",
-    foldername = "ceasar",
+    folderName = "ceasar",
     sampleSolFileNames = Seq("test_ceasar.py")
   )
 

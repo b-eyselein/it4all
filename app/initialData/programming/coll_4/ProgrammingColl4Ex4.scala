@@ -146,7 +146,7 @@ object ProgrammingColl4Ex4 {
       )
     ),
     testFileName = "test_slicing.py",
-    foldername = "slicing",
+    folderName = "slicing",
     sampleSolFileNames = Seq("test_slicing.py")
   )
 

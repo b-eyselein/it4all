@@ -239,7 +239,7 @@ object ProgrammingColl7Ex3 {
       )
     ),
     testFileName = "test_vector2d.py",
-    foldername = "vector2d",
+    folderName = "vector2d",
     sampleSolFileNames = Seq("test_vector2d.py")
   )
 

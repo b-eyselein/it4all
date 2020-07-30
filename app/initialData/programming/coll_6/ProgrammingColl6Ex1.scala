@@ -183,7 +183,7 @@ object ProgrammingColl6Ex1 {
       )
     ),
     testFileName = "test_temperatures.py",
-    foldername = "temperatures",
+    folderName = "temperatures",
     sampleSolFileNames = Seq("test_temperatures.py")
   )
 

@@ -137,7 +137,7 @@ object ProgrammingColl7Ex2 {
       )
     ),
     testFileName = "test_maumau.py",
-    foldername = "maumau",
+    folderName = "maumau",
     sampleSolFileNames = Seq("test_maumau.py")
   )
 
