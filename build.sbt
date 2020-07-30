@@ -55,8 +55,8 @@ libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-play" % "4.3.0", // Apache 2.0
 
   // Mongo database
-  "org.reactivemongo" %% "play2-reactivemongo"            % "0.20.12-play28-fix1", // Apache 2.0
-  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "0.20.12-play28-fix1", // Apache 2.0
+  "org.reactivemongo" %% "play2-reactivemongo"            % "1.0.0-play28-rc.2", // Apache 2.0
+  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.0.0-play29-rc.2", // Apache 2.0
 
   // Other helpers
   "com.beachape"         %% "enumeratum-play"      % "1.6.0", // MIT

@@ -26,16 +26,15 @@ object RegexExtractionCorrector extends RegexAbstractCorrector {
           exception => onError("Error while building sample regex", maxPoints, Some(exception)),
           sampleRegex => {
 
-            val extractionResults = exerciseContent.extractionTestData.map {
-              extractionTestData =>
-                val regexMatchMatchingResult = RegexMatchMatcher.doMatch(
-                  userRegex.findAllMatchIn(extractionTestData.base).toList,
-                  sampleRegex.findAllMatchIn(extractionTestData.base).toList
-                )
+            val extractionResults = exerciseContent.extractionTestData.map { extractionTestData =>
+              val regexMatchMatchingResult = RegexMatchMatcher.doMatch(
+                userRegex.findAllMatchIn(extractionTestData.base).toList,
+                sampleRegex.findAllMatchIn(extractionTestData.base).toList
+              )
 
-                val correct = regexMatchMatchingResult.allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH)
+              val correct = regexMatchMatchingResult.allMatches.forall(_.matchType == MatchType.SUCCESSFUL_MATCH)
 
-                RegexExtractionSingleResult(extractionTestData.base, regexMatchMatchingResult, correct)
+              RegexExtractionSingleResult(extractionTestData.base, regexMatchMatchingResult, correct)
             }
 
             val correctResultsCount: Int = extractionResults.count(_.correct)

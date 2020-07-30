@@ -1,13 +1,14 @@
 package model.mongo
 
+import model._
 import model.tools.Helper.UntypedExercise
 import model.tools.Tool
-import model.{JsonProtocols, _}
-import play.api.libs.json._
+import play.api.libs.json.{Format, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
-import reactivemongo.play.json.compat._
-import reactivemongo.play.json.collection.JSONCollection
+import reactivemongo.api.bson.BSONDocument
+import reactivemongo.api.bson.collection.BSONCollection
+import reactivemongo.play.json.compat.json2bson._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -26,31 +27,27 @@ trait MongoClientQueries
 
   // Solution queries
 
-  private def futureUserSolutionsCollection: Future[JSONCollection] =
+  private def futureUserSolutionsCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection("userSolutions"))
 
   protected def nextUserSolutionId[P](exercise: UntypedExercise, part: P)(implicit pf: Format[P]): Future[Int] = {
-    val exFilter = Json.obj(
+    val exFilter = BSONDocument(
       "toolId"       -> exercise.toolId,
       "collectionId" -> exercise.collectionId,
       "exerciseId"   -> exercise.exerciseId,
       "part"         -> part
     )
 
-    final case class ThisResult(solutionId: Int)
-
-    implicit val resultFormat: Reads[ThisResult] = (__ \ "solutionId").read[Int].map(ThisResult.apply _)
-
     for {
       userSolutionsCollection <- futureUserSolutionsCollection
-      x <-
+      maybeMaxKeyDocument <-
         userSolutionsCollection
-          .find(exFilter, Some(Json.obj("solutionId" -> 1, "_id" -> 0)))
-          .sort(Json.obj("solutionId" -> -1))
-          .one[ThisResult]
-    } yield x match {
+          .find(exFilter, Some(BSONDocument("solutionId" -> 1, "_id" -> 0)))
+          .sort(BSONDocument("solutionId" -> -1))
+          .one[BSONDocument]
+    } yield maybeMaxKeyDocument match {
       case None        => 1
-      case Some(jsObj) => jsObj.solutionId + 1
+      case Some(jsObj) => jsObj.getAsOpt[Int]("solutionId").map(_ + 1).getOrElse(1)
     }
   }
 
@@ -63,12 +60,12 @@ trait MongoClientQueries
     for {
       userSolutionsCollection <- futureUserSolutionsCollection
       insertResult            <- userSolutionsCollection.insert(true).one(solution)
-    } yield insertResult.ok
+    } yield insertResult.writeErrors.isEmpty
   }
 
   // Update user proficiencies
 
-  private def futureUserProficienciesCollection: Future[JSONCollection] =
+  private def futureUserProficienciesCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection("userProficiencies"))
 
   private implicit val userProficiencyFormat: OFormat[UserProficiency] = JsonProtocols.userProficiencyFormat
@@ -78,7 +75,7 @@ trait MongoClientQueries
       userProficienciesCollection <- futureUserProficienciesCollection
       userProfs <-
         userProficienciesCollection
-          .find(Json.obj("username" -> username, "topic.toolId" -> toolId), Option.empty[JsObject])
+          .find(BSONDocument("username" -> username, "topic.toolId" -> toolId), Option.empty[BSONDocument])
           .cursor[UserProficiency]()
           .collect[Seq](-1, Cursor.FailOnError())
     } yield userProfs
@@ -101,7 +98,7 @@ trait MongoClientQueries
     topicWithLevel: TopicWithLevel
   ): Future[Boolean] = {
 
-    val filter = Json.obj(
+    val filter = BSONDocument(
       "username"           -> username,
       "topic.abbreviation" -> topicWithLevel.topic.abbreviation,
       "topic.toolId"       -> topicWithLevel.topic.toolId
@@ -118,7 +115,7 @@ trait MongoClientQueries
 
       oldUserProficiency: UserProficiency <-
         userProficienciesCollection
-          .find(filter, Option.empty[JsObject])
+          .find(filter, Option.empty[BSONDocument])
           .one[UserProficiency]
           .map(_.getOrElse(UserProficiency(username, topicWithLevel.topic)))
 
@@ -126,12 +123,9 @@ trait MongoClientQueries
         pointsForExercises = oldUserProficiency.pointsForExercises + levelForExerciseToAdd
       )
 
-      updateResult <-
-        userProficienciesCollection
-          .update(true)
-          .one(filter, newUserProficiency, upsert = true)
+      updateResult <- userProficienciesCollection.update(true).one(filter, newUserProficiency, upsert = true)
 
-    } yield updateResult.ok
+    } yield updateResult.writeErrors.isEmpty
   }
 
 }

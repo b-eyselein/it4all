@@ -1,11 +1,12 @@
 package model.mongo
 
 import model.{ExerciseCollection, JsonProtocols}
-import play.api.libs.json.{JsObject, Json, OFormat}
+import play.api.libs.json.OFormat
 import play.modules.reactivemongo.ReactiveMongoComponents
-import reactivemongo.api.{Cursor, ReadConcern}
-import reactivemongo.play.json.compat._
-import reactivemongo.play.json.collection.JSONCollection
+import reactivemongo.api.Cursor
+import reactivemongo.api.bson.BSONDocument
+import reactivemongo.api.bson.collection.BSONCollection
+import reactivemongo.play.json.compat.json2bson._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -16,14 +17,13 @@ trait MongoCollectionQueries {
 
   private implicit val exerciseCollectionFormat: OFormat[ExerciseCollection] = JsonProtocols.exerciseCollectionFormat
 
-  private def futureCollectionsCollection: Future[JSONCollection] =
+  private def futureCollectionsCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection("exerciseCollections"))
 
   protected def futureCollectionCountForTool(toolId: String): Future[Long] =
     for {
       collectionCollection <- futureCollectionsCollection
-      collectionCount <-
-        collectionCollection.count(Some(Json.obj("toolId" -> toolId)), None, 0, None, ReadConcern.Local)
+      collectionCount      <- collectionCollection.count(Some(BSONDocument("toolId" -> toolId)))
     } yield collectionCount
 
   protected def futureCollectionsForTool(toolId: String): Future[Seq[ExerciseCollection]] =
@@ -31,8 +31,8 @@ trait MongoCollectionQueries {
       collectionsCollection <- futureCollectionsCollection
       collections <-
         collectionsCollection
-          .find(Json.obj("toolId" -> toolId), Option.empty[JsObject])
-          .sort(Json.obj("collectionId" -> 1))
+          .find(BSONDocument("toolId" -> toolId), Option.empty[BSONDocument])
+          .sort(BSONDocument("collectionId" -> 1))
           .cursor[ExerciseCollection]()
           .collect[Seq](-1, Cursor.FailOnError())
     } yield collections
@@ -42,7 +42,7 @@ trait MongoCollectionQueries {
       collectionCollection <- futureCollectionsCollection
       maybeCollection <-
         collectionCollection
-          .find(Json.obj("toolId" -> toolId, "collectionId" -> collectionId), Option.empty[JsObject])
+          .find(BSONDocument("toolId" -> toolId, "collectionId" -> collectionId), Option.empty[BSONDocument])
           .one[ExerciseCollection]
     } yield maybeCollection
 
@@ -50,6 +50,6 @@ trait MongoCollectionQueries {
     for {
       collectionsCollection <- futureCollectionsCollection
       insertResult          <- collectionsCollection.insert(true).one(exerciseCollection)
-    } yield insertResult.ok
+    } yield insertResult.writeErrors.isEmpty
 
 }

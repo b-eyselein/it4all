@@ -1,11 +1,12 @@
 package model.mongo
 
 import model.{JsonProtocols, LessonContent}
-import play.api.libs.json.{JsObject, Json, OFormat}
+import play.api.libs.json.OFormat
 import play.modules.reactivemongo.ReactiveMongoComponents
-import reactivemongo.api.{Cursor, ReadConcern}
-import reactivemongo.play.json.compat._
-import reactivemongo.play.json.collection.JSONCollection
+import reactivemongo.api.Cursor
+import reactivemongo.api.bson.BSONDocument
+import reactivemongo.api.bson.collection.BSONCollection
+import reactivemongo.play.json.compat.json2bson._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -16,19 +17,14 @@ trait MongoLessonContentQueries {
 
   private implicit val lessonContentFormat: OFormat[LessonContent] = JsonProtocols.lessonContentFormat
 
-  private def futureLessonContentsCollection: Future[JSONCollection] =
+  private def futureLessonContentsCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection("lessonContents"))
 
   protected def futureLessonContentCountForLesson(toolId: String, lessonId: Int): Future[Long] =
     for {
       lessonContentsCollection <- futureLessonContentsCollection
-      lessonContentCount <- lessonContentsCollection.count(
-        Some(Json.obj("toolId" -> toolId, "lessonId" -> lessonId)),
-        None,
-        0,
-        None,
-        ReadConcern.Local
-      )
+      lessonContentCount <-
+        lessonContentsCollection.count(Some(BSONDocument("toolId" -> toolId, "lessonId" -> lessonId)))
     } yield lessonContentCount
 
   protected def futureLessonContentsForLesson(toolId: String, lessonId: Int): Future[Seq[LessonContent]] = {
@@ -36,8 +32,8 @@ trait MongoLessonContentQueries {
       lessonContentsCollection <- futureLessonContentsCollection
       lessonContents <-
         lessonContentsCollection
-          .find(Json.obj("toolId" -> toolId, "lessonId" -> lessonId), Option.empty[JsObject])
-          .sort(Json.obj("contentId" -> 1))
+          .find(BSONDocument("toolId" -> toolId, "lessonId" -> lessonId), Option.empty[BSONDocument])
+          .sort(BSONDocument("contentId" -> 1))
           .cursor[LessonContent]()
           .collect[Seq](-1, Cursor.FailOnError())
     } yield lessonContents
@@ -48,7 +44,10 @@ trait MongoLessonContentQueries {
       lessonContentsCollection <- futureLessonContentsCollection
       maybeLessonContent <-
         lessonContentsCollection
-          .find(Json.obj("toolId" -> toolId, "lessonId" -> lessonId, "contentId" -> contentId), Option.empty[JsObject])
+          .find(
+            BSONDocument("toolId" -> toolId, "lessonId" -> lessonId, "contentId" -> contentId),
+            Option.empty[BSONDocument]
+          )
           .one[LessonContent]
     } yield maybeLessonContent
 
@@ -56,10 +55,10 @@ trait MongoLessonContentQueries {
     for {
       lessonContentCollection <- futureLessonContentsCollection
       insertResult            <- lessonContentCollection.insert(true).one(lessonContent)
-    } yield insertResult.ok
+    } yield insertResult.writeErrors.isEmpty
 
   protected def futureUpsertLessonContent(lessonContent: LessonContent): Future[Boolean] = {
-    val key = Json.obj(
+    val key = BSONDocument(
       "toolId"    -> lessonContent.toolId,
       "lessonId"  -> lessonContent.lessonId,
       "contentId" -> lessonContent.contentId
@@ -68,7 +67,7 @@ trait MongoLessonContentQueries {
     for {
       lessonContentCollection <- futureLessonContentsCollection
       insertResult            <- lessonContentCollection.update(true).one(key, lessonContent, upsert = true)
-    } yield insertResult.ok
+    } yield insertResult.writeErrors.isEmpty
   }
 
 }

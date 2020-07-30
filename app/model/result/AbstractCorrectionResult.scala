@@ -60,6 +60,6 @@ final case class BasicExercisePartResult(
   maxPoints: Points
 ) {
 
-  def isCorrect: Boolean = points.asDouble == maxPoints.asDouble
+  def isCorrect: Boolean = points.quarters == maxPoints.quarters
 
 }

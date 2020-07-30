@@ -15,24 +15,21 @@ import sangria.schema._
 trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
   self: MongoExercisePartResultQueries =>
 
-  private val exPartType: ObjectType[Unit, (UntypedExercise, ExPart)] = ObjectType(
+  private val exPartType: ObjectType[Unit, (LoggedInUser, UntypedExercise, ExPart)] = ObjectType(
     "ExPart",
-    fields[Unit, (UntypedExercise, ExPart)](
-      Field("id", StringType, resolve = _.value._2.id),
-      Field("name", StringType, resolve = _.value._2.partName),
-      Field("isEntryPart", BooleanType, resolve = _.value._2.isEntryPart),
+    fields[Unit, (LoggedInUser, UntypedExercise, ExPart)](
+      Field("id", StringType, resolve = _.value._3.id),
+      Field("name", StringType, resolve = _.value._3.partName),
+      Field("isEntryPart", BooleanType, resolve = _.value._3.isEntryPart),
       Field(
         "solved",
         BooleanType,
-        resolve = context => {
-          val exercise = context.value._1
-
-          futureExerciseResultById(exercise.toolId, exercise.collectionId, exercise.exerciseId, context.value._2.id)
+        resolve = context =>
+          futureExerciseResultById(context.value._1.username, context.value._2, context.value._3.id)
             .map {
               case None                          => false
               case Some(basicExercisePartResult) => basicExercisePartResult.isCorrect
             }
-        }
       )
     )
   )
@@ -100,7 +97,9 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
       Field(
         "parts",
         ListType(exPartType),
-        resolve = context => context.value._3.content.parts.map { exPart => (context.value._3, exPart) }
+        resolve = context =>
+          context.value._3.content.parts
+            .map { exPart => (context.value._1, context.value._3, exPart) }
       )
     )
   )

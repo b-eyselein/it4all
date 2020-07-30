@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Jul 29 2020 14:14:34 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Thu Jul 30 2020 14:44:34 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -264,10 +264,10 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  ONLY_SAMPLE
-  PARTIAL_MATCH
   SUCCESSFUL_MATCH
+  ONLY_SAMPLE
   UNSUCCESSFUL_MATCH
+  PARTIAL_MATCH
   ONLY_USER
 }
 
@@ -293,7 +293,7 @@ type NormalUnitTestPart {
   unitTestFiles: [ExerciseFile!]!
   unitTestTestConfigs: [UnitTestTestConfig!]!
   testFileName: String!
-  foldername: String!
+  folderName: String!
   sampleSolFileNames: [String!]!
   simplifiedTestMainFile: ExerciseFile
 }
@@ -551,11 +551,11 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  INSERT
   DELETE
   SELECT
-  UPDATE
+  INSERT
   CREATE
+  UPDATE
 }
 
 enum SqlExPart {

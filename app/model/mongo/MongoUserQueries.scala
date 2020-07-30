@@ -1,10 +1,11 @@
 package model.mongo
 
 import model.User
-import play.api.libs.json.{JsObject, Json, OFormat}
+import play.api.libs.json.{Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
-import reactivemongo.play.json.collection.JSONCollection
-import reactivemongo.play.json.compat._
+import reactivemongo.api.bson.BSONDocument
+import reactivemongo.api.bson.collection.BSONCollection
+import reactivemongo.play.json.compat.json2bson._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -15,14 +16,14 @@ trait MongoUserQueries {
 
   private implicit val userFormat: OFormat[User] = Json.format
 
-  private def futureUsersCollection: Future[JSONCollection] = reactiveMongoApi.database.map(_.collection("users"))
+  private def futureUsersCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection("users"))
 
   protected def futureUserByUsername(username: String): Future[Option[User]] =
     for {
       usersCollection <- futureUsersCollection
       maybeUser <-
         usersCollection
-          .find(Json.obj("username" -> username), Option.empty[JsObject])
+          .find(BSONDocument("username" -> username), Option.empty[BSONDocument])
           .one[User]
     } yield maybeUser
 

@@ -321,10 +321,10 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlySample = 'ONLY_SAMPLE',
-  PartialMatch = 'PARTIAL_MATCH',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH',
   OnlyUser = 'ONLY_USER'
 }
 
@@ -368,7 +368,7 @@ export type NormalUnitTestPart = {
   unitTestFiles: Array<ExerciseFile>;
   unitTestTestConfigs: Array<UnitTestTestConfig>;
   testFileName: Scalars['String'];
-  foldername: Scalars['String'];
+  folderName: Scalars['String'];
   sampleSolFileNames: Array<Scalars['String']>;
   simplifiedTestMainFile?: Maybe<ExerciseFile>;
 };
@@ -698,11 +698,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Insert = 'INSERT',
   Delete = 'DELETE',
   Select = 'SELECT',
-  Update = 'UPDATE',
-  Create = 'CREATE'
+  Insert = 'INSERT',
+  Create = 'CREATE',
+  Update = 'UPDATE'
 }
 
 export enum SqlExPart {

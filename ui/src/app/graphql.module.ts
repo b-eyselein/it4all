@@ -1,21 +1,14 @@
 import {NgModule} from '@angular/core';
 import {APOLLO_OPTIONS, ApolloModule} from 'apollo-angular';
 import {HttpLink, HttpLinkModule} from 'apollo-angular-link-http';
-import {InMemoryCache, IntrospectionFragmentMatcher} from 'apollo-cache-inmemory';
-import possibleTypes from '../introspection-result';
+import {InMemoryCache} from 'apollo-cache-inmemory';
 
 const uri = '/api/graphql'; // <-- add the URL of the GraphQL server here
-
-const fragmentMatcher = new IntrospectionFragmentMatcher({
-  introspectionQueryResultData: possibleTypes
-});
 
 export function createApollo(httpLink: HttpLink) {
   return {
     link: httpLink.create({uri}),
-    cache: new InMemoryCache({
-      fragmentMatcher
-    })
+    cache: new InMemoryCache()
   };
 }
 

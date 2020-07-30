@@ -38,11 +38,11 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
 
   override protected val toolId = "programming"
 
-  private val progColl01 = ExerciseCollection( 1, toolId, title = "Zahlen", authors = Seq("bje40dc"))
+  private val progColl01 = ExerciseCollection(1, toolId, title = "Zahlen", authors = Seq("bje40dc"))
 
   private val progColl01Exes = Seq(programmingColl1Ex1, programmingColl1Ex2, programmingColl1Ex3, programmingColl1Ex4)
 
-  private val progColl02 = ExerciseCollection( 2, toolId, title = "Strings", authors = Seq("bje40dc"))
+  private val progColl02 = ExerciseCollection(2, toolId, title = "Strings", authors = Seq("bje40dc"))
 
   private val progColl02Exes = Seq(
     programmingColl2Ex1,
@@ -55,23 +55,23 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
     programmingColl2Ex8
   )
 
-  private val progColl03 = ExerciseCollection( 3, toolId, title = "Bedingungen", authors = Seq("bje40dc"))
+  private val progColl03 = ExerciseCollection(3, toolId, title = "Bedingungen", authors = Seq("bje40dc"))
 
   private val progColl03Exes = Seq(programmingColl3Ex1, programmingColl3Ex2, programmingColl3Ex3)
 
-  private val progColl04 = ExerciseCollection( 4, toolId, title = "Listen", authors = Seq("bje40dc"))
+  private val progColl04 = ExerciseCollection(4, toolId, title = "Listen", authors = Seq("bje40dc"))
 
   private val progColl04Exes = Seq(programmingColl4Ex1, programmingColl4Ex2, programmingColl4Ex3, programmingColl4Ex4)
 
-  private val progColl05 = ExerciseCollection( 5, toolId, title = "Tupel und Dicts", authors = Seq("bje40dc"))
+  private val progColl05 = ExerciseCollection(5, toolId, title = "Tupel und Dicts", authors = Seq("bje40dc"))
 
   private val progColl05Exes = Seq(programmingColl5Ex1, programmingColl5Ex2, programmingColl5Ex3, programmingColl5Ex4)
 
-  private val progColl06 = ExerciseCollection( 6, toolId, title = "Funktionen", authors = Seq("bje40dc"))
+  private val progColl06 = ExerciseCollection(6, toolId, title = "Funktionen", authors = Seq("bje40dc"))
 
   private val progColl06Exes = Seq(programmingColl6Ex1, programmingColl6Ex2)
 
-  private val progColl07 = ExerciseCollection( 7, toolId, title = "Klassen", authors = Seq("bje40dc"))
+  private val progColl07 = ExerciseCollection(7, toolId, title = "Klassen", authors = Seq("bje40dc"))
 
   private val progColl07Exes = Seq(programmingColl7Ex1, programmingColl7Ex2, programmingColl7Ex3)
 

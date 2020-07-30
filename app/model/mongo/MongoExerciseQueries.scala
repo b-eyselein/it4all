@@ -2,11 +2,12 @@ package model.mongo
 
 import model.tools.Tool
 import model.{Exercise, ExerciseContent}
-import play.api.libs.json.{Format, JsObject, Json, OFormat}
+import play.api.libs.json.{Format, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
-import reactivemongo.api.{Cursor, ReadConcern}
-import reactivemongo.play.json.collection.JSONCollection
-import reactivemongo.play.json.compat._
+import reactivemongo.api.Cursor
+import reactivemongo.api.bson.BSONDocument
+import reactivemongo.api.bson.collection.BSONCollection
+import reactivemongo.play.json.compat.json2bson._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -15,13 +16,13 @@ trait MongoExerciseQueries {
 
   protected implicit val ec: ExecutionContext
 
-  private def futureExercisesCollection: Future[JSONCollection] =
+  private def futureExercisesCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection("exercises"))
 
   protected def futureExerciseCountForTool(toolId: String): Future[Long] =
     for {
       exercisesCollection <- futureExercisesCollection
-      exerciseCount       <- exercisesCollection.count(Some(Json.obj("toolId" -> toolId)), None, 0, None, ReadConcern.Local)
+      exerciseCount       <- exercisesCollection.count(Some(BSONDocument("toolId" -> toolId)))
     } yield exerciseCount
 
   protected def futureExercisesForTool(tool: Tool): Future[Seq[Exercise[tool.ExContentType]]] = {
@@ -31,7 +32,7 @@ trait MongoExerciseQueries {
       exercisesCollection <- futureExercisesCollection
       exercises <-
         exercisesCollection
-          .find(Json.obj("toolId" -> tool.id), Option.empty[JsObject])
+          .find(BSONDocument("toolId" -> tool.id), Option.empty[BSONDocument])
           .cursor[Exercise[tool.ExContentType]]()
           .collect[Seq](-1, Cursor.FailOnError())
     } yield exercises
@@ -42,7 +43,7 @@ trait MongoExerciseQueries {
       exercisesCollection <- futureExercisesCollection
       exerciseCount <-
         exercisesCollection
-          .count(Some(Json.obj("toolId" -> toolId, "collectionId" -> collectionId)), None, 0, None, ReadConcern.Local)
+          .count(Some(BSONDocument("toolId" -> toolId, "collectionId" -> collectionId)))
     } yield exerciseCount
 
   protected def futureExercisesForCollection(
@@ -55,8 +56,8 @@ trait MongoExerciseQueries {
       exercisesCollection <- futureExercisesCollection
       exercises <-
         exercisesCollection
-          .find(Json.obj("toolId" -> tool.id, "collectionId" -> collectionId), Option.empty[JsObject])
-          .sort(Json.obj("exerciseId" -> 1))
+          .find(BSONDocument("toolId" -> tool.id, "collectionId" -> collectionId), Option.empty[BSONDocument])
+          .sort(BSONDocument("exerciseId" -> 1))
           .cursor[Exercise[tool.ExContentType]]()
           .collect[Seq](-1, Cursor.FailOnError())
     } yield exercises
@@ -68,10 +69,10 @@ trait MongoExerciseQueries {
       maybeExercise <-
         exercisesCollection
           .find(
-            Json.obj("toolId" -> toolId, "collectionId" -> collectionId, "exerciseId" -> exerciseId),
-            Option.empty[JsObject]
+            BSONDocument("toolId" -> toolId, "collectionId" -> collectionId, "exerciseId" -> exerciseId),
+            Option.empty[BSONDocument]
           )
-          .one[JsObject]
+          .one[BSONDocument]
     } yield maybeExercise.isDefined
 
   protected def futureExerciseById(
@@ -86,8 +87,8 @@ trait MongoExerciseQueries {
       maybeExercise <-
         exercisesCollection
           .find(
-            Json.obj("toolId" -> tool.id, "collectionId" -> collectionId, "exerciseId" -> exerciseId),
-            Option.empty[JsObject]
+            BSONDocument("toolId" -> tool.id, "collectionId" -> collectionId, "exerciseId" -> exerciseId),
+            Option.empty[BSONDocument]
           )
           .one[Exercise[tool.ExContentType]]
     } yield maybeExercise
@@ -102,7 +103,7 @@ trait MongoExerciseQueries {
     for {
       exercisesCollection <- futureExercisesCollection
       insertResult        <- exercisesCollection.insert(true).one(exercise)
-    } yield insertResult.ok
+    } yield insertResult.writeErrors.isEmpty
   }
 
 }
