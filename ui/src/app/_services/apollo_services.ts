@@ -271,7 +271,7 @@ export type CollectionOverviewQuery = (
 
 export type PartFragment = (
   { __typename?: 'ExPart' }
-  & Pick<Types.ExPart, 'id' | 'name' | 'isEntryPart' | 'solved'>
+  & Pick<Types.ExPart, 'id' | 'name' | 'solved'>
 );
 
 export type ExerciseOverviewQueryVariables = Types.Exact<{
@@ -1049,7 +1049,6 @@ export const PartFragmentDoc = gql`
     fragment Part on ExPart {
   id
   name
-  isEntryPart
   solved
 }
     `;

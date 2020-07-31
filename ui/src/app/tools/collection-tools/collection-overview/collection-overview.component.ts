@@ -45,10 +45,6 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
           this.maxPage = Math.ceil(this.collectionOverviewQuery.me.tool.collection.exercises.length / SLICE_COUNT);
 
           this.pages = Array(this.maxPage).fill(0).map((value, index) => index);
-
-          // FIXME: apollo (?) changes content of exercises => part.solved!
-
-          console.info(JSON.stringify(this.exercises, null, 2));
         });
     });
   }

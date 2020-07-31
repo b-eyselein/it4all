@@ -93,7 +93,7 @@ query CollectionOverview($userJwt: String!, $toolId: String!, $collId: Int!) {
 fragment Part on ExPart {
   id
   name
-  isEntryPart
+  # isEntryPart
   solved
 }
 
