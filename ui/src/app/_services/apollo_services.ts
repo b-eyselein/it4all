@@ -271,7 +271,16 @@ export type CollectionOverviewQuery = (
 
 export type PartFragment = (
   { __typename?: 'ExPart' }
-  & Pick<Types.ExPart, 'id' | 'name' | 'solved'>
+  & Pick<Types.ExPart, 'id' | 'name' | 'isEntryPart' | 'solved'>
+);
+
+export type ExerciseOverviewFragment = (
+  { __typename?: 'Exercise' }
+  & Pick<Types.Exercise, 'title' | 'text'>
+  & { parts: Array<(
+    { __typename?: 'ExPart' }
+    & PartFragment
+  )> }
 );
 
 export type ExerciseOverviewQueryVariables = Types.Exact<{
@@ -292,11 +301,7 @@ export type ExerciseOverviewQuery = (
         { __typename?: 'ExerciseCollection' }
         & { exercise?: Types.Maybe<(
           { __typename?: 'Exercise' }
-          & Pick<Types.Exercise, 'exerciseId' | 'title' | 'text'>
-          & { parts: Array<(
-            { __typename?: 'ExPart' }
-            & PartFragment
-          )> }
+          & ExerciseOverviewFragment
         )> }
       )> }
     )> }
@@ -383,6 +388,11 @@ export type TopicWithLevelFragment = (
   ) }
 );
 
+export type FieldsPartFragment = (
+  { __typename?: 'ExPart' }
+  & Pick<Types.ExPart, 'id' | 'name' | 'solved'>
+);
+
 export type FieldsForLinkFragment = (
   { __typename?: 'Exercise' }
   & Pick<Types.Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
@@ -391,7 +401,7 @@ export type FieldsForLinkFragment = (
     & TopicWithLevelFragment
   )>, parts: Array<(
     { __typename?: 'ExPart' }
-    & PartFragment
+    & FieldsPartFragment
   )> }
 );
 
@@ -757,6 +767,23 @@ export const CollectionValuesFragmentDoc = gql`
   exerciseCount
 }
     `;
+export const PartFragmentDoc = gql`
+    fragment Part on ExPart {
+  id
+  name
+  isEntryPart
+  solved
+}
+    `;
+export const ExerciseOverviewFragmentDoc = gql`
+    fragment ExerciseOverview on Exercise {
+  title
+  text
+  parts {
+    ...Part
+  }
+}
+    ${PartFragmentDoc}`;
 export const ExerciseFileFragmentDoc = gql`
     fragment ExerciseFile on ExerciseFile {
   name
@@ -1045,8 +1072,8 @@ export const TopicWithLevelFragmentDoc = gql`
 }
     ${TopicFragmentDoc}
 ${LevelFragmentDoc}`;
-export const PartFragmentDoc = gql`
-    fragment Part on ExPart {
+export const FieldsPartFragmentDoc = gql`
+    fragment FieldsPart on ExPart {
   id
   name
   solved
@@ -1063,11 +1090,11 @@ export const FieldsForLinkFragmentDoc = gql`
     ...TopicWithLevel
   }
   parts {
-    ...Part
+    ...FieldsPart
   }
 }
     ${TopicWithLevelFragmentDoc}
-${PartFragmentDoc}`;
+${FieldsPartFragmentDoc}`;
 export const LoggedInUserWithTokenFragmentDoc = gql`
     fragment LoggedInUserWithToken on LoggedInUserWithToken {
   loggedInUser {
@@ -1266,18 +1293,13 @@ export const ExerciseOverviewDocument = gql`
     tool(toolId: $toolId) {
       collection(collId: $collId) {
         exercise(exId: $exId) {
-          exerciseId
-          title
-          text
-          parts {
-            ...Part
-          }
+          ...ExerciseOverview
         }
       }
     }
   }
 }
-    ${PartFragmentDoc}`;
+    ${ExerciseOverviewFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

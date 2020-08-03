@@ -1,14 +1,36 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ExerciseOverviewGQL, ExerciseOverviewQuery, PartFragment} from '../../../_services/apollo_services';
+import {ExerciseOverviewFragment, ExerciseOverviewGQL, ExerciseOverviewQuery, PartFragment} from '../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
 import {AuthenticationService} from '../../../_services/authentication.service';
 
-@Component({templateUrl: './exercise-overview.component.html'})
+@Component({
+  template: `
+    <div class="container">
+      <ng-container *ngIf="exercise; else loadingDataBlock">
+
+        <h1 class="title is-3 has-text-centered">Aufgabe &quot;{{exercise.title}}&quot;</h1>
+
+        <div class="notification is-light-grey" [innerHTML]="exercise.text"></div>
+
+        <div class="columns">
+          <div class="column" *ngFor="let part of entryParts">
+            <a class="button is-link is-fullwidth" [routerLink]="['parts', part.id]">{{part.name}}</a>
+          </div>
+        </div>
+
+      </ng-container>
+    </div>
+
+    <ng-template #loadingDataBlock>
+      <div class="notification is-primary has-text-centered">Lade Daten...</div>
+    </ng-template>
+  `
+})
 export class ExerciseOverviewComponent implements OnInit, OnDestroy {
 
   private sub: Subscription;
-  exerciseOverviewQuery: ExerciseOverviewQuery;
+  private exerciseOverviewQuery: ExerciseOverviewQuery;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -32,12 +54,16 @@ export class ExerciseOverviewComponent implements OnInit, OnDestroy {
     });
   }
 
-  get parts(): PartFragment[] {
-    return this.exerciseOverviewQuery.me.tool.collection.exercise.parts;
-  }
-
   ngOnDestroy(): void {
     this.sub.unsubscribe();
+  }
+
+  get exercise(): ExerciseOverviewFragment | undefined {
+    return this.exerciseOverviewQuery?.me.tool.collection.exercise;
+  }
+
+  get entryParts(): PartFragment[] {
+    return this.exercise.parts.filter((p) => p.isEntryPart);
   }
 
 }

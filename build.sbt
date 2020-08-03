@@ -59,8 +59,8 @@ libraryDependencies ++= Seq(
   "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.0.0-play29-rc.2", // Apache 2.0
 
   // Other helpers
-  "com.beachape"         %% "enumeratum-play"      % "1.6.0", // MIT
-  "com.beachape"         %% "enumeratum-play-json" % "1.6.0", // MIT
+  "com.beachape"         %% "enumeratum-play"      % "1.6.1", // MIT
+  "com.beachape"         %% "enumeratum-play-json" % "1.6.1", // MIT
   "com.github.t3hnar"    %% "scala-bcrypt"         % "4.3.0", // Apache 2.0
   "com.github.pathikrit" %% "better-files"         % "3.9.1", // MIT
 

@@ -93,8 +93,16 @@ query CollectionOverview($userJwt: String!, $toolId: String!, $collId: Int!) {
 fragment Part on ExPart {
   id
   name
-  # isEntryPart
+  isEntryPart
   solved
+}
+
+fragment ExerciseOverview on Exercise {
+  title
+  text
+  parts {
+    ...Part
+  }
 }
 
 query ExerciseOverview($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!) {
@@ -102,12 +110,7 @@ query ExerciseOverview($userJwt: String!, $toolId: String!, $collId: Int!, $exId
     tool(toolId: $toolId) {
       collection(collId: $collId) {
         exercise(exId: $exId) {
-          exerciseId
-          title
-          text
-          parts {
-            ...Part
-          }
+          ...ExerciseOverview
         }
       }
     }
@@ -186,6 +189,12 @@ fragment TopicWithLevel on TopicWithLevel{
   }
 }
 
+fragment FieldsPart on ExPart {
+  id
+  name
+  solved
+}
+
 fragment FieldsForLink on Exercise {
   exerciseId
   collectionId
@@ -196,10 +205,8 @@ fragment FieldsForLink on Exercise {
     ...TopicWithLevel
   }
   parts {
-    ...Part
+    ...FieldsPart
   }
-  # TODO: activate!
-  # solved
 }
 
 # Programming
