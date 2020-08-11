@@ -15,7 +15,7 @@ final case class ProgrammingExerciseContent(
   def parts: Seq[ProgExPart] =
     unitTestPart match {
       case _: SimplifiedUnitTestPart => Seq(ProgExPart.Implementation)
-      case _                         => Seq(ProgExPart.Implementation, ProgExPart.TestCreation)
+      case _                         => Seq(ProgExPart.TestCreation, ProgExPart.Implementation)
     }
 
 }

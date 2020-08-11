@@ -56,12 +56,6 @@ object ProgrammingGraphQLModels
     buildSampleSolutionType("Programming", progSolutionType)
 
   override val exerciseContentType: ObjectType[Unit, ProgrammingExerciseContent] = {
-    /*
-    implicit val sutpt: ObjectType[Unit, SimplifiedUnitTestPart]     = simplifiedUnitTestPartType
-    implicit val nutpt: ObjectType[Unit, NormalUnitTestPart]         = normalUnitTestPartType
-     */
-
-    implicit val utpt: UnionType[Unit]                               = unitTestPartType
     implicit val ipt: ObjectType[Unit, ImplementationPart]           = implementationPartType
     implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType
 
@@ -88,27 +82,22 @@ object ProgrammingGraphQLModels
     )
   }
 
-  private val NormalExecutionResultType: ObjectType[Unit, NormalExecutionResult] = {
-    implicit val stt: EnumType[SuccessType] = successTypeType
-
-    deriveObjectType()
-  }
+  private val NormalExecutionResultType: ObjectType[Unit, NormalExecutionResult] = deriveObjectType()
 
   private val simplifiedExecutionResultType: ObjectType[Unit, SimplifiedExecutionResult] = {
     implicit val stt: EnumType[SuccessType] = successTypeType
 
     deriveObjectType(
-      ReplaceField("input", Field("input", StringType, resolve = context => Json.stringify(context.value.input))),
+      ReplaceField(
+        "testInput",
+        Field("testInput", StringType, resolve = context => Json.stringify(context.value.testInput))
+      ),
       ReplaceField("awaited", Field("awaited", StringType, resolve = context => Json.stringify(context.value.awaited))),
       ReplaceField("gotten", Field("gotten", StringType, resolve = context => Json.stringify(context.value.gotten)))
     )
   }
 
-  private val unitTestCorrectionResultType: ObjectType[Unit, UnitTestCorrectionResult] = {
-    implicit val uttct: ObjectType[Unit, UnitTestTestConfig] = unitTestTestConfigType
-
-    deriveObjectType()
-  }
+  private val unitTestCorrectionResultType: ObjectType[Unit, UnitTestCorrectionResult] = deriveObjectType()
 
   // Abstract result
 

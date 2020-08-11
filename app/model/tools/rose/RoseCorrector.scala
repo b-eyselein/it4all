@@ -41,6 +41,8 @@ object RoseCorrector extends AbstractCorrector {
 
     val maxPoints = ???
 
+    val dockerBindPath = DockerConnector.DefaultWorkingDir
+
     exercise.content.sampleSolutions.headOption match {
       case None => Future.successful(onError("No sample solution for rose exercise!", maxPoints))
       case Some(SampleSolution(_, sample)) =>
@@ -62,13 +64,11 @@ object RoseCorrector extends AbstractCorrector {
           .createFileIfNotExists(createParents = true)
           .write(buildOptionFileContent())
 
-        val dockerBindPath = DockerConnector.DefaultWorkingDir
-
         val dockerBinds: Seq[DockerBind] = Seq(
-          DockerBind(solutionFilePath, s"$dockerBindPath/$solutionFileName"),
-          DockerBind(sampleFilePath, s"$dockerBindPath/$sampleFileName"),
-          DockerBind(actionFilePath, s"$dockerBindPath/$actionsFileName"),
-          DockerBind(optionsFilePath, s"$dockerBindPath/$optionsFileName")
+          DockerBind(solutionFilePath, dockerBindPath / solutionFileName),
+          DockerBind(sampleFilePath, dockerBindPath / sampleFileName),
+          DockerBind(actionFilePath, dockerBindPath / actionsFileName),
+          DockerBind(optionsFilePath, dockerBindPath / optionsFileName)
         )
 
         // Check if image exists

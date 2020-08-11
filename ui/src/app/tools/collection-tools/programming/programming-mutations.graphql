@@ -9,6 +9,7 @@ mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $p
 }
 
 fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
+  __typename
   solutionSaved
   resultSaved
   proficienciesUpdated
@@ -42,28 +43,23 @@ fragment ProgrammingResult on ProgrammingResult {
 }
 
 fragment SimplifiedExecutionResult on SimplifiedExecutionResult {
-  id
+  __typename
+  testId
   success
-  input
+  testInput
   awaited
   gotten
-  # stdout
 }
 
-fragment  NormalExecutionResult on NormalExecutionResult {
-  success
+fragment NormalExecutionResult on NormalExecutionResult {
+  __typename
+  successful
   logs
 }
 
 fragment UnitTestCorrectionResult on UnitTestCorrectionResult {
+  __typename
+  testId
   successful
-  file
-  status
-  stderr
-  stdout
-  testConfig {
-    description
-    id
-    shouldFail
-  }
+  description
 }

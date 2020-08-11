@@ -1,8 +1,8 @@
 package model.tools.programming
 
-import better.files.File
+import better.files._
 import model.ExerciseFile
-import model.core.{DockerBind, DockerConnector}
+import model.core.{DockerConnector, ScalaDockerImage}
 import model.points.Points
 import model.tools.AbstractCorrector
 
@@ -15,30 +15,23 @@ trait ProgrammingAbstractCorrector extends AbstractCorrector {
   override protected def buildInternalError(msg: String, maxPoints: Points): ProgrammingInternalErrorResult =
     ProgrammingInternalErrorResult(msg, maxPoints)
 
+  val programmingCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "py_prog_corrector", "0.1.2")
+
   val resultFileName = "result.json"
 
   protected val testDataFileName = "test_data.json"
   protected val testMainFileName = "test_main.py"
 
+  protected val baseBindPath: File = DockerConnector.DefaultWorkingDir
+
   protected val implFileRegex: Regex = """.*_\d*\.py""".r
 
-  @deprecated
-  protected def createFileAndWrite(file: File, content: String): Unit =
-    file
-      .createFileIfNotExists(createParents = true)
-      .write(content)
+  protected def writeExerciseFileToDirectory(ef: ExerciseFile, targetDir: File): File = {
+    val targetPath = targetDir / ef.name
 
-  def writeExerciseFileAndMount(
-    exerciseFile: ExerciseFile,
-    writeToDirectory: File,
-    bindToDirectory: String = DockerConnector.DefaultWorkingDir,
-    isReadOnly: Boolean = true
-  ): DockerBind = {
-    val targetPath = writeToDirectory / exerciseFile.name
-
-    createFileAndWrite(targetPath, exerciseFile.content)
-
-    DockerBind(targetPath, s"$bindToDirectory/${exerciseFile.name}", isReadOnly)
+    targetPath
+      .createIfNotExists(createParents = true)
+      .write(ef.content)
   }
 
 }

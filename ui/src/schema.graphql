@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Aug 03 2020 09:38:13 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Thu Aug 06 2020 14:49:04 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -264,11 +264,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  PARTIAL_MATCH
   UNSUCCESSFUL_MATCH
-  ONLY_USER
-  SUCCESSFUL_MATCH
   ONLY_SAMPLE
+  ONLY_USER
+  PARTIAL_MATCH
+  SUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -284,7 +284,7 @@ interface NewMatch {
 }
 
 type NormalExecutionResult {
-  success: SuccessType!
+  successful: Boolean!
   logs: String!
 }
 
@@ -467,10 +467,10 @@ type SelectAdditionalComparisons {
 }
 
 type SimplifiedExecutionResult {
+  testId: Int!
   success: SuccessType!
-  id: Int!
   stdout: String
-  input: String!
+  testInput: String!
   awaited: String!
   gotten: String!
 }
@@ -554,8 +554,8 @@ enum SqlExerciseType {
   INSERT
   SELECT
   CREATE
-  UPDATE
   DELETE
+  UPDATE
 }
 
 enum SqlExPart {
@@ -978,10 +978,9 @@ enum UmlVisibility {
 }
 
 type UnitTestCorrectionResult {
-  testConfig: UnitTestTestConfig!
+  testId: Int!
+  description: String!
   successful: Boolean!
-  file: String!
-  status: Int!
   stdout: [String!]!
   stderr: [String!]!
 }

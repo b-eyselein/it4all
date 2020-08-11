@@ -28,7 +28,7 @@ export type ProgrammingCorrectionMutation = (
 );
 
 export type ProgrammingCorrectionResultFragment = (
-  { __typename?: 'ProgrammingCorrectionResult' }
+  { __typename: 'ProgrammingCorrectionResult' }
   & Pick<Types.ProgrammingCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
     { __typename?: 'ProgrammingInternalErrorResult' }
@@ -73,22 +73,18 @@ export type ProgrammingResultFragment = (
 );
 
 export type SimplifiedExecutionResultFragment = (
-  { __typename?: 'SimplifiedExecutionResult' }
-  & Pick<Types.SimplifiedExecutionResult, 'id' | 'success' | 'input' | 'awaited' | 'gotten'>
+  { __typename: 'SimplifiedExecutionResult' }
+  & Pick<Types.SimplifiedExecutionResult, 'testId' | 'success' | 'testInput' | 'awaited' | 'gotten'>
 );
 
 export type NormalExecutionResultFragment = (
-  { __typename?: 'NormalExecutionResult' }
-  & Pick<Types.NormalExecutionResult, 'success' | 'logs'>
+  { __typename: 'NormalExecutionResult' }
+  & Pick<Types.NormalExecutionResult, 'successful' | 'logs'>
 );
 
 export type UnitTestCorrectionResultFragment = (
-  { __typename?: 'UnitTestCorrectionResult' }
-  & Pick<Types.UnitTestCorrectionResult, 'successful' | 'file' | 'status' | 'stderr' | 'stdout'>
-  & { testConfig: (
-    { __typename?: 'UnitTestTestConfig' }
-    & Pick<Types.UnitTestTestConfig, 'description' | 'id' | 'shouldFail'>
-  ) }
+  { __typename: 'UnitTestCorrectionResult' }
+  & Pick<Types.UnitTestCorrectionResult, 'testId' | 'successful' | 'description'>
 );
 
 export const ProgrammingAbstractResultFragmentDoc = gql`
@@ -105,31 +101,27 @@ export const ProgrammingInternalErrorResultFragmentDoc = gql`
     `;
 export const SimplifiedExecutionResultFragmentDoc = gql`
     fragment SimplifiedExecutionResult on SimplifiedExecutionResult {
-  id
+  __typename
+  testId
   success
-  input
+  testInput
   awaited
   gotten
 }
     `;
 export const NormalExecutionResultFragmentDoc = gql`
     fragment NormalExecutionResult on NormalExecutionResult {
-  success
+  __typename
+  successful
   logs
 }
     `;
 export const UnitTestCorrectionResultFragmentDoc = gql`
     fragment UnitTestCorrectionResult on UnitTestCorrectionResult {
+  __typename
+  testId
   successful
-  file
-  status
-  stderr
-  stdout
-  testConfig {
-    description
-    id
-    shouldFail
-  }
+  description
 }
     `;
 export const ProgrammingResultFragmentDoc = gql`
@@ -149,6 +141,7 @@ ${NormalExecutionResultFragmentDoc}
 ${UnitTestCorrectionResultFragmentDoc}`;
 export const ProgrammingCorrectionResultFragmentDoc = gql`
     fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
+  __typename
   solutionSaved
   resultSaved
   proficienciesUpdated

@@ -170,5 +170,5 @@ db.getCollection('userProficiencies')
 // instantiate collection and unique index for user results (TODO: validation?)
 
 db.getCollection('exerciseResults')
-    .createIndex({username: 1, ...exercisesIndex, part: 1}, {unique: true});
+    .createIndex({username: 1, ...exercisesIndex, partId: 1}, {unique: true});
 

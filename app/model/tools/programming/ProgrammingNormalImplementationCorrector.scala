@@ -2,9 +2,8 @@ package model.tools.programming
 
 import better.files.File
 import model.SampleSolution
-import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
+import model.core.{DockerBind, DockerConnector, RunContainerResult, ScalaDockerImage}
 import model.points._
-import model.result.SuccessType
 import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -18,13 +17,14 @@ object ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorre
     ScalaDockerImage("ls6uniwue", "py_normal_prog_corrector", "0.3.1")
 
   def correctNormalImplementation(
+    solutionFilesMounts: Seq[DockerBind],
     solTargetDir: File,
     exerciseContent: ProgrammingExerciseContent,
-    normalUnitTestPart: NormalUnitTestPart,
-    programmingSolutionFilesMounts: Seq[DockerBind]
+    normalUnitTestPart: NormalUnitTestPart
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
 
     val maxPoints = normalUnitTestPart.unitTestTestConfigs.size.points
+
 
     exerciseContent.sampleSolutions.headOption match {
       case None => Future.successful(onError("No sample solution found!", maxPoints))
@@ -37,32 +37,26 @@ object ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorre
           case None => Future.successful(onError("No content for unit test file found!", maxPoints))
           case Some(unitTestFileContent) =>
             val unitTestFileName = s"${exerciseContent.filename}_test.py"
-            val unitTestFile     = solTargetDir / unitTestFileName
-            createFileAndWrite(unitTestFile, unitTestFileContent)
 
-            val unitTestFileMount = DockerBind(
-              unitTestFile,
-              s"${DockerConnector.DefaultWorkingDir}/$unitTestFileName}",
-              isReadOnly = true
-            )
+            val unitTestFile = solTargetDir / unitTestFileName
+            unitTestFile
+              .createIfNotExists(createParents = true)
+              .write(unitTestFileContent)
+
+            val unitTestFileMount = DockerBind(unitTestFile, baseBindPath / unitTestFileName, isReadOnly = true)
 
             DockerConnector
               .runContainer(
                 programmingNormalCorrectionDockerImage.name,
-                maybeDockerBinds = programmingSolutionFilesMounts :+ unitTestFileMount,
+                maybeDockerBinds = solutionFilesMounts :+ unitTestFileMount,
                 deleteContainerAfterRun = false
               )
               .map {
-                case Failure(exception) =>
-                  onError("Error while running docker container", maxPoints, Some(exception))
-                case Success(runContainerResult) =>
-                  val successType = if (runContainerResult.statusCode == 0) SuccessType.COMPLETE else SuccessType.ERROR
-
-                  val points = ???
-
+                case Failure(exception) => onError("Error while running docker container", maxPoints, Some(exception))
+                case Success(RunContainerResult(statusCode, logs)) =>
                   ProgrammingResult(
-                    normalResult = Some(NormalExecutionResult(successType, runContainerResult.logs)),
-                    points = points,
+                    normalResult = Some(NormalExecutionResult(statusCode == 0, logs)),
+                    points = normalUnitTestPart.unitTestTestConfigs.size.points,
                     maxPoints = maxPoints
                   )
               }

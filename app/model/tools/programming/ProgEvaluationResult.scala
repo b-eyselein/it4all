@@ -4,11 +4,7 @@ import model.points._
 import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import play.api.libs.json.JsValue
 
-sealed trait ProgEvalResult {
-
-  def success: SuccessType
-
-}
+sealed trait ProgEvalResult
 
 trait ProgrammingAbstractResult extends AbstractCorrectionResult
 
@@ -31,7 +27,7 @@ final case class ProgrammingResult(
 
     val simplifiedResultOk = simplifiedResults.isEmpty || simplifiedResults.forall(_.success == SuccessType.COMPLETE)
 
-    val normalResultOk = normalResult.isEmpty || normalResult.forall(_.success == SuccessType.COMPLETE)
+    val normalResultOk = normalResult.isEmpty || normalResult.forall(_.successful)
 
     val unitTestResultsOk = unitTestResults.isEmpty || unitTestResults.forall(_.successful)
 
@@ -43,34 +39,35 @@ final case class ProgrammingResult(
 // Simplified results
 
 final case class SimplifiedExecutionResult(
-  success: SuccessType,
-  id: Int,
-  input: JsValue,
+  testId: Int,
+  testInput: JsValue,
   awaited: JsValue,
   gotten: JsValue,
+  success: SuccessType,
   stdout: Option[String]
 ) extends ProgEvalResult
+
+final case class SimplifiedExecutionResultFileContent(
+  results: Seq[SimplifiedExecutionResult]
+)
 
 // Normal test results
 
 final case class NormalExecutionResult(
-  success: SuccessType,
+  successful: Boolean,
   logs: String
 ) extends ProgEvalResult
 
 // Unit Test Correction
 
 final case class UnitTestCorrectionResult(
-  testConfig: UnitTestTestConfig,
+  testId: Int,
+  description: String,
   successful: Boolean,
-  file: String,
-  status: Int,
   stdout: Seq[String],
   stderr: Seq[String]
-) extends ProgEvalResult {
+) extends ProgEvalResult
 
-  override def success: SuccessType = if (successful) SuccessType.COMPLETE else SuccessType.NONE
-
-}
-
-final case class UnitTestCorrectionResultFileContent(results: Seq[UnitTestCorrectionResult])
+final case class UnitTestCorrectionResultFileContent(
+  results: Seq[UnitTestCorrectionResult]
+)

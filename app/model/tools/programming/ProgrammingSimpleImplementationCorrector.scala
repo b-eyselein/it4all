@@ -1,34 +1,29 @@
 package model.tools.programming
 
 import better.files.File
-import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
+import model.core.{DockerBind, DockerConnector}
 import model.points._
 import model.result.SuccessType
-import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-object ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorrector {
-
-  override protected val logger: Logger = Logger(ProgrammingSimpleImplementationCorrector.getClass)
-
-  val programmingSimplifiedCorrectionDockerImageName: ScalaDockerImage =
-    ScalaDockerImage("ls6uniwue", "py_simplified_prog_corrector", "0.3.1")
+trait ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorrector {
 
   private def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
     ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(completeTestData)
 
-  def correctSimplifiedImplementation(
+  protected def correctSimplifiedImplementation(
+    defaultFileMounts: Seq[DockerBind],
     solTargetDir: File,
     simplifiedUnitTestPart: SimplifiedUnitTestPart,
-    progSolutionFilesMounts: Seq[DockerBind],
     resultFile: File
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
 
     val maxPoints = simplifiedUnitTestPart.sampleTestData.size.points
 
+    // write files
     val testMainFile = solTargetDir / testMainFileName
     testMainFile
       .createIfNotExists(createParents = true)
@@ -39,18 +34,17 @@ object ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorre
       .createIfNotExists(createParents = true)
       .write(Json.prettyPrint(buildSimpleTestDataFileContent(simplifiedUnitTestPart.sampleTestData)))
 
-    val dockerBindPath = DockerConnector.DefaultWorkingDir
-
+    // mount files
     val otherDockerBinds = Seq(
-      DockerBind(testDataFile, s"$dockerBindPath/$testDataFileName", isReadOnly = true),
-      DockerBind(testMainFile, s"$dockerBindPath/$testMainFileName", isReadOnly = true),
-      DockerBind(resultFile, s"$dockerBindPath/$resultFileName")
+      DockerBind(testDataFile, baseBindPath / testDataFileName, isReadOnly = true),
+      DockerBind(testMainFile, baseBindPath / testMainFileName, isReadOnly = true)
     )
 
     DockerConnector
       .runContainer(
-        imageName = programmingSimplifiedCorrectionDockerImageName.name,
-        maybeDockerBinds = progSolutionFilesMounts ++ otherDockerBinds
+        imageName = programmingCorrectionDockerImage.name,
+        maybeDockerBinds = defaultFileMounts ++ otherDockerBinds,
+        maybeCmd = Some(Seq("simplified"))
       )
       .map {
         case Failure(exception) =>
@@ -60,12 +54,12 @@ object ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorre
             .readSimplifiedExecutionResultFile(resultFile)
             .fold(
               exception => onError("Error while reading result file", maxPoints, Some(exception)),
-              simplifiedResults => {
-
-                val points = simplifiedResults.count(ser => ser.success == SuccessType.COMPLETE).points
-
-                ProgrammingResult(simplifiedResults = simplifiedResults, points = points, maxPoints = maxPoints)
-              }
+              simplifiedResults =>
+                ProgrammingResult(
+                  simplifiedResults = simplifiedResults,
+                  points = simplifiedResults.count(ser => ser.success == SuccessType.COMPLETE).points,
+                  maxPoints = maxPoints
+                )
             )
       }
   }

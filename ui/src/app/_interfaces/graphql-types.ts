@@ -321,11 +321,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  PartialMatch = 'PARTIAL_MATCH',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
   OnlyUser = 'ONLY_USER',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
-  OnlySample = 'ONLY_SAMPLE'
+  PartialMatch = 'PARTIAL_MATCH',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -358,7 +358,7 @@ export type NewMatch = {
 
 export type NormalExecutionResult = {
   __typename?: 'NormalExecutionResult';
-  success: SuccessType;
+  successful: Scalars['Boolean'];
   logs: Scalars['String'];
 };
 
@@ -592,10 +592,10 @@ export type SelectAdditionalComparisons = {
 
 export type SimplifiedExecutionResult = {
   __typename?: 'SimplifiedExecutionResult';
+  testId: Scalars['Int'];
   success: SuccessType;
-  id: Scalars['Int'];
   stdout?: Maybe<Scalars['String']>;
-  input: Scalars['String'];
+  testInput: Scalars['String'];
   awaited: Scalars['String'];
   gotten: Scalars['String'];
 };
@@ -701,8 +701,8 @@ export enum SqlExerciseType {
   Insert = 'INSERT',
   Select = 'SELECT',
   Create = 'CREATE',
-  Update = 'UPDATE',
-  Delete = 'DELETE'
+  Delete = 'DELETE',
+  Update = 'UPDATE'
 }
 
 export enum SqlExPart {
@@ -1182,10 +1182,9 @@ export enum UmlVisibility {
 
 export type UnitTestCorrectionResult = {
   __typename?: 'UnitTestCorrectionResult';
-  testConfig: UnitTestTestConfig;
+  testId: Scalars['Int'];
+  description: Scalars['String'];
   successful: Scalars['Boolean'];
-  file: Scalars['String'];
-  status: Scalars['Int'];
   stdout: Array<Scalars['String']>;
   stderr: Array<Scalars['String']>;
 };

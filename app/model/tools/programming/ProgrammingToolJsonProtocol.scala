@@ -1,7 +1,6 @@
 package model.tools.programming
 
 import model.tools._
-import model.tools.uml.{UmlClassDiagram, UmlClassDiagramJsonFormat}
 import model.{ExerciseFile, JsonProtocols, SampleSolution}
 import play.api.libs.json._
 
@@ -12,8 +11,7 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
   private val progTestDataFormat: Format[ProgTestData] = Json.format[ProgTestData]
 
   override val solutionFormat: Format[ProgSolution] = {
-    implicit val eff: Format[ExerciseFile]   = JsonProtocols.exerciseFileFormat
-    implicit val putdf: Format[ProgTestData] = progTestDataFormat
+    implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
 
     Json.format
   }
@@ -55,10 +53,8 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
   }
 
   val exerciseContentFormat: OFormat[ProgrammingExerciseContent] = {
-    implicit val utf: Format[UnitTestPart]       = unitTestPartFormat
-    implicit val ipf: Format[ImplementationPart] = implementationPartFormat
-    // implicit val pstdf: Format[ProgTestData]               = progTestDataFormat
-    implicit val ucdf: Format[UmlClassDiagram]             = UmlClassDiagramJsonFormat.umlClassDiagramJsonFormat
+    implicit val utf: Format[UnitTestPart]                 = unitTestPartFormat
+    implicit val ipf: Format[ImplementationPart]           = implementationPartFormat
     implicit val ssf: Format[SampleSolution[ProgSolution]] = sampleSolutionFormat
 
     Json.format
@@ -68,7 +64,19 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
 
   // Simplified execution
 
-  val simplifiedExecutionResultFormat: Format[SimplifiedExecutionResult] = Json.format[SimplifiedExecutionResult]
+  def dumpCompleteTestDataToJson(testData: Seq[ProgTestData]): JsValue =
+    Json.obj(
+      "baseData" -> None,
+      "testData" -> JsArray(
+        testData.map(progTestDataFormat.writes)
+      )
+    )
+
+  val simplifiedExecutionResultFileContentFormat: OFormat[SimplifiedExecutionResultFileContent] = {
+    implicit val simplifiedExecutionResultFormat: OFormat[SimplifiedExecutionResult] = Json.format
+
+    Json.format
+  }
 
   // Normal execution
 
@@ -85,34 +93,10 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
     Json.writes
   }
 
-  private val unitTestCorrectionResultFormat: Format[UnitTestCorrectionResult] = {
-    implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
-
-    Json.format
-  }
-
   val unitTestCorrectionResultsFileJsonReads: Reads[UnitTestCorrectionResultFileContent] = {
-    implicit val utcrf: Format[UnitTestCorrectionResult] = unitTestCorrectionResultFormat
+    implicit val unitTestCorrectionResultFormat: OFormat[UnitTestCorrectionResult] = Json.format
 
     Json.reads
   }
-
-  /*
-  override val completeResultWrites: Writes[ProgCompleteResult] = {
-    implicit val serw: Writes[SimplifiedExecutionResult]  = simplifiedExecutionResultFormat
-    implicit val uttcrf: Writes[UnitTestCorrectionResult] = unitTestCorrectionResultFormat
-    implicit val nerw: Writes[NormalExecutionResult]      = Json.format[NormalExecutionResult]
-
-    Json.writes[ProgCompleteResult]
-  }
-   */
-
-  // Simplified ProgUserTestData
-
-  def dumpCompleteTestDataToJson(testData: Seq[ProgTestData]): JsValue =
-    Json.obj(
-      "testData" -> JsArray(testData.map(progTestDataFormat.writes)),
-      "baseData" -> None
-    )
 
 }

@@ -6,10 +6,10 @@ import {SuccessType} from '../../../../../_interfaces/graphql-types';
   selector: 'it4all-programming-simplified-result',
   template: `
     <div class="message" [ngClass]="correct ? 'is-success' : 'is-danger'">
-      <header class="message-header">{{result.id}}. Test war {{correct ? '' : 'nicht'}} erfolgreich.</header>
+      <header class="message-header">{{result.testId}}. Test war {{correct ? '' : 'nicht'}} erfolgreich.</header>
       <div class="message-body">
 
-        <p>Eingabe: <code>{{result.input}}</code></p>
+        <p>Eingabe: <code>{{result.testInput}}</code></p>
         <p>Erwartet: <code>{{result.awaited}}</code></p>
 
         <div *ngIf="isError">Fehlerausgabe:
@@ -29,10 +29,6 @@ export class ProgrammingSimplifiedResultComponent implements OnInit {
   ngOnInit(): void {
     this.correct = this.result.success === SuccessType.Complete;
     this.isError = this.result.success === SuccessType.Error;
-
-    if(this.isError) {
-      console.info(this.result.gotten);
-    }
   }
 
   get errorOutput() {

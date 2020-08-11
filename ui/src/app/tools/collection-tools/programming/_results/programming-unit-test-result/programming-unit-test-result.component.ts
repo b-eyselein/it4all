@@ -6,11 +6,9 @@ import {UnitTestCorrectionResultFragment} from '../../programming-apollo-mutatio
   template: `
     <li>
       <p [ngClass]="unitTestResult.successful ? 'has-text-success' : 'has-text-danger'">
-        Der {{unitTestResult.testConfig.id}}. Test war
-        <ng-container *ngIf="!unitTestResult.successful">nicht</ng-container>
-        erfolgreich.
+        Der {{unitTestResult.testId}}. Test war {{unitTestResult.successful ? '' : 'nicht'}} erfolgreich.
       </p>
-      <p *ngIf="!unitTestResult.successful">{{unitTestResult.testConfig.description}}</p>
+      <p *ngIf="!unitTestResult.successful">{{unitTestResult.description}}</p>
     </li>
   `,
 })

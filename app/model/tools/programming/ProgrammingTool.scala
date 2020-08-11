@@ -1,11 +1,10 @@
 package model.tools.programming
 
-import better.files.File
 import initialData.InitialData
 import initialData.programming.ProgrammingInitialData
 import model.graphql.ToolGraphQLModelBasics
-import model.tools._
-import model.{Exercise, ExerciseFile, LoggedInUser, Topic}
+import model.tools.{Tool, ToolJsonProtocol, ToolState}
+import model.{Exercise, LoggedInUser, Topic}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,51 +37,9 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.A
     part: ProgExPart
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
 
-    val solutionTargetDir: File =
-      solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId) / part.id
+    val solTargetDir = solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId) / part.id
 
-    // Create or truncate result file
-    val resultFile = solutionTargetDir / ProgrammingNormalImplementationCorrector.resultFileName
-
-    resultFile
-      .createIfNotExists(createParents = true)
-      .clear()
-
-    part match {
-      case ProgExPart.TestCreation =>
-        exercise.content.unitTestPart match {
-          case nutp: NormalUnitTestPart =>
-            ProgrammingUnitTestCorrector.correctUnitTestPart(
-              solutionTargetDir,
-              solution,
-              exercise.content,
-              nutp,
-              resultFile
-            )
-          case _ => ???
-        }
-      case _ =>
-        val programmingSolutionFilesMounts = solution.files.map { exerciseFile: ExerciseFile =>
-          ProgrammingNormalImplementationCorrector.writeExerciseFileAndMount(exerciseFile, solutionTargetDir)
-        }
-
-        exercise.content.unitTestPart match {
-          case sutp: SimplifiedUnitTestPart =>
-            ProgrammingSimpleImplementationCorrector.correctSimplifiedImplementation(
-              solutionTargetDir,
-              sutp,
-              programmingSolutionFilesMounts,
-              resultFile
-            )
-          case nutp: NormalUnitTestPart =>
-            ProgrammingNormalImplementationCorrector.correctNormalImplementation(
-              solutionTargetDir,
-              exercise.content,
-              nutp,
-              programmingSolutionFilesMounts
-            )
-        }
-    }
+    ProgrammingCorrector.correct(exercise, solution, solTargetDir, part)
   }
 
   override val initialData: InitialData[ProgrammingExerciseContent] = ProgrammingInitialData
