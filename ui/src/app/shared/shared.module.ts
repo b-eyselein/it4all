@@ -4,21 +4,28 @@ import {TabComponent} from './tab/tab.component';
 import {TabsComponent} from './tabs/tabs.component';
 import {PointsNotificationComponent} from './points-notification/points-notification.component';
 import {SolutionSavedComponent} from './solution-saved/solution-saved.component';
+import {BreadcrumbsComponent} from "./breadcrumbs/breadcrumbs.component";
+import {RouterModule} from "@angular/router";
 
 
 @NgModule({
   declarations: [
-    TabComponent, TabsComponent,
+    TabComponent,
+    TabsComponent,
     PointsNotificationComponent,
+    BreadcrumbsComponent,
     SolutionSavedComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule
   ],
   exports: [
-    TabComponent, TabsComponent,
+    TabComponent,
+    TabsComponent,
     PointsNotificationComponent,
-    SolutionSavedComponent
+    SolutionSavedComponent,
+    BreadcrumbsComponent
   ]
 })
 export class SharedModule {

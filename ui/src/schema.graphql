@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue Aug 18 2020 10:22:20 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Aug 26 2020 09:06:03 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -264,11 +264,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
-  UNSUCCESSFUL_MATCH
-  ONLY_USER
-  ONLY_SAMPLE
   SUCCESSFUL_MATCH
+  ONLY_USER
   PARTIAL_MATCH
+  ONLY_SAMPLE
+  UNSUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -552,10 +552,10 @@ type SqlExerciseMutations {
 
 enum SqlExerciseType {
   SELECT
-  DELETE
-  CREATE
-  UPDATE
   INSERT
+  CREATE
+  DELETE
+  UPDATE
 }
 
 enum SqlExPart {

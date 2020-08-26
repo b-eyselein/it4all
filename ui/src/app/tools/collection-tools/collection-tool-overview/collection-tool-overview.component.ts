@@ -1,8 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {CollectionToolOverviewGQL, CollectionToolOverviewQuery, UserProficiencyFragment} from '../../../_services/apollo_services';
+import {
+  CollectionToolOverviewGQL,
+  CollectionToolOverviewQuery,
+  UserProficiencyFragment
+} from '../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
 import {AuthenticationService} from '../../../_services/authentication.service';
+import {BreadCrumbPart} from "../../../shared/breadcrumbs/breadcrumbs.component";
 
 @Component({templateUrl: './collection-tool-overview.component.html'})
 export class CollectionToolOverviewComponent implements OnInit, OnDestroy {
@@ -35,6 +40,17 @@ export class CollectionToolOverviewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub.unsubscribe();
+  }
+
+  get tool() {
+    return this.collectionToolOverviewQuery.me.tool;
+  }
+
+  get breadCrumbs(): BreadCrumbPart[] {
+    return [
+      {routerLinkPart: '/', title: 'Tools'},
+      {routerLinkPart: `tools/${this.tool.id}`, title: this.tool.name}
+    ]
   }
 
 }

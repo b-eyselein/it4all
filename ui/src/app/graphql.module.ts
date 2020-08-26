@@ -23,7 +23,7 @@ const defaultOptions: DefaultOptions = {
 function createApollo(httpLink: HttpLink) {
   return {
     link: httpLink.create({uri}),
-    cache: new InMemoryCache({addTypename: false, fragmentMatcher}),
+    cache: new InMemoryCache({/*addTypename: false,*/ fragmentMatcher}),
     defaultOptions
   };
 }

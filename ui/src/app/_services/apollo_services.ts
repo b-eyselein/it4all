@@ -173,7 +173,7 @@ export type CollectionToolOverviewQuery = (
     { __typename?: 'User' }
     & { tool?: Types.Maybe<(
       { __typename?: 'CollectionTool' }
-      & Pick<Types.CollectionTool, 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
+      & Pick<Types.CollectionTool, 'id' | 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
       & { proficiencies: Array<(
         { __typename?: 'UserProficiency' }
         & UserProficiencyFragment
@@ -235,11 +235,24 @@ export type CollectionListQuery = (
     { __typename?: 'User' }
     & { tool?: Types.Maybe<(
       { __typename?: 'CollectionTool' }
-      & Pick<Types.CollectionTool, 'name'>
+      & Pick<Types.CollectionTool, 'id' | 'name'>
       & { collections: Array<(
         { __typename?: 'ExerciseCollection' }
         & CollectionValuesFragment
       )> }
+    )> }
+  )> }
+);
+
+export type CollOverviewToolFragment = (
+  { __typename?: 'CollectionTool' }
+  & Pick<Types.CollectionTool, 'id' | 'name'>
+  & { collection?: Types.Maybe<(
+    { __typename?: 'ExerciseCollection' }
+    & Pick<Types.ExerciseCollection, 'collectionId' | 'title'>
+    & { exercises: Array<(
+      { __typename?: 'Exercise' }
+      & FieldsForLinkFragment
     )> }
   )> }
 );
@@ -257,14 +270,7 @@ export type CollectionOverviewQuery = (
     { __typename?: 'User' }
     & { tool?: Types.Maybe<(
       { __typename?: 'CollectionTool' }
-      & { collection?: Types.Maybe<(
-        { __typename?: 'ExerciseCollection' }
-        & Pick<Types.ExerciseCollection, 'title'>
-        & { exercises: Array<(
-          { __typename?: 'Exercise' }
-          & FieldsForLinkFragment
-        )> }
-      )> }
+      & CollOverviewToolFragment
     )> }
   )> }
 );
@@ -767,6 +773,53 @@ export const CollectionValuesFragmentDoc = gql`
   exerciseCount
 }
     `;
+export const TopicWithLevelFragmentDoc = gql`
+    fragment TopicWithLevel on TopicWithLevel {
+  topic {
+    ...Topic
+  }
+  level {
+    ...Level
+  }
+}
+    ${TopicFragmentDoc}
+${LevelFragmentDoc}`;
+export const FieldsPartFragmentDoc = gql`
+    fragment FieldsPart on ExPart {
+  id
+  name
+  solved
+}
+    `;
+export const FieldsForLinkFragmentDoc = gql`
+    fragment FieldsForLink on Exercise {
+  exerciseId
+  collectionId
+  toolId
+  title
+  difficulty
+  topicsWithLevels {
+    ...TopicWithLevel
+  }
+  parts {
+    ...FieldsPart
+  }
+}
+    ${TopicWithLevelFragmentDoc}
+${FieldsPartFragmentDoc}`;
+export const CollOverviewToolFragmentDoc = gql`
+    fragment CollOverviewTool on CollectionTool {
+  id
+  name
+  collection(collId: $collId) {
+    collectionId
+    title
+    exercises {
+      ...FieldsForLink
+    }
+  }
+}
+    ${FieldsForLinkFragmentDoc}`;
 export const PartFragmentDoc = gql`
     fragment Part on ExPart {
   id
@@ -1061,40 +1114,6 @@ ${SqlExerciseContentSolveFieldsFragmentDoc}
 ${UmlExerciseContentSolveFieldsFragmentDoc}
 ${WebExerciseContentSolveFieldsFragmentDoc}
 ${XmlExerciseContentSolveFieldsFragmentDoc}`;
-export const TopicWithLevelFragmentDoc = gql`
-    fragment TopicWithLevel on TopicWithLevel {
-  topic {
-    ...Topic
-  }
-  level {
-    ...Level
-  }
-}
-    ${TopicFragmentDoc}
-${LevelFragmentDoc}`;
-export const FieldsPartFragmentDoc = gql`
-    fragment FieldsPart on ExPart {
-  id
-  name
-  solved
-}
-    `;
-export const FieldsForLinkFragmentDoc = gql`
-    fragment FieldsForLink on Exercise {
-  exerciseId
-  collectionId
-  toolId
-  title
-  difficulty
-  topicsWithLevels {
-    ...TopicWithLevel
-  }
-  parts {
-    ...FieldsPart
-  }
-}
-    ${TopicWithLevelFragmentDoc}
-${FieldsPartFragmentDoc}`;
 export const LoggedInUserWithTokenFragmentDoc = gql`
     fragment LoggedInUserWithToken on LoggedInUserWithToken {
   loggedInUser {
@@ -1203,6 +1222,7 @@ export const CollectionToolOverviewDocument = gql`
     query CollectionToolOverview($userJwt: String!, $toolId: String!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
+      id
       name
       collectionCount
       exerciseCount
@@ -1249,6 +1269,7 @@ export const CollectionListDocument = gql`
     query CollectionList($userJwt: String!, $toolId: String!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
+      id
       name
       collections {
         ...CollectionValues
@@ -1269,16 +1290,11 @@ export const CollectionOverviewDocument = gql`
     query CollectionOverview($userJwt: String!, $toolId: String!, $collId: Int!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
-      collection(collId: $collId) {
-        title
-        exercises {
-          ...FieldsForLink
-        }
-      }
+      ...CollOverviewTool
     }
   }
 }
-    ${FieldsForLinkFragmentDoc}`;
+    ${CollOverviewToolFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

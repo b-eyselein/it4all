@@ -90,8 +90,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "it4all-client:build",
-            "proxyConfig": "proxy.conf.json"
+            "browserTarget": "it4all-client:build"
           },
           "configurations": {
             "production": {

@@ -1,8 +1,10 @@
 <div class="container">
   <ng-container *ngIf="collectionOverviewQuery; else loadingDataBlock">
-    <h1 class="title is-3 has-text-centered">
-      Sammlung &quot;{{collectionOverviewQuery.me.tool.collection.title}}&quot; - Aufgaben
-    </h1>
+    <h1 class="title is-3 has-text-centered">Sammlung &quot;{{tool.collection.title}}&quot; - Aufgaben</h1>
+
+    <div class="mb-3">
+      <it4all-breadcrumbs [parts]="breadCrumbs"></it4all-breadcrumbs>
+    </div>
 
     <nav class="pagination is-centered" role="navigation" aria-label="pagination" *ngIf="paginationNeeded">
       <button class="button pagination-previous" (click)="currentPage = currentPage - 1" [disabled]="currentPage < 1">
@@ -15,7 +17,8 @@
           </button>
         </li>
       </ul>
-      <button class="button pagination-next" (click)="currentPage = currentPage + 1" [disabled]="currentPage >= maxPage - 1">
+      <button class="button pagination-next" (click)="currentPage = currentPage + 1"
+              [disabled]="currentPage >= maxPage - 1">
         Nächste
       </button>
     </nav>

@@ -1,10 +1,18 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {CollectionOverviewGQL, CollectionOverviewQuery, FieldsForLinkFragment} from '../../../_services/apollo_services';
+import {
+  CollectionOverviewGQL,
+  CollectionOverviewQuery,
+  CollOverviewToolFragment,
+  FieldsForLinkFragment
+} from '../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
 import {AuthenticationService} from '../../../_services/authentication.service';
+import {BreadCrumbPart} from "../../../shared/breadcrumbs/breadcrumbs.component";
 
 const SLICE_COUNT: number = 12;
+
+// url => /tools/:toolId/collections/:collId
 
 @Component({templateUrl: './collection-overview.component.html'})
 export class CollectionOverviewComponent implements OnInit, OnDestroy {
@@ -53,12 +61,25 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
+  get tool(): CollOverviewToolFragment {
+    return this.collectionOverviewQuery.me.tool;
+  }
+
   get exercises(): FieldsForLinkFragment[] {
-    return this.collectionOverviewQuery.me.tool.collection.exercises;
+    return this.tool.collection.exercises;
   }
 
   getExercisesPaginated(): FieldsForLinkFragment[] {
     return this.exercises.slice(this.currentPage * SLICE_COUNT, (this.currentPage + 1) * SLICE_COUNT);
+  }
+
+  get breadCrumbs(): BreadCrumbPart[] {
+    return [
+      {routerLinkPart: '/', title: 'Tools'},
+      {routerLinkPart: `tools/${this.tool.id}`, title: this.tool.name},
+      {routerLinkPart: 'collections', title: 'Sammlungen'},
+      {routerLinkPart: this.tool.collection.collectionId.toString(), title: this.tool.collection.title}
+    ]
   }
 
 }

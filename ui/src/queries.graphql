@@ -21,6 +21,7 @@ query ToolOverview($userJwt: String!) {
 query CollectionToolOverview($userJwt: String!, $toolId: String!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
+      id
       name
       collectionCount
       exerciseCount
@@ -67,6 +68,7 @@ fragment CollectionValues on ExerciseCollection {
 query CollectionList($userJwt: String!, $toolId: String!) {
   me(userJwt: $userJwt){
     tool(toolId: $toolId) {
+      id
       name
       collections {
         ...CollectionValues
@@ -76,15 +78,23 @@ query CollectionList($userJwt: String!, $toolId: String!) {
 }
 
 # /tools/:toolId/collections/:collId
+fragment CollOverviewTool on CollectionTool {
+  id
+  name
+  collection(collId: $collId) {
+    collectionId
+    title
+    exercises {
+      ...FieldsForLink
+    }
+  }
+}
+
+
 query CollectionOverview($userJwt: String!, $toolId: String!, $collId: Int!) {
   me(userJwt: $userJwt){
     tool(toolId: $toolId) {
-      collection(collId: $collId) {
-        title
-        exercises {
-          ...FieldsForLink
-        }
-      }
+      ...CollOverviewTool
     }
   }
 }

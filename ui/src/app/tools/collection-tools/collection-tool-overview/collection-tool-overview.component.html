@@ -1,6 +1,10 @@
 <div class="container">
   <ng-container *ngIf="collectionToolOverviewQuery; else loadingDataBlock">
-    <h1 class="title is-3 has-text-centered">Tool {{collectionToolOverviewQuery.me.tool.name}}</h1>
+    <h1 class="title is-3 has-text-centered">Tool {{tool.name}}</h1>
+
+    <div class="mb-3">
+      <it4all-breadcrumbs [parts]="breadCrumbs"></it4all-breadcrumbs>
+    </div>
 
     <div class="columns">
       <div class="column">
@@ -9,8 +13,7 @@
             <p class="card-header-title">Sammlungen</p>
           </header>
           <div class="card-content">
-            {{collectionToolOverviewQuery.me.tool.collectionCount}} Sammlungen
-            mit {{collectionToolOverviewQuery.me.tool.exerciseCount}} Aufgaben
+            {{tool.collectionCount}} Sammlungen mit {{tool.exerciseCount}} Aufgaben
           </div>
           <footer class="card-footer">
             <a class="card-footer-item" routerLink="./collections">Zu den Sammlungen</a>
@@ -23,24 +26,20 @@
           <header class="card-header">
             <p class="card-header-title">Alle Aufgaben</p>
           </header>
-          <div class="card-content">
-            {{collectionToolOverviewQuery.me.tool.exerciseCount}} Aufgaben
-          </div>
+          <div class="card-content">{{tool.exerciseCount}} Aufgaben</div>
           <footer class="card-footer">
             <a class="card-footer-item" routerLink="allExercises">Zur Übersicht</a>
           </footer>
         </div>
       </div>
 
-      <!--  *ngIf="collectionToolOverviewQuery.me.tool.lessonCount > 0" -->
+      <!--  *ngIf=".me.tool.lessonCount > 0" -->
       <div class="column">
         <div class="card">
           <header class="card-header">
             <p class="card-header-title is-centered">Lektionen</p>
           </header>
-          <div class="card-content">
-            {{collectionToolOverviewQuery.me.tool.lessonCount}} Lektionen
-          </div>
+          <div class="card-content">{{tool.lessonCount}} Lektionen</div>
           <footer class="card-footer">
             <a class="card-footer-item" [routerLink]="['lessons']">Zu den Lektionen</a>
           </footer>
