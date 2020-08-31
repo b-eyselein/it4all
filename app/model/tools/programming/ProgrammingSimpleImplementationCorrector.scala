@@ -14,14 +14,14 @@ trait ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorrec
   private def buildSimpleTestDataFileContent(completeTestData: Seq[ProgTestData]): JsValue =
     ProgrammingToolJsonProtocol.dumpCompleteTestDataToJson(completeTestData)
 
-  protected def correctSimplifiedImplementation(
+  def correctSimplifiedImplementation(
     defaultFileMounts: Seq[DockerBind],
     solTargetDir: File,
     simplifiedUnitTestPart: SimplifiedUnitTestPart,
     resultFile: File
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
 
-    val maxPoints = simplifiedUnitTestPart.sampleTestData.size.points
+    val mp = maxPoints(simplifiedUnitTestPart)
 
     // write files
     val testMainFile = solTargetDir / testMainFileName
@@ -48,17 +48,17 @@ trait ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorrec
       )
       .map {
         case Failure(exception) =>
-          onError("Error while running programming simplified execution docker image", maxPoints, Some(exception))
+          onError("Error while running programming simplified execution docker image", mp, Some(exception))
         case Success(_) =>
           ResultsFileJsonFormat
             .readSimplifiedExecutionResultFile(resultFile)
             .fold(
-              exception => onError("Error while reading result file", maxPoints, Some(exception)),
+              exception => onError("Error while reading result file", mp, Some(exception)),
               simplifiedResults =>
                 ProgrammingResult(
                   simplifiedResults = simplifiedResults,
                   points = simplifiedResults.count(ser => ser.success == SuccessType.COMPLETE).points,
-                  maxPoints = maxPoints
+                  maxPoints = mp
                 )
             )
       }

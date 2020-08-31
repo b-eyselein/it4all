@@ -3,7 +3,7 @@ package model.tools.programming
 import better.files._
 import model.ExerciseFile
 import model.core.{DockerConnector, ScalaDockerImage}
-import model.points.Points
+import model.points._
 import model.tools.AbstractCorrector
 
 import scala.util.matching.Regex
@@ -33,5 +33,9 @@ trait ProgrammingAbstractCorrector extends AbstractCorrector {
       .createIfNotExists(createParents = true)
       .write(ef.content)
   }
+
+  protected def maxPoints(utp: NormalUnitTestPart): Points = utp.unitTestTestConfigs.size.points
+
+  protected def maxPoints(utp: SimplifiedUnitTestPart): Points = utp.sampleTestData.size.points
 
 }

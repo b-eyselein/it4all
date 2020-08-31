@@ -7,7 +7,10 @@ import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object ProgrammingCorrector extends ProgrammingSimpleImplementationCorrector with ProgrammingUnitTestCorrector {
+object ProgrammingCorrector
+    extends ProgrammingSimpleImplementationCorrector
+    with ProgrammingUnitTestCorrector
+    with ProgrammingNormalImplementationCorrector {
 
   override protected val logger: Logger = Logger(ProgrammingCorrector.getClass)
 
@@ -19,7 +22,7 @@ object ProgrammingCorrector extends ProgrammingSimpleImplementationCorrector wit
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
 
     // Create or truncate result file
-    val resultFile = solutionTargetDir / ProgrammingNormalImplementationCorrector.resultFileName
+    val resultFile = solutionTargetDir / resultFileName
     resultFile
       .createIfNotExists(createParents = true)
       .clear()
@@ -53,7 +56,7 @@ object ProgrammingCorrector extends ProgrammingSimpleImplementationCorrector wit
               resultFile
             )
           case normalUnitTestPart: NormalUnitTestPart =>
-            ProgrammingNormalImplementationCorrector.correctNormalImplementation(
+            correctNormalImplementation(
               defaultFileMounts,
               solutionTargetDir,
               exercise.content,

@@ -11,7 +11,7 @@ import scala.util.{Failure, Success}
 
 trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
 
-  protected def correctUnitTestPart(
+  def correctUnitTestPart(
     defaultFileMounts: Seq[DockerBind],
     solTargetDir: File,
     exerciseContent: ProgrammingExerciseContent,
@@ -19,7 +19,7 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
     resultFile: File
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
 
-    val maxPoints = unitTestPart.unitTestTestConfigs.size.points
+    val mp = maxPoints(unitTestPart)
 
     // write test data file
 
@@ -68,20 +68,20 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
       )
       .map {
         case Failure(exception) =>
-          onError("Error running programming unit test correction image", maxPoints, Some(exception))
+          onError("Error running programming unit test correction image", mp, Some(exception))
         case Success(RunContainerResult(statusCode, logs)) =>
           if (statusCode != 0) {
-            ProgrammingInternalErrorResult(logs, maxPoints)
+            ProgrammingInternalErrorResult(logs, mp)
           } else {
             ResultsFileJsonFormat
               .readTestCorrectionResultFile(resultFile)
               .fold(
-                exception => onError("Error reading unit test correction result file", maxPoints, Some(exception)),
+                exception => onError("Error reading unit test correction result file", mp, Some(exception)),
                 results =>
                   ProgrammingResult(
                     unitTestResults = results,
                     points = results.count(_.successful).points,
-                    maxPoints = maxPoints
+                    maxPoints = mp
                   )
               )
           }

@@ -2,19 +2,13 @@ package model.tools.programming
 
 import better.files.File
 import model.SampleSolution
-import model.core.{DockerBind, DockerConnector, RunContainerResult, ScalaDockerImage}
+import model.core.{DockerBind, DockerConnector, RunContainerResult}
 import model.points._
-import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-object ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrector {
-
-  override protected val logger: Logger = Logger(ProgrammingNormalImplementationCorrector.getClass)
-
-  val programmingNormalCorrectionDockerImage: ScalaDockerImage =
-    ScalaDockerImage("ls6uniwue", "py_normal_prog_corrector", "0.3.1")
+trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrector {
 
   def correctNormalImplementation(
     solutionFilesMounts: Seq[DockerBind],
@@ -23,18 +17,17 @@ object ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorre
     normalUnitTestPart: NormalUnitTestPart
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
 
-    val maxPoints = normalUnitTestPart.unitTestTestConfigs.size.points
-
+    val mp = maxPoints(normalUnitTestPart)
 
     exerciseContent.sampleSolutions.headOption match {
-      case None => Future.successful(onError("No sample solution found!", maxPoints))
+      case None => Future.successful(onError("No sample solution found!", mp))
       case Some(SampleSolution(_, ProgSolution(files))) =>
         val maybeTestFileContent = files
           .find(_.name == normalUnitTestPart.testFileName)
           .map(_.content)
 
         maybeTestFileContent match {
-          case None => Future.successful(onError("No content for unit test file found!", maxPoints))
+          case None => Future.successful(onError("No content for unit test file found!", mp))
           case Some(unitTestFileContent) =>
             val unitTestFileName = s"${exerciseContent.filename}_test.py"
 
@@ -47,18 +40,18 @@ object ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorre
 
             DockerConnector
               .runContainer(
-                //programmingNormalCorrectionDockerImage.name,
                 programmingCorrectionDockerImage.name,
                 maybeDockerBinds = solutionFilesMounts :+ unitTestFileMount,
-                deleteContainerAfterRun = false
+                deleteContainerAfterRun = _ == 0,
+                maybeCmd = Some(Seq("normal"))
               )
               .map {
-                case Failure(exception) => onError("Error while running docker container", maxPoints, Some(exception))
+                case Failure(exception) => onError("Error while running docker container", mp, Some(exception))
                 case Success(RunContainerResult(statusCode, logs)) =>
                   ProgrammingResult(
                     normalResult = Some(NormalExecutionResult(statusCode == 0, logs)),
                     points = normalUnitTestPart.unitTestTestConfigs.size.points,
-                    maxPoints = maxPoints
+                    maxPoints = mp
                   )
               }
         }

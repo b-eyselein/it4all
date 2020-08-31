@@ -34,11 +34,9 @@ object DockerConnector {
 
   private val logger: Logger = Logger(DockerConnector.getClass)
 
-  private val SuccessStatusCode: Int = 0
-
-  val DefaultWorkingDir = File("/data")
-
   private val dockerClient: DockerClient = DefaultDockerClient.fromEnv().build()
+
+  val DefaultWorkingDir: File = File("/data")
 
   def imageExists(scalaDockerImage: ScalaDockerImage): Boolean =
     imageExists(scalaDockerImage.name)
@@ -94,7 +92,7 @@ object DockerConnector {
     maybeEntryPoint: Option[Seq[String]] = None,
     maybeCmd: Option[Seq[String]] = None,
     maybeDockerBinds: Seq[DockerBind] = Seq.empty,
-    deleteContainerAfterRun: Boolean = true
+    deleteContainerAfterRun: Int => Boolean = _ => true
   )(implicit ec: ExecutionContext): Future[Try[RunContainerResult]] =
     Future {
 
@@ -109,12 +107,10 @@ object DockerConnector {
               val result: RunContainerResult =
                 RunContainerResult(statusCode, getContainerLogs(containerId))
 
-              if (deleteContainerAfterRun && statusCode == SuccessStatusCode) {
+              if (deleteContainerAfterRun(statusCode)) {
                 // Do not delete failed containers for now
                 val containerDeleted = deleteContainer(containerId)
                 if (containerDeleted.isFailure) logger.error("Could not delete container!")
-              } else {
-                logger.debug("NOT Deleting container...")
               }
 
               result
