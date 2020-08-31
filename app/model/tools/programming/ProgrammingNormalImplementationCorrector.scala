@@ -47,7 +47,8 @@ object ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorre
 
             DockerConnector
               .runContainer(
-                programmingNormalCorrectionDockerImage.name,
+                //programmingNormalCorrectionDockerImage.name,
+                programmingCorrectionDockerImage.name,
                 maybeDockerBinds = solutionFilesMounts :+ unitTestFileMount,
                 deleteContainerAfterRun = false
               )

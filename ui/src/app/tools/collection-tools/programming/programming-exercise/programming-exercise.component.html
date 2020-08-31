@@ -46,7 +46,7 @@
 
             <div class="message is-danger" *ngIf="internalErrorResult">
               <div class="message-header">Es gab einen internen Fehler bei der Korrektur:</div>
-              <div class="message-body">{{internalErrorResult.msg}}</div>
+              <div class="message-body"><pre>{{internalErrorResult.msg}}</pre></div>
             </div>
 
             <div class="columns is-multiline" *ngIf="simplifiedResults && simplifiedResults.length > 0">
