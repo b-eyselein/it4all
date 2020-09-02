@@ -42,7 +42,6 @@ trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrec
               .runContainer(
                 programmingCorrectionDockerImage.name,
                 maybeDockerBinds = solutionFilesMounts :+ unitTestFileMount,
-                deleteContainerAfterRun = _ == 0,
                 maybeCmd = Some(Seq("normal"))
               )
               .map {

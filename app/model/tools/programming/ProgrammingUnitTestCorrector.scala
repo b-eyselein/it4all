@@ -64,6 +64,7 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
       .runContainer(
         imageName = programmingCorrectionDockerImage.name,
         maybeDockerBinds = allDockerBinds,
+        deleteContainerAfterRun = _ == 0,
         maybeCmd = Some(Seq("unit_test"))
       )
       .map {
