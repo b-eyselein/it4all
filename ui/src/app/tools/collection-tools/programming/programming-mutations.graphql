@@ -1,4 +1,4 @@
-mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
+mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: FilesSolutionInput!) {
   me(userJwt: $userJwt) {
     programmingExercise(collId: $collId, exId: $exId) {
       correct(part: $part, solution: $solution) {

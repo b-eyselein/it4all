@@ -128,7 +128,7 @@ object ProgrammingColl1Ex3 {
   private val sampleSolutions = Seq(
     SampleSolution(
       id = 1,
-      sample = ProgSolution(
+      sample = FilesSolution(
         files = Seq(
           ExerciseFile(
             name = "test_babylonian_root.py",

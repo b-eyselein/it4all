@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Aug 26 2020 09:06:03 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon Sep 14 2020 10:56:53 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -17,10 +17,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  TruePositive
-  FalsePositive
   FalseNegative
+  FalsePositive
   TrueNegative
+  TruePositive
 }
 
 type CollectionTool {
@@ -116,6 +116,38 @@ type ExPart {
   name: String!
   isEntryPart: Boolean!
   solved: Boolean!
+}
+
+type FilesSampleSolution {
+  id: Int!
+  sample: FilesSolution!
+}
+
+type FilesSolution {
+  files: [ExerciseFile!]!
+}
+
+input FilesSolutionInput {
+  files: [ExerciseFileInput!]!
+}
+
+interface FlaskAbstractCorrectionResult {
+  _x: Boolean!
+}
+
+type FlaskCorrectionResult {
+  solutionSaved: Boolean!
+  resultSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: FlaskAbstractCorrectionResult!
+}
+
+type FlaskExerciseMutations {
+  correct(part: FlaskExercisePart!, solution: FilesSolutionInput!): FlaskCorrectionResult!
+}
+
+enum FlaskExercisePart {
+  FlaskSingleExPart
 }
 
 type GradedHtmlTaskResult {
@@ -264,11 +296,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
+  UNSUCCESSFUL_MATCH
+  PARTIAL_MATCH
   SUCCESSFUL_MATCH
   ONLY_USER
-  PARTIAL_MATCH
   ONLY_SAMPLE
-  UNSUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -319,13 +351,13 @@ type ProgrammingCorrectionResult {
 type ProgrammingExerciseContent {
   filename: String!
   implementationPart: ImplementationPart!
-  sampleSolutions: [ProgrammingSampleSolution!]!
+  sampleSolutions: [FilesSampleSolution!]!
   unitTestPart: UnitTestPart!
   part(partId: String!): ProgExPart
 }
 
 type ProgrammingExerciseMutations {
-  correct(part: ProgExPart!, solution: ProgSolutionInput!): ProgrammingCorrectionResult!
+  correct(part: ProgExPart!, solution: FilesSolutionInput!): ProgrammingCorrectionResult!
 }
 
 type ProgrammingInternalErrorResult implements ProgrammingAbstractResult & AbstractCorrectionResult {
@@ -341,19 +373,6 @@ type ProgrammingResult implements ProgrammingAbstractResult & AbstractCorrection
   unitTestResults: [UnitTestCorrectionResult!]!
   points: Float!
   maxPoints: Float!
-}
-
-type ProgrammingSampleSolution {
-  id: Int!
-  sample: ProgSolution!
-}
-
-type ProgSolution {
-  files: [ExerciseFile!]!
-}
-
-input ProgSolutionInput {
-  files: [ExerciseFileInput!]!
 }
 
 type Query {
@@ -373,8 +392,8 @@ type RegexCorrectionResult {
 }
 
 enum RegexCorrectionType {
-  MATCHING
   EXTRACTION
+  MATCHING
 }
 
 type RegexExerciseContent {
@@ -551,11 +570,11 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  SELECT
-  INSERT
-  CREATE
   DELETE
+  INSERT
   UPDATE
+  CREATE
+  SELECT
 }
 
 enum SqlExPart {
@@ -745,8 +764,8 @@ type UmlAssociationMatchingResult implements MatchingResult {
 }
 
 enum UmlAssociationType {
-  ASSOCIATION
   AGGREGATION
+  ASSOCIATION
   COMPOSITION
 }
 
@@ -971,10 +990,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PUBLIC
   PACKAGE
-  PROTECTED
   PRIVATE
+  PROTECTED
+  PUBLIC
 }
 
 type UnitTestCorrectionResult {
@@ -1005,6 +1024,7 @@ input UserCredentials {
 }
 
 type UserMutations {
+  flaskExercise(collId: Int!, exId: Int!): FlaskExerciseMutations
   programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
   regexExercise(collId: Int!, exId: Int!): RegexExerciseMutations
   sqlExercise(collId: Int!, exId: Int!): SqlExerciseMutations
@@ -1038,12 +1058,12 @@ type WebExerciseContent {
   jsText: String
   siteSpec: SiteSpec!
   files: [ExerciseFile!]!
-  sampleSolutions: [WebSampleSolution!]!
+  sampleSolutions: [FilesSampleSolution!]!
   part(partId: String!): WebExPart
 }
 
 type WebExerciseMutations {
-  correct(part: WebExPart!, solution: WebSolutionInput!): WebCorrectionResult!
+  correct(part: WebExPart!, solution: FilesSolutionInput!): WebCorrectionResult!
 }
 
 enum WebExPart {
@@ -1062,19 +1082,6 @@ type WebResult implements WebAbstractResult & AbstractCorrectionResult {
   gradedJsTaskResults: [GradedJsTaskResult!]!
   points: Float!
   maxPoints: Float!
-}
-
-type WebSampleSolution {
-  id: Int!
-  sample: WebSolution!
-}
-
-type WebSolution {
-  files: [ExerciseFile!]!
-}
-
-input WebSolutionInput {
-  files: [ExerciseFileInput!]!
 }
 
 interface XmlAbstractResult {

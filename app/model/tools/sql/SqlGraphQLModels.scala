@@ -141,7 +141,7 @@ object SqlGraphQLModels
     resolve = context => SelectDAO.tableContents(context.value.schemaName)
   )
 
-  private val sqlExerciseContentType: ObjectType[Unit, SqlExerciseContent] = {
+  override val exerciseContentType: ObjectType[Unit, SqlExerciseContent] = {
     implicit val seTypeT: EnumType[SqlExerciseType]            = sqlExerciseTypeType
     implicit val sst: ObjectType[Unit, SampleSolution[String]] = sampleSolutionType
 
@@ -157,7 +157,5 @@ object SqlGraphQLModels
       )
     )
   }
-
-  override val exerciseContentType: OutputType[SqlExerciseContent] = sqlExerciseContentType
 
 }

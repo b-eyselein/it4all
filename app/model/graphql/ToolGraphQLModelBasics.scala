@@ -1,10 +1,9 @@
 package model.graphql
 
+import model._
 import model.matching.{Match, MatchType, MatchingResult}
 import model.result.AbstractCorrectionResult
-import model.{ExPart, ExerciseContent, SampleSolution}
 import sangria.macros.derive._
-import sangria.marshalling.playJson._
 import sangria.schema._
 
 import scala.reflect.ClassTag
@@ -82,10 +81,32 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
     )
   )
 
-  val exerciseContentType: OutputType[C]
+  val exerciseContentType: ObjectType[Unit, C]
 
   val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, ResType]
 
   val sampleSolutionType: ObjectType[Unit, SampleSolution[S]]
+
+}
+
+trait FilesSolutionToolGraphQLModelBasics[C <: ExerciseContent, PT <: ExPart, ResType <: AbstractCorrectionResult]
+    extends ToolGraphQLModelBasics[FilesSolution, C, PT, ResType] {
+
+  override val SolTypeInputType: InputObjectType[FilesSolution] = {
+    implicit val efit: InputObjectType[ExerciseFile] = exerciseFileInputType
+
+    deriveInputObjectType(
+      InputObjectTypeName("FilesSolutionInput")
+    )
+  }
+
+  private val solutionType: ObjectType[Unit, FilesSolution] = {
+    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
+
+    deriveObjectType()
+  }
+
+  override val sampleSolutionType: ObjectType[Unit, SampleSolution[FilesSolution]] =
+    buildSampleSolutionType("Files", solutionType)
 
 }

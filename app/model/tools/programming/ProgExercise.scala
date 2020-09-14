@@ -1,16 +1,16 @@
 package model.tools.programming
 
-import model.{ExerciseContent, ExerciseFile, SampleSolution}
+import model.{ExerciseContent, ExerciseFile, FilesSolution, SampleSolution}
 import play.api.libs.json.JsValue
 
 final case class ProgrammingExerciseContent(
   filename: String,
   unitTestPart: UnitTestPart,
   implementationPart: ImplementationPart,
-  override val sampleSolutions: Seq[SampleSolution[ProgSolution]]
+  override val sampleSolutions: Seq[SampleSolution[FilesSolution]]
 ) extends ExerciseContent {
 
-  override protected type S = ProgSolution
+  override protected type S = FilesSolution
 
   def parts: Seq[ProgExPart] =
     unitTestPart match {
@@ -45,7 +45,5 @@ final case class ImplementationPart(
   implFileName: String,
   sampleSolFileNames: Seq[String]
 )
-
-final case class ProgSolution(files: Seq[ExerciseFile])
 
 final case class ProgTestData(id: Int, input: JsValue, output: JsValue)

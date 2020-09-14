@@ -1,6 +1,7 @@
 package model.tools.programming
 
 import better.files.File
+import model.FilesSolution
 import model.core.DockerBind
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import play.api.Logger
@@ -16,7 +17,7 @@ object ProgrammingCorrector
 
   def correct(
     exercise: ProgrammingExercise,
-    solution: ProgSolution,
+    solution: FilesSolution,
     solutionTargetDir: File,
     part: ProgExPart
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {

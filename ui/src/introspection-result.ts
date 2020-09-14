@@ -246,6 +246,11 @@
             "name": "XmlResult"
           }
         ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "FlaskAbstractCorrectionResult",
+        "possibleTypes": []
       }
     ]
   }

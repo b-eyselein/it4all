@@ -159,7 +159,7 @@ object ProgrammingColl2Ex7 {
   private val sampleSolutions = Seq(
     SampleSolution(
       id = 1,
-      sample = ProgSolution(
+      sample = FilesSolution(
         files = Seq(
           ExerciseFile(
             name = "a1z26.py",

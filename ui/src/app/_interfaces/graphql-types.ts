@@ -1,5 +1,5 @@
 export type Maybe<T> = T | null;
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -32,10 +32,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  TruePositive = 'TruePositive',
-  FalsePositive = 'FalsePositive',
   FalseNegative = 'FalseNegative',
-  TrueNegative = 'TrueNegative'
+  FalsePositive = 'FalsePositive',
+  TrueNegative = 'TrueNegative',
+  TruePositive = 'TruePositive'
 }
 
 export type CollectionTool = {
@@ -157,6 +157,44 @@ export type ExPart = {
   isEntryPart: Scalars['Boolean'];
   solved: Scalars['Boolean'];
 };
+
+export type FilesSampleSolution = {
+  __typename?: 'FilesSampleSolution';
+  id: Scalars['Int'];
+  sample: FilesSolution;
+};
+
+export type FilesSolution = {
+  __typename?: 'FilesSolution';
+  files: Array<ExerciseFile>;
+};
+
+export type FilesSolutionInput = {
+  files: Array<ExerciseFileInput>;
+};
+
+export type FlaskCorrectionResult = {
+  __typename?: 'FlaskCorrectionResult';
+  solutionSaved: Scalars['Boolean'];
+  resultSaved: Scalars['Boolean'];
+  proficienciesUpdated?: Maybe<Scalars['Boolean']>;
+  result: FlaskAbstractCorrectionResult;
+};
+
+export type FlaskExerciseMutations = {
+  __typename?: 'FlaskExerciseMutations';
+  correct: FlaskCorrectionResult;
+};
+
+
+export type FlaskExerciseMutationsCorrectArgs = {
+  part: FlaskExercisePart;
+  solution: FilesSolutionInput;
+};
+
+export enum FlaskExercisePart {
+  FlaskSingleExPart = 'FlaskSingleExPart'
+}
 
 export type GradedHtmlTaskResult = {
   __typename?: 'GradedHtmlTaskResult';
@@ -321,11 +359,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
   OnlyUser = 'ONLY_USER',
-  PartialMatch = 'PARTIAL_MATCH',
-  OnlySample = 'ONLY_SAMPLE',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
+  OnlySample = 'ONLY_SAMPLE'
 }
 
 export type Mutation = {
@@ -396,7 +434,7 @@ export type ProgrammingExerciseContent = {
   __typename?: 'ProgrammingExerciseContent';
   filename: Scalars['String'];
   implementationPart: ImplementationPart;
-  sampleSolutions: Array<ProgrammingSampleSolution>;
+  sampleSolutions: Array<FilesSampleSolution>;
   unitTestPart: UnitTestPart;
   part?: Maybe<ProgExPart>;
 };
@@ -414,7 +452,7 @@ export type ProgrammingExerciseMutations = {
 
 export type ProgrammingExerciseMutationsCorrectArgs = {
   part: ProgExPart;
-  solution: ProgSolutionInput;
+  solution: FilesSolutionInput;
 };
 
 export type ProgrammingInternalErrorResult = ProgrammingAbstractResult & AbstractCorrectionResult & {
@@ -432,21 +470,6 @@ export type ProgrammingResult = ProgrammingAbstractResult & AbstractCorrectionRe
   unitTestResults: Array<UnitTestCorrectionResult>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
-};
-
-export type ProgrammingSampleSolution = {
-  __typename?: 'ProgrammingSampleSolution';
-  id: Scalars['Int'];
-  sample: ProgSolution;
-};
-
-export type ProgSolution = {
-  __typename?: 'ProgSolution';
-  files: Array<ExerciseFile>;
-};
-
-export type ProgSolutionInput = {
-  files: Array<ExerciseFileInput>;
 };
 
 export type Query = {
@@ -473,8 +496,8 @@ export type RegexCorrectionResult = {
 };
 
 export enum RegexCorrectionType {
-  Matching = 'MATCHING',
-  Extraction = 'EXTRACTION'
+  Extraction = 'EXTRACTION',
+  Matching = 'MATCHING'
 }
 
 export type RegexExerciseContent = {
@@ -698,11 +721,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
-  Insert = 'INSERT',
-  Create = 'CREATE',
   Delete = 'DELETE',
-  Update = 'UPDATE'
+  Insert = 'INSERT',
+  Update = 'UPDATE',
+  Create = 'CREATE',
+  Select = 'SELECT'
 }
 
 export enum SqlExPart {
@@ -915,8 +938,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
 };
 
 export enum UmlAssociationType {
-  Association = 'ASSOCIATION',
   Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
   Composition = 'COMPOSITION'
 }
 
@@ -1174,10 +1197,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
-  Public = 'PUBLIC',
   Package = 'PACKAGE',
+  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Private = 'PRIVATE'
+  Public = 'PUBLIC'
 }
 
 export type UnitTestCorrectionResult = {
@@ -1217,12 +1240,19 @@ export type UserCredentials = {
 
 export type UserMutations = {
   __typename?: 'UserMutations';
+  flaskExercise?: Maybe<FlaskExerciseMutations>;
   programmingExercise?: Maybe<ProgrammingExerciseMutations>;
   regexExercise?: Maybe<RegexExerciseMutations>;
   sqlExercise?: Maybe<SqlExerciseMutations>;
   umlExercise?: Maybe<UmlExerciseMutations>;
   webExercise?: Maybe<WebExerciseMutations>;
   xmlExercise?: Maybe<XmlExerciseMutations>;
+};
+
+
+export type UserMutationsFlaskExerciseArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
 };
 
 
@@ -1289,7 +1319,7 @@ export type WebExerciseContent = {
   jsText?: Maybe<Scalars['String']>;
   siteSpec: SiteSpec;
   files: Array<ExerciseFile>;
-  sampleSolutions: Array<WebSampleSolution>;
+  sampleSolutions: Array<FilesSampleSolution>;
   part?: Maybe<WebExPart>;
 };
 
@@ -1306,7 +1336,7 @@ export type WebExerciseMutations = {
 
 export type WebExerciseMutationsCorrectArgs = {
   part: WebExPart;
-  solution: WebSolutionInput;
+  solution: FilesSolutionInput;
 };
 
 export enum WebExPart {
@@ -1327,21 +1357,6 @@ export type WebResult = WebAbstractResult & AbstractCorrectionResult & {
   gradedJsTaskResults: Array<GradedJsTaskResult>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
-};
-
-export type WebSampleSolution = {
-  __typename?: 'WebSampleSolution';
-  id: Scalars['Int'];
-  sample: WebSolution;
-};
-
-export type WebSolution = {
-  __typename?: 'WebSolution';
-  files: Array<ExerciseFile>;
-};
-
-export type WebSolutionInput = {
-  files: Array<ExerciseFileInput>;
 };
 
 export type XmlAbstractResult = {
@@ -1449,4 +1464,8 @@ export type XmlSolution = {
 export type XmlSolutionInput = {
   document: Scalars['String'];
   grammar: Scalars['String'];
+};
+
+export type FlaskAbstractCorrectionResult = {
+  _x: Scalars['Boolean'];
 };

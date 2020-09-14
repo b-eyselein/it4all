@@ -143,7 +143,7 @@ object ProgrammingColl2Ex3 {
   private val sampleSolutions = Seq(
     SampleSolution(
       id = 1,
-      sample = ProgSolution(
+      sample = FilesSolution(
         files = Seq(
           ExerciseFile(
             name = "file_name_and_ending.py",

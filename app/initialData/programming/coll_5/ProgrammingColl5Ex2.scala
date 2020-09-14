@@ -173,7 +173,7 @@ object ProgrammingColl5Ex2 {
   private val sampleSolutions = Seq(
     SampleSolution(
       id = 1,
-      sample = ProgSolution(
+      sample = FilesSolution(
         files = Seq(
           ExerciseFile(
             name = "dicts.py",

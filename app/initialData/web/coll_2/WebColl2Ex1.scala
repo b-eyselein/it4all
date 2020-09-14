@@ -2,9 +2,9 @@ package initialData.web.coll_2
 
 import de.uniwue.webtester.sitespec._
 import initialData.InitialData._
+import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.tools.web.{WebExerciseContent, WebSolution}
-import model.{Exercise, ExerciseFile, SampleSolution}
+import model.{Exercise, ExerciseFile, FilesSolution, SampleSolution}
 
 object WebColl2Ex1 {
 
@@ -65,9 +65,9 @@ object WebColl2Ex1 {
     )
   }
 
-  private val sampleSolution: SampleSolution[WebSolution] = SampleSolution(
+  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(
     id = 1,
-    sample = WebSolution(
+    sample = FilesSolution(
       files = Seq(
         ExerciseFile(
           name = "clickCounter.html",

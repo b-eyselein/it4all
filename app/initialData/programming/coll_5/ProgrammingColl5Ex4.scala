@@ -137,7 +137,7 @@ object ProgrammingColl5Ex4 {
   private val sampleSolutions = Seq(
     SampleSolution(
       id = 1,
-      sample = ProgSolution(
+      sample = FilesSolution(
         files = Seq(
           ExerciseFile(
             name = "reindeers.py",

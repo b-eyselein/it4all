@@ -1,20 +1,14 @@
 package model.tools.programming
 
 import model.tools._
-import model.{ExerciseFile, JsonProtocols, SampleSolution}
+import model.{ExerciseFile, FilesSolution, JsonProtocols, SampleSolution}
 import play.api.libs.json._
 
-object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, ProgrammingExerciseContent, ProgExPart] {
+object ProgrammingToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[ProgrammingExerciseContent, ProgExPart] {
 
   override val partTypeFormat: Format[ProgExPart] = ProgExPart.jsonFormat
 
   private val progTestDataFormat: Format[ProgTestData] = Json.format[ProgTestData]
-
-  override val solutionFormat: Format[ProgSolution] = {
-    implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
-
-    Json.format
-  }
 
   // Exercise
 
@@ -53,9 +47,9 @@ object ProgrammingToolJsonProtocol extends ToolJsonProtocol[ProgSolution, Progra
   }
 
   val exerciseContentFormat: OFormat[ProgrammingExerciseContent] = {
-    implicit val utf: Format[UnitTestPart]                 = unitTestPartFormat
-    implicit val ipf: Format[ImplementationPart]           = implementationPartFormat
-    implicit val ssf: Format[SampleSolution[ProgSolution]] = sampleSolutionFormat
+    implicit val utf: Format[UnitTestPart]                  = unitTestPartFormat
+    implicit val ipf: Format[ImplementationPart]            = implementationPartFormat
+    implicit val ssf: Format[SampleSolution[FilesSolution]] = sampleSolutionFormat
 
     Json.format
   }

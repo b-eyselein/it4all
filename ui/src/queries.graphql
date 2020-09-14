@@ -176,6 +176,14 @@ fragment ExerciseFile on ExerciseFile {
   editable
 }
 
+fragment FilesSampleSolution on FilesSampleSolution {
+  __typename
+  sample {
+    files {
+      ...ExerciseFile
+    }
+  }
+}
 
 fragment Level on Level {
   title
@@ -245,18 +253,9 @@ fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {
     }
   }
   sampleSolutions {
-    ...ProgrammingSampleSolution
+    ...FilesSampleSolution
   }
   part(partId: $partId)
-}
-
-fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
-  __typename
-  sample {
-    files {
-      ...ExerciseFile
-    }
-  }
 }
 
 # Regex
@@ -404,18 +403,9 @@ fragment WebExerciseContentSolveFields on WebExerciseContent {
     jsTaskCount
   }
   sampleSolutions {
-    ...WebSampleSolution
+    ...FilesSampleSolution
   }
   part(partId: $partId)
-}
-
-fragment WebSampleSolution on WebSampleSolution {
-  __typename
-  sample {
-    files {
-      ...ExerciseFile
-    }
-  }
 }
 
 # Xml

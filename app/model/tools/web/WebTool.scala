@@ -7,10 +7,10 @@ import better.files.File.OpenOptions
 import de.uniwue.webtester.WebCorrector
 import initialData.InitialData
 import initialData.web.WebInitialData
-import model.graphql.ToolGraphQLModelBasics
+import model.graphql.FilesSolutionToolGraphQLModelBasics
 import model.points._
 import model.tools._
-import model.{Exercise, LoggedInUser}
+import model.{Exercise, FilesSolution, LoggedInUser}
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import play.api.Logger
 
@@ -21,7 +21,7 @@ object WebTool extends Tool("web", "Web") {
 
   private val logger = Logger(WebTool.getClass)
 
-  override type SolType       = WebSolution
+  override type SolType       = FilesSolution
   override type ExContentType = WebExerciseContent
   override type PartType      = WebExPart
   override type ResType       = WebAbstractResult
@@ -30,9 +30,9 @@ object WebTool extends Tool("web", "Web") {
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: ToolJsonProtocol[WebSolution, WebExerciseContent, WebExPart] = WebToolJsonProtocol
+  override val jsonFormats: FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebExPart] = WebToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExPart, WebAbstractResult] =
+  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebAbstractResult] =
     WebGraphQLModels
 
   // DB
@@ -43,7 +43,7 @@ object WebTool extends Tool("web", "Web") {
     StandardOpenOption.WRITE
   )
 
-  def writeWebSolutionFiles(targetDir: File, webSolution: WebSolution): Try[Seq[File]] =
+  def writeFilesSolutionFiles(targetDir: File, webSolution: FilesSolution): Try[Seq[File]] =
     Try {
       webSolution.files.map { exerciseFile =>
         (targetDir / exerciseFile.name)
@@ -92,12 +92,15 @@ object WebTool extends Tool("web", "Web") {
 
   override def correctAbstract(
     user: LoggedInUser,
-    solution: WebSolution,
+    solution: FilesSolution,
     exercise: WebExercise,
     part: WebExPart
   )(implicit executionContext: ExecutionContext): Future[WebAbstractResult] =
     Future {
-      writeWebSolutionFiles(solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId), solution)
+      writeFilesSolutionFiles(
+        solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId),
+        solution
+      )
         .fold(
           onCorrectionError("Error while writing user solution"),
           _ => {

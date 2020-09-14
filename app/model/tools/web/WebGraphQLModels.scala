@@ -1,14 +1,14 @@
 package model.tools.web
 
 import de.uniwue.webtester.sitespec.{HtmlTask, JsAction, JsActionType, SiteSpec}
-import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
+import model.graphql.{FilesSolutionToolGraphQLModelBasics, GraphQLArguments}
 import model.result.SuccessType
-import model.{ExerciseFile, SampleSolution}
+import model.{ExerciseFile, FilesSolution, SampleSolution}
 import sangria.macros.derive._
 import sangria.schema._
 
 object WebGraphQLModels
-    extends ToolGraphQLModelBasics[WebSolution, WebExerciseContent, WebExPart, WebAbstractResult]
+    extends FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebAbstractResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[WebExPart] = EnumType(
@@ -44,19 +44,10 @@ object WebGraphQLModels
     )
   }
 
-  private val webSolutionType: ObjectType[Unit, WebSolution] = {
-    implicit val eft: ObjectType[Unit, ExerciseFile] = exerciseFileType
-
-    deriveObjectType()
-  }
-
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[WebSolution]] =
-    buildSampleSolutionType("Web", webSolutionType)
-
   override val exerciseContentType: ObjectType[Unit, WebExerciseContent] = {
-    implicit val siteSpecT: ObjectType[Unit, SiteSpec]              = siteSpecType
-    implicit val eft: ObjectType[Unit, ExerciseFile]                = exerciseFileType
-    implicit val sst: ObjectType[Unit, SampleSolution[WebSolution]] = sampleSolutionType
+    implicit val siteSpecT: ObjectType[Unit, SiteSpec]                = siteSpecType
+    implicit val eft: ObjectType[Unit, ExerciseFile]                  = exerciseFileType
+    implicit val sst: ObjectType[Unit, SampleSolution[FilesSolution]] = sampleSolutionType
 
     deriveObjectType(
       AddFields(
@@ -67,16 +58,6 @@ object WebGraphQLModels
           resolve = context => WebExPart.values.find(_.id == context.arg(partIdArgument))
         )
       )
-    )
-  }
-
-  // Solution types
-
-  override val SolTypeInputType: InputType[WebSolution] = {
-    implicit val eft: InputObjectType[ExerciseFile] = exerciseFileInputType
-
-    deriveInputObjectType[WebSolution](
-      InputObjectTypeName("WebSolutionInput")
     )
   }
 

@@ -119,7 +119,7 @@ object ProgrammingColl2Ex2 {
   private val sampleSolutions = Seq(
     SampleSolution(
       id = 1,
-      sample = ProgSolution(
+      sample = FilesSolution(
         files = Seq(
           ExerciseFile(
             name = "floating_point_exponential.py",

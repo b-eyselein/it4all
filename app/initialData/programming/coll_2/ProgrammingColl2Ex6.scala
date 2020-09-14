@@ -230,7 +230,7 @@ object ProgrammingColl2Ex6 {
   private val sampleSolutions = Seq(
     SampleSolution(
       id = 1,
-      sample = ProgSolution(
+      sample = FilesSolution(
         files = Seq(
           ExerciseFile(
             name = "xmas_tree.py",

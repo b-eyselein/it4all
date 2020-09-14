@@ -2,17 +2,17 @@ package initialData.web.coll_2
 
 import de.uniwue.webtester.sitespec._
 import initialData.InitialData._
+import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.tools.web.{WebExerciseContent, WebSolution}
-import model.{Exercise, ExerciseFile, SampleSolution}
+import model.{Exercise, ExerciseFile, FilesSolution, SampleSolution}
 
 object WebColl2Ex2 {
 
   private val exResPath = exerciseResourcesPath("web", 2, 2)
 
-  private val sampleSolution: SampleSolution[WebSolution] = SampleSolution(
+  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(
     id = 1,
-    sample = WebSolution(
+    sample = FilesSolution(
       files = Seq(
         ExerciseFile(
           name = "pwChecker.html",

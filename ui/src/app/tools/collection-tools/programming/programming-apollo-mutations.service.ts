@@ -3,13 +3,12 @@ import * as Types from '../../../_interfaces/graphql-types';
 import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-
 export type ProgrammingCorrectionMutationVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.ProgExPart;
-  solution: Types.ProgSolutionInput;
+  solution: Types.FilesSolutionInput;
 }>;
 
 
@@ -155,7 +154,7 @@ export const ProgrammingCorrectionResultFragmentDoc = gql`
 ${ProgrammingInternalErrorResultFragmentDoc}
 ${ProgrammingResultFragmentDoc}`;
 export const ProgrammingCorrectionDocument = gql`
-    mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: ProgSolutionInput!) {
+    mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: FilesSolutionInput!) {
   me(userJwt: $userJwt) {
     programmingExercise(collId: $collId, exId: $exId) {
       correct(part: $part, solution: $solution) {

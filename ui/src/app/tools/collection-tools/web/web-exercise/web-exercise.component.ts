@@ -16,7 +16,7 @@ import {
   WebInternalErrorResultFragment,
   WebResultFragment
 } from '../web-apollo-mutations.service';
-import {WebExPart, WebSolution, WebSolutionInput} from '../../../../_interfaces/graphql-types';
+import {FilesSolution, FilesSolutionInput, WebExPart} from '../../../../_interfaces/graphql-types';
 import {HtmlPart, JsPart} from '../web-tool';
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
@@ -28,7 +28,7 @@ import 'codemirror/mode/htmlmixed/htmlmixed';
   templateUrl: './web-exercise.component.html'
 })
 export class WebExerciseComponent
-  extends ComponentWithExerciseDirective<WebSolution, WebSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionMutationVariables, WebCorrectionGQL>
+  extends ComponentWithExerciseDirective<FilesSolution, FilesSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionMutationVariables, WebCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
@@ -65,11 +65,11 @@ export class WebExerciseComponent
     this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.part.id);
   }
 
-  protected getSolution(): WebSolutionInput {
+  protected getSolution(): FilesSolutionInput {
     return {files: this.exerciseFileFragments};
   }
 
-  get sampleSolutions(): WebSolution[] {
+  get sampleSolutions(): FilesSolution[] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 

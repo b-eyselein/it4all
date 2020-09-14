@@ -1,8 +1,6 @@
 package model.tools
 
 import model._
-import model.points.Points
-import model.result.BasicExercisePartResult
 import play.api.libs.json._
 
 trait ToolJsonProtocol[S, C <: ExerciseContent, P <: ExPart] {
@@ -49,5 +47,16 @@ abstract class StringSampleSolutionToolJsonProtocol[C <: ExerciseContent, PartTy
     extends ToolJsonProtocol[String, C, PartType] {
 
   override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)
+
+}
+
+abstract class FilesSampleSolutionToolJsonProtocol[C <: ExerciseContent, PartType <: ExPart]
+    extends ToolJsonProtocol[FilesSolution, C, PartType] {
+
+  override val solutionFormat: Format[FilesSolution] = {
+    implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
+
+    Json.format
+  }
 
 }

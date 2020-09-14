@@ -21,7 +21,7 @@ import {
   SimplifiedExecutionResultFragment,
   UnitTestCorrectionResultFragment
 } from '../programming-apollo-mutations.service';
-import {ProgExPart, ProgSolution, ProgSolutionInput} from '../../../../_interfaces/graphql-types';
+import {FilesSolution, FilesSolutionInput, ProgExPart} from '../../../../_interfaces/graphql-types';
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
 import 'codemirror/mode/python/python';
@@ -32,8 +32,8 @@ import 'codemirror/mode/python/python';
   styleUrls: ['./programming-exercise.component.sass']
 })
 export class ProgrammingExerciseComponent
-  extends ComponentWithExerciseDirective<ProgSolution,
-    ProgSolutionInput,
+  extends ComponentWithExerciseDirective<FilesSolution,
+    FilesSolutionInput,
     ProgrammingCorrectionMutation,
     ProgExPart,
     ProgrammingCorrectionMutationVariables,
@@ -78,18 +78,18 @@ export class ProgrammingExerciseComponent
   }
 
   loadOldSolution(): void {
-    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id, (maybeOldSolution: ProgSolutionInput) => {
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id, (maybeOldSolution: FilesSolutionInput) => {
       //console.log(JSON.stringify(maybeOldSolution));
       // TODO: deactivated for now...
       // this.exerciseFiles = maybeOldSolution.files;
     });
   }
 
-  protected getSolution(): ProgSolutionInput {
+  protected getSolution(): FilesSolutionInput {
     return {files: this.exerciseFiles};
   }
 
-  get sampleSolutions(): ProgSolution[] {
+  get sampleSolutions(): FilesSolution[] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 

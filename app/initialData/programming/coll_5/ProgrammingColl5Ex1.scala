@@ -16,7 +16,7 @@ object ProgrammingColl5Ex1 {
   private val sampleSolutions = Seq(
     SampleSolution(
       id = 1,
-      sample = ProgSolution(
+      sample = FilesSolution(
         files = Seq(
           ExerciseFile(
             name = "tuples.py",

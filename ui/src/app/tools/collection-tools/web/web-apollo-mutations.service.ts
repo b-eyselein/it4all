@@ -3,13 +3,12 @@ import * as Types from '../../../_interfaces/graphql-types';
 import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-
 export type WebCorrectionMutationVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];
   exId: Types.Scalars['Int'];
   part: Types.WebExPart;
-  solution: Types.WebSolutionInput;
+  solution: Types.FilesSolutionInput;
 }>;
 
 
@@ -209,7 +208,7 @@ export const WebCorrectionResultFragmentDoc = gql`
 ${WebResultFragmentDoc}
 ${WebInternalErrorResultFragmentDoc}`;
 export const WebCorrectionDocument = gql`
-    mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
+    mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: WebExPart!, $solution: FilesSolutionInput!) {
   me(userJwt: $userJwt) {
     webExercise(collId: $collId, exId: $exId) {
       correct(part: $part, solution: $solution) {

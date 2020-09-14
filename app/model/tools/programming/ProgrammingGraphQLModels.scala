@@ -1,14 +1,14 @@
 package model.tools.programming
 
-import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
+import model.graphql.{FilesSolutionToolGraphQLModelBasics, GraphQLArguments}
 import model.result.SuccessType
-import model.{ExerciseFile, SampleSolution}
+import model.{ExerciseFile, FilesSolution, SampleSolution}
 import play.api.libs.json.Json
 import sangria.macros.derive._
 import sangria.schema._
 
 object ProgrammingGraphQLModels
-    extends ToolGraphQLModelBasics[ProgSolution, ProgrammingExerciseContent, ProgExPart, ProgrammingAbstractResult]
+    extends FilesSolutionToolGraphQLModelBasics[ProgrammingExerciseContent, ProgExPart, ProgrammingAbstractResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[ProgExPart] = EnumType(
@@ -41,23 +41,14 @@ object ProgrammingGraphQLModels
     deriveObjectType()
   }
 
-  private val progSolutionType: ObjectType[Unit, ProgSolution] = {
-    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
-
-    deriveObjectType()
-  }
-
   private val unitTestPartType: UnionType[Unit] = UnionType(
     "UnitTestPart",
     types = List(simplifiedUnitTestPartType, normalUnitTestPartType)
   )
 
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[ProgSolution]] =
-    buildSampleSolutionType("Programming", progSolutionType)
-
   override val exerciseContentType: ObjectType[Unit, ProgrammingExerciseContent] = {
-    implicit val ipt: ObjectType[Unit, ImplementationPart]           = implementationPartType
-    implicit val sst: ObjectType[Unit, SampleSolution[ProgSolution]] = sampleSolutionType
+    implicit val ipt: ObjectType[Unit, ImplementationPart]            = implementationPartType
+    implicit val sst: ObjectType[Unit, SampleSolution[FilesSolution]] = sampleSolutionType
 
     deriveObjectType(
       ReplaceField("unitTestPart", Field("unitTestPart", unitTestPartType, resolve = _.value.unitTestPart)),
@@ -73,14 +64,6 @@ object ProgrammingGraphQLModels
   }
 
   // Solution types
-
-  override val SolTypeInputType: InputObjectType[ProgSolution] = {
-    implicit val efit: InputObjectType[ExerciseFile] = exerciseFileInputType
-
-    deriveInputObjectType(
-      InputObjectTypeName("ProgSolutionInput")
-    )
-  }
 
   private val NormalExecutionResultType: ObjectType[Unit, NormalExecutionResult] = deriveObjectType()
 

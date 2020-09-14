@@ -15,19 +15,15 @@ object WebExPart extends ExParts[WebExPart] {
 
 }
 
-final case class WebSolution(
-  files: Seq[ExerciseFile]
-)
-
 final case class WebExerciseContent(
   htmlText: Option[String] = None,
   jsText: Option[String] = None,
   siteSpec: SiteSpec,
   files: Seq[ExerciseFile],
-  sampleSolutions: Seq[SampleSolution[WebSolution]]
+  sampleSolutions: Seq[SampleSolution[FilesSolution]]
 ) extends ExerciseContent {
 
-  override protected type S = WebSolution
+  override protected type S = FilesSolution
 
   override def parts: Seq[ExPart] = {
     val htmlPart = if (siteSpec.htmlTasks.nonEmpty) Some(WebExPart.HtmlPart) else None

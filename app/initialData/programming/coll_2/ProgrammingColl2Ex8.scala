@@ -50,7 +50,7 @@ object ProgrammingColl2Ex8 {
   private val sampleSolutions = Seq(
     SampleSolution(
       id = 1,
-      sample = ProgSolution(
+      sample = FilesSolution(
         files = Seq(
           ExerciseFile(
             name = "ceasar.py",

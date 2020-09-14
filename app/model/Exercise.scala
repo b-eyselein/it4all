@@ -62,6 +62,10 @@ final case class ExerciseFile(
   content: String
 )
 
+final case class FilesSolution(
+  files: Seq[ExerciseFile]
+)
+
 final case class SampleSolution[SolType](
   id: Int,
   sample: SolType

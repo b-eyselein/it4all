@@ -1,9 +1,9 @@
 package model.tools.programming
 
 import better.files.File
-import model.SampleSolution
 import model.core.{DockerBind, DockerConnector, RunContainerResult}
 import model.points._
+import model.{FilesSolution, SampleSolution}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -21,7 +21,7 @@ trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrec
 
     exerciseContent.sampleSolutions.headOption match {
       case None => Future.successful(onError("No sample solution found!", mp))
-      case Some(SampleSolution(_, ProgSolution(files))) =>
+      case Some(SampleSolution(_, FilesSolution(files))) =>
         val maybeTestFileContent = files
           .find(_.name == normalUnitTestPart.testFileName)
           .map(_.content)

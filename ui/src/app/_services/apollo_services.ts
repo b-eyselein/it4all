@@ -3,9 +3,6 @@ import * as Types from '../_interfaces/graphql-types';
 import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-
-
-
 export type LessonIdentifierFragment = (
   { __typename?: 'Lesson' }
   & Pick<Types.Lesson, 'lessonId' | 'title' | 'description' | 'video'>
@@ -369,6 +366,17 @@ export type ExerciseFileFragment = (
   & Pick<Types.ExerciseFile, 'name' | 'fileType' | 'content' | 'editable'>
 );
 
+export type FilesSampleSolutionFragment = (
+  { __typename: 'FilesSampleSolution' }
+  & { sample: (
+    { __typename?: 'FilesSolution' }
+    & { files: Array<(
+      { __typename?: 'ExerciseFile' }
+      & ExerciseFileFragment
+    )> }
+  ) }
+);
+
 export type LevelFragment = (
   { __typename?: 'Level' }
   & Pick<Types.Level, 'title' | 'levelIndex'>
@@ -443,20 +451,9 @@ export type ProgExerciseContentSolveFieldsFragment = (
       & ExerciseFileFragment
     )> }
   ), sampleSolutions: Array<(
-    { __typename?: 'ProgrammingSampleSolution' }
-    & ProgrammingSampleSolutionFragment
+    { __typename?: 'FilesSampleSolution' }
+    & FilesSampleSolutionFragment
   )> }
-);
-
-export type ProgrammingSampleSolutionFragment = (
-  { __typename: 'ProgrammingSampleSolution' }
-  & { sample: (
-    { __typename?: 'ProgSolution' }
-    & { files: Array<(
-      { __typename?: 'ExerciseFile' }
-      & ExerciseFileFragment
-    )> }
-  ) }
 );
 
 export type RegexExerciseContentSolveFieldsFragment = (
@@ -596,20 +593,9 @@ export type WebExerciseContentSolveFieldsFragment = (
       & Pick<Types.HtmlTask, 'text'>
     )> }
   ), sampleSolutions: Array<(
-    { __typename?: 'WebSampleSolution' }
-    & WebSampleSolutionFragment
+    { __typename?: 'FilesSampleSolution' }
+    & FilesSampleSolutionFragment
   )> }
-);
-
-export type WebSampleSolutionFragment = (
-  { __typename: 'WebSampleSolution' }
-  & { sample: (
-    { __typename?: 'WebSolution' }
-    & { files: Array<(
-      { __typename?: 'ExerciseFile' }
-      & ExerciseFileFragment
-    )> }
-  ) }
 );
 
 export type XmlExerciseContentSolveFieldsFragment = (
@@ -859,8 +845,8 @@ export const SimplifiedUnitTestPartFragmentDoc = gql`
   }
 }
     ${ExerciseFileFragmentDoc}`;
-export const ProgrammingSampleSolutionFragmentDoc = gql`
-    fragment ProgrammingSampleSolution on ProgrammingSampleSolution {
+export const FilesSampleSolutionFragmentDoc = gql`
+    fragment FilesSampleSolution on FilesSampleSolution {
   __typename
   sample {
     files {
@@ -882,14 +868,14 @@ export const ProgExerciseContentSolveFieldsFragmentDoc = gql`
     }
   }
   sampleSolutions {
-    ...ProgrammingSampleSolution
+    ...FilesSampleSolution
   }
   part(partId: $partId)
 }
     ${NormalUnitTestPartFragmentDoc}
 ${SimplifiedUnitTestPartFragmentDoc}
 ${ExerciseFileFragmentDoc}
-${ProgrammingSampleSolutionFragmentDoc}`;
+${FilesSampleSolutionFragmentDoc}`;
 export const RegexSampleSolutionFragmentDoc = gql`
     fragment RegexSampleSolution on RegexSampleSolution {
   __typename
@@ -1034,16 +1020,6 @@ export const UmlExerciseContentSolveFieldsFragmentDoc = gql`
   part(partId: $partId)
 }
     ${UmlSampleSolutionFragmentDoc}`;
-export const WebSampleSolutionFragmentDoc = gql`
-    fragment WebSampleSolution on WebSampleSolution {
-  __typename
-  sample {
-    files {
-      ...ExerciseFile
-    }
-  }
-}
-    ${ExerciseFileFragmentDoc}`;
 export const WebExerciseContentSolveFieldsFragmentDoc = gql`
     fragment WebExerciseContentSolveFields on WebExerciseContent {
   files {
@@ -1057,12 +1033,12 @@ export const WebExerciseContentSolveFieldsFragmentDoc = gql`
     jsTaskCount
   }
   sampleSolutions {
-    ...WebSampleSolution
+    ...FilesSampleSolution
   }
   part(partId: $partId)
 }
     ${ExerciseFileFragmentDoc}
-${WebSampleSolutionFragmentDoc}`;
+${FilesSampleSolutionFragmentDoc}`;
 export const XmlSampleSolutionFragmentDoc = gql`
     fragment XmlSampleSolution on XmlSampleSolution {
   __typename

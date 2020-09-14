@@ -4,13 +4,13 @@ import initialData.InitialData
 import initialData.programming.ProgrammingInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.tools.{Tool, ToolJsonProtocol, ToolState}
-import model.{Exercise, LoggedInUser, Topic}
+import model.{Exercise, FilesSolution, LoggedInUser, Topic}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.ALPHA) {
+object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.BETA) {
 
-  override type SolType       = ProgSolution
+  override type SolType       = FilesSolution
   override type ExContentType = ProgrammingExerciseContent
   override type PartType      = ProgExPart
   override type ResType       = ProgrammingAbstractResult
@@ -19,11 +19,11 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.A
 
   // Yaml, Html Forms, Json
 
-  override val jsonFormats: ToolJsonProtocol[ProgSolution, ProgrammingExerciseContent, ProgExPart] =
+  override val jsonFormats: ToolJsonProtocol[FilesSolution, ProgrammingExerciseContent, ProgExPart] =
     ProgrammingToolJsonProtocol
 
   override val graphQlModels
-    : ToolGraphQLModelBasics[ProgSolution, ProgrammingExerciseContent, ProgExPart, ProgrammingAbstractResult] =
+    : ToolGraphQLModelBasics[FilesSolution, ProgrammingExerciseContent, ProgExPart, ProgrammingAbstractResult] =
     ProgrammingGraphQLModels
 
   override val allTopics: Seq[Topic] = ProgrammingTopics.values
@@ -32,7 +32,7 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.A
 
   override def correctAbstract(
     user: LoggedInUser,
-    solution: ProgSolution,
+    solution: FilesSolution,
     exercise: ProgrammingExercise,
     part: ProgExPart
   )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {

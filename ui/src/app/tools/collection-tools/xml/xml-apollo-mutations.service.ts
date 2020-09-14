@@ -3,7 +3,6 @@ import * as Types from '../../../_interfaces/graphql-types';
 import gql from 'graphql-tag';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-
 export type XmlCorrectionMutationVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   collId: Types.Scalars['Int'];

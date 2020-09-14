@@ -1,4 +1,4 @@
-mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: WebExPart!, $solution: WebSolutionInput!) {
+mutation WebCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: WebExPart!, $solution: FilesSolutionInput!) {
   me(userJwt:$userJwt) {
     webExercise(collId: $collId, exId: $exId) {
       correct(part: $part, solution: $solution) {

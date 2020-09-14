@@ -2,18 +2,12 @@ package model.tools.web
 
 import de.uniwue.webtester.sitespec._
 import model.tools._
-import model.{ExerciseFile, JsonProtocols, SampleSolution}
+import model.{ExerciseFile, FilesSolution, JsonProtocols, SampleSolution}
 import play.api.libs.json.{Format, Json, OFormat}
 
-object WebToolJsonProtocol extends ToolJsonProtocol[WebSolution, WebExerciseContent, WebExPart] {
+object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebExPart] {
 
   override val partTypeFormat: Format[WebExPart] = WebExPart.jsonFormat
-
-  override val solutionFormat: Format[WebSolution] = {
-    implicit val eff: Format[ExerciseFile] = JsonProtocols.exerciseFileFormat
-
-    Json.format
-  }
 
   private val jsActionFormat: Format[JsAction] = {
     implicit val jatf: Format[JsActionType] = JsActionType.jsonFormat
@@ -48,9 +42,9 @@ object WebToolJsonProtocol extends ToolJsonProtocol[WebSolution, WebExerciseCont
   }
 
   override val exerciseContentFormat: OFormat[WebExerciseContent] = {
-    implicit val eff: Format[ExerciseFile]                  = JsonProtocols.exerciseFileFormat
-    implicit val ssf: Format[SiteSpec]                      = siteSpecFormat
-    implicit val sasof: Format[SampleSolution[WebSolution]] = sampleSolutionFormat
+    implicit val eff: Format[ExerciseFile]                    = JsonProtocols.exerciseFileFormat
+    implicit val ssf: Format[SiteSpec]                        = siteSpecFormat
+    implicit val sasof: Format[SampleSolution[FilesSolution]] = sampleSolutionFormat
 
     Json.format
   }

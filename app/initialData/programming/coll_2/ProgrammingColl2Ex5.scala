@@ -181,7 +181,7 @@ object ProgrammingColl2Ex5 {
   private val sampleSolutions = Seq(
     SampleSolution(
       id = 1,
-      sample = ProgSolution(
+      sample = FilesSolution(
         files = Seq(
           ExerciseFile(
             name = "three_chinese.py",

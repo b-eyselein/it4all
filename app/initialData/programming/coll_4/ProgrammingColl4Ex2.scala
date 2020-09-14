@@ -17,7 +17,7 @@ object ProgrammingColl4Ex2 {
   private val sampleSolutions = Seq(
     SampleSolution(
       id = 1,
-      sample = ProgSolution(
+      sample = FilesSolution(
         files = Seq(
           ExerciseFile(
             name = "longest_string.py",
