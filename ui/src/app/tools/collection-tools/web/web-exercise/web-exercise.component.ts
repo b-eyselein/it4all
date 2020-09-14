@@ -42,7 +42,7 @@ export class WebExerciseComponent
 
   partId: string;
 
-  exerciseFileFragments: ExerciseFileFragment[] = [];
+  exerciseFiles: ExerciseFileFragment[] = [];
 
   constructor(private authenticationService: AuthenticationService, webCorrectionGQL: WebCorrectionGQL, dexieService: DexieService) {
     super(webCorrectionGQL, dexieService);
@@ -51,12 +51,12 @@ export class WebExerciseComponent
   ngOnInit(): void {
     this.partId = getIdForWebExPart(this.contentFragment.part);
 
-    this.exerciseFileFragments = this.contentFragment.files;
+    this.exerciseFiles = this.contentFragment.files;
 
     this.loadOldSolutionAbstract(
       this.exerciseFragment,
       this.partId,
-      (oldSolution) => this.exerciseFileFragments = oldSolution.files
+      (oldSolution) => this.exerciseFiles = oldSolution.files
     );
   }
 
@@ -65,7 +65,7 @@ export class WebExerciseComponent
   }
 
   protected getSolution(): FilesSolutionInput {
-    return {files: this.exerciseFileFragments};
+    return {files: this.exerciseFiles};
   }
 
   get sampleSolutions(): FilesSolution[] {

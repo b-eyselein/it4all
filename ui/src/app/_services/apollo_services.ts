@@ -338,11 +338,6 @@ export type ExerciseSolveFieldsFragment = (
   )> }
 );
 
-export type ExPartBasicsFragment = (
-  { __typename?: 'ExPartBasics' }
-  & Pick<Types.ExPartBasics, 'id' | 'name'>
-);
-
 export type ExerciseQueryVariables = Types.Exact<{
   userJwt: Types.Scalars['String'];
   toolId: Types.Scalars['String'];
@@ -364,9 +359,6 @@ export type ExerciseQuery = (
           { __typename?: 'Exercise' }
           & ExerciseSolveFieldsFragment
         )> }
-      )>, partFragment?: Types.Maybe<(
-        { __typename?: 'ExPartBasics' }
-        & ExPartBasicsFragment
       )> }
     )> }
   )> }
@@ -1121,12 +1113,6 @@ ${SqlExerciseContentFragmentDoc}
 ${UmlExerciseContentFragmentDoc}
 ${WebExerciseContentFragmentDoc}
 ${XmlExerciseContentFragmentDoc}`;
-export const ExPartBasicsFragmentDoc = gql`
-    fragment ExPartBasics on ExPartBasics {
-  id
-  name
-}
-    `;
 export const LoggedInUserWithTokenFragmentDoc = gql`
     fragment LoggedInUserWithToken on LoggedInUserWithToken {
   loggedInUser {
@@ -1346,14 +1332,10 @@ export const ExerciseDocument = gql`
           ...ExerciseSolveFields
         }
       }
-      partFragment(partId: $partId) {
-        ...ExPartBasics
-      }
     }
   }
 }
-    ${ExerciseSolveFieldsFragmentDoc}
-${ExPartBasicsFragmentDoc}`;
+    ${ExerciseSolveFieldsFragmentDoc}`;
 
   @Injectable({
     providedIn: 'root'

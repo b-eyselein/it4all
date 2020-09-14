@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Sep 14 2020 13:26:05 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon Sep 14 2020 14:35:02 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -35,7 +35,6 @@ type CollectionTool {
   collection(collId: Int!): ExerciseCollection
   exerciseCount: Long!
   allExercises: [Exercise!]!
-  partFragment(partId: String!): ExPartBasics
   proficiencies: [UserProficiency!]!
 }
 
@@ -118,11 +117,6 @@ type ExPart {
   name: String!
   isEntryPart: Boolean!
   solved: Boolean!
-}
-
-type ExPartBasics {
-  id: String!
-  name: String!
 }
 
 type FilesSampleSolution {
@@ -308,11 +302,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
+  SUCCESSFUL_MATCH
+  PARTIAL_MATCH
+  ONLY_SAMPLE
   ONLY_USER
   UNSUCCESSFUL_MATCH
-  ONLY_SAMPLE
-  PARTIAL_MATCH
-  SUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -582,11 +576,11 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  CREATE
-  UPDATE
   SELECT
+  CREATE
   DELETE
   INSERT
+  UPDATE
 }
 
 enum SqlExPart {

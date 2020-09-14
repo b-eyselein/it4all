@@ -2,7 +2,9 @@
 
   <div class="columns">
     <div class="column is-half-desktop">
-      <it4all-exercise-files-editor [exerciseFileFragments]="exerciseFileFragments" [mode]="'htmlmixed'">
+      <it4all-exercise-files-editor
+        [exerciseFileFragments]="exerciseFiles"
+        [mode]="'htmlmixed'">
       </it4all-exercise-files-editor>
     </div>
 
@@ -10,7 +12,7 @@
 
       <it4all-tabs>
         <it4all-tab [title]="'Aufgabenstellung'">
-          <div class="notification is-light-grey">
+          <div class="notification mb-3 is-light-grey">
             <div class="content">
               <p>{{exerciseFragment.text}}</p>
               <ol *ngIf="partId === 'html'">
@@ -31,14 +33,17 @@
               </button>
             </div>
             <div class="column">
-              <a [routerLink]="['../..']" class="button is-dark is-fullwidth">Bearbeiten beenden</a>
+              <a routerLink="../.." class="button is-dark is-fullwidth">Bearbeiten beenden</a>
             </div>
           </div>
         </it4all-tab>
 
-        <it4all-tab [title]="'Korrektur'">
+        <it4all-tab [title]="correctionTabTitle">
+          <div class="notification is-dark-warning" *ngIf="isCorrecting">
+            Die Korrektur läuft gerade...
+          </div>
 
-          <ng-container *ngIf="result">
+          <ng-container *ngIf="correctionResult">
 
             <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
 
@@ -67,10 +72,10 @@
             </div>
 
           </ng-container>
-
         </it4all-tab>
 
         <it4all-tab [title]="'Live-Vorschau'"></it4all-tab>
+
         <it4all-tab [title]="sampleSolutionsTabTitle">
           <div class="buttons">
             <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
@@ -79,12 +84,12 @@
           </div>
 
           <ng-container *ngIf="displaySampleSolutions">
-            <ng-container *ngFor="let sample of sampleSolutions">
-              <ng-container *ngFor="let exFile of sample.files; let last = last">
+            <ng-container *ngFor="let sample of sampleSolutions; let lastList = last">
+              <div class="mb-3" *ngFor="let exFile of sample.files">
                 <it4all-exercise-file-card [exerciseFile]="exFile"></it4all-exercise-file-card>
+              </div>
 
-                <br *ngIf="!last">
-              </ng-container>
+              <br *ngIf="!lastList">
             </ng-container>
 
           </ng-container>

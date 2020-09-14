@@ -158,11 +158,6 @@ fragment ExerciseSolveFields on Exercise {
   }
 }
 
-fragment ExPartBasics on ExPartBasics {
-  id
-  name
-}
-
 query Exercise($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
   me (userJwt: $userJwt) {
     tool(toolId: $toolId) {

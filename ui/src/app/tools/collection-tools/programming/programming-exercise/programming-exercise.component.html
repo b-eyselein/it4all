@@ -2,19 +2,22 @@
 
   <div class="columns">
     <div class="column is-half-desktop">
-      <it4all-exercise-files-editor [exerciseFileFragments]="exerciseFiles"
-                                    [mode]="'python'"></it4all-exercise-files-editor>
+      <it4all-exercise-files-editor
+        [exerciseFileFragments]="exerciseFiles"
+        [mode]="'python'">
+      </it4all-exercise-files-editor>
     </div>
     <div class="column is-half-desktop">
 
       <it4all-tabs>
         <it4all-tab [title]="'Aufgabenstellung'">
-          <div class="notification mb-3 is-light-grey" [innerHTML]="exerciseFragment.text"></div>
+          <div class="notification mb-3 is-light-grey">
+            <span [innerHTML]="exerciseFragment.text"></span>
+          </div>
 
           <div class="columns">
             <div class="column">
-              <button class="button is-link is-fullwidth" [class.is-loading]="isCorrecting"
-                      (click)="performCorrection()">
+              <button class="button is-link is-fullwidth" [class.is-loading]="isCorrecting" (click)="correct()">
                 Korrektur
               </button>
             </div>
@@ -25,28 +28,26 @@
         </it4all-tab>
 
         <it4all-tab [title]="correctionTabTitle">
-          <div class="notification danger" *ngIf="isCorrecting">
+          <div class="notification is-dark-warning" *ngIf="isCorrecting">
             Die Korrektur läuft gerade...
           </div>
 
-          <!-- class="overflowHiddenDiv" -->
-          <div  *ngIf="resultQuery && correctionResult">
+          <ng-container *ngIf="correctionResult">
 
             <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
 
             <br>
 
-            <!-- TODO: points notification programming! -->
-            <it4all-points-notification
-              [points]="correctionResult.result.points"
-              [maxPoints]="correctionResult.result.maxPoints">
+            <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
             </it4all-points-notification>
 
             <br>
 
             <div class="message is-danger" *ngIf="internalErrorResult">
               <div class="message-header">Es gab einen internen Fehler bei der Korrektur:</div>
-              <div class="message-body"><pre>{{internalErrorResult.msg}}</pre></div>
+              <div class="message-body">
+                <pre>{{internalErrorResult.msg}}</pre>
+              </div>
             </div>
 
             <div class="columns is-multiline" *ngIf="simplifiedResults && simplifiedResults.length > 0">
@@ -65,28 +66,26 @@
 
             <it4all-programming-normal-result *ngIf="normalResult" [normalResult]="normalResult">
             </it4all-programming-normal-result>
-          </div>
+          </ng-container>
         </it4all-tab>
 
         <it4all-tab [title]="sampleSolutionsTabTitle">
           <div class="buttons">
             <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
-              Musterlösung {{ displaySampleSolutions ? 'ausblenden' : 'anzeigen'}}
+              Musterlösung {{displaySampleSolutions ? 'ausblenden' : 'anzeigen'}}
             </button>
           </div>
 
-          <div class="overflowHiddenDiv" *ngIf="displaySampleSolutions">
-            <!-- TODO: tabs for multiple sample solutions? -->
+          <ng-container *ngIf="displaySampleSolutions">
+            <ng-container *ngFor="let sample of sampleSolutions; let lastList = last">
+              <div class="mb-3" *ngFor="let exFile of sample.files">
+                <it4all-exercise-file-card [exerciseFile]="exFile"></it4all-exercise-file-card>
+              </div>
 
-            <div *ngFor="let sampleSolutionFiles of sampleSolutionFilesList; let last = last">
-              <ng-container *ngFor="let sampleSolFile of sampleSolutionFiles">
-                <it4all-exercise-file-card [exerciseFile]="sampleSolFile"></it4all-exercise-file-card>
+              <br *ngIf="!lastList">
+            </ng-container>
 
-                <br *ngIf="!last">
-              </ng-container>
-            </div>
-
-          </div>
+          </ng-container>
         </it4all-tab>
       </it4all-tabs>
 

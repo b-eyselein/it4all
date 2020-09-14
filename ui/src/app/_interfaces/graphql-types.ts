@@ -51,7 +51,6 @@ export type CollectionTool = {
   collection?: Maybe<ExerciseCollection>;
   exerciseCount: Scalars['Long'];
   allExercises: Array<Exercise>;
-  partFragment?: Maybe<ExPartBasics>;
   proficiencies: Array<UserProficiency>;
 };
 
@@ -63,11 +62,6 @@ export type CollectionToolLessonArgs = {
 
 export type CollectionToolCollectionArgs = {
   collId: Scalars['Int'];
-};
-
-
-export type CollectionToolPartFragmentArgs = {
-  partId: Scalars['String'];
 };
 
 export type DtdParseException = {
@@ -163,12 +157,6 @@ export type ExPart = {
   name: Scalars['String'];
   isEntryPart: Scalars['Boolean'];
   solved: Scalars['Boolean'];
-};
-
-export type ExPartBasics = {
-  __typename?: 'ExPartBasics';
-  id: Scalars['String'];
-  name: Scalars['String'];
 };
 
 export type FilesSampleSolution = {
@@ -378,11 +366,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlyUser = 'ONLY_USER',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  OnlySample = 'ONLY_SAMPLE',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH'
+  OnlySample = 'ONLY_SAMPLE',
+  OnlyUser = 'ONLY_USER',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -740,11 +728,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Create = 'CREATE',
-  Update = 'UPDATE',
   Select = 'SELECT',
+  Create = 'CREATE',
   Delete = 'DELETE',
-  Insert = 'INSERT'
+  Insert = 'INSERT',
+  Update = 'UPDATE'
 }
 
 export enum SqlExPart {

@@ -24,7 +24,6 @@ import {AuthenticationService} from '../../../../_services/authentication.servic
 
 import 'codemirror/mode/python/python';
 
-
 function getIdForProgExPart(progExPart: ProgExPart): string {
   switch (progExPart) {
     case ProgExPart.ActivityDiagram:
@@ -37,8 +36,7 @@ function getIdForProgExPart(progExPart: ProgExPart): string {
 
 @Component({
   selector: 'it4all-programming-exercise',
-  templateUrl: './programming-exercise.component.html',
-  styleUrls: ['./programming-exercise.component.sass']
+  templateUrl: './programming-exercise.component.html'
 })
 export class ProgrammingExerciseComponent
   extends ComponentWithExerciseDirective<FilesSolution,
@@ -62,10 +60,6 @@ export class ProgrammingExerciseComponent
     dexieService: DexieService
   ) {
     super(programmingCorrectionGQL, dexieService);
-  }
-
-  get sampleSolutionFilesList(): ExerciseFileFragment[][] {
-    return this.contentFragment.sampleSolutions.map((s) => s.sample.files);
   }
 
   ngOnInit(): void {
@@ -132,7 +126,7 @@ export class ProgrammingExerciseComponent
     return this.result?.normalResult;
   }
 
-  performCorrection(): void {
+  correct(): void {
     this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.partId);
   }
 
