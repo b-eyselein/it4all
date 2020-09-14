@@ -24,7 +24,7 @@ final case class FlaskExerciseContent(
 
   override protected type S = FilesSolution
 
-  override def parts: Seq[ExPart] = ???
+  override def parts: Seq[ExPart] = Seq(FlaskExPart.FlaskSingleExPart)
 
 }
 

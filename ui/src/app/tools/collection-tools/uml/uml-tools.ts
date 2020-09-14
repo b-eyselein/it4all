@@ -1,24 +1,19 @@
-import {ToolPart} from '../../../_interfaces/tool';
 import {distinctStringArray} from '../../../helpers';
-import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../_services/apollo_services';
-import {KeyValueObject} from '../../../_interfaces/graphql-types';
+import {ExerciseSolveFieldsFragment, UmlExerciseContentFragment} from '../../../_services/apollo_services';
+import {KeyValueObject, UmlExPart} from '../../../_interfaces/graphql-types';
 
-const UmlClassSelectionPart: ToolPart = {name: 'Klassenselektion', id: 'classSelection'};
-
-export const UmlDiagramDrawingHelpPart: ToolPart = {
-  name: 'Diagramm zeichnen mit Hilfe',
-  id: 'diagramDrawingHelp',
-  disabled: true
-};
-
-export const UmlDiagramDrawingPart: ToolPart = {name: 'Diagramm zeichnen', id: 'diagramDrawing', disabled: true};
-
-export const UmlMemberAllocationPart: ToolPart = {
-  name: 'Zuordnung der Attribute und Methoden',
-  id: 'memberAllocation',
-  disabled: true
-};
-
+export function getIdForUmlExPart(umlExPart: UmlExPart): string {
+  switch (umlExPart) {
+    case UmlExPart.ClassSelection:
+      return 'classSelection';
+    case UmlExPart.DiagramDrawing:
+      return 'diagramDrawing';
+    case UmlExPart.DiagramDrawingHelp:
+      return 'diagramDrawingHelp';
+    case UmlExPart.MemberAllocation:
+      return 'memberAllocation';
+  }
+}
 
 // Helper functions
 
@@ -53,7 +48,7 @@ export function isSelectable(toIgnore: string[], s: string): boolean {
 
 export function getUmlExerciseTextParts(
   exercise: ExerciseSolveFieldsFragment,
-  exerciseContent: UmlExerciseContentSolveFieldsFragment,
+  exerciseContent: UmlExerciseContentFragment,
 ): { selectableClasses: SelectableClass[], textParts: UmlExerciseTextPart[] } {
 
   const splitText = splitExerciseText(exercise.text);

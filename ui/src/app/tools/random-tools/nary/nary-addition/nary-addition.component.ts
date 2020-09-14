@@ -1,21 +1,18 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {NaryAdditionToolPart} from '../../random-tools-list';
-import {ToolPart} from '../../../../_interfaces/tool';
 import {BINARY_SYSTEM, NaryComponentBase, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
 import {randomInt} from '../../../../helpers';
 
 @Component({
+  selector: 'it4all-nary-addition',
   templateUrl: './nary-addition.component.html',
   styles: [`
-      #solution {
-          direction: rtl;
-          unicode-bidi: bidi-override
-      }`
+    #solution {
+      direction: rtl;
+      unicode-bidi: bidi-override
+    }`
   ]
 })
 export class NaryAdditionComponent extends NaryComponentBase implements OnInit {
-
-  toolPart: ToolPart = NaryAdditionToolPart;
 
   // noinspection JSMismatchedCollectionQueryUpdate
   numberingSystems: NumberingSystem[] = NUMBERING_SYSTEMS;

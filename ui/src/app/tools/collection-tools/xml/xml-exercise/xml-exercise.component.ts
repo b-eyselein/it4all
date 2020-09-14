@@ -1,11 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {DexieService} from '../../../../_services/dexie.service';
 import {
   ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
-  XmlExerciseContentSolveFieldsFragment
+  XmlExerciseContentFragment
 } from '../../../../_services/apollo_services';
 import {
   XmlAbstractResultFragment,
@@ -19,11 +18,33 @@ import {
   XmlResultFragment
 } from '../xml-apollo-mutations.service';
 import {XmlExPart, XmlSolution, XmlSolutionInput} from '../../../../_interfaces/graphql-types';
-import {getXmlDocumentContent, getXmlGrammarContent, XmlDocumentCreation, XmlGrammarCreation} from '../xml-tool';
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
+
+
+export function getIdForXmlExPart(xmlExPart: XmlExPart): string {
+  switch (xmlExPart) {
+    case XmlExPart.DocumentCreationXmlPart:
+      return 'document';
+    case XmlExPart.GrammarCreationXmlPart:
+      return 'grammar';
+  }
+}
+
+export function getXmlGrammarContent(rootNode: string): string {
+  return `<!ELEMENT ${rootNode} (EMPTY)>`;
+}
+
+export function getXmlDocumentContent(rootNode: string): string {
+  return `
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ${rootNode} SYSTEM "${rootNode}.dtd">
+<${rootNode}>
+</${rootNode}>`.trim();
+}
+
 
 @Component({
   selector: 'it4all-xml-exercise',
@@ -34,9 +55,9 @@ export class XmlExerciseComponent
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() contentFragment: XmlExerciseContentSolveFieldsFragment;
+  @Input() contentFragment: XmlExerciseContentFragment;
 
-  oldPart: ToolPart;
+  partId: string;
 
   isGrammarPart: boolean;
 
@@ -50,18 +71,10 @@ export class XmlExerciseComponent
   }
 
   ngOnInit() {
-    switch (this.contentFragment.part) {
-      case XmlExPart.DocumentCreationXmlPart:
-        this.oldPart = XmlDocumentCreation;
-        break;
-      case XmlExPart.GrammarCreationXmlPart:
-        this.oldPart = XmlGrammarCreation;
-        break;
-    }
-
     const rootNode = this.contentFragment.rootNode;
 
-    this.isGrammarPart = this.oldPart.id === 'grammar';
+    this.partId = getIdForXmlExPart(this.contentFragment.part);
+    this.isGrammarPart = this.partId === 'grammar';
 
     const grammarFileName = `${rootNode}.dtd`;
     this.grammarFile = {
@@ -81,7 +94,7 @@ export class XmlExerciseComponent
 
     this.exerciseFileFragments = [this.grammarFile, this.documentFile];
 
-    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id, (oldSol) => {
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.partId, (oldSol) => {
       this.grammarFile.content = oldSol.grammar;
       this.documentFile.content = oldSol.document;
 
@@ -91,7 +104,7 @@ export class XmlExerciseComponent
   }
 
   correct(): void {
-    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.oldPart.id);
+    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.partId);
   }
 
   protected getSolution(): XmlSolutionInput {

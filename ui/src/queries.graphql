@@ -135,24 +135,32 @@ fragment ExerciseSolveFields on Exercise {
   toolId
   title
   text
+  flaskContent {
+    ...FlaskExerciseContent
+  }
   programmingContent {
-    ...ProgExerciseContentSolveFields
+    ...ProgrammingExerciseContent
   }
   regexContent {
-    ...RegexExerciseContentSolveFields
+    ...RegexExerciseContent
   }
   sqlContent {
-    ...SqlExerciseContentSolveFields
+    ...SqlExerciseContent
   }
   umlContent {
-    ...UmlExerciseContentSolveFields
+    ...UmlExerciseContent
   }
   webContent {
-    ...WebExerciseContentSolveFields
+    ...WebExerciseContent
   }
   xmlContent {
-    ...XmlExerciseContentSolveFields
+    ...XmlExerciseContent
   }
+}
+
+fragment ExPartBasics on ExPartBasics {
+  id
+  name
 }
 
 query Exercise($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
@@ -227,6 +235,14 @@ fragment FieldsForLink on Exercise {
   }
 }
 
+# Flask
+fragment FlaskExerciseContent on FlaskExerciseContent {
+  __typename
+  sampleSolutions {
+    ...FilesSampleSolution
+  }
+}
+
 # Programming
 
 fragment SimplifiedUnitTestPart on SimplifiedUnitTestPart {
@@ -241,7 +257,7 @@ fragment NormalUnitTestPart on NormalUnitTestPart {
   }
 }
 
-fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {
+fragment ProgrammingExerciseContent on ProgrammingExerciseContent {
   unitTestPart {
     __typename
     ...NormalUnitTestPart
@@ -260,7 +276,7 @@ fragment ProgExerciseContentSolveFields on ProgrammingExerciseContent {
 
 # Regex
 
-fragment RegexExerciseContentSolveFields on RegexExerciseContent {
+fragment RegexExerciseContent on RegexExerciseContent {
   sampleSolutions {
     ...RegexSampleSolution
   }
@@ -274,7 +290,7 @@ fragment RegexSampleSolution on RegexSampleSolution {
 
 # Sql
 
-fragment SqlExerciseContentSolveFields on SqlExerciseContent {
+fragment SqlExerciseContent on SqlExerciseContent {
   hint
   sampleSolutions {
     ...SqlSampleSolution
@@ -315,7 +331,7 @@ fragment SqlSampleSolution on SqlSampleSolution {
 
 # Uml
 
-fragment UmlExerciseContentSolveFields on UmlExerciseContent {
+fragment UmlExerciseContent on UmlExerciseContent {
   toIgnore
   mappings {
     key
@@ -391,7 +407,7 @@ fragment UmlImplementation on UmlImplementation {
 
 # Web
 
-fragment WebExerciseContentSolveFields on WebExerciseContent {
+fragment WebExerciseContent on WebExerciseContent {
   files {
     ...ExerciseFile
   }
@@ -410,7 +426,7 @@ fragment WebExerciseContentSolveFields on WebExerciseContent {
 
 # Xml
 
-fragment XmlExerciseContentSolveFields on XmlExerciseContent {
+fragment XmlExerciseContent on XmlExerciseContent {
   rootNode
   grammarDescription
   sampleSolutions {

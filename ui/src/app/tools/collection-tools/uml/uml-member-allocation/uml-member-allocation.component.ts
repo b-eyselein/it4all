@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {distinctObjectArray, flatMapArray} from '../../../../helpers';
 import {
   ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment
+  UmlExerciseContentFragment
 } from '../../../../_services/apollo_services';
 import {UmlAttribute, UmlClassDiagram, UmlMethod, UmlVisibility} from '../../../../_interfaces/graphql-types';
 
@@ -46,7 +46,7 @@ interface MemberAllocClass {
 export class UmlMemberAllocationComponent implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() contentFragment: UmlExerciseContentSolveFieldsFragment;
+  @Input() contentFragment: UmlExerciseContentFragment;
 
   data: MemberAllocClass[];
 

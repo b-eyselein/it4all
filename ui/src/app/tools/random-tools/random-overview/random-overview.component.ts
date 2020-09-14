@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {RandomTool} from '../../../_interfaces/tool';
+import {RandomTool} from '../random-tool';
 import {randomTools} from '../random-tools-list';
 import {Subscription} from 'rxjs';
 

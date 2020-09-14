@@ -1,21 +1,13 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {isAssociation, isImplementation, isMyJointClass, MyJointClass} from '../_model/joint-class-diag-elements';
-import {
-  getUmlExerciseTextParts,
-  SelectableClass,
-  UmlDiagramDrawingHelpPart,
-  UmlDiagramDrawingPart,
-  UmlExerciseTextPart,
-  UmlMemberAllocationPart
-} from '../uml-tools';
+import {getIdForUmlExPart, getUmlExerciseTextParts, SelectableClass, UmlExerciseTextPart} from '../uml-tools';
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
 import {ExportedUmlClassDiagram, umlAssocfromConnection, umlImplfromConnection} from '../_model/my-uml-interfaces';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
-import {ToolPart} from '../../../../_interfaces/tool';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
-import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, UmlExerciseContentFragment} from '../../../../_services/apollo_services';
 import {
   UmlAbstractResultFragment,
   UmlCorrectionGQL,
@@ -58,13 +50,12 @@ export class UmlDiagramDrawingComponent
   extends ComponentWithExerciseDirective<UmlClassDiagram, UmlClassDiagramInput, UmlCorrectionMutation, UmlExPart, UmlCorrectionMutationVariables, UmlCorrectionGQL>
   implements OnInit {
 
-  readonly nextPart = UmlMemberAllocationPart;
-
+  readonly nextPartId: string = getIdForUmlExPart(UmlExPart.MemberAllocation);
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() contentFragment: UmlExerciseContentSolveFieldsFragment;
+  @Input() contentFragment: UmlExerciseContentFragment;
 
-  oldPart: ToolPart;
+  partId: string;
 
   withHelp: boolean;
 
@@ -89,14 +80,7 @@ export class UmlDiagramDrawingComponent
   }
 
   ngOnInit(): void {
-    switch (this.contentFragment.part) {
-      case UmlExPart.DiagramDrawingHelp:
-        this.oldPart = UmlDiagramDrawingHelpPart;
-        break;
-      case UmlExPart.DiagramDrawing:
-        this.oldPart = UmlDiagramDrawingPart;
-        break;
-    }
+    this.partId = getIdForUmlExPart(this.contentFragment.part);
 
     this.withHelp = this.contentFragment.part === UmlExPart.DiagramDrawingHelp;
 
@@ -125,7 +109,7 @@ export class UmlDiagramDrawingComponent
 
     this.loadClassDiagram(this.contentFragment.sampleSolutions[0].sample as ExportedUmlClassDiagram);
 
-    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id, (oldSol) => this.loadClassDiagram(oldSol));
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.partId, (oldSol) => this.loadClassDiagram(oldSol));
   }
 
   loadClassDiagram(cd: ExportedUmlClassDiagram): void {
@@ -291,7 +275,7 @@ export class UmlDiagramDrawingComponent
   }
 
   correct(): void {
-    super.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.oldPart.id);
+    super.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.partId);
 
     this.corrected = true;
   }

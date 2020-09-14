@@ -1,4 +1,4 @@
-mutation XmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!,$part: XmlExPart!, $solution: XmlSolutionInput!) {
+mutation XmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
   me(userJwt: $userJwt ) {
     xmlExercise(collId: $collId, exId: $exId)  {
       correct(part: $part, solution: $solution) {

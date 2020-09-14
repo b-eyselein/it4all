@@ -3,6 +3,7 @@ package model.graphql
 import model.mongo.MongoExercisePartResultQueries
 import model.tools.Helper.UntypedExercise
 import model.tools.Tool
+import model.tools.flask.{FlaskExerciseContent, FlaskToolGraphQLModels}
 import model.tools.programming.{ProgrammingExerciseContent, ProgrammingGraphQLModels}
 import model.tools.regex.{RegexExerciseContent, RegexGraphQLModels}
 import model.tools.sql.{SqlExerciseContent, SqlGraphQLModels}
@@ -45,7 +46,15 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
       Field("text", StringType, resolve = _.value._3.text),
       Field("topicsWithLevels", ListType(topicWithLevelType), resolve = _.value._3.topicsWithLevels),
       Field("difficulty", IntType, resolve = _.value._3.difficulty),
-      // Content
+      // Content FIXME: refactor!
+      Field(
+        "flaskContent",
+        OptionType(FlaskToolGraphQLModels.exerciseContentType),
+        resolve = _.value._3.content match {
+          case x: FlaskExerciseContent => Some(x)
+          case _                       => None
+        }
+      ),
       Field(
         "programmingContent",
         OptionType(ProgrammingGraphQLModels.exerciseContentType),

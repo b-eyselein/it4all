@@ -1,13 +1,12 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {DECIMAL_SYSTEM, NaryComponentBase, NaryReadOnlyNumberInput} from '../nary';
-import {NaryTwoConversionToolPart} from '../../random-tools-list';
-import {ToolPart} from '../../../../_interfaces/tool';
 import {randomInt} from '../../../../helpers';
 
-@Component({templateUrl: './nary-two-conversion.component.html'})
+@Component({
+  selector: 'it4all-nary-two-conversion',
+  templateUrl: './nary-two-conversion.component.html'
+})
 export class NaryTwoConversionComponent extends NaryComponentBase implements OnInit {
-
-  toolPart: ToolPart = NaryTwoConversionToolPart;
 
   withIntermediateSteps = true;
 

@@ -3,12 +3,13 @@ import {ActivatedRoute} from '@angular/router';
 import {
   ExerciseGQL,
   ExerciseQuery, ExerciseSolveFieldsFragment,
-  ProgExerciseContentSolveFieldsFragment,
-  RegexExerciseContentSolveFieldsFragment,
-  SqlExerciseContentSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment,
-  WebExerciseContentSolveFieldsFragment,
-  XmlExerciseContentSolveFieldsFragment
+  FlaskExerciseContentFragment,
+  ProgrammingExerciseContentFragment,
+  RegexExerciseContentFragment,
+  SqlExerciseContentFragment,
+  UmlExerciseContentFragment,
+  WebExerciseContentFragment,
+  XmlExerciseContentFragment
 } from '../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
 import {AuthenticationService} from '../../../_services/authentication.service';
@@ -56,27 +57,31 @@ export class ExerciseComponent implements OnInit, OnDestroy {
     return this.exerciseQuery.me.tool.collection.exercise;
   }
 
-  get programmingExerciseContent(): ProgExerciseContentSolveFieldsFragment | undefined {
+  get flaskExerciseContent(): FlaskExerciseContentFragment | undefined {
+    return this.exercise.flaskContent;
+  }
+
+  get programmingExerciseContent(): ProgrammingExerciseContentFragment | undefined {
     return this.exercise.programmingContent;
   }
 
-  get regexExerciseContent(): RegexExerciseContentSolveFieldsFragment | undefined {
+  get regexExerciseContent(): RegexExerciseContentFragment | undefined {
     return this.exercise.regexContent;
   }
 
-  get sqlExerciseContent(): SqlExerciseContentSolveFieldsFragment | undefined {
+  get sqlExerciseContent(): SqlExerciseContentFragment | undefined {
     return this.exercise.sqlContent;
   }
 
-  get umlExerciseContent(): UmlExerciseContentSolveFieldsFragment | undefined {
+  get umlExerciseContent(): UmlExerciseContentFragment | undefined {
     return this.exercise.umlContent;
   }
 
-  get webExerciseContent(): WebExerciseContentSolveFieldsFragment | undefined {
+  get webExerciseContent(): WebExerciseContentFragment | undefined {
     return this.exercise.webContent;
   }
 
-  get xmlExerciseContent(): XmlExerciseContentSolveFieldsFragment | undefined {
+  get xmlExerciseContent(): XmlExerciseContentFragment | undefined {
     return this.exercise.xmlContent;
   }
 

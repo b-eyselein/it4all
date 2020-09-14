@@ -1,8 +1,7 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {DexieService} from '../../../../_services/dexie.service';
-import {RegexExercisePart} from '../regex-tool';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
-import {ExerciseSolveFieldsFragment, RegexExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, RegexExerciseContentFragment} from '../../../../_services/apollo_services';
 import {
   RegexAbstractResultFragment,
   RegexCorrectionGQL,
@@ -16,6 +15,14 @@ import {
 import {RegexExPart} from '../../../../_interfaces/graphql-types';
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
+
+function getIdForRegexExercisePart(regexExPart: RegexExPart): string {
+  switch (regexExPart) {
+    case RegexExPart.RegexSingleExPart:
+      return 'regex';
+  }
+}
+
 @Component({
   selector: 'it4all-regex-exercise',
   templateUrl: './regex-exercise.component.html'
@@ -25,18 +32,20 @@ export class RegexExerciseComponent
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() contentFragment: RegexExerciseContentSolveFieldsFragment;
+  @Input() contentFragment: RegexExerciseContentFragment;
 
   solution = '';
 
   showInfo = false;
+
+  readonly partId: string = getIdForRegexExercisePart(RegexExPart.RegexSingleExPart);
 
   constructor(private authenticationService: AuthenticationService, regexCorrectionGQL: RegexCorrectionGQL, dexieService: DexieService) {
     super(regexCorrectionGQL, dexieService);
   }
 
   ngOnInit(): void {
-    this.loadOldSolutionAbstract(this.exerciseFragment, RegexExercisePart.id, (oldSol) => this.solution = oldSol);
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.partId, (oldSol) => this.solution = oldSol);
   }
 
   protected getSolution(): string {
@@ -83,7 +92,7 @@ export class RegexExerciseComponent
       return;
     }
 
-    this.correctAbstract(this.exerciseFragment, RegexExPart.RegexSingleExPart, RegexExercisePart.id);
+    this.correctAbstract(this.exerciseFragment, RegexExPart.RegexSingleExPart, this.partId);
   }
 
   // FIXME: make directive?

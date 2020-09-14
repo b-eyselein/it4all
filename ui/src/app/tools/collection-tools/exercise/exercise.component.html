@@ -1,5 +1,11 @@
 <ng-container *ngIf=" exerciseQuery; else loadingDataBlock">
 
+  <it4all-flask-exercise
+    *ngIf="flaskExerciseContent"
+    [exerciseFragment]="exercise"
+    [contentFragment]="flaskExerciseContent">
+  </it4all-flask-exercise>
+
   <it4all-programming-exercise
     *ngIf="programmingExerciseContent"
     [exerciseFragment]="exercise"

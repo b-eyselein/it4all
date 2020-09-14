@@ -1,18 +1,16 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {ToolPart} from '../../../../_interfaces/tool';
-import {BoolFillOutPart} from '../../random-tools-list';
 import {BoolComponentHelper} from '../_model/bool-component-helper';
 import {BooleanNode, calculateAssignments} from '../_model/bool-node';
 import {generateBooleanFormula} from '../_model/bool-formula';
 
-@Component({templateUrl: './bool-fill-out.component.html'})
+@Component({
+  selector: 'it4all-bool-fillout',
+  templateUrl: './bool-fill-out.component.html'
+})
 export class BoolFillOutComponent extends BoolComponentHelper implements OnInit {
-
-  readonly part: ToolPart = BoolFillOutPart;
 
   withSubFormulas = false;
   subFormulas: BooleanNode[] = [];
-
 
   ngOnInit(): void {
     this.update();

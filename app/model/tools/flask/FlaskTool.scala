@@ -15,6 +15,8 @@ object FlaskTool extends Tool("flask", "Flask", ToolState.ALPHA) {
   override type PartType      = FlaskExPart
   override type ResType       = FlaskCorrectionResult
 
+  type FlaskExercise = Exercise[FlaskExerciseContent]
+
   override val jsonFormats: FilesSampleSolutionToolJsonProtocol[FlaskExerciseContent, FlaskExPart]  =
     FlaskToolJsonProtocol
   override val graphQlModels

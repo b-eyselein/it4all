@@ -44,6 +44,7 @@ import {HtmlAttributeResultComponent} from './web/_components/html-attribute-res
 import {FilledPointsComponent} from './_components/filled-points/filled-points.component';
 import {ProficiencyCardComponent} from './_components/proficiency-card/proficiency-card.component';
 import {LessonQuestionsContentComponent} from './lessons/lesson-questions/lesson-questions-content.component';
+import {FlaskExerciseComponent} from './flask/flask-exercise/flask-exercise.component';
 
 
 @NgModule({
@@ -64,10 +65,12 @@ import {LessonQuestionsContentComponent} from './lessons/lesson-questions/lesson
 
     StringSampleSolComponent, FilledPointsComponent,
 
-    RegexExerciseComponent, RegexMatchingResultComponent, RegexExtractionResultComponent, RegexExtractionMatchComponent,
-    RegexCheatsheetComponent,
+    FlaskExerciseComponent,
 
     ProgrammingExerciseComponent, ProgrammingSimplifiedResultComponent, ProgrammingUnitTestResultComponent, ProgrammingNormalResultComponent,
+
+    RegexExerciseComponent, RegexMatchingResultComponent, RegexExtractionResultComponent, RegexExtractionMatchComponent,
+    RegexCheatsheetComponent,
 
     SqlExerciseComponent, SqlResultComponent, SqlMatchingResultComponent, SqlExecutionResultComponent, SqlTableContentsComponent, QueryResultTableComponent,
 

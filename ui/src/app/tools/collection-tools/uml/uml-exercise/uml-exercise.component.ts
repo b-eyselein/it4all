@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ExerciseSolveFieldsFragment, UmlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, UmlExerciseContentFragment} from '../../../../_services/apollo_services';
 import {UmlExPart} from '../../../../_interfaces/graphql-types';
 
 @Component({
@@ -9,7 +9,7 @@ import {UmlExPart} from '../../../../_interfaces/graphql-types';
 export class UmlExerciseComponent {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() contentFragment: UmlExerciseContentSolveFieldsFragment;
+  @Input() contentFragment: UmlExerciseContentFragment;
 
   isClassSelection(): boolean {
     return this.contentFragment.part === UmlExPart.ClassSelection;

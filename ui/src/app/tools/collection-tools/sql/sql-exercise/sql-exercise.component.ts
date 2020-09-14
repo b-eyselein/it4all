@@ -3,22 +3,28 @@ import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
-import {ToolPart} from '../../../../_interfaces/tool';
-import {ExerciseSolveFieldsFragment, SqlExerciseContentSolveFieldsFragment} from '../../../../_services/apollo_services';
+import {ExerciseSolveFieldsFragment, SqlExerciseContentFragment} from '../../../../_services/apollo_services';
 import {
   SqlAbstractResultFragment,
   SqlCorrectionGQL,
   SqlCorrectionMutation,
   SqlCorrectionMutationVariables,
+  SqlCorrectionResultFragment,
   SqlInternalErrorResultFragment,
-  SqlResultFragment,
-  SqlCorrectionResultFragment
+  SqlResultFragment
 } from '../sql-apollo-mutations.service';
 import {SqlExPart, SqlInternalErrorResult} from '../../../../_interfaces/graphql-types';
-import {SqlCreateQueryPart} from '../sql-tool';
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
 import 'codemirror/mode/sql/sql';
+
+
+function getIdForSqlExPart(sqlExPart: SqlExPart): string {
+  switch (sqlExPart) {
+    case SqlExPart.SqlSingleExPart:
+      return 'solve';
+  }
+}
 
 @Component({
   selector: 'it4all-sql-exercise',
@@ -32,10 +38,10 @@ export class SqlExerciseComponent
 
   readonly editorOptions = getDefaultEditorOptions('sql');
 
-  readonly oldPart: ToolPart = SqlCreateQueryPart;
+  readonly partId = getIdForSqlExPart(SqlExPart.SqlSingleExPart);
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() contentFragment: SqlExerciseContentSolveFieldsFragment;
+  @Input() contentFragment: SqlExerciseContentFragment;
 
   solution = '';
 
@@ -45,7 +51,7 @@ export class SqlExerciseComponent
 
   ngOnInit() {
     this.dexieService
-      .getSolution(this.exerciseFragment, this.oldPart.id)
+      .getSolution(this.exerciseFragment, this.partId)
       .then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');
   }
 
@@ -88,7 +94,7 @@ export class SqlExerciseComponent
   // Correction
 
   correct(): void {
-    this.correctAbstract(this.exerciseFragment, SqlExPart.SqlSingleExPart, this.oldPart.id);
+    this.correctAbstract(this.exerciseFragment, SqlExPart.SqlSingleExPart, this.partId);
   }
 
 

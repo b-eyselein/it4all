@@ -1,13 +1,19 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {NaryConversionToolPart} from '../../random-tools-list';
-import {ToolPart} from '../../../../_interfaces/tool';
-import {BINARY_SYSTEM, HEXADECIMAL_SYSTEM, NaryComponentBase, NaryReadOnlyNumberInput, NUMBERING_SYSTEMS, NumberingSystem} from '../nary';
+import {
+  BINARY_SYSTEM,
+  HEXADECIMAL_SYSTEM,
+  NaryComponentBase,
+  NaryReadOnlyNumberInput,
+  NUMBERING_SYSTEMS,
+  NumberingSystem
+} from '../nary';
 import {randomInt} from '../../../../helpers';
 
-@Component({templateUrl: './nary-conversion.component.html'})
+@Component({
+  selector: 'it4all-nary-conversion',
+  templateUrl: './nary-conversion.component.html'
+})
 export class NaryConversionComponent extends NaryComponentBase implements OnInit {
-
-  toolPart: ToolPart = NaryConversionToolPart;
 
   // noinspection JSMismatchedCollectionQueryUpdate
   numberingSystems: NumberingSystem[] = NUMBERING_SYSTEMS;

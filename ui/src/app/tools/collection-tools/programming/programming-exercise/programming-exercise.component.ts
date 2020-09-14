@@ -1,13 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {DexieService} from '../../../../_services/dexie.service';
-import {ProgrammingImplementationToolPart, ProgrammingTestCreationPart} from '../programming-tool';
-import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {
   ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
   NormalUnitTestPartFragment,
-  ProgExerciseContentSolveFieldsFragment
+  ProgrammingExerciseContentFragment
 } from '../../../../_services/apollo_services';
 import {
   NormalExecutionResultFragment,
@@ -26,6 +24,17 @@ import {AuthenticationService} from '../../../../_services/authentication.servic
 
 import 'codemirror/mode/python/python';
 
+
+function getIdForProgExPart(progExPart: ProgExPart): string {
+  switch (progExPart) {
+    case ProgExPart.ActivityDiagram:
+    case ProgExPart.Implementation:
+      return 'implementation';
+    case ProgExPart.TestCreation:
+      return 'testCreation';
+  }
+}
+
 @Component({
   selector: 'it4all-programming-exercise',
   templateUrl: './programming-exercise.component.html',
@@ -41,9 +50,9 @@ export class ProgrammingExerciseComponent
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() contentFragment: ProgExerciseContentSolveFieldsFragment;
+  @Input() contentFragment: ProgrammingExerciseContentFragment;
 
-  private oldPart: ToolPart;
+  partId: string;
 
   exerciseFiles: ExerciseFileFragment[] = [];
 
@@ -60,15 +69,7 @@ export class ProgrammingExerciseComponent
   }
 
   ngOnInit(): void {
-    switch (this.contentFragment.part) {
-      case ProgExPart.ActivityDiagram:
-      case ProgExPart.Implementation:
-        this.oldPart = ProgrammingImplementationToolPart;
-        break;
-      case ProgExPart.TestCreation:
-        this.oldPart = ProgrammingTestCreationPart;
-        break;
-    }
+    this.partId = getIdForProgExPart(this.contentFragment.part);
 
     this.exerciseFiles = (this.contentFragment.part === ProgExPart.Implementation) ?
       this.contentFragment.implementationPart.files :
@@ -78,11 +79,11 @@ export class ProgrammingExerciseComponent
   }
 
   loadOldSolution(): void {
-    this.loadOldSolutionAbstract(this.exerciseFragment, this.oldPart.id, (maybeOldSolution: FilesSolutionInput) => {
-      //console.log(JSON.stringify(maybeOldSolution));
-      // TODO: deactivated for now...
-      // this.exerciseFiles = maybeOldSolution.files;
-    });
+    this.loadOldSolutionAbstract(
+      this.exerciseFragment,
+      this.partId,
+      (oldSol: FilesSolutionInput) => this.exerciseFiles = oldSol.files
+    );
   }
 
   protected getSolution(): FilesSolutionInput {
@@ -132,7 +133,7 @@ export class ProgrammingExerciseComponent
   }
 
   performCorrection(): void {
-    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.oldPart.id);
+    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.partId);
   }
 
 }

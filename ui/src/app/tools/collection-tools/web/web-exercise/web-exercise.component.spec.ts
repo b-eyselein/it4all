@@ -10,7 +10,6 @@ import {SolutionSavedComponent} from '../../../../shared/solution-saved/solution
 import {PointsNotificationComponent} from '../../../../shared/points-notification/points-notification.component';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {HtmlPart} from '../web-tool';
 
 describe('WebExerciseComponent', () => {
 
@@ -33,7 +32,6 @@ describe('WebExerciseComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(WebExerciseComponent);
     component = fixture.componentInstance;
-    component.part = HtmlPart;
     fixture.detectChanges();
   });
 

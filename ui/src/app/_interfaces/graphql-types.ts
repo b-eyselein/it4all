@@ -32,10 +32,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  FalseNegative = 'FalseNegative',
+  TruePositive = 'TruePositive',
   FalsePositive = 'FalsePositive',
-  TrueNegative = 'TrueNegative',
-  TruePositive = 'TruePositive'
+  FalseNegative = 'FalseNegative',
+  TrueNegative = 'TrueNegative'
 }
 
 export type CollectionTool = {
@@ -51,6 +51,7 @@ export type CollectionTool = {
   collection?: Maybe<ExerciseCollection>;
   exerciseCount: Scalars['Long'];
   allExercises: Array<Exercise>;
+  partFragment?: Maybe<ExPartBasics>;
   proficiencies: Array<UserProficiency>;
 };
 
@@ -62,6 +63,11 @@ export type CollectionToolLessonArgs = {
 
 export type CollectionToolCollectionArgs = {
   collId: Scalars['Int'];
+};
+
+
+export type CollectionToolPartFragmentArgs = {
+  partId: Scalars['String'];
 };
 
 export type DtdParseException = {
@@ -111,6 +117,7 @@ export type Exercise = {
   text: Scalars['String'];
   topicsWithLevels: Array<TopicWithLevel>;
   difficulty: Scalars['Int'];
+  flaskContent?: Maybe<FlaskExerciseContent>;
   programmingContent?: Maybe<ProgrammingExerciseContent>;
   regexContent?: Maybe<RegexExerciseContent>;
   sqlContent?: Maybe<SqlExerciseContent>;
@@ -158,6 +165,12 @@ export type ExPart = {
   solved: Scalars['Boolean'];
 };
 
+export type ExPartBasics = {
+  __typename?: 'ExPartBasics';
+  id: Scalars['String'];
+  name: Scalars['String'];
+};
+
 export type FilesSampleSolution = {
   __typename?: 'FilesSampleSolution';
   id: Scalars['Int'];
@@ -179,6 +192,12 @@ export type FlaskCorrectionResult = {
   resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: FlaskAbstractCorrectionResult;
+};
+
+export type FlaskExerciseContent = {
+  __typename?: 'FlaskExerciseContent';
+  sampleSolutions: Array<FilesSampleSolution>;
+  _x: Scalars['Boolean'];
 };
 
 export type FlaskExerciseMutations = {
@@ -359,11 +378,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  PartialMatch = 'PARTIAL_MATCH',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   OnlyUser = 'ONLY_USER',
-  OnlySample = 'ONLY_SAMPLE'
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
+  PartialMatch = 'PARTIAL_MATCH',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -496,8 +515,8 @@ export type RegexCorrectionResult = {
 };
 
 export enum RegexCorrectionType {
-  Extraction = 'EXTRACTION',
-  Matching = 'MATCHING'
+  Matching = 'MATCHING',
+  Extraction = 'EXTRACTION'
 }
 
 export type RegexExerciseContent = {
@@ -721,11 +740,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Delete = 'DELETE',
-  Insert = 'INSERT',
-  Update = 'UPDATE',
   Create = 'CREATE',
-  Select = 'SELECT'
+  Update = 'UPDATE',
+  Select = 'SELECT',
+  Delete = 'DELETE',
+  Insert = 'INSERT'
 }
 
 export enum SqlExPart {
@@ -938,8 +957,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
 };
 
 export enum UmlAssociationType {
-  Aggregation = 'AGGREGATION',
   Association = 'ASSOCIATION',
+  Aggregation = 'AGGREGATION',
   Composition = 'COMPOSITION'
 }
 
@@ -1197,10 +1216,10 @@ export type UmlSampleSolution = {
 };
 
 export enum UmlVisibility {
+  Public = 'PUBLIC',
   Package = 'PACKAGE',
-  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Public = 'PUBLIC'
+  Private = 'PRIVATE'
 }
 
 export type UnitTestCorrectionResult = {

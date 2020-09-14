@@ -3,9 +3,9 @@ package model.tools
 import better.files.File
 import enumeratum.{EnumEntry, PlayEnum}
 import initialData.InitialData
-import model._
 import model.graphql.ToolGraphQLModelBasics
 import model.result.AbstractCorrectionResult
+import model._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,7 +38,7 @@ abstract class Tool(val id: String, val name: String, val toolState: ToolState =
   type PartType <: ExPart
   type ResType <: AbstractCorrectionResult
 
-  // Yaml, Html forms, Json, GraphQL
+  // Json & GraphQL Formats
 
   val jsonFormats: ToolJsonProtocol[SolType, ExContentType, PartType]
 
@@ -59,5 +59,7 @@ abstract class Tool(val id: String, val name: String, val toolState: ToolState =
   val allTopics: Seq[Topic] = Seq.empty
 
   val initialData: InitialData[ExContentType]
+
+  def possibleParts: Seq[PartType] = Seq.empty
 
 }

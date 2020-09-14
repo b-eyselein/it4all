@@ -1,15 +1,14 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {ToolPart} from '../../../../_interfaces/tool';
-import {BoolCreatePart} from '../../random-tools-list';
 import {parseBooleanFormula} from '../_model/boolean-formula-parser';
 import {BoolComponentHelper} from '../_model/bool-component-helper';
 import {BooleanNode, calculateAssignments} from '../_model/bool-node';
 import {generateBooleanFormula} from '../_model/bool-formula';
 
-@Component({templateUrl: './bool-create.component.html'})
+@Component({
+  selector: 'it4all-bool-create',
+  templateUrl: './bool-create.component.html'
+})
 export class BoolCreateComponent extends BoolComponentHelper implements OnInit {
-
-  readonly part: ToolPart = BoolCreatePart;
 
   solution = '';
 

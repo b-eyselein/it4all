@@ -1,28 +1,23 @@
-import {RandomTool, ToolPart} from '../../_interfaces/tool';
+import {RandomTool} from './random-tool';
+import {ToolState} from "../../_interfaces/graphql-types";
 
-// Boolean Algebra
-
-export const BoolFillOutPart: ToolPart = {id: 'fillOut', name: 'Wahrheitstabellen ausfüllen'};
-export const BoolCreatePart: ToolPart = {id: 'create', name: 'Boolesche Formel erstellen'};
-
-export const BoolTool: RandomTool = new class BoolToolClass extends RandomTool {
-  constructor() {
-    super('bool', 'Boolesche Algebra', [BoolFillOutPart, BoolCreatePart], 'live');
+export const randomTools: RandomTool[] = [
+  {
+    id: 'bool',
+    name: 'Boolesche Algebra',
+    parts: [
+      {id: 'fillOut', name: 'Wahrheitstabellen ausfüllen'},
+      {id: 'create', name: 'Boolesche Formel erstellen'},
+      {id: 'drawing', name: 'Schaltkreis zeichnen', disabled: true}
+    ]
+  },
+  {
+    id: 'nary',
+    name: 'Zahlensysteme',
+    parts: [
+      {id: 'addition', name: 'Addition'},
+      {id: 'conversion', name: 'Zahlenumwandlung'},
+      {id: 'twoConversion', name: 'Zahlenumwandlung im Zweiersystem'}
+    ]
   }
-}();
-
-// Nary
-
-export const NaryAdditionToolPart = {id: 'addition', name: 'Addition'};
-export const NaryConversionToolPart = {id: 'conversion', name: 'Zahlenumwandlung'};
-export const NaryTwoConversionToolPart = {id: 'twoConversion', name: 'Zahlenumwandlung im Zweiersystem'};
-
-export const NaryTool: RandomTool = new class NaryToolClass extends RandomTool {
-  constructor() {
-    super('nary', 'Zahlensysteme', [NaryAdditionToolPart, NaryConversionToolPart, NaryTwoConversionToolPart], 'live');
-  }
-}();
-
-// All tools
-
-export const randomTools: RandomTool[] = [BoolTool, NaryTool];
+];

@@ -1,11 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ToolPart} from '../../../../_interfaces/tool';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {DexieService} from '../../../../_services/dexie.service';
 import {
   ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
-  WebExerciseContentSolveFieldsFragment
+  WebExerciseContentFragment
 } from '../../../../_services/apollo_services';
 import {
   WebAbstractResultFragment,
@@ -17,11 +16,18 @@ import {
   WebResultFragment
 } from '../web-apollo-mutations.service';
 import {FilesSolution, FilesSolutionInput, WebExPart} from '../../../../_interfaces/graphql-types';
-import {HtmlPart, JsPart} from '../web-tool';
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
+export function getIdForWebExPart(webExPart: WebExPart): string {
+  switch (webExPart) {
+    case WebExPart.HtmlPart:
+      return 'html';
+    case WebExPart.JsPart:
+      return 'js';
+  }
+}
 
 @Component({
   selector: 'it4all-web-exercise',
@@ -32,9 +38,9 @@ export class WebExerciseComponent
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() contentFragment: WebExerciseContentSolveFieldsFragment;
+  @Input() contentFragment: WebExerciseContentFragment;
 
-  part: ToolPart;
+  partId: string;
 
   exerciseFileFragments: ExerciseFileFragment[] = [];
 
@@ -43,26 +49,19 @@ export class WebExerciseComponent
   }
 
   ngOnInit(): void {
-    switch (this.contentFragment.part) {
-      case WebExPart.HtmlPart:
-        this.part = HtmlPart;
-        break;
-      case WebExPart.JsPart:
-        this.part = JsPart;
-        break;
-    }
+    this.partId = getIdForWebExPart(this.contentFragment.part);
 
     this.exerciseFileFragments = this.contentFragment.files;
 
     this.loadOldSolutionAbstract(
       this.exerciseFragment,
-      this.part.id,
+      this.partId,
       (oldSolution) => this.exerciseFileFragments = oldSolution.files
     );
   }
 
   correct(): void {
-    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.part.id);
+    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.partId);
   }
 
   protected getSolution(): FilesSolutionInput {

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {randomTools} from '../tools/random-tools/random-tools-list';
-import {RandomTool} from '../_interfaces/tool';
+import {RandomTool} from '../tools/random-tools/random-tool';
 import {CollectionToolFragment, ToolOverviewGQL, ToolOverviewQuery} from '../_services/apollo_services';
 import {ToolState} from '../_interfaces/graphql-types';
 import {AuthenticationService} from '../_services/authentication.service';

@@ -13,12 +13,12 @@
           <div class="notification is-light-grey">
             <div class="content">
               <p>{{exerciseFragment.text}}</p>
-              <ol *ngIf="part.id === 'html'">
+              <ol *ngIf="partId === 'html'">
                 <li *ngFor="let task of contentFragment.siteSpec.htmlTasks">
                   {{task.text}}
                 </li>
               </ol>
-              <p *ngIf="part.id === 'js'">
+              <p *ngIf="partId === 'js'">
                 Es gibt insgesamt {{contentFragment.siteSpec.jsTaskCount}} Testfälle.
               </p>
             </div>

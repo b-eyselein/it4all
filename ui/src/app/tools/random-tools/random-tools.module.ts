@@ -7,15 +7,28 @@ import {BoolDrawingComponent} from './bool/bool-drawing/bool-drawing.component';
 import {randomToolRoutingComponents, RandomToolsRoutingModule} from './random-tools.routing';
 import {FormsModule} from '@angular/forms';
 import {SharedModule} from '../../shared/shared.module';
+import {BoolFillOutComponent} from "./bool/bool-fill-out/bool-fill-out.component";
+import {BoolCreateComponent} from "./bool/bool-create/bool-create.component";
+import {NaryAdditionComponent} from "./nary/nary-addition/nary-addition.component";
+import {NaryConversionComponent} from "./nary/nary-conversion/nary-conversion.component";
+import {NaryTwoConversionComponent} from "./nary/nary-two-conversion/nary-two-conversion.component";
 
 
 @NgModule({
   declarations: [
-    RandomSolveButtonsComponent,
-    NaryNumberReadOnlyInputComponent,
-    BoolCreateInstructionsComponent, BoolDrawingComponent,
+    ...randomToolRoutingComponents,
 
-    ...randomToolRoutingComponents
+    RandomSolveButtonsComponent,
+
+    BoolFillOutComponent,
+    BoolDrawingComponent,
+    BoolCreateComponent,
+    BoolCreateInstructionsComponent,
+
+    NaryNumberReadOnlyInputComponent,
+    NaryAdditionComponent,
+    NaryConversionComponent,
+    NaryTwoConversionComponent,
   ],
   imports: [
     CommonModule,

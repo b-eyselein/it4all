@@ -23,6 +23,15 @@ generates:
       - typescript-operations
       - typescript-apollo-angular
 
+  src/app/tools/collection-tools/flask/flask-apollo-mutations.service.ts:
+    documents: src/app/tools/collection-tools/flask/flask-mutations.graphql
+    preset: import-types
+    presetConfig:
+      typesPath: ../../../_interfaces/graphql-types
+    plugins:
+      - typescript-operations
+      - typescript-apollo-angular
+
   src/app/tools/collection-tools/programming/programming-apollo-mutations.service.ts:
     documents: src/app/tools/collection-tools/programming/programming-mutations.graphql
     preset: import-types

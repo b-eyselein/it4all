@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Sep 14 2020 10:56:53 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Mon Sep 14 2020 13:26:05 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -17,10 +17,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  FalseNegative
-  FalsePositive
-  TrueNegative
   TruePositive
+  FalsePositive
+  FalseNegative
+  TrueNegative
 }
 
 type CollectionTool {
@@ -35,6 +35,7 @@ type CollectionTool {
   collection(collId: Int!): ExerciseCollection
   exerciseCount: Long!
   allExercises: [Exercise!]!
+  partFragment(partId: String!): ExPartBasics
   proficiencies: [UserProficiency!]!
 }
 
@@ -79,6 +80,7 @@ type Exercise {
   text: String!
   topicsWithLevels: [TopicWithLevel!]!
   difficulty: Int!
+  flaskContent: FlaskExerciseContent
   programmingContent: ProgrammingExerciseContent
   regexContent: RegexExerciseContent
   sqlContent: SqlExerciseContent
@@ -118,6 +120,11 @@ type ExPart {
   solved: Boolean!
 }
 
+type ExPartBasics {
+  id: String!
+  name: String!
+}
+
 type FilesSampleSolution {
   id: Int!
   sample: FilesSolution!
@@ -140,6 +147,11 @@ type FlaskCorrectionResult {
   resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: FlaskAbstractCorrectionResult!
+}
+
+type FlaskExerciseContent {
+  sampleSolutions: [FilesSampleSolution!]!
+  _x: Boolean!
 }
 
 type FlaskExerciseMutations {
@@ -296,11 +308,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
+  ONLY_USER
   UNSUCCESSFUL_MATCH
+  ONLY_SAMPLE
   PARTIAL_MATCH
   SUCCESSFUL_MATCH
-  ONLY_USER
-  ONLY_SAMPLE
 }
 
 type Mutation {
@@ -392,8 +404,8 @@ type RegexCorrectionResult {
 }
 
 enum RegexCorrectionType {
-  EXTRACTION
   MATCHING
+  EXTRACTION
 }
 
 type RegexExerciseContent {
@@ -570,11 +582,11 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
+  CREATE
+  UPDATE
+  SELECT
   DELETE
   INSERT
-  UPDATE
-  CREATE
-  SELECT
 }
 
 enum SqlExPart {
@@ -764,8 +776,8 @@ type UmlAssociationMatchingResult implements MatchingResult {
 }
 
 enum UmlAssociationType {
-  AGGREGATION
   ASSOCIATION
+  AGGREGATION
   COMPOSITION
 }
 
@@ -990,10 +1002,10 @@ type UmlSampleSolution {
 }
 
 enum UmlVisibility {
-  PACKAGE
-  PRIVATE
-  PROTECTED
   PUBLIC
+  PACKAGE
+  PROTECTED
+  PRIVATE
 }
 
 type UnitTestCorrectionResult {

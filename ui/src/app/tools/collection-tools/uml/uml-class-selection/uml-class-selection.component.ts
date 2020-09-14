@@ -1,9 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {getUmlExerciseTextParts, SelectableClass, UmlDiagramDrawingHelpPart, UmlExerciseTextPart} from '../uml-tools';
-import {
-  ExerciseSolveFieldsFragment,
-  UmlExerciseContentSolveFieldsFragment
-} from '../../../../_services/apollo_services';
+import {getIdForUmlExPart, getUmlExerciseTextParts, SelectableClass, UmlExerciseTextPart} from '../uml-tools';
+import {ExerciseSolveFieldsFragment, UmlExerciseContentFragment} from '../../../../_services/apollo_services';
+import {UmlExPart} from "../../../../_interfaces/graphql-types";
 
 @Component({
   selector: 'it4all-uml-class-selection',
@@ -11,10 +9,10 @@ import {
 })
 export class UmlClassSelectionComponent implements OnInit {
 
-  readonly nextPart = UmlDiagramDrawingHelpPart;
+  readonly nextPartId: string = getIdForUmlExPart(UmlExPart.DiagramDrawingHelp);
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
-  @Input() exerciseContent: UmlExerciseContentSolveFieldsFragment;
+  @Input() exerciseContent: UmlExerciseContentFragment;
 
   selectableClasses: SelectableClass[];
   umlExerciseTextParts: UmlExerciseTextPart[];
