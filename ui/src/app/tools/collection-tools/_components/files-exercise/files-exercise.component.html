@@ -1,0 +1,67 @@
+<div class="container is-fluid">
+
+  <div class="columns">
+    <div class="column is-half-desktop">
+      <it4all-exercise-files-editor
+        [exerciseFileFragments]="exerciseFiles"
+        [mode]="defaultMode">
+      </it4all-exercise-files-editor>
+    </div>
+
+    <div class="column is-half-desktop">
+
+      <it4all-tabs>
+        <it4all-tab [title]="exerciseTextTabTitle">
+          <div class="notification mb-3 is-light-grey">
+            <ng-content select="[exText]"></ng-content>
+          </div>
+
+          <div class="columns">
+            <div class="column">
+              <button class="button is-link is-fullwidth" [class.is-loading]="isCorrecting" (click)="correct.emit()">
+                Korrektur
+              </button>
+            </div>
+            <div class="column">
+              <a routerLink="../.." class="button is-dark is-fullwidth">Bearbeiten beenden</a>
+            </div>
+          </div>
+        </it4all-tab>
+
+        <it4all-tab [title]="correctionTabTitle">
+          <div class="notification is-dark-warning" *ngIf="isCorrecting">
+            Die Korrektur läuft gerade...
+          </div>
+
+          <ng-content select="[correctionContent]"></ng-content>
+        </it4all-tab>
+
+        <it4all-tab [title]="livePreviewTabTitle" *ngIf="hasLivePreview">
+          <ng-content select="[livePreview]"></ng-content>
+        </it4all-tab>
+
+        <it4all-tab [title]="sampleSolutionsTabTitle">
+          <div class="buttons">
+            <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
+              Musterlösung {{displaySampleSolutions ? 'ausblenden' : 'anzeigen'}}
+            </button>
+          </div>
+
+          <ng-container *ngIf="displaySampleSolutions">
+            <ng-container *ngFor="let sample of sampleSolutions; let lastList = last">
+              <div class="mb-3" *ngFor="let exFile of sample.files">
+                <it4all-exercise-file-card [exerciseFile]="exFile"></it4all-exercise-file-card>
+              </div>
+
+              <br *ngIf="!lastList">
+            </ng-container>
+
+          </ng-container>
+        </it4all-tab>
+      </it4all-tabs>
+
+    </div>
+  </div>
+
+</div>
+

@@ -1,3 +1,16 @@
-<div class="container is-fluid">
-  <p>flask-exercise works!</p>
-</div>
+<it4all-files-exercise
+  [exerciseFiles]="exerciseFileFragments"
+  [isCorrecting]="isCorrecting"
+  [sampleSolutions]="sampleSolutions"
+  (correct)="correct()"
+  defaultMode="'python'">
+
+  <ng-container exText>
+    {{exerciseFragment.text}}
+  </ng-container>
+
+  <ng-container correctionContent>
+    TODO!
+  </ng-container>
+
+</it4all-files-exercise>

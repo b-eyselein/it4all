@@ -26,6 +26,8 @@ export function getIdForWebExPart(webExPart: WebExPart): string {
       return 'html';
     case WebExPart.JsPart:
       return 'js';
+    default:
+      throw Error('TODO!');
   }
 }
 
@@ -34,7 +36,7 @@ export function getIdForWebExPart(webExPart: WebExPart): string {
   templateUrl: './web-exercise.component.html'
 })
 export class WebExerciseComponent
-  extends ComponentWithExerciseDirective<FilesSolution, FilesSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionMutationVariables, WebCorrectionGQL>
+  extends ComponentWithExerciseDirective<FilesSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionMutationVariables, WebCorrectionGQL>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
@@ -60,27 +62,33 @@ export class WebExerciseComponent
     );
   }
 
-  correct(): void {
-    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.partId);
-  }
-
-  protected getSolution(): FilesSolutionInput {
-    return {files: this.exerciseFiles};
-  }
+  // Sample solutions
 
   get sampleSolutions(): FilesSolution[] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 
-  protected getMutationQueryVariables(part: WebExPart): WebCorrectionMutationVariables {
+  // Correction
+
+  protected getSolution(): FilesSolutionInput {
+    return {files: this.exerciseFiles};
+  }
+
+  protected getMutationQueryVariables(): WebCorrectionMutationVariables {
     return {
       exId: this.exerciseFragment.exerciseId,
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
-      part,
+      part: this.contentFragment.part,
       userJwt: this.authenticationService.currentUserValue.jwt
     };
   }
+
+  correct(): void {
+    this.correctAbstract(this.exerciseFragment, this.partId)
+  };
+
+  // Results
 
   get correctionResult(): WebCorrectionResultFragment | null {
     return this.resultQuery?.me.webExercise?.correct;

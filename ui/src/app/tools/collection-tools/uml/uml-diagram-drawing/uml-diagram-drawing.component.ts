@@ -17,7 +17,7 @@ import {
   UmlInternalErrorResultFragment,
   UmlResultFragment
 } from '../uml-apollo-mutations.service';
-import {UmlClassDiagram, UmlClassDiagramInput, UmlExPart} from '../../../../_interfaces/graphql-types';
+import {UmlClassDiagramInput, UmlExPart} from '../../../../_interfaces/graphql-types';
 
 import * as joint from 'jointjs';
 import {AuthenticationService} from '../../../../_services/authentication.service';
@@ -47,7 +47,7 @@ interface SelectableClassDiagramObject {
   `]
 })
 export class UmlDiagramDrawingComponent
-  extends ComponentWithExerciseDirective<UmlClassDiagram, UmlClassDiagramInput, UmlCorrectionMutation, UmlExPart, UmlCorrectionMutationVariables, UmlCorrectionGQL>
+  extends ComponentWithExerciseDirective<UmlClassDiagramInput, UmlCorrectionMutation, UmlExPart, UmlCorrectionMutationVariables, UmlCorrectionGQL>
   implements OnInit {
 
   readonly nextPartId: string = getIdForUmlExPart(UmlExPart.MemberAllocation);
@@ -240,27 +240,15 @@ export class UmlDiagramDrawingComponent
     fileReader.readAsText(files.item(0));
   }
 
-  protected getSolution(): ExportedUmlClassDiagram {
-    return {
-      classes: this.graph.getCells().filter(isMyJointClass).map((cell) => cell.getAsUmlClass()),
-      associations: this.graph.getLinks().filter(isAssociation).map(umlAssocfromConnection),
-      implementations: this.graph.getLinks().filter(isImplementation).map(umlImplfromConnection)
-    };
-  }
+  // Sample solutions
 
+  /*
   get sampleSolutions(): UmlClassDiagram[] {
     return this.contentFragment.sampleSolutions.map((sample) => sample.sample);
   }
+   */
 
-  protected getMutationQueryVariables(part: UmlExPart): UmlCorrectionMutationVariables {
-    return {
-      exId: this.exerciseFragment.exerciseId,
-      collId: this.exerciseFragment.collectionId,
-      solution: this.getSolution(),
-      part,
-      userJwt: this.authenticationService.currentUserValue.jwt
-    };
-  }
+  // Results
 
   get correctionResult(): UmlCorrectionResultFragment | null {
     return this.resultQuery?.me.umlExercise?.correct;
@@ -274,8 +262,28 @@ export class UmlDiagramDrawingComponent
     return this.umlAbstractResult?.__typename === 'UmlResult' ? this.umlAbstractResult : null;
   }
 
+  // Correction
+
+  protected getSolution(): ExportedUmlClassDiagram {
+    return {
+      classes: this.graph.getCells().filter(isMyJointClass).map((cell) => cell.getAsUmlClass()),
+      associations: this.graph.getLinks().filter(isAssociation).map(umlAssocfromConnection),
+      implementations: this.graph.getLinks().filter(isImplementation).map(umlImplfromConnection)
+    };
+  }
+
+  protected getMutationQueryVariables(): UmlCorrectionMutationVariables {
+    return {
+      exId: this.exerciseFragment.exerciseId,
+      collId: this.exerciseFragment.collectionId,
+      solution: this.getSolution(),
+      part: this.contentFragment.part,
+      userJwt: this.authenticationService.currentUserValue.jwt
+    };
+  }
+
   correct(): void {
-    super.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.partId);
+    super.correctAbstract(this.exerciseFragment, this.partId);
 
     this.corrected = true;
   }

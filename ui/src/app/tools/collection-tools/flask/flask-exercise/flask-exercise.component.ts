@@ -29,8 +29,7 @@ function getIdForFlaskExPart(flaskExPart: FlaskExercisePart): string {
   templateUrl: './flask-exercise.component.html'
 })
 export class FlaskExerciseComponent
-  extends ComponentWithExerciseDirective<FilesSolution,
-    FilesSolutionInput,
+  extends ComponentWithExerciseDirective<FilesSolutionInput,
     FlaskCorrectionMutation,
     FlaskExercisePart,
     FlaskCorrectionMutationVariables,
@@ -40,7 +39,7 @@ export class FlaskExerciseComponent
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: FlaskExerciseContentFragment;
 
-  partId: string = getIdForFlaskExPart(FlaskExercisePart.FlaskSingleExPart);
+  readonly partId: string = getIdForFlaskExPart(FlaskExercisePart.FlaskSingleExPart);
 
   exerciseFileFragments: ExerciseFileFragment[] = [];
 
@@ -56,16 +55,30 @@ export class FlaskExerciseComponent
     );
   }
 
-  protected getMutationQueryVariables(part: FlaskExercisePart): FlaskCorrectionMutationVariables {
-    return undefined;
+  // Sample solutions
+
+  get sampleSolutions(): FilesSolution[] {
+    return [];
   }
+
+  // Correction
 
   protected getSolution(): FilesSolutionInput | undefined {
     return undefined;
   }
 
-  protected get sampleSolutions(): FilesSolution[] {
-    return [];
+  protected getMutationQueryVariables(): FlaskCorrectionMutationVariables {
+    return {
+      userJwt: this.authenticationService.currentUserValue.jwt,
+      exId: this.exerciseFragment.exerciseId,
+      collId: this.exerciseFragment.collectionId,
+      part: FlaskExercisePart.FlaskSingleExPart,
+      solution: this.getSolution()
+    };
+  }
+
+  correct(): void {
+    this.correctAbstract(this.exerciseFragment, this.partId);
   }
 
 }

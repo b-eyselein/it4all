@@ -39,8 +39,7 @@ function getIdForProgExPart(progExPart: ProgExPart): string {
   templateUrl: './programming-exercise.component.html'
 })
 export class ProgrammingExerciseComponent
-  extends ComponentWithExerciseDirective<FilesSolution,
-    FilesSolutionInput,
+  extends ComponentWithExerciseDirective<FilesSolutionInput,
     ProgrammingCorrectionMutation,
     ProgExPart,
     ProgrammingCorrectionMutationVariables,
@@ -69,34 +68,36 @@ export class ProgrammingExerciseComponent
       this.contentFragment.implementationPart.files :
       (this.contentFragment.unitTestPart as NormalUnitTestPartFragment).unitTestFiles;
 
-    this.loadOldSolution();
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.partId, (oldSol: FilesSolutionInput) => this.exerciseFiles = oldSol.files);
   }
 
-  loadOldSolution(): void {
-    this.loadOldSolutionAbstract(
-      this.exerciseFragment,
-      this.partId,
-      (oldSol: FilesSolutionInput) => this.exerciseFiles = oldSol.files
-    );
-  }
-
-  protected getSolution(): FilesSolutionInput {
-    return {files: this.exerciseFiles};
-  }
+  // Sample solutions
 
   get sampleSolutions(): FilesSolution[] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 
-  protected getMutationQueryVariables(part: ProgExPart): ProgrammingCorrectionMutationVariables {
+  // Correction
+
+  protected getSolution(): FilesSolutionInput {
+    return {files: this.exerciseFiles};
+  }
+
+  protected getMutationQueryVariables(): ProgrammingCorrectionMutationVariables {
     return {
       exId: this.exerciseFragment.exerciseId,
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
-      part,
+      part: this.contentFragment.part,
       userJwt: this.authenticationService.currentUserValue.jwt
     };
   }
+
+  correct(): void {
+    this.correctAbstract(this.exerciseFragment, this.partId);
+  }
+
+  // Results
 
   get correctionResult(): ProgrammingCorrectionResultFragment | null {
     return this.resultQuery?.me.programmingExercise?.correct;
@@ -124,10 +125,6 @@ export class ProgrammingExerciseComponent
 
   get normalResult(): NormalExecutionResultFragment | null {
     return this.result?.normalResult;
-  }
-
-  correct(): void {
-    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.partId);
   }
 
 }

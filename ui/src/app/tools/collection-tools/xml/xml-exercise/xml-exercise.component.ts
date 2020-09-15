@@ -22,6 +22,7 @@ import {AuthenticationService} from '../../../../_services/authentication.servic
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
+import {HasSampleSolutions} from "../../_helpers/correction-helpers";
 
 
 export function getIdForXmlExPart(xmlExPart: XmlExPart): string {
@@ -51,8 +52,8 @@ export function getXmlDocumentContent(rootNode: string): string {
   templateUrl: './xml-exercise.component.html'
 })
 export class XmlExerciseComponent
-  extends ComponentWithExerciseDirective<XmlSolution, XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionMutationVariables, XmlCorrectionGQL>
-  implements OnInit {
+  extends ComponentWithExerciseDirective<XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionMutationVariables, XmlCorrectionGQL>
+  implements OnInit, HasSampleSolutions<XmlSolution> {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: XmlExerciseContentFragment;
@@ -103,9 +104,7 @@ export class XmlExerciseComponent
     });
   }
 
-  correct(): void {
-    this.correctAbstract(this.exerciseFragment, this.contentFragment.part, this.partId);
-  }
+  // Correction
 
   protected getSolution(): XmlSolutionInput {
     return {
@@ -114,19 +113,21 @@ export class XmlExerciseComponent
     };
   }
 
-  get sampleSolutions(): XmlSolution[] {
-    return this.contentFragment.sampleSolutions.map((s) => s.sample);
-  }
-
-  protected getMutationQueryVariables(part: XmlExPart): XmlCorrectionMutationVariables {
+  protected getMutationQueryVariables(): XmlCorrectionMutationVariables {
     return {
       exId: this.exerciseFragment.exerciseId,
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
-      part,
+      part: this.contentFragment.part,
       userJwt: this.authenticationService.currentUserValue.jwt
     };
   }
+
+  correct(): void {
+    this.correctAbstract(this.exerciseFragment, this.partId);
+  }
+
+  // Results
 
   get correctionResult(): XmlCorrectionResultFragment | null {
     return this.resultQuery?.me.xmlExercise?.correct;
@@ -146,6 +147,18 @@ export class XmlExerciseComponent
 
   get documentResult(): XmlDocumentResultFragment | null {
     return this.xmlResult?.documentResult;
+  }
+
+  // Sample solutions
+
+  displaySampleSolutions = false;
+
+  toggleSampleSolutions() {
+    this.displaySampleSolutions = !this.displaySampleSolutions;
+  }
+
+  get sampleSolutions(): XmlSolution[] {
+    return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 
 }

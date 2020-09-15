@@ -1,102 +1,49 @@
-<div class="container is-fluid">
+<it4all-files-exercise
+  *ngIf="exerciseFragment && contentFragment"
+  [exerciseFiles]="exerciseFiles"
+  [isCorrecting]="isCorrecting"
+  [sampleSolutions]="sampleSolutions"
+  (correct)="correct()"
+  defaultMode="htmlmixed">
 
-  <div class="columns">
-    <div class="column is-half-desktop">
-      <it4all-exercise-files-editor
-        [exerciseFileFragments]="exerciseFiles"
-        [mode]="'htmlmixed'">
-      </it4all-exercise-files-editor>
-    </div>
-
-    <div class="column is-half-desktop">
-
-      <it4all-tabs>
-        <it4all-tab [title]="'Aufgabenstellung'">
-          <div class="notification mb-3 is-light-grey">
-            <div class="content">
-              <p>{{exerciseFragment.text}}</p>
-              <ol *ngIf="partId === 'html'">
-                <li *ngFor="let task of contentFragment.siteSpec.htmlTasks">
-                  {{task.text}}
-                </li>
-              </ol>
-              <p *ngIf="partId === 'js'">
-                Es gibt insgesamt {{contentFragment.siteSpec.jsTaskCount}} Testfälle.
-              </p>
-            </div>
-          </div>
-
-          <div class="columns">
-            <div class="column">
-              <button class="button is-link is-fullwidth" [class.is-loading]="isCorrecting" (click)="correct()">
-                Korrektur
-              </button>
-            </div>
-            <div class="column">
-              <a routerLink="../.." class="button is-dark is-fullwidth">Bearbeiten beenden</a>
-            </div>
-          </div>
-        </it4all-tab>
-
-        <it4all-tab [title]="correctionTabTitle">
-          <div class="notification is-dark-warning" *ngIf="isCorrecting">
-            Die Korrektur läuft gerade...
-          </div>
-
-          <ng-container *ngIf="correctionResult">
-
-            <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
-
-            <br>
-
-            <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
-            </it4all-points-notification>
-
-            <br>
-
-            <div class="content">
-              <ul *ngIf="result.gradedHtmlTaskResults.length > 0">
-                <li *ngFor="let htmlResult of result.gradedHtmlTaskResults">
-                  <it4all-html-task-result [htmlResult]="htmlResult"></it4all-html-task-result>
-                </li>
-
-                <li *ngFor="let jsResult of result.gradedJsTaskResults">
-                  <span [ngClass]="jsResult.success === 'COMPLETE' ? 'has-text-success' : 'has-text-danger'">
-                   ({{jsResult.points}} / {{jsResult.maxPoints}})
-                    Test {{jsResult.id}} ist {{jsResult.success === 'COMPLETE' ? '' : 'nicht'}} korrekt:
-                  </span>
-
-                  {{jsResult | json}}
-                </li>
-              </ul>
-            </div>
-
-          </ng-container>
-        </it4all-tab>
-
-        <it4all-tab [title]="'Live-Vorschau'"></it4all-tab>
-
-        <it4all-tab [title]="sampleSolutionsTabTitle">
-          <div class="buttons">
-            <button class="button is-primary is-fullwidth" (click)="toggleSampleSolutions()">
-              Musterlösung {{displaySampleSolutions ? 'ausblenden' : 'anzeigen'}}
-            </button>
-          </div>
-
-          <ng-container *ngIf="displaySampleSolutions">
-            <ng-container *ngFor="let sample of sampleSolutions; let lastList = last">
-              <div class="mb-3" *ngFor="let exFile of sample.files">
-                <it4all-exercise-file-card [exerciseFile]="exFile"></it4all-exercise-file-card>
-              </div>
-
-              <br *ngIf="!lastList">
-            </ng-container>
-
-          </ng-container>
-        </it4all-tab>
-      </it4all-tabs>
-
-    </div>
+  <div exText class="content">
+    <p>{{exerciseFragment.text}}</p>
+    <ol *ngIf="partId === 'html'">
+      <li *ngFor="let task of contentFragment.siteSpec.htmlTasks">
+        {{task.text}}
+      </li>
+    </ol>
+    <p *ngIf="partId === 'js'">
+      Es gibt insgesamt {{contentFragment.siteSpec.jsTaskCount}} Testfälle.
+    </p>
   </div>
 
-</div>
+  <ng-container correctionContent *ngIf="correctionResult">
+    <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
+
+    <br>
+
+    <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
+    </it4all-points-notification>
+
+    <br>
+
+    <div class="content">
+      <ul *ngIf="result.gradedHtmlTaskResults.length > 0">
+        <li *ngFor="let htmlResult of result.gradedHtmlTaskResults">
+          <it4all-html-task-result [htmlResult]="htmlResult"></it4all-html-task-result>
+        </li>
+
+        <li *ngFor="let jsResult of result.gradedJsTaskResults">
+          <span [ngClass]="jsResult.success === 'COMPLETE' ? 'has-text-success' : 'has-text-danger'">
+           ({{jsResult.points}} / {{jsResult.maxPoints}})
+            Test {{jsResult.id}} ist {{jsResult.success === 'COMPLETE' ? '' : 'nicht'}} korrekt:
+          </span>
+
+          {{jsResult | json}}
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+
+</it4all-files-exercise>

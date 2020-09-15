@@ -17,6 +17,7 @@ import {SqlExPart, SqlInternalErrorResult} from '../../../../_interfaces/graphql
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
 import 'codemirror/mode/sql/sql';
+import {HasSampleSolutions} from "../../_helpers/correction-helpers";
 
 
 function getIdForSqlExPart(sqlExPart: SqlExPart): string {
@@ -33,8 +34,8 @@ function getIdForSqlExPart(sqlExPart: SqlExPart): string {
   encapsulation: ViewEncapsulation.None // style editor also
 })
 export class SqlExerciseComponent
-  extends ComponentWithExerciseDirective<string, string, SqlCorrectionMutation, SqlExPart, SqlCorrectionMutationVariables, SqlCorrectionGQL>
-  implements OnInit {
+  extends ComponentWithExerciseDirective<string, SqlCorrectionMutation, SqlExPart, SqlCorrectionMutationVariables, SqlCorrectionGQL>
+  implements OnInit, HasSampleSolutions<string> {
 
   readonly editorOptions = getDefaultEditorOptions('sql');
 
@@ -53,24 +54,6 @@ export class SqlExerciseComponent
     this.dexieService
       .getSolution(this.exerciseFragment, this.partId)
       .then((solution: DbSolution<string> | undefined) => this.solution = solution ? solution.solution : '');
-  }
-
-  protected getSolution(): string | undefined {
-    return this.solution.length > 0 ? this.solution : undefined;
-  }
-
-  get sampleSolutions(): string[] {
-    return this.contentFragment.sampleSolutions.map((s) => s.sample);
-  }
-
-  protected getMutationQueryVariables(part: SqlExPart): SqlCorrectionMutationVariables {
-    return {
-      exId: this.exerciseFragment.exerciseId,
-      collId: this.exerciseFragment.collectionId,
-      solution: this.getSolution(),
-      part,
-      userJwt: this.authenticationService.currentUserValue.jwt
-    };
   }
 
   // Result types
@@ -93,9 +76,34 @@ export class SqlExerciseComponent
 
   // Correction
 
-  correct(): void {
-    this.correctAbstract(this.exerciseFragment, SqlExPart.SqlSingleExPart, this.partId);
+  protected getSolution(): string | undefined {
+    return this.solution.length > 0 ? this.solution : undefined;
   }
 
+  protected getMutationQueryVariables(): SqlCorrectionMutationVariables {
+    return {
+      exId: this.exerciseFragment.exerciseId,
+      collId: this.exerciseFragment.collectionId,
+      solution: this.getSolution(),
+      part: SqlExPart.SqlSingleExPart,
+      userJwt: this.authenticationService.currentUserValue.jwt
+    };
+  }
+
+  correct(): void {
+    this.correctAbstract(this.exerciseFragment, this.partId);
+  }
+
+  // Sample solutions
+
+  displaySampleSolutions = false;
+
+  toggleSampleSolutions() {
+    this.displaySampleSolutions = !this.displaySampleSolutions;
+  }
+
+  get sampleSolutions(): string[] {
+    return this.contentFragment.sampleSolutions.map((s) => s.sample);
+  }
 
 }

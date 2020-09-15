@@ -4,33 +4,24 @@ import {TabComponent} from '../../../shared/tab/tab.component';
 import {DexieService} from '../../../_services/dexie.service';
 import {ExerciseSolveFieldsFragment} from '../../../_services/apollo_services';
 import {Mutation} from 'apollo-angular';
+import {CorrectionHelpers} from "./correction-helpers";
 
 @Directive()
-export abstract class ComponentWithExerciseDirective<SolutionType,
-  SolutionInputType,
+export abstract class ComponentWithExerciseDirective<SolutionInputType,
   MutationQueryType,
   PartType,
   MutationVariablesType extends { exId: number, collId: number, part: PartType, userJwt: string, solution: SolutionInputType },
-  MutationGQL extends Mutation<MutationQueryType, MutationVariablesType>> {
-
-  readonly exerciseTextTabTitle = 'Aufgabenstellung';
-  readonly correctionTabTitle = 'Korrektur';
-  readonly sampleSolutionsTabTitle = 'Musterlösungen';
+  MutationGQL extends Mutation<MutationQueryType, MutationVariablesType>> extends CorrectionHelpers {
 
   isCorrecting = false;
 
   resultQuery: MutationQueryType | undefined;
 
-  displaySampleSolutions = false;
-
   @ViewChild(TabsComponent) tabsComponent: TabsComponent;
   @ViewChildren(TabComponent) tabComponents: QueryList<TabComponent>;
 
   protected constructor(protected mutationGQL: MutationGQL, protected dexieService: DexieService) {
-  }
-
-  toggleSampleSolutions(): void {
-    this.displaySampleSolutions = !this.displaySampleSolutions;
+    super();
   }
 
   protected activateCorrectionTab(): void {
@@ -41,7 +32,7 @@ export abstract class ComponentWithExerciseDirective<SolutionType,
     }
   }
 
-  protected correctAbstract(exerciseFragment: ExerciseSolveFieldsFragment, part: PartType, partId: string): void {
+  protected correctAbstract(exerciseFragment: ExerciseSolveFieldsFragment, partId: string): void {
     this.isCorrecting = true;
 
     const solution: SolutionInputType | undefined = this.getSolution();
@@ -55,7 +46,7 @@ export abstract class ComponentWithExerciseDirective<SolutionType,
     this.dexieService.upsertSolution<SolutionInputType>(exerciseFragment, partId, solution);
 
     this.mutationGQL
-      .mutate(this.getMutationQueryVariables(part))
+      .mutate(this.getMutationQueryVariables())
       .subscribe(
         ({data}) => {
           this.resultQuery = data;
@@ -82,10 +73,8 @@ export abstract class ComponentWithExerciseDirective<SolutionType,
       });
   }
 
-  protected abstract get sampleSolutions(): SolutionType[];
-
   protected abstract getSolution(): SolutionInputType | undefined;
 
-  protected abstract getMutationQueryVariables(part: PartType): MutationVariablesType;
+  protected abstract getMutationQueryVariables(): MutationVariablesType;
 
 }

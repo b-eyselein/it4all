@@ -14,6 +14,7 @@ import {
 } from '../regex-apollo-mutations.service';
 import {RegexExPart} from '../../../../_interfaces/graphql-types';
 import {AuthenticationService} from '../../../../_services/authentication.service';
+import {HasSampleSolutions} from "../../_helpers/correction-helpers";
 
 
 function getIdForRegexExercisePart(regexExPart: RegexExPart): string {
@@ -28,8 +29,8 @@ function getIdForRegexExercisePart(regexExPart: RegexExPart): string {
   templateUrl: './regex-exercise.component.html'
 })
 export class RegexExerciseComponent
-  extends ComponentWithExerciseDirective<string, string, RegexCorrectionMutation, RegexExPart, RegexCorrectionMutationVariables, RegexCorrectionGQL>
-  implements OnInit {
+  extends ComponentWithExerciseDirective<string, RegexCorrectionMutation, RegexExPart, RegexCorrectionMutationVariables, RegexCorrectionGQL>
+  implements OnInit, HasSampleSolutions<string> {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: RegexExerciseContentFragment;
@@ -48,23 +49,44 @@ export class RegexExerciseComponent
     this.loadOldSolutionAbstract(this.exerciseFragment, this.partId, (oldSol) => this.solution = oldSol);
   }
 
-  protected getSolution(): string {
-    return this.solution;
+  // Sample solutions
+
+  displaySampleSolutions = false;
+
+  toggleSampleSolutions() {
+    this.displaySampleSolutions = !this.displaySampleSolutions;
   }
 
   get sampleSolutions(): string[] {
     return this.contentFragment.sampleSolutions.map((s) => s.sample);
   }
 
-  protected getMutationQueryVariables(part: RegexExPart): RegexCorrectionMutationVariables {
+  // Correction
+
+  protected getSolution(): string {
+    return this.solution;
+  }
+
+  protected getMutationQueryVariables(): RegexCorrectionMutationVariables {
     return {
       exId: this.exerciseFragment.exerciseId,
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
-      part,
+      part: RegexExPart.RegexSingleExPart,
       userJwt: this.authenticationService.currentUserValue.jwt
     };
   }
+
+  correct(): void {
+    if (this.solution === undefined || this.solution.length === 0) {
+      alert('Sie können keine leere Lösung abgeben!');
+      return;
+    }
+
+    this.correctAbstract(this.exerciseFragment, this.partId);
+  }
+
+  // Results
 
   get correctionResult(): RegexCorrectionResultFragment | null {
     return this.resultQuery?.me.regexExercise?.correct;
@@ -86,14 +108,7 @@ export class RegexExerciseComponent
     return this.abstractResult?.__typename === 'RegexExtractionResult' ? this.abstractResult : undefined;
   }
 
-  correct(): void {
-    if (this.solution === undefined || this.solution.length === 0) {
-      alert('Sie können keine leere Lösung abgeben!');
-      return;
-    }
-
-    this.correctAbstract(this.exerciseFragment, RegexExPart.RegexSingleExPart, this.partId);
-  }
+  // Other
 
   // FIXME: make directive?
   @HostListener('document:keypress', ['$event'])
