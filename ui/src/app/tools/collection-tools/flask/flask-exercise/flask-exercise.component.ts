@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {
   ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
@@ -13,9 +13,11 @@ import {
   FlaskCorrectionMutation,
   FlaskCorrectionMutationVariables
 } from "../flask-apollo-mutations.service";
+import {FilesExerciseComponent} from "../../_components/files-exercise/files-exercise.component";
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
 import 'codemirror/mode/python/python';
+
 
 function getIdForFlaskExPart(flaskExPart: FlaskExercisePart): string {
   switch (flaskExPart) {
@@ -35,6 +37,8 @@ export class FlaskExerciseComponent
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: FlaskExerciseContentFragment;
 
+  @ViewChild(FilesExerciseComponent) filesExerciseComponent: FilesExerciseComponent;
+
   readonly partId: string = getIdForFlaskExPart(FlaskExercisePart.FlaskSingleExPart);
 
   exerciseFileFragments: ExerciseFileFragment[] = [];
@@ -44,6 +48,10 @@ export class FlaskExerciseComponent
   }
 
   ngOnInit(): void {
+    this.exerciseFileFragments = this.contentFragment.files;
+
+    console.info(this.exerciseFileFragments.length);
+
     this.loadOldSolutionAbstract(
       this.exerciseFragment,
       this.partId,
@@ -60,7 +68,7 @@ export class FlaskExerciseComponent
   // Correction
 
   protected getSolution(): FilesSolutionInput | undefined {
-    return undefined;
+    return {files: this.exerciseFileFragments};
   }
 
   protected getMutationQueryVariables(): FlaskCorrectionMutationVariables {
@@ -74,7 +82,11 @@ export class FlaskExerciseComponent
   }
 
   correct(): void {
-    this.correctAbstract(this.exerciseFragment, this.partId);
+    this.correctAbstract(this.exerciseFragment, this.partId, () => {
+      if (this.filesExerciseComponent) {
+        this.filesExerciseComponent.toggleCorrectionTab();
+      }
+    });
   }
 
 }

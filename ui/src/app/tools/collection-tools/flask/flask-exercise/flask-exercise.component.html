@@ -9,8 +9,8 @@
     {{exerciseFragment.text}}
   </ng-container>
 
-  <ng-container correctionContent>
-    TODO!
+  <ng-container correctionContent *ngIf="resultQuery">
+    {{resultQuery | json}}
   </ng-container>
 
 </it4all-files-exercise>

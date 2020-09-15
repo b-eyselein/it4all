@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Mon Sep 14 2020 14:35:02 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Tue Sep 15 2020 15:02:02 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -144,6 +144,7 @@ type FlaskCorrectionResult {
 }
 
 type FlaskExerciseContent {
+  files: [ExerciseFile!]!
   sampleSolutions: [FilesSampleSolution!]!
   _x: Boolean!
 }

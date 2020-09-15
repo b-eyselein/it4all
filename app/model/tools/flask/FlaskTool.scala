@@ -13,21 +13,24 @@ object FlaskTool extends Tool("flask", "Flask", ToolState.ALPHA) {
   override type SolType       = FilesSolution
   override type ExContentType = FlaskExerciseContent
   override type PartType      = FlaskExPart
-  override type ResType       = FlaskCorrectionResult
+  override type ResType       = FlaskAbstractCorrectionResult
 
   type FlaskExercise = Exercise[FlaskExerciseContent]
 
-  override val jsonFormats: FilesSampleSolutionToolJsonProtocol[FlaskExerciseContent, FlaskExPart]  =
+  override val jsonFormats: FilesSampleSolutionToolJsonProtocol[FlaskExerciseContent, FlaskExPart] =
     FlaskToolJsonProtocol
+
   override val graphQlModels
-    : FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskExPart, FlaskCorrectionResult] = FlaskToolGraphQLModels
+    : FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskExPart, FlaskAbstractCorrectionResult] =
+    FlaskToolGraphQLModels
 
   override def correctAbstract(
     user: LoggedInUser,
     solution: FilesSolution,
     exercise: Exercise[FlaskExerciseContent],
     part: FlaskExPart
-  )(implicit executionContext: ExecutionContext): Future[FlaskCorrectionResult] = ???
+  )(implicit executionContext: ExecutionContext): Future[FlaskAbstractCorrectionResult] =
+    FlaskCorrector.correct(user.username, solution, exercise)
 
   override val initialData: InitialData[FlaskExerciseContent] = FlaskInitialData
 

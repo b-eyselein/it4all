@@ -184,6 +184,7 @@ export type FlaskCorrectionResult = {
 
 export type FlaskExerciseContent = {
   __typename?: 'FlaskExerciseContent';
+  files: Array<ExerciseFile>;
   sampleSolutions: Array<FilesSampleSolution>;
   _x: Scalars['Boolean'];
 };
