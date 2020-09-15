@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FilesExerciseComponent } from './files-exercise.component';
+import {FilesExerciseComponent} from './files-exercise.component';
 
 describe('FilesExerciseComponent', () => {
   let component: FilesExerciseComponent;
@@ -8,9 +8,9 @@ describe('FilesExerciseComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FilesExerciseComponent ]
+      declarations: [FilesExerciseComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

@@ -45,7 +45,7 @@ import {FilledPointsComponent} from './_components/filled-points/filled-points.c
 import {ProficiencyCardComponent} from './_components/proficiency-card/proficiency-card.component';
 import {LessonQuestionsContentComponent} from './lessons/lesson-questions/lesson-questions-content.component';
 import {FlaskExerciseComponent} from './flask/flask-exercise/flask-exercise.component';
-import { FilesExerciseComponent } from './_components/files-exercise/files-exercise.component';
+import {FilesExerciseComponent} from './_components/files-exercise/files-exercise.component';
 
 
 @NgModule({

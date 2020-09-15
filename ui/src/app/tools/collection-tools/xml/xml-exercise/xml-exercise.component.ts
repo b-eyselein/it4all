@@ -52,7 +52,7 @@ export function getXmlDocumentContent(rootNode: string): string {
   templateUrl: './xml-exercise.component.html'
 })
 export class XmlExerciseComponent
-  extends ComponentWithExerciseDirective<XmlSolutionInput, XmlCorrectionMutation, XmlExPart, XmlCorrectionMutationVariables, XmlCorrectionGQL>
+  extends ComponentWithExerciseDirective<XmlSolutionInput, XmlCorrectionMutation, XmlCorrectionMutationVariables>
   implements OnInit, HasSampleSolutions<XmlSolution> {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;

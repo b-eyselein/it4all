@@ -34,7 +34,7 @@ function getIdForSqlExPart(sqlExPart: SqlExPart): string {
   encapsulation: ViewEncapsulation.None // style editor also
 })
 export class SqlExerciseComponent
-  extends ComponentWithExerciseDirective<string, SqlCorrectionMutation, SqlExPart, SqlCorrectionMutationVariables, SqlCorrectionGQL>
+  extends ComponentWithExerciseDirective<string, SqlCorrectionMutation, SqlCorrectionMutationVariables>
   implements OnInit, HasSampleSolutions<string> {
 
   readonly editorOptions = getDefaultEditorOptions('sql');

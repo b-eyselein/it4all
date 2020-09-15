@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {DexieService} from '../../../../_services/dexie.service';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {
@@ -21,6 +21,7 @@ import {
 } from '../programming-apollo-mutations.service';
 import {FilesSolution, FilesSolutionInput, ProgExPart} from '../../../../_interfaces/graphql-types';
 import {AuthenticationService} from '../../../../_services/authentication.service';
+import {FilesExerciseComponent} from "../../_components/files-exercise/files-exercise.component";
 
 import 'codemirror/mode/python/python';
 
@@ -39,15 +40,13 @@ function getIdForProgExPart(progExPart: ProgExPart): string {
   templateUrl: './programming-exercise.component.html'
 })
 export class ProgrammingExerciseComponent
-  extends ComponentWithExerciseDirective<FilesSolutionInput,
-    ProgrammingCorrectionMutation,
-    ProgExPart,
-    ProgrammingCorrectionMutationVariables,
-    ProgrammingCorrectionGQL>
+  extends ComponentWithExerciseDirective<FilesSolutionInput, ProgrammingCorrectionMutation, ProgrammingCorrectionMutationVariables>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: ProgrammingExerciseContentFragment;
+
+  @ViewChild(FilesExerciseComponent) filesExerciseComponent: FilesExerciseComponent;
 
   partId: string;
 
@@ -94,7 +93,11 @@ export class ProgrammingExerciseComponent
   }
 
   correct(): void {
-    this.correctAbstract(this.exerciseFragment, this.partId);
+    this.correctAbstract(this.exerciseFragment, this.partId, () => {
+      if (this.filesExerciseComponent) {
+        this.filesExerciseComponent.toggleCorrectionTab();
+      }
+    });
   }
 
   // Results

@@ -1,7 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {AllExercisesOverviewComponent} from './all-exercises-overview.component';
-import {TagComponent} from '../_components/tag/tag.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {ActivatedRoute} from '@angular/router';
@@ -13,7 +12,7 @@ describe('AllExercisesOverviewComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
-      declarations: [AllExercisesOverviewComponent, TagComponent],
+      declarations: [AllExercisesOverviewComponent],
       providers: [
         {
           provide: ActivatedRoute,

@@ -29,7 +29,7 @@ function getIdForRegexExercisePart(regexExPart: RegexExPart): string {
   templateUrl: './regex-exercise.component.html'
 })
 export class RegexExerciseComponent
-  extends ComponentWithExerciseDirective<string, RegexCorrectionMutation, RegexExPart, RegexCorrectionMutationVariables, RegexCorrectionGQL>
+  extends ComponentWithExerciseDirective<string, RegexCorrectionMutation, RegexCorrectionMutationVariables>
   implements OnInit, HasSampleSolutions<string> {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;

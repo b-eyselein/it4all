@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {DexieService} from '../../../../_services/dexie.service';
 import {
@@ -19,6 +19,7 @@ import {FilesSolution, FilesSolutionInput, WebExPart} from '../../../../_interfa
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
+import {FilesExerciseComponent} from "../../_components/files-exercise/files-exercise.component";
 
 export function getIdForWebExPart(webExPart: WebExPart): string {
   switch (webExPart) {
@@ -36,11 +37,13 @@ export function getIdForWebExPart(webExPart: WebExPart): string {
   templateUrl: './web-exercise.component.html'
 })
 export class WebExerciseComponent
-  extends ComponentWithExerciseDirective<FilesSolutionInput, WebCorrectionMutation, WebExPart, WebCorrectionMutationVariables, WebCorrectionGQL>
+  extends ComponentWithExerciseDirective<FilesSolutionInput, WebCorrectionMutation, WebCorrectionMutationVariables>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;
   @Input() contentFragment: WebExerciseContentFragment;
+
+  @ViewChild(FilesExerciseComponent) filesExerciseComponent: FilesExerciseComponent;
 
   partId: string;
 
@@ -85,7 +88,11 @@ export class WebExerciseComponent
   }
 
   correct(): void {
-    this.correctAbstract(this.exerciseFragment, this.partId)
+    this.correctAbstract(this.exerciseFragment, this.partId, () => {
+      if (this.filesExerciseComponent) {
+        this.filesExerciseComponent.toggleCorrectionTab();
+      }
+    });
   };
 
   // Results

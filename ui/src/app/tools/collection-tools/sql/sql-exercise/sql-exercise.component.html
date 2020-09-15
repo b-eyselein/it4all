@@ -13,7 +13,9 @@
 
       <div class="columns">
         <div class="column">
-          <button class="button is-link is-fullwidth" (click)="correct()">Lösung testen</button>
+          <button class="button is-link is-fullwidth" [class.is-loading]="isCorrecting" (click)="correct()">
+            Lösung testen
+          </button>
         </div>
         <div class="column">
           <a class="button is-dark is-fullwidth" routerLink="../..">Bearbeiten beenden</a>

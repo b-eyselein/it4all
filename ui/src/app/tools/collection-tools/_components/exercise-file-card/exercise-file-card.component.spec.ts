@@ -19,7 +19,6 @@ describe('ExerciseFileCardComponent', () => {
     component.exerciseFile = {
       name: '',
       fileType: 'python',
-      resourcePath: '',
       content: '',
       editable: false
     };

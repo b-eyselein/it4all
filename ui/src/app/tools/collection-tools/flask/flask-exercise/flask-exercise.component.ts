@@ -29,11 +29,7 @@ function getIdForFlaskExPart(flaskExPart: FlaskExercisePart): string {
   templateUrl: './flask-exercise.component.html'
 })
 export class FlaskExerciseComponent
-  extends ComponentWithExerciseDirective<FilesSolutionInput,
-    FlaskCorrectionMutation,
-    FlaskExercisePart,
-    FlaskCorrectionMutationVariables,
-    FlaskCorrectionGQL>
+  extends ComponentWithExerciseDirective<FilesSolutionInput, FlaskCorrectionMutation, FlaskCorrectionMutationVariables>
   implements OnInit {
 
   @Input() exerciseFragment: ExerciseSolveFieldsFragment;

@@ -23,23 +23,15 @@ describe('SqlResultComponent', () => {
       points: 0,
       maxPoints: 0,
       staticComparison: {
-        whereComparison: {
-          maxPoints: -1, points: -1, allMatches: [], matchSingularName: '', matchName: ''
-        },
-        joinExpressionComparison: {
-          maxPoints: -1, points: -1, allMatches: [], matchSingularName: '', matchName: ''
-        },
-        tableComparison: {
-          maxPoints: -1, points: -1, allMatches: [], matchSingularName: '', matchName: ''
-        },
-        columnComparison: {
-          maxPoints: -1, points: -1, allMatches: [], matchSingularName: '', matchName: ''
-        },
+        whereComparison: {maxPoints: -1, points: -1, allMatches: []},
+        joinExpressionComparison: {maxPoints: -1, points: -1, allMatches: []},
+        tableComparison: {maxPoints: -1, points: -1, allMatches: []},
+        columnComparison: {maxPoints: -1, points: -1, allMatches: []},
         additionalComparisons: {}
       },
       executionResult: {
-        sampleResultTry: null,
-        userResultTry: null
+        sampleResult: null,
+        userResult: null
       }
     };
     fixture.detectChanges();

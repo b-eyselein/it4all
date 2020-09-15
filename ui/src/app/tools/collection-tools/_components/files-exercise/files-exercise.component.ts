@@ -1,12 +1,15 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {ExerciseFile, FilesSolution} from "../../../../_interfaces/graphql-types";
 import {CorrectionHelpers, HasSampleSolutions} from "../../_helpers/correction-helpers";
+import {TabsComponent} from "../../../../shared/tabs/tabs.component";
 
 @Component({
   selector: 'it4all-files-exercise',
   templateUrl: './files-exercise.component.html'
 })
-export class FilesExerciseComponent extends CorrectionHelpers implements HasSampleSolutions<FilesSolution> {
+export class FilesExerciseComponent
+  extends CorrectionHelpers
+  implements HasSampleSolutions<FilesSolution> {
 
   @Input() exerciseFiles: ExerciseFile[];
 
@@ -22,8 +25,20 @@ export class FilesExerciseComponent extends CorrectionHelpers implements HasSamp
 
   displaySampleSolutions = false;
 
+  @ViewChild(TabsComponent) tabsComponent: TabsComponent;
+
   toggleSampleSolutions(): void {
     this.displaySampleSolutions = !this.displaySampleSolutions;
+  }
+
+  performCorrection(): void {
+    this.correct.emit();
+  }
+
+  toggleCorrectionTab() {
+    if (this.tabsComponent) {
+      this.tabsComponent.selectTabByTitle(this.correctionTabTitle);
+    }
   }
 
 }
