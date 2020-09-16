@@ -1,28 +1,21 @@
 package initialData.web.coll_1
 
 import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, ExerciseFile, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution, SampleSolution}
 
-object WebColl1Ex5 {
+object WebColl1Ex5 extends WebInitialExercise(1, 5) {
 
-  private val exResPath = exerciseResourcesPath("web", 1, 5)
-
-  private val sampleSolution = SampleSolution(
-    id = 1,
-    sample = FilesSolution(
-      files = Seq(
-        ExerciseFile(
-          name = "audio.html",
-          fileType = "htmlmixed",
-          editable = false,
-          content = loadTextFromFile(exResPath / "sol_1" / "audio.html")
-        )
-      )
-    )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath / "sol_1",
+    Seq(FileLoadConfig("audio.html", htmlFileType))
   )
+
+  private val sampleSolution = SampleSolution(1, FilesSolution(sampleSolutionFiles))
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -59,28 +52,20 @@ object WebColl1Ex5 {
   )
 
   val webColl1Ex5: WebExercise = Exercise(
-    exerciseId = 5,
-    collectionId = 1,
-    toolId = "web",
+    exerciseId,
+    collectionId,
+    toolId,
     title = "Audio in HTML 5",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 1,
     content = WebExerciseContent(
-      files = Seq(
-        ExerciseFile(
-          name = "audio.html",
-          fileType = "htmlmixed",
-          editable = true,
-          content = loadTextFromFile(exResPath / "audio.html")
-        )
+      SiteSpec("audio.html", html_tasks, jsTasks = Seq.empty),
+      files = loadFilesFromFolder(
+        exResPath,
+        Seq(FileLoadConfig("audio.html", htmlFileType, editable = true))
       ),
-      siteSpec = SiteSpec(
-        fileName = "audio.html",
-        htmlTasks = html_tasks,
-        jsTasks = Seq.empty
-      ),
-      sampleSolutions = Seq(sampleSolution)
+      Seq(sampleSolution)
     )
   )
 }

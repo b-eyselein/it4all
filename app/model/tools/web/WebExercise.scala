@@ -16,11 +16,11 @@ object WebExPart extends ExParts[WebExPart] {
 }
 
 final case class WebExerciseContent(
-  htmlText: Option[String] = None,
-  jsText: Option[String] = None,
   siteSpec: SiteSpec,
   files: Seq[ExerciseFile],
-  sampleSolutions: Seq[SampleSolution[FilesSolution]]
+  sampleSolutions: Seq[SampleSolution[FilesSolution]],
+  htmlText: Option[String] = None,
+  jsText: Option[String] = None
 ) extends ExerciseContent {
 
   override protected type S = FilesSolution

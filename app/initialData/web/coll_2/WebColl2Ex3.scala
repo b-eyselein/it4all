@@ -1,14 +1,14 @@
 package initialData.web.coll_2
 
 import de.uniwue.webtester.sitespec._
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, ExerciseFile, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution, SampleSolution}
 
-object WebColl2Ex3 {
-
-  private val exResPath = exerciseResourcesPath("web", 2, 3)
+object WebColl2Ex3 extends WebInitialExercise(2, 3) {
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -111,47 +111,31 @@ object WebColl2Ex3 {
     )
   )
 
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(
-    id = 1,
-    sample = FilesSolution(
-      files = Seq(
-        ExerciseFile(
-          name = "factorial.html",
-          fileType = "htmlmixed",
-          editable = false,
-          content = loadTextFromFile(exResPath / "sol_1" / "factorial.html")
-        ),
-        ExerciseFile(
-          name = "factorial.js",
-          fileType = "javascript",
-          editable = false,
-          content = loadTextFromFile(exResPath / "sol_1" / "factorial.js")
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath / "sol_1",
+    Seq(
+      FileLoadConfig("factorial.html", htmlFileType),
+      FileLoadConfig("factorial.js", jsFileType)
     )
   )
 
+  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
+
   val webColl2Ex3: WebExercise = Exercise(
-    exerciseId = 3,
-    collectionId = 2,
-    toolId = "web",
+    exerciseId,
+    collectionId,
+    toolId,
     title = "Schleifen",
     authors = Seq("alg81dm"),
     text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 2,
     content = WebExerciseContent(
-      files = Seq(
-        ExerciseFile(
-          name = "factorial.html",
-          fileType = "htmlmixed",
-          editable = true,
-          content = loadTextFromFile(exResPath / "factorial.html")
-        ),
-        ExerciseFile(
-          name = "factorial.js",
-          fileType = "javascript",
-          editable = true,
-          content = loadTextFromFile(exResPath / "factorial.js")
+      siteSpec = SiteSpec("factorial.html", html_tasks, js_tasks),
+      files = loadFilesFromFolder(
+        exResPath,
+        Seq(
+          FileLoadConfig("factorial.html", htmlFileType, editable = true),
+          FileLoadConfig("factorial.js", jsFileType, editable = true)
         )
       ),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),
@@ -160,11 +144,6 @@ object WebColl2Ex3 {
           |Sie soll den Inhalt (value) des Eingabefeldes auslesen, die Fakultät davon berechnen und den
           |Inhalt (textContent) des Elements mit der ID 'result' auf das Ergebnis setzen.""".stripMargin
           .replace("\n", " ")
-      ),
-      siteSpec = SiteSpec(
-        fileName = "factorial.html",
-        htmlTasks = html_tasks,
-        jsTasks = js_tasks
       ),
       sampleSolutions = Seq(sampleSolution)
     )

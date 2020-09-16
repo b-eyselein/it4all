@@ -123,8 +123,8 @@ object ProgrammingColl2Ex2 extends ProgrammingInitialExercise(2, 2) {
   private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl2Ex2: ProgrammingExercise = Exercise(
-    exerciseId = 2,
-    collectionId = 2,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Fließkommazahl in Exponentialschreibweise",
     authors = Seq("bje40dc"),

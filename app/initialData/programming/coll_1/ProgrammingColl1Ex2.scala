@@ -98,9 +98,9 @@ object ProgrammingColl1Ex2 extends ProgrammingInitialExercise(1, 2) {
   private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl1Ex2: ProgrammingExercise = Exercise(
-    exerciseId = 2,
-    collectionId = 1,
-    toolId = "programming",
+    exerciseId,
+    collectionId,
+    toolId,
     title = "Fakultät",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

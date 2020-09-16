@@ -1,32 +1,21 @@
 package initialData.programming.coll_4
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl4Ex4 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 4, 4)
+object ProgrammingColl4Ex4 extends ProgrammingInitialExercise(4, 4) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "slicing.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "slicing_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_slicing.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_slicing_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("slicing.py", fileType, maybeOtherFileName = Some("slicing_declaration.py")),
+        FileLoadConfig("test_slicing.py", fileType, editable = true, Some("test_slicing_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -152,49 +141,30 @@ object ProgrammingColl4Ex4 {
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_slicing.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_slicing.py")
-      ),
-      ExerciseFile(
-        name = "slicing.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "slicing_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_slicing.py", fileType),
+        FileLoadConfig("slicing.py", fileType, editable = true, Some("slicing_declaration.py"))
       )
     ),
     implFileName = "slicing.py",
     sampleSolFileNames = Seq("slicing.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "slicing.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "slicing.py")
-          ),
-          ExerciseFile(
-            name = "test_slicing.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_slicing.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("slicing.py", fileType),
+      FileLoadConfig("test_slicing.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl4Ex4: ProgrammingExercise = Exercise(
-    exerciseId = 4,
-    collectionId = 4,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Slicing",
     authors = Seq("bje40dc"),

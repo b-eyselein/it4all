@@ -1,15 +1,14 @@
 package initialData.web.coll_1
 
-import better.files.File
 import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, ExerciseFile, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution, SampleSolution}
 
-object WebColl1Ex2 {
-
-  private val ex_res_folder: File = exerciseResourcesPath("web", 1, 2)
+object WebColl1Ex2 extends WebInitialExercise(1, 2) {
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -110,47 +109,31 @@ object WebColl1Ex2 {
     )
   )
 
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(
-    id = 1,
-    sample = FilesSolution(
-      files = Seq(
-        ExerciseFile(
-          name = "production.html",
-          fileType = "htmlmixed",
-          editable = false,
-          content = loadTextFromFile(ex_res_folder / "sol_1" / "production.html")
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath / "sol_1",
+    Seq(
+      FileLoadConfig("production.html", htmlFileType)
     )
   )
 
+  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
+
   val webColl1Ex2: WebExercise = Exercise(
-    exerciseId = 2,
-    collectionId = 1,
+    exerciseId,
+    collectionId,
     toolId = "web",
     title = "Tabellen in Html",
     authors = Seq("bje40dc"),
-    text = loadTextFromFile(ex_res_folder / "text.html"),
+    text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 2,
     content = WebExerciseContent(
-      files = Seq(
-        ExerciseFile(
-          name = "production.html",
-          fileType = "htmlmixed",
-          editable = true,
-          content = loadTextFromFile(ex_res_folder / "production.html")
-        ),
-        ExerciseFile(
-          name = "productionStyle.css",
-          fileType = "css",
-          editable = false,
-          content = loadTextFromFile(ex_res_folder / "productionStyle.css")
+      siteSpec = SiteSpec("production.html", html_tasks, jsTasks = Seq.empty),
+      files = loadFilesFromFolder(
+        exResPath,
+        Seq(
+          FileLoadConfig("production.html", htmlFileType, editable = true),
+          FileLoadConfig("productionStyle.css", cssFileType)
         )
-      ),
-      siteSpec = SiteSpec(
-        fileName = "production.html",
-        htmlTasks = html_tasks,
-        jsTasks = Seq.empty
       ),
       sampleSolutions = Seq(sampleSolution)
     )

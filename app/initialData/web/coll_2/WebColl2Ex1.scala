@@ -1,14 +1,14 @@
 package initialData.web.coll_2
 
 import de.uniwue.webtester.sitespec._
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, ExerciseFile, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution, SampleSolution}
 
-object WebColl2Ex1 {
-
-  private val exResPath = exerciseResourcesPath("web", 2, 1)
+object WebColl2Ex1 extends WebInitialExercise(2, 1) {
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -65,49 +65,34 @@ object WebColl2Ex1 {
     )
   }
 
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(
-    id = 1,
-    sample = FilesSolution(
-      files = Seq(
-        ExerciseFile(
-          name = "clickCounter.html",
-          fileType = "htmlmixed",
-          editable = false,
-          content = loadTextFromFile(exResPath / "sol_1" / "clickCounter.html")
-        ),
-        ExerciseFile(
-          name = "clickCounter.js",
-          fileType = "javascript",
-          editable = false,
-          content = loadTextFromFile(exResPath / "sol_1" / "clickCounter.js")
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath / "sol_1",
+    Seq(
+      FileLoadConfig("clickCounter.html", htmlFileType),
+      FileLoadConfig("clickCounter.js", jsFileType)
     )
   )
 
+  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
+
   val webColl2Ex1: WebExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 2,
+    exerciseId,
+    collectionId,
     toolId = "web",
     title = "Klickzähler",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 2,
     content = WebExerciseContent(
-      files = Seq(
-        ExerciseFile(
-          name = "clickCounter.html",
-          fileType = "htmlmixed",
-          editable = true,
-          content = loadTextFromFile(exResPath / "clickCounter.html")
-        ),
-        ExerciseFile(
-          name = "clickCounter.js",
-          fileType = "javascript",
-          editable = true,
-          content = loadTextFromFile(exResPath / "clickCounter.js")
+      SiteSpec("clickCounter.html", html_tasks, js_tasks),
+      loadFilesFromFolder(
+        exResPath,
+        Seq(
+          FileLoadConfig("clickCounter.html", htmlFileType, editable = true),
+          FileLoadConfig("clickCounter.js", jsFileType, editable = true)
         )
       ),
+      Seq(sampleSolution),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),
       jsText = Some(
         """Implementieren Sie nun die Funktion <code>increment()</code> die aufgerufen wird wenn auf den Knopf
@@ -115,13 +100,7 @@ object WebColl2Ex1 {
           |Sie soll den Inhalt (innerHTML) des Elementes mit der id 'theSpan' auslesen und um 1 erhöhen.
           |Sie können die Funktion <code>parseInt(str)</code> verwenden um einen String in eine Ganzzahl
           |umzuwandeln.""".stripMargin.replace("\n", " ")
-      ),
-      siteSpec = SiteSpec(
-        fileName = "clickCounter.html",
-        htmlTasks = html_tasks,
-        jsTasks = js_tasks
-      ),
-      sampleSolutions = Seq(sampleSolution)
+      )
     )
   )
 

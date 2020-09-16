@@ -1,34 +1,18 @@
 package initialData.programming.coll_4
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 import play.api.libs.json.{JsNull, JsString, Json}
 
-object ProgrammingColl4Ex2 {
+object ProgrammingColl4Ex2 extends ProgrammingInitialExercise(4, 2) {
 
-  private val toolId = "programming"
+  private val sampleSolutionFiles = loadFilesFromFolder(exResPath, Seq(FileLoadConfig("longest_string.py", fileType)))
 
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 4, 2)
-
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "longest_string.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "longest_string.py")
-          )
-        )
-      )
-    )
-  )
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   private val implementationPart = ImplementationPart(
     base = """from typing import List
@@ -36,12 +20,10 @@ object ProgrammingColl4Ex2 {
              |def longest_string(my_list: List[str]) -> str:
              |    return ''
   """.stripMargin,
-    files = Seq(
-      ExerciseFile(
-        name = "longest_string.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "longest_string_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig(name = "longest_string.py", fileType, editable = true, Some("longest_string_declaration.py"))
       )
     ),
     implFileName = "longest_string.py",

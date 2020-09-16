@@ -1,32 +1,21 @@
 package initialData.programming.coll_3
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl3Ex2 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 3, 2)
+object ProgrammingColl3Ex2 extends ProgrammingInitialExercise(3, 2) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "discount.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "discount_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_discount.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_discount_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("discount.py", fileType, maybeOtherFileName = Some("discount_declaration.py")),
+        FileLoadConfig("test_discount.py", fileType, editable = true, Some("test_discount_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -117,49 +106,30 @@ object ProgrammingColl3Ex2 {
     base = """def calculate_discount(has_dog: bool, has_cat: bool, has_hamster: bool) -> int:
              |pass
              |""".stripMargin,
-    files = Seq(
-      ExerciseFile(
-        name = "test_discount.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_discount.py")
-      ),
-      ExerciseFile(
-        name = "discount.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "discount_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_discount.py", fileType),
+        FileLoadConfig("discount.py", fileType, editable = true, Some("discount_declaration.py"))
       )
     ),
     implFileName = "discount.py",
     sampleSolFileNames = Seq("discount.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "discount.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "discount.py")
-          ),
-          ExerciseFile(
-            name = "test_discount.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_discount.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("discount.py", fileType),
+      FileLoadConfig("test_discount.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl3Ex2: ProgrammingExercise = Exercise(
-    exerciseId = 2,
-    collectionId = 3,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Rabatt",
     authors = Seq("bje40dc"),

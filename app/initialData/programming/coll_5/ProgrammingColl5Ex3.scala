@@ -1,32 +1,26 @@
 package initialData.programming.coll_5
 
-import initialData.InitialData.{exerciseResourcesPath, loadTextFromFile}
+import initialData.FileLoadConfig
+import initialData.InitialData.loadTextFromFile
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl5Ex3 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 5, 3)
+object ProgrammingColl5Ex3 extends ProgrammingInitialExercise(5, 3) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "tuples_and_dicts.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "tuples_and_dicts_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_tuples_and_dicts.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_tuples_and_dicts_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("tuples_and_dicts.py", fileType, maybeOtherFileName = Some("tuples_and_dicts_declaration.py")),
+        FileLoadConfig(
+          "test_tuples_and_dicts.py",
+          fileType,
+          editable = true,
+          Some("test_tuples_and_dicts_declaration.py")
+        )
       )
     ),
     unitTestTestConfigs = Seq(
@@ -121,49 +115,30 @@ object ProgrammingColl5Ex3 {
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_tuples_and_dicts.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_tuples_and_dicts.py")
-      ),
-      ExerciseFile(
-        name = "tuples_and_dicts.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "tuples_and_dicts_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_tuples_and_dicts.py", fileType),
+        FileLoadConfig("tuples_and_dicts.py", fileType, editable = true, Some("tuples_and_dicts_declaration.py"))
       )
     ),
     implFileName = "tuples_and_dicts.py",
     sampleSolFileNames = Seq("tuples_and_dicts.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "tuples_and_dicts.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "tuples_and_dicts.py")
-          ),
-          ExerciseFile(
-            name = "test_tuples_and_dicts.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_tuples_and_dicts.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("tuples_and_dicts.py", fileType),
+      FileLoadConfig("test_tuples_and_dicts.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl5Ex3: ProgrammingExercise = Exercise(
-    exerciseId = 3,
-    collectionId = 5,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Tupel und Dictionaries",
     authors = Seq("bje40dc"),

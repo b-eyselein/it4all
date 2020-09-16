@@ -1,32 +1,21 @@
 package initialData.programming.coll_3
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl3Ex1 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 3, 1)
+object ProgrammingColl3Ex1 extends ProgrammingInitialExercise(3, 1) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "lottery.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "lottery_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_lottery.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_lottery_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("lottery.py", fileType, maybeOtherFileName = Some("lottery_declaration.py")),
+        FileLoadConfig("test_lottery.py", fileType, editable = true, Some("test_lottery_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -128,49 +117,30 @@ object ProgrammingColl3Ex1 {
     base = """def calculate_lottery_win(pot: float, win_class: int) > float:
              |    pass
              |""".stripMargin,
-    files = Seq(
-      ExerciseFile(
-        name = "test_lottery.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_lottery.py")
-      ),
-      ExerciseFile(
-        name = "lottery.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "lottery_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_lottery.py", fileType),
+        FileLoadConfig("lottery.py", fileType, editable = true, Some("lottery_declaration.py"))
       )
     ),
     implFileName = "lottery.py",
     sampleSolFileNames = Seq("lottery.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "lottery.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "lottery.py")
-          ),
-          ExerciseFile(
-            name = "test_lottery.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_lottery.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("lottery.py", fileType),
+      FileLoadConfig("test_lottery.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl3Ex1: ProgrammingExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 3,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Lotterie",
     authors = Seq("bje40dc"),

@@ -1,14 +1,14 @@
 package initialData.web.coll_1
 
 import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, ExerciseFile, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution, SampleSolution}
 
-object WebColl1Ex3 {
-
-  private val ex_res_folder = exerciseResourcesPath("web", 1, 3)
+object WebColl1Ex3 extends WebInitialExercise(1, 3) {
 
   private val html_tasks = Seq(
     HtmlTask(
@@ -57,49 +57,34 @@ object WebColl1Ex3 {
     )
   )
 
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(
-    id = 1,
-    sample = FilesSolution(
-      files = Seq(
-        ExerciseFile(
-          name = "mustang.html",
-          fileType = "htmlmixed",
-          editable = false,
-          content = loadTextFromFile(ex_res_folder / "sol_1" / "mustang.html")
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath / "sol_1",
+    Seq(
+      FileLoadConfig("mustang.html", htmlFileType)
     )
   )
 
+  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
+
+
   val webColl1Ex3: WebExercise = Exercise(
-    exerciseId = 3,
-    collectionId = 1,
+    exerciseId ,
+    collectionId ,
     toolId = "web",
     title = "Hyperlinks und Bilder in HTML",
     authors = Seq("bje40dc"),
-    text = loadTextFromFile(ex_res_folder / "text.html"),
+    text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 2,
     content = WebExerciseContent(
-      files = Seq(
-        ExerciseFile(
-          name = "mustang.html",
-          fileType = "htmlmixed",
-          editable = true,
-          content = loadTextFromFile(ex_res_folder / "mustang.html")
-        ),
-        ExerciseFile(
-          name = "mustangStyle.css",
-          fileType = "css",
-          editable = false,
-          content = loadTextFromFile(ex_res_folder / "mustangStyle.css")
+      SiteSpec("mustang.html", html_tasks, jsTasks = Seq.empty),
+      files = loadFilesFromFolder(
+        exResPath,
+        Seq(
+          FileLoadConfig("mustang.html", htmlFileType, editable = true),
+          FileLoadConfig("mustangStyle.css", cssFileType)
         )
       ),
-      siteSpec = SiteSpec(
-        fileName = "mustang.html",
-        htmlTasks = html_tasks,
-        jsTasks = Seq.empty
-      ),
-      sampleSolutions = Seq(sampleSolution)
+      Seq(sampleSolution)
     )
   )
 

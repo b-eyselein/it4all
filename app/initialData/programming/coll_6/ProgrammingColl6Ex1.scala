@@ -1,32 +1,21 @@
 package initialData.programming.coll_6
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl6Ex1 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 6, 1)
+object ProgrammingColl6Ex1 extends ProgrammingInitialExercise(6, 1) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "temperatures.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "temperatures_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_temperatures.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_temperatures_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("temperatures.py", fileType, maybeOtherFileName = Some("temperatures_declaration.py")),
+        FileLoadConfig("test_temperatures.py", fileType, editable = true, Some("test_temperatures_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -189,49 +178,30 @@ object ProgrammingColl6Ex1 {
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_temperatures.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_temperatures.py")
-      ),
-      ExerciseFile(
-        name = "temperatures.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "temperatures_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_temperatures.py", fileType),
+        FileLoadConfig("temperatures.py", fileType, editable = true, Some("temperatures_declaration.py"))
       )
     ),
     implFileName = "temperatures.py",
     sampleSolFileNames = Seq("temperatures.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "temperatures.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "temperatures.py")
-          ),
-          ExerciseFile(
-            name = "test_temperatures.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_temperatures.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("temperatures.py", fileType),
+      FileLoadConfig("test_temperatures.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl6Ex1: ProgrammingExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 6,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Temperaturen",
     authors = Seq("bje40dc"),

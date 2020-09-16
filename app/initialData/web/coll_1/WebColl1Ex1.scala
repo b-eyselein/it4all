@@ -1,14 +1,14 @@
 package initialData.web.coll_1
 
 import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, ExerciseFile, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution, SampleSolution}
 
-object WebColl1Ex1 {
-
-  private val ex_res_folder = exerciseResourcesPath("web", 1, 1)
+object WebColl1Ex1 extends WebInitialExercise(1, 1) {
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -64,49 +64,33 @@ object WebColl1Ex1 {
     )
   )
 
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(
-    id = 1,
-    sample = FilesSolution(
-      files = Seq(
-        ExerciseFile(
-          name = "carList.html",
-          fileType = "htmlmixed",
-          editable = false,
-          content = loadTextFromFile(ex_res_folder / "sol_1" / "carList.html")
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("carList.html", htmlFileType)
     )
   )
 
+  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
+
   val webColl1Ex1: WebExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 1,
-    toolId = "web",
+    exerciseId,
+    collectionId,
+    toolId,
     title = "Listen in Html",
     authors = Seq("bje40dc"),
-    text = loadTextFromFile(ex_res_folder / "text.html"),
+    text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 1,
     content = WebExerciseContent(
-      files = Seq(
-        ExerciseFile(
-          name = "carList.html",
-          fileType = "htmlmixed",
-          editable = true,
-          content = loadTextFromFile(ex_res_folder / "carList.html")
-        ),
-        ExerciseFile(
-          name = "carListStyle.css",
-          fileType = "css",
-          editable = false,
-          content = loadTextFromFile(ex_res_folder / "carListStyle.css")
+      SiteSpec("carList.html", html_tasks, jsTasks = Seq.empty),
+      loadFilesFromFolder(
+        exResPath,
+        Seq(
+          FileLoadConfig("carList.html", htmlFileType, editable = true),
+          FileLoadConfig("carListStyle.css", cssFileType)
         )
       ),
-      siteSpec = SiteSpec(
-        fileName = "carList.html",
-        htmlTasks = html_tasks,
-        jsTasks = Seq.empty
-      ),
-      sampleSolutions = Seq(sampleSolution)
+      Seq(sampleSolution)
     )
   )
 

@@ -1,32 +1,21 @@
 package initialData.programming.coll_7
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl7Ex1 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 7, 1)
+object ProgrammingColl7Ex1 extends ProgrammingInitialExercise(7, 1) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = loadTextFromFile(exResPath / "unit_tests_description.html"),
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "circle.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "circle_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_circle.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_circle_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("circle.py", fileType, maybeOtherFileName = Some("circle_declaration.py")),
+        FileLoadConfig("test_circle.py", fileType, editable = true, Some("test_circle_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -140,49 +129,30 @@ object ProgrammingColl7Ex1 {
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_circle.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_circle.py")
-      ),
-      ExerciseFile(
-        name = "circle.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "circle_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_circle.py", fileType),
+        FileLoadConfig("circle.py", fileType, editable = true, Some("circle_declaration.py"))
       )
     ),
     implFileName = "circle.py",
     sampleSolFileNames = Seq("circle.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "circle.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "circle.py")
-          ),
-          ExerciseFile(
-            name = "test_circle.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_circle.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("circle.py", fileType),
+      FileLoadConfig("test_circle.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl7Ex1: ProgrammingExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 7,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Kreise",
     authors = Seq("bje40dc"),

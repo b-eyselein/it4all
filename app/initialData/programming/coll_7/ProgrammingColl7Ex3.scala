@@ -1,32 +1,21 @@
 package initialData.programming.coll_7
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl7Ex3 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 7, 3)
+object ProgrammingColl7Ex3 extends ProgrammingInitialExercise(7, 3) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "TODO!",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "vector2d.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "vector2d_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_vector2d.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_vector2d_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("vector2d.py", fileType, maybeOtherFileName = Some("vector2d_declaration.py")),
+        FileLoadConfig("test_vector2d.py", fileType, editable = true, Some("test_vector2d_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -245,49 +234,30 @@ object ProgrammingColl7Ex3 {
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_vector2d.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_vector2d.py")
-      ),
-      ExerciseFile(
-        name = "vector2d.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "vector2d_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_vector2d.py", fileType),
+        FileLoadConfig("vector2d.py", fileType, editable = true, Some("vector2d_declaration.py"))
       )
     ),
     implFileName = "vector2d.py",
     sampleSolFileNames = Seq("vector2d.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "vector2d.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "vector2d.py")
-          ),
-          ExerciseFile(
-            name = "test_vector2d.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_vector2d.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("vector2d.py", fileType),
+      FileLoadConfig("test_vector2d.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl7Ex3: ProgrammingExercise = Exercise(
-    exerciseId = 3,
-    collectionId = 7,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Vektor2D",
     authors = Seq("bje40dc"),

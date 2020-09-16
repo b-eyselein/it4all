@@ -115,9 +115,9 @@ object ProgrammingColl1Ex4 extends ProgrammingInitialExercise(1, 4) {
   private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl1Ex4: ProgrammingExercise = Exercise(
-    exerciseId = 4,
-    collectionId = 1,
-    toolId = "programming",
+    exerciseId,
+    collectionId,
+    toolId,
     title = "Fibonacci",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

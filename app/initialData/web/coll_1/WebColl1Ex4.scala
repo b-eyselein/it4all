@@ -1,14 +1,14 @@
 package initialData.web.coll_1
 
 import de.uniwue.webtester.sitespec.{HtmlTask, SiteSpec}
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, ExerciseFile, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution, SampleSolution}
 
-object WebColl1Ex4 {
-
-  private val exResPath = exerciseResourcesPath("web", 1, 4)
+object WebColl1Ex4 extends WebInitialExercise(1, 4) {
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -74,49 +74,31 @@ object WebColl1Ex4 {
     )
   )
 
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(
-    id = 1,
-    sample = FilesSolution(
-      files = Seq(
-        ExerciseFile(
-          name = "login.html",
-          fileType = "htmlmixed",
-          editable = false,
-          content = loadTextFromFile(exResPath / "sol_1" / "login.html")
-        )
-      )
-    )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath / "sol_1",
+    Seq(FileLoadConfig("login.html", htmlFileType))
   )
 
+  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
+
   val webColl1Ex4: WebExercise = Exercise(
-    exerciseId = 4,
-    collectionId = 1,
-    toolId = "web",
+    exerciseId,
+    collectionId,
+    toolId,
     title = "Login-Formular",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 3,
     content = WebExerciseContent(
-      files = Seq(
-        ExerciseFile(
-          name = "login.html",
-          fileType = "htmlmixed",
-          editable = true,
-          content = loadTextFromFile(exResPath / "login.html")
-        ),
-        ExerciseFile(
-          name = "loginStyle.css",
-          fileType = "css",
-          editable = false,
-          content = loadTextFromFile(exResPath / "loginStyle.css")
+      SiteSpec("login.html", html_tasks, jsTasks = Seq.empty),
+      files = loadFilesFromFolder(
+        exResPath,
+        Seq(
+          FileLoadConfig("login.html", htmlFileType, editable = true),
+          FileLoadConfig("loginStyle.css", cssFileType)
         )
       ),
-      siteSpec = SiteSpec(
-        fileName = "login.html",
-        htmlTasks = html_tasks,
-        jsTasks = Seq.empty
-      ),
-      sampleSolutions = Seq(sampleSolution)
+      Seq(sampleSolution)
     )
   )
 

@@ -1,32 +1,21 @@
 package initialData.programming.coll_5
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl5Ex2 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 5, 2)
+object ProgrammingColl5Ex2 extends ProgrammingInitialExercise(5, 2) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "dicts.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "dicts_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_dicts.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_dicts_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("dicts.py", fileType, maybeOtherFileName = Some("dicts_declaration.py")),
+        FileLoadConfig("test_dicts.py", fileType, editable = true, Some("test_dicts_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -152,49 +141,30 @@ object ProgrammingColl5Ex2 {
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_dicts.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_dicts.py")
-      ),
-      ExerciseFile(
-        name = "dicts.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "dicts_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_dicts.py", fileType),
+        FileLoadConfig("dicts.py", fileType, editable = true, Some("dicts_declaration.py"))
       )
     ),
     implFileName = "dicts.py",
     sampleSolFileNames = Seq("dicts.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "dicts.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "dicts.py")
-          ),
-          ExerciseFile(
-            name = "test_dicts.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_dicts.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("dicts.py", fileType),
+      FileLoadConfig("test_dicts.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl5Ex2: ProgrammingExercise = Exercise(
-    exerciseId = 2,
-    collectionId = 5,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Dictionaries",
     authors = Seq("bje40dc"),

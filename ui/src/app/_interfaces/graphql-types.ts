@@ -190,6 +190,7 @@ export type FlaskCorrectionResult = {
 export type FlaskExerciseContent = {
   __typename?: 'FlaskExerciseContent';
   files: Array<ExerciseFile>;
+  testFiles: Array<ExerciseFile>;
   testConfig: FlaskTestsConfig;
   sampleSolutions: Array<FilesSampleSolution>;
 };

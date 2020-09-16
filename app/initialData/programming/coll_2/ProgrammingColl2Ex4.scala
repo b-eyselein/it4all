@@ -108,8 +108,8 @@ object ProgrammingColl2Ex4 extends ProgrammingInitialExercise(2, 4) {
   private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl2Ex4: ProgrammingExercise = Exercise(
-    exerciseId = 4,
-    collectionId = 2,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Namenssuche",
     authors = Seq("bje40dc"),

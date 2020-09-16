@@ -74,9 +74,9 @@ object FlaskColl01Ex01 extends FlaskInitialExercise(1, 1) {
   private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val flaskColl01Ex01: FlaskExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 1,
-    toolId = "flask",
+    exerciseId,
+    collectionId,
+    toolId,
     title = "Testaufgabe",
     authors = Seq("bje40dc"),
     text = "TODO!",

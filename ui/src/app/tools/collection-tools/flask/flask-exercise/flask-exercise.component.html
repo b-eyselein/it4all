@@ -22,8 +22,11 @@
     </div>
 
     <div *ngFor="let testResult of result.testResults" class="my-3">
-      <div class="notification" [ngClass]="testResult.successful ? 'is-success' : 'is-danger'">
-        <pre>{{testResult.stdout.join("\n")}}</pre>
+      <div class="message" [ngClass]="testResult.successful ? 'is-success' : 'is-danger'">
+        <header class="message-header">{{testResult.testName}}</header>
+        <div class="message-body">
+          <pre>{{testResult.stderr.join("\n")}}</pre>
+        </div>
       </div>
 
     </div>

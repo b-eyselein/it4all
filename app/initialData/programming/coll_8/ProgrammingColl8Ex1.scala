@@ -1,38 +1,22 @@
 package initialData.programming.coll_8
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl8Ex1 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 8, 1)
+object ProgrammingColl8Ex1 extends ProgrammingInitialExercise(8, 1) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = loadTextFromFile(exResPath / "unit_test_description.html"),
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "table.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "table_declaration.py")
-      ),
-      ExerciseFile(
-        name = "raum.csv",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "raum.csv")
-      ),
-      ExerciseFile(
-        name = "test_table.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_table_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("table.py", fileType, maybeOtherFileName = Some("table_declaration.py")),
+        FileLoadConfig("raum.csv", fileType),
+        FileLoadConfig("test_table.py", fileType, editable = true, Some("test_table_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -123,55 +107,31 @@ object ProgrammingColl8Ex1 {
 
   private val implementationPart = ImplementationPart(
     base = "",
-    files = Seq(
-      ExerciseFile(
-        name = "test_table.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_table_declaration.py")
-      ),
-      ExerciseFile(
-        name = "table.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "table_declaration.py")
-      ),
-      ExerciseFile(
-        name = "raum.csv",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "raum.csv")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_table.py", fileType, maybeOtherFileName = Some("test_table_declaration.py")),
+        FileLoadConfig("table.py", fileType, editable = true, Some("table_declaration.py")),
+        FileLoadConfig("raum.csv", fileType)
       )
     ),
     implFileName = "table.py",
     sampleSolFileNames = Seq("table.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "table.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "table.py")
-          ),
-          ExerciseFile(
-            name = "test_table.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_table.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("table.py", fileType),
+      FileLoadConfig("test_table.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl8Ex1: ProgrammingExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 8,
+    exerciseId,
+    collectionId,
     toolId,
     title = "PySQL",
     authors = Seq("amh12ry"),

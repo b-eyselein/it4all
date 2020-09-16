@@ -80,7 +80,7 @@ object FlaskCorrector extends DockerExecutionCorrector {
       .runContainer(
         imageName = flaskCorrectionDockerImage.name,
         maybeDockerBinds = dockerBinds,
-        deleteContainerAfterRun = _ => false
+        deleteContainerAfterRun = _ == 0
       )
       .map {
         case Failure(exception) => onError("Error running tester container", maxPoints, Some(exception))

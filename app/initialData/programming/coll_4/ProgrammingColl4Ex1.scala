@@ -1,34 +1,18 @@
 package initialData.programming.coll_4
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 import play.api.libs.json.{JsArray, JsNull, JsNumber, Json}
 
-object ProgrammingColl4Ex1 {
+object ProgrammingColl4Ex1 extends ProgrammingInitialExercise(4, 1) {
 
-  private val toolId = "programming"
+  private val sampleSolutionFiles = loadFilesFromFolder(exResPath, Seq(FileLoadConfig("average.py", fileType)))
 
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 4, 1)
-
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "average.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "average.py")
-          )
-        )
-      )
-    )
-  )
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   private val unitTestPart = SimplifiedUnitTestPart(
     simplifiedTestMainFile = ExerciseFile(
@@ -49,12 +33,10 @@ object ProgrammingColl4Ex1 {
              |
              |def average(my_list: List[int]) -> float:
              |    return 0""".stripMargin,
-    files = Seq(
-      ExerciseFile(
-        name = "average.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "average_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("average.py", fileType, editable = true, Some("average_declaration.py"))
       )
     ),
     implFileName = "average.py",
@@ -62,8 +44,8 @@ object ProgrammingColl4Ex1 {
   )
 
   val programmingColl4Ex1: ProgrammingExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 4,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Durchschnitt",
     authors = Seq("bje40dc"),

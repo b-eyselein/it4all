@@ -58,8 +58,8 @@ object ProgrammingColl2Ex1 extends ProgrammingInitialExercise(2, 1) {
   )
 
   val programmingColl2Ex1: ProgrammingExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 2,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Palindrom",
     authors = Seq("bje40dc"),

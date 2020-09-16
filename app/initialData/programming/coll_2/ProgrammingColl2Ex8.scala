@@ -67,8 +67,8 @@ object ProgrammingColl2Ex8 extends ProgrammingInitialExercise(2, 8) {
   )
 
   val programmingColl2Ex8: ProgrammingExercise = Exercise(
-    exerciseId = 8,
-    collectionId = 2,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Caesar-Verschlüsselung",
     authors = Seq("bje40dc"),

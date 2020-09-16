@@ -1,54 +1,31 @@
 package initialData.programming.coll_5
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl5Ex1 {
+object ProgrammingColl5Ex1 extends ProgrammingInitialExercise(5, 1) {
 
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 5, 1)
-
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "tuples.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "tuples.py")
-          ),
-          ExerciseFile(
-            name = "test_tuples.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_tuples.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("tuples.py", fileType),
+      FileLoadConfig("test_tuples.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_tuples.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_tuples.py")
-      ),
-      ExerciseFile(
-        name = "tuples.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "tuples_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_tuples.py", fileType),
+        FileLoadConfig("tuples.py", fileType, editable = true, Some("tuples_declaration.py"))
       )
     ),
     implFileName = "tuples.py",
@@ -57,18 +34,11 @@ object ProgrammingColl5Ex1 {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "tuples.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "tuples_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_tuples.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_tuples_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("tuples.py", fileType, maybeOtherFileName = Some("tuples_declaration.py")),
+        FileLoadConfig("test_tuples.py", fileType, editable = true, Some("test_tuples_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -182,8 +152,8 @@ object ProgrammingColl5Ex1 {
   )
 
   val programmingColl5Ex1: ProgrammingExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 5,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Tupel",
     authors = Seq("bje40dc"),

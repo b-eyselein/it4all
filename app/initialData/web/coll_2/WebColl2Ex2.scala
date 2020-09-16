@@ -1,34 +1,24 @@
 package initialData.web.coll_2
 
 import de.uniwue.webtester.sitespec._
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, ExerciseFile, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution, SampleSolution}
 
-object WebColl2Ex2 {
+object WebColl2Ex2 extends WebInitialExercise(2, 2) {
 
-  private val exResPath = exerciseResourcesPath("web", 2, 2)
-
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(
-    id = 1,
-    sample = FilesSolution(
-      files = Seq(
-        ExerciseFile(
-          name = "pwChecker.html",
-          fileType = "htmlmixed",
-          editable = false,
-          content = loadTextFromFile(exResPath / "sol_1" / "branchesStrings.html")
-        ),
-        ExerciseFile(
-          name = "pwChecker.js",
-          fileType = "javascript",
-          editable = false,
-          content = loadTextFromFile(exResPath / "sol_1" / "branchesStrings.js")
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath / "sol_1",
+    Seq(
+      FileLoadConfig("pwChecker.html", htmlFileType, maybeOtherFileName = Some("branchesStrings.html")),
+      FileLoadConfig("pwChecker.js", jsFileType, maybeOtherFileName = Some("branchesStrings.js"))
     )
   )
+
+  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -44,7 +34,7 @@ object WebColl2Ex2 {
         """Erstellen Sie ein Passworteingabefeld mit der ID 'password'.
           |Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.""".stripMargin
           .replace("\n", " "),
-      xpathQuery = """/html/body//input[@id='password']""",
+      xpathQuery = """/html/body//input[@id='pa= "javascript"ssword']""",
       awaitedTagName = "input",
       attributes = Map("type" -> "password", "onchange" -> "passwordStrength()")
     ),
@@ -123,28 +113,23 @@ object WebColl2Ex2 {
   )
 
   val webColl2Ex2: WebExercise = Exercise(
-    exerciseId = 2,
-    collectionId = 2,
-    toolId = "web",
+    exerciseId,
+    collectionId,
+    toolId,
     title = "Verzweigungen und Strings",
     authors = Seq("alg81dm"),
     text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 3,
     content = WebExerciseContent(
-      files = Seq(
-        ExerciseFile(
-          name = "pwChecker.html",
-          fileType = "htmlmixed",
-          editable = true,
-          content = loadTextFromFile(exResPath / "branchesStrings.html")
-        ),
-        ExerciseFile(
-          name = "pwChecker.js",
-          fileType = "javascript",
-          editable = true,
-          content = loadTextFromFile(exResPath / "branchesStrings.js")
+      SiteSpec("pwChecker.html", html_tasks, js_tasks),
+      loadFilesFromFolder(
+        exResPath,
+        Seq(
+          FileLoadConfig("pwChecker.html", htmlFileType, editable = true, Some("branchesStrings.html")),
+          FileLoadConfig("pwChecker.js", jsFileType, editable = true, Some("branchesStrings.js"))
         )
       ),
+      Seq(sampleSolution),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),
       jsText = Some(
         """Implementieren Sie nun die Funktion <code>passwordStrength()</code>, die bei Änderung des Felds aufgerufen
@@ -157,13 +142,7 @@ object WebColl2Ex2 {
           |Wenn das Passwort unter 8 Zeichen lang ist, soll der Fehlertext 'Zu kurz' lauten.
           |Wenn die Eingabe den Teilstring 'passwort' enthält, soll 'Zu einfach' gesetzt werden.""".stripMargin
           .replace("\n", " ")
-      ),
-      siteSpec = SiteSpec(
-        fileName = "pwChecker.html",
-        htmlTasks = html_tasks,
-        jsTasks = js_tasks
-      ),
-      sampleSolutions = Seq(sampleSolution)
+      )
     )
   )
 

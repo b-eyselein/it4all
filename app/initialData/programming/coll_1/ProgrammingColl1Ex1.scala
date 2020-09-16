@@ -46,8 +46,8 @@ object ProgrammingColl1Ex1 extends ProgrammingInitialExercise(1, 1) {
   )
 
   val programmingColl1Ex1: ProgrammingExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 1,
+    exerciseId ,
+    collectionId ,
     toolId,
     title = "Größter gemeinsamer Teiler",
     authors = Seq("bje40dc"),

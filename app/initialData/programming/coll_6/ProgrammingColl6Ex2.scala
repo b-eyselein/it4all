@@ -1,32 +1,21 @@
 package initialData.programming.coll_6
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl6Ex2 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 6, 2)
+object ProgrammingColl6Ex2 extends ProgrammingInitialExercise(6, 2) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "distances.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "distances_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_distances.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_distances_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("distances.py", fileType, maybeOtherFileName = Some("distances_declaration.py")),
+        FileLoadConfig("test_distances.py", fileType, editable = true, Some("test_distances_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -225,49 +214,30 @@ object ProgrammingColl6Ex2 {
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_distances.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_distances.py")
-      ),
-      ExerciseFile(
-        name = "distances.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "distances_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_distances.py", fileType),
+        FileLoadConfig("distances.py", fileType, editable = true, Some("distances_declaration.py"))
       )
     ),
     implFileName = "distances.py",
     sampleSolFileNames = Seq("distances.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "distances.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "distances.py")
-          ),
-          ExerciseFile(
-            name = "test_distances.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_distances.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("distances.py", fileType),
+      FileLoadConfig("test_distances.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl6Ex2: ProgrammingExercise = Exercise(
-    exerciseId = 2,
-    collectionId = 6,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Längen",
     authors = Seq("bje40dc"),

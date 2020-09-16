@@ -1,32 +1,21 @@
 package initialData.programming.coll_4
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl4Ex3 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 4, 3)
+object ProgrammingColl4Ex3 extends ProgrammingInitialExercise(4, 3) {
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_general.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_general.py")
-      ),
-      ExerciseFile(
-        name = "general.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "general_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_general.py", fileType, maybeOtherFileName = Some("test_general.py")),
+        FileLoadConfig("general.py", fileType, editable = true, Some("general_declaration.py"))
       )
     ),
     implFileName = "general.py",
@@ -35,18 +24,11 @@ object ProgrammingColl4Ex3 {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "general.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "general_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_general.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_general_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("general.py", fileType, maybeOtherFileName = Some("general_declaration.py")),
+        FileLoadConfig("test_general.py", fileType, editable = true, Some("test_general_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -286,31 +268,19 @@ object ProgrammingColl4Ex3 {
     sampleSolFileNames = Seq("test_general.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "general.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "general.py")
-          ),
-          ExerciseFile(
-            name = "test_general.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_general.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("general.py", fileType),
+      FileLoadConfig("test_general.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl4Ex3: ProgrammingExercise = Exercise(
-    exerciseId = 3,
-    collectionId = 4,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Allgemeine Aufgaben",
     authors = Seq("bje40dc"),

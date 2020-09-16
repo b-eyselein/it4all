@@ -1,32 +1,21 @@
 package initialData.programming.coll_3
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl3Ex3 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 3, 3)
+object ProgrammingColl3Ex3 extends ProgrammingInitialExercise(3, 3) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "greet.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "greet_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_greet.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_greet_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("greet.py", fileType, maybeOtherFileName = Some("greet_declaration.py")),
+        FileLoadConfig("test_greet.py", fileType, editable = true, Some("test_greet_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -127,49 +116,30 @@ object ProgrammingColl3Ex3 {
   private val implementationPart = ImplementationPart(
     base = """def greet(hour: int) -> str:
              |    pass""".stripMargin,
-    files = Seq(
-      ExerciseFile(
-        name = "test_greet.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_greet.py")
-      ),
-      ExerciseFile(
-        name = "greet.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "greet_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_greet.py", fileType),
+        FileLoadConfig("greet.py", fileType, editable = true, Some("greet_declaration.py"))
       )
     ),
     implFileName = "greet.py",
     sampleSolFileNames = Seq("greet.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "greet.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "greet.py")
-          ),
-          ExerciseFile(
-            name = "test_greet.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_greet.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("greet.py", fileType),
+      FileLoadConfig("test_greet.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl3Ex3: ProgrammingExercise = Exercise(
-    exerciseId = 3,
-    collectionId = 3,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Grußformel",
     authors = Seq("bje40dc"),

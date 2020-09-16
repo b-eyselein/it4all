@@ -123,9 +123,9 @@ object ProgrammingColl1Ex3 extends ProgrammingInitialExercise(1, 3) {
   private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl1Ex3: ProgrammingExercise = Exercise(
-    exerciseId = 3,
-    collectionId = 1,
-    toolId = "programming",
+    exerciseId,
+    collectionId,
+    toolId,
     title = "Babylonisches Wurzelziehen",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

@@ -1,32 +1,21 @@
 package initialData.programming.coll_7
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl7Ex2 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 7, 2)
+object ProgrammingColl7Ex2 extends ProgrammingInitialExercise(7, 2) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "maumau.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "maumau_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_maumau.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_maumau_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("maumau.py", fileType, maybeOtherFileName = Some("maumau_declaration.py")),
+        FileLoadConfig("test_maumau.py", fileType, editable = true, Some("test_maumau_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -143,49 +132,30 @@ object ProgrammingColl7Ex2 {
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_maumau.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_maumau.py")
-      ),
-      ExerciseFile(
-        name = "maumau.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "maumau_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_maumau.py", fileType),
+        FileLoadConfig("maumau.py", fileType, editable = true, Some("maumau_declaration.py"))
       )
     ),
     implFileName = "maumau.py",
     sampleSolFileNames = Seq("maumau.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "maumau.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "maumau.py")
-          ),
-          ExerciseFile(
-            name = "test_maumau.py",
-            fileType,
-            editable = false,
-            content = "test_maumau.py"
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("maumau.py", fileType),
+      FileLoadConfig("test_maumau.py", fileType)
     )
   )
 
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
+
   val programmingColl7Ex2: ProgrammingExercise = Exercise(
-    exerciseId = 2,
-    collectionId = 7,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Mau-Mau",
     authors = Seq("bje40dc"),

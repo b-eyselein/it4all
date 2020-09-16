@@ -220,8 +220,8 @@ object ProgrammingColl2Ex6 extends ProgrammingInitialExercise(2, 6) {
   private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl2Ex6: ProgrammingExercise = Exercise(
-    exerciseId = 6,
-    collectionId = 2,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Weihnachtsbaum",
     authors = Seq("bje40dc"),
