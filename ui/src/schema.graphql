@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Sep 16 2020 14:16:54 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Sep 16 2020 15:33:37 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -1096,11 +1096,11 @@ type WebCorrectionResult {
 }
 
 type WebExerciseContent {
-  htmlText: String
-  jsText: String
   siteSpec: SiteSpec!
   files: [ExerciseFile!]!
   sampleSolutions: [FilesSampleSolution!]!
+  htmlText: String
+  jsText: String
   part(partId: String!): WebExPart
 }
 

@@ -1367,11 +1367,11 @@ export type WebCorrectionResult = {
 
 export type WebExerciseContent = {
   __typename?: 'WebExerciseContent';
-  htmlText?: Maybe<Scalars['String']>;
-  jsText?: Maybe<Scalars['String']>;
   siteSpec: SiteSpec;
   files: Array<ExerciseFile>;
   sampleSolutions: Array<FilesSampleSolution>;
+  htmlText?: Maybe<Scalars['String']>;
+  jsText?: Maybe<Scalars['String']>;
   part?: Maybe<WebExPart>;
 };
 

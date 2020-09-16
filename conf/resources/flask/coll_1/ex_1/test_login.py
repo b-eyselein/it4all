@@ -15,7 +15,7 @@ register_url: str = f"{base_url}/register"
 
 default_driver_options: ChromeOptions = ChromeOptions()
 default_driver_options.headless = True
-default_driver_options.add_argument('--no-sandbox')
+default_driver_options.add_argument("--no-sandbox")
 
 
 class MyTest(TestCase):
@@ -32,25 +32,25 @@ class MyTest(TestCase):
 
         all_elements: List[WebElement] = search_context.find_elements_by_xpath(xpath)
 
-        self.check_value(1, len(all_elements))
+        self.assertEqual(1, len(all_elements))
 
         return all_elements[0]
 
     def __test_element__(
-            self,
-            xpath: str,
-            search_context: Optional[WebElement] = None,
-            text: Optional[str] = None,
-            attributes: Optional[Dict[str, Any]] = None,
+        self,
+        xpath: str,
+        search_context: Optional[WebElement] = None,
+        text: Optional[str] = None,
+        attributes: Optional[Dict[str, Any]] = None,
     ) -> WebElement:
         web_element: WebElement = self.__find_distinct_element__(xpath, search_context)
 
         if text is not None:
-            self.check_value(text, web_element.text)
+            self.assertEqual(text, web_element.text)
 
         if attributes is not None:
             for key, value in attributes.items():
-                self.check_value(value, web_element.get_attribute(key))
+                self.assertEqual(value, web_element.get_attribute(key))
 
         return web_element
 
@@ -75,17 +75,11 @@ class MyTest(TestCase):
         # send form
         self.__find_distinct_element__("//form//button").click()
 
-    def check_value(self, a, b):
-        self.assertEqual(a, b)
-
-    def t_x(self):
-        self.fail('TODO!')
-
-    def t_1_redirect_to_login(self):
+    def test_redirect_to_login(self):
         self.web_driver.get(base_url)
         self.assertEqual(login_url, self.web_driver.current_url)
 
-    def t_2_register_form(self):
+    def test_register_form(self):
         self.web_driver.get(register_url)
 
         register_form: WebElement = self.__test_element__(
@@ -110,13 +104,13 @@ class MyTest(TestCase):
         # submit_button
         self.__test_element__(".//button", register_form, text="Registrieren")
 
-    def t_3_register_functionality(self):
+    def test_register_functionality(self):
         self.__perform_register__()
 
         WebDriverWait(self.web_driver, 5).until(expected_conditions.url_changes(register_url))
         self.assertEqual(login_url, self.web_driver.current_url)
 
-    def t_4_login_form(self):
+    def test_login_form(self):
         self.web_driver.get(login_url)
 
         login_form: WebElement = self.__test_element__("//form", attributes={"method": "post", "action": login_url})
@@ -132,14 +126,18 @@ class MyTest(TestCase):
         # submit_button
         self.__test_element__(".//button", login_form, text="Einloggen")
 
-    def t_5_login_functionality(self):
+    def test_login_functionality(self):
         self.__perform_login__()
 
         WebDriverWait(self.web_driver, 5).until(expected_conditions.url_changes(login_url))
         self.assertEqual(index_url, self.web_driver.current_url)
 
     def test_index(self):
-        self.fail('TODO!')
+        self.__perform_login__()
+
+        self.web_driver.get(base_url)
+
+        self.__test_element__("//h1", text="Startseite")
 
 
 if __name__ == "__main__":

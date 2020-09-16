@@ -35,38 +35,23 @@ object FlaskColl01Ex01 extends FlaskInitialExercise(1, 1) {
     testFileName = "test_login",
     testClassName = "MyTest",
     tests = Seq(
-      FlaskSingleTestConfig(
-        maxPoints = 1,
-        testName = "redirect_to_login_test",
-        testFunctionName = "t_1_redirect_to_login"
-      ),
+      FlaskSingleTestConfig(maxPoints = 1, testName = "test_redirect_to_login"),
+      FlaskSingleTestConfig(maxPoints = 3, testName = "test_register_form"),
       FlaskSingleTestConfig(
         maxPoints = 3,
-        testName = "register_form_test",
-        testFunctionName = "t_2_register_form"
+        testName = "test_register_functionality",
+        dependencies = Some(Seq("test_register_form"))
       ),
-      FlaskSingleTestConfig(
-        maxPoints = 3,
-        testName = "register_func_test",
-        testFunctionName = "t_3_register_functionality",
-        dependencies = Some(Seq("register_form_test"))
-      ),
+      FlaskSingleTestConfig(maxPoints = 2, testName = "test_login_form"),
       FlaskSingleTestConfig(
         maxPoints = 2,
-        testName = "login_form_test",
-        testFunctionName = "t_4_login_form"
-      ),
-      FlaskSingleTestConfig(
-        maxPoints = 2,
-        testName = "login_func_test",
-        testFunctionName = "t_5_login_functionality",
-        dependencies = Some(Seq("login_form_test"))
+        testName = "test_login_functionality",
+        dependencies = Some(Seq("test_login_form"))
       ),
       FlaskSingleTestConfig(
         maxPoints = 5,
-        testName = "index_test",
-        testFunctionName = "test_index",
-        dependencies = Some(Seq("login_func_test"))
+        testName = "test_index",
+        dependencies = Some(Seq("test_login_functionality"))
       )
     )
   )
