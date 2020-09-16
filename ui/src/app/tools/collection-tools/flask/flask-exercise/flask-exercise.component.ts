@@ -9,13 +9,16 @@ import {FilesSolution, FilesSolutionInput, FlaskExercisePart} from "../../../../
 import {AuthenticationService} from "../../../../_services/authentication.service";
 import {DexieService} from "../../../../_services/dexie.service";
 import {
+  FlaskAbstractCorrectionResultFragment,
   FlaskCorrectionGQL,
   FlaskCorrectionMutation,
-  FlaskCorrectionMutationVariables
+  FlaskCorrectionMutationVariables,
+  FlaskCorrectionResultFragment,
+  FlaskResultFragment
 } from "../flask-apollo-mutations.service";
 import {FilesExerciseComponent} from "../../_components/files-exercise/files-exercise.component";
 
-import 'codemirror/mode/htmlmixed/htmlmixed';
+import 'codemirror/mode/jinja2/jinja2';
 import 'codemirror/mode/python/python';
 
 
@@ -49,8 +52,6 @@ export class FlaskExerciseComponent
 
   ngOnInit(): void {
     this.exerciseFileFragments = this.contentFragment.files;
-
-    console.info(this.exerciseFileFragments.length);
 
     this.loadOldSolutionAbstract(
       this.exerciseFragment,
@@ -87,6 +88,20 @@ export class FlaskExerciseComponent
         this.filesExerciseComponent.toggleCorrectionTab();
       }
     });
+  }
+
+  // Result
+
+  get correctionResult(): FlaskCorrectionResultFragment | undefined {
+    return this.resultQuery?.me.flaskExercise?.correct;
+  }
+
+  get abstractResult(): FlaskAbstractCorrectionResultFragment | undefined {
+    return this.correctionResult?.result;
+  }
+
+  get result(): FlaskResultFragment | undefined {
+    return (this.abstractResult.__typename === 'FlaskResult') ? this.abstractResult : undefined;
   }
 
 }

@@ -1,32 +1,21 @@
 package initialData.programming.coll_2
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex4 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 2, 4)
+object ProgrammingColl2Ex4 extends ProgrammingInitialExercise(2, 4) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "name_search.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "name_search_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_name_search.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_name_search_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("name_search.py", fileType, maybeOtherFileName = Some("name_search_declaration.py")),
+        FileLoadConfig("test_name_search.py", fileType, editable = true, Some("test_name_search_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -97,44 +86,26 @@ object ProgrammingColl2Ex4 {
 
              |def name_search(all_names: List[str], fragment: str) -> List[Tuple[str, str]]:
              |    pass""".stripMargin,
-    files = Seq(
-      ExerciseFile(
-        name = "test_name_search.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_name_search.py")
-      ),
-      ExerciseFile(
-        name = "name_search.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "name_search_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_name_search.py", fileType),
+        FileLoadConfig("name_search.py", fileType, editable = true, Some("name_search_declaration.py"))
       )
     ),
     implFileName = "name_search.py",
     sampleSolFileNames = Seq("name_search.py")
   )
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "name_search.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "name_search.py")
-          ),
-          ExerciseFile(
-            name = "test_name_search.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_name_search.py")
-          )
-        )
-      )
+
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("name_search.py", fileType),
+      FileLoadConfig("test_name_search.py", fileType)
     )
   )
+
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl2Ex4: ProgrammingExercise = Exercise(
     exerciseId = 4,

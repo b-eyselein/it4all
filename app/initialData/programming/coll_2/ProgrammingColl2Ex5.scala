@@ -1,32 +1,21 @@
 package initialData.programming.coll_2
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex5 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 2, 5)
+object ProgrammingColl2Ex5 extends ProgrammingInitialExercise(2, 5) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "three_chinese.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "three_chinese_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_three_chinese.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_three_chinese_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("three_chinese.py", fileType, maybeOtherFileName = Some("three_chinese_declaration.py")),
+        FileLoadConfig("test_three_chinese.py", fileType, editable = true, Some("test_three_chinese_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -160,45 +149,26 @@ object ProgrammingColl2Ex5 {
   private val implementationPart = ImplementationPart(
     base = """def three_chinese(line: str, target_vowel: str) -> str:
              |    pass""".stripMargin,
-    files = Seq(
-      ExerciseFile(
-        name = "test_three_chinese.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_three_chinese.py")
-      ),
-      ExerciseFile(
-        name = "three_chinese.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "three_chinese_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_three_chinese.py", fileType),
+        FileLoadConfig("three_chinese.py", fileType, editable = true, Some("three_chinese_declaration.py"))
       )
     ),
     implFileName = "three_chinese.py",
     sampleSolFileNames = Seq("three_chinese.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "three_chinese.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "three_chinese.py")
-          ),
-          ExerciseFile(
-            name = "test_three_chinese.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_three_chinese.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("three_chinese.py", fileType),
+      FileLoadConfig("test_three_chinese.py", fileType)
     )
   )
+
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl2Ex5: ProgrammingExercise = Exercise(
     exerciseId = 5,

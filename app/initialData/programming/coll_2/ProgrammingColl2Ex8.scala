@@ -1,32 +1,21 @@
 package initialData.programming.coll_2
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex8 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 2, 8)
+object ProgrammingColl2Ex8 extends ProgrammingInitialExercise(2, 8) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "ceasar.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "ceasar_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_ceasar.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_ceasar_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("ceasar.py", fileType, maybeOtherFileName = Some("ceasar_declaration.py")),
+        FileLoadConfig("test_ceasar.py", fileType, editable = true, Some("test_ceasar_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -47,27 +36,15 @@ object ProgrammingColl2Ex8 {
     sampleSolFileNames = Seq("test_ceasar.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "ceasar.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "ceasar.py")
-          ),
-          ExerciseFile(
-            name = "test_ceasar.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_ceasar.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("ceasar.py", fileType),
+      FileLoadConfig("test_ceasar.py", fileType)
     )
   )
+
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),

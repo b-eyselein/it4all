@@ -174,6 +174,11 @@ export type FilesSolutionInput = {
   files: Array<ExerciseFileInput>;
 };
 
+export type FlaskAbstractCorrectionResult = {
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
 export type FlaskCorrectionResult = {
   __typename?: 'FlaskCorrectionResult';
   solutionSaved: Scalars['Boolean'];
@@ -185,8 +190,8 @@ export type FlaskCorrectionResult = {
 export type FlaskExerciseContent = {
   __typename?: 'FlaskExerciseContent';
   files: Array<ExerciseFile>;
+  testConfig: FlaskTestsConfig;
   sampleSolutions: Array<FilesSampleSolution>;
-  _x: Scalars['Boolean'];
 };
 
 export type FlaskExerciseMutations = {
@@ -203,6 +208,44 @@ export type FlaskExerciseMutationsCorrectArgs = {
 export enum FlaskExercisePart {
   FlaskSingleExPart = 'FlaskSingleExPart'
 }
+
+export type FlaskInternalErrorResult = FlaskAbstractCorrectionResult & AbstractCorrectionResult & {
+  __typename?: 'FlaskInternalErrorResult';
+  msg: Scalars['String'];
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
+export type FlaskResult = FlaskAbstractCorrectionResult & AbstractCorrectionResult & {
+  __typename?: 'FlaskResult';
+  testResults: Array<FlaskTestResult>;
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+};
+
+export type FlaskSingleTestConfig = {
+  __typename?: 'FlaskSingleTestConfig';
+  maxPoints: Scalars['Int'];
+  testName: Scalars['String'];
+  testFunctionName: Scalars['String'];
+  dependencies?: Maybe<Array<Scalars['String']>>;
+};
+
+export type FlaskTestResult = {
+  __typename?: 'FlaskTestResult';
+  maxPoints: Scalars['Int'];
+  testName: Scalars['String'];
+  successful: Scalars['Boolean'];
+  stdout: Array<Scalars['String']>;
+  stderr: Array<Scalars['String']>;
+};
+
+export type FlaskTestsConfig = {
+  __typename?: 'FlaskTestsConfig';
+  testFileName: Scalars['String'];
+  testClassName: Scalars['String'];
+  tests: Array<FlaskSingleTestConfig>;
+};
 
 export type GradedHtmlTaskResult = {
   __typename?: 'GradedHtmlTaskResult';
@@ -367,11 +410,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
   OnlySample = 'ONLY_SAMPLE',
-  OnlyUser = 'ONLY_USER',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
+  OnlyUser = 'ONLY_USER'
 }
 
 export type Mutation = {
@@ -729,11 +772,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
-  Create = 'CREATE',
+  Update = 'UPDATE',
   Delete = 'DELETE',
+  Select = 'SELECT',
   Insert = 'INSERT',
-  Update = 'UPDATE'
+  Create = 'CREATE'
 }
 
 export enum SqlExPart {
@@ -1472,8 +1515,4 @@ export type XmlSolution = {
 export type XmlSolutionInput = {
   document: Scalars['String'];
   grammar: Scalars['String'];
-};
-
-export type FlaskAbstractCorrectionResult = {
-  _x: Scalars['Boolean'];
 };

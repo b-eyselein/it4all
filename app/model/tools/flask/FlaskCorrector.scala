@@ -1,18 +1,24 @@
 package model.tools.flask
 
+import model.core._
 import model.points._
-import model.tools.AbstractCorrector
-import model.tools.flask.FlaskTool.solutionDirForExercise
-import model.{Exercise, FilesSolution, points}
+import model.tools.DockerExecutionCorrector
+import model.tools.flask.FlaskTool.{FlaskExercise, solutionDirForExercise}
+import model.tools.flask.FlaskToolJsonProtocol.{flaskCorrectionResultFileReads, flaskTestsConfigFormat}
+import model.{FilesSolution, points}
 import play.api.Logger
+import play.api.libs.json.Json
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
-object FlaskCorrector extends AbstractCorrector {
+object FlaskCorrector extends DockerExecutionCorrector {
+
+  val flaskCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "flask_tester", "0.0.2")
 
   override protected val logger: Logger = Logger(this.getClass)
 
-  override type AbstractResult = FlaskAbstractCorrectionResult
+  override type AbstractResult = FlaskAbstractResult
 
   override protected def buildInternalError(msg: String, maxPoints: points.Points): FlaskInternalErrorResult =
     FlaskInternalErrorResult(msg, maxPoints)
@@ -20,23 +26,81 @@ object FlaskCorrector extends AbstractCorrector {
   def correct(
     username: String,
     solution: FilesSolution,
-    exercise: Exercise[FlaskExerciseContent]
-  )(implicit executionContext: ExecutionContext): Future[FlaskAbstractCorrectionResult] = Future {
+    exercise: FlaskExercise
+  )(implicit executionContext: ExecutionContext): Future[FlaskAbstractResult] = {
 
     val maxPoints = exercise.content.maxPoints.points
 
     val solTargetDir = solutionDirForExercise(username, exercise.collectionId, exercise.exerciseId)
 
     // Write solution files
-    solution.files.map { f =>
-      val targetFile = solTargetDir / f.name
+    val appUnderTestTargetDir = solTargetDir / "app"
+    solution.files.foreach { f =>
+      val targetFile = appUnderTestTargetDir / f.name
 
       targetFile
         .createIfNotExists(createParents = true)
         .write(f.content)
     }
 
-    FlaskInternalErrorResult("Correction is not yet implemented!", maxPoints)
+    // Write helper files
+    val resultFile = solTargetDir / resultFileName
+
+    resultFile
+      .createIfNotExists(createParents = true)
+      .clear()
+
+    // Write test config
+    val testConfigFile = solTargetDir / testConfigFileName
+
+    testConfigFile
+      .createIfNotExists(createParents = true)
+      .write(Json.stringify(flaskTestsConfigFormat.writes(exercise.content.testConfig)))
+
+    // write test files
+    val testFileBinds = exercise.content.testFiles.map { f =>
+      val targetFile = solTargetDir / f.name
+
+      targetFile
+        .createIfNotExists(createParents = true)
+        .write(f.content)
+
+      DockerBind(fromPath = targetFile, baseBindPath / f.name, isReadOnly = true)
+    }
+
+    // Create mounts
+
+    val dockerBinds = Seq(
+      DockerBind(fromPath = appUnderTestTargetDir, toPath = baseBindPath / "app", isReadOnly = true),
+      DockerBind(fromPath = testConfigFile, toPath = baseBindPath / testConfigFileName, isReadOnly = true),
+      DockerBind(fromPath = resultFile, toPath = baseBindPath / resultFileName)
+    ) ++ testFileBinds
+
+    DockerConnector
+      .runContainer(
+        imageName = flaskCorrectionDockerImage.name,
+        maybeDockerBinds = dockerBinds,
+        deleteContainerAfterRun = _ => false
+      )
+      .map {
+        case Failure(exception) => onError("Error running tester container", maxPoints, Some(exception))
+        case Success(RunContainerResult(_, _)) =>
+          ResultsFileJsonFormat
+            .readDockerExecutionResultFile(resultFile, flaskCorrectionResultFileReads)
+            .fold(
+              exception => onError("Error while reading result!", maxPoints, Some(exception)),
+              flaskCorrectionResultFileContent => {
+                val results = flaskCorrectionResultFileContent.results
+
+                FlaskResult(
+                  testResults = results,
+                  points = results.filter(_.successful).map(_.maxPoints).sum.points,
+                  maxPoints = maxPoints
+                )
+              }
+            )
+      }
+
   }
 
 }

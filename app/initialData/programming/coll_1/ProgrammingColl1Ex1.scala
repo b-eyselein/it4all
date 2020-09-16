@@ -1,18 +1,14 @@
 package initialData.programming.coll_1
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 import play.api.libs.json.{JsNumber, Json}
 
-object ProgrammingColl1Ex1 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 1, 1)
+object ProgrammingColl1Ex1 extends ProgrammingInitialExercise(1, 1) {
 
   private val unitTestPart = SimplifiedUnitTestPart(
     simplifiedTestMainFile = ExerciseFile(
@@ -34,32 +30,19 @@ object ProgrammingColl1Ex1 {
     base = """def ggt(a: int, b: int) -> int:
              |    return 0
              |""".stripMargin,
-    files = Seq(
-      ExerciseFile(
-        name = "ggt.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "ggt_declaration.py")
-      )
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(FileLoadConfig("ggt.py", fileType, editable = true, Some("ggt_declaration.py")))
     ),
     implFileName = "ggt.py",
     sampleSolFileNames = Seq("ggt.py")
   )
 
+  private val sampleSolutionFiles =
+    loadFilesFromFolder(exResPath, Seq(FileLoadConfig("ggt.py", fileType, editable = true)))
+
   private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "ggt.py",
-            fileType,
-            editable = true,
-            content = loadTextFromFile(exResPath / "ggt.py")
-          )
-        )
-      )
-    )
+    SampleSolution(1, FilesSolution(sampleSolutionFiles))
   )
 
   val programmingColl1Ex1: ProgrammingExercise = Exercise(

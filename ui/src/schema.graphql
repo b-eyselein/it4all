@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue Sep 15 2020 15:02:02 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Wed Sep 16 2020 12:49:52 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -133,7 +133,8 @@ input FilesSolutionInput {
 }
 
 interface FlaskAbstractCorrectionResult {
-  _x: Boolean!
+  points: Float!
+  maxPoints: Float!
 }
 
 type FlaskCorrectionResult {
@@ -145,8 +146,8 @@ type FlaskCorrectionResult {
 
 type FlaskExerciseContent {
   files: [ExerciseFile!]!
+  testConfig: FlaskTestsConfig!
   sampleSolutions: [FilesSampleSolution!]!
-  _x: Boolean!
 }
 
 type FlaskExerciseMutations {
@@ -155,6 +156,39 @@ type FlaskExerciseMutations {
 
 enum FlaskExercisePart {
   FlaskSingleExPart
+}
+
+type FlaskInternalErrorResult implements FlaskAbstractCorrectionResult & AbstractCorrectionResult {
+  msg: String!
+  points: Float!
+  maxPoints: Float!
+}
+
+type FlaskResult implements FlaskAbstractCorrectionResult & AbstractCorrectionResult {
+  testResults: [FlaskTestResult!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type FlaskSingleTestConfig {
+  maxPoints: Int!
+  testName: String!
+  testFunctionName: String!
+  dependencies: [String!]
+}
+
+type FlaskTestResult {
+  maxPoints: Int!
+  testName: String!
+  successful: Boolean!
+  stdout: [String!]!
+  stderr: [String!]!
+}
+
+type FlaskTestsConfig {
+  testFileName: String!
+  testClassName: String!
+  tests: [FlaskSingleTestConfig!]!
 }
 
 type GradedHtmlTaskResult {
@@ -303,11 +337,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
+  UNSUCCESSFUL_MATCH
   SUCCESSFUL_MATCH
   PARTIAL_MATCH
   ONLY_SAMPLE
   ONLY_USER
-  UNSUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -577,11 +611,11 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  SELECT
-  CREATE
-  DELETE
-  INSERT
   UPDATE
+  DELETE
+  SELECT
+  INSERT
+  CREATE
 }
 
 enum SqlExPart {

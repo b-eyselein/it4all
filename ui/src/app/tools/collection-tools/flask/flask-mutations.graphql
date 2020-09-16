@@ -9,5 +9,35 @@ mutation FlaskCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: F
 }
 
 fragment FlaskCorrectionResult on FlaskCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...FlaskAbstractCorrectionResult
+  }
+}
+
+fragment FlaskAbstractCorrectionResult on FlaskAbstractCorrectionResult {
   __typename
+  points
+  maxPoints
+  ...FlaskInternalErrorResult
+  ...FlaskResult
+}
+
+fragment FlaskInternalErrorResult on FlaskInternalErrorResult {
+  msg
+}
+
+fragment FlaskResult on FlaskResult {
+  testResults {
+    ...FlaskTestResult
+  }
+}
+
+fragment FlaskTestResult on FlaskTestResult {
+  testName
+  successful
+  stdout
+  stderr
 }

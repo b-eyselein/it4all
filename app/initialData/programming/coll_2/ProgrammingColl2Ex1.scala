@@ -1,18 +1,13 @@
 package initialData.programming.coll_2
 
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 import play.api.libs.json.{JsBoolean, JsString}
 
-object ProgrammingColl2Ex1 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 2, 1)
+object ProgrammingColl2Ex1 extends ProgrammingInitialExercise(2, 1) {
 
   private val unitTestPart = SimplifiedUnitTestPart(
     simplifiedTestMainFile = ExerciseFile(

@@ -1,17 +1,13 @@
 package initialData.programming.coll_1
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl1Ex3 {
-
-  private val toolId = "programming"
-
-  private val exResPath = exerciseResourcesPath(toolId, 1, 3)
-
-  private val fileType = "python"
+object ProgrammingColl1Ex3 extends ProgrammingInitialExercise(1, 3) {
 
   private val unitTestTestConfigs = Seq(
     UnitTestTestConfig(
@@ -85,18 +81,16 @@ object ProgrammingColl1Ex3 {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "babylonian_root.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "babylonian_root_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_babylonian_root.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_babylonian_root_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("babylonian_root.py", fileType, editable = false, Some("babylonian_root_declaration.py")),
+        FileLoadConfig(
+          "test_babylonian_root.py",
+          fileType,
+          editable = true,
+          Some("test_babylonian_root_declaration.py")
+        )
       )
     ),
     unitTestTestConfigs,
@@ -107,45 +101,26 @@ object ProgrammingColl1Ex3 {
 
   private val implementationPart = ImplementationPart(
     base = "",
-    files = Seq(
-      ExerciseFile(
-        name = "test_babylonian_root.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_babylonian_root.py")
-      ),
-      ExerciseFile(
-        name = "babylonian_root.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "babylonian_root_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_babylonian_root.py", fileType),
+        FileLoadConfig("babylonian_root.py", fileType, editable = true, Some("babylonian_root_declaration.py"))
       )
     ),
     implFileName = "babylonian_root.py",
     sampleSolFileNames = Seq("babylonian_root.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "test_babylonian_root.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_babylonian_root.py")
-          ),
-          ExerciseFile(
-            name = "babylonian_root.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "babylonian_root.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("test_babylonian_root.py", fileType),
+      FileLoadConfig("babylonian_root.py", fileType)
     )
   )
+
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl1Ex3: ProgrammingExercise = Exercise(
     exerciseId = 3,

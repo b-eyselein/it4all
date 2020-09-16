@@ -1,35 +1,24 @@
 package initialData.programming.coll_1
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl1Ex2 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 1, 2)
+object ProgrammingColl1Ex2 extends ProgrammingInitialExercise(1, 2) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = """Schreiben Sie Unittests für die Funktion <code>factorial(n= int) -> int</code>.
                              |Diese soll die Fakultät der Zahl <code>n</code> berechnen.
                              |Der Funktionsparameter <code>n</code> soll größer als 0 sein.""".stripMargin
       .replace("\n", " "),
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "factorial.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "factorial_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_factorial.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_factorial_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("factorial.py", fileType, editable = false, Some("factorial_declaration.py")),
+        FileLoadConfig("test_factorial.py", fileType, editable = true, Some("test_factorial_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -87,45 +76,26 @@ object ProgrammingColl1Ex2 {
     base = """def factorial(n: int) -> int:
              |    pass
              |""".stripMargin,
-    files = Seq(
-      ExerciseFile(
-        name = "test_factorial.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_factorial.py")
-      ),
-      ExerciseFile(
-        name = "factorial.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "factorial_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_factorial.py", fileType),
+        FileLoadConfig("factorial.py", fileType, editable = true, Some("factorial_declaration.py"))
       )
     ),
     implFileName = "factorial.py",
     sampleSolFileNames = Seq("factorial.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "test_factorial.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_factorial.py")
-          ),
-          ExerciseFile(
-            name = "factorial.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "factorial.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("test_factorial.py", fileType),
+      FileLoadConfig("factorial.py", fileType)
     )
   )
+
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl1Ex2: ProgrammingExercise = Exercise(
     exerciseId = 2,

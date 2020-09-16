@@ -1,9 +1,10 @@
 package model.tools.programming
 
 import better.files.File
-import model.core.{DockerBind, DockerConnector}
+import model.core.{DockerBind, DockerConnector, ResultsFileJsonFormat}
 import model.points._
 import model.result.SuccessType
+import model.tools.programming.ProgrammingToolJsonProtocol.simplifiedExecutionResultFileContentReads
 import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,15 +52,18 @@ trait ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorrec
           onError("Error while running programming simplified execution docker image", mp, Some(exception))
         case Success(_) =>
           ResultsFileJsonFormat
-            .readSimplifiedExecutionResultFile(resultFile)
+            .readDockerExecutionResultFile(resultFile, simplifiedExecutionResultFileContentReads)
             .fold(
               exception => onError("Error while reading result file", mp, Some(exception)),
-              simplifiedResults =>
+              simplifiedExecutionResultFileContent => {
+                val results = simplifiedExecutionResultFileContent.results
+
                 ProgrammingResult(
-                  simplifiedResults = simplifiedResults,
-                  points = simplifiedResults.count(ser => ser.success == SuccessType.COMPLETE).points,
+                  simplifiedResults = results,
+                  points = results.count(ser => ser.success == SuccessType.COMPLETE).points,
                   maxPoints = mp
                 )
+              }
             )
       }
   }

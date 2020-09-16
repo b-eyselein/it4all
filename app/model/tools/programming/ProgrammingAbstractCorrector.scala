@@ -2,13 +2,13 @@ package model.tools.programming
 
 import better.files._
 import model.ExerciseFile
-import model.core.{DockerConnector, ScalaDockerImage}
+import model.core.ScalaDockerImage
 import model.points._
-import model.tools.AbstractCorrector
+import model.tools.DockerExecutionCorrector
 
 import scala.util.matching.Regex
 
-trait ProgrammingAbstractCorrector extends AbstractCorrector {
+trait ProgrammingAbstractCorrector extends DockerExecutionCorrector {
 
   override type AbstractResult = ProgrammingAbstractResult
 
@@ -17,12 +17,8 @@ trait ProgrammingAbstractCorrector extends AbstractCorrector {
 
   val programmingCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "py_prog_corrector", "0.1.3")
 
-  val resultFileName = "result.json"
-
   protected val testDataFileName = "test_data.json"
   protected val testMainFileName = "test_main.py"
-
-  protected val baseBindPath: File = DockerConnector.DefaultWorkingDir
 
   protected val implFileRegex: Regex = """.*_\d*\.py""".r
 

@@ -66,10 +66,10 @@ object ProgrammingToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[P
       )
     )
 
-  val simplifiedExecutionResultFileContentFormat: OFormat[SimplifiedExecutionResultFileContent] = {
-    implicit val simplifiedExecutionResultFormat: OFormat[SimplifiedExecutionResult] = Json.format
+  val simplifiedExecutionResultFileContentReads: Reads[SimplifiedExecutionResultFileContent] = {
+    implicit val simplifiedExecutionResultFormat: Reads[SimplifiedExecutionResult] = Json.reads
 
-    Json.format
+    Json.reads
   }
 
   // Normal execution

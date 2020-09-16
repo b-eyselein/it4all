@@ -56,7 +56,7 @@ export class ExerciseFilesEditorComponent implements OnChanges {
 
   private updateFirstFile(): void {
     if (this.activatableExerciseFiles && this.activatableExerciseFiles.length > 0) {
-      console.log(this.currentFileName);
+      // console.log(this.currentFileName);
 
       if (!this.currentFileName) {
         const editableExerciseFile: ActivatableExerciseFile | undefined =

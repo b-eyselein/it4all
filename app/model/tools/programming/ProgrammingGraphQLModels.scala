@@ -65,8 +65,6 @@ object ProgrammingGraphQLModels
 
   // Solution types
 
-  private val NormalExecutionResultType: ObjectType[Unit, NormalExecutionResult] = deriveObjectType()
-
   private val simplifiedExecutionResultType: ObjectType[Unit, SimplifiedExecutionResult] = {
     implicit val stt: EnumType[SuccessType] = successTypeType
 
@@ -80,35 +78,32 @@ object ProgrammingGraphQLModels
     )
   }
 
-  private val unitTestCorrectionResultType: ObjectType[Unit, UnitTestCorrectionResult] = deriveObjectType()
-
   // Abstract result
 
-  private val programmingAbstractResultType: InterfaceType[Unit, ProgrammingAbstractResult] = InterfaceType(
-    "ProgrammingAbstractResult",
-    fields[Unit, ProgrammingAbstractResult](
-      Field("points", FloatType, resolve = _.value.points.asDouble),
-      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
-    ),
-    interfaces[Unit, ProgrammingAbstractResult](abstractResultInterfaceType)
-  ).withPossibleTypes(() => List(programmingInternalErrorResultType, programmingResultType))
+  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, ProgrammingAbstractResult] =
+    InterfaceType(
+      "ProgrammingAbstractResult",
+      fields[Unit, ProgrammingAbstractResult](
+        Field("points", FloatType, resolve = _.value.points.asDouble),
+        Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
+      ),
+      interfaces[Unit, ProgrammingAbstractResult](abstractResultInterfaceType)
+    ).withPossibleTypes(() => List(programmingInternalErrorResultType, programmingResultType))
 
   private val programmingResultType: ObjectType[Unit, ProgrammingResult] = {
-    implicit val nert: ObjectType[Unit, NormalExecutionResult]     = NormalExecutionResultType
+    implicit val nert: ObjectType[Unit, NormalExecutionResult]     = deriveObjectType()
     implicit val sert: ObjectType[Unit, SimplifiedExecutionResult] = simplifiedExecutionResultType
-    implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = unitTestCorrectionResultType
+    implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = deriveObjectType()
 
     deriveObjectType[Unit, ProgrammingResult](
-      Interfaces(programmingAbstractResultType),
+      Interfaces(toolAbstractResultTypeInterfaceType),
       ExcludeFields("points", "maxPoints")
     )
   }
 
   private val programmingInternalErrorResultType: ObjectType[Unit, ProgrammingInternalErrorResult] = deriveObjectType(
-    Interfaces(programmingAbstractResultType),
+    Interfaces(toolAbstractResultTypeInterfaceType),
     ExcludeFields("maxPoints")
   )
 
-  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, ProgrammingAbstractResult] =
-    programmingAbstractResultType
 }

@@ -10,7 +10,23 @@
   </ng-container>
 
   <ng-container correctionContent *ngIf="resultQuery">
-    {{resultQuery | json}}
+
+    <div class="my-3">
+      <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
+    </div>
+
+
+    <div class="my-3">
+      <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
+      </it4all-points-notification>
+    </div>
+
+    <div *ngFor="let testResult of result.testResults" class="my-3">
+      <div class="notification" [ngClass]="testResult.successful ? 'is-success' : 'is-danger'">
+        <pre>{{testResult.stdout.join("\n")}}</pre>
+      </div>
+
+    </div>
   </ng-container>
 
 </it4all-files-exercise>

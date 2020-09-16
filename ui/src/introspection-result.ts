@@ -18,6 +18,12 @@
         "name": "AbstractCorrectionResult",
         "possibleTypes": [
           {
+            "name": "FlaskInternalErrorResult"
+          },
+          {
+            "name": "FlaskResult"
+          },
+          {
             "name": "ProgrammingInternalErrorResult"
           },
           {
@@ -49,6 +55,18 @@
           },
           {
             "name": "XmlResult"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "FlaskAbstractCorrectionResult",
+        "possibleTypes": [
+          {
+            "name": "FlaskInternalErrorResult"
+          },
+          {
+            "name": "FlaskResult"
           }
         ]
       },
@@ -246,11 +264,6 @@
             "name": "XmlResult"
           }
         ]
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "FlaskAbstractCorrectionResult",
-        "possibleTypes": []
       }
     ]
   }

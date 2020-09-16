@@ -1,32 +1,21 @@
 package initialData.programming.coll_1
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl1Ex4 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 1, 4)
+object ProgrammingColl1Ex4 extends ProgrammingInitialExercise(1, 4) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "fibonacci.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "fibonacci_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_fibonacci.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_fibonacci_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("fibonacci.py", fileType, editable = true, Some("fibonacci_declaration.py")),
+        FileLoadConfig("test_fibonacci.py", fileType, editable = true, Some("test_fibonacci_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -104,45 +93,26 @@ object ProgrammingColl1Ex4 {
 
   private val implementationPart = ImplementationPart(
     base = "",
-    files = Seq(
-      ExerciseFile(
-        name = "test_fibonacci.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_fibonacci.py")
-      ),
-      ExerciseFile(
-        name = "fibonacci.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "fibonacci_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_fibonacci.py", fileType),
+        FileLoadConfig(name = "fibonacci.py", fileType, editable = true, Some("fibonacci_declaration.py"))
       )
     ),
     implFileName = "fibonacci.py",
     sampleSolFileNames = Seq("fibonacci.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "test_fibonacci.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_fibonacci.py")
-          ),
-          ExerciseFile(
-            name = "fibonacci.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "fibonacci.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("test_fibonacci.py", fileType),
+      FileLoadConfig("fibonacci.py", fileType)
     )
   )
+
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl1Ex4: ProgrammingExercise = Exercise(
     exerciseId = 4,

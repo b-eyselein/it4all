@@ -1,31 +1,30 @@
 package initialData.programming.coll_2
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex3 {
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 2, 3)
+object ProgrammingColl2Ex3 extends ProgrammingInitialExercise(2, 3) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "file_name_and_ending.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "file_name_and_ending_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_file_name_and_ending.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_file_name_and_ending_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig(
+          "file_name_and_ending.py",
+          fileType,
+          maybeOtherFileName = Some("file_name_and_ending_declaration.py")
+        ),
+        FileLoadConfig(
+          "test_file_name_and_ending.py",
+          fileType,
+          editable = true,
+          Some("test_file_name_and_ending_declaration.py")
+        )
       )
     ),
     unitTestTestConfigs = Seq(
@@ -122,45 +121,31 @@ object ProgrammingColl2Ex3 {
              |
              |def file_name_and_ending(filename: str) -> Tuple[str, str]:
              |    pass""".stripMargin,
-    files = Seq(
-      ExerciseFile(
-        name = "test_file_name_and_ending.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_file_name_and_ending.py")
-      ),
-      ExerciseFile(
-        name = "file_name_and_ending.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "file_name_and_ending_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_file_name_and_ending.py", fileType),
+        FileLoadConfig(
+          "file_name_and_ending.py",
+          fileType,
+          editable = true,
+          Some("file_name_and_ending_declaration.py")
+        )
       )
     ),
     implFileName = "file_name_and_ending.py",
     sampleSolFileNames = Seq("file_name_and_ending.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "file_name_and_ending.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "file_name_and_ending.py")
-          ),
-          ExerciseFile(
-            name = "test_file_name_and_ending.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_file_name_and_ending.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("file_name_and_ending.py", fileType),
+      FileLoadConfig("test_file_name_and_ending.py", fileType)
     )
   )
+
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl2Ex3: ProgrammingExercise = Exercise(
     exerciseId = 3,

@@ -4,8 +4,6 @@ import model.points._
 import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
 import play.api.libs.json.JsValue
 
-sealed trait ProgEvalResult
-
 trait ProgrammingAbstractResult extends AbstractCorrectionResult
 
 final case class ProgrammingInternalErrorResult(
@@ -45,7 +43,7 @@ final case class SimplifiedExecutionResult(
   gotten: JsValue,
   success: SuccessType,
   stdout: Option[String]
-) extends ProgEvalResult
+)
 
 final case class SimplifiedExecutionResultFileContent(
   results: Seq[SimplifiedExecutionResult]
@@ -56,7 +54,7 @@ final case class SimplifiedExecutionResultFileContent(
 final case class NormalExecutionResult(
   successful: Boolean,
   logs: String
-) extends ProgEvalResult
+)
 
 // Unit Test Correction
 
@@ -66,7 +64,7 @@ final case class UnitTestCorrectionResult(
   successful: Boolean,
   stdout: Seq[String],
   stderr: Seq[String]
-) extends ProgEvalResult
+)
 
 final case class UnitTestCorrectionResultFileContent(
   results: Seq[UnitTestCorrectionResult]

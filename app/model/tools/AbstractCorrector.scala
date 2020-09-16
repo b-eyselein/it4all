@@ -1,5 +1,7 @@
 package model.tools
 
+import better.files.File
+import model.core.DockerConnector
 import model.points._
 import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import play.api.Logger
@@ -27,5 +29,14 @@ trait AbstractCorrector {
 
     buildInternalError(internalMsg, maxPoints)
   }
+
+}
+
+trait DockerExecutionCorrector extends AbstractCorrector {
+
+  protected val resultFileName     = "result.json"
+  protected val testConfigFileName = "testConfig.json"
+
+  protected val baseBindPath: File = DockerConnector.DefaultWorkingDir
 
 }

@@ -2,6 +2,7 @@ package model
 
 import com.google.inject.AbstractModule
 import model.core.{DockerConnector, ScalaDockerImage}
+import model.tools.flask.FlaskCorrector
 import model.tools.programming.ProgrammingCorrector
 import model.tools.rose.RoseCorrector
 import play.api.Logger
@@ -15,8 +16,9 @@ class DockerPullModule extends AbstractModule {
   private implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
 
   private val imagesToPull: Seq[ScalaDockerImage] = Seq(
-    RoseCorrector.roseCorrectionDockerImageName,
-    ProgrammingCorrector.programmingCorrectionDockerImage
+    FlaskCorrector.flaskCorrectionDockerImage,
+    ProgrammingCorrector.programmingCorrectionDockerImage,
+    RoseCorrector.roseCorrectionDockerImageName
   )
 
   override def configure(): Unit = {

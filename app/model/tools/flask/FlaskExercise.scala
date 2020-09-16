@@ -2,8 +2,6 @@ package model.tools.flask
 
 import enumeratum.PlayEnum
 import model._
-import model.points.Points
-import model.result.{AbstractCorrectionResult, InternalErrorResult}
 
 sealed abstract class FlaskExPart(
   override val partName: String,
@@ -18,9 +16,23 @@ object FlaskExPart extends PlayEnum[FlaskExPart] {
 
 }
 
+final case class FlaskSingleTestConfig(
+  maxPoints: Int,
+  testName: String,
+  testFunctionName: String,
+  dependencies: Option[Seq[String]] = None
+)
+
+final case class FlaskTestsConfig(
+  testFileName: String,
+  testClassName: String,
+  tests: Seq[FlaskSingleTestConfig]
+)
+
 final case class FlaskExerciseContent(
   files: Seq[ExerciseFile],
-  maxPoints: Int,
+  testFiles: Seq[ExerciseFile],
+  testConfig: FlaskTestsConfig,
   override val sampleSolutions: Seq[SampleSolution[FilesSolution]]
 ) extends ExerciseContent {
 
@@ -28,19 +40,6 @@ final case class FlaskExerciseContent(
 
   override def parts: Seq[ExPart] = Seq(FlaskExPart.FlaskSingleExPart)
 
-}
+  def maxPoints: Int = testConfig.tests.map(_.maxPoints).sum
 
-trait FlaskAbstractCorrectionResult extends AbstractCorrectionResult
-
-final case class FlaskInternalErrorResult(
-  msg: String,
-  maxPoints: Points
-) extends FlaskAbstractCorrectionResult
-    with InternalErrorResult
-
-final case class FlaskCorrectionResult(
-  points: Points,
-  maxPoints: Points
-) extends FlaskAbstractCorrectionResult {
-  override def isCompletelyCorrect: Boolean = ???
 }

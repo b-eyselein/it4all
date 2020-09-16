@@ -1,32 +1,21 @@
 package initialData.programming.coll_2
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex7 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 2, 7)
+object ProgrammingColl2Ex7 extends ProgrammingInitialExercise(2, 7) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "a1z26.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "a1z26_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_a1z26.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_a1z26_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("a1z26.py", fileType, maybeOtherFileName = Some("a1z26_declaration.py")),
+        FileLoadConfig("test_a1z26.py", fileType, editable = true, Some("test_a1z26_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -138,45 +127,26 @@ object ProgrammingColl2Ex7 {
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_a1z26.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_a1z26.py")
-      ),
-      ExerciseFile(
-        name = "a1z26.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "a1z26_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_a1z26.py", fileType),
+        FileLoadConfig("a1z26.py", fileType, editable = true, Some("a1z26_declaration.py"))
       )
     ),
     implFileName = "a1z26.py",
     sampleSolFileNames = Seq("a1z26.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "a1z26.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "a1z26.py")
-          ),
-          ExerciseFile(
-            name = "test_a1z26.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_a1z26.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("a1z26.py", fileType),
+      FileLoadConfig("test_a1z26.py", fileType)
     )
   )
+
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl2Ex7: ProgrammingExercise = Exercise(
     exerciseId = 7,

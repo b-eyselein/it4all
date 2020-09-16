@@ -1,9 +1,9 @@
 package model.tools.programming
 
 import better.files.File
-import model.core.{DockerBind, DockerConnector, RunContainerResult}
+import model.core.{DockerBind, DockerConnector, ResultsFileJsonFormat, RunContainerResult}
 import model.points._
-import model.tools.programming.ProgrammingToolJsonProtocol.UnitTestTestData
+import model.tools.programming.ProgrammingToolJsonProtocol.{UnitTestTestData, unitTestCorrectionResultsFileJsonReads}
 import play.api.libs.json.Json
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,10 +44,9 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
 
     val unitTestSolFilesDockerBinds: Seq[DockerBind] = unitTestPart.unitTestTestConfigs
       .filter { tc => implFileRegex.matches(tc.file.name) }
-      .map {
-        case UnitTestTestConfig(_, _, _, ef) =>
-          val targetPath = writeExerciseFileToDirectory(ef, solTargetDir)
-          DockerBind(targetPath, bindDirectory / ef.name)
+      .map { case UnitTestTestConfig(_, _, _, ef) =>
+        val targetPath = writeExerciseFileToDirectory(ef, solTargetDir)
+        DockerBind(targetPath, bindDirectory / ef.name)
       }
 
     val exFilesMounts = unitTestPart.unitTestFiles
@@ -75,15 +74,18 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
             ProgrammingInternalErrorResult(logs, mp)
           } else {
             ResultsFileJsonFormat
-              .readTestCorrectionResultFile(resultFile)
+              .readDockerExecutionResultFile(resultFile, unitTestCorrectionResultsFileJsonReads)
               .fold(
                 exception => onError("Error reading unit test correction result file", mp, Some(exception)),
-                results =>
+                unitTestCorrectionResultFileContent => {
+                  val results = unitTestCorrectionResultFileContent.results
+
                   ProgrammingResult(
                     unitTestResults = results,
                     points = results.count(_.successful).points,
                     maxPoints = mp
                   )
+                }
               )
           }
       }

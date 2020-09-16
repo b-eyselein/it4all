@@ -1,32 +1,21 @@
 package initialData.programming.coll_2
 
+import initialData.FileLoadConfig
 import initialData.InitialData._
+import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex6 {
-
-  private val toolId = "programming"
-
-  private val fileType = "python"
-
-  private val exResPath = exerciseResourcesPath(toolId, 2, 6)
+object ProgrammingColl2Ex6 extends ProgrammingInitialExercise(2, 6) {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = "",
-    unitTestFiles = Seq(
-      ExerciseFile(
-        name = "xmas_tree.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "xmas_tree_declaration.py")
-      ),
-      ExerciseFile(
-        name = "test_xmas_tree.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "test_xmas_tree_declaration.py")
+    unitTestFiles = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("xmas_tree.py", fileType, maybeOtherFileName = Some("xmas_tree_declaration.py")),
+        FileLoadConfig("test_xmas_tree.py", fileType, editable = true, Some("test_xmas_tree_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -209,45 +198,26 @@ object ProgrammingColl2Ex6 {
 
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_xmas_tree.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_xmas_tree.py")
-      ),
-      ExerciseFile(
-        name = "xmas_tree.py",
-        fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "xmas_tree_declaration.py")
+    files = loadFilesFromFolder(
+      exResPath,
+      Seq(
+        FileLoadConfig("test_xmas_tree.py", fileType),
+        FileLoadConfig("xmas_tree.py", fileType, editable = true, Some("xmas_tree_declaration.py"))
       )
     ),
     implFileName = "xmas_tree.py",
     sampleSolFileNames = Seq("xmas_tree.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "xmas_tree.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "xmas_tree.py")
-          ),
-          ExerciseFile(
-            name = "test_xmas_tree.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "test_xmas_tree.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = loadFilesFromFolder(
+    exResPath,
+    Seq(
+      FileLoadConfig("xmas_tree.py", fileType),
+      FileLoadConfig("test_xmas_tree.py", fileType)
     )
   )
+
+  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
 
   val programmingColl2Ex6: ProgrammingExercise = Exercise(
     exerciseId = 6,
