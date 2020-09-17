@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Wed Sep 16 2020 15:33:37 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Thu Sep 17 2020 11:01:42 GMT+0200 (Mitteleuropäische Sommerzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -172,14 +172,15 @@ type FlaskResult implements FlaskAbstractCorrectionResult & AbstractCorrectionRe
 }
 
 type FlaskSingleTestConfig {
+  id: Int!
+  description: String!
   maxPoints: Int!
   testName: String!
-  testFunctionName: String!
   dependencies: [String!]
 }
 
 type FlaskTestResult {
-  maxPoints: Int!
+  testId: Int!
   testName: String!
   successful: Boolean!
   stdout: [String!]!

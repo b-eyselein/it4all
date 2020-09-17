@@ -17,6 +17,8 @@ object FlaskExPart extends PlayEnum[FlaskExPart] {
 }
 
 final case class FlaskSingleTestConfig(
+  id: Int,
+  description: String,
   maxPoints: Int,
   testName: String,
   dependencies: Option[Seq[String]] = None

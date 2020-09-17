@@ -233,6 +233,12 @@ fragment FieldsForLink on Exercise {
 # Flask
 fragment FlaskExerciseContent on FlaskExerciseContent {
   __typename
+  testConfig {
+    tests {
+      id
+      description
+    }
+  }
   files {
     ...ExerciseFile
   }

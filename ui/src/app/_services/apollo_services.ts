@@ -424,7 +424,13 @@ export type FieldsForLinkFragment = (
 
 export type FlaskExerciseContentFragment = (
   { __typename: 'FlaskExerciseContent' }
-  & { files: Array<(
+  & { testConfig: (
+    { __typename?: 'FlaskTestsConfig' }
+    & { tests: Array<(
+      { __typename?: 'FlaskSingleTestConfig' }
+      & Pick<Types.FlaskSingleTestConfig, 'id' | 'description'>
+    )> }
+  ), files: Array<(
     { __typename?: 'ExerciseFile' }
     & ExerciseFileFragment
   )>, sampleSolutions: Array<(
@@ -858,6 +864,12 @@ export const FilesSampleSolutionFragmentDoc = gql`
 export const FlaskExerciseContentFragmentDoc = gql`
     fragment FlaskExerciseContent on FlaskExerciseContent {
   __typename
+  testConfig {
+    tests {
+      id
+      description
+    }
+  }
   files {
     ...ExerciseFile
   }

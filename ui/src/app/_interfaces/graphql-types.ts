@@ -226,15 +226,16 @@ export type FlaskResult = FlaskAbstractCorrectionResult & AbstractCorrectionResu
 
 export type FlaskSingleTestConfig = {
   __typename?: 'FlaskSingleTestConfig';
+  id: Scalars['Int'];
+  description: Scalars['String'];
   maxPoints: Scalars['Int'];
   testName: Scalars['String'];
-  testFunctionName: Scalars['String'];
   dependencies?: Maybe<Array<Scalars['String']>>;
 };
 
 export type FlaskTestResult = {
   __typename?: 'FlaskTestResult';
-  maxPoints: Scalars['Int'];
+  testId: Scalars['Int'];
   testName: Scalars['String'];
   successful: Scalars['Boolean'];
   stdout: Array<Scalars['String']>;

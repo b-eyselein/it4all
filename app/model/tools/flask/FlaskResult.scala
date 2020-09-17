@@ -22,7 +22,7 @@ final case class FlaskResult(
 }
 
 final case class FlaskTestResult(
-  maxPoints: Int,
+  testId: Int,
   testName: String,
   successful: Boolean,
   stdout: Seq[String],

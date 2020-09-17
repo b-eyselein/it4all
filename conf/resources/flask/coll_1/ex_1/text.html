@@ -1,0 +1,51 @@
+<p>
+    In dieser Aufgabe soll die Loginfunktionalität für eine Webseite implementiert werden. Dazu soll den Nutzern
+    außerdem die Möglichkeit der Registrierung geboten werden. Um den Login über verschiedene Requests hinweg
+    verfügbar
+    zu machen, soll der Nutzername in der Session gespeichert werden.
+</p>
+<div>
+    Es sollen drei Templates erstellt werden, die alle drei das gegebene Basis-Template <code>base.html</code> erweitern
+    und den Inhalt im Block <code>content</code> rendern::
+    <ul>
+        <li>
+            <code>index.html</code>: Dieses Template soll nur eine <code>h1</code>-Überschrift mit dem Textinhalt
+            <code>Startseite</code> anzeigen.
+        </li>
+        <li>
+            <code>login.html</code>: Dieses Template rendert ein typisches Login-Formular. Dieses soll als Daten einen
+            Benutzernamen (<code>name := 'name'</code>) und ein Passwort (<code>name := 'password'</code>) erfassen und
+            diese Daten per <code>POST</code>-Request an die URL <code>/login</code> senden.
+        </li>
+        <li>
+            <code>register.html</code>: Dieses Template rendert ein typisches Registrierungs-Formular. Dieses soll als
+            Daten einen Benutzernamen (<code>name := 'name'</code>) und zwei mal dasselbe Passwort
+            (<code>name := 'password'</code> und <code>name := 'passwordRepeat'</code>) erfassen und
+            diese Daten per <code>POST</code>-Request an die URL <code>/register</code> senden.
+        </li>
+    </ul>
+</div>
+<div>Es sollen insgesamt Routes für 3 URLs implementiert werden:
+    <ul>
+        <li>
+            <code>/</code>: Wenn diese URL aufgerufen wird, soll überprüft werden, ob ein Nutzer eingeloggt ist.
+            Falls nicht, soll eine Weiterleitung zur URL <code>/login</code> stattfinden. Ansonsten soll das Template
+            <code>index.html</code> angezeigt werden.
+        </li>
+        <li>
+            <code>/login</code>: Wenn diese URL mit der Methode <code>GET</code> aufgerufen wird, soll das Template
+            <code>login.html</code> gerendert werden. Dieses sendet die Formulardaten per <code>POST</code>-Request
+            an die selbe URL. Daher sollen in diesem Fall die Formulardaten ausgelesen und der Nutzer validiert
+            werden. Bei einer erfolgreichen Validierung wird der Nutzername in der Session gespeichert und es soll eine
+            Weiterleitung auf die URL <code>/</code> stattfinden. Ansonsten soll wiederum das Template
+            <code>login.html</code> angezeigt werden.
+        </li>
+        <li>
+            <code>/register</code>: Wenn diese URL mit der Methode <code>GET</code> aufgerufen wird, soll das Template
+            <code>register.html</code> angezeigt werden. Dieses Formular senden die Daten per <code>POST</code>-Request
+            an dieselbe URL. In diesem Fall sollen die Formulardaten ausgelesen und validiert werden. Bei erfolgreicher
+            Validierung soll der Nutzer registriert werden, ansonsten soll wieder das Template
+            <code>register.html</code> angezeigt werden.
+        </li>
+    </ul>
+</div>

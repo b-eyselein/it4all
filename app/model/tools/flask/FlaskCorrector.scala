@@ -14,7 +14,7 @@ import scala.util.{Failure, Success}
 
 object FlaskCorrector extends DockerExecutionCorrector {
 
-  val flaskCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "flask_tester", "0.0.2")
+  val flaskCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "flask_tester", "0.0.3")
 
   override protected val logger: Logger = Logger(this.getClass)
 
@@ -53,9 +53,13 @@ object FlaskCorrector extends DockerExecutionCorrector {
     // Write test config
     val testConfigFile = solTargetDir / testConfigFileName
 
+    val testConfigFileContent = Json.stringify(
+      flaskTestsConfigFormat.writes(exercise.content.testConfig)
+    )
+
     testConfigFile
       .createIfNotExists(createParents = true)
-      .write(Json.stringify(flaskTestsConfigFormat.writes(exercise.content.testConfig)))
+      .write(testConfigFileContent)
 
     // write test files
     val testFileBinds = exercise.content.testFiles.map { f =>
@@ -80,7 +84,7 @@ object FlaskCorrector extends DockerExecutionCorrector {
       .runContainer(
         imageName = flaskCorrectionDockerImage.name,
         maybeDockerBinds = dockerBinds,
-        deleteContainerAfterRun = _ == 0
+        deleteContainerAfterRun = _ => false
       )
       .map {
         case Failure(exception) => onError("Error running tester container", maxPoints, Some(exception))
@@ -90,13 +94,20 @@ object FlaskCorrector extends DockerExecutionCorrector {
             .fold(
               exception => onError("Error while reading result!", maxPoints, Some(exception)),
               flaskCorrectionResultFileContent => {
-                val results = flaskCorrectionResultFileContent.results
+                val testResults = flaskCorrectionResultFileContent.results
 
-                FlaskResult(
-                  testResults = results,
-                  points = results.filter(_.successful).map(_.maxPoints).sum.points,
-                  maxPoints = maxPoints
-                )
+                val points = testResults
+                  .filter(_.successful)
+                  .map { tr =>
+                    exercise.content.testConfig.tests
+                      .find(_.id == tr.testId)
+                      .map(_.maxPoints)
+                      .getOrElse(0)
+                  }
+                  .sum
+                  .points
+
+                FlaskResult(testResults, points, maxPoints)
               }
             )
       }

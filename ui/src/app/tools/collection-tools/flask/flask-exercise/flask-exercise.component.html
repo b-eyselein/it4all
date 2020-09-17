@@ -5,16 +5,22 @@
   (correct)="correct()"
   defaultMode="'python'">
 
-  <ng-container exText>
-    {{exerciseFragment.text}}
-  </ng-container>
+  <div class="content" exText>
+    <div class="mb-3" [innerHTML]="exerciseFragment.text"></div>
+
+    <p>Es werden folgende Testfälle ausgeführt:</p>
+
+    <div *ngFor="let singleTestConfig of contentFragment.testConfig.tests">
+      {{singleTestConfig.id}}.
+      <span [innerHTML]="singleTestConfig.description"></span>
+    </div>
+  </div>
 
   <ng-container correctionContent *ngIf="resultQuery">
 
     <div class="my-3">
       <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
     </div>
-
 
     <div class="my-3">
       <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
