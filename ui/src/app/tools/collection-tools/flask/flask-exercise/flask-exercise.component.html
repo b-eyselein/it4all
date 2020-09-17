@@ -11,7 +11,7 @@
     <p>Es werden folgende Testfälle ausgeführt:</p>
 
     <div *ngFor="let singleTestConfig of contentFragment.testConfig.tests">
-      {{singleTestConfig.id}}.
+      {{singleTestConfig.id}}. <code>{{singleTestConfig.testName}}</code>:
       <span [innerHTML]="singleTestConfig.description"></span>
     </div>
   </div>

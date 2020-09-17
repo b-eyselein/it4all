@@ -236,6 +236,7 @@ fragment FlaskExerciseContent on FlaskExerciseContent {
   testConfig {
     tests {
       id
+      testName
       description
     }
   }

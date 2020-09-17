@@ -428,7 +428,7 @@ export type FlaskExerciseContentFragment = (
     { __typename?: 'FlaskTestsConfig' }
     & { tests: Array<(
       { __typename?: 'FlaskSingleTestConfig' }
-      & Pick<Types.FlaskSingleTestConfig, 'id' | 'description'>
+      & Pick<Types.FlaskSingleTestConfig, 'id' | 'testName' | 'description'>
     )> }
   ), files: Array<(
     { __typename?: 'ExerciseFile' }
@@ -867,6 +867,7 @@ export const FlaskExerciseContentFragmentDoc = gql`
   testConfig {
     tests {
       id
+      testName
       description
     }
   }
