@@ -108,6 +108,7 @@ fragment Part on ExPart {
 }
 
 fragment ExerciseOverview on Exercise {
+  exerciseId
   title
   text
   parts {
@@ -118,7 +119,11 @@ fragment ExerciseOverview on Exercise {
 query ExerciseOverview($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!) {
   me (userJwt: $userJwt) {
     tool(toolId: $toolId) {
+      id
+      name
       collection(collId: $collId) {
+        collectionId
+        title
         exercise(exId: $exId) {
           ...ExerciseOverview
         }

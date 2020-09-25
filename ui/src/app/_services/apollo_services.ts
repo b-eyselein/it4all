@@ -279,7 +279,7 @@ export type PartFragment = (
 
 export type ExerciseOverviewFragment = (
   { __typename?: 'Exercise' }
-  & Pick<Types.Exercise, 'title' | 'text'>
+  & Pick<Types.Exercise, 'exerciseId' | 'title' | 'text'>
   & { parts: Array<(
     { __typename?: 'ExPart' }
     & PartFragment
@@ -300,8 +300,10 @@ export type ExerciseOverviewQuery = (
     { __typename?: 'User' }
     & { tool?: Types.Maybe<(
       { __typename?: 'CollectionTool' }
+      & Pick<Types.CollectionTool, 'id' | 'name'>
       & { collection?: Types.Maybe<(
         { __typename?: 'ExerciseCollection' }
+        & Pick<Types.ExerciseCollection, 'collectionId' | 'title'>
         & { exercise?: Types.Maybe<(
           { __typename?: 'Exercise' }
           & ExerciseOverviewFragment
@@ -836,6 +838,7 @@ export const PartFragmentDoc = gql`
     `;
 export const ExerciseOverviewFragmentDoc = gql`
     fragment ExerciseOverview on Exercise {
+  exerciseId
   title
   text
   parts {
@@ -1326,7 +1329,11 @@ export const ExerciseOverviewDocument = gql`
     query ExerciseOverview($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!) {
   me(userJwt: $userJwt) {
     tool(toolId: $toolId) {
+      id
+      name
       collection(collId: $collId) {
+        collectionId
+        title
         exercise(exId: $exId) {
           ...ExerciseOverview
         }

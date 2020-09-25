@@ -45,7 +45,8 @@ trait ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorrec
       .runContainer(
         imageName = programmingCorrectionDockerImage.name,
         maybeDockerBinds = defaultFileMounts ++ otherDockerBinds,
-        maybeCmd = Some(Seq("simplified"))
+        maybeCmd = Some(Seq("simplified")),
+        deleteContainerAfterRun = _ == 0
       )
       .map {
         case Failure(exception) =>

@@ -1,32 +1,16 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ExerciseOverviewFragment, ExerciseOverviewGQL, ExerciseOverviewQuery, PartFragment} from '../../../_services/apollo_services';
+import {
+  ExerciseOverviewFragment,
+  ExerciseOverviewGQL,
+  ExerciseOverviewQuery,
+  PartFragment
+} from '../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
 import {AuthenticationService} from '../../../_services/authentication.service';
+import {BreadCrumbPart} from "../../../shared/breadcrumbs/breadcrumbs.component";
 
-@Component({
-  template: `
-    <div class="container">
-      <ng-container *ngIf="exercise; else loadingDataBlock">
-
-        <h1 class="title is-3 has-text-centered">Aufgabe &quot;{{exercise.title}}&quot;</h1>
-
-        <div class="notification is-light-grey" [innerHTML]="exercise.text"></div>
-
-        <div class="columns">
-          <div class="column" *ngFor="let part of entryParts">
-            <a class="button is-link is-fullwidth" [routerLink]="['parts', part.id]">{{part.name}}</a>
-          </div>
-        </div>
-
-      </ng-container>
-    </div>
-
-    <ng-template #loadingDataBlock>
-      <div class="notification is-primary has-text-centered">Lade Daten...</div>
-    </ng-template>
-  `
-})
+@Component({templateUrl: './exercise-overview.component.html'})
 export class ExerciseOverviewComponent implements OnInit, OnDestroy {
 
   private sub: Subscription;
@@ -58,12 +42,27 @@ export class ExerciseOverviewComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
+  private getTool() {
+    return this.exerciseOverviewQuery?.me.tool;
+  }
+
   get exercise(): ExerciseOverviewFragment | undefined {
     return this.exerciseOverviewQuery?.me.tool.collection.exercise;
   }
 
   get entryParts(): PartFragment[] {
     return this.exercise.parts.filter((p) => p.isEntryPart);
+  }
+
+  get breadCrumbs(): BreadCrumbPart[] {
+    return [
+      {routerLinkPart: '/', title: 'Tools'},
+      {routerLinkPart: `tools/${this.getTool().id}`, title: this.getTool().name},
+      {routerLinkPart: 'collections', title: 'Sammlungen'},
+      {routerLinkPart: this.getTool().collection.collectionId.toString(), title: this.getTool().collection.title},
+      {routerLinkPart: 'exercises', title: 'Aufgaben'},
+      {routerLinkPart: this.exercise.exerciseId.toString(), title: this.exercise.exerciseId.toString()}
+    ]
   }
 
 }
