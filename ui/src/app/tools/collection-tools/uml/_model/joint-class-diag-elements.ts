@@ -2,8 +2,8 @@ import * as joint from 'jointjs';
 import * as _ from 'lodash';
 
 import {calcRectHeight, COLORS, fontSize, STD_ELEMENT_WIDTH, STD_PADDING} from './uml-consts';
-import {buildAttributeString, buildMethodString, CLASS_TYPES, ExportedUmlClass} from './my-uml-interfaces';
-import {UmlAttribute, UmlClassType, UmlMethod} from '../../../../_interfaces/graphql-types';
+import {buildAttributeString, buildMethodString, CLASS_TYPES} from './my-uml-interfaces';
+import {UmlAttribute, UmlClassInput, UmlClassType, UmlMethod} from '../../../../_interfaces/graphql-types';
 
 export const STD_CLASS_HEIGHT = 160;
 export const STD_CLASS_WIDTH = 200;
@@ -146,13 +146,12 @@ export class MyJointClass extends joint.shapes.basic.Generic {
     this.set('methods', methods);
   }
 
-  getAsUmlClass(): ExportedUmlClass {
+  getAsUmlClass(): UmlClassInput {
     return {
       name: this.getClassName(),
       classType: this.getClassType(),
       attributes: this.getAttributes(),
-      methods: this.getMethods(),
-      position: this.get('position')
+      methods: this.getMethods()
     };
   }
 

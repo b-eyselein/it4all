@@ -58,12 +58,15 @@ export abstract class ComponentWithExerciseDirective<SolutionInputType, Mutation
   protected loadOldSolutionAbstract(
     exerciseFragment: ExerciseSolveFieldsFragment,
     partId: string,
-    setOldSolution: (oldSol: SolutionInputType) => void
+    setOldSolution: (oldSol: SolutionInputType) => void,
+    onNoSolution: () => void = () => void 0
   ) {
     return this.dexieService.getSolution<SolutionInputType>(exerciseFragment, partId)
       .then((dbSol) => {
         if (dbSol) {
           setOldSolution(dbSol.solution);
+        } else {
+          onNoSolution();
         }
       });
   }

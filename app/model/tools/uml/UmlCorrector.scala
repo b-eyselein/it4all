@@ -24,7 +24,9 @@ object UmlCorrector extends AbstractCorrector {
     part: UmlExPart
   ): UmlAbstractResult = {
 
-    val maxPoints = ???
+    // TODO: points and maxPoints!
+
+    val maxPoints = (-1).points
 
     exercise.content.sampleSolutions.headOption match {
       case None => onError("There is no sample solution!", maxPoints)
@@ -55,7 +57,7 @@ object UmlCorrector extends AbstractCorrector {
           case _ => None
         }
 
-        val points: Points = ???
+        val points: Points = (-1).points
 
         UmlResult(classResult, assocResult, implResult, points, maxPoints)
     }

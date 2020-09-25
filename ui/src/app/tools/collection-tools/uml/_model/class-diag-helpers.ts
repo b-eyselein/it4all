@@ -27,9 +27,9 @@ function findFreePositionForNextClass(paper: joint.dia.Paper): joint.dia.Point {
 export function addClassToGraph(
   name: string,
   paper: joint.dia.Paper,
-  maybePosition?: joint.dia.Point,
   attributes: UmlAttributeInput[] = [],
-  methods: UmlMethodInput[] = []
+  methods: UmlMethodInput[] = [],
+  maybePosition?: joint.dia.Point,
 ): void {
   if (paper.model.getCells().find((c) => c instanceof MyJointClass && c.getClassName() === name)) {
     // graph already contains class with that name!

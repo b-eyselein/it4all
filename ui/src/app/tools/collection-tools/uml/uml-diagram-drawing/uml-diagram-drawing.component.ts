@@ -3,7 +3,7 @@ import {isAssociation, isImplementation, isMyJointClass, MyJointClass} from '../
 import {getIdForUmlExPart, getUmlExerciseTextParts, SelectableClass, UmlExerciseTextPart} from '../uml-tools';
 import {GRID_SIZE, PAPER_HEIGHT} from '../_model/uml-consts';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph} from '../_model/class-diag-helpers';
-import {ExportedUmlClassDiagram, umlAssocfromConnection, umlImplfromConnection} from '../_model/my-uml-interfaces';
+import {umlAssocfromConnection, umlImplfromConnection} from '../_model/my-uml-interfaces';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
@@ -106,35 +106,42 @@ export class UmlDiagramDrawingComponent
     this.createPaperEvents(this.paper);
 
     // load classes
+    const declaration = this.contentFragment.sampleSolutions[0].sample;
 
-    this.loadClassDiagram(this.contentFragment.sampleSolutions[0].sample as ExportedUmlClassDiagram);
-
-    this.loadOldSolutionAbstract(this.exerciseFragment, this.partId, (oldSol) => this.loadClassDiagram(oldSol));
+    this.loadOldSolutionAbstract(this.exerciseFragment, this.partId,
+      (oldSol) => this.loadClassDiagram(oldSol),
+      () => this.loadClassDiagram(declaration, false)
+    );
   }
 
-  loadClassDiagram(cd: ExportedUmlClassDiagram): void {
+  loadClassDiagram(cd: UmlClassDiagramInput, loadAttributesAndMethods: boolean = true): void {
     for (const clazz of cd.classes) {
-      addClassToGraph(clazz.name, this.paper, clazz.position, clazz.attributes, clazz.methods);
+      const attributes = loadAttributesAndMethods ? clazz.attributes : [];
+      const methods = loadAttributesAndMethods ? clazz.methods : [];
+
+      addClassToGraph(clazz.name, this.paper, attributes, methods);
     }
 
     const allCells: MyJointClass[] = this.graph.getCells().filter(isMyJointClass);
 
-    for (const assoc of cd.associations) {
-      addAssociationToGraph(
-        allCells.find((c) => c.getClassName() === assoc.firstEnd),
-        assoc.firstMult === 'UNBOUND' ? '*' : '1',
-        allCells.find((c) => c.getClassName() === assoc.secondEnd),
-        assoc.secondMult === 'UNBOUND' ? '*' : '1',
-        this.graph
-      );
-    }
+    if (loadAttributesAndMethods) {
+      for (const assoc of cd.associations) {
+        addAssociationToGraph(
+          allCells.find((c) => c.getClassName() === assoc.firstEnd),
+          assoc.firstMult === 'UNBOUND' ? '*' : '1',
+          allCells.find((c) => c.getClassName() === assoc.secondEnd),
+          assoc.secondMult === 'UNBOUND' ? '*' : '1',
+          this.graph
+        );
+      }
 
-    for (const impl of cd.implementations) {
-      addImplementationToGraph(
-        allCells.find((c) => c.getClassName() === impl.subClass),
-        allCells.find((c) => c.getClassName() === impl.superClass),
-        this.graph
-      );
+      for (const impl of cd.implementations) {
+        addImplementationToGraph(
+          allCells.find((c) => c.getClassName() === impl.subClass),
+          allCells.find((c) => c.getClassName() === impl.superClass),
+          this.graph
+        );
+      }
     }
   }
 
@@ -144,7 +151,7 @@ export class UmlDiagramDrawingComponent
           this.creatableClassDiagramObjects.find((scdo) => scdo.selected);
 
         if (selectedObjectToCreate && CreatableClassDiagramObject.Class === selectedObjectToCreate.key) {
-          addClassToGraph('Klasse 1', paper, {x, y});
+          addClassToGraph('Klasse 1', paper, [], [], {x, y});
         }
       }
     );
@@ -220,10 +227,10 @@ export class UmlDiagramDrawingComponent
     fileReader.onload = ((pe) => {
       const read: string = pe.target.result as string;
 
-      const loaded: ExportedUmlClassDiagram = JSON.parse(read);
+      const loaded: UmlClassDiagramInput = JSON.parse(read);
 
       for (const clazz of loaded.classes) {
-        addClassToGraph(clazz.name, this.paper, clazz.position, clazz.attributes || []);
+        addClassToGraph(clazz.name, this.paper, clazz.attributes || [], clazz.methods || []);
       }
 
       const allCells = this.graph.getCells().filter(isMyJointClass);
@@ -239,14 +246,6 @@ export class UmlDiagramDrawingComponent
 
     fileReader.readAsText(files.item(0));
   }
-
-  // Sample solutions
-
-  /*
-  get sampleSolutions(): UmlClassDiagram[] {
-    return this.contentFragment.sampleSolutions.map((sample) => sample.sample);
-  }
-   */
 
   // Results
 
@@ -264,7 +263,7 @@ export class UmlDiagramDrawingComponent
 
   // Correction
 
-  protected getSolution(): ExportedUmlClassDiagram {
+  protected getSolution(): UmlClassDiagramInput {
     return {
       classes: this.graph.getCells().filter(isMyJointClass).map((cell) => cell.getAsUmlClass()),
       associations: this.graph.getLinks().filter(isAssociation).map(umlAssocfromConnection),

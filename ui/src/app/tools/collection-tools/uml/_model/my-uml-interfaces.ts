@@ -4,24 +4,12 @@ import {
   UmlAssociationInput,
   UmlAssociationType,
   UmlAttribute,
-  UmlClassDiagramInput,
-  UmlClassInput,
   UmlImplementationInput,
   UmlMethod,
   UmlMultiplicity
 } from '../../../../_interfaces/graphql-types';
 
 export const CLASS_TYPES = ['CLASS', 'ABSTRACT', 'INTERFACE'];
-
-export interface ExportedUmlClassDiagram extends UmlClassDiagramInput {
-  classes: ExportedUmlClass[];
-  implementations: UmlImplementationInput[];
-  associations: UmlAssociationInput[];
-}
-
-export interface ExportedUmlClass extends UmlClassInput {
-  position?: { x: number, y: number };
-}
 
 export function buildMethodString(cm: UmlMethod): string {
   const modifier = [];

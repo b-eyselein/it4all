@@ -8,7 +8,7 @@ import model.graphql.{GraphQLModel, GraphQLRequest}
 import model.lti.BasicLtiLaunchRequest
 import model.{JsonProtocols, LoggedInUser, LoggedInUserWithToken, User, UserCredentials}
 import pdi.jwt.JwtSession
-import play.api.Configuration
+import play.api.{Configuration, Logger}
 import play.api.http.HttpErrorHandler
 import play.api.libs.json._
 import play.api.mvc._
@@ -33,6 +33,8 @@ class Controller @Inject() (
     with GraphQLModel
     with MongoController
     with ReactiveMongoComponents {
+
+  private val logger = Logger(classOf[Controller])
 
   def index: Action[AnyContent] = assets.at("index.html")
 
@@ -64,8 +66,10 @@ class Controller @Inject() (
             )
             .map(Ok(_))
             .recover {
-              case error: QueryAnalysisError => BadRequest(error.resolveError)
-              case error: ErrorWithResolver  => InternalServerError(error.resolveError)
+              case error: QueryAnalysisError =>
+                logger.error("There has been a query error", error)
+                BadRequest(error.resolveError)
+              case error: ErrorWithResolver => InternalServerError(error.resolveError)
             }
       }
     }
@@ -122,7 +126,7 @@ class Controller @Inject() (
           user.pwHash match {
             case None => BadRequest("No password found!")
             case Some(pwHash) =>
-              if (request.body.password.isBcrypted(pwHash)) {
+              if (request.body.password.isBcryptedBounded(pwHash)) {
                 val loggedInUser = LoggedInUser(user.username)
 
                 Ok(
