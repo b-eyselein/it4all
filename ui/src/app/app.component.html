@@ -5,22 +5,29 @@
 
   <div class="navbar-menu">
     <div class="navbar-end">
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link" i18n>Sprache</a>
+        <div class="navbar-dropdown">
+          <a *ngFor="let lang of langs" class="navbar-item" href="/{{lang}}{{getCurrentUrl()}}">{{lang}}</a>
+        </div>
+      </div>
 
       <a class="navbar-item" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/impressum/">
-        Impressum
+        <span i18n>Impressum</span>
       </a>
       <a class="navbar-item" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/datenschutz/">
-        Datenschutz
+        <span i18n>Datenschutz</span>
       </a>
 
       <div class="navbar-item">
         <ng-container *ngIf="currentUser; else noUserBlock">
-          <button (click)="logout()" class="button is-light">Logout {{currentUser.loggedInUser.username}}</button>
+          <button (click)="logout()" class="button is-light">
+            <span i18n>Logout</span>&nbsp;{{currentUser.loggedInUser.username}}</button>
         </ng-container>
         <ng-template #noUserBlock>
           <div class="buttons">
-            <a routerLink="/loginForm" class="button is-light">Login</a>
-            <a routerLink="/registerForm" class="button is-light">Registrieren</a>
+            <a routerLink="/loginForm" class="button is-light" i18n>Login</a>
+            <a routerLink="/registerForm" class="button is-light" i18n>Registrieren</a>
           </div>
         </ng-template>
       </div>

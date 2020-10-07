@@ -1,32 +1,34 @@
 <div class="container">
 
-  <h1 class="title is-3 has-text-centered">Login</h1>
+  <h1 class="title is-3 has-text-centered" i18n>Login</h1>
 
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
     <div class="field">
-      <label for="username" class="label">Nutzername</label>
+      <label for="username" class="label"><span i18n>Nutzername</span>:</label>
       <div class="control">
-        <input type="text" id="username" formControlName="username" class="input" placeholder="Nutzername" autofocus>
+        <input type="text" id="username" formControlName="username" class="input"
+               placeholder="Nutzername" i18n-placeholder autofocus>
       </div>
     </div>
 
     <div class="field">
-      <label for="password" class="label">Passwort</label>
+      <label for="password" class="label"><span i18n>Passwort</span>:</label>
       <div class="control">
-        <input type="password" formControlName="password" placeholder="Passwort" id="password" class="input">
+        <input type="password" formControlName="password" placeholder="Passwort" i18n-placeholder id="password"
+               class="input">
       </div>
     </div>
 
     <div class="notification is-danger" *ngIf="submitted && inValid">
-      Kombination aus Nutzername und Password ist nicht valide!
+      <span i18n>Kombination aus Nutzername und Password ist nicht valide</span>!
     </div>
 
     <br>
 
     <div class="field">
       <div class="control">
-        <button class="button is-link">Login</button>
+        <button class="button is-link" i18n>Login</button>
       </div>
     </div>
 
