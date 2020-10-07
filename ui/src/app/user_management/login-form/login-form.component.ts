@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthenticationService} from '../../_services/authentication.service';
 import {first} from 'rxjs/operators';
@@ -14,7 +14,6 @@ export class LoginFormComponent implements OnInit {
   returnUrl: string;
 
   constructor(
-    private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService
@@ -28,9 +27,9 @@ export class LoginFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
+    this.loginForm = new FormGroup({
+      username: new FormControl(['', Validators.required]),
+      password: new FormControl(['', Validators.required])
     });
 
     this.returnUrl = this.route.snapshot.queryParams.returnUrl || '/';
