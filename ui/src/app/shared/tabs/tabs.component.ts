@@ -17,7 +17,6 @@ export class TabsComponent implements AfterContentInit {
 
   @ContentChildren(TabComponent) tabs: QueryList<TabComponent>;
 
-
   ngAfterContentInit() {
     const activeTabs = this.tabs.filter((t) => t.active);
 

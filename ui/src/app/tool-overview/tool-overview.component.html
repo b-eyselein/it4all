@@ -1,8 +1,7 @@
 <div class="container">
-  <h1 class="title is-3 has-text-centered">Tools <code>it4all</code></h1>
+  <h1 class="title is-3 has-text-centered"><span i18n>Tools</span>&nbsp;<code>it4all</code></h1>
 
   <div class="columns is-multiline">
-
     <div class="column is-one-quarter-desktop is-half-tablet" *ngFor="let ranTool of randomTools">
 
       <div class="card">
@@ -16,7 +15,7 @@
         <footer class="card-footer">
           <a [routerLink]="['/randomTools', ranTool.id]" class="card-footer-item">Zum Tool</a>
           <a [routerLink]="['/lessons', ranTool.id]" class="card-footer-item" *ngIf="ranTool.hasLessons">
-            Zu den Lektionen
+            <ng-container i18n>Zu den Lektionen</ng-container>
           </a>
         </footer>
       </div>
@@ -33,16 +32,15 @@
           </p>
         </header>
         <div class="card-content">
-          <p>{{colTool.collectionCount}} Sammlungen mit {{colTool.exerciseCount}} Aufgaben</p>
-          <p>{{colTool.lessonCount === 0 ? 'Keine' : colTool.lessonCount}} Lektionen</p>
+          <p i18n>{{colTool.collectionCount}} Sammlungen mit {{colTool.exerciseCount}} Aufgaben</p>
+          <p i18n>{{colTool.lessonCount === 0 ? 'Keine' : colTool.lessonCount}} Lektionen</p>
         </div>
         <footer class="card-footer">
-          <a [routerLink]="['/tools', colTool.id]" class="card-footer-item">Zum Tool</a>
+          <a [routerLink]="['/tools', colTool.id]" class="card-footer-item" i18n>Zum Tool</a>
         </footer>
       </div>
 
     </div>
 
   </div>
-
 </div>

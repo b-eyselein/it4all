@@ -44,6 +44,41 @@
           <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="fefee13017c2b85143cd131ee253e327a14053a0" datatype="html">
+        <source>Tools</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/tool-overview/tool-overview.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e837b8f8d11cd9efc2db516c7f6ef70afa6a8037" datatype="html">
+        <source>Zu den Lektionen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/tool-overview/tool-overview.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5bf31eb355f0b449d8c745d8fcb04d2efbb868da" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{colTool.collectionCount}}"/> Sammlungen mit <x id="INTERPOLATION_1" equiv-text="{{colTool.exerciseCount}}"/> Aufgaben</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/tool-overview/tool-overview.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7ed1367455297716f30271d713bfd2b12566fdec" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{colTool.lessonCount === 0 ? &apos;Keine&apos; : colTool.lessonCount}}"/> Lektionen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/tool-overview/tool-overview.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c533340dac6555cdcd7086167932ccb0295f4779" datatype="html">
+        <source>Zum Tool</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/tool-overview/tool-overview.component.html</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="227094aed22780e90303b4157e24f11db9e2c959" datatype="html">
         <source>Nutzername</source>
         <context-group purpose="location">
@@ -84,6 +119,13 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/user_management/register-form/register-form.component.html</context>
           <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2e55f8a5f502e6e096578b84009059497f6abe8c" datatype="html">
+        <source>Sie haben <x id="INTERPOLATION" equiv-text="{{points}}"/> von maximal <x id="INTERPOLATION_1" equiv-text="{{maxPoints}}"/> Punkten erreicht</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/points-notification/points-notification.component.ts</context>
+          <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
     </body>

@@ -4,7 +4,9 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
   selector: 'it4all-points-notification',
   template: `
     <div class="notification is-light-grey {{textColor}}">
-      <p class="has-text-centered">Sie haben {{points}} von maximal {{maxPoints}} Punkten erreicht.</p>
+      <p class="has-text-centered">
+        <span i18n>Sie haben {{points}} von maximal {{maxPoints}} Punkten erreicht</span>.
+      </p>
 
       <br>
 
