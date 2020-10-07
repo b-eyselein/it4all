@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {RegisterGQL} from '../../_services/apollo_services';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {AuthenticationService} from '../../_services/authentication.service';
 import {first} from 'rxjs/operators';
@@ -15,7 +15,6 @@ export class RegisterFormComponent implements OnInit {
   registeredUsername: string | undefined;
 
   constructor(
-    private formBuilder: FormBuilder,
     private router: Router,
     private registerGQL: RegisterGQL,
     private authenticationService: AuthenticationService
@@ -28,10 +27,10 @@ export class RegisterFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.registerForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      firstPassword: ['', Validators.required],
-      secondPassword: ['', Validators.required],
+    this.registerForm = new FormGroup({
+      username: new FormControl('', [Validators.required]),
+      firstPassword: new FormControl('', [Validators.required]),
+      secondPassword: new FormControl('', [Validators.required]),
     });
   }
 

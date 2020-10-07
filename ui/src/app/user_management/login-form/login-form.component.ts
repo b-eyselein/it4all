@@ -23,13 +23,12 @@ export class LoginFormComponent implements OnInit {
       // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['/']);
     }
-
   }
 
   ngOnInit() {
     this.loginForm = new FormGroup({
-      username: new FormControl(['', Validators.required]),
-      password: new FormControl(['', Validators.required])
+      username: new FormControl('', [Validators.required]),
+      password: new FormControl('', [Validators.required])
     });
 
     this.returnUrl = this.route.snapshot.queryParams.returnUrl || '/';
