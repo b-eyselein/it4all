@@ -25,7 +25,7 @@ wartremoverExcluded ++= routes.in(Compile).value
 wartremoverExcluded += sourceManaged.value
 wartremoverExcluded += (target in TwirlKeys.compileTemplates).value
 
-updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true)
+updateOptions := updateOptions.value.withCachedResolution(true)
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 
@@ -72,7 +72,7 @@ libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.1", // Apache 2.0
 
   // Sql
-  "mysql"                 % "mysql-connector-java" % "8.0.21", // GPL 2.0
+  "mysql"                 % "mysql-connector-java" % "8.0.22", // GPL 2.0
   "com.typesafe.play"    %% "play-slick"           % "5.0.0", // Apache 2.0
   "com.github.jsqlparser" % "jsqlparser"           % "3.2", // Apache 2.0
 

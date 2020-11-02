@@ -18,6 +18,8 @@ data/
 
 .idea/*
 
+.bsp/
+
 # Client folder
 ui/coverage
 ui/dist
