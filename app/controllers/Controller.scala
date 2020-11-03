@@ -99,7 +99,7 @@ class Controller @Inject() (
 
           jwtHashesToClaim.put(uuid, (createJwtSession(user), user))
 
-          Redirect(s"/lti/${uuid.toString}").withNewSession
+          Redirect(s"/de/lti/${uuid.toString}").withNewSession
         }
     }
   }

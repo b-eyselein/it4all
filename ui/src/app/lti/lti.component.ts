@@ -7,7 +7,11 @@ export class LtiComponent {
 
   // TODO: eventually render template?
 
-  constructor(private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private authenticationService: AuthenticationService
+  ) {
     const uuid: string = this.route.snapshot.paramMap.get('uuid');
 
     this.authenticationService.claimJsonWebToken(uuid)
