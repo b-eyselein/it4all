@@ -57,7 +57,7 @@ export class UmlMemberAllocationComponent implements OnInit {
   corrected = false;
 
   ngOnInit() {
-    this.sample = this.contentFragment.sampleSolutions[0].sample;
+    this.sample = this.contentFragment.umlSampleSolutions[0].sample;
 
     this.allAttributes = distinctObjectArray(
       flatMapArray(this.sample.classes, (clazz) => clazz.attributes), (a) => a.memberName

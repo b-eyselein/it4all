@@ -2,7 +2,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {
   ExerciseGQL,
-  ExerciseQuery, ExerciseSolveFieldsFragment,
+  ExerciseQuery,
+  ExerciseSolveFieldsFragment,
   FlaskExerciseContentFragment,
   ProgrammingExerciseContentFragment,
   RegexExerciseContentFragment,
@@ -58,31 +59,31 @@ export class ExerciseComponent implements OnInit, OnDestroy {
   }
 
   get flaskExerciseContent(): FlaskExerciseContentFragment | undefined {
-    return this.exercise.flaskContent;
+    return this.exercise.content.__typename === 'FlaskExerciseContent' ? this.exercise.content : undefined;
   }
 
   get programmingExerciseContent(): ProgrammingExerciseContentFragment | undefined {
-    return this.exercise.programmingContent;
+    return this.exercise.content.__typename === 'ProgrammingExerciseContent' ? this.exercise.content : undefined;
   }
 
   get regexExerciseContent(): RegexExerciseContentFragment | undefined {
-    return this.exercise.regexContent;
+    return this.exercise.content.__typename === 'RegexExerciseContent' ? this.exercise.content : undefined;
   }
 
   get sqlExerciseContent(): SqlExerciseContentFragment | undefined {
-    return this.exercise.sqlContent;
+    return this.exercise.content.__typename === 'SqlExerciseContent' ? this.exercise.content : undefined;
   }
 
   get umlExerciseContent(): UmlExerciseContentFragment | undefined {
-    return this.exercise.umlContent;
+    return this.exercise.content.__typename === 'UmlExerciseContent' ? this.exercise.content : undefined;
   }
 
   get webExerciseContent(): WebExerciseContentFragment | undefined {
-    return this.exercise.webContent;
+    return this.exercise.content.__typename === 'WebExerciseContent' ? this.exercise.content : undefined;
   }
 
   get xmlExerciseContent(): XmlExerciseContentFragment | undefined {
-    return this.exercise.xmlContent;
+    return this.exercise.content.__typename === 'XmlExerciseContent' ? this.exercise.content : undefined;
   }
 
 }

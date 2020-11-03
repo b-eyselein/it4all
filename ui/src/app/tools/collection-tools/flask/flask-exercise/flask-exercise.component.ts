@@ -63,7 +63,7 @@ export class FlaskExerciseComponent
   // Sample solutions
 
   get sampleSolutions(): FilesSolution[] {
-    return this.contentFragment.sampleSolutions.map((s) => s.sample);
+    return this.contentFragment.flaskSampleSolutions.map((s) => s.sample);
   }
 
   // Correction

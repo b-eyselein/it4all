@@ -111,13 +111,7 @@ export type Exercise = {
   text: Scalars['String'];
   topicsWithLevels: Array<TopicWithLevel>;
   difficulty: Scalars['Int'];
-  flaskContent?: Maybe<FlaskExerciseContent>;
-  programmingContent?: Maybe<ProgrammingExerciseContent>;
-  regexContent?: Maybe<RegexExerciseContent>;
-  sqlContent?: Maybe<SqlExerciseContent>;
-  umlContent?: Maybe<UmlExerciseContent>;
-  webContent?: Maybe<WebExerciseContent>;
-  xmlContent?: Maybe<XmlExerciseContent>;
+  content: ExerciseContentUnionType;
   parts: Array<ExPart>;
 };
 
@@ -135,6 +129,8 @@ export type ExerciseCollection = {
 export type ExerciseCollectionExerciseArgs = {
   exId: Scalars['Int'];
 };
+
+export type ExerciseContentUnionType = FlaskExerciseContent | ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent;
 
 export type ExerciseFile = {
   __typename?: 'ExerciseFile';
@@ -414,9 +410,9 @@ export type MatchingResult = {
 export enum MatchType {
   OnlySample = 'ONLY_SAMPLE',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
-  OnlyUser = 'ONLY_USER',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH'
+  OnlyUser = 'ONLY_USER'
 }
 
 export type Mutation = {
@@ -776,9 +772,9 @@ export type SqlExerciseMutationsCorrectArgs = {
 export enum SqlExerciseType {
   Insert = 'INSERT',
   Create = 'CREATE',
-  Select = 'SELECT',
+  Update = 'UPDATE',
   Delete = 'DELETE',
-  Update = 'UPDATE'
+  Select = 'SELECT'
 }
 
 export enum SqlExPart {

@@ -2,14 +2,7 @@ package model.graphql
 
 import model.mongo.MongoExercisePartResultQueries
 import model.tools.Helper.UntypedExercise
-import model.tools.Tool
-import model.tools.flask.{FlaskExerciseContent, FlaskToolGraphQLModels}
-import model.tools.programming.{ProgrammingExerciseContent, ProgrammingGraphQLModels}
-import model.tools.regex.{RegexExerciseContent, RegexGraphQLModels}
-import model.tools.sql.{SqlExerciseContent, SqlGraphQLModels}
-import model.tools.uml.{UmlExerciseContent, UmlGraphQLModels}
-import model.tools.web.{WebExerciseContent, WebGraphQLModels}
-import model.tools.xml.{XmlExerciseContent, XmlGraphQLModels}
+import model.tools.{Tool, ToolList}
 import model.{ExPart, LoggedInUser}
 import sangria.schema._
 
@@ -35,6 +28,11 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
     )
   )
 
+  private val exerciseContentUnionType = UnionType(
+    "ExerciseContentUnionType",
+    types = ToolList.tools.map(_.graphQlModels.exerciseContentType)
+  )
+
   protected val exerciseType: ObjectType[Unit, (LoggedInUser, Tool, UntypedExercise)] = ObjectType(
     "Exercise",
     fields[Unit, (LoggedInUser, Tool, UntypedExercise)](
@@ -46,63 +44,7 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
       Field("text", StringType, resolve = _.value._3.text),
       Field("topicsWithLevels", ListType(topicWithLevelType), resolve = _.value._3.topicsWithLevels),
       Field("difficulty", IntType, resolve = _.value._3.difficulty),
-      // Content FIXME: refactor!
-      Field(
-        "flaskContent",
-        OptionType(FlaskToolGraphQLModels.exerciseContentType),
-        resolve = _.value._3.content match {
-          case x: FlaskExerciseContent => Some(x)
-          case _                       => None
-        }
-      ),
-      Field(
-        "programmingContent",
-        OptionType(ProgrammingGraphQLModels.exerciseContentType),
-        resolve = _.value._3.content match {
-          case x: ProgrammingExerciseContent => Some(x)
-          case _                             => None
-        }
-      ),
-      Field(
-        "regexContent",
-        OptionType(RegexGraphQLModels.exerciseContentType),
-        resolve = _.value._3.content match {
-          case x: RegexExerciseContent => Some(x)
-          case _                       => None
-        }
-      ),
-      Field(
-        "sqlContent",
-        OptionType(SqlGraphQLModels.exerciseContentType),
-        resolve = _.value._3.content match {
-          case x: SqlExerciseContent => Some(x)
-          case _                     => None
-        }
-      ),
-      Field(
-        "umlContent",
-        OptionType(UmlGraphQLModels.exerciseContentType),
-        resolve = _.value._3.content match {
-          case x: UmlExerciseContent => Some(x)
-          case _                     => None
-        }
-      ),
-      Field(
-        "webContent",
-        OptionType(WebGraphQLModels.exerciseContentType),
-        resolve = _.value._3.content match {
-          case x: WebExerciseContent => Some(x)
-          case _                     => None
-        }
-      ),
-      Field(
-        "xmlContent",
-        OptionType(XmlGraphQLModels.exerciseContentType),
-        resolve = _.value._3.content match {
-          case x: XmlExerciseContent => Some(x)
-          case _                     => None
-        }
-      ),
+      Field("content", exerciseContentUnionType, resolve = _.value._3.content),
       Field(
         "parts",
         ListType(exPartType),

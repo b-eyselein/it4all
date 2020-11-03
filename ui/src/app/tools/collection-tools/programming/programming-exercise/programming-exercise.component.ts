@@ -61,9 +61,9 @@ export class ProgrammingExerciseComponent
   }
 
   ngOnInit(): void {
-    this.partId = getIdForProgExPart(this.contentFragment.part);
+    this.partId = getIdForProgExPart(this.contentFragment.programmingPart);
 
-    this.exerciseFiles = (this.contentFragment.part === ProgExPart.Implementation) ?
+    this.exerciseFiles = (this.contentFragment.programmingPart === ProgExPart.Implementation) ?
       this.contentFragment.implementationPart.files :
       (this.contentFragment.unitTestPart as NormalUnitTestPartFragment).unitTestFiles;
 
@@ -73,7 +73,7 @@ export class ProgrammingExerciseComponent
   // Sample solutions
 
   get sampleSolutions(): FilesSolution[] {
-    return this.contentFragment.sampleSolutions.map((s) => s.sample);
+    return this.contentFragment.programmingSampleSolutions.map((s) => s.sample);
   }
 
   // Correction
@@ -87,7 +87,7 @@ export class ProgrammingExerciseComponent
       exId: this.exerciseFragment.exerciseId,
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
-      part: this.contentFragment.part,
+      part: this.contentFragment.programmingPart,
       userJwt: this.authenticationService.currentUserValue.jwt
     };
   }

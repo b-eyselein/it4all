@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Thu Sep 24 2020 13:57:54 GMT+0200 (Mitteleuropäische Sommerzeit)
+# timestamp: Tue Nov 03 2020 09:58:27 GMT+0100 (Mitteleuropäische Normalzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -79,13 +79,7 @@ type Exercise {
   text: String!
   topicsWithLevels: [TopicWithLevel!]!
   difficulty: Int!
-  flaskContent: FlaskExerciseContent
-  programmingContent: ProgrammingExerciseContent
-  regexContent: RegexExerciseContent
-  sqlContent: SqlExerciseContent
-  umlContent: UmlExerciseContent
-  webContent: WebExerciseContent
-  xmlContent: XmlExerciseContent
+  content: ExerciseContentUnionType!
   parts: [ExPart!]!
 }
 
@@ -97,6 +91,8 @@ type ExerciseCollection {
   exercises: [Exercise!]!
   exercise(exId: Int!): Exercise
 }
+
+union ExerciseContentUnionType = FlaskExerciseContent | ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
 
 type ExerciseFile {
   name: String!
@@ -341,9 +337,9 @@ interface MatchingResult {
 enum MatchType {
   ONLY_SAMPLE
   UNSUCCESSFUL_MATCH
+  SUCCESSFUL_MATCH
   PARTIAL_MATCH
   ONLY_USER
-  SUCCESSFUL_MATCH
 }
 
 type Mutation {
@@ -615,9 +611,9 @@ type SqlExerciseMutations {
 enum SqlExerciseType {
   INSERT
   CREATE
-  SELECT
-  DELETE
   UPDATE
+  DELETE
+  SELECT
 }
 
 enum SqlExPart {

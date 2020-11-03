@@ -140,25 +140,15 @@ fragment ExerciseSolveFields on Exercise {
   toolId
   title
   text
-  flaskContent {
+  content {
+    __typename
     ...FlaskExerciseContent
-  }
-  programmingContent {
     ...ProgrammingExerciseContent
-  }
-  regexContent {
+    ...ProgrammingExerciseContent
     ...RegexExerciseContent
-  }
-  sqlContent {
     ...SqlExerciseContent
-  }
-  umlContent {
     ...UmlExerciseContent
-  }
-  webContent {
     ...WebExerciseContent
-  }
-  xmlContent {
     ...XmlExerciseContent
   }
 }
@@ -248,7 +238,7 @@ fragment FlaskExerciseContent on FlaskExerciseContent {
   files {
     ...ExerciseFile
   }
-  sampleSolutions {
+  flaskSampleSolutions: sampleSolutions {
     ...FilesSampleSolution
   }
 }
@@ -278,19 +268,19 @@ fragment ProgrammingExerciseContent on ProgrammingExerciseContent {
       ...ExerciseFile
     }
   }
-  sampleSolutions {
+  programmingSampleSolutions: sampleSolutions {
     ...FilesSampleSolution
   }
-  part(partId: $partId)
+  programmingPart: part(partId: $partId)
 }
 
 # Regex
 
 fragment RegexExerciseContent on RegexExerciseContent {
-  sampleSolutions {
+  regexSampleSolutions: sampleSolutions {
     ...RegexSampleSolution
   }
-  part(partId: $partId)
+  regexPart: part(partId: $partId)
 }
 
 fragment RegexSampleSolution on RegexSampleSolution {
@@ -302,10 +292,10 @@ fragment RegexSampleSolution on RegexSampleSolution {
 
 fragment SqlExerciseContent on SqlExerciseContent {
   hint
-  sampleSolutions {
+  sqlSampleSolutions: sampleSolutions {
     ...SqlSampleSolution
   }
-  part(partId: $partId)
+  sqlPart: part(partId: $partId)
   sqlDbContents {
     ...SqlQueryResult
   }
@@ -347,10 +337,10 @@ fragment UmlExerciseContent on UmlExerciseContent {
     key
     value
   }
-  sampleSolutions {
+  umlSampleSolutions: sampleSolutions {
     ...UmlSampleSolution
   }
-  part(partId: $partId)
+  umlPart: part(partId: $partId)
 }
 
 fragment UmlSampleSolution on UmlSampleSolution {
@@ -428,10 +418,10 @@ fragment WebExerciseContent on WebExerciseContent {
     }
     jsTaskCount
   }
-  sampleSolutions {
+  webSampleSolutions: sampleSolutions {
     ...FilesSampleSolution
   }
-  part(partId: $partId)
+  webPart: part(partId: $partId)
 }
 
 # Xml
@@ -439,10 +429,10 @@ fragment WebExerciseContent on WebExerciseContent {
 fragment XmlExerciseContent on XmlExerciseContent {
   rootNode
   grammarDescription
-  sampleSolutions {
+  xmlSampleSolutions: sampleSolutions {
     ...XmlSampleSolution
   }
-  part(partId: $partId)
+  xmlPart: part(partId: $partId)
 }
 
 fragment XmlSampleSolution on XmlSampleSolution {

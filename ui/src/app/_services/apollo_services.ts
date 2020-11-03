@@ -316,28 +316,29 @@ export type ExerciseOverviewQuery = (
 export type ExerciseSolveFieldsFragment = (
   { __typename?: 'Exercise' }
   & Pick<Types.Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'text'>
-  & { flaskContent?: Types.Maybe<(
-    { __typename?: 'FlaskExerciseContent' }
+  & { content: (
+    { __typename: 'FlaskExerciseContent' }
     & FlaskExerciseContentFragment
-  )>, programmingContent?: Types.Maybe<(
-    { __typename?: 'ProgrammingExerciseContent' }
+  ) | (
+    { __typename: 'ProgrammingExerciseContent' }
     & ProgrammingExerciseContentFragment
-  )>, regexContent?: Types.Maybe<(
-    { __typename?: 'RegexExerciseContent' }
+    & ProgrammingExerciseContentFragment
+  ) | (
+    { __typename: 'RegexExerciseContent' }
     & RegexExerciseContentFragment
-  )>, sqlContent?: Types.Maybe<(
-    { __typename?: 'SqlExerciseContent' }
+  ) | (
+    { __typename: 'SqlExerciseContent' }
     & SqlExerciseContentFragment
-  )>, umlContent?: Types.Maybe<(
-    { __typename?: 'UmlExerciseContent' }
+  ) | (
+    { __typename: 'UmlExerciseContent' }
     & UmlExerciseContentFragment
-  )>, webContent?: Types.Maybe<(
-    { __typename?: 'WebExerciseContent' }
+  ) | (
+    { __typename: 'WebExerciseContent' }
     & WebExerciseContentFragment
-  )>, xmlContent?: Types.Maybe<(
-    { __typename?: 'XmlExerciseContent' }
+  ) | (
+    { __typename: 'XmlExerciseContent' }
     & XmlExerciseContentFragment
-  )> }
+  ) }
 );
 
 export type ExerciseQueryVariables = Types.Exact<{
@@ -435,7 +436,7 @@ export type FlaskExerciseContentFragment = (
   ), files: Array<(
     { __typename?: 'ExerciseFile' }
     & ExerciseFileFragment
-  )>, sampleSolutions: Array<(
+  )>, flaskSampleSolutions: Array<(
     { __typename?: 'FilesSampleSolution' }
     & FilesSampleSolutionFragment
   )> }
@@ -459,7 +460,7 @@ export type NormalUnitTestPartFragment = (
 
 export type ProgrammingExerciseContentFragment = (
   { __typename?: 'ProgrammingExerciseContent' }
-  & Pick<Types.ProgrammingExerciseContent, 'part'>
+  & { programmingPart: Types.ProgrammingExerciseContent['part'] }
   & { unitTestPart: (
     { __typename: 'SimplifiedUnitTestPart' }
     & SimplifiedUnitTestPartFragment
@@ -472,7 +473,7 @@ export type ProgrammingExerciseContentFragment = (
       { __typename?: 'ExerciseFile' }
       & ExerciseFileFragment
     )> }
-  ), sampleSolutions: Array<(
+  ), programmingSampleSolutions: Array<(
     { __typename?: 'FilesSampleSolution' }
     & FilesSampleSolutionFragment
   )> }
@@ -480,8 +481,8 @@ export type ProgrammingExerciseContentFragment = (
 
 export type RegexExerciseContentFragment = (
   { __typename?: 'RegexExerciseContent' }
-  & Pick<Types.RegexExerciseContent, 'part'>
-  & { sampleSolutions: Array<(
+  & { regexPart: Types.RegexExerciseContent['part'] }
+  & { regexSampleSolutions: Array<(
     { __typename?: 'RegexSampleSolution' }
     & RegexSampleSolutionFragment
   )> }
@@ -494,8 +495,9 @@ export type RegexSampleSolutionFragment = (
 
 export type SqlExerciseContentFragment = (
   { __typename?: 'SqlExerciseContent' }
-  & Pick<Types.SqlExerciseContent, 'hint' | 'part'>
-  & { sampleSolutions: Array<(
+  & Pick<Types.SqlExerciseContent, 'hint'>
+  & { sqlPart: Types.SqlExerciseContent['part'] }
+  & { sqlSampleSolutions: Array<(
     { __typename?: 'SqlSampleSolution' }
     & SqlSampleSolutionFragment
   )>, sqlDbContents: Array<(
@@ -537,11 +539,12 @@ export type SqlSampleSolutionFragment = (
 
 export type UmlExerciseContentFragment = (
   { __typename?: 'UmlExerciseContent' }
-  & Pick<Types.UmlExerciseContent, 'toIgnore' | 'part'>
+  & Pick<Types.UmlExerciseContent, 'toIgnore'>
+  & { umlPart: Types.UmlExerciseContent['part'] }
   & { mappings: Array<(
     { __typename?: 'KeyValueObject' }
     & Pick<Types.KeyValueObject, 'key' | 'value'>
-  )>, sampleSolutions: Array<(
+  )>, umlSampleSolutions: Array<(
     { __typename?: 'UmlSampleSolution' }
     & UmlSampleSolutionFragment
   )> }
@@ -603,7 +606,7 @@ export type UmlImplementationFragment = (
 
 export type WebExerciseContentFragment = (
   { __typename?: 'WebExerciseContent' }
-  & Pick<Types.WebExerciseContent, 'part'>
+  & { webPart: Types.WebExerciseContent['part'] }
   & { files: Array<(
     { __typename?: 'ExerciseFile' }
     & ExerciseFileFragment
@@ -614,7 +617,7 @@ export type WebExerciseContentFragment = (
       { __typename?: 'HtmlTask' }
       & Pick<Types.HtmlTask, 'text'>
     )> }
-  ), sampleSolutions: Array<(
+  ), webSampleSolutions: Array<(
     { __typename?: 'FilesSampleSolution' }
     & FilesSampleSolutionFragment
   )> }
@@ -622,8 +625,9 @@ export type WebExerciseContentFragment = (
 
 export type XmlExerciseContentFragment = (
   { __typename?: 'XmlExerciseContent' }
-  & Pick<Types.XmlExerciseContent, 'rootNode' | 'grammarDescription' | 'part'>
-  & { sampleSolutions: Array<(
+  & Pick<Types.XmlExerciseContent, 'rootNode' | 'grammarDescription'>
+  & { xmlPart: Types.XmlExerciseContent['part'] }
+  & { xmlSampleSolutions: Array<(
     { __typename?: 'XmlSampleSolution' }
     & XmlSampleSolutionFragment
   )> }
@@ -877,7 +881,7 @@ export const FlaskExerciseContentFragmentDoc = gql`
   files {
     ...ExerciseFile
   }
-  sampleSolutions {
+  flaskSampleSolutions: sampleSolutions {
     ...FilesSampleSolution
   }
 }
@@ -909,10 +913,10 @@ export const ProgrammingExerciseContentFragmentDoc = gql`
       ...ExerciseFile
     }
   }
-  sampleSolutions {
+  programmingSampleSolutions: sampleSolutions {
     ...FilesSampleSolution
   }
-  part(partId: $partId)
+  programmingPart: part(partId: $partId)
 }
     ${NormalUnitTestPartFragmentDoc}
 ${SimplifiedUnitTestPartFragmentDoc}
@@ -926,10 +930,10 @@ export const RegexSampleSolutionFragmentDoc = gql`
     `;
 export const RegexExerciseContentFragmentDoc = gql`
     fragment RegexExerciseContent on RegexExerciseContent {
-  sampleSolutions {
+  regexSampleSolutions: sampleSolutions {
     ...RegexSampleSolution
   }
-  part(partId: $partId)
+  regexPart: part(partId: $partId)
 }
     ${RegexSampleSolutionFragmentDoc}`;
 export const SqlSampleSolutionFragmentDoc = gql`
@@ -967,10 +971,10 @@ export const SqlQueryResultFragmentDoc = gql`
 export const SqlExerciseContentFragmentDoc = gql`
     fragment SqlExerciseContent on SqlExerciseContent {
   hint
-  sampleSolutions {
+  sqlSampleSolutions: sampleSolutions {
     ...SqlSampleSolution
   }
-  part(partId: $partId)
+  sqlPart: part(partId: $partId)
   sqlDbContents {
     ...SqlQueryResult
   }
@@ -1056,10 +1060,10 @@ export const UmlExerciseContentFragmentDoc = gql`
     key
     value
   }
-  sampleSolutions {
+  umlSampleSolutions: sampleSolutions {
     ...UmlSampleSolution
   }
-  part(partId: $partId)
+  umlPart: part(partId: $partId)
 }
     ${UmlSampleSolutionFragmentDoc}`;
 export const WebExerciseContentFragmentDoc = gql`
@@ -1074,10 +1078,10 @@ export const WebExerciseContentFragmentDoc = gql`
     }
     jsTaskCount
   }
-  sampleSolutions {
+  webSampleSolutions: sampleSolutions {
     ...FilesSampleSolution
   }
-  part(partId: $partId)
+  webPart: part(partId: $partId)
 }
     ${ExerciseFileFragmentDoc}
 ${FilesSampleSolutionFragmentDoc}`;
@@ -1094,10 +1098,10 @@ export const XmlExerciseContentFragmentDoc = gql`
     fragment XmlExerciseContent on XmlExerciseContent {
   rootNode
   grammarDescription
-  sampleSolutions {
+  xmlSampleSolutions: sampleSolutions {
     ...XmlSampleSolution
   }
-  part(partId: $partId)
+  xmlPart: part(partId: $partId)
 }
     ${XmlSampleSolutionFragmentDoc}`;
 export const ExerciseSolveFieldsFragmentDoc = gql`
@@ -1107,25 +1111,15 @@ export const ExerciseSolveFieldsFragmentDoc = gql`
   toolId
   title
   text
-  flaskContent {
+  content {
+    __typename
     ...FlaskExerciseContent
-  }
-  programmingContent {
     ...ProgrammingExerciseContent
-  }
-  regexContent {
+    ...ProgrammingExerciseContent
     ...RegexExerciseContent
-  }
-  sqlContent {
     ...SqlExerciseContent
-  }
-  umlContent {
     ...UmlExerciseContent
-  }
-  webContent {
     ...WebExerciseContent
-  }
-  xmlContent {
     ...XmlExerciseContent
   }
 }

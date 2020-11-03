@@ -59,6 +59,33 @@
         ]
       },
       {
+        "kind": "UNION",
+        "name": "ExerciseContentUnionType",
+        "possibleTypes": [
+          {
+            "name": "FlaskExerciseContent"
+          },
+          {
+            "name": "ProgrammingExerciseContent"
+          },
+          {
+            "name": "RegexExerciseContent"
+          },
+          {
+            "name": "SqlExerciseContent"
+          },
+          {
+            "name": "UmlExerciseContent"
+          },
+          {
+            "name": "WebExerciseContent"
+          },
+          {
+            "name": "XmlExerciseContent"
+          }
+        ]
+      },
+      {
         "kind": "INTERFACE",
         "name": "FlaskAbstractCorrectionResult",
         "possibleTypes": [

@@ -80,9 +80,9 @@ export class UmlDiagramDrawingComponent
   }
 
   ngOnInit(): void {
-    this.partId = getIdForUmlExPart(this.contentFragment.part);
+    this.partId = getIdForUmlExPart(this.contentFragment.umlPart);
 
-    this.withHelp = this.contentFragment.part === UmlExPart.DiagramDrawingHelp;
+    this.withHelp = this.contentFragment.umlPart === UmlExPart.DiagramDrawingHelp;
 
     this.creatableClassDiagramObjects = [
       {name: 'Klasse', key: CreatableClassDiagramObject.Class, selected: false, disabled: this.withHelp},
@@ -106,7 +106,7 @@ export class UmlDiagramDrawingComponent
     this.createPaperEvents(this.paper);
 
     // load classes
-    const declaration = this.contentFragment.sampleSolutions[0].sample;
+    const declaration = this.contentFragment.umlSampleSolutions[0].sample;
 
     this.loadOldSolutionAbstract(this.exerciseFragment, this.partId,
       (oldSol) => this.loadClassDiagram(oldSol),
@@ -276,7 +276,7 @@ export class UmlDiagramDrawingComponent
       exId: this.exerciseFragment.exerciseId,
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
-      part: this.contentFragment.part,
+      part: this.contentFragment.umlPart,
       userJwt: this.authenticationService.currentUserValue.jwt
     };
   }

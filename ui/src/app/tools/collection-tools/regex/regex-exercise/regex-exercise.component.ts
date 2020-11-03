@@ -58,7 +58,7 @@ export class RegexExerciseComponent
   }
 
   get sampleSolutions(): string[] {
-    return this.contentFragment.sampleSolutions.map((s) => s.sample);
+    return this.contentFragment.regexSampleSolutions.map((s) => s.sample);
   }
 
   // Correction

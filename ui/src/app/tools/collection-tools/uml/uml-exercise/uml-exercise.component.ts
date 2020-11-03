@@ -30,15 +30,15 @@ export class UmlExerciseComponent {
   @Input() contentFragment: UmlExerciseContentFragment;
 
   isClassSelection(): boolean {
-    return this.contentFragment.part === UmlExPart.ClassSelection;
+    return this.contentFragment.umlPart === UmlExPart.ClassSelection;
   }
 
   isDiagramDrawing(): boolean {
-    return [UmlExPart.DiagramDrawingHelp, UmlExPart.DiagramDrawing].includes(this.contentFragment.part);
+    return [UmlExPart.DiagramDrawingHelp, UmlExPart.DiagramDrawing].includes(this.contentFragment.umlPart);
   }
 
   isMemberAllocation(): boolean {
-    return this.contentFragment.part === UmlExPart.MemberAllocation;
+    return this.contentFragment.umlPart === UmlExPart.MemberAllocation;
   }
 
 }

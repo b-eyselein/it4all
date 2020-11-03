@@ -74,13 +74,13 @@ export class XmlExerciseComponent
   ngOnInit() {
     const rootNode = this.contentFragment.rootNode;
 
-    this.partId = getIdForXmlExPart(this.contentFragment.part);
+    this.partId = getIdForXmlExPart(this.contentFragment.xmlPart);
     this.isGrammarPart = this.partId === 'grammar';
 
     const grammarFileName = `${rootNode}.dtd`;
     this.grammarFile = {
       name: grammarFileName,
-      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : this.contentFragment.sampleSolutions[0].sample.grammar,
+      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : this.contentFragment.xmlSampleSolutions[0].sample.grammar,
       fileType: 'dtd',
       editable: this.isGrammarPart,
     };
@@ -118,7 +118,7 @@ export class XmlExerciseComponent
       exId: this.exerciseFragment.exerciseId,
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
-      part: this.contentFragment.part,
+      part: this.contentFragment.xmlPart,
       userJwt: this.authenticationService.currentUserValue.jwt
     };
   }
@@ -158,7 +158,7 @@ export class XmlExerciseComponent
   }
 
   get sampleSolutions(): XmlSolution[] {
-    return this.contentFragment.sampleSolutions.map((s) => s.sample);
+    return this.contentFragment.xmlSampleSolutions.map((s) => s.sample);
   }
 
 }
