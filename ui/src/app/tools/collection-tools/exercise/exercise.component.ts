@@ -58,32 +58,32 @@ export class ExerciseComponent implements OnInit, OnDestroy {
     return this.exerciseQuery.me.tool.collection.exercise;
   }
 
-  get flaskExerciseContent(): FlaskExerciseContentFragment | undefined {
-    return this.exercise.content.__typename === 'FlaskExerciseContent' ? this.exercise.content : undefined;
+  get flaskExerciseContent(): FlaskExerciseContentFragment | null {
+    return this.exercise.content.__typename === 'FlaskExerciseContent' ? this.exercise.content : null;
   }
 
-  get programmingExerciseContent(): ProgrammingExerciseContentFragment | undefined {
-    return this.exercise.content.__typename === 'ProgrammingExerciseContent' ? this.exercise.content : undefined;
+  get programmingExerciseContent(): ProgrammingExerciseContentFragment | null {
+    return this.exercise.content.__typename === 'ProgrammingExerciseContent' ? this.exercise.content : null;
   }
 
-  get regexExerciseContent(): RegexExerciseContentFragment | undefined {
-    return this.exercise.content.__typename === 'RegexExerciseContent' ? this.exercise.content : undefined;
+  get regexExerciseContent(): RegexExerciseContentFragment | null {
+    return this.exercise.content.__typename === 'RegexExerciseContent' ? this.exercise.content : null;
   }
 
-  get sqlExerciseContent(): SqlExerciseContentFragment | undefined {
-    return this.exercise.content.__typename === 'SqlExerciseContent' ? this.exercise.content : undefined;
+  get sqlExerciseContent(): SqlExerciseContentFragment | null {
+    return this.exercise.content.__typename === 'SqlExerciseContent' ? this.exercise.content : null;
   }
 
-  get umlExerciseContent(): UmlExerciseContentFragment | undefined {
-    return this.exercise.content.__typename === 'UmlExerciseContent' ? this.exercise.content : undefined;
+  get umlExerciseContent(): UmlExerciseContentFragment | null {
+    return this.exercise.content.__typename === 'UmlExerciseContent' ? this.exercise.content : null;
   }
 
-  get webExerciseContent(): WebExerciseContentFragment | undefined {
-    return this.exercise.content.__typename === 'WebExerciseContent' ? this.exercise.content : undefined;
+  get webExerciseContent(): WebExerciseContentFragment | null {
+    return this.exercise.content.__typename === 'WebExerciseContent' ? this.exercise.content : null;
   }
 
-  get xmlExerciseContent(): XmlExerciseContentFragment | undefined {
-    return this.exercise.content.__typename === 'XmlExerciseContent' ? this.exercise.content : undefined;
+  get xmlExerciseContent(): XmlExerciseContentFragment | null {
+    return this.exercise.content.__typename === 'XmlExerciseContent' ? this.exercise.content : null;
   }
 
 }
