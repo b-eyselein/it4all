@@ -59,7 +59,7 @@ export function getUmlExerciseTextParts(
       .map((s) => replaceWithMapping(exerciseContent.mappings, s))
   );
 
-  const sampleSolution = exerciseContent.umlSampleSolutions[0].sample;
+  const sampleSolution = exerciseContent.umlSampleSolutions[0];
 
   const selectableClasses = allBaseForms.map<SelectableClass>((name) => {
       return {

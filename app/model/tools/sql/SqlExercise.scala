@@ -59,7 +59,7 @@ object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 final case class SqlExerciseContent(
   exerciseType: SqlExerciseType,
   schemaName: String,
-  sampleSolutions: Seq[SampleSolution[String]],
+  sampleSolutions: Seq[String],
   hint: Option[String] = None
 ) extends ExerciseContent {
 

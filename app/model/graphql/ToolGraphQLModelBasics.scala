@@ -17,15 +17,6 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
 
   val partEnumType: EnumType[PT]
 
-  protected def buildSampleSolutionType(
-    name: String,
-    solTypeType: OutputType[S]
-  ): ObjectType[Unit, SampleSolution[S]] =
-    deriveObjectType(
-      ObjectTypeName(s"${name}SampleSolution"),
-      ReplaceField("sample", Field("sample", solTypeType, resolve = _.value.sample))
-    )
-
   // Matching types
 
   protected val matchTypeType: EnumType[MatchType] = deriveEnumType()
@@ -85,8 +76,6 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
 
   val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, ResType]
 
-  val sampleSolutionType: ObjectType[Unit, SampleSolution[S]]
-
 }
 
 trait FilesSolutionToolGraphQLModelBasics[C <: ExerciseContent, PT <: ExPart, ResType <: AbstractCorrectionResult]
@@ -100,13 +89,10 @@ trait FilesSolutionToolGraphQLModelBasics[C <: ExerciseContent, PT <: ExPart, Re
     )
   }
 
-  private val solutionType: ObjectType[Unit, FilesSolution] = {
+  protected val solutionType: ObjectType[Unit, FilesSolution] = {
     implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
 
     deriveObjectType()
   }
-
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[FilesSolution]] =
-    buildSampleSolutionType("Files", solutionType)
 
 }

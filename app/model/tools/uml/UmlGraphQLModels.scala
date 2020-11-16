@@ -4,7 +4,7 @@ import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.matching.{MatchType, MatchingResult}
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
-import model.{KeyValueObject, SampleSolution}
+import model.KeyValueObject
 import play.api.libs.json.OFormat
 import sangria.macros.derive._
 import sangria.marshalling.playJson._
@@ -88,11 +88,8 @@ object UmlGraphQLModels
     deriveObjectType()
   }
 
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[UmlClassDiagram]] =
-    buildSampleSolutionType("Uml", umlClassDiagramType)
-
   override val exerciseContentType: ObjectType[Unit, UmlExerciseContent] = {
-    implicit val sst: ObjectType[Unit, SampleSolution[UmlClassDiagram]] = sampleSolutionType
+    implicit val sst: ObjectType[Unit, UmlClassDiagram] = umlClassDiagramType
 
     deriveObjectType(
       AddFields(

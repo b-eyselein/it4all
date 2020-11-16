@@ -1,6 +1,5 @@
 package model.tools.sql
 
-import model.SampleSolution
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
@@ -14,8 +13,6 @@ import sangria.schema._
 object SqlGraphQLModels
     extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlAbstractResult]
     with GraphQLArguments {
-
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] = buildSampleSolutionType("Sql", StringType)
 
   override val partEnumType: EnumType[SqlExPart] = EnumType(
     "SqlExPart",
@@ -142,8 +139,7 @@ object SqlGraphQLModels
   )
 
   override val exerciseContentType: ObjectType[Unit, SqlExerciseContent] = {
-    implicit val seTypeT: EnumType[SqlExerciseType]            = sqlExerciseTypeType
-    implicit val sst: ObjectType[Unit, SampleSolution[String]] = sampleSolutionType
+    implicit val seTypeT: EnumType[SqlExerciseType] = sqlExerciseTypeType
 
     deriveObjectType(
       AddFields(

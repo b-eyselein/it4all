@@ -1,6 +1,6 @@
 package model.tools.uml
 
-import model.{ExPart, ExParts, ExerciseContent, SampleSolution}
+import model.{ExPart, ExParts, ExerciseContent}
 
 sealed abstract class UmlExPart(
   val partName: String,
@@ -27,7 +27,7 @@ object UmlExPart extends ExParts[UmlExPart] {
 final case class UmlExerciseContent(
   toIgnore: Seq[String],
   mappings: Map[String, String],
-  sampleSolutions: Seq[SampleSolution[UmlClassDiagram]]
+  sampleSolutions: Seq[UmlClassDiagram]
 ) extends ExerciseContent {
 
   override protected type S = UmlClassDiagram

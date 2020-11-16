@@ -80,7 +80,7 @@ export class XmlExerciseComponent
     const grammarFileName = `${rootNode}.dtd`;
     this.grammarFile = {
       name: grammarFileName,
-      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : this.contentFragment.xmlSampleSolutions[0].sample.grammar,
+      content: this.isGrammarPart ? getXmlGrammarContent(rootNode) : this.contentFragment.xmlSampleSolutions[0].grammar,
       fileType: 'dtd',
       editable: this.isGrammarPart,
     };
@@ -158,7 +158,7 @@ export class XmlExerciseComponent
   }
 
   get sampleSolutions(): XmlSolution[] {
-    return this.contentFragment.xmlSampleSolutions.map((s) => s.sample);
+    return this.contentFragment.xmlSampleSolutions;
   }
 
 }

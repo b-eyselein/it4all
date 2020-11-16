@@ -57,7 +57,7 @@ export class UmlMemberAllocationComponent implements OnInit {
   corrected = false;
 
   ngOnInit() {
-    this.sample = this.contentFragment.umlSampleSolutions[0].sample;
+    this.sample = this.contentFragment.umlSampleSolutions[0];
 
     this.allAttributes = distinctObjectArray(
       flatMapArray(this.sample.classes, (clazz) => clazz.attributes), (a) => a.memberName
@@ -87,7 +87,6 @@ export class UmlMemberAllocationComponent implements OnInit {
       };
     });
   }
-
 
   memberColor(m: MemberAllocMember): string {
     if (this.corrected) {

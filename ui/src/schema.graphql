@@ -1,5 +1,5 @@
 # source: http://localhost:9000/api/graphql
-# timestamp: Tue Nov 03 2020 09:58:27 GMT+0100 (Mitteleuropäische Normalzeit)
+# timestamp: Mon Nov 16 2020 14:59:21 GMT+0100 (Mitteleuropäische Normalzeit)
 
 interface AbstractCorrectionResult {
   points: Float!
@@ -115,11 +115,6 @@ type ExPart {
   solved: Boolean!
 }
 
-type FilesSampleSolution {
-  id: Int!
-  sample: FilesSolution!
-}
-
 type FilesSolution {
   files: [ExerciseFile!]!
 }
@@ -144,7 +139,7 @@ type FlaskExerciseContent {
   files: [ExerciseFile!]!
   testFiles: [ExerciseFile!]!
   testConfig: FlaskTestsConfig!
-  sampleSolutions: [FilesSampleSolution!]!
+  sampleSolutions: [FilesSolution!]!
 }
 
 type FlaskExerciseMutations {
@@ -335,11 +330,11 @@ interface MatchingResult {
 }
 
 enum MatchType {
+  ONLY_USER
+  PARTIAL_MATCH
+  SUCCESSFUL_MATCH
   ONLY_SAMPLE
   UNSUCCESSFUL_MATCH
-  SUCCESSFUL_MATCH
-  PARTIAL_MATCH
-  ONLY_USER
 }
 
 type Mutation {
@@ -390,7 +385,7 @@ type ProgrammingCorrectionResult {
 type ProgrammingExerciseContent {
   filename: String!
   implementationPart: ImplementationPart!
-  sampleSolutions: [FilesSampleSolution!]!
+  sampleSolutions: [FilesSolution!]!
   unitTestPart: UnitTestPart!
   part(partId: String!): ProgExPart
 }
@@ -440,7 +435,7 @@ type RegexExerciseContent {
   correctionType: RegexCorrectionType!
   matchTestData: [RegexMatchTestData!]!
   extractionTestData: [RegexExtractionTestData!]!
-  sampleSolutions: [RegexSampleSolution!]!
+  sampleSolutions: [String!]!
   part(partId: String!): RegexExPart
 }
 
@@ -505,11 +500,6 @@ type RegexMatchTestData {
   id: Int!
   data: String!
   isIncluded: Boolean!
-}
-
-type RegexSampleSolution {
-  id: Int!
-  sample: String!
 }
 
 input RegisterValues {
@@ -598,7 +588,7 @@ type SqlExecutionResult {
 type SqlExerciseContent {
   exerciseType: SqlExerciseType!
   schemaName: String!
-  sampleSolutions: [SqlSampleSolution!]!
+  sampleSolutions: [String!]!
   hint: String
   part(partId: String!): SqlExPart
   sqlDbContents: [SqlQueryResult!]!
@@ -609,11 +599,11 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  INSERT
-  CREATE
-  UPDATE
   DELETE
+  UPDATE
+  INSERT
   SELECT
+  CREATE
 }
 
 enum SqlExPart {
@@ -710,11 +700,6 @@ type SqlResult implements SqlAbstractResult & AbstractCorrectionResult {
 
 type SqlRow {
   cells: [SqlKeyCellValueObject!]!
-}
-
-type SqlSampleSolution {
-  id: Int!
-  sample: String!
 }
 
 type SqlTableComparisonMatchingResult implements MatchingResult {
@@ -918,7 +903,7 @@ type UmlCorrectionResult {
 
 type UmlExerciseContent {
   toIgnore: [String!]!
-  sampleSolutions: [UmlSampleSolution!]!
+  sampleSolutions: [UmlClassDiagram!]!
   part(partId: String!): UmlExPart
   mappings: [KeyValueObject!]!
 }
@@ -1023,11 +1008,6 @@ type UmlResult implements UmlAbstractResult {
   maxPoints: Float!
 }
 
-type UmlSampleSolution {
-  id: Int!
-  sample: UmlClassDiagram!
-}
-
 enum UmlVisibility {
   PUBLIC
   PACKAGE
@@ -1095,7 +1075,7 @@ type WebCorrectionResult {
 type WebExerciseContent {
   siteSpec: SiteSpec!
   files: [ExerciseFile!]!
-  sampleSolutions: [FilesSampleSolution!]!
+  sampleSolutions: [FilesSolution!]!
   htmlText: String
   jsText: String
   part(partId: String!): WebExPart
@@ -1161,7 +1141,7 @@ enum XmlErrorType {
 type XmlExerciseContent {
   grammarDescription: String!
   rootNode: String!
-  sampleSolutions: [XmlSampleSolution!]!
+  sampleSolutions: [XmlSolution!]!
   part(partId: String!): XmlExPart
 }
 
@@ -1191,11 +1171,6 @@ type XmlResult implements XmlAbstractResult & AbstractCorrectionResult {
   grammarResult: XmlGrammarResult
   points: Float!
   maxPoints: Float!
-}
-
-type XmlSampleSolution {
-  id: Int!
-  sample: XmlSolution!
 }
 
 type XmlSolution {

@@ -6,7 +6,7 @@ import initialData.InitialData._
 import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution}
 
 object WebColl1Ex3 extends WebInitialExercise(1, 3) {
 
@@ -64,12 +64,9 @@ object WebColl1Ex3 extends WebInitialExercise(1, 3) {
     )
   )
 
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
-
-
   val webColl1Ex3: WebExercise = Exercise(
-    exerciseId ,
-    collectionId ,
+    exerciseId,
+    collectionId,
     toolId = "web",
     title = "Hyperlinks und Bilder in HTML",
     authors = Seq("bje40dc"),
@@ -84,7 +81,7 @@ object WebColl1Ex3 extends WebInitialExercise(1, 3) {
           FileLoadConfig("mustangStyle.css", cssFileType)
         )
       ),
-      Seq(sampleSolution)
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

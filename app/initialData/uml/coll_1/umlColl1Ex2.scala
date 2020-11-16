@@ -1,8 +1,8 @@
 package initialData.uml.coll_1
 
+import model.Exercise
 import model.tools.uml.UmlTool.UmlExercise
 import model.tools.uml._
-import model.{Exercise, SampleSolution}
 
 object umlColl1Ex2 {
 
@@ -134,7 +134,7 @@ object umlColl1Ex2 {
         "Rezepten"          -> "Rezept"
       ),
       toIgnore = Seq("Ein", "Jede"),
-      sampleSolutions = Seq(SampleSolution(id = 1, sample = sample))
+      sampleSolutions = Seq(sample)
     )
   )
 }

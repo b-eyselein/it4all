@@ -1,8 +1,8 @@
 package initialData.uml.coll_1
 
+import model.Exercise
 import model.tools.uml.UmlTool.UmlExercise
 import model.tools.uml._
-import model.{Exercise, SampleSolution}
 
 object UmlColl1Ex1 {
 
@@ -76,9 +76,7 @@ object UmlColl1Ex1 {
         "Zinsen" -> "Zins"
       ),
       toIgnore = Seq("Eine", "Jedes", "Diese", "Für", "Jeder", "Es", "Zudem", "Die"),
-      sampleSolutions = Seq(
-        SampleSolution(id = 1, sample = sample)
-      )
+      sampleSolutions = Seq(sample)
     )
   )
 }

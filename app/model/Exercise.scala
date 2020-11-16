@@ -32,7 +32,7 @@ trait ExerciseContent {
 
   protected type S
 
-  val sampleSolutions: Seq[SampleSolution[S]]
+  val sampleSolutions: Seq[S]
 
   def parts: Seq[ExPart]
 
@@ -64,11 +64,6 @@ final case class ExerciseFile(
 
 final case class FilesSolution(
   files: Seq[ExerciseFile]
-)
-
-final case class SampleSolution[SolType](
-  id: Int,
-  sample: SolType
 )
 
 final case class UserSolution[SolType, PartType <: ExPart](

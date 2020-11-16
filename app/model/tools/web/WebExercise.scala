@@ -18,7 +18,7 @@ object WebExPart extends ExParts[WebExPart] {
 final case class WebExerciseContent(
   siteSpec: SiteSpec,
   files: Seq[ExerciseFile],
-  sampleSolutions: Seq[SampleSolution[FilesSolution]],
+  sampleSolutions: Seq[FilesSolution],
   htmlText: Option[String] = None,
   jsText: Option[String] = None
 ) extends ExerciseContent {

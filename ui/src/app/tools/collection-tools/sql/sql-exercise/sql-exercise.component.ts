@@ -103,7 +103,7 @@ export class SqlExerciseComponent
   }
 
   get sampleSolutions(): string[] {
-    return this.contentFragment.sqlSampleSolutions.map((s) => s.sample);
+    return this.contentFragment.sqlSampleSolutions;
   }
 
 }

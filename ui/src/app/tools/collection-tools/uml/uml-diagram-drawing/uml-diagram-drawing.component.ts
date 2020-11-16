@@ -106,7 +106,7 @@ export class UmlDiagramDrawingComponent
     this.createPaperEvents(this.paper);
 
     // load classes
-    const declaration = this.contentFragment.umlSampleSolutions[0].sample;
+    const declaration = this.contentFragment.umlSampleSolutions[0];
 
     this.loadOldSolutionAbstract(this.exerciseFragment, this.partId,
       (oldSol) => this.loadClassDiagram(oldSol),

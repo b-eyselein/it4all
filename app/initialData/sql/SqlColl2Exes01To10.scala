@@ -1,8 +1,8 @@
 package initialData.sql
 
+import model.Exercise
 import model.tools.sql.SqlTool.SqlExercise
 import model.tools.sql.{SqlExerciseContent, SqlExerciseType}
-import model.{Exercise, SampleSolution}
 
 object SqlColl2Exes01To10 {
 
@@ -20,16 +20,10 @@ object SqlColl2Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT *
-                     |    FROM authors;""".stripMargin
-        ),
-        SampleSolution(
-          id = 2,
-          sample = """SELECT id, first_name, family_name, birthday
-                     |    FROM authors;""".stripMargin
-        )
+        """SELECT *
+          |    FROM authors;""".stripMargin,
+        """SELECT id, first_name, family_name, birthday
+          |    FROM authors;""".stripMargin
       )
     )
   )
@@ -46,11 +40,8 @@ object SqlColl2Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT family_name
-                     |    FROM authors;""".stripMargin
-        )
+        """SELECT family_name
+          |    FROM authors;""".stripMargin
       )
     )
   )
@@ -67,11 +58,8 @@ object SqlColl2Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT name
-                     |    FROM publishers;""".stripMargin
-        )
+        """SELECT name
+          |    FROM publishers;""".stripMargin
       )
     )
   )
@@ -88,11 +76,8 @@ object SqlColl2Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT first_name, family_name
-                     |    FROM customers;""".stripMargin
-        )
+        """SELECT first_name, family_name
+          |    FROM customers;""".stripMargin
       )
     )
   )
@@ -109,11 +94,8 @@ object SqlColl2Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT title, year, isbn
-                     |    FROM books;""".stripMargin
-        )
+        """SELECT title, year, isbn
+          |    FROM books;""".stripMargin
       )
     )
   )
@@ -130,12 +112,9 @@ object SqlColl2Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT title
-                     |    FROM books
-                     |    WHERE isbn = '978-3551354051';""".stripMargin
-        )
+        """SELECT title
+          |    FROM books
+          |    WHERE isbn = '978-3551354051';""".stripMargin
       )
     )
   )
@@ -152,12 +131,9 @@ object SqlColl2Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT price
-                     |    FROM books
-                     |    WHERE isbn = '978-3551354068';""".stripMargin
-        )
+        """SELECT price
+          |    FROM books
+          |    WHERE isbn = '978-3551354068';""".stripMargin
       )
     )
   )
@@ -174,12 +150,9 @@ object SqlColl2Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT first_name, family_name
-                     |    FROM authors
-                     |    WHERE id = 3;""".stripMargin
-        )
+        """SELECT first_name, family_name
+          |    FROM authors
+          |    WHERE id = 3;""".stripMargin
       )
     )
   )
@@ -196,12 +169,9 @@ object SqlColl2Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT author_id
-                     |    FROM books
-                     |    WHERE title = 'Der kleine Prinz';""".stripMargin
-        )
+        """SELECT author_id
+          |    FROM books
+          |    WHERE title = 'Der kleine Prinz';""".stripMargin
       )
     )
   )
@@ -218,12 +188,9 @@ object SqlColl2Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT name
-                     |    FROM publishers
-                     |    WHERE phone = '+49 2402 / 806341';""".stripMargin
-        )
+        """SELECT name
+          |    FROM publishers
+          |    WHERE phone = '+49 2402 / 806341';""".stripMargin
       )
     )
   )

@@ -134,8 +134,6 @@ object ProgrammingColl5Ex3 extends ProgrammingInitialExercise(5, 3) {
     )
   )
 
-  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
-
   val programmingColl5Ex3: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -155,7 +153,7 @@ object ProgrammingColl5Ex3 extends ProgrammingInitialExercise(5, 3) {
       filename = "tuples_and_dicts",
       unitTestPart,
       implementationPart,
-      sampleSolutions
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

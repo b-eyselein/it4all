@@ -17,8 +17,6 @@ object ProgrammingColl5Ex1 extends ProgrammingInitialExercise(5, 1) {
     )
   )
 
-  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
-
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
     files = loadFilesFromFolder(
@@ -169,7 +167,7 @@ object ProgrammingColl5Ex1 extends ProgrammingInitialExercise(5, 1) {
       filename = "tuples",
       unitTestPart,
       implementationPart,
-      sampleSolutions
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

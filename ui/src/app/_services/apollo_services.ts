@@ -372,15 +372,12 @@ export type ExerciseFileFragment = (
   & Pick<Types.ExerciseFile, 'name' | 'fileType' | 'content' | 'editable'>
 );
 
-export type FilesSampleSolutionFragment = (
-  { __typename: 'FilesSampleSolution' }
-  & { sample: (
-    { __typename?: 'FilesSolution' }
-    & { files: Array<(
-      { __typename?: 'ExerciseFile' }
-      & ExerciseFileFragment
-    )> }
-  ) }
+export type FilesSolutionFragment = (
+  { __typename: 'FilesSolution' }
+  & { files: Array<(
+    { __typename?: 'ExerciseFile' }
+    & ExerciseFileFragment
+  )> }
 );
 
 export type LevelFragment = (
@@ -437,8 +434,8 @@ export type FlaskExerciseContentFragment = (
     { __typename?: 'ExerciseFile' }
     & ExerciseFileFragment
   )>, flaskSampleSolutions: Array<(
-    { __typename?: 'FilesSampleSolution' }
-    & FilesSampleSolutionFragment
+    { __typename?: 'FilesSolution' }
+    & FilesSolutionFragment
   )> }
 );
 
@@ -474,33 +471,21 @@ export type ProgrammingExerciseContentFragment = (
       & ExerciseFileFragment
     )> }
   ), programmingSampleSolutions: Array<(
-    { __typename?: 'FilesSampleSolution' }
-    & FilesSampleSolutionFragment
+    { __typename?: 'FilesSolution' }
+    & FilesSolutionFragment
   )> }
 );
 
 export type RegexExerciseContentFragment = (
   { __typename?: 'RegexExerciseContent' }
-  & { regexPart: Types.RegexExerciseContent['part'] }
-  & { regexSampleSolutions: Array<(
-    { __typename?: 'RegexSampleSolution' }
-    & RegexSampleSolutionFragment
-  )> }
-);
-
-export type RegexSampleSolutionFragment = (
-  { __typename: 'RegexSampleSolution' }
-  & Pick<Types.RegexSampleSolution, 'sample'>
+  & { regexSampleSolutions: Types.RegexExerciseContent['sampleSolutions'], regexPart: Types.RegexExerciseContent['part'] }
 );
 
 export type SqlExerciseContentFragment = (
   { __typename?: 'SqlExerciseContent' }
   & Pick<Types.SqlExerciseContent, 'hint'>
-  & { sqlPart: Types.SqlExerciseContent['part'] }
-  & { sqlSampleSolutions: Array<(
-    { __typename?: 'SqlSampleSolution' }
-    & SqlSampleSolutionFragment
-  )>, sqlDbContents: Array<(
+  & { sqlSampleSolutions: Types.SqlExerciseContent['sampleSolutions'], sqlPart: Types.SqlExerciseContent['part'] }
+  & { sqlDbContents: Array<(
     { __typename?: 'SqlQueryResult' }
     & SqlQueryResultFragment
   )> }
@@ -532,11 +517,6 @@ export type SqlCellFragment = (
   & Pick<Types.SqlCell, 'colName' | 'content' | 'different'>
 );
 
-export type SqlSampleSolutionFragment = (
-  { __typename: 'SqlSampleSolution' }
-  & Pick<Types.SqlSampleSolution, 'sample'>
-);
-
 export type UmlExerciseContentFragment = (
   { __typename?: 'UmlExerciseContent' }
   & Pick<Types.UmlExerciseContent, 'toIgnore'>
@@ -545,17 +525,9 @@ export type UmlExerciseContentFragment = (
     { __typename?: 'KeyValueObject' }
     & Pick<Types.KeyValueObject, 'key' | 'value'>
   )>, umlSampleSolutions: Array<(
-    { __typename?: 'UmlSampleSolution' }
-    & UmlSampleSolutionFragment
-  )> }
-);
-
-export type UmlSampleSolutionFragment = (
-  { __typename: 'UmlSampleSolution' }
-  & { sample: (
     { __typename?: 'UmlClassDiagram' }
     & UmlClassDiagramFragment
-  ) }
+  )> }
 );
 
 export type UmlClassDiagramFragment = (
@@ -618,8 +590,8 @@ export type WebExerciseContentFragment = (
       & Pick<Types.HtmlTask, 'text'>
     )> }
   ), webSampleSolutions: Array<(
-    { __typename?: 'FilesSampleSolution' }
-    & FilesSampleSolutionFragment
+    { __typename?: 'FilesSolution' }
+    & FilesSolutionFragment
   )> }
 );
 
@@ -628,17 +600,14 @@ export type XmlExerciseContentFragment = (
   & Pick<Types.XmlExerciseContent, 'rootNode' | 'grammarDescription'>
   & { xmlPart: Types.XmlExerciseContent['part'] }
   & { xmlSampleSolutions: Array<(
-    { __typename?: 'XmlSampleSolution' }
-    & XmlSampleSolutionFragment
+    { __typename?: 'XmlSolution' }
+    & XmlSolutionFragment
   )> }
 );
 
-export type XmlSampleSolutionFragment = (
-  { __typename: 'XmlSampleSolution' }
-  & { sample: (
-    { __typename?: 'XmlSolution' }
-    & Pick<Types.XmlSolution, 'document' | 'grammar'>
-  ) }
+export type XmlSolutionFragment = (
+  { __typename: 'XmlSolution' }
+  & Pick<Types.XmlSolution, 'document' | 'grammar'>
 );
 
 export type RegisterMutationVariables = Types.Exact<{
@@ -858,13 +827,11 @@ export const ExerciseFileFragmentDoc = gql`
   editable
 }
     `;
-export const FilesSampleSolutionFragmentDoc = gql`
-    fragment FilesSampleSolution on FilesSampleSolution {
+export const FilesSolutionFragmentDoc = gql`
+    fragment FilesSolution on FilesSolution {
   __typename
-  sample {
-    files {
-      ...ExerciseFile
-    }
+  files {
+    ...ExerciseFile
   }
 }
     ${ExerciseFileFragmentDoc}`;
@@ -882,11 +849,11 @@ export const FlaskExerciseContentFragmentDoc = gql`
     ...ExerciseFile
   }
   flaskSampleSolutions: sampleSolutions {
-    ...FilesSampleSolution
+    ...FilesSolution
   }
 }
     ${ExerciseFileFragmentDoc}
-${FilesSampleSolutionFragmentDoc}`;
+${FilesSolutionFragmentDoc}`;
 export const NormalUnitTestPartFragmentDoc = gql`
     fragment NormalUnitTestPart on NormalUnitTestPart {
   unitTestFiles {
@@ -914,32 +881,18 @@ export const ProgrammingExerciseContentFragmentDoc = gql`
     }
   }
   programmingSampleSolutions: sampleSolutions {
-    ...FilesSampleSolution
+    ...FilesSolution
   }
   programmingPart: part(partId: $partId)
 }
     ${NormalUnitTestPartFragmentDoc}
 ${SimplifiedUnitTestPartFragmentDoc}
 ${ExerciseFileFragmentDoc}
-${FilesSampleSolutionFragmentDoc}`;
-export const RegexSampleSolutionFragmentDoc = gql`
-    fragment RegexSampleSolution on RegexSampleSolution {
-  __typename
-  sample
-}
-    `;
+${FilesSolutionFragmentDoc}`;
 export const RegexExerciseContentFragmentDoc = gql`
     fragment RegexExerciseContent on RegexExerciseContent {
-  regexSampleSolutions: sampleSolutions {
-    ...RegexSampleSolution
-  }
+  regexSampleSolutions: sampleSolutions
   regexPart: part(partId: $partId)
-}
-    ${RegexSampleSolutionFragmentDoc}`;
-export const SqlSampleSolutionFragmentDoc = gql`
-    fragment SqlSampleSolution on SqlSampleSolution {
-  __typename
-  sample
 }
     `;
 export const SqlCellFragmentDoc = gql`
@@ -971,16 +924,13 @@ export const SqlQueryResultFragmentDoc = gql`
 export const SqlExerciseContentFragmentDoc = gql`
     fragment SqlExerciseContent on SqlExerciseContent {
   hint
-  sqlSampleSolutions: sampleSolutions {
-    ...SqlSampleSolution
-  }
+  sqlSampleSolutions: sampleSolutions
   sqlPart: part(partId: $partId)
   sqlDbContents {
     ...SqlQueryResult
   }
 }
-    ${SqlSampleSolutionFragmentDoc}
-${SqlQueryResultFragmentDoc}`;
+    ${SqlQueryResultFragmentDoc}`;
 export const UmlAttributeFragmentDoc = gql`
     fragment UmlAttribute on UmlAttribute {
   isAbstract
@@ -1045,14 +995,6 @@ export const UmlClassDiagramFragmentDoc = gql`
     ${UmlClassFragmentDoc}
 ${UmlAssociationFragmentDoc}
 ${UmlImplementationFragmentDoc}`;
-export const UmlSampleSolutionFragmentDoc = gql`
-    fragment UmlSampleSolution on UmlSampleSolution {
-  __typename
-  sample {
-    ...UmlClassDiagram
-  }
-}
-    ${UmlClassDiagramFragmentDoc}`;
 export const UmlExerciseContentFragmentDoc = gql`
     fragment UmlExerciseContent on UmlExerciseContent {
   toIgnore
@@ -1061,11 +1003,11 @@ export const UmlExerciseContentFragmentDoc = gql`
     value
   }
   umlSampleSolutions: sampleSolutions {
-    ...UmlSampleSolution
+    ...UmlClassDiagram
   }
   umlPart: part(partId: $partId)
 }
-    ${UmlSampleSolutionFragmentDoc}`;
+    ${UmlClassDiagramFragmentDoc}`;
 export const WebExerciseContentFragmentDoc = gql`
     fragment WebExerciseContent on WebExerciseContent {
   files {
@@ -1079,19 +1021,17 @@ export const WebExerciseContentFragmentDoc = gql`
     jsTaskCount
   }
   webSampleSolutions: sampleSolutions {
-    ...FilesSampleSolution
+    ...FilesSolution
   }
   webPart: part(partId: $partId)
 }
     ${ExerciseFileFragmentDoc}
-${FilesSampleSolutionFragmentDoc}`;
-export const XmlSampleSolutionFragmentDoc = gql`
-    fragment XmlSampleSolution on XmlSampleSolution {
+${FilesSolutionFragmentDoc}`;
+export const XmlSolutionFragmentDoc = gql`
+    fragment XmlSolution on XmlSolution {
   __typename
-  sample {
-    document
-    grammar
-  }
+  document
+  grammar
 }
     `;
 export const XmlExerciseContentFragmentDoc = gql`
@@ -1099,11 +1039,11 @@ export const XmlExerciseContentFragmentDoc = gql`
   rootNode
   grammarDescription
   xmlSampleSolutions: sampleSolutions {
-    ...XmlSampleSolution
+    ...XmlSolution
   }
   xmlPart: part(partId: $partId)
 }
-    ${XmlSampleSolutionFragmentDoc}`;
+    ${XmlSolutionFragmentDoc}`;
 export const ExerciseSolveFieldsFragmentDoc = gql`
     fragment ExerciseSolveFields on Exercise {
   exerciseId

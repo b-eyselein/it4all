@@ -112,8 +112,6 @@ object ProgrammingColl1Ex4 extends ProgrammingInitialExercise(1, 4) {
     )
   )
 
-  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
-
   val programmingColl1Ex4: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -130,7 +128,7 @@ object ProgrammingColl1Ex4 extends ProgrammingInitialExercise(1, 4) {
       filename = "fibonacci",
       unitTestPart,
       implementationPart,
-      sampleSolutions
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

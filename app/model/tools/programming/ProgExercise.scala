@@ -1,13 +1,13 @@
 package model.tools.programming
 
-import model.{ExerciseContent, ExerciseFile, FilesSolution, SampleSolution}
+import model.{ExerciseContent, ExerciseFile, FilesSolution}
 import play.api.libs.json.JsValue
 
 final case class ProgrammingExerciseContent(
   filename: String,
   unitTestPart: UnitTestPart,
   implementationPart: ImplementationPart,
-  override val sampleSolutions: Seq[SampleSolution[FilesSolution]]
+  override val sampleSolutions: Seq[FilesSolution]
 ) extends ExerciseContent {
 
   override protected type S = FilesSolution

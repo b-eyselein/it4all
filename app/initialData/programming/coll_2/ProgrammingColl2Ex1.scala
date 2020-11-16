@@ -41,19 +41,12 @@ object ProgrammingColl2Ex1 extends ProgrammingInitialExercise(2, 1) {
     sampleSolFileNames = Seq("palindrome.py")
   )
 
-  private val sampleSolutions = Seq(
-    SampleSolution(
-      id = 1,
-      sample = FilesSolution(
-        files = Seq(
-          ExerciseFile(
-            name = "palindrome.py",
-            fileType,
-            editable = false,
-            content = loadTextFromFile(exResPath / "palindrome.py")
-          )
-        )
-      )
+  private val sampleSolutionFiles = Seq(
+    ExerciseFile(
+      name = "palindrome.py",
+      fileType,
+      editable = false,
+      content = loadTextFromFile(exResPath / "palindrome.py")
     )
   )
 
@@ -73,7 +66,7 @@ object ProgrammingColl2Ex1 extends ProgrammingInitialExercise(2, 1) {
       filename = "palindrome",
       unitTestPart,
       implementationPart,
-      sampleSolutions
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

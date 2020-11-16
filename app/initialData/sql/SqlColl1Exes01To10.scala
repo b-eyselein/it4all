@@ -2,7 +2,7 @@ package initialData.sql
 
 import model.tools.sql.SqlTool.SqlExercise
 import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
-import model.{Exercise, Level, SampleSolution, TopicWithLevel}
+import model.{Exercise, Level, TopicWithLevel}
 
 object SqlColl1Exes01To10 {
 
@@ -24,16 +24,10 @@ object SqlColl1Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT COUNT(*) AS Anzahl
-                     |    FROM employee;""".stripMargin
-        ),
-        SampleSolution(
-          id = 2,
-          sample = """SELECT COUNT(id) AS Anzahl
-                     |    FROM employee;""".stripMargin
-        )
+        """SELECT COUNT(*) AS Anzahl
+          |    FROM employee;""".stripMargin,
+        """SELECT COUNT(id) AS Anzahl
+          |    FROM employee;""".stripMargin
       )
     )
   )
@@ -50,12 +44,9 @@ object SqlColl1Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT id
-                     |    FROM employee
-                     |    WHERE firstname = 'Max' AND lastname = 'Becker';""".stripMargin
-        )
+        """SELECT id
+          |    FROM employee
+          |    WHERE firstname = 'Max' AND lastname = 'Becker';""".stripMargin
       )
     )
   )
@@ -75,25 +66,15 @@ object SqlColl1Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT emailaddress
-                     |    FROM employee JOIN emailaddress ON employee.id = emailaddress.employee_id
-                     |    WHERE firstname = 'Max' AND lastname = 'Becker';""".stripMargin
-        ),
-        SampleSolution(
-          id = 2,
-          sample =
-            """SELECT emailaddress
-              |    FROM employee, emailaddress
-              |    WHERE employee.id = emailaddress.employee_id AND firstname = 'Max' AND lastname = 'Becker';""".stripMargin
-        ),
-        SampleSolution(
-          id = 3,
-          sample = """SELECT emailaddress
-                     |    FROM employee as emp, emailaddress as email
-                     |    WHERE emp.id = email.employee_id AND firstname = 'Max' AND lastname = 'Becker';""".stripMargin
-        )
+        """SELECT emailaddress
+          |    FROM employee JOIN emailaddress ON employee.id = emailaddress.employee_id
+          |    WHERE firstname = 'Max' AND lastname = 'Becker';""".stripMargin,
+        """SELECT emailaddress
+          |    FROM employee, emailaddress
+          |    WHERE employee.id = emailaddress.employee_id AND firstname = 'Max' AND lastname = 'Becker';""".stripMargin,
+        """SELECT emailaddress
+          |    FROM employee as emp, emailaddress as email
+          |    WHERE emp.id = email.employee_id AND firstname = 'Max' AND lastname = 'Becker';""".stripMargin
       )
     )
   )
@@ -113,12 +94,9 @@ object SqlColl1Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT username
-                     |    FROM employee
-                     |    ORDER BY username;""".stripMargin
-        )
+        """SELECT username
+          |    FROM employee
+          |    ORDER BY username;""".stripMargin
       )
     )
   )
@@ -138,13 +116,10 @@ object SqlColl1Exes01To10 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT chef_id, count(id)
-                     |    FROM employee
-                     |    WHERE chef_id IS NOT NULL
-                     |    GROUP BY chef_id;""".stripMargin
-        )
+        """SELECT chef_id, count(id)
+          |    FROM employee
+          |    WHERE chef_id IS NOT NULL
+          |    GROUP BY chef_id;""".stripMargin
       )
     )
   )
@@ -164,9 +139,7 @@ object SqlColl1Exes01To10 {
       exerciseType = SqlExerciseType.CREATE,
       schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """CREATE TABLE employee (
+        """CREATE TABLE employee (
               |    id INT PRIMARY KEY,
               |    firstname VARCHAR(50),
               |    lastname VARCHAR(50),
@@ -174,7 +147,6 @@ object SqlColl1Exes01To10 {
               |    chef_id INT,
               |    FOREIGN KEY (chef_id) REFERENCES employee(id)
               |);"""
-        )
       )
     )
   )
@@ -196,12 +168,9 @@ object SqlColl1Exes01To10 {
       exerciseType = SqlExerciseType.UPDATE,
       schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """UPDATE employee
-                     |    SET chef_id = 3
-                     |    WHERE id = 8;""".stripMargin
-        )
+        """UPDATE employee
+          |    SET chef_id = 3
+          |    WHERE id = 8;""".stripMargin
       )
     )
   )
@@ -221,11 +190,8 @@ object SqlColl1Exes01To10 {
       exerciseType = SqlExerciseType.DELETE,
       schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """DELETE FROM employee
-                     |    WHERE id = 7;""".stripMargin
-        )
+        """DELETE FROM employee
+          |    WHERE id = 7;""".stripMargin
       )
     )
   )
@@ -247,15 +213,9 @@ object SqlColl1Exes01To10 {
       exerciseType = SqlExerciseType.INSERT,
       schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """INSERT INTO employee VALUES (9, 'Tina', 'Sattler', 'tina_sattler', 2);"""
-        ),
-        SampleSolution(
-          id = 2,
-          sample = """INSERT INTO employee (id, firstname, lastname, username, chef_id)
-                     |VALUES (9, 'Tina', 'Sattler', 'tina_sattler', 2);""".stripMargin
-        )
+        """INSERT INTO employee VALUES (9, 'Tina', 'Sattler', 'tina_sattler', 2);""",
+        """INSERT INTO employee (id, firstname, lastname, username, chef_id)
+          |VALUES (9, 'Tina', 'Sattler', 'tina_sattler', 2);""".stripMargin
       )
     )
   )

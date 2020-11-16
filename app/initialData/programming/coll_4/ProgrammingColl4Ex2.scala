@@ -12,8 +12,6 @@ object ProgrammingColl4Ex2 extends ProgrammingInitialExercise(4, 2) {
 
   private val sampleSolutionFiles = loadFilesFromFolder(exResPath, Seq(FileLoadConfig("longest_string.py", fileType)))
 
-  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
-
   private val implementationPart = ImplementationPart(
     base = """from typing import List
              |
@@ -63,7 +61,7 @@ object ProgrammingColl4Ex2 extends ProgrammingInitialExercise(4, 2) {
       filename = "longest_string",
       unitTestPart,
       implementationPart,
-      sampleSolutions
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

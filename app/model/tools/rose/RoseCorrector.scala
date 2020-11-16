@@ -1,7 +1,6 @@
 package model.tools.rose
 
 import better.files._
-import model.SampleSolution
 import model.core.{DockerBind, DockerConnector, ScalaDockerImage}
 import model.points._
 import model.tools.AbstractCorrector
@@ -45,7 +44,7 @@ object RoseCorrector extends AbstractCorrector {
 
     exercise.content.sampleSolutions.headOption match {
       case None => Future.successful(onError("No sample solution for rose exercise!", maxPoints))
-      case Some(SampleSolution(_, sample)) =>
+      case Some(sample) =>
         val solutionFilePath: File = solutionTargetDir / solutionFileName
         solutionFilePath
           .createFileIfNotExists(createParents = true)

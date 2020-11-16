@@ -3,7 +3,7 @@ package model.tools.web
 import de.uniwue.webtester.sitespec.{HtmlTask, JsAction, JsActionType, SiteSpec}
 import model.graphql.{FilesSolutionToolGraphQLModelBasics, GraphQLArguments}
 import model.result.SuccessType
-import model.{ExerciseFile, FilesSolution, SampleSolution}
+import model.{ExerciseFile, FilesSolution}
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -45,9 +45,9 @@ object WebGraphQLModels
   }
 
   override val exerciseContentType: ObjectType[Unit, WebExerciseContent] = {
-    implicit val siteSpecT: ObjectType[Unit, SiteSpec]                = siteSpecType
-    implicit val eft: ObjectType[Unit, ExerciseFile]                  = exerciseFileType
-    implicit val sst: ObjectType[Unit, SampleSolution[FilesSolution]] = sampleSolutionType
+    implicit val siteSpecT: ObjectType[Unit, SiteSpec] = siteSpecType
+    implicit val eft: ObjectType[Unit, ExerciseFile]   = exerciseFileType
+    implicit val sst: ObjectType[Unit, FilesSolution]  = solutionType
 
     deriveObjectType(
       AddFields(

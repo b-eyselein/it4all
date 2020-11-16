@@ -2,7 +2,7 @@ package model.tools.programming
 
 import model.graphql.{FilesSolutionToolGraphQLModelBasics, GraphQLArguments}
 import model.result.SuccessType
-import model.{ExerciseFile, FilesSolution, SampleSolution}
+import model.{ExerciseFile, FilesSolution}
 import play.api.libs.json.Json
 import sangria.macros.derive._
 import sangria.schema._
@@ -47,8 +47,8 @@ object ProgrammingGraphQLModels
   )
 
   override val exerciseContentType: ObjectType[Unit, ProgrammingExerciseContent] = {
-    implicit val ipt: ObjectType[Unit, ImplementationPart]            = implementationPartType
-    implicit val sst: ObjectType[Unit, SampleSolution[FilesSolution]] = sampleSolutionType
+    implicit val ipt: ObjectType[Unit, ImplementationPart] = implementationPartType
+    implicit val sst: ObjectType[Unit, FilesSolution]      = solutionType
 
     deriveObjectType(
       ReplaceField("unitTestPart", Field("unitTestPart", unitTestPartType, resolve = _.value.unitTestPart)),

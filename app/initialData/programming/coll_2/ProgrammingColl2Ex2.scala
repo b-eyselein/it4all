@@ -120,8 +120,6 @@ object ProgrammingColl2Ex2 extends ProgrammingInitialExercise(2, 2) {
     )
   )
 
-  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
-
   val programmingColl2Ex2: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -138,7 +136,7 @@ object ProgrammingColl2Ex2 extends ProgrammingInitialExercise(2, 2) {
       filename = "floating_point_exponential",
       unitTestPart,
       implementationPart,
-      sampleSolutions
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

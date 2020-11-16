@@ -1,6 +1,5 @@
 package model.tools.regex
 
-import model.SampleSolution
 import model.tools.StringSampleSolutionToolJsonProtocol
 import play.api.libs.json.{Format, Json, OFormat}
 
@@ -16,7 +15,6 @@ object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexE
     implicit val rgtf: Format[RegexCorrectionType]      = RegexCorrectionType.jsonFormat
     implicit val rmtdf: Format[RegexMatchTestData]      = regexMatchTestDataFormat
     implicit val retdf: Format[RegexExtractionTestData] = regexExtractionTestDataFormat
-    implicit val ssf: Format[SampleSolution[String]]    = sampleSolutionFormat
 
     Json.format
   }

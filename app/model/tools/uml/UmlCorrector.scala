@@ -30,9 +30,7 @@ object UmlCorrector extends AbstractCorrector {
 
     exercise.content.sampleSolutions.headOption match {
       case None => onError("There is no sample solution!", maxPoints)
-      case Some(sampleSolution) =>
-        val sampleClassDiagram = sampleSolution.sample
-
+      case Some(sampleClassDiagram) =>
         val classResult = part match {
           case UmlExPart.DiagramDrawingHelp => None
 

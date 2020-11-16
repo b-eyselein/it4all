@@ -1,6 +1,5 @@
 package model.tools.sql
 
-import model.SampleSolution
 import model.points._
 import model.tools.AbstractCorrector
 import model.tools.sql.matcher._
@@ -28,7 +27,7 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
     database: SqlExecutionDAO,
     schemaName: String,
     learnerSolution: String,
-    sampleSolutions: Seq[SampleSolution[String]]
+    sampleSolutions: Seq[String]
   )(implicit ec: ExecutionContext): SqlAbstractResult =
     parseStatement(learnerSolution).fold(
       exception => SqlInternalErrorResult("Your query could not be parsed: " + exception.getMessage),
@@ -44,8 +43,8 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
 
             val maybeStaticComparison: Option[(Q, SqlQueriesStaticComparison)] =
               sampleSolutions
-                .flatMap { sqlSample =>
-                  parseStatement(sqlSample.sample).toOption
+                .flatMap { sample =>
+                  parseStatement(sample).toOption
                     .flatMap(ps => checkStatement(ps).toOption)
                     .map { sampleQ =>
                       val staticComp = performStaticComparison(

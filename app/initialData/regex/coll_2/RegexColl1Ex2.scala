@@ -1,8 +1,8 @@
 package initialData.regex.coll_2
 
+import model.Exercise
 import model.tools.regex.RegexTool.RegexExercise
 import model.tools.regex.{RegexCorrectionType, RegexExerciseContent, RegexExtractionTestData}
-import model.{Exercise, SampleSolution}
 
 object RegexColl1Ex2 {
 
@@ -53,9 +53,7 @@ object RegexColl1Ex2 {
           base = "Smart ForFour, EZ 01/2018, 16 t km, HU 01/2021, E10 geeignet, 71 PS, Tel +49 (0)931 805-580"
         )
       ),
-      sampleSolutions = Seq(
-        SampleSolution(id = 1, sample = """\d+\s?[Tt]\s?[Kk][Mm]""")
-      )
+      sampleSolutions = Seq("""\d+\s?[Tt]\s?[Kk][Mm]""")
     )
   )
 

@@ -1,6 +1,5 @@
 package model.tools.regex
 
-import model.SampleSolution
 import model.matching.MatchType
 import model.points._
 import play.api.Logger
@@ -21,7 +20,7 @@ object RegexExtractionCorrector extends RegexAbstractCorrector {
 
     exerciseContent.sampleSolutions.headOption match {
       case None => onError("No sample solution found", maxPoints)
-      case Some(SampleSolution(_, sample)) =>
+      case Some(sample) =>
         Try(sample.r).fold(
           exception => onError("Error while building sample regex", maxPoints, Some(exception)),
           sampleRegex => {

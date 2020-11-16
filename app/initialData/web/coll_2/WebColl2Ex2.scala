@@ -6,7 +6,7 @@ import initialData.InitialData._
 import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution}
 
 object WebColl2Ex2 extends WebInitialExercise(2, 2) {
 
@@ -17,8 +17,6 @@ object WebColl2Ex2 extends WebInitialExercise(2, 2) {
       FileLoadConfig("pwChecker.js", jsFileType, maybeOtherFileName = Some("branchesStrings.js"))
     )
   )
-
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -129,7 +127,7 @@ object WebColl2Ex2 extends WebInitialExercise(2, 2) {
           FileLoadConfig("pwChecker.js", jsFileType, editable = true, Some("branchesStrings.js"))
         )
       ),
-      Seq(sampleSolution),
+      Seq(FilesSolution(sampleSolutionFiles)),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),
       jsText = Some(
         """Implementieren Sie nun die Funktion <code>passwordStrength()</code>, die bei Änderung des Felds aufgerufen

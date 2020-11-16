@@ -6,7 +6,7 @@ import initialData.InitialData._
 import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution}
 
 object WebColl1Ex5 extends WebInitialExercise(1, 5) {
 
@@ -14,8 +14,6 @@ object WebColl1Ex5 extends WebInitialExercise(1, 5) {
     exResPath / "sol_1",
     Seq(FileLoadConfig("audio.html", htmlFileType))
   )
-
-  private val sampleSolution = SampleSolution(1, FilesSolution(sampleSolutionFiles))
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -65,7 +63,7 @@ object WebColl1Ex5 extends WebInitialExercise(1, 5) {
         exResPath,
         Seq(FileLoadConfig("audio.html", htmlFileType, editable = true))
       ),
-      Seq(sampleSolution)
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 }

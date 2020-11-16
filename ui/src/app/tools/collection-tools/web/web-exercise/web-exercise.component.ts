@@ -68,7 +68,7 @@ export class WebExerciseComponent
   // Sample solutions
 
   get sampleSolutions(): FilesSolution[] {
-    return this.contentFragment.webSampleSolutions.map((s) => s.sample);
+    return this.contentFragment.webSampleSolutions;
   }
 
   // Correction

@@ -1,6 +1,6 @@
 package model.tools.rose
 
-import model.{ExPart, ExParts, ExerciseContent, SampleSolution}
+import model.{ExPart, ExParts, ExerciseContent}
 
 abstract sealed class RoseExPart(val partName: String, val id: String) extends ExPart
 
@@ -16,7 +16,7 @@ final case class RoseExerciseContent(
   fieldWidth: Int,
   fieldHeight: Int,
   isMultiplayer: Boolean,
-  sampleSolutions: Seq[SampleSolution[String]]
+  sampleSolutions: Seq[String]
 ) extends ExerciseContent {
 
   override protected type S = String

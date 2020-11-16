@@ -1,9 +1,9 @@
 package initialData.rose.coll_1
 
 import initialData.InitialData._
+import model.Exercise
 import model.tools.rose.RoseExerciseContent
 import model.tools.rose.RoseTool.RoseExercise
-import model.{Exercise, SampleSolution}
 
 object RoseColl1Ex2 {
 
@@ -22,10 +22,7 @@ object RoseColl1Ex2 {
       fieldHeight = 10,
       isMultiplayer = false,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = loadTextFromFile(exResPath / "sol_1" / "robot.py")
-        )
+        loadTextFromFile(exResPath / "sol_1" / "robot.py")
       )
     )
   )

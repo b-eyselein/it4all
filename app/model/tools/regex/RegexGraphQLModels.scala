@@ -1,6 +1,5 @@
 package model.tools.regex
 
-import model.SampleSolution
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.tools.regex.RegexTool.ExtractedValuesComparison
 import sangria.macros.derive._
@@ -17,9 +16,6 @@ object RegexGraphQLModels
     values = RegexExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )
 
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] =
-    buildSampleSolutionType("Regex", StringType)
-
   // Enum types
 
   private val regexCorrectionTypeType: EnumType[RegexCorrectionType] = deriveEnumType()
@@ -32,7 +28,6 @@ object RegexGraphQLModels
     implicit val rctt: EnumType[RegexCorrectionType]              = regexCorrectionTypeType
     implicit val rmtdt: ObjectType[Unit, RegexMatchTestData]      = deriveObjectType()
     implicit val retdt: ObjectType[Unit, RegexExtractionTestData] = deriveObjectType()
-    implicit val sst: ObjectType[Unit, SampleSolution[String]]    = sampleSolutionType
 
     deriveObjectType(
       AddFields(

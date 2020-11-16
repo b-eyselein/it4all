@@ -2,7 +2,7 @@ package initialData.sql
 
 import model.tools.sql.SqlTool.SqlExercise
 import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
-import model.{Exercise, Level, SampleSolution, TopicWithLevel}
+import model.{Exercise, Level, TopicWithLevel}
 
 object SqlColl2Exes11To20 {
 
@@ -25,11 +25,8 @@ object SqlColl2Exes11To20 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT title, family_name
-                     |    FROM authors JOIN books ON authors.id = books.author_id;""".stripMargin
-        )
+        """SELECT title, family_name
+          |    FROM authors JOIN books ON authors.id = books.author_id;""".stripMargin
       )
     )
   )
@@ -49,12 +46,9 @@ object SqlColl2Exes11To20 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT title, price
-                     |    FROM books JOIN publishers ON publisher_id = publishers.id
-                     |    WHERE name = 'Carlsen';""".stripMargin
-        )
+        """SELECT title, price
+          |    FROM books JOIN publishers ON publisher_id = publishers.id
+          |    WHERE name = 'Carlsen';""".stripMargin
       ),
       hint = Some("""Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.""")
     )
@@ -75,12 +69,9 @@ object SqlColl2Exes11To20 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT title, isbn
-                     |    FROM books JOIN authors on books.author_id = authors.id
-                     |    WHERE family_name = 'Rowling'""".stripMargin
-        )
+        """SELECT title, isbn
+          |    FROM books JOIN authors on books.author_id = authors.id
+          |    WHERE family_name = 'Rowling'""".stripMargin
       )
     )
   )
@@ -101,12 +92,9 @@ object SqlColl2Exes11To20 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT rating
-                     |    FROM ratings JOIN customers ON ratings.customer_id = customers.id
-                     |    WHERE email = 'wilhard_1041@web.de';""".stripMargin
-        )
+        """SELECT rating
+          |    FROM ratings JOIN customers ON ratings.customer_id = customers.id
+          |    WHERE email = 'wilhard_1041@web.de';""".stripMargin
       )
     )
   )
@@ -126,12 +114,9 @@ object SqlColl2Exes11To20 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT DISTINCT family_name
-                     |    FROM orders JOIN customers ON orders.customer_id = customers.id
-                     |    WHERE orders.id >= 3;""".stripMargin
-        )
+        """SELECT DISTINCT family_name
+          |    FROM orders JOIN customers ON orders.customer_id = customers.id
+          |    WHERE orders.id >= 3;""".stripMargin
       ),
       hint = Some("""Diese Bestellungen haben eine ID von mindestens 3.""")
     )
@@ -149,12 +134,9 @@ object SqlColl2Exes11To20 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT email
-                     |    FROM customers
-                     |    WHERE email LIKE '%gmx.de';""".stripMargin
-        )
+        """SELECT email
+          |    FROM customers
+          |    WHERE email LIKE '%gmx.de';""".stripMargin
       ),
       hint = Some("""Verwenden Sie für die Eingrenzung der Mailadresse den 'LIKE'-Operator.""")
     )
@@ -172,11 +154,8 @@ object SqlColl2Exes11To20 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT title
-                     |    FROM books WHERE price < 10.00;""".stripMargin
-        )
+        """SELECT title
+          |    FROM books WHERE price < 10.00;""".stripMargin
       )
     )
   )
@@ -194,11 +173,8 @@ object SqlColl2Exes11To20 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT DISTINCT book_id
-                     |    FROM wishlists;""".stripMargin
-        )
+        """SELECT DISTINCT book_id
+          |    FROM wishlists;""".stripMargin
       )
     )
   )
@@ -215,18 +191,12 @@ object SqlColl2Exes11To20 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT first_name, family_name
-                     |    FROM customers
-                     |    WHERE birthday < '1982-01-01' AND birthday > '1980-12-31';""".stripMargin
-        ),
-        SampleSolution(
-          id = 2,
-          sample = """SELECT first_name, family_name
-                     |    FROM customers
-                     |    WHERE birthday LIKE '1981-%';""".stripMargin
-        )
+        """SELECT first_name, family_name
+          |    FROM customers
+          |    WHERE birthday < '1982-01-01' AND birthday > '1980-12-31';""".stripMargin,
+        """SELECT first_name, family_name
+          |    FROM customers
+          |    WHERE birthday LIKE '1981-%';""".stripMargin
       ),
       hint = Some("""Verwenden Sie den 'LIKE'-Operator zu Vergleich des Jahres.""")
     )
@@ -245,18 +215,12 @@ object SqlColl2Exes11To20 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT title
-                     |    FROM books
-                     |    WHERE stock < 20000 OR price < 14.00;""".stripMargin
-        ),
-        SampleSolution(
-          id = 2,
-          sample = """SELECT title
-                     |    FROM books
-                     |    WHERE stock < 20000 OR price < 14;""".stripMargin
-        )
+        """SELECT title
+          |    FROM books
+          |    WHERE stock < 20000 OR price < 14.00;""".stripMargin,
+        """SELECT title
+          |    FROM books
+          |    WHERE stock < 20000 OR price < 14;""".stripMargin
       )
     )
   )

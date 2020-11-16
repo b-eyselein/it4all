@@ -1,6 +1,5 @@
 package model.tools.rose
 
-import model.SampleSolution
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import sangria.macros.derive._
 import sangria.schema._
@@ -14,14 +13,7 @@ object RoseGraphQLModels
     values = RoseExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
   )
 
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[String]] =
-    buildSampleSolutionType("Rose", StringType)
-
-  override val exerciseContentType: ObjectType[Unit, RoseExerciseContent] = {
-    implicit val sst: ObjectType[Unit, SampleSolution[String]] = sampleSolutionType
-
-    deriveObjectType()
-  }
+  override val exerciseContentType: ObjectType[Unit, RoseExerciseContent] = deriveObjectType()
 
   override val SolTypeInputType: InputType[String] = StringType
 

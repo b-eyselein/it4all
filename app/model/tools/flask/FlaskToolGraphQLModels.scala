@@ -1,7 +1,7 @@
 package model.tools.flask
 
 import model.graphql.FilesSolutionToolGraphQLModelBasics
-import model.{ExerciseFile, FilesSolution, SampleSolution}
+import model.{ExerciseFile, FilesSolution}
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -20,9 +20,9 @@ object FlaskToolGraphQLModels
   )
 
   override val exerciseContentType: ObjectType[Unit, FlaskExerciseContent] = {
-    implicit val eft: ObjectType[Unit, ExerciseFile]                  = exerciseFileType
-    implicit val ftct: ObjectType[Unit, FlaskTestsConfig]             = flaskTestsConfigType
-    implicit val sst: ObjectType[Unit, SampleSolution[FilesSolution]] = sampleSolutionType
+    implicit val eft: ObjectType[Unit, ExerciseFile]      = exerciseFileType
+    implicit val ftct: ObjectType[Unit, FlaskTestsConfig] = flaskTestsConfigType
+    implicit val sst: ObjectType[Unit, FilesSolution]     = solutionType
 
     deriveObjectType()
   }

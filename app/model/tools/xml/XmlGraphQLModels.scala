@@ -2,7 +2,6 @@ package model.tools.xml
 
 import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
-import model.SampleSolution
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.matching.MatchType
 import model.result.SuccessType
@@ -20,11 +19,8 @@ object XmlGraphQLModels
 
   private val xmlSolutionType: ObjectType[Unit, XmlSolution] = deriveObjectType()
 
-  override val sampleSolutionType: ObjectType[Unit, SampleSolution[XmlSolution]] =
-    buildSampleSolutionType("Xml", xmlSolutionType)
-
   override val exerciseContentType: ObjectType[Unit, XmlExerciseContent] = {
-    implicit val sst: ObjectType[Unit, SampleSolution[XmlSolution]] = sampleSolutionType
+    implicit val sst: ObjectType[Unit, XmlSolution] = xmlSolutionType
 
     deriveObjectType(
       AddFields(

@@ -1,8 +1,8 @@
 package initialData.regex.coll_1
 
+import model.Exercise
 import model.tools.regex.RegexTool.RegexExercise
 import model.tools.regex.{RegexCorrectionType, RegexExerciseContent, RegexMatchTestData}
-import model.{Exercise, SampleSolution}
 
 object RegexColl1Ex2 {
 
@@ -39,11 +39,7 @@ object RegexColl1Ex2 {
         RegexMatchTestData(id = 12, data = "11.2.", isIncluded = false)
       ),
       extractionTestData = Seq.empty,
-      sampleSolutions = Seq(
-        SampleSolution(id = 1, sample = """\d\d\.\d\d\.\d\d\d\d"""),
-        SampleSolution(id = 2, sample = """\d{2}\.\d{2}\.\d{4}"""),
-        SampleSolution(id = 3, sample = """[0-9]{2}\.[0-9]{2}\.[0-9]{4}""")
-      )
+      sampleSolutions = Seq("""\d\d\.\d\d\.\d\d\d\d""", """\d{2}\.\d{2}\.\d{4}""", """[0-9]{2}\.[0-9]{2}\.[0-9]{4}""")
     )
   )
 

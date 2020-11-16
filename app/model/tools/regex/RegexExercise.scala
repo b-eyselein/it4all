@@ -1,7 +1,7 @@
 package model.tools.regex
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.{ExPart, ExParts, ExerciseContent, SampleSolution}
+import model.{ExPart, ExParts, ExerciseContent}
 
 sealed abstract class RegexExPart(val partName: String, val id: String) extends ExPart
 
@@ -30,7 +30,7 @@ final case class RegexExerciseContent(
   correctionType: RegexCorrectionType,
   matchTestData: Seq[RegexMatchTestData],
   extractionTestData: Seq[RegexExtractionTestData] = Seq.empty,
-  sampleSolutions: Seq[SampleSolution[String]]
+  sampleSolutions: Seq[String]
 ) extends ExerciseContent {
 
   override protected type S = String

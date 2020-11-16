@@ -155,12 +155,6 @@ export type ExPart = {
   solved: Scalars['Boolean'];
 };
 
-export type FilesSampleSolution = {
-  __typename?: 'FilesSampleSolution';
-  id: Scalars['Int'];
-  sample: FilesSolution;
-};
-
 export type FilesSolution = {
   __typename?: 'FilesSolution';
   files: Array<ExerciseFile>;
@@ -188,7 +182,7 @@ export type FlaskExerciseContent = {
   files: Array<ExerciseFile>;
   testFiles: Array<ExerciseFile>;
   testConfig: FlaskTestsConfig;
-  sampleSolutions: Array<FilesSampleSolution>;
+  sampleSolutions: Array<FilesSolution>;
 };
 
 export type FlaskExerciseMutations = {
@@ -408,11 +402,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlySample = 'ONLY_SAMPLE',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  OnlyUser = 'ONLY_USER',
   PartialMatch = 'PARTIAL_MATCH',
-  OnlyUser = 'ONLY_USER'
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  OnlySample = 'ONLY_SAMPLE',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
 export type Mutation = {
@@ -483,7 +477,7 @@ export type ProgrammingExerciseContent = {
   __typename?: 'ProgrammingExerciseContent';
   filename: Scalars['String'];
   implementationPart: ImplementationPart;
-  sampleSolutions: Array<FilesSampleSolution>;
+  sampleSolutions: Array<FilesSolution>;
   unitTestPart: UnitTestPart;
   part?: Maybe<ProgExPart>;
 };
@@ -555,7 +549,7 @@ export type RegexExerciseContent = {
   correctionType: RegexCorrectionType;
   matchTestData: Array<RegexMatchTestData>;
   extractionTestData: Array<RegexExtractionTestData>;
-  sampleSolutions: Array<RegexSampleSolution>;
+  sampleSolutions: Array<Scalars['String']>;
   part?: Maybe<RegexExPart>;
 };
 
@@ -641,12 +635,6 @@ export type RegexMatchTestData = {
   id: Scalars['Int'];
   data: Scalars['String'];
   isIncluded: Scalars['Boolean'];
-};
-
-export type RegexSampleSolution = {
-  __typename?: 'RegexSampleSolution';
-  id: Scalars['Int'];
-  sample: Scalars['String'];
 };
 
 export type RegisterValues = {
@@ -747,7 +735,7 @@ export type SqlExerciseContent = {
   __typename?: 'SqlExerciseContent';
   exerciseType: SqlExerciseType;
   schemaName: Scalars['String'];
-  sampleSolutions: Array<SqlSampleSolution>;
+  sampleSolutions: Array<Scalars['String']>;
   hint?: Maybe<Scalars['String']>;
   part?: Maybe<SqlExPart>;
   sqlDbContents: Array<SqlQueryResult>;
@@ -770,11 +758,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Insert = 'INSERT',
-  Create = 'CREATE',
-  Update = 'UPDATE',
   Delete = 'DELETE',
-  Select = 'SELECT'
+  Update = 'UPDATE',
+  Insert = 'INSERT',
+  Select = 'SELECT',
+  Create = 'CREATE'
 }
 
 export enum SqlExPart {
@@ -885,12 +873,6 @@ export type SqlResult = SqlAbstractResult & AbstractCorrectionResult & {
 export type SqlRow = {
   __typename?: 'SqlRow';
   cells: Array<SqlKeyCellValueObject>;
-};
-
-export type SqlSampleSolution = {
-  __typename?: 'SqlSampleSolution';
-  id: Scalars['Int'];
-  sample: Scalars['String'];
 };
 
 export type SqlTableComparisonMatchingResult = MatchingResult & {
@@ -1113,7 +1095,7 @@ export type UmlCorrectionResult = {
 export type UmlExerciseContent = {
   __typename?: 'UmlExerciseContent';
   toIgnore: Array<Scalars['String']>;
-  sampleSolutions: Array<UmlSampleSolution>;
+  sampleSolutions: Array<UmlClassDiagram>;
   part?: Maybe<UmlExPart>;
   mappings: Array<KeyValueObject>;
 };
@@ -1239,12 +1221,6 @@ export type UmlResult = UmlAbstractResult & {
   maxPoints: Scalars['Float'];
 };
 
-export type UmlSampleSolution = {
-  __typename?: 'UmlSampleSolution';
-  id: Scalars['Int'];
-  sample: UmlClassDiagram;
-};
-
 export enum UmlVisibility {
   Public = 'PUBLIC',
   Package = 'PACKAGE',
@@ -1366,7 +1342,7 @@ export type WebExerciseContent = {
   __typename?: 'WebExerciseContent';
   siteSpec: SiteSpec;
   files: Array<ExerciseFile>;
-  sampleSolutions: Array<FilesSampleSolution>;
+  sampleSolutions: Array<FilesSolution>;
   htmlText?: Maybe<Scalars['String']>;
   jsText?: Maybe<Scalars['String']>;
   part?: Maybe<WebExPart>;
@@ -1451,7 +1427,7 @@ export type XmlExerciseContent = {
   __typename?: 'XmlExerciseContent';
   grammarDescription: Scalars['String'];
   rootNode: Scalars['String'];
-  sampleSolutions: Array<XmlSampleSolution>;
+  sampleSolutions: Array<XmlSolution>;
   part?: Maybe<XmlExPart>;
 };
 
@@ -1496,12 +1472,6 @@ export type XmlResult = XmlAbstractResult & AbstractCorrectionResult & {
   grammarResult?: Maybe<XmlGrammarResult>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
-};
-
-export type XmlSampleSolution = {
-  __typename?: 'XmlSampleSolution';
-  id: Scalars['Int'];
-  sample: XmlSolution;
 };
 
 export type XmlSolution = {

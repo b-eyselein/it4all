@@ -34,7 +34,7 @@ final case class FlaskExerciseContent(
   files: Seq[ExerciseFile],
   testFiles: Seq[ExerciseFile],
   testConfig: FlaskTestsConfig,
-  override val sampleSolutions: Seq[SampleSolution[FilesSolution]]
+  override val sampleSolutions: Seq[FilesSolution]
 ) extends ExerciseContent {
 
   override protected type S = FilesSolution

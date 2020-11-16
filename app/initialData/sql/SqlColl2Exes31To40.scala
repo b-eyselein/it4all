@@ -2,7 +2,7 @@ package initialData.sql
 
 import model.tools.sql.SqlTool.SqlExercise
 import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
-import model.{Exercise, Level, SampleSolution, TopicWithLevel}
+import model.{Exercise, Level, TopicWithLevel}
 
 object SqlColl2Exes31To40 {
 
@@ -25,13 +25,10 @@ object SqlColl2Exes31To40 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT title, price
-                     |    FROM books JOIN authors on authors.id = books.author_id
-                     |    WHERE authors.family_name = 'Tolkien' AND price > 10
-                     |    ORDER BY year DESC;""".stripMargin
-        )
+        """SELECT title, price
+          |    FROM books JOIN authors on authors.id = books.author_id
+          |    WHERE authors.family_name = 'Tolkien' AND price > 10
+          |    ORDER BY year DESC;""".stripMargin
       )
     )
   )
@@ -55,18 +52,12 @@ object SqlColl2Exes31To40 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT SUM(amount) AS Anzahl
-                     |    FROM order_positions
-                     |    WHERE price < 5;""".stripMargin
-        ),
-        SampleSolution(
-          id = 2,
-          sample = """SELECT SUM(amount) AS Anzahl
-                     |    FROM order_positions
-                     |    WHERE price < 5.00;""".stripMargin
-        )
+        """SELECT SUM(amount) AS Anzahl
+          |    FROM order_positions
+          |    WHERE price < 5;""".stripMargin,
+        """SELECT SUM(amount) AS Anzahl
+          |    FROM order_positions
+          |    WHERE price < 5.00;""".stripMargin
       )
     )
   )
@@ -91,13 +82,10 @@ object SqlColl2Exes31To40 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT author_id, sum(stock) AS stock_sum
-                     |    FROM books
-                     |    GROUP BY author_id
-                     |    ORDER BY stock_sum DESC;""".stripMargin
-        )
+        """SELECT author_id, sum(stock) AS stock_sum
+          |    FROM books
+          |    GROUP BY author_id
+          |    ORDER BY stock_sum DESC;""".stripMargin
       ),
       hint = Some("""Verwenden Sie den Sum-Operator und das Schlüsselwort AS.""")
     )
@@ -117,12 +105,9 @@ object SqlColl2Exes31To40 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT first_name, family_name, birthday
-                     |    FROM customers
-                     |    WHERE birthday LIKE '%-02-%';""".stripMargin
-        )
+        """SELECT first_name, family_name, birthday
+          |    FROM customers
+          |    WHERE birthday LIKE '%-02-%';""".stripMargin
       ),
       hint = Some("""Verwenden Sie für die Eingrenzung des Geburtsdatums den 'LIKE'-Operator.""")
     )
@@ -144,13 +129,10 @@ object SqlColl2Exes31To40 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT first_name, family_name, birthday
-                     |    FROM customers
-                     |    ORDER BY birthday DESC
-                     |    LIMIT 1;""".stripMargin
-        )
+        """SELECT first_name, family_name, birthday
+          |    FROM customers
+          |    ORDER BY birthday DESC
+          |    LIMIT 1;""".stripMargin
       ),
       hint = Some("Achten Sie darauf, dass sich die Spaltennamen nicht verändern.")
     )
@@ -173,12 +155,9 @@ object SqlColl2Exes31To40 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT id, email
-                     |    FROM customers
-                     |    WHERE password = '3e45af4ca27ea2b03fc6183af40ea112';""".stripMargin
-        )
+        """SELECT id, email
+          |    FROM customers
+          |    WHERE password = '3e45af4ca27ea2b03fc6183af40ea112';""".stripMargin
       ),
       hint = Some(
         """Die Passwörter der Kunden sind als MD5-Hash-String in der Tabelle 'customers' gespeichert.
@@ -208,15 +187,12 @@ object SqlColl2Exes31To40 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT customers.first_name, customers.family_name, AVG(rating) AS avg_rating
+        """SELECT customers.first_name, customers.family_name, AVG(rating) AS avg_rating
                         |    FROM ratings
                         |        LEFT JOIN customers ON customers.id = customer_id
                         |    GROUP BY customer_id
                         |    ORDER BY avg_rating DESC
                         |    LIMIT 1;"""
-        )
       )
     )
   )
@@ -243,15 +219,12 @@ object SqlColl2Exes31To40 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT customers.first_name, customers.family_name, SUM(price) AS value
-                     |    FROM wishlists
-                     |        LEFT JOIN books ON books.id = book_id
-                     |        LEFT JOIN customers ON customers.id = customer_id
-                     |    GROUP BY customer_id
-                     |    ORDER BY value;""".stripMargin
-        )
+        """SELECT customers.first_name, customers.family_name, SUM(price) AS value
+          |    FROM wishlists
+          |        LEFT JOIN books ON books.id = book_id
+          |        LEFT JOIN customers ON customers.id = customer_id
+          |    GROUP BY customer_id
+          |    ORDER BY value;""".stripMargin
       )
     )
   )
@@ -268,11 +241,8 @@ object SqlColl2Exes31To40 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT * FROM books
-                     |    WHERE year IN (1998, 2001, 2011);""".stripMargin
-        )
+        """SELECT * FROM books
+          |    WHERE year IN (1998, 2001, 2011);""".stripMargin
       )
     )
   )
@@ -293,12 +263,9 @@ object SqlColl2Exes31To40 {
       exerciseType = SqlExerciseType.UPDATE,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """UPDATE books
-                     |    SET stock = 500
-                     |    WHERE title = '1984';""".stripMargin
-        )
+        """UPDATE books
+          |    SET stock = 500
+          |    WHERE title = '1984';""".stripMargin
       )
     )
   )

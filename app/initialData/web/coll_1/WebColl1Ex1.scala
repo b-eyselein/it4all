@@ -6,7 +6,7 @@ import initialData.InitialData._
 import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution}
 
 object WebColl1Ex1 extends WebInitialExercise(1, 1) {
 
@@ -71,8 +71,6 @@ object WebColl1Ex1 extends WebInitialExercise(1, 1) {
     )
   )
 
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
-
   val webColl1Ex1: WebExercise = Exercise(
     exerciseId,
     collectionId,
@@ -90,7 +88,7 @@ object WebColl1Ex1 extends WebInitialExercise(1, 1) {
           FileLoadConfig("carListStyle.css", cssFileType)
         )
       ),
-      Seq(sampleSolution)
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

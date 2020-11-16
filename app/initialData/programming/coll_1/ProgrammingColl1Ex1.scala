@@ -41,13 +41,9 @@ object ProgrammingColl1Ex1 extends ProgrammingInitialExercise(1, 1) {
   private val sampleSolutionFiles =
     loadFilesFromFolder(exResPath, Seq(FileLoadConfig("ggt.py", fileType, editable = true)))
 
-  private val sampleSolutions = Seq(
-    SampleSolution(1, FilesSolution(sampleSolutionFiles))
-  )
-
   val programmingColl1Ex1: ProgrammingExercise = Exercise(
-    exerciseId ,
-    collectionId ,
+    exerciseId,
+    collectionId,
     toolId,
     title = "Größter gemeinsamer Teiler",
     authors = Seq("bje40dc"),
@@ -62,7 +58,7 @@ object ProgrammingColl1Ex1 extends ProgrammingInitialExercise(1, 1) {
       filename = "ggt",
       unitTestPart,
       implementationPart,
-      sampleSolutions
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

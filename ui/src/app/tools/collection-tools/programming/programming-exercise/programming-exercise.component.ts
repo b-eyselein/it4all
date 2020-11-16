@@ -73,7 +73,7 @@ export class ProgrammingExerciseComponent
   // Sample solutions
 
   get sampleSolutions(): FilesSolution[] {
-    return this.contentFragment.programmingSampleSolutions.map((s) => s.sample);
+    return this.contentFragment.programmingSampleSolutions;
   }
 
   // Correction

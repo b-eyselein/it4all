@@ -6,7 +6,7 @@ import initialData.InitialData._
 import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution}
 
 object WebColl2Ex1 extends WebInitialExercise(2, 1) {
 
@@ -73,8 +73,6 @@ object WebColl2Ex1 extends WebInitialExercise(2, 1) {
     )
   )
 
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
-
   val webColl2Ex1: WebExercise = Exercise(
     exerciseId,
     collectionId,
@@ -92,7 +90,7 @@ object WebColl2Ex1 extends WebInitialExercise(2, 1) {
           FileLoadConfig("clickCounter.js", jsFileType, editable = true)
         )
       ),
-      Seq(sampleSolution),
+      Seq(FilesSolution(sampleSolutionFiles)),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),
       jsText = Some(
         """Implementieren Sie nun die Funktion <code>increment()</code> die aufgerufen wird wenn auf den Knopf

@@ -3,7 +3,6 @@ package model.tools.xml
 import better.files.File
 import de.uniwue.dtd.parser.DocTypeDefParser
 import javax.xml.parsers.DocumentBuilderFactory
-import model.SampleSolution
 import model.core.Levenshtein
 import model.points._
 import model.result.SuccessType
@@ -64,7 +63,7 @@ object XmlCorrector extends AbstractCorrector {
     exerciseContent: XmlExerciseContent
   ): XmlAbstractResult = {
 
-    val maxPoints = ???
+    val maxPoints = (-1).points
 
     exerciseContent.sampleSolutions.headOption match {
       case None            => onError("There is no sample solution!", maxPoints)
@@ -72,7 +71,7 @@ object XmlCorrector extends AbstractCorrector {
         // Write grammar
         (solutionBaseDir / s"${exerciseContent.rootNode}.dtd")
           .createFileIfNotExists(createParents = true)
-          .write(xmlSample.sample.grammar)
+          .write(xmlSample.grammar)
 
         // Write document
         val documentPath: File = solutionBaseDir / s"${exerciseContent.rootNode}.xml"
@@ -82,7 +81,8 @@ object XmlCorrector extends AbstractCorrector {
 
         XmlResult(
           successType = if (xmlErrors.isEmpty) SuccessType.COMPLETE else SuccessType.PARTIALLY,
-          points = ???,
+          // FIXME: points!
+          points = (-1).points,
           maxPoints = maxPoints,
           documentResult = Some(XmlDocumentResult(xmlErrors))
         )
@@ -93,27 +93,28 @@ object XmlCorrector extends AbstractCorrector {
 
   private def findNearestGrammarSample(
     learnerSolution: String,
-    sampleSolutions: Seq[SampleSolution[XmlSolution]]
-  ): Option[SampleSolution[XmlSolution]] =
+    sampleSolutions: Seq[XmlSolution]
+  ): Option[XmlSolution] =
     sampleSolutions.reduceOption((sampleG1, sampleG2) => {
-      val dist1 = Levenshtein.levenshtein(learnerSolution, sampleG1.sample.grammar)
-      val dist2 = Levenshtein.levenshtein(learnerSolution, sampleG2.sample.grammar)
+      val dist1 = Levenshtein.levenshtein(learnerSolution, sampleG1.grammar)
+      val dist2 = Levenshtein.levenshtein(learnerSolution, sampleG2.grammar)
 
       if (dist1 < dist2) sampleG1 else sampleG2
     })
 
   def correctGrammar(
     solution: XmlSolution,
-    sampleSolutions: Seq[SampleSolution[XmlSolution]]
+    sampleSolutions: Seq[XmlSolution]
   ): XmlAbstractResult = {
 
-    val maxPoints = ???
+    // FIXME: points!
+    val maxPoints = (-1).points
 
     findNearestGrammarSample(solution.grammar, sampleSolutions) match {
       case None => onError("Could not find a sample grammar!", maxPoints)
       case Some(sampleSolution) =>
         DocTypeDefParser
-          .tryParseDTD(sampleSolution.sample.grammar)
+          .tryParseDTD(sampleSolution.grammar)
           .fold(
             error => onError("Error while parsing dtd", maxPoints, Some(error)),
             sampleGrammar => {

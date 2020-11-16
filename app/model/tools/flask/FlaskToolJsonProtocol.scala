@@ -1,7 +1,7 @@
 package model.tools.flask
 
 import model.tools.FilesSampleSolutionToolJsonProtocol
-import model.{ExerciseFile, FilesSolution, JsonProtocols, SampleSolution}
+import model.{ExerciseFile, FilesSolution, JsonProtocols}
 import play.api.libs.json._
 
 object FlaskToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[FlaskExerciseContent, FlaskExPart] {
@@ -17,9 +17,9 @@ object FlaskToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[FlaskEx
   override val partTypeFormat: Format[FlaskExPart] = FlaskExPart.jsonFormat
 
   override protected val exerciseContentFormat: OFormat[FlaskExerciseContent] = {
-    implicit val eff: OFormat[ExerciseFile]                  = JsonProtocols.exerciseFileFormat
-    implicit val ftcf: OFormat[FlaskTestsConfig]             = flaskTestsConfigFormat
-    implicit val fsf: OFormat[SampleSolution[FilesSolution]] = sampleSolutionFormat
+    implicit val eff: Format[ExerciseFile]      = JsonProtocols.exerciseFileFormat
+    implicit val ftcf: Format[FlaskTestsConfig] = flaskTestsConfigFormat
+    implicit val fsf: Format[FilesSolution]     = solutionFormat
 
     Json.format
   }

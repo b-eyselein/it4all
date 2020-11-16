@@ -12,8 +12,6 @@ object ProgrammingColl4Ex1 extends ProgrammingInitialExercise(4, 1) {
 
   private val sampleSolutionFiles = loadFilesFromFolder(exResPath, Seq(FileLoadConfig("average.py", fileType)))
 
-  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
-
   private val unitTestPart = SimplifiedUnitTestPart(
     simplifiedTestMainFile = ExerciseFile(
       name = "test_main.py",
@@ -59,7 +57,7 @@ object ProgrammingColl4Ex1 extends ProgrammingInitialExercise(4, 1) {
       filename = "average",
       unitTestPart,
       implementationPart,
-      sampleSolutions
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

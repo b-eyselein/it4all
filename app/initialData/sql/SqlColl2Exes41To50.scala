@@ -2,7 +2,7 @@ package initialData.sql
 
 import model.tools.sql.SqlTool.SqlExercise
 import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
-import model.{Exercise, Level, SampleSolution, TopicWithLevel}
+import model.{Exercise, Level, TopicWithLevel}
 
 object SqlColl2Exes41To50 {
 
@@ -27,13 +27,10 @@ object SqlColl2Exes41To50 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT first_name, family_name
-                     |    FROM customers
-                     |    WHERE LENGTH(family_name) = 4
-                     |    ORDER BY family_name;""".stripMargin
-        )
+        """SELECT first_name, family_name
+          |    FROM customers
+          |    WHERE LENGTH(family_name) = 4
+          |    ORDER BY family_name;""".stripMargin
       )
     )
   )
@@ -55,12 +52,9 @@ object SqlColl2Exes41To50 {
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """SELECT title, publishers.name, stock
-                     |    FROM books JOIN publishers ON publisher_id = publishers.id
-                     |    WHERE stock < 40000;""".stripMargin
-        )
+        """SELECT title, publishers.name, stock
+          |    FROM books JOIN publishers ON publisher_id = publishers.id
+          |    WHERE stock < 40000;""".stripMargin
       ),
       hint = Some("""Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.""")
     )
@@ -85,17 +79,10 @@ object SqlColl2Exes41To50 {
       exerciseType = SqlExerciseType.INSERT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample =
-            """INSERT INTO customers (first_name, family_name, birthday, email, password, address)
-              |VALUES ('Ferdinandus', 'Merkle', '1990 - 11 - 24', 'ferdinandus_1856@yahoo.com','','');""".stripMargin
-        ),
-        SampleSolution(
-          id = 2,
-          sample = """INSERT INTO customers (first_name, family_name, birthday, email)
-                     |VALUES ('Ferdinandus', 'Merkle', '1990 - 11 - 24', 'ferdinandus_1856@yahoo.com');""".stripMargin
-        )
+        """INSERT INTO customers (first_name, family_name, birthday, email, password, address)
+          |VALUES ('Ferdinandus', 'Merkle', '1990 - 11 - 24', 'ferdinandus_1856@yahoo.com','','');""".stripMargin,
+        """INSERT INTO customers (first_name, family_name, birthday, email)
+          |VALUES ('Ferdinandus', 'Merkle', '1990 - 11 - 24', 'ferdinandus_1856@yahoo.com');""".stripMargin
       )
     )
   )
@@ -115,11 +102,8 @@ object SqlColl2Exes41To50 {
       exerciseType = SqlExerciseType.DELETE,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """DELETE FROM customers
-                     |    WHERE birthday > '1995-01-01';""".stripMargin
-        )
+        """DELETE FROM customers
+          |    WHERE birthday > '1995-01-01';""".stripMargin
       )
     )
   )
@@ -139,11 +123,8 @@ object SqlColl2Exes41To50 {
       exerciseType = SqlExerciseType.DELETE,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """DELETE FROM customers
-                     |    WHERE id NOT IN (SELECT customer_id FROM orders);""".stripMargin
-        )
+        """DELETE FROM customers
+          |    WHERE id NOT IN (SELECT customer_id FROM orders);""".stripMargin
       ),
       hint = Some("Verwenden Sie den Operator 'IN' für diese Aufgabe.")
     )
@@ -164,11 +145,8 @@ object SqlColl2Exes41To50 {
       exerciseType = SqlExerciseType.DELETE,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """DELETE FROM books
-                     |    WHERE price > 8.50 AND publisher_id = '7';""".stripMargin
-        )
+        """DELETE FROM books
+          |    WHERE price > 8.50 AND publisher_id = '7';""".stripMargin
       )
     )
   )
@@ -188,11 +166,8 @@ object SqlColl2Exes41To50 {
       exerciseType = SqlExerciseType.DELETE,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """DELETE FROM books
-                     |    WHERE author_id = 3;""".stripMargin
-        )
+        """DELETE FROM books
+          |    WHERE author_id = 3;""".stripMargin
       )
     )
   )
@@ -215,12 +190,8 @@ object SqlColl2Exes41To50 {
       exerciseType = SqlExerciseType.INSERT,
       schemaName = schemaName,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample =
-            """INSERT INTO books (title, author_id, year, publisher_id, isbn, stock, price)
-              |    VALUES('Applied Statistical Genetics with R', 2, 2010, 12, 'PF/520-Y/2', 289, 24.99);""".stripMargin
-        )
+        """INSERT INTO books (title, author_id, year, publisher_id, isbn, stock, price)
+          |    VALUES('Applied Statistical Genetics with R', 2, 2010, 12, 'PF/520-Y/2', 289, 24.99);""".stripMargin
       )
     )
   )

@@ -6,7 +6,7 @@ import initialData.InitialData._
 import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.{Exercise, FilesSolution, SampleSolution}
+import model.{Exercise, FilesSolution}
 
 object WebColl2Ex3 extends WebInitialExercise(2, 3) {
 
@@ -119,8 +119,6 @@ object WebColl2Ex3 extends WebInitialExercise(2, 3) {
     )
   )
 
-  private val sampleSolution: SampleSolution[FilesSolution] = SampleSolution(1, FilesSolution(sampleSolutionFiles))
-
   val webColl2Ex3: WebExercise = Exercise(
     exerciseId,
     collectionId,
@@ -145,7 +143,7 @@ object WebColl2Ex3 extends WebInitialExercise(2, 3) {
           |Inhalt (textContent) des Elements mit der ID 'result' auf das Ergebnis setzen.""".stripMargin
           .replace("\n", " ")
       ),
-      sampleSolutions = Seq(sampleSolution)
+      sampleSolutions = Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

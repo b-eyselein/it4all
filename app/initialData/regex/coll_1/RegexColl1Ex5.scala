@@ -1,8 +1,8 @@
 package initialData.regex.coll_1
 
+import model.Exercise
 import model.tools.regex.RegexTool.RegexExercise
 import model.tools.regex.{RegexCorrectionType, RegexExerciseContent, RegexMatchTestData}
-import model.{Exercise, SampleSolution}
 
 object RegexColl1Ex5 {
 
@@ -33,10 +33,7 @@ object RegexColl1Ex5 {
       ),
       extractionTestData = Seq.empty,
       sampleSolutions = Seq(
-        SampleSolution(
-          id = 1,
-          sample = """([a-z]|[A-Z]|[0-9]|_|-|\.)+@([a-z]|[A-Z]|[0-9]|_|-)+\.([a-z]|[A-Z]|[0-9]|_|-|\.)+"""
-        )
+        """([a-z]|[A-Z]|[0-9]|_|-|\.)+@([a-z]|[A-Z]|[0-9]|_|-)+\.([a-z]|[A-Z]|[0-9]|_|-|\.)+"""
       )
     )
   )

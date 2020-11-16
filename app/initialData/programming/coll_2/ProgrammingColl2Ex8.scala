@@ -44,8 +44,6 @@ object ProgrammingColl2Ex8 extends ProgrammingInitialExercise(2, 8) {
     )
   )
 
-  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
-
   private val implementationPart = ImplementationPart(
     base = loadTextFromFile(exResPath / "base.py"),
     files = Seq(
@@ -83,7 +81,7 @@ object ProgrammingColl2Ex8 extends ProgrammingInitialExercise(2, 8) {
       filename = "ceasar",
       unitTestPart,
       implementationPart,
-      sampleSolutions
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

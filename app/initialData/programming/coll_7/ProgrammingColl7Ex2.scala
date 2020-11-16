@@ -151,8 +151,6 @@ object ProgrammingColl7Ex2 extends ProgrammingInitialExercise(7, 2) {
     )
   )
 
-  private val sampleSolutions = Seq(SampleSolution(1, FilesSolution(sampleSolutionFiles)))
-
   val programmingColl7Ex2: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -171,7 +169,7 @@ object ProgrammingColl7Ex2 extends ProgrammingInitialExercise(7, 2) {
       filename = "maumau",
       unitTestPart,
       implementationPart,
-      sampleSolutions
+      Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 
