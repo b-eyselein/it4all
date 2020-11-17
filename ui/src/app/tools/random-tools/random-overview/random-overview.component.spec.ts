@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {RandomOverviewComponent} from './random-overview.component';
 import {AppRoutingModule, routingComponents} from '../../../app-routing.module';
@@ -10,7 +10,7 @@ describe('RandomOverviewComponent', () => {
   let component: RandomOverviewComponent;
   let fixture: ComponentFixture<RandomOverviewComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule],
       declarations: [RandomOverviewComponent],

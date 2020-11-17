@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {RegexExtractionResultComponent} from './regex-extraction-result.component';
 import {RegexExtractionMatchComponent} from './regex-extraction-match/regex-extraction-match.component';
@@ -7,7 +7,7 @@ describe('RegexExtractionResultComponent', () => {
   let component: RegexExtractionResultComponent;
   let fixture: ComponentFixture<RegexExtractionResultComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [RegexExtractionResultComponent, RegexExtractionMatchComponent]
     })

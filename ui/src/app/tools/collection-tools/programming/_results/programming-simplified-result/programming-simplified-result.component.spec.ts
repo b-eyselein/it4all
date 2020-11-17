@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ProgrammingSimplifiedResultComponent} from './programming-simplified-result.component';
 
@@ -6,7 +6,7 @@ describe('ProgrammingSimplifiedResultComponent', () => {
   let component: ProgrammingSimplifiedResultComponent;
   let fixture: ComponentFixture<ProgrammingSimplifiedResultComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ProgrammingSimplifiedResultComponent]
     })

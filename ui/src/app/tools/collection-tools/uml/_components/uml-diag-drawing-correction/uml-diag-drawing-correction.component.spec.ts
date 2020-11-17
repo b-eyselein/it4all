@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { UmlDiagDrawingCorrectionComponent } from './uml-diag-drawing-correction.component';
 
@@ -6,7 +6,7 @@ describe('UmlDiagDrawingCorrectionComponent', () => {
   let component: UmlDiagDrawingCorrectionComponent;
   let fixture: ComponentFixture<UmlDiagDrawingCorrectionComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ UmlDiagDrawingCorrectionComponent ]
     })

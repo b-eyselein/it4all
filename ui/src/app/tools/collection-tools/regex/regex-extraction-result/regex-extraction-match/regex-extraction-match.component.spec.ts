@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {RegexExtractionMatchComponent} from './regex-extraction-match.component';
 import {MatchType} from '../../../../../_interfaces/graphql-types';
 
@@ -6,7 +6,7 @@ describe('RegexExtractionMatchComponent', () => {
   let component: RegexExtractionMatchComponent;
   let fixture: ComponentFixture<RegexExtractionMatchComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [RegexExtractionMatchComponent]
     })

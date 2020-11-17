@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {BoolDrawingComponent} from './bool-drawing.component';
 import {AppRoutingModule, routingComponents} from '../../../../app-routing.module';
@@ -9,7 +9,7 @@ describe('BoolDrawingComponent', () => {
   let component: BoolDrawingComponent;
   let fixture: ComponentFixture<BoolDrawingComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
       declarations: [BoolDrawingComponent, ToolOverviewComponent, ...routingComponents],

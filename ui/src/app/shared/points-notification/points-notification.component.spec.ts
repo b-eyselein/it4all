@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {PointsNotificationComponent} from './points-notification.component';
 
@@ -6,7 +6,7 @@ describe('PointsNotificationComponent', () => {
   let component: PointsNotificationComponent;
   let fixture: ComponentFixture<PointsNotificationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PointsNotificationComponent]
     }).compileComponents();

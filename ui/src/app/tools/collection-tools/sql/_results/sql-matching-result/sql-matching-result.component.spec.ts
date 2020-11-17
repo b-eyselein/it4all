@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {SqlMatchingResultComponent} from './sql-matching-result.component';
 
@@ -6,7 +6,7 @@ describe('SqlMatchingResultComponent', () => {
   let component: SqlMatchingResultComponent;
   let fixture: ComponentFixture<SqlMatchingResultComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SqlMatchingResultComponent]
     }).compileComponents();

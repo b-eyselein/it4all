@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { UmlImplMatchComponent } from './uml-impl-match.component';
 
@@ -6,7 +6,7 @@ describe('UmlImplMatchComponent', () => {
   let component: UmlImplMatchComponent;
   let fixture: ComponentFixture<UmlImplMatchComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ UmlImplMatchComponent ]
     })

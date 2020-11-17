@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {LtiComponent} from './lti.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -9,7 +9,7 @@ describe('LtiComponent', () => {
   let component: LtiComponent;
   let fixture: ComponentFixture<LtiComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
       declarations: [LtiComponent],

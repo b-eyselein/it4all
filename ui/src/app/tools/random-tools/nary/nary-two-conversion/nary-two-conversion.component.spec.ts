@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {NaryTwoConversionComponent} from './nary-two-conversion.component';
 import {FormsModule} from '@angular/forms';
@@ -9,7 +9,7 @@ describe('TwoConversionComponent', () => {
   let component: NaryTwoConversionComponent;
   let fixture: ComponentFixture<NaryTwoConversionComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule],
       declarations: [NaryTwoConversionComponent, NaryNumberReadOnlyInputComponent, RandomSolveButtonsComponent],

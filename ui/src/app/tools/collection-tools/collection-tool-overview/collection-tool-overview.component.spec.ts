@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {CollectionToolOverviewComponent} from './collection-tool-overview.component';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -9,7 +9,7 @@ describe('CollectionToolOverviewComponent', () => {
   let component: CollectionToolOverviewComponent;
   let fixture: ComponentFixture<CollectionToolOverviewComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
       declarations: [CollectionToolOverviewComponent],

@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ToolOverviewComponent} from './tool-overview.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -8,7 +8,7 @@ describe('ToolOverviewComponent', () => {
   let component: ToolOverviewComponent;
   let fixture: ComponentFixture<ToolOverviewComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule],
       declarations: [ToolOverviewComponent]

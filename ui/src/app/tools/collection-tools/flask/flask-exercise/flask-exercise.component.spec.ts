@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FlaskExerciseComponent } from './flask-exercise.component';
 
@@ -6,7 +6,7 @@ describe('FlaskExerciseComponent', () => {
   let component: FlaskExerciseComponent;
   let fixture: ComponentFixture<FlaskExerciseComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ FlaskExerciseComponent ]
     })

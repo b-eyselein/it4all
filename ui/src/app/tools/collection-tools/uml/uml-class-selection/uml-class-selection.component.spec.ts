@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {UmlClassSelectionComponent} from './uml-class-selection.component';
 
@@ -6,7 +6,7 @@ describe('UmlClassSelectionComponent', () => {
   let component: UmlClassSelectionComponent;
   let fixture: ComponentFixture<UmlClassSelectionComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [UmlClassSelectionComponent]
     }).compileComponents();

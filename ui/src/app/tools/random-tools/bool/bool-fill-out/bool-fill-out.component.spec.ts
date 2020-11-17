@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {BoolFillOutComponent} from './bool-fill-out.component';
 import {RandomSolveButtonsComponent} from '../../_components/random-solve-buttons/random-solve-buttons.component';
@@ -9,7 +9,7 @@ describe('BoolFilloutComponent', () => {
   let component: BoolFillOutComponent;
   let fixture: ComponentFixture<BoolFillOutComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule, AppRoutingModule],
       declarations: [BoolFillOutComponent, RandomSolveButtonsComponent, ...routingComponents]

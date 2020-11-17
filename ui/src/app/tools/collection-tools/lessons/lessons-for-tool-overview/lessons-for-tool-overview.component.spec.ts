@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {LessonsForToolOverviewComponent} from './lessons-for-tool-overview.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -10,7 +10,7 @@ describe('LessonsForToolOverviewComponent', () => {
   let component: LessonsForToolOverviewComponent;
   let fixture: ComponentFixture<LessonsForToolOverviewComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, ReactiveFormsModule, RouterTestingModule, HttpClientTestingModule],
       declarations: [LessonsForToolOverviewComponent],

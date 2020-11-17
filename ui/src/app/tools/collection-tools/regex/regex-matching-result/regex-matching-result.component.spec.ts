@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {RegexMatchingResultComponent} from './regex-matching-result.component';
 import {FormsModule} from '@angular/forms';
 import {BinaryClassificationResultType} from '../../../../_interfaces/graphql-types';
@@ -7,7 +7,7 @@ describe('RegexMatchingResultComponent', () => {
   let component: RegexMatchingResultComponent;
   let fixture: ComponentFixture<RegexMatchingResultComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [RegexMatchingResultComponent],
       imports: [FormsModule]

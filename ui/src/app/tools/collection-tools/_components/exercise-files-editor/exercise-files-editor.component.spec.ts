@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ExerciseFilesEditorComponent} from './exercise-files-editor.component';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
@@ -8,7 +8,7 @@ describe('ExerciseFilesEditorComponent', () => {
   let component: ExerciseFilesEditorComponent;
   let fixture: ComponentFixture<ExerciseFilesEditorComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, CodemirrorModule],
       declarations: [ExerciseFilesEditorComponent]

@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {SqlResultComponent} from './sql-result.component';
 import {SolutionSavedComponent} from '../../../../../shared/solution-saved/solution-saved.component';
@@ -9,7 +9,7 @@ describe('SqlResultComponent', () => {
   let component: SqlResultComponent;
   let fixture: ComponentFixture<SqlResultComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SqlResultComponent, SolutionSavedComponent, PointsNotificationComponent, SqlMatchingResultComponent]
     }).compileComponents();

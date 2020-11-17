@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ProgrammingExerciseComponent} from './programming-exercise.component';
 import {ExerciseFilesEditorComponent} from '../../_components/exercise-files-editor/exercise-files-editor.component';
@@ -18,7 +18,7 @@ describe('ProgrammingExerciseComponent', () => {
   let component: ProgrammingExerciseComponent;
   let fixture: ComponentFixture<ProgrammingExerciseComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, CodemirrorModule, HttpClientTestingModule],
       declarations: [

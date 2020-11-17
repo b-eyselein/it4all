@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {NaryAdditionComponent} from './nary-addition.component';
 import {FormsModule} from '@angular/forms';
@@ -9,7 +9,7 @@ describe('NaryAdditionComponent', () => {
   let component: NaryAdditionComponent;
   let fixture: ComponentFixture<NaryAdditionComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule],
       declarations: [NaryAdditionComponent, NaryNumberReadOnlyInputComponent, RandomSolveButtonsComponent],

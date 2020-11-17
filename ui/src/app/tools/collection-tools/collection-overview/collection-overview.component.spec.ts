@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {CollectionOverviewComponent} from './collection-overview.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
@@ -11,7 +11,7 @@ describe('CollectionOverviewComponent', () => {
   let component: CollectionOverviewComponent;
   let fixture: ComponentFixture<CollectionOverviewComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([]), CodemirrorModule],
       declarations: [CollectionOverviewComponent, TagComponent],
