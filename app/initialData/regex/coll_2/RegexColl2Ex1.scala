@@ -24,7 +24,7 @@ object RegexColl2Ex1 {
         RegexExtractionTestData(id = 1, base = "Frische Äpfel= 2,99€/kg, Bananen= 3,49€/kg, Ananas 1,99€/Stück"),
         RegexExtractionTestData(id = 2, base = "Reifenwechsel= 50€, Ölservice= 99€, Lichtcheck= 119,99€")
       ),
-      sampleSolutions = Seq("""\d+[,\d\d?]?""")
+      sampleSolutions = Seq("""\d+(,\d\d?)?""")
     )
   )
 
