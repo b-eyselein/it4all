@@ -8,8 +8,6 @@ scalaVersion := "2.13.4"
 
 scalacOptions ++= CompilerOptions.allOptions
 
-javacOptions ++= Seq("-source", "14")
-
 // Wart remover for scalac options
 wartremoverWarnings ++= Warts.allBut(
   Wart.DefaultArguments,
