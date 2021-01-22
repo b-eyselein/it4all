@@ -32,11 +32,10 @@ JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(
-    packageName in Universal := s"${name.value}"
+    packageName in Universal := s"${name.value}",
+    sources in (Compile,doc) := Seq.empty,
+    publishArtifact in (Compile, packageDoc) := false
   )
-
-// TODO: For ActionRefiner ToolMainAction
-addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.3" cross CrossVersion.full)
 
 val artifactoryUrl = "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory"
 

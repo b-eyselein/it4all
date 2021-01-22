@@ -43,15 +43,14 @@ object SqlQueryResult {
       rows match {
         case Nil => SqlQueryResult(userResult.columnNames, acc, userResult.tableName)
         case (userRow, sampleRow) :: tail =>
-          val newUserRow = userRow.cells.map {
-            case (userColName, userCell) =>
-              val newCell = userCell.copy(
-                different = !sampleRow.cells
-                  .get(userColName)
-                  .exists { _.content == userCell.content }
-              )
+          val newUserRow = userRow.cells.map { case (userColName, userCell) =>
+            val newCell = userCell.copy(
+              different = !sampleRow.cells
+                .get(userColName)
+                .exists { _.content == userCell.content }
+            )
 
-              (userColName, newCell)
+            (userColName, newCell)
           }
 
           go(tail, acc :+ SqlRow(newUserRow))

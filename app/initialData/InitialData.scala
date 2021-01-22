@@ -57,8 +57,8 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
               case false => logger.error(s"Could not insert collection $key!")
               case true  => logger.debug(s"Inserted collection $key.")
             }
-            .recover {
-              case e => logger.error("Error while inserting collection", e)
+            .recover { case e =>
+              logger.error("Error while inserting collection", e)
             }
       }
 
@@ -77,8 +77,8 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
               case false => logger.error(s"Exercise $key could not be inserted!")
               case true  => logger.debug(s"Inserted exercise $key.")
             }
-            .recover {
-              case e => logger.error("Error while inserting exercise", e)
+            .recover { case e =>
+              logger.error("Error while inserting exercise", e)
             }
       }
 
@@ -90,8 +90,8 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
         case false => logger.error(s"Could not insert lesson $key")
         case true  => logger.debug(s"Inserted lesson $key")
       }
-      .recover {
-        case e => logger.error("Error while inserting lesson", e)
+      .recover { case e =>
+        logger.error("Error while inserting lesson", e)
       }
   }
 
@@ -107,26 +107,24 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
         case false => logger.error(s"Could not insert lesson content $key")
         case true  => logger.debug(s"Insert lesson content $key")
       }
-      .recover {
-        case e => logger.error("Error while inserting lesson", e)
+      .recover { case e =>
+        logger.error("Error while inserting lesson", e)
       }
   }
 
   ToolList.tools.foreach { tool =>
     // Insert all collections and exercises
-    tool.initialData.exerciseData.foreach {
-      case (coll, exes) =>
-        insertInitialCollection(coll)
+    tool.initialData.exerciseData.foreach { case (coll, exes) =>
+      insertInitialCollection(coll)
 
-        exes.foreach(ex => insertInitialExercise(ex, tool.jsonFormats.exerciseFormat))
+      exes.foreach(ex => insertInitialExercise(ex, tool.jsonFormats.exerciseFormat))
     }
 
     // Insert all lessons
-    tool.initialData.lessonData.foreach {
-      case (lesson, lessonContents) =>
-        upsertInitialLesson(lesson)
+    tool.initialData.lessonData.foreach { case (lesson, lessonContents) =>
+      upsertInitialLesson(lesson)
 
-        lessonContents.foreach(lessonContent => upsertInitialLessonContent(lessonContent))
+      lessonContents.foreach(lessonContent => upsertInitialLessonContent(lessonContent))
     }
   }
 
