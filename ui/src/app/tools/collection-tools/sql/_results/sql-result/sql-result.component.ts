@@ -2,10 +2,9 @@ import {Component, Input, ViewEncapsulation} from '@angular/core';
 import {
   BinaryExpressionComparisonFragment,
   ColumnComparisonFragment,
-  InsertComparisonFragment,
   SelectAdditionalComparisonFragment,
   SqlResultFragment,
-  TableComparisonFragment
+  StringMatchingResultFragment,
 } from '../../sql-apollo-mutations.service';
 
 @Component({
@@ -24,7 +23,7 @@ export class SqlResultComponent {
     return this.result.staticComparison.columnComparison;
   }
 
-  get tableComparison(): TableComparisonFragment {
+  get tableComparison(): StringMatchingResultFragment {
     return this.result.staticComparison.tableComparison;
   }
 
@@ -40,7 +39,7 @@ export class SqlResultComponent {
     return this.result.staticComparison.additionalComparisons.selectComparisons;
   }
 
-  get insertAdditionalComparisons(): InsertComparisonFragment {
+  get insertAdditionalComparisons(): StringMatchingResultFragment {
     return this.result.staticComparison.additionalComparisons.insertComparison;
   }
 

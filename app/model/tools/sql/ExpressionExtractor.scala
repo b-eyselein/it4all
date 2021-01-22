@@ -168,4 +168,8 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   override def visit(aThis: ArrayExpression): Unit = {}
 
+  override def visit(xmlSerializeExpression: XMLSerializeExpr): Unit = {}
+
+  override def visit(variableAssignment: VariableAssignment): Unit = {}
+
 }

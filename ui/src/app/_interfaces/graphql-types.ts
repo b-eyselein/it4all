@@ -22,7 +22,7 @@ export type AbstractCorrectionResult = {
 export type AdditionalComparison = {
   __typename?: 'AdditionalComparison';
   selectComparisons?: Maybe<SelectAdditionalComparisons>;
-  insertComparison?: Maybe<SqlInsertComparisonMatchingResult>;
+  insertComparison?: Maybe<StringMatchingResult>;
 };
 
 export type AttributeList = {
@@ -32,10 +32,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  TruePositive = 'TruePositive',
-  FalsePositive = 'FalsePositive',
   FalseNegative = 'FalseNegative',
-  TrueNegative = 'TrueNegative'
+  FalsePositive = 'FalsePositive',
+  TrueNegative = 'TrueNegative',
+  TruePositive = 'TruePositive'
 }
 
 export type CollectionTool = {
@@ -402,11 +402,11 @@ export type MatchingResult = {
 };
 
 export enum MatchType {
-  OnlyUser = 'ONLY_USER',
-  PartialMatch = 'PARTIAL_MATCH',
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   OnlySample = 'ONLY_SAMPLE',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
+  OnlyUser = 'ONLY_USER',
+  PartialMatch = 'PARTIAL_MATCH'
 }
 
 export type Mutation = {
@@ -539,8 +539,8 @@ export type RegexCorrectionResult = {
 };
 
 export enum RegexCorrectionType {
-  Matching = 'MATCHING',
-  Extraction = 'EXTRACTION'
+  Extraction = 'EXTRACTION',
+  Matching = 'MATCHING'
 }
 
 export type RegexExerciseContent = {
@@ -576,6 +576,8 @@ export enum RegexExPart {
 export type RegexExtractedValuesComparisonMatchingResult = MatchingResult & {
   __typename?: 'RegexExtractedValuesComparisonMatchingResult';
   allMatches: Array<RegexMatchMatch>;
+  notMatchedForUser: Array<Scalars['String']>;
+  notMatchedForSample: Array<Scalars['String']>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
@@ -645,8 +647,8 @@ export type RegisterValues = {
 
 export type SelectAdditionalComparisons = {
   __typename?: 'SelectAdditionalComparisons';
-  groupByComparison: SqlGroupByComparisonMatchingResult;
-  orderByComparison: SqlOrderByComparisonMatchingResult;
+  groupByComparison: StringMatchingResult;
+  orderByComparison: StringMatchingResult;
   limitComparison: SqlLimitComparisonMatchingResult;
 };
 
@@ -681,6 +683,8 @@ export type SqlAbstractResult = {
 export type SqlBinaryExpressionComparisonMatchingResult = MatchingResult & {
   __typename?: 'SqlBinaryExpressionComparisonMatchingResult';
   allMatches: Array<SqlBinaryExpressionMatch>;
+  notMatchedForUser: Array<Scalars['String']>;
+  notMatchedForSample: Array<Scalars['String']>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
@@ -704,6 +708,8 @@ export type SqlCell = {
 export type SqlColumnComparisonMatchingResult = MatchingResult & {
   __typename?: 'SqlColumnComparisonMatchingResult';
   allMatches: Array<SqlColumnMatch>;
+  notMatchedForUser: Array<Scalars['String']>;
+  notMatchedForSample: Array<Scalars['String']>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
@@ -758,48 +764,16 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Delete = 'DELETE',
+  Create = 'CREATE',
   Update = 'UPDATE',
   Insert = 'INSERT',
-  Select = 'SELECT',
-  Create = 'CREATE'
+  Delete = 'DELETE',
+  Select = 'SELECT'
 }
 
 export enum SqlExPart {
   SqlSingleExPart = 'SqlSingleExPart'
 }
-
-export type SqlGroupByComparisonMatchingResult = MatchingResult & {
-  __typename?: 'SqlGroupByComparisonMatchingResult';
-  allMatches: Array<SqlGroupByMatch>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
-export type SqlGroupByMatch = NewMatch & {
-  __typename?: 'SqlGroupByMatch';
-  sampleArg?: Maybe<Scalars['String']>;
-  userArg?: Maybe<Scalars['String']>;
-  matchType: MatchType;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
-};
-
-export type SqlInsertComparisonMatchingResult = MatchingResult & {
-  __typename?: 'SqlInsertComparisonMatchingResult';
-  allMatches: Array<SqlInsertMatch>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
-export type SqlInsertMatch = NewMatch & {
-  __typename?: 'SqlInsertMatch';
-  sampleArg?: Maybe<Scalars['String']>;
-  userArg?: Maybe<Scalars['String']>;
-  matchType: MatchType;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
-};
 
 export type SqlInternalErrorResult = SqlAbstractResult & AbstractCorrectionResult & {
   __typename?: 'SqlInternalErrorResult';
@@ -817,6 +791,8 @@ export type SqlKeyCellValueObject = {
 export type SqlLimitComparisonMatchingResult = MatchingResult & {
   __typename?: 'SqlLimitComparisonMatchingResult';
   allMatches: Array<SqlLimitMatch>;
+  notMatchedForUser: Array<Scalars['String']>;
+  notMatchedForSample: Array<Scalars['String']>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
@@ -830,26 +806,10 @@ export type SqlLimitMatch = NewMatch & {
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
-export type SqlOrderByComparisonMatchingResult = MatchingResult & {
-  __typename?: 'SqlOrderByComparisonMatchingResult';
-  allMatches: Array<SqlOrderByMatch>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
-export type SqlOrderByMatch = NewMatch & {
-  __typename?: 'SqlOrderByMatch';
-  sampleArg?: Maybe<Scalars['String']>;
-  userArg?: Maybe<Scalars['String']>;
-  matchType: MatchType;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
-};
-
 export type SqlQueriesStaticComparison = {
   __typename?: 'SqlQueriesStaticComparison';
   columnComparison: SqlColumnComparisonMatchingResult;
-  tableComparison: SqlTableComparisonMatchingResult;
+  tableComparison: StringMatchingResult;
   joinExpressionComparison: SqlBinaryExpressionComparisonMatchingResult;
   whereComparison: SqlBinaryExpressionComparisonMatchingResult;
   additionalComparisons: AdditionalComparison;
@@ -875,20 +835,20 @@ export type SqlRow = {
   cells: Array<SqlKeyCellValueObject>;
 };
 
-export type SqlTableComparisonMatchingResult = MatchingResult & {
-  __typename?: 'SqlTableComparisonMatchingResult';
-  allMatches: Array<SqlTableMatch>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
+export type StringMatch = {
+  __typename?: 'StringMatch';
+  matchType: MatchType;
+  userArg?: Maybe<Scalars['String']>;
+  sampleArg?: Maybe<Scalars['String']>;
 };
 
-export type SqlTableMatch = NewMatch & {
-  __typename?: 'SqlTableMatch';
-  sampleArg?: Maybe<Scalars['String']>;
-  userArg?: Maybe<Scalars['String']>;
-  matchType: MatchType;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
+export type StringMatchingResult = {
+  __typename?: 'StringMatchingResult';
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
+  allMatches: Array<StringMatch>;
+  notMatchedForUser: Array<Scalars['String']>;
+  notMatchedForSample: Array<Scalars['String']>;
 };
 
 export enum SuccessType {
@@ -964,13 +924,15 @@ export type UmlAssociationMatch = NewMatch & {
 export type UmlAssociationMatchingResult = MatchingResult & {
   __typename?: 'UmlAssociationMatchingResult';
   allMatches: Array<UmlAssociationMatch>;
+  notMatchedForUser: Array<UmlAssociation>;
+  notMatchedForSample: Array<UmlAssociation>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
 
 export enum UmlAssociationType {
-  Association = 'ASSOCIATION',
   Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
   Composition = 'COMPOSITION'
 }
 
@@ -1020,6 +982,8 @@ export type UmlAttributeMatch = NewMatch & {
 export type UmlAttributeMatchingResult = MatchingResult & {
   __typename?: 'UmlAttributeMatchingResult';
   allMatches: Array<UmlAttributeMatch>;
+  notMatchedForUser: Array<UmlAttribute>;
+  notMatchedForSample: Array<UmlAttribute>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
@@ -1074,6 +1038,8 @@ export type UmlClassMatchAnalysisResult = {
 export type UmlClassMatchingResult = MatchingResult & {
   __typename?: 'UmlClassMatchingResult';
   allMatches: Array<UmlClassMatch>;
+  notMatchedForUser: Array<UmlClass>;
+  notMatchedForSample: Array<UmlClass>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
@@ -1146,6 +1112,8 @@ export type UmlImplementationMatch = NewMatch & {
 export type UmlImplementationMatchingResult = MatchingResult & {
   __typename?: 'UmlImplementationMatchingResult';
   allMatches: Array<UmlImplementationMatch>;
+  notMatchedForUser: Array<UmlImplementation>;
+  notMatchedForSample: Array<UmlImplementation>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
@@ -1203,6 +1171,8 @@ export type UmlMethodMatch = NewMatch & {
 export type UmlMethodMatchingResult = MatchingResult & {
   __typename?: 'UmlMethodMatchingResult';
   allMatches: Array<UmlMethodMatch>;
+  notMatchedForUser: Array<UmlMethod>;
+  notMatchedForSample: Array<UmlMethod>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
@@ -1222,10 +1192,10 @@ export type UmlResult = UmlAbstractResult & {
 };
 
 export enum UmlVisibility {
-  Public = 'PUBLIC',
   Package = 'PACKAGE',
+  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Private = 'PRIVATE'
+  Public = 'PUBLIC'
 }
 
 export type UnitTestCorrectionResult = {
@@ -1405,6 +1375,8 @@ export type XmlDocumentResult = {
 export type XmlElementLineComparisonMatchingResult = MatchingResult & {
   __typename?: 'XmlElementLineComparisonMatchingResult';
   allMatches: Array<ElementLineMatch>;
+  notMatchedForUser: Array<ElementLine>;
+  notMatchedForSample: Array<ElementLine>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };

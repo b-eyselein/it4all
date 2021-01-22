@@ -1,12 +1,11 @@
 package model.tools.sql
 
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
+import model.matching.StringMatcher.StringMatchingResult
 import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList
-import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
-import net.sf.jsqlparser.schema.Table
-import net.sf.jsqlparser.statement.select.{Limit, OrderByElement}
+import net.sf.jsqlparser.expression.BinaryExpression
+import net.sf.jsqlparser.statement.select.Limit
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -27,53 +26,43 @@ object SqlGraphQLModels
 
   // Result types
 
-  private val columnMatchType: ObjectType[Unit, ColumnMatch] =
-    buildStringMatchTypeType[ColumnWrapper, ColumnMatch]("SqlColumnMatch")
-
-  private val tableMatchType: ObjectType[Unit, TableMatch] =
-    buildStringMatchTypeType[Table, TableMatch]("SqlTableMatch")
-
-  private val binaryExpressionMatchType: ObjectType[Unit, BinaryExpressionMatch] =
-    buildStringMatchTypeType[BinaryExpression, BinaryExpressionMatch]("SqlBinaryExpressionMatch")
-
-  private val groupByMatchType: ObjectType[Unit, GroupByMatch] =
-    buildStringMatchTypeType[Expression, GroupByMatch]("SqlGroupByMatch")
-
-  private val orderByMatchType: ObjectType[Unit, OrderByMatch] =
-    buildStringMatchTypeType[OrderByElement, OrderByMatch]("SqlOrderByMatch")
-
-  private val limitMatchType: ObjectType[Unit, LimitMatch] =
-    buildStringMatchTypeType[Limit, LimitMatch]("SqlLimitMatch")
-
-  private val insertMatchType: ObjectType[Unit, ExpressionListMatch] =
-    buildStringMatchTypeType[ExpressionList, ExpressionListMatch]("SqlInsertMatch")
-
   private val sqlSelectAdditionalComparisons: ObjectType[Unit, SelectAdditionalComparisons] = {
-    implicit val gbmt: ObjectType[Unit, GroupByComparison] =
-      matchingResultType("SqlGroupByComparison", groupByMatchType)
-    implicit val obct: ObjectType[Unit, OrderByComparison] =
-      matchingResultType("SqlOrderByComparison", orderByMatchType)
-    implicit val lct: ObjectType[Unit, LimitComparison] =
-      matchingResultType("SqlLimitComparison", limitMatchType)
+    implicit val smrt: ObjectType[Unit, StringMatchingResult] = stringMatchingResultType
+
+    implicit val lct: ObjectType[Unit, LimitComparison] = matchingResultType(
+      "SqlLimitComparison",
+      buildStringMatchTypeType[Limit, LimitMatch]("SqlLimitMatch"),
+      StringType,
+      _.toString
+    )
 
     deriveObjectType()
   }
 
   private val additionalComparisonsType: ObjectType[Unit, AdditionalComparison] = {
     implicit val ssac: ObjectType[Unit, SelectAdditionalComparisons] = sqlSelectAdditionalComparisons
-    implicit val sqct: ObjectType[Unit, InsertComparison] =
-      matchingResultType("SqlInsertComparison", insertMatchType)
+    implicit val smrt: ObjectType[Unit, StringMatchingResult]        = stringMatchingResultType
 
     deriveObjectType()
   }
 
   private val sqlQueriesStaticComparisonType: ObjectType[Unit, SqlQueriesStaticComparison] = {
-    implicit val cct: ObjectType[Unit, ColumnComparison] =
-      matchingResultType("SqlColumnComparison", columnMatchType)
-    implicit val tct: ObjectType[Unit, TableComparison] =
-      matchingResultType("SqlTableComparison", tableMatchType)
-    implicit val jct: ObjectType[Unit, BinaryExpressionComparison] =
-      matchingResultType("SqlBinaryExpressionComparison", binaryExpressionMatchType)
+
+    implicit val smrt: ObjectType[Unit, StringMatchingResult] = stringMatchingResultType
+
+    implicit val cct: ObjectType[Unit, ColumnComparison] = matchingResultType(
+      "SqlColumnComparison",
+      buildStringMatchTypeType[ColumnWrapper, ColumnMatch]("SqlColumnMatch"),
+      StringType,
+      _.toString
+    )
+
+    implicit val jct: ObjectType[Unit, BinaryExpressionComparison] = matchingResultType(
+      "SqlBinaryExpressionComparison",
+      buildStringMatchTypeType[BinaryExpression, BinaryExpressionMatch]("SqlBinaryExpressionMatch"),
+      StringType,
+      _.toString
+    )
 
     implicit val act: ObjectType[Unit, AdditionalComparison] = additionalComparisonsType
 

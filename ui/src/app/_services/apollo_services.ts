@@ -1307,7 +1307,9 @@ export const ExerciseDocument = gql`
   }
 export const RegisterDocument = gql`
     mutation Register($username: String!, $firstPassword: String!, $secondPassword: String!) {
-  register(registerValues: {username: $username, firstPassword: $firstPassword, secondPassword: $secondPassword})
+  register(
+    registerValues: {username: $username, firstPassword: $firstPassword, secondPassword: $secondPassword}
+  )
 }
     `;
 

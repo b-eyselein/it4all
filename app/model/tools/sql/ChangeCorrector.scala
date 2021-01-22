@@ -1,7 +1,6 @@
 package model.tools.sql
 
-import model.matching.MatchingResult
-import model.tools.sql.matcher.{ExpressionListMatch, ExpressionListMatcher}
+import model.matching.{MatchingResult, StringMatch, StringMatcher}
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.expression.operators.relational.{ExpressionList, MultiExpressionList}
 import net.sf.jsqlparser.schema.Table
@@ -37,8 +36,11 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
   override protected def performAdditionalComparisons(userQuery: Insert, sampleQuery: Insert): AdditionalComparison = {
 
     // FIXME: correct inserted values!
-    val insertedValuesComparison: MatchingResult[ExpressionList, ExpressionListMatch] =
-      ExpressionListMatcher.doMatch(expressionLists(userQuery), expressionLists(sampleQuery))
+    val insertedValuesComparison: MatchingResult[String, StringMatch] = StringMatcher
+      .doMatch(
+        expressionLists(userQuery).map(_.toString),
+        expressionLists(sampleQuery).map(_.toString)
+      )
 
     AdditionalComparison(None, Some(insertedValuesComparison))
   }

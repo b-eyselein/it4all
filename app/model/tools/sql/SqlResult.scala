@@ -1,5 +1,6 @@
 package model.tools.sql
 
+import model.matching.StringMatcher.StringMatchingResult
 import model.points._
 import model.result.{AbstractCorrectionResult, InternalErrorResult}
 import model.tools.sql.SqlTool._
@@ -24,8 +25,8 @@ class SqlStatementException(cause: Throwable) extends Exception(cause) {
 }
 
 final case class SelectAdditionalComparisons(
-  groupByComparison: GroupByComparison,
-  orderByComparison: OrderByComparison,
+  groupByComparison: StringMatchingResult,
+  orderByComparison: StringMatchingResult,
   limitComparison: LimitComparison
 ) {
 
@@ -37,7 +38,7 @@ final case class SelectAdditionalComparisons(
 
 final case class AdditionalComparison(
   selectComparisons: Option[SelectAdditionalComparisons],
-  insertComparison: Option[InsertComparison]
+  insertComparison: Option[StringMatchingResult]
 ) {
 
   def points: Points = {
@@ -58,7 +59,7 @@ final case class AdditionalComparison(
 
 final case class SqlQueriesStaticComparison(
   columnComparison: ColumnComparison,
-  tableComparison: TableComparison,
+  tableComparison: StringMatchingResult,
   joinExpressionComparison: BinaryExpressionComparison,
   whereComparison: BinaryExpressionComparison,
   additionalComparisons: AdditionalComparison

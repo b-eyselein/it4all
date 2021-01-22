@@ -58,7 +58,7 @@ object RegexGraphQLModels
 
   private val regexExtractionEvaluationResultType: ObjectType[Unit, RegexExtractionSingleResult] = {
     implicit val extractedValuesComparisonType: ObjectType[Unit, ExtractedValuesComparison] =
-      matchingResultType("RegexExtractedValuesComparison", regexMatchMatchType)
+      matchingResultType("RegexExtractedValuesComparison", regexMatchMatchType, StringType, _.source.toString)
 
     deriveObjectType()
   }

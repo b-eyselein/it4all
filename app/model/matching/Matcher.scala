@@ -4,7 +4,7 @@ import model.points._
 
 trait Matcher[T, M <: Match[T]] {
 
-  protected def canMatch(t1: T, t2: T): Boolean
+  protected def canMatch(t1: T, t2: T): Boolean = t1 == t2
 
   protected def instantiateOnlyUserMatch(ua: T): M
 
@@ -43,7 +43,7 @@ trait Matcher[T, M <: Match[T]] {
           val points: Points    = addUp(allMatches.map(_.points))
           val maxPoints: Points = addUp(allMatches.map(_.maxPoints))
 
-          MatchingResult(allMatches, points, maxPoints)
+          MatchingResult(allMatches, Seq.empty, Seq.empty, points, maxPoints)
 
         case firstHead :: firstTail =>
           val (foundMatch, notMatchedInSecond) = findMatchInSecondCollection(firstHead, secondCollection)

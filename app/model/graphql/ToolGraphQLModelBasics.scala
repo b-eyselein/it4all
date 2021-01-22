@@ -1,7 +1,8 @@
 package model.graphql
 
 import model._
-import model.matching.{Match, MatchType, MatchingResult}
+import model.matching.StringMatcher.StringMatchingResult
+import model.matching.{Match, MatchType, MatchingResult, StringMatch}
 import model.result.AbstractCorrectionResult
 import sangria.macros.derive._
 import sangria.schema._
@@ -53,16 +54,46 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
       )
     )
 
-  protected def matchingResultType[T, M <: Match[T]](
+  protected def matchingResultType[T, M <: Match[T], TO](
     name: String,
-    mType: OutputType[M]
+    mType: OutputType[M],
+    tType: OutputType[TO],
+    t2to: T => TO
   ): ObjectType[Unit, MatchingResult[T, M]] =
     deriveObjectType(
       ObjectTypeName(s"${name}MatchingResult"),
       Interfaces(matchingResultInterface[T, M]),
       ExcludeFields("points", "maxPoints"),
-      ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches))
+      ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches)),
+      ReplaceField(
+        "notMatchedForUser",
+        Field("notMatchedForUser", ListType(tType), resolve = _.value.notMatchedForUser.map(t2to))
+      ),
+      ReplaceField(
+        "notMatchedForSample",
+        Field("notMatchedForSample", ListType(tType), resolve = _.value.notMatchedForUser.map(t2to))
+      )
     )
+
+  private val stringMatchType: ObjectType[Unit, StringMatch] = {
+    implicit val mtt: EnumType[MatchType] = matchTypeType
+
+    deriveObjectType()
+  }
+
+  protected val stringMatchingResultType: ObjectType[Unit, StringMatchingResult] =
+    ObjectType(
+      "StringMatchingResult",
+      fields[Unit, StringMatchingResult](
+        Field("points", FloatType, resolve = _.value.points.asDouble),
+        Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble),
+        Field("allMatches", ListType(stringMatchType), resolve = _.value.allMatches),
+        Field("notMatchedForUser", ListType(StringType), resolve = _.value.notMatchedForUser),
+        Field("notMatchedForSample", ListType(StringType), resolve = _.value.notMatchedForSample)
+      )
+    )
+
+  // Result
 
   protected val abstractResultInterfaceType: InterfaceType[Unit, AbstractCorrectionResult] = InterfaceType(
     "AbstractCorrectionResult",

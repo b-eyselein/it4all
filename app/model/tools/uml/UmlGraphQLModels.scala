@@ -1,10 +1,10 @@
 package model.tools.uml
 
+import model.KeyValueObject
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.matching.{MatchType, MatchingResult}
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
-import model.KeyValueObject
 import play.api.libs.json.OFormat
 import sangria.macros.derive._
 import sangria.marshalling.playJson._
@@ -32,6 +32,7 @@ object UmlGraphQLModels
 
   private val umlAttributeInputType: InputObjectType[UmlAttribute] = {
     implicit val uvt: EnumType[UmlVisibility] = umlVisibilityType
+
     deriveInputObjectType(InputObjectTypeName("UmlAttributeInput"))
   }
 
@@ -161,9 +162,10 @@ object UmlGraphQLModels
     implicit val uctt: EnumType[UmlClassType] = umlClassTypeType
 
     implicit val uact: ObjectType[Unit, MatchingResult[UmlAttribute, UmlAttributeMatch]] =
-      matchingResultType("UmlAttribute", umlAttributeMatchType)
+      matchingResultType("UmlAttribute", umlAttributeMatchType, umlAttributeType, identity)
+
     implicit val umct: ObjectType[Unit, MatchingResult[UmlMethod, UmlMethodMatch]] =
-      matchingResultType("UmlMethod", umlMethodMatchType)
+      matchingResultType("UmlMethod", umlMethodMatchType, umlMethodType, identity)
 
     deriveObjectType()
   }
@@ -215,11 +217,13 @@ object UmlGraphQLModels
 
   private val umlResultType: ObjectType[Unit, UmlResult] = {
     implicit val cct: ObjectType[Unit, ClassComparison] =
-      matchingResultType("UmlClass", umlClassMatchType)
+      matchingResultType("UmlClass", umlClassMatchType, umlClassType, identity)
+
     implicit val act: ObjectType[Unit, AssociationComparison] =
-      matchingResultType("UmlAssociation", umlAssociationMatchType)
+      matchingResultType("UmlAssociation", umlAssociationMatchType, umlAssociationType, identity)
+
     implicit val ict: ObjectType[Unit, ImplementationComparison] =
-      matchingResultType("UmlImplementation", umlImplementationMatchType)
+      matchingResultType("UmlImplementation", umlImplementationMatchType, umlImplementationType, identity)
 
     deriveObjectType[Unit, UmlResult](
       Interfaces(umlAbstractResultType),

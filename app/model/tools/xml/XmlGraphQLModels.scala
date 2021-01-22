@@ -88,8 +88,9 @@ object XmlGraphQLModels
 
   private val xmlGrammarResultType: ObjectType[Unit, XmlGrammarResult] = {
     implicit val dpet: ObjectType[Unit, DTDParseException] = dtdParseExceptionType
+
     implicit val elct: ObjectType[Unit, XmlTool.ElementLineComparison] =
-      matchingResultType[ElementLine, ElementLineMatch]("XmlElementLineComparison", elementLineMatchType)
+      matchingResultType("XmlElementLineComparison", elementLineMatchType, elementLineType, identity)
 
     deriveObjectType()
   }

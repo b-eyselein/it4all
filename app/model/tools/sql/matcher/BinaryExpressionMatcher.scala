@@ -11,18 +11,16 @@ final case class BinaryExpressionMatch(
   sampleArg: Option[BinaryExpression]
 ) extends Match[BinaryExpression] {
 
-  override def points: Points =
-    matchType match {
-      case MatchType.SUCCESSFUL_MATCH   => singlePoint
-      case MatchType.UNSUCCESSFUL_MATCH => singleHalfPoint
-      case _                            => zeroPoints
-    }
+  override def points: Points = matchType match {
+    case MatchType.SUCCESSFUL_MATCH   => singlePoint
+    case MatchType.UNSUCCESSFUL_MATCH => singleHalfPoint
+    case _                            => zeroPoints
+  }
 
-  override def maxPoints: Points =
-    sampleArg match {
-      case None    => zeroPoints
-      case Some(_) => singlePoint
-    }
+  override def maxPoints: Points = sampleArg match {
+    case None    => zeroPoints
+    case Some(_) => singlePoint
+  }
 
 }
 
@@ -45,10 +43,9 @@ final case class BinaryExpressionMatcher(
         }
     }
 
-  override protected def canMatch(binEx1: BinaryExpression, binEx2: BinaryExpression): Boolean = {
+  private def maybeTableAlias(col: Column): Option[String] = Option(col.getTable).map(_.getName)
 
-    def maybeTableAlias(col: Column): Option[String] = Option(col.getTable).map(_.getName)
-
+  override protected def canMatch(binEx1: BinaryExpression, binEx2: BinaryExpression): Boolean =
     getColToCompare(binEx1) match {
       case None => ???
       case Some(colComp1) =>
@@ -61,7 +58,6 @@ final case class BinaryExpressionMatcher(
             colComp1.getColumnName == colComp2.getColumnName && table1 == table2
         }
     }
-  }
 
   override protected def instantiateOnlySampleMatch(sa: BinaryExpression): BinaryExpressionMatch =
     BinaryExpressionMatch(MatchType.ONLY_SAMPLE, None, Some(sa))

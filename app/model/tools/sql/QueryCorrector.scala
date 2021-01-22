@@ -1,5 +1,6 @@
 package model.tools.sql
 
+import model.matching.StringMatcher
 import model.points._
 import model.tools.AbstractCorrector
 import model.tools.sql.matcher._
@@ -90,7 +91,7 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
 
     SqlQueriesStaticComparison(
       ColumnMatcher.doMatch(userColumns, getColumnWrappers(sampleQ)),
-      TableMatcher.doMatch(userTables, sampleTables),
+      StringMatcher.doMatch(userTables.map(_.getName), sampleTables.map(_.getName)),
       binExMatcher.doMatch(userJoinExpressions, getJoinExpressions(sampleQ)),
       binExMatcher.doMatch(userExpressions, getExpressions(sampleQ)),
       performAdditionalComparisons(userQ, sampleQ)

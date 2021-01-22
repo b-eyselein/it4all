@@ -35,33 +35,9 @@ fragment ColumnComparison on SqlColumnComparisonMatchingResult {
   ...SqlMatchingResult
 }
 
-# Table comparison
-
-fragment TableComparison on SqlTableComparisonMatchingResult {
-  ...SqlMatchingResult
-}
-
 # JoinExpression / Where Comparison
 
 fragment BinaryExpressionComparison on SqlBinaryExpressionComparisonMatchingResult {
-  ...SqlMatchingResult
-}
-
-# Insert comparison
-
-fragment InsertComparison on SqlInsertComparisonMatchingResult {
-  ...SqlMatchingResult
-}
-
-# Group by comparison
-
-fragment  GroupByComparison on SqlGroupByComparisonMatchingResult {
-  ...SqlMatchingResult
-}
-
-# Order By comparison
-
-fragment OrderByComparison on SqlOrderByComparisonMatchingResult {
   ...SqlMatchingResult
 }
 
@@ -75,10 +51,10 @@ fragment LimitComparison on SqlLimitComparisonMatchingResult {
 
 fragment SelectAdditionalComparison on SelectAdditionalComparisons {
   groupByComparison {
-    ...GroupByComparison
+    ...StringMatchingResult
   }
   orderByComparison {
-    ...OrderByComparison
+    ...StringMatchingResult
   }
   limitComparison {
     ...LimitComparison
@@ -93,8 +69,7 @@ fragment SqlResult on SqlResult {
       ...ColumnComparison
     }
     tableComparison {
-      ...SqlMatchingResult
-      ...TableComparison
+      ...StringMatchingResult
     }
     joinExpressionComparison {
       ...BinaryExpressionComparison
@@ -107,7 +82,7 @@ fragment SqlResult on SqlResult {
         ...SelectAdditionalComparison
       }
       insertComparison {
-        ...InsertComparison
+        ...StringMatchingResult
       }
     }
   }
@@ -149,6 +124,22 @@ fragment SqlCell on SqlCell {
 }
 
 # other fragments
+
+fragment StringMatch on StringMatch {
+  matchType
+  sampleArg
+  userArg
+}
+
+fragment StringMatchingResult on StringMatchingResult {
+  points
+  maxPoints
+  allMatches {
+    ...StringMatch
+  }
+  notMatchedForUser
+  notMatchedForSample
+}
 
 fragment NewMatch on NewMatch {
   matchType

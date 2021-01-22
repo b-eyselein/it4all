@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
 import {ExerciseFileFragment} from '../../../../_services/apollo_services';
 
@@ -13,7 +13,7 @@ interface ActivatableExerciseFile {
   styleUrls: ['./exercise-files-editor.component.sass'],
   encapsulation: ViewEncapsulation.None // Style child component with same sass
 })
-export class ExerciseFilesEditorComponent implements OnChanges {
+export class ExerciseFilesEditorComponent implements OnChanges, OnInit {
 
   @Input() exerciseFileFragments: ExerciseFileFragment[];
   @Input() mode: string;
@@ -22,7 +22,7 @@ export class ExerciseFilesEditorComponent implements OnChanges {
 
   currentFileName: string | undefined = undefined;
 
-  editorOptions = getDefaultEditorOptions(this.mode);
+  editorOptions: any;
 
   private theContent = '';
 
@@ -42,6 +42,10 @@ export class ExerciseFilesEditorComponent implements OnChanges {
     if (this.currentFileName) {
       this.activatableExerciseFiles.find((f) => f.file.name === this.currentFileName).file.content = this.content;
     }
+  }
+
+  ngOnInit() {
+    this.editorOptions = getDefaultEditorOptions(this.mode);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

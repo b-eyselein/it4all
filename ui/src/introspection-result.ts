@@ -123,19 +123,7 @@
             "name": "SqlColumnComparisonMatchingResult"
           },
           {
-            "name": "SqlGroupByComparisonMatchingResult"
-          },
-          {
-            "name": "SqlInsertComparisonMatchingResult"
-          },
-          {
             "name": "SqlLimitComparisonMatchingResult"
-          },
-          {
-            "name": "SqlOrderByComparisonMatchingResult"
-          },
-          {
-            "name": "SqlTableComparisonMatchingResult"
           },
           {
             "name": "UmlAssociationMatchingResult"
@@ -174,19 +162,7 @@
             "name": "SqlColumnMatch"
           },
           {
-            "name": "SqlGroupByMatch"
-          },
-          {
-            "name": "SqlInsertMatch"
-          },
-          {
             "name": "SqlLimitMatch"
-          },
-          {
-            "name": "SqlOrderByMatch"
-          },
-          {
-            "name": "SqlTableMatch"
           },
           {
             "name": "UmlAssociationMatch"

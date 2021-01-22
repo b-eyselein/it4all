@@ -1,5 +1,5 @@
-import {Component, Input, OnChanges, SimpleChanges, ViewEncapsulation} from '@angular/core';
-import {SqlMatchingResultFragment} from '../../sql-apollo-mutations.service';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {StringMatchFragment, StringMatchingResultFragment} from '../../sql-apollo-mutations.service';
 import {MatchType, NewMatch} from '../../../../../_interfaces/graphql-types';
 
 @Component({
@@ -12,7 +12,8 @@ import {MatchType, NewMatch} from '../../../../../_interfaces/graphql-types';
     <div class="content" *ngIf="!successful">
       <ul>
         <li *ngFor="let match of matchingResult.allMatches" [class]="getCssClassForMatchType(match.matchType)">
-          Die Angabe {{matchSingularName}} <code>{{getArgDescription(match)}}</code> {{getTextForMatchType(match.matchType)}}.
+          Die Angabe {{matchSingularName}}
+          <code>{{getArgDescription(match)}}</code> {{getTextForMatchType(match.matchType)}}.
         </li>
       </ul>
     </div>
@@ -23,20 +24,21 @@ export class SqlMatchingResultComponent implements OnChanges {
   @Input() matchName: string;
   @Input() matchSingularName: string;
 
-  @Input() matchingResult: SqlMatchingResultFragment;
+  @Input() matchingResult: StringMatchingResultFragment;
 
   successful: boolean;
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.successful = this.matchingResult.allMatches.every((m) => m.matchType === MatchType.SuccessfulMatch);
+    this.successful = this.matchingResult.allMatches
+      .every((m) => m.matchType === MatchType.SuccessfulMatch);
   }
 
   getCssClassForMatchType(matchType: MatchType): string {
     return (matchType === MatchType.SuccessfulMatch) ? 'has-text-success' : 'has-text-danger';
   }
 
-  getArgDescription(match: NewMatch): string {
-    return match.matchType === MatchType.OnlySample ? match.sampleArgDescription : match.userArgDescription;
+  getArgDescription(match: StringMatchFragment): string {
+    return match.matchType === MatchType.OnlySample ? match.sampleArg : match.userArg;
   }
 
   getTextForMatchType(matchType: MatchType): string {

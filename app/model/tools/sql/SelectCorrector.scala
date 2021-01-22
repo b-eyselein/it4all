@@ -1,9 +1,9 @@
 package model.tools.sql
 
-import model.tools.sql.SqlTool.LimitComparison
+import model.matching.StringMatcher
 import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
-import net.sf.jsqlparser.schema.Table
+import net.sf.jsqlparser.schema.{Column, Table}
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select._
 import play.api.Logger
@@ -87,44 +87,45 @@ object SelectCorrector extends QueryCorrector("SELECT") {
     AdditionalComparison(
       Some(
         SelectAdditionalComparisons(
-          GroupByMatcher.doMatch(groupByElements(userQuery), groupByElements(sampleQuery)),
-          OrderByMatcher.doMatch(orderByElements(userQuery), orderByElements(sampleQuery)),
-          compareLimitElement(userQuery, sampleQuery)
+          StringMatcher.doMatch(groupByElements(userQuery), groupByElements(sampleQuery)),
+          StringMatcher.doMatch(orderByElements(userQuery), orderByElements(sampleQuery)),
+          LimitMatcher.doMatch(limitElement(userQuery).toSeq, limitElement(sampleQuery).toSeq)
         )
       ),
       None
     )
 
-  private def compareLimitElement(userQ: Q, sampleQ: Q): LimitComparison = {
-    val maybeUserLimit: Option[Limit] = limitElement(userQ)
-    val maybeSampleLimit              = limitElement(sampleQ)
-
-    LimitMatcher.doMatch(maybeUserLimit.toSeq, maybeSampleLimit.toSeq)
+  private def orderByElements(userQ: Q): Seq[String] = userQ.getSelectBody match {
+    case ps: PlainSelect =>
+      Option(ps.getOrderByElements)
+        .map(_.asScala)
+        .getOrElse(Seq.empty)
+        .map(_.toString)
+        .toSeq
+    case _ => Seq.empty
   }
 
-  private def orderByElements(userQ: Q): Seq[OrderByElement] =
-    userQ.getSelectBody match {
-      case ps: PlainSelect => Option(ps.getOrderByElements).map(_.asScala).getOrElse(Seq[OrderByElement]()).toSeq
-      case _               => Seq[OrderByElement]()
-    }
+  private def groupByElements(query: Q): Seq[String] = query.getSelectBody match {
+    case ps: PlainSelect =>
+      Option(ps.getGroupBy)
+        .map(_.getGroupByExpressions.asScala)
+        .getOrElse(Seq.empty)
+        .flatMap {
+          case c: Column => Some(c.getColumnName)
+          case _         => None
+        }
+        .toSeq
+    case _ => Seq.empty
+  }
 
-  private def groupByElements(query: Q): Seq[Expression] =
-    query.getSelectBody match {
-      case ps: PlainSelect =>
-        Option(ps.getGroupBy).map(_.getGroupByExpressions.asScala).getOrElse(Seq[Expression]()).toSeq
-      case _ => Seq[Expression]()
-    }
+  private def limitElement(query: Q): Option[Limit] = query.getSelectBody match {
+    case ps: PlainSelect => Option(ps.getLimit)
+    case _               => None
+  }
 
-  private def limitElement(query: Q): Option[Limit] =
-    query.getSelectBody match {
-      case ps: PlainSelect => Option(ps.getLimit)
-      case _               => None
-    }
-
-  override protected def checkStatement(statement: Statement): Try[Select] =
-    statement match {
-      case q: Select        => Success(q)
-      case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
-    }
+  override protected def checkStatement(statement: Statement): Try[Select] = statement match {
+    case q: Select        => Success(q)
+    case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
+  }
 
 }
