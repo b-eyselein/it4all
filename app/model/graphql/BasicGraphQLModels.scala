@@ -18,8 +18,6 @@ trait BasicGraphQLModels {
 
   protected val toolStateType: EnumType[ToolState] = deriveEnumType()
 
-//  protected val levelEnumType: EnumType[Level] = deriveEnumType()
-
   protected val levelType: ObjectType[Unit, Level] = ObjectType(
     "Level",
     fields[Unit, Level](
