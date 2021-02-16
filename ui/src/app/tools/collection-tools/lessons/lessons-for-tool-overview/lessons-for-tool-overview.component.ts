@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {LessonIdentifierFragment, LessonsForToolGQL, LessonsForToolQuery} from '../../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
-import {AuthenticationService} from '../../../../_services/authentication.service';
 
 @Component({
   template: `
@@ -43,21 +42,15 @@ export class LessonsForToolOverviewComponent implements OnInit, OnDestroy {
 
   lessonsForToolQuery: LessonsForToolQuery;
 
-  constructor(
-    private authenticationService: AuthenticationService,
-    private route: ActivatedRoute,
-    private lessonsForToolGQL: LessonsForToolGQL
-  ) {
+  constructor(private route: ActivatedRoute, private lessonsForToolGQL: LessonsForToolGQL) {
   }
 
   ngOnInit() {
-    const userJwt = this.authenticationService.currentUserValue.jwt;
-
     this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
 
       this.lessonsForToolGQL
-        .watch({userJwt, toolId})
+        .watch({toolId})
         .valueChanges
         .subscribe(({data}) => this.lessonsForToolQuery = data);
     });

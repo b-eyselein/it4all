@@ -4,23 +4,22 @@ import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exer
 import {
   ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
-  NormalUnitTestPartFragment,
-  ProgrammingExerciseContentFragment
-} from '../../../../_services/apollo_services';
-import {
+  FilesSolution,
+  FilesSolutionInput,
   NormalExecutionResultFragment,
+  NormalUnitTestPartFragment,
+  ProgExPart,
   ProgrammingAbstractResultFragment,
   ProgrammingCorrectionGQL,
   ProgrammingCorrectionMutation,
   ProgrammingCorrectionMutationVariables,
   ProgrammingCorrectionResultFragment,
+  ProgrammingExerciseContentFragment,
   ProgrammingInternalErrorResultFragment,
   ProgrammingResultFragment,
   SimplifiedExecutionResultFragment,
   UnitTestCorrectionResultFragment
-} from '../programming-apollo-mutations.service';
-import {FilesSolution, FilesSolutionInput, ProgExPart} from '../../../../_interfaces/graphql-types';
-import {AuthenticationService} from '../../../../_services/authentication.service';
+} from '../../../../_services/apollo_services';
 import {FilesExerciseComponent} from "../../_components/files-exercise/files-exercise.component";
 
 import 'codemirror/mode/python/python';
@@ -52,11 +51,7 @@ export class ProgrammingExerciseComponent
 
   exerciseFiles: ExerciseFileFragment[] = [];
 
-  constructor(
-    private authenticationService: AuthenticationService,
-    programmingCorrectionGQL: ProgrammingCorrectionGQL,
-    dexieService: DexieService
-  ) {
+  constructor(programmingCorrectionGQL: ProgrammingCorrectionGQL, dexieService: DexieService) {
     super(programmingCorrectionGQL, dexieService);
   }
 
@@ -88,7 +83,6 @@ export class ProgrammingExerciseComponent
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
       part: this.contentFragment.programmingPart,
-      userJwt: this.authenticationService.currentUserValue.jwt
     };
   }
 

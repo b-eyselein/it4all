@@ -1,7 +1,5 @@
 package model.graphql
 
-import java.time.Clock
-
 import com.github.t3hnar.bcrypt._
 import model._
 import model.mongo.MongoClientQueries
@@ -14,6 +12,7 @@ import sangria.macros.derive._
 import sangria.marshalling.playJson._
 import sangria.schema._
 
+import java.time.Clock
 import scala.concurrent.Future
 
 trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries {
@@ -154,9 +153,9 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
     }
   )
 
-  protected val MutationType: ObjectType[Unit, Unit] = ObjectType(
+  protected val MutationType: ObjectType[GraphQLContext, Unit] = ObjectType(
     "Mutation",
-    fields = fields[Unit, Unit](
+    fields = fields[GraphQLContext, Unit](
       Field(
         "register",
         OptionType(StringType),
@@ -169,12 +168,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
         arguments = userCredentialsArgument :: Nil,
         resolve = context => authenticate(context.arg(userCredentialsArgument))
       ),
-      Field(
-        "me",
-        OptionType(loggedInUserMutationType),
-        arguments = userJwtArgument :: Nil,
-        resolve = context => deserializeJwt(context.arg(userJwtArgument))
-      )
+      Field("me", OptionType(loggedInUserMutationType), resolve = context => context.ctx.loggedInUser)
     )
   )
 

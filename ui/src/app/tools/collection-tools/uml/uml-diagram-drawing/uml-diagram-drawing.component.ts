@@ -7,20 +7,21 @@ import {umlAssocfromConnection, umlImplfromConnection} from '../_model/my-uml-in
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
-import {ExerciseSolveFieldsFragment, UmlExerciseContentFragment} from '../../../../_services/apollo_services';
 import {
+  ExerciseSolveFieldsFragment,
   UmlAbstractResultFragment,
+  UmlClassDiagramInput,
   UmlCorrectionGQL,
   UmlCorrectionMutation,
   UmlCorrectionMutationVariables,
   UmlCorrectionResultFragment,
+  UmlExerciseContentFragment,
+  UmlExPart,
   UmlInternalErrorResultFragment,
   UmlResultFragment
-} from '../uml-apollo-mutations.service';
-import {UmlClassDiagramInput, UmlExPart} from '../../../../_interfaces/graphql-types';
+} from '../../../../_services/apollo_services';
 
 import * as joint from 'jointjs';
-import {AuthenticationService} from '../../../../_services/authentication.service';
 
 
 enum CreatableClassDiagramObject {
@@ -75,7 +76,7 @@ export class UmlDiagramDrawingComponent
 
   readonly debug = !environment.production;
 
-  constructor(private authenticationService: AuthenticationService, umlCorrectionGQL: UmlCorrectionGQL, dexieService: DexieService) {
+  constructor(umlCorrectionGQL: UmlCorrectionGQL, dexieService: DexieService) {
     super(umlCorrectionGQL, dexieService);
   }
 
@@ -277,7 +278,6 @@ export class UmlDiagramDrawingComponent
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
       part: this.contentFragment.umlPart,
-      userJwt: this.authenticationService.currentUserValue.jwt
     };
   }
 

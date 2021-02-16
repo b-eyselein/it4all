@@ -1,5 +1,5 @@
-mutation SqlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
-  me(userJwt: $userJwt) {
+mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
+  me {
     sqlExercise(collId: $collId, exId: $exId) {
       correct(part: $part, solution: $solution) {
         ...SqlCorrectionResult

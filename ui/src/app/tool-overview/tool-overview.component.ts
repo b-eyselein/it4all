@@ -1,9 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {randomTools} from '../tools/random-tools/random-tools-list';
 import {RandomTool} from '../tools/random-tools/random-tool';
-import {CollectionToolFragment, ToolOverviewGQL, ToolOverviewQuery} from '../_services/apollo_services';
-import {ToolState} from '../_interfaces/graphql-types';
-import {AuthenticationService} from '../_services/authentication.service';
+import {CollectionToolFragment, ToolOverviewGQL, ToolOverviewQuery, ToolState} from '../_services/apollo_services';
 
 @Component({templateUrl: './tool-overview.component.html'})
 export class ToolOverviewComponent implements OnInit {
@@ -12,17 +10,12 @@ export class ToolOverviewComponent implements OnInit {
 
   toolOverviewQuery: ToolOverviewQuery;
 
-  constructor(
-    private authenticationService: AuthenticationService,
-    private toolOverviewGQL: ToolOverviewGQL
-  ) {
+  constructor(private toolOverviewGQL: ToolOverviewGQL) {
   }
 
   ngOnInit(): void {
-    const userJwt = this.authenticationService.currentUserValue.jwt;
-
     this.toolOverviewGQL
-      .watch({userJwt})
+      .watch()
       .valueChanges
       .subscribe(({data}) => this.toolOverviewQuery = data);
   }

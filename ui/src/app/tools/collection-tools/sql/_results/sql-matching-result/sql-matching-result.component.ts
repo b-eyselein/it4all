@@ -1,6 +1,5 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {StringMatchFragment, StringMatchingResultFragment} from '../../sql-apollo-mutations.service';
-import {MatchType, NewMatch} from '../../../../../_interfaces/graphql-types';
+import {MatchType, StringMatchFragment, StringMatchingResultFragment} from '../../../../../_services/apollo_services';
 
 @Component({
   selector: 'it4all-sql-matching-result',

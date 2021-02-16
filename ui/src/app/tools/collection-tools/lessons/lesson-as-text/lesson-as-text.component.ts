@@ -6,8 +6,10 @@ import {
   LessonMultipleChoiceQuestionContentFragment,
   LessonTextContentFragment
 } from '../../../../_services/apollo_services';
-import {AuthenticationService} from '../../../../_services/authentication.service';
-import {isSolvableLessonMultipleChoiceQuestionContentFragment, isSolvableLessonTextContentFragment} from '../solvable-lesson-content';
+import {
+  isSolvableLessonMultipleChoiceQuestionContentFragment,
+  isSolvableLessonTextContentFragment
+} from '../solvable-lesson-content';
 import {Subscription} from 'rxjs';
 
 type ContentFragment = LessonTextContentFragment | LessonMultipleChoiceQuestionContentFragment;
@@ -20,22 +22,16 @@ export class LessonAsTextComponent implements OnInit, OnDestroy {
   lessonQuery: LessonAsTextQuery;
   currentIndex = 0;
 
-  constructor(
-    private authenticationService: AuthenticationService,
-    private route: ActivatedRoute,
-    private lessonGQL: LessonAsTextGQL,
-  ) {
+  constructor(private route: ActivatedRoute, private lessonGQL: LessonAsTextGQL) {
   }
 
   ngOnInit() {
-    const userJwt = this.authenticationService.currentUserValue.jwt;
-
     this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
       const lessonId = parseInt(paramMap.get('lessonId'), 10);
 
       this.lessonGQL
-        .watch({userJwt, toolId, lessonId})
+        .watch({toolId, lessonId})
         .valueChanges
         .subscribe(({data}) => this.lessonQuery = data);
     });

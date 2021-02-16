@@ -1,30 +1,27 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
-import {DexieService} from '../../../../_services/dexie.service';
 import {
   ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
-  XmlExerciseContentFragment
-} from '../../../../_services/apollo_services';
-import {
   XmlAbstractResultFragment,
   XmlCorrectionGQL,
   XmlCorrectionMutation,
   XmlCorrectionMutationVariables,
   XmlCorrectionResultFragment,
   XmlDocumentResultFragment,
+  XmlExerciseContentFragment,
   XmlExPart,
   XmlGrammarResultFragment,
   XmlInternalErrorResultFragment,
   XmlResultFragment,
   XmlSolution,
   XmlSolutionInput
-} from '../xml-apollo-mutations.service';
-import {AuthenticationService} from '../../../../_services/authentication.service';
+} from '../../../../_services/apollo_services';
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
 import {HasSampleSolutions} from "../../_helpers/correction-helpers";
+import {DexieService} from "../../../../_services/dexie.service";
 
 
 export function getIdForXmlExPart(xmlExPart: XmlExPart): string {
@@ -69,7 +66,7 @@ export class XmlExerciseComponent
 
   exerciseFileFragments: ExerciseFileFragment[] = [];
 
-  constructor(private authenticationService: AuthenticationService, xmlCorrectionGQL: XmlCorrectionGQL, dexieService: DexieService) {
+  constructor(xmlCorrectionGQL: XmlCorrectionGQL, dexieService: DexieService) {
     super(xmlCorrectionGQL, dexieService);
   }
 
@@ -121,7 +118,6 @@ export class XmlExerciseComponent
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
       part: this.contentFragment.xmlPart,
-      userJwt: this.authenticationService.currentUserValue.jwt
     };
   }
 

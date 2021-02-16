@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {SqlCellFragment, SqlQueryResultFragment, SqlRowFragment} from '../../sql-apollo-mutations.service';
+import {SqlCellFragment, SqlQueryResultFragment, SqlRowFragment} from "../../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-query-result-table',

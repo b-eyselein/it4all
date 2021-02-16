@@ -1,9 +1,22 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {UmlImplementationMatchFragment} from '../../uml-apollo-mutations.service';
+import {UmlImplementationMatchFragment} from "../../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-uml-impl-match',
-  templateUrl: './uml-impl-match.component.html'
+  template: `
+    <div [ngClass]="isCorrect ? 'has-text-dark-success' : 'has-text-danger'">
+      Die Vererbung von <code>{{subClass}}</code> nach <code>{{superClass}}</code> {{wordForMatchType}}
+
+      <div *ngIf="implMatch.matchType === 'UNSUCCESSFUL_MATCH' || implMatch.matchType ==='PARTIAL_MATCH'"
+           class="content">
+        <ul>
+          <li [ngClass]="directionCorrect ? 'has-text-dark-success' : 'has-text-danger'">
+            Die Vererbungsrichtung war {{directionCorrect ? '' : 'nicht'}} korrekt.
+          </li>
+        </ul>
+      </div>
+    </div>
+  `
 })
 export class UmlImplMatchComponent implements OnChanges {
 

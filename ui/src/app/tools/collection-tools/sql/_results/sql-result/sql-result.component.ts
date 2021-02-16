@@ -5,7 +5,7 @@ import {
   SelectAdditionalComparisonFragment,
   SqlResultFragment,
   StringMatchingResultFragment,
-} from '../../sql-apollo-mutations.service';
+} from '../../../../../_services/apollo_services';
 
 @Component({
   selector: 'it4all-sql-result',

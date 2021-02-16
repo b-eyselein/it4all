@@ -1,11 +1,12 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {MatchType, UmlImplementationMatch} from '../../../../../_interfaces/graphql-types';
 import {
+  MatchType,
   UmlAssociationMatchFragment,
   UmlAssociationMatchingResultFragment,
+  UmlImplementationMatch,
   UmlImplementationMatchingResultFragment,
   UmlResultFragment
-} from '../../uml-apollo-mutations.service';
+} from '../../../../../_services/apollo_services';
 
 @Component({
   selector: 'it4all-uml-diag-drawing-correction',

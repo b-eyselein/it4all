@@ -13,6 +13,10 @@ final case class GraphQLRequest(
   variables: Option[JsObject]
 )
 
+final case class GraphQLContext(
+  loggedInUser: Option[LoggedInUser]
+)
+
 trait GraphQLModel
     extends BasicGraphQLModels
     with CollectionGraphQLModel
@@ -98,18 +102,13 @@ trait GraphQLModel
     )
   )
 
-  private val QueryType: ObjectType[Unit, Unit] = ObjectType(
+  private val QueryType: ObjectType[GraphQLContext, Unit] = ObjectType(
     "Query",
-    fields[Unit, Unit](
-      Field(
-        "me",
-        OptionType(loggedInUserType),
-        arguments = userJwtArgument :: Nil,
-        resolve = context => deserializeJwt(context.arg(userJwtArgument))
-      )
+    fields[GraphQLContext, Unit](
+      Field("me", OptionType(loggedInUserType), resolve = context => context.ctx.loggedInUser)
     )
   )
 
-  val schema: Schema[Unit, Unit] = Schema(QueryType, mutation = Some(MutationType))
+  val schema: Schema[GraphQLContext, Unit] = Schema(QueryType, mutation = Some(MutationType))
 
 }

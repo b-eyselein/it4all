@@ -249,11 +249,6 @@ export type MutationLoginArgs = {
   credentials: UserCredentials;
 };
 
-
-export type MutationMeArgs = {
-  userJwt: Scalars['String'];
-};
-
 export type NewMatch = {
   matchType: MatchType;
   userArgDescription?: Maybe<Scalars['String']>;
@@ -1163,11 +1158,6 @@ export type Query = {
   me?: Maybe<User>;
 };
 
-
-export type QueryMeArgs = {
-  userJwt: Scalars['String'];
-};
-
 export enum RegexCorrectionType {
   Matching = 'MATCHING',
   Extraction = 'EXTRACTION'
@@ -1461,13 +1451,958 @@ export type XmlSolution = {
 };
 
 
+export type FlaskCorrectionMutationVariables = Exact<{
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: FlaskExercisePart;
+  solution: FilesSolutionInput;
+}>;
+
+
+export type FlaskCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { flaskExercise?: Maybe<(
+      { __typename?: 'FlaskExerciseMutations' }
+      & { correct: (
+        { __typename?: 'FlaskCorrectionResult' }
+        & FlaskCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type FlaskCorrectionResultFragment = (
+  { __typename?: 'FlaskCorrectionResult' }
+  & Pick<FlaskCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'FlaskInternalErrorResult' }
+    & FlaskAbstractCorrectionResult_FlaskInternalErrorResult_Fragment
+  ) | (
+    { __typename?: 'FlaskResult' }
+    & FlaskAbstractCorrectionResult_FlaskResult_Fragment
+  ) }
+);
+
+type FlaskAbstractCorrectionResult_FlaskInternalErrorResult_Fragment = (
+  { __typename: 'FlaskInternalErrorResult' }
+  & Pick<FlaskInternalErrorResult, 'points' | 'maxPoints'>
+  & FlaskInternalErrorResultFragment
+);
+
+type FlaskAbstractCorrectionResult_FlaskResult_Fragment = (
+  { __typename: 'FlaskResult' }
+  & Pick<FlaskResult, 'points' | 'maxPoints'>
+  & FlaskResultFragment
+);
+
+export type FlaskAbstractCorrectionResultFragment = FlaskAbstractCorrectionResult_FlaskInternalErrorResult_Fragment | FlaskAbstractCorrectionResult_FlaskResult_Fragment;
+
+export type FlaskInternalErrorResultFragment = (
+  { __typename?: 'FlaskInternalErrorResult' }
+  & Pick<FlaskInternalErrorResult, 'msg'>
+);
+
+export type FlaskResultFragment = (
+  { __typename?: 'FlaskResult' }
+  & { testResults: Array<(
+    { __typename?: 'FlaskTestResult' }
+    & FlaskTestResultFragment
+  )> }
+);
+
+export type FlaskTestResultFragment = (
+  { __typename?: 'FlaskTestResult' }
+  & Pick<FlaskTestResult, 'testName' | 'successful' | 'stdout' | 'stderr'>
+);
+
+export type ProgrammingCorrectionMutationVariables = Exact<{
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: ProgExPart;
+  solution: FilesSolutionInput;
+}>;
+
+
+export type ProgrammingCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { programmingExercise?: Maybe<(
+      { __typename?: 'ProgrammingExerciseMutations' }
+      & { correct: (
+        { __typename?: 'ProgrammingCorrectionResult' }
+        & ProgrammingCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type ProgrammingCorrectionResultFragment = (
+  { __typename: 'ProgrammingCorrectionResult' }
+  & Pick<ProgrammingCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'ProgrammingInternalErrorResult' }
+    & ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment
+    & ProgrammingInternalErrorResultFragment
+  ) | (
+    { __typename?: 'ProgrammingResult' }
+    & ProgrammingAbstractResult_ProgrammingResult_Fragment
+    & ProgrammingResultFragment
+  ) }
+);
+
+type ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment = (
+  { __typename: 'ProgrammingInternalErrorResult' }
+  & Pick<ProgrammingInternalErrorResult, 'points' | 'maxPoints'>
+);
+
+type ProgrammingAbstractResult_ProgrammingResult_Fragment = (
+  { __typename: 'ProgrammingResult' }
+  & Pick<ProgrammingResult, 'points' | 'maxPoints'>
+);
+
+export type ProgrammingAbstractResultFragment = ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment | ProgrammingAbstractResult_ProgrammingResult_Fragment;
+
+export type ProgrammingInternalErrorResultFragment = (
+  { __typename?: 'ProgrammingInternalErrorResult' }
+  & Pick<ProgrammingInternalErrorResult, 'msg'>
+);
+
+export type ProgrammingResultFragment = (
+  { __typename?: 'ProgrammingResult' }
+  & { simplifiedResults: Array<(
+    { __typename?: 'SimplifiedExecutionResult' }
+    & SimplifiedExecutionResultFragment
+  )>, normalResult?: Maybe<(
+    { __typename?: 'NormalExecutionResult' }
+    & NormalExecutionResultFragment
+  )>, unitTestResults: Array<(
+    { __typename?: 'UnitTestCorrectionResult' }
+    & UnitTestCorrectionResultFragment
+  )> }
+);
+
+export type SimplifiedExecutionResultFragment = (
+  { __typename: 'SimplifiedExecutionResult' }
+  & Pick<SimplifiedExecutionResult, 'testId' | 'success' | 'testInput' | 'awaited' | 'gotten'>
+);
+
+export type NormalExecutionResultFragment = (
+  { __typename: 'NormalExecutionResult' }
+  & Pick<NormalExecutionResult, 'successful' | 'logs'>
+);
+
+export type UnitTestCorrectionResultFragment = (
+  { __typename: 'UnitTestCorrectionResult' }
+  & Pick<UnitTestCorrectionResult, 'testId' | 'successful' | 'description'>
+);
+
+export type RegexCorrectionMutationVariables = Exact<{
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: RegexExPart;
+  solution: Scalars['String'];
+}>;
+
+
+export type RegexCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { regexExercise?: Maybe<(
+      { __typename?: 'RegexExerciseMutations' }
+      & { correct: (
+        { __typename?: 'RegexCorrectionResult' }
+        & RegexCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type RegexCorrectionResultFragment = (
+  { __typename?: 'RegexCorrectionResult' }
+  & Pick<RegexCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'RegexExtractionResult' }
+    & RegexAbstractResult_RegexExtractionResult_Fragment
+    & RegexExtractionResultFragment
+  ) | (
+    { __typename?: 'RegexInternalErrorResult' }
+    & RegexAbstractResult_RegexInternalErrorResult_Fragment
+    & RegexInternalErrorResultFragment
+  ) | (
+    { __typename?: 'RegexMatchingResult' }
+    & RegexAbstractResult_RegexMatchingResult_Fragment
+    & RegexMatchingResultFragment
+  ) }
+);
+
+type RegexAbstractResult_RegexExtractionResult_Fragment = (
+  { __typename: 'RegexExtractionResult' }
+  & Pick<RegexExtractionResult, 'points' | 'maxPoints'>
+);
+
+type RegexAbstractResult_RegexInternalErrorResult_Fragment = (
+  { __typename: 'RegexInternalErrorResult' }
+  & Pick<RegexInternalErrorResult, 'points' | 'maxPoints'>
+);
+
+type RegexAbstractResult_RegexMatchingResult_Fragment = (
+  { __typename: 'RegexMatchingResult' }
+  & Pick<RegexMatchingResult, 'points' | 'maxPoints'>
+);
+
+export type RegexAbstractResultFragment = RegexAbstractResult_RegexExtractionResult_Fragment | RegexAbstractResult_RegexInternalErrorResult_Fragment | RegexAbstractResult_RegexMatchingResult_Fragment;
+
+export type RegexInternalErrorResultFragment = (
+  { __typename?: 'RegexInternalErrorResult' }
+  & Pick<RegexInternalErrorResult, 'msg'>
+);
+
+export type RegexMatchingSingleResultFragment = (
+  { __typename?: 'RegexMatchingSingleResult' }
+  & Pick<RegexMatchingSingleResult, 'resultType' | 'matchData'>
+);
+
+export type RegexMatchingResultFragment = (
+  { __typename?: 'RegexMatchingResult' }
+  & { matchingResults: Array<(
+    { __typename?: 'RegexMatchingSingleResult' }
+    & RegexMatchingSingleResultFragment
+  )> }
+);
+
+export type RegexExtractionMatchFragment = (
+  { __typename?: 'RegexMatchMatch' }
+  & Pick<RegexMatchMatch, 'matchType' | 'userArg' | 'sampleArg'>
+);
+
+export type ExtractionMatchingResultFragment = (
+  { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
+  & Pick<RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'RegexMatchMatch' }
+    & RegexExtractionMatchFragment
+  )> }
+);
+
+export type RegexExtractionSingleResultFragment = (
+  { __typename?: 'RegexExtractionSingleResult' }
+  & Pick<RegexExtractionSingleResult, 'base' | 'correct'>
+  & { extractionMatchingResult: (
+    { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
+    & ExtractionMatchingResultFragment
+  ) }
+);
+
+export type RegexExtractionResultFragment = (
+  { __typename?: 'RegexExtractionResult' }
+  & { extractionResults: Array<(
+    { __typename?: 'RegexExtractionSingleResult' }
+    & RegexExtractionSingleResultFragment
+  )> }
+);
+
+export type SqlCorrectionMutationVariables = Exact<{
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: SqlExPart;
+  solution: Scalars['String'];
+}>;
+
+
+export type SqlCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { sqlExercise?: Maybe<(
+      { __typename?: 'SqlExerciseMutations' }
+      & { correct: (
+        { __typename?: 'SqlCorrectionResult' }
+        & SqlCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type SqlCorrectionResultFragment = (
+  { __typename?: 'SqlCorrectionResult' }
+  & Pick<SqlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'SqlInternalErrorResult' }
+    & SqlAbstractResult_SqlInternalErrorResult_Fragment
+    & SqlInternalErrorResultFragment
+  ) | (
+    { __typename?: 'SqlResult' }
+    & SqlAbstractResult_SqlResult_Fragment
+    & SqlResultFragment
+  ) }
+);
+
+type SqlAbstractResult_SqlInternalErrorResult_Fragment = (
+  { __typename: 'SqlInternalErrorResult' }
+  & Pick<SqlInternalErrorResult, 'points' | 'maxPoints'>
+);
+
+type SqlAbstractResult_SqlResult_Fragment = (
+  { __typename: 'SqlResult' }
+  & Pick<SqlResult, 'points' | 'maxPoints'>
+);
+
+export type SqlAbstractResultFragment = SqlAbstractResult_SqlInternalErrorResult_Fragment | SqlAbstractResult_SqlResult_Fragment;
+
+export type SqlInternalErrorResultFragment = (
+  { __typename?: 'SqlInternalErrorResult' }
+  & Pick<SqlInternalErrorResult, 'msg'>
+);
+
+export type ColumnComparisonFragment = (
+  { __typename?: 'SqlColumnComparisonMatchingResult' }
+  & SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment
+);
+
+export type BinaryExpressionComparisonFragment = (
+  { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
+  & SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment
+);
+
+export type LimitComparisonFragment = (
+  { __typename?: 'SqlLimitComparisonMatchingResult' }
+  & SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment
+);
+
+export type SelectAdditionalComparisonFragment = (
+  { __typename?: 'SelectAdditionalComparisons' }
+  & { groupByComparison: (
+    { __typename?: 'StringMatchingResult' }
+    & StringMatchingResultFragment
+  ), orderByComparison: (
+    { __typename?: 'StringMatchingResult' }
+    & StringMatchingResultFragment
+  ), limitComparison: (
+    { __typename?: 'SqlLimitComparisonMatchingResult' }
+    & LimitComparisonFragment
+  ) }
+);
+
+export type SqlResultFragment = (
+  { __typename?: 'SqlResult' }
+  & { staticComparison: (
+    { __typename?: 'SqlQueriesStaticComparison' }
+    & { columnComparison: (
+      { __typename?: 'SqlColumnComparisonMatchingResult' }
+      & ColumnComparisonFragment
+    ), tableComparison: (
+      { __typename?: 'StringMatchingResult' }
+      & StringMatchingResultFragment
+    ), joinExpressionComparison: (
+      { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
+      & BinaryExpressionComparisonFragment
+    ), whereComparison: (
+      { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
+      & BinaryExpressionComparisonFragment
+    ), additionalComparisons: (
+      { __typename?: 'AdditionalComparison' }
+      & { selectComparisons?: Maybe<(
+        { __typename?: 'SelectAdditionalComparisons' }
+        & SelectAdditionalComparisonFragment
+      )>, insertComparison?: Maybe<(
+        { __typename?: 'StringMatchingResult' }
+        & StringMatchingResultFragment
+      )> }
+    ) }
+  ), executionResult: (
+    { __typename?: 'SqlExecutionResult' }
+    & SqlExecutionResultFragment
+  ) }
+);
+
+export type SqlExecutionResultFragment = (
+  { __typename?: 'SqlExecutionResult' }
+  & { userResult?: Maybe<(
+    { __typename?: 'SqlQueryResult' }
+    & SqlQueryResultFragment
+  )>, sampleResult?: Maybe<(
+    { __typename?: 'SqlQueryResult' }
+    & SqlQueryResultFragment
+  )> }
+);
+
+export type SqlQueryResultFragment = (
+  { __typename?: 'SqlQueryResult' }
+  & Pick<SqlQueryResult, 'tableName' | 'columnNames'>
+  & { rows: Array<(
+    { __typename?: 'SqlRow' }
+    & SqlRowFragment
+  )> }
+);
+
+export type SqlRowFragment = (
+  { __typename?: 'SqlRow' }
+  & { cells: Array<(
+    { __typename?: 'SqlKeyCellValueObject' }
+    & Pick<SqlKeyCellValueObject, 'key'>
+    & { value: (
+      { __typename?: 'SqlCell' }
+      & SqlCellFragment
+    ) }
+  )> }
+);
+
+export type SqlCellFragment = (
+  { __typename?: 'SqlCell' }
+  & Pick<SqlCell, 'colName' | 'content' | 'different'>
+);
+
+export type StringMatchFragment = (
+  { __typename?: 'StringMatch' }
+  & Pick<StringMatch, 'matchType' | 'sampleArg' | 'userArg'>
+);
+
+export type StringMatchingResultFragment = (
+  { __typename?: 'StringMatchingResult' }
+  & Pick<StringMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUser' | 'notMatchedForSample'>
+  & { allMatches: Array<(
+    { __typename?: 'StringMatch' }
+    & StringMatchFragment
+  )> }
+);
+
+type NewMatch_ElementLineMatch_Fragment = (
+  { __typename?: 'ElementLineMatch' }
+  & Pick<ElementLineMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_RegexMatchMatch_Fragment = (
+  { __typename?: 'RegexMatchMatch' }
+  & Pick<RegexMatchMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlBinaryExpressionMatch_Fragment = (
+  { __typename?: 'SqlBinaryExpressionMatch' }
+  & Pick<SqlBinaryExpressionMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlColumnMatch_Fragment = (
+  { __typename?: 'SqlColumnMatch' }
+  & Pick<SqlColumnMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlLimitMatch_Fragment = (
+  { __typename?: 'SqlLimitMatch' }
+  & Pick<SqlLimitMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlAssociationMatch_Fragment = (
+  { __typename?: 'UmlAssociationMatch' }
+  & Pick<UmlAssociationMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlAttributeMatch_Fragment = (
+  { __typename?: 'UmlAttributeMatch' }
+  & Pick<UmlAttributeMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlClassMatch_Fragment = (
+  { __typename?: 'UmlClassMatch' }
+  & Pick<UmlClassMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlImplementationMatch_Fragment = (
+  { __typename?: 'UmlImplementationMatch' }
+  & Pick<UmlImplementationMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlMethodMatch_Fragment = (
+  { __typename?: 'UmlMethodMatch' }
+  & Pick<UmlMethodMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+export type NewMatchFragment = NewMatch_ElementLineMatch_Fragment | NewMatch_RegexMatchMatch_Fragment | NewMatch_SqlBinaryExpressionMatch_Fragment | NewMatch_SqlColumnMatch_Fragment | NewMatch_SqlLimitMatch_Fragment | NewMatch_UmlAssociationMatch_Fragment | NewMatch_UmlAttributeMatch_Fragment | NewMatch_UmlClassMatch_Fragment | NewMatch_UmlImplementationMatch_Fragment | NewMatch_UmlMethodMatch_Fragment;
+
+type SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment = (
+  { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
+  & Pick<RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'RegexMatchMatch' }
+    & NewMatch_RegexMatchMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
+  & Pick<SqlBinaryExpressionComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlBinaryExpressionMatch' }
+    & NewMatch_SqlBinaryExpressionMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlColumnComparisonMatchingResult' }
+  & Pick<SqlColumnComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlColumnMatch' }
+    & NewMatch_SqlColumnMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlLimitComparisonMatchingResult' }
+  & Pick<SqlLimitComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlLimitMatch' }
+    & NewMatch_SqlLimitMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_UmlAssociationMatchingResult_Fragment = (
+  { __typename?: 'UmlAssociationMatchingResult' }
+  & Pick<UmlAssociationMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlAssociationMatch' }
+    & NewMatch_UmlAssociationMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_UmlAttributeMatchingResult_Fragment = (
+  { __typename?: 'UmlAttributeMatchingResult' }
+  & Pick<UmlAttributeMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlAttributeMatch' }
+    & NewMatch_UmlAttributeMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_UmlClassMatchingResult_Fragment = (
+  { __typename?: 'UmlClassMatchingResult' }
+  & Pick<UmlClassMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlClassMatch' }
+    & NewMatch_UmlClassMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_UmlImplementationMatchingResult_Fragment = (
+  { __typename?: 'UmlImplementationMatchingResult' }
+  & Pick<UmlImplementationMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlImplementationMatch' }
+    & NewMatch_UmlImplementationMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_UmlMethodMatchingResult_Fragment = (
+  { __typename?: 'UmlMethodMatchingResult' }
+  & Pick<UmlMethodMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlMethodMatch' }
+    & NewMatch_UmlMethodMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment = (
+  { __typename?: 'XmlElementLineComparisonMatchingResult' }
+  & Pick<XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'ElementLineMatch' }
+    & NewMatch_ElementLineMatch_Fragment
+  )> }
+);
+
+export type SqlMatchingResultFragment = SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment | SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment | SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment | SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment | SqlMatchingResult_UmlAssociationMatchingResult_Fragment | SqlMatchingResult_UmlAttributeMatchingResult_Fragment | SqlMatchingResult_UmlClassMatchingResult_Fragment | SqlMatchingResult_UmlImplementationMatchingResult_Fragment | SqlMatchingResult_UmlMethodMatchingResult_Fragment | SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment;
+
+export type UmlCorrectionMutationVariables = Exact<{
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: UmlExPart;
+  solution: UmlClassDiagramInput;
+}>;
+
+
+export type UmlCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { umlExercise?: Maybe<(
+      { __typename?: 'UmlExerciseMutations' }
+      & { correct: (
+        { __typename?: 'UmlCorrectionResult' }
+        & UmlCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type UmlCorrectionResultFragment = (
+  { __typename?: 'UmlCorrectionResult' }
+  & Pick<UmlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'UmlInternalErrorResult' }
+    & UmlAbstractResult_UmlInternalErrorResult_Fragment
+    & UmlInternalErrorResultFragment
+  ) | (
+    { __typename?: 'UmlResult' }
+    & UmlAbstractResult_UmlResult_Fragment
+    & UmlResultFragment
+  ) }
+);
+
+type UmlAbstractResult_UmlInternalErrorResult_Fragment = (
+  { __typename: 'UmlInternalErrorResult' }
+  & Pick<UmlInternalErrorResult, 'points' | 'maxPoints'>
+);
+
+type UmlAbstractResult_UmlResult_Fragment = (
+  { __typename: 'UmlResult' }
+  & Pick<UmlResult, 'points' | 'maxPoints'>
+);
+
+export type UmlAbstractResultFragment = UmlAbstractResult_UmlInternalErrorResult_Fragment | UmlAbstractResult_UmlResult_Fragment;
+
+export type UmlInternalErrorResultFragment = (
+  { __typename?: 'UmlInternalErrorResult' }
+  & Pick<UmlInternalErrorResult, 'msg'>
+);
+
+export type UmlResultFragment = (
+  { __typename?: 'UmlResult' }
+  & { classResult?: Maybe<(
+    { __typename?: 'UmlClassMatchingResult' }
+    & UmlClassMatchingResultFragment
+  )>, assocResult?: Maybe<(
+    { __typename?: 'UmlAssociationMatchingResult' }
+    & UmlAssociationMatchingResultFragment
+  )>, implResult?: Maybe<(
+    { __typename?: 'UmlImplementationMatchingResult' }
+    & UmlImplementationMatchingResultFragment
+  )> }
+);
+
+export type UmlClassMatchingResultFragment = (
+  { __typename?: 'UmlClassMatchingResult' }
+  & Pick<UmlClassMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlClassMatch' }
+    & UmlClassMatchFragment
+  )> }
+);
+
+export type UmlClassMatchFragment = (
+  { __typename?: 'UmlClassMatch' }
+  & Pick<UmlClassMatch, 'matchType'>
+  & { userArg?: Maybe<(
+    { __typename?: 'UmlClass' }
+    & UmlSolutionClassFragment
+  )>, sampleArg?: Maybe<(
+    { __typename?: 'UmlClass' }
+    & UmlSolutionClassFragment
+  )>, analysisResult?: Maybe<{ __typename: 'UmlClassMatchAnalysisResult' }> }
+);
+
+export type UmlSolutionClassFragment = (
+  { __typename?: 'UmlClass' }
+  & Pick<UmlClass, 'classType' | 'name'>
+  & { attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }
+);
+
+export type UmlAssociationMatchingResultFragment = (
+  { __typename?: 'UmlAssociationMatchingResult' }
+  & Pick<UmlAssociationMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlAssociationMatch' }
+    & UmlAssociationMatchFragment
+  )> }
+);
+
+export type UmlAssociationMatchFragment = (
+  { __typename?: 'UmlAssociationMatch' }
+  & Pick<UmlAssociationMatch, 'matchType'>
+  & { userArg?: Maybe<(
+    { __typename?: 'UmlAssociation' }
+    & UmlAssociationFragment
+  )>, sampleArg?: Maybe<(
+    { __typename?: 'UmlAssociation' }
+    & UmlAssociationFragment
+  )>, maybeAnalysisResult?: Maybe<{ __typename: 'UmlAssociationAnalysisResult' }> }
+);
+
+export type UmlAssociationFragment = (
+  { __typename?: 'UmlAssociation' }
+  & Pick<UmlAssociation, 'assocType' | 'assocName' | 'firstEnd' | 'firstMult' | 'secondEnd' | 'secondMult'>
+);
+
+export type UmlImplementationMatchingResultFragment = (
+  { __typename?: 'UmlImplementationMatchingResult' }
+  & Pick<UmlImplementationMatchingResult, 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlImplementationMatch' }
+    & UmlImplementationMatchFragment
+  )> }
+);
+
+export type UmlImplementationMatchFragment = (
+  { __typename?: 'UmlImplementationMatch' }
+  & Pick<UmlImplementationMatch, 'matchType'>
+  & { userArg?: Maybe<(
+    { __typename?: 'UmlImplementation' }
+    & UmlImplementationFragment
+  )>, sampleArg?: Maybe<(
+    { __typename?: 'UmlImplementation' }
+    & UmlImplementationFragment
+  )> }
+);
+
+export type UmlImplementationFragment = (
+  { __typename?: 'UmlImplementation' }
+  & Pick<UmlImplementation, 'subClass' | 'superClass'>
+);
+
+export type WebCorrectionMutationVariables = Exact<{
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: WebExPart;
+  solution: FilesSolutionInput;
+}>;
+
+
+export type WebCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { webExercise?: Maybe<(
+      { __typename?: 'WebExerciseMutations' }
+      & { correct: (
+        { __typename?: 'WebCorrectionResult' }
+        & WebCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type WebCorrectionResultFragment = (
+  { __typename?: 'WebCorrectionResult' }
+  & Pick<WebCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'WebInternalErrorResult' }
+    & WebAbstractResult_WebInternalErrorResult_Fragment
+    & WebInternalErrorResultFragment
+  ) | (
+    { __typename?: 'WebResult' }
+    & WebAbstractResult_WebResult_Fragment
+    & WebResultFragment
+  ) }
+);
+
+type WebAbstractResult_WebInternalErrorResult_Fragment = (
+  { __typename: 'WebInternalErrorResult' }
+  & Pick<WebInternalErrorResult, 'points' | 'maxPoints'>
+);
+
+type WebAbstractResult_WebResult_Fragment = (
+  { __typename: 'WebResult' }
+  & Pick<WebResult, 'points' | 'maxPoints'>
+);
+
+export type WebAbstractResultFragment = WebAbstractResult_WebInternalErrorResult_Fragment | WebAbstractResult_WebResult_Fragment;
+
+export type WebInternalErrorResultFragment = (
+  { __typename?: 'WebInternalErrorResult' }
+  & Pick<WebInternalErrorResult, 'msg'>
+);
+
+export type WebResultFragment = (
+  { __typename?: 'WebResult' }
+  & { gradedHtmlTaskResults: Array<(
+    { __typename?: 'GradedHtmlTaskResult' }
+    & GradedHtmlTaskResultFragment
+  )>, gradedJsTaskResults: Array<(
+    { __typename?: 'GradedJsTaskResult' }
+    & GradedJsTaskResultFragment
+  )> }
+);
+
+export type GradedHtmlTaskResultFragment = (
+  { __typename?: 'GradedHtmlTaskResult' }
+  & Pick<GradedHtmlTaskResult, 'id' | 'success' | 'elementFound' | 'isSuccessful' | 'points' | 'maxPoints'>
+  & { textContentResult?: Maybe<(
+    { __typename?: 'GradedTextResult' }
+    & GradedTextContentResultFragment
+  )>, attributeResults: Array<(
+    { __typename?: 'GradedTextResult' }
+    & GradedTextContentResultFragment
+  )> }
+);
+
+export type GradedTextContentResultFragment = (
+  { __typename?: 'GradedTextResult' }
+  & Pick<GradedTextResult, 'keyName' | 'awaitedContent' | 'maybeFoundContent' | 'isSuccessful' | 'points' | 'maxPoints'>
+);
+
+export type GradedJsTaskResultFragment = (
+  { __typename?: 'GradedJsTaskResult' }
+  & Pick<GradedJsTaskResult, 'id' | 'success' | 'points' | 'maxPoints'>
+  & { gradedPreResults: Array<(
+    { __typename?: 'GradedJsHtmlElementSpecResult' }
+    & GradedJsHtmlElementSpecResultFragment
+  )>, gradedJsActionResult: (
+    { __typename?: 'GradedJsActionResult' }
+    & GradedJsActionResultFragment
+  ), gradedPostResults: Array<(
+    { __typename?: 'GradedJsHtmlElementSpecResult' }
+    & GradedJsHtmlElementSpecResultFragment
+  )> }
+);
+
+export type GradedJsHtmlElementSpecResultFragment = (
+  { __typename?: 'GradedJsHtmlElementSpecResult' }
+  & Pick<GradedJsHtmlElementSpecResult, 'id'>
+);
+
+export type GradedJsActionResultFragment = (
+  { __typename?: 'GradedJsActionResult' }
+  & Pick<GradedJsActionResult, 'actionPerformed' | 'points' | 'maxPoints'>
+  & { jsAction: { __typename: 'JsAction' } }
+);
+
+export type XmlCorrectionMutationVariables = Exact<{
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: XmlExPart;
+  solution: XmlSolutionInput;
+}>;
+
+
+export type XmlCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { xmlExercise?: Maybe<(
+      { __typename?: 'XmlExerciseMutations' }
+      & { correct: (
+        { __typename?: 'XmlCorrectionResult' }
+        & XmlCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type XmlCorrectionResultFragment = (
+  { __typename?: 'XmlCorrectionResult' }
+  & Pick<XmlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'XmlInternalErrorResult' }
+    & XmlAbstractResult_XmlInternalErrorResult_Fragment
+    & XmlInternalErrorResultFragment
+  ) | (
+    { __typename?: 'XmlResult' }
+    & XmlAbstractResult_XmlResult_Fragment
+    & XmlResultFragment
+  ) }
+);
+
+type XmlAbstractResult_XmlInternalErrorResult_Fragment = (
+  { __typename: 'XmlInternalErrorResult' }
+  & Pick<XmlInternalErrorResult, 'points' | 'maxPoints'>
+);
+
+type XmlAbstractResult_XmlResult_Fragment = (
+  { __typename: 'XmlResult' }
+  & Pick<XmlResult, 'points' | 'maxPoints'>
+);
+
+export type XmlAbstractResultFragment = XmlAbstractResult_XmlInternalErrorResult_Fragment | XmlAbstractResult_XmlResult_Fragment;
+
+export type XmlInternalErrorResultFragment = (
+  { __typename?: 'XmlInternalErrorResult' }
+  & Pick<XmlInternalErrorResult, 'msg'>
+);
+
+export type XmlResultFragment = (
+  { __typename?: 'XmlResult' }
+  & Pick<XmlResult, 'successType'>
+  & { grammarResult?: Maybe<(
+    { __typename?: 'XmlGrammarResult' }
+    & XmlGrammarResultFragment
+  )>, documentResult?: Maybe<(
+    { __typename?: 'XmlDocumentResult' }
+    & XmlDocumentResultFragment
+  )> }
+);
+
+export type XmlGrammarResultFragment = (
+  { __typename?: 'XmlGrammarResult' }
+  & { parseErrors: Array<(
+    { __typename?: 'DTDParseException' }
+    & Pick<DtdParseException, 'msg' | 'parsedLine'>
+  )>, results: (
+    { __typename?: 'XmlElementLineComparisonMatchingResult' }
+    & Pick<XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints'>
+    & XmlElementLineMatchingResultFragment
+  ) }
+);
+
+export type XmlElementLineMatchingResultFragment = (
+  { __typename?: 'XmlElementLineComparisonMatchingResult' }
+  & { allMatches: Array<(
+    { __typename?: 'ElementLineMatch' }
+    & XmlElementLineMatchFragment
+  )> }
+);
+
+export type XmlElementLineMatchFragment = (
+  { __typename?: 'ElementLineMatch' }
+  & Pick<ElementLineMatch, 'matchType'>
+  & { userArg?: Maybe<(
+    { __typename?: 'ElementLine' }
+    & ElementLineFragment
+  )>, sampleArg?: Maybe<(
+    { __typename?: 'ElementLine' }
+    & ElementLineFragment
+  )>, maybeAnalysisResult?: Maybe<(
+    { __typename?: 'ElementLineAnalysisResult' }
+    & XmlElementLineAnalysisResultFragment
+  )> }
+);
+
+export type XmlElementLineAnalysisResultFragment = (
+  { __typename?: 'ElementLineAnalysisResult' }
+  & Pick<ElementLineAnalysisResult, 'attributesCorrect' | 'correctAttributes' | 'contentCorrect' | 'correctContent'>
+);
+
+export type ElementLineFragment = (
+  { __typename?: 'ElementLine' }
+  & Pick<ElementLine, 'elementName'>
+  & { elementDefinition: (
+    { __typename?: 'ElementDefinition' }
+    & Pick<ElementDefinition, 'elementName' | 'content'>
+  ), attributeLists: Array<(
+    { __typename?: 'AttributeList' }
+    & Pick<AttributeList, 'elementName' | 'attributeDefinitions'>
+  )> }
+);
+
+export type XmlDocumentResultFragment = (
+  { __typename?: 'XmlDocumentResult' }
+  & { errors: Array<(
+    { __typename?: 'XmlError' }
+    & XmlErrorFragment
+  )> }
+);
+
+export type XmlErrorFragment = (
+  { __typename?: 'XmlError' }
+  & Pick<XmlError, 'success' | 'line' | 'errorType' | 'errorMessage'>
+);
+
 export type LessonIdentifierFragment = (
   { __typename?: 'Lesson' }
   & Pick<Lesson, 'lessonId' | 'title' | 'description' | 'video'>
 );
 
 export type LessonsForToolQueryVariables = Exact<{
-  userJwt: Scalars['String'];
   toolId: Scalars['String'];
 }>;
 
@@ -1493,7 +2428,6 @@ export type LessonOverviewFragment = (
 );
 
 export type LessonOverviewQueryVariables = Exact<{
-  userJwt: Scalars['String'];
   toolId: Scalars['String'];
   lessonId: Scalars['Int'];
 }>;
@@ -1554,7 +2488,6 @@ export type LessonAsTextFragment = (
 );
 
 export type LessonAsTextQueryVariables = Exact<{
-  userJwt: Scalars['String'];
   toolId: Scalars['String'];
   lessonId: Scalars['Int'];
 }>;
@@ -1575,7 +2508,6 @@ export type LessonAsTextQuery = (
 );
 
 export type LessonAsVideoQueryVariables = Exact<{
-  userJwt: Scalars['String'];
   toolId: Scalars['String'];
   lessonId: Scalars['Int'];
 }>;
@@ -1600,9 +2532,7 @@ export type CollectionToolFragment = (
   & Pick<CollectionTool, 'id' | 'name' | 'state' | 'collectionCount' | 'lessonCount' | 'exerciseCount'>
 );
 
-export type ToolOverviewQueryVariables = Exact<{
-  userJwt: Scalars['String'];
-}>;
+export type ToolOverviewQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ToolOverviewQuery = (
@@ -1617,7 +2547,6 @@ export type ToolOverviewQuery = (
 );
 
 export type CollectionToolOverviewQueryVariables = Exact<{
-  userJwt: Scalars['String'];
   toolId: Scalars['String'];
 }>;
 
@@ -1650,7 +2579,6 @@ export type UserProficiencyFragment = (
 );
 
 export type AllExercisesOverviewQueryVariables = Exact<{
-  userJwt: Scalars['String'];
   toolId: Scalars['String'];
 }>;
 
@@ -1679,7 +2607,6 @@ export type CollectionValuesFragment = (
 );
 
 export type CollectionListQueryVariables = Exact<{
-  userJwt: Scalars['String'];
   toolId: Scalars['String'];
 }>;
 
@@ -1713,7 +2640,6 @@ export type CollOverviewToolFragment = (
 );
 
 export type CollectionOverviewQueryVariables = Exact<{
-  userJwt: Scalars['String'];
   toolId: Scalars['String'];
   collId: Scalars['Int'];
 }>;
@@ -1745,7 +2671,6 @@ export type ExerciseOverviewFragment = (
 );
 
 export type ExerciseOverviewQueryVariables = Exact<{
-  userJwt: Scalars['String'];
   toolId: Scalars['String'];
   collId: Scalars['Int'];
   exId: Scalars['Int'];
@@ -1800,7 +2725,6 @@ export type ExerciseSolveFieldsFragment = (
 );
 
 export type ExerciseQueryVariables = Exact<{
-  userJwt: Scalars['String'];
   toolId: Scalars['String'];
   collId: Scalars['Int'];
   exId: Scalars['Int'];
@@ -1949,32 +2873,6 @@ export type SqlExerciseContentFragment = (
   )> }
 );
 
-export type SqlQueryResultFragment = (
-  { __typename?: 'SqlQueryResult' }
-  & Pick<SqlQueryResult, 'tableName' | 'columnNames'>
-  & { rows: Array<(
-    { __typename?: 'SqlRow' }
-    & SqlRowFragment
-  )> }
-);
-
-export type SqlRowFragment = (
-  { __typename?: 'SqlRow' }
-  & { cells: Array<(
-    { __typename?: 'SqlKeyCellValueObject' }
-    & Pick<SqlKeyCellValueObject, 'key'>
-    & { value: (
-      { __typename?: 'SqlCell' }
-      & SqlCellFragment
-    ) }
-  )> }
-);
-
-export type SqlCellFragment = (
-  { __typename?: 'SqlCell' }
-  & Pick<SqlCell, 'colName' | 'content' | 'different'>
-);
-
 export type UmlExerciseContentFragment = (
   { __typename?: 'UmlExerciseContent' }
   & Pick<UmlExerciseContent, 'toIgnore'>
@@ -2022,16 +2920,6 @@ export type UmlAttributeFragment = (
 export type UmlMethodFragment = (
   { __typename?: 'UmlMethod' }
   & Pick<UmlMethod, 'isAbstract' | 'isStatic' | 'visibility' | 'memberName' | 'parameters' | 'memberType'>
-);
-
-export type UmlAssociationFragment = (
-  { __typename?: 'UmlAssociation' }
-  & Pick<UmlAssociation, 'assocType' | 'assocName' | 'firstEnd' | 'firstMult' | 'secondEnd' | 'secondMult'>
-);
-
-export type UmlImplementationFragment = (
-  { __typename?: 'UmlImplementation' }
-  & Pick<UmlImplementation, 'subClass' | 'superClass'>
 );
 
 export type WebExerciseContentFragment = (
@@ -2103,6 +2991,684 @@ export type LoginMutation = (
   )> }
 );
 
+export const FlaskInternalErrorResultFragmentDoc = gql`
+    fragment FlaskInternalErrorResult on FlaskInternalErrorResult {
+  msg
+}
+    `;
+export const FlaskTestResultFragmentDoc = gql`
+    fragment FlaskTestResult on FlaskTestResult {
+  testName
+  successful
+  stdout
+  stderr
+}
+    `;
+export const FlaskResultFragmentDoc = gql`
+    fragment FlaskResult on FlaskResult {
+  testResults {
+    ...FlaskTestResult
+  }
+}
+    ${FlaskTestResultFragmentDoc}`;
+export const FlaskAbstractCorrectionResultFragmentDoc = gql`
+    fragment FlaskAbstractCorrectionResult on FlaskAbstractCorrectionResult {
+  __typename
+  points
+  maxPoints
+  ...FlaskInternalErrorResult
+  ...FlaskResult
+}
+    ${FlaskInternalErrorResultFragmentDoc}
+${FlaskResultFragmentDoc}`;
+export const FlaskCorrectionResultFragmentDoc = gql`
+    fragment FlaskCorrectionResult on FlaskCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...FlaskAbstractCorrectionResult
+  }
+}
+    ${FlaskAbstractCorrectionResultFragmentDoc}`;
+export const ProgrammingAbstractResultFragmentDoc = gql`
+    fragment ProgrammingAbstractResult on ProgrammingAbstractResult {
+  __typename
+  points
+  maxPoints
+}
+    `;
+export const ProgrammingInternalErrorResultFragmentDoc = gql`
+    fragment ProgrammingInternalErrorResult on ProgrammingInternalErrorResult {
+  msg
+}
+    `;
+export const SimplifiedExecutionResultFragmentDoc = gql`
+    fragment SimplifiedExecutionResult on SimplifiedExecutionResult {
+  __typename
+  testId
+  success
+  testInput
+  awaited
+  gotten
+}
+    `;
+export const NormalExecutionResultFragmentDoc = gql`
+    fragment NormalExecutionResult on NormalExecutionResult {
+  __typename
+  successful
+  logs
+}
+    `;
+export const UnitTestCorrectionResultFragmentDoc = gql`
+    fragment UnitTestCorrectionResult on UnitTestCorrectionResult {
+  __typename
+  testId
+  successful
+  description
+}
+    `;
+export const ProgrammingResultFragmentDoc = gql`
+    fragment ProgrammingResult on ProgrammingResult {
+  simplifiedResults {
+    ...SimplifiedExecutionResult
+  }
+  normalResult {
+    ...NormalExecutionResult
+  }
+  unitTestResults {
+    ...UnitTestCorrectionResult
+  }
+}
+    ${SimplifiedExecutionResultFragmentDoc}
+${NormalExecutionResultFragmentDoc}
+${UnitTestCorrectionResultFragmentDoc}`;
+export const ProgrammingCorrectionResultFragmentDoc = gql`
+    fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
+  __typename
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...ProgrammingAbstractResult
+    ...ProgrammingInternalErrorResult
+    ...ProgrammingResult
+  }
+}
+    ${ProgrammingAbstractResultFragmentDoc}
+${ProgrammingInternalErrorResultFragmentDoc}
+${ProgrammingResultFragmentDoc}`;
+export const RegexAbstractResultFragmentDoc = gql`
+    fragment RegexAbstractResult on RegexAbstractResult {
+  __typename
+  points
+  maxPoints
+}
+    `;
+export const RegexInternalErrorResultFragmentDoc = gql`
+    fragment RegexInternalErrorResult on RegexInternalErrorResult {
+  msg
+}
+    `;
+export const RegexMatchingSingleResultFragmentDoc = gql`
+    fragment RegexMatchingSingleResult on RegexMatchingSingleResult {
+  resultType
+  matchData
+}
+    `;
+export const RegexMatchingResultFragmentDoc = gql`
+    fragment RegexMatchingResult on RegexMatchingResult {
+  matchingResults {
+    ...RegexMatchingSingleResult
+  }
+}
+    ${RegexMatchingSingleResultFragmentDoc}`;
+export const RegexExtractionMatchFragmentDoc = gql`
+    fragment RegexExtractionMatch on RegexMatchMatch {
+  matchType
+  userArg
+  sampleArg
+}
+    `;
+export const ExtractionMatchingResultFragmentDoc = gql`
+    fragment ExtractionMatchingResult on RegexExtractedValuesComparisonMatchingResult {
+  allMatches {
+    ...RegexExtractionMatch
+  }
+  points
+  maxPoints
+}
+    ${RegexExtractionMatchFragmentDoc}`;
+export const RegexExtractionSingleResultFragmentDoc = gql`
+    fragment RegexExtractionSingleResult on RegexExtractionSingleResult {
+  base
+  correct
+  extractionMatchingResult {
+    ...ExtractionMatchingResult
+  }
+}
+    ${ExtractionMatchingResultFragmentDoc}`;
+export const RegexExtractionResultFragmentDoc = gql`
+    fragment RegexExtractionResult on RegexExtractionResult {
+  extractionResults {
+    ...RegexExtractionSingleResult
+  }
+}
+    ${RegexExtractionSingleResultFragmentDoc}`;
+export const RegexCorrectionResultFragmentDoc = gql`
+    fragment RegexCorrectionResult on RegexCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...RegexAbstractResult
+    ...RegexInternalErrorResult
+    ...RegexMatchingResult
+    ...RegexExtractionResult
+  }
+}
+    ${RegexAbstractResultFragmentDoc}
+${RegexInternalErrorResultFragmentDoc}
+${RegexMatchingResultFragmentDoc}
+${RegexExtractionResultFragmentDoc}`;
+export const SqlAbstractResultFragmentDoc = gql`
+    fragment SqlAbstractResult on SqlAbstractResult {
+  __typename
+  points
+  maxPoints
+}
+    `;
+export const SqlInternalErrorResultFragmentDoc = gql`
+    fragment SqlInternalErrorResult on SqlInternalErrorResult {
+  msg
+}
+    `;
+export const NewMatchFragmentDoc = gql`
+    fragment NewMatch on NewMatch {
+  matchType
+  sampleArgDescription
+  userArgDescription
+}
+    `;
+export const SqlMatchingResultFragmentDoc = gql`
+    fragment SqlMatchingResult on MatchingResult {
+  points
+  maxPoints
+  allMatches {
+    ...NewMatch
+  }
+}
+    ${NewMatchFragmentDoc}`;
+export const ColumnComparisonFragmentDoc = gql`
+    fragment ColumnComparison on SqlColumnComparisonMatchingResult {
+  ...SqlMatchingResult
+}
+    ${SqlMatchingResultFragmentDoc}`;
+export const StringMatchFragmentDoc = gql`
+    fragment StringMatch on StringMatch {
+  matchType
+  sampleArg
+  userArg
+}
+    `;
+export const StringMatchingResultFragmentDoc = gql`
+    fragment StringMatchingResult on StringMatchingResult {
+  points
+  maxPoints
+  allMatches {
+    ...StringMatch
+  }
+  notMatchedForUser
+  notMatchedForSample
+}
+    ${StringMatchFragmentDoc}`;
+export const BinaryExpressionComparisonFragmentDoc = gql`
+    fragment BinaryExpressionComparison on SqlBinaryExpressionComparisonMatchingResult {
+  ...SqlMatchingResult
+}
+    ${SqlMatchingResultFragmentDoc}`;
+export const LimitComparisonFragmentDoc = gql`
+    fragment LimitComparison on SqlLimitComparisonMatchingResult {
+  ...SqlMatchingResult
+}
+    ${SqlMatchingResultFragmentDoc}`;
+export const SelectAdditionalComparisonFragmentDoc = gql`
+    fragment SelectAdditionalComparison on SelectAdditionalComparisons {
+  groupByComparison {
+    ...StringMatchingResult
+  }
+  orderByComparison {
+    ...StringMatchingResult
+  }
+  limitComparison {
+    ...LimitComparison
+  }
+}
+    ${StringMatchingResultFragmentDoc}
+${LimitComparisonFragmentDoc}`;
+export const SqlCellFragmentDoc = gql`
+    fragment SqlCell on SqlCell {
+  colName
+  content
+  different
+}
+    `;
+export const SqlRowFragmentDoc = gql`
+    fragment SqlRow on SqlRow {
+  cells {
+    key
+    value {
+      ...SqlCell
+    }
+  }
+}
+    ${SqlCellFragmentDoc}`;
+export const SqlQueryResultFragmentDoc = gql`
+    fragment SqlQueryResult on SqlQueryResult {
+  tableName
+  columnNames
+  rows {
+    ...SqlRow
+  }
+}
+    ${SqlRowFragmentDoc}`;
+export const SqlExecutionResultFragmentDoc = gql`
+    fragment SqlExecutionResult on SqlExecutionResult {
+  userResult {
+    ...SqlQueryResult
+  }
+  sampleResult {
+    ...SqlQueryResult
+  }
+}
+    ${SqlQueryResultFragmentDoc}`;
+export const SqlResultFragmentDoc = gql`
+    fragment SqlResult on SqlResult {
+  staticComparison {
+    columnComparison {
+      ...ColumnComparison
+    }
+    tableComparison {
+      ...StringMatchingResult
+    }
+    joinExpressionComparison {
+      ...BinaryExpressionComparison
+    }
+    whereComparison {
+      ...BinaryExpressionComparison
+    }
+    additionalComparisons {
+      selectComparisons {
+        ...SelectAdditionalComparison
+      }
+      insertComparison {
+        ...StringMatchingResult
+      }
+    }
+  }
+  executionResult {
+    ...SqlExecutionResult
+  }
+}
+    ${ColumnComparisonFragmentDoc}
+${StringMatchingResultFragmentDoc}
+${BinaryExpressionComparisonFragmentDoc}
+${SelectAdditionalComparisonFragmentDoc}
+${SqlExecutionResultFragmentDoc}`;
+export const SqlCorrectionResultFragmentDoc = gql`
+    fragment SqlCorrectionResult on SqlCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...SqlAbstractResult
+    ...SqlInternalErrorResult
+    ...SqlResult
+  }
+}
+    ${SqlAbstractResultFragmentDoc}
+${SqlInternalErrorResultFragmentDoc}
+${SqlResultFragmentDoc}`;
+export const UmlAbstractResultFragmentDoc = gql`
+    fragment UmlAbstractResult on UmlAbstractResult {
+  __typename
+  points
+  maxPoints
+}
+    `;
+export const UmlInternalErrorResultFragmentDoc = gql`
+    fragment UmlInternalErrorResult on UmlInternalErrorResult {
+  msg
+}
+    `;
+export const UmlSolutionClassFragmentDoc = gql`
+    fragment UmlSolutionClass on UmlClass {
+  classType
+  name
+  attributes {
+    __typename
+  }
+  methods {
+    __typename
+  }
+}
+    `;
+export const UmlClassMatchFragmentDoc = gql`
+    fragment UmlClassMatch on UmlClassMatch {
+  matchType
+  userArg {
+    ...UmlSolutionClass
+  }
+  sampleArg {
+    ...UmlSolutionClass
+  }
+  analysisResult {
+    __typename
+  }
+}
+    ${UmlSolutionClassFragmentDoc}`;
+export const UmlClassMatchingResultFragmentDoc = gql`
+    fragment UmlClassMatchingResult on UmlClassMatchingResult {
+  allMatches {
+    ...UmlClassMatch
+  }
+  points
+  maxPoints
+}
+    ${UmlClassMatchFragmentDoc}`;
+export const UmlAssociationFragmentDoc = gql`
+    fragment UmlAssociation on UmlAssociation {
+  assocType
+  assocName
+  firstEnd
+  firstMult
+  secondEnd
+  secondMult
+}
+    `;
+export const UmlAssociationMatchFragmentDoc = gql`
+    fragment UmlAssociationMatch on UmlAssociationMatch {
+  matchType
+  userArg {
+    ...UmlAssociation
+  }
+  sampleArg {
+    ...UmlAssociation
+  }
+  maybeAnalysisResult {
+    __typename
+  }
+}
+    ${UmlAssociationFragmentDoc}`;
+export const UmlAssociationMatchingResultFragmentDoc = gql`
+    fragment UmlAssociationMatchingResult on UmlAssociationMatchingResult {
+  allMatches {
+    ...UmlAssociationMatch
+  }
+  points
+  maxPoints
+}
+    ${UmlAssociationMatchFragmentDoc}`;
+export const UmlImplementationFragmentDoc = gql`
+    fragment UmlImplementation on UmlImplementation {
+  subClass
+  superClass
+}
+    `;
+export const UmlImplementationMatchFragmentDoc = gql`
+    fragment UmlImplementationMatch on UmlImplementationMatch {
+  matchType
+  userArg {
+    ...UmlImplementation
+  }
+  sampleArg {
+    ...UmlImplementation
+  }
+}
+    ${UmlImplementationFragmentDoc}`;
+export const UmlImplementationMatchingResultFragmentDoc = gql`
+    fragment UmlImplementationMatchingResult on UmlImplementationMatchingResult {
+  allMatches {
+    ...UmlImplementationMatch
+  }
+  points
+  maxPoints
+}
+    ${UmlImplementationMatchFragmentDoc}`;
+export const UmlResultFragmentDoc = gql`
+    fragment UmlResult on UmlResult {
+  classResult {
+    ...UmlClassMatchingResult
+  }
+  assocResult {
+    ...UmlAssociationMatchingResult
+  }
+  implResult {
+    ...UmlImplementationMatchingResult
+  }
+}
+    ${UmlClassMatchingResultFragmentDoc}
+${UmlAssociationMatchingResultFragmentDoc}
+${UmlImplementationMatchingResultFragmentDoc}`;
+export const UmlCorrectionResultFragmentDoc = gql`
+    fragment UmlCorrectionResult on UmlCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...UmlAbstractResult
+    ...UmlInternalErrorResult
+    ...UmlResult
+  }
+}
+    ${UmlAbstractResultFragmentDoc}
+${UmlInternalErrorResultFragmentDoc}
+${UmlResultFragmentDoc}`;
+export const WebAbstractResultFragmentDoc = gql`
+    fragment WebAbstractResult on WebAbstractResult {
+  __typename
+  points
+  maxPoints
+}
+    `;
+export const GradedTextContentResultFragmentDoc = gql`
+    fragment GradedTextContentResult on GradedTextResult {
+  keyName
+  awaitedContent
+  maybeFoundContent
+  isSuccessful
+  points
+  maxPoints
+}
+    `;
+export const GradedHtmlTaskResultFragmentDoc = gql`
+    fragment GradedHtmlTaskResult on GradedHtmlTaskResult {
+  id
+  success
+  elementFound
+  textContentResult {
+    ...GradedTextContentResult
+  }
+  attributeResults {
+    ...GradedTextContentResult
+  }
+  isSuccessful
+  points
+  maxPoints
+}
+    ${GradedTextContentResultFragmentDoc}`;
+export const GradedJsHtmlElementSpecResultFragmentDoc = gql`
+    fragment GradedJsHtmlElementSpecResult on GradedJsHtmlElementSpecResult {
+  id
+}
+    `;
+export const GradedJsActionResultFragmentDoc = gql`
+    fragment GradedJsActionResult on GradedJsActionResult {
+  jsAction {
+    __typename
+  }
+  actionPerformed
+  points
+  maxPoints
+}
+    `;
+export const GradedJsTaskResultFragmentDoc = gql`
+    fragment GradedJsTaskResult on GradedJsTaskResult {
+  id
+  gradedPreResults {
+    ...GradedJsHtmlElementSpecResult
+  }
+  gradedJsActionResult {
+    ...GradedJsActionResult
+  }
+  gradedPostResults {
+    ...GradedJsHtmlElementSpecResult
+  }
+  success
+  points
+  maxPoints
+}
+    ${GradedJsHtmlElementSpecResultFragmentDoc}
+${GradedJsActionResultFragmentDoc}`;
+export const WebResultFragmentDoc = gql`
+    fragment WebResult on WebResult {
+  gradedHtmlTaskResults {
+    ...GradedHtmlTaskResult
+  }
+  gradedJsTaskResults {
+    ...GradedJsTaskResult
+  }
+}
+    ${GradedHtmlTaskResultFragmentDoc}
+${GradedJsTaskResultFragmentDoc}`;
+export const WebInternalErrorResultFragmentDoc = gql`
+    fragment WebInternalErrorResult on WebInternalErrorResult {
+  msg
+}
+    `;
+export const WebCorrectionResultFragmentDoc = gql`
+    fragment WebCorrectionResult on WebCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...WebAbstractResult
+    ...WebResult
+    ...WebInternalErrorResult
+  }
+}
+    ${WebAbstractResultFragmentDoc}
+${WebResultFragmentDoc}
+${WebInternalErrorResultFragmentDoc}`;
+export const XmlAbstractResultFragmentDoc = gql`
+    fragment XmlAbstractResult on XmlAbstractResult {
+  __typename
+  points
+  maxPoints
+}
+    `;
+export const XmlInternalErrorResultFragmentDoc = gql`
+    fragment XmlInternalErrorResult on XmlInternalErrorResult {
+  msg
+}
+    `;
+export const ElementLineFragmentDoc = gql`
+    fragment ElementLine on ElementLine {
+  elementName
+  elementDefinition {
+    elementName
+    content
+  }
+  attributeLists {
+    elementName
+    attributeDefinitions
+  }
+}
+    `;
+export const XmlElementLineAnalysisResultFragmentDoc = gql`
+    fragment XmlElementLineAnalysisResult on ElementLineAnalysisResult {
+  attributesCorrect
+  correctAttributes
+  contentCorrect
+  correctContent
+}
+    `;
+export const XmlElementLineMatchFragmentDoc = gql`
+    fragment XmlElementLineMatch on ElementLineMatch {
+  matchType
+  userArg {
+    ...ElementLine
+  }
+  sampleArg {
+    ...ElementLine
+  }
+  maybeAnalysisResult {
+    ...XmlElementLineAnalysisResult
+  }
+}
+    ${ElementLineFragmentDoc}
+${XmlElementLineAnalysisResultFragmentDoc}`;
+export const XmlElementLineMatchingResultFragmentDoc = gql`
+    fragment XmlElementLineMatchingResult on XmlElementLineComparisonMatchingResult {
+  allMatches {
+    ...XmlElementLineMatch
+  }
+}
+    ${XmlElementLineMatchFragmentDoc}`;
+export const XmlGrammarResultFragmentDoc = gql`
+    fragment XmlGrammarResult on XmlGrammarResult {
+  parseErrors {
+    msg
+    parsedLine
+  }
+  results {
+    points
+    maxPoints
+    ...XmlElementLineMatchingResult
+  }
+}
+    ${XmlElementLineMatchingResultFragmentDoc}`;
+export const XmlErrorFragmentDoc = gql`
+    fragment XmlError on XmlError {
+  success
+  line
+  errorType
+  errorMessage
+}
+    `;
+export const XmlDocumentResultFragmentDoc = gql`
+    fragment XmlDocumentResult on XmlDocumentResult {
+  errors {
+    ...XmlError
+  }
+}
+    ${XmlErrorFragmentDoc}`;
+export const XmlResultFragmentDoc = gql`
+    fragment XmlResult on XmlResult {
+  successType
+  grammarResult {
+    ...XmlGrammarResult
+  }
+  documentResult {
+    ...XmlDocumentResult
+  }
+}
+    ${XmlGrammarResultFragmentDoc}
+${XmlDocumentResultFragmentDoc}`;
+export const XmlCorrectionResultFragmentDoc = gql`
+    fragment XmlCorrectionResult on XmlCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...XmlAbstractResult
+    ...XmlInternalErrorResult
+    ...XmlResult
+  }
+}
+    ${XmlAbstractResultFragmentDoc}
+${XmlInternalErrorResultFragmentDoc}
+${XmlResultFragmentDoc}`;
 export const LessonIdentifierFragmentDoc = gql`
     fragment LessonIdentifier on Lesson {
   lessonId
@@ -2353,32 +3919,6 @@ export const RegexExerciseContentFragmentDoc = gql`
   regexPart: part(partId: $partId)
 }
     `;
-export const SqlCellFragmentDoc = gql`
-    fragment SqlCell on SqlCell {
-  colName
-  content
-  different
-}
-    `;
-export const SqlRowFragmentDoc = gql`
-    fragment SqlRow on SqlRow {
-  cells {
-    key
-    value {
-      ...SqlCell
-    }
-  }
-}
-    ${SqlCellFragmentDoc}`;
-export const SqlQueryResultFragmentDoc = gql`
-    fragment SqlQueryResult on SqlQueryResult {
-  tableName
-  columnNames
-  rows {
-    ...SqlRow
-  }
-}
-    ${SqlRowFragmentDoc}`;
 export const SqlExerciseContentFragmentDoc = gql`
     fragment SqlExerciseContent on SqlExerciseContent {
   hint
@@ -2422,22 +3962,6 @@ export const UmlClassFragmentDoc = gql`
 }
     ${UmlAttributeFragmentDoc}
 ${UmlMethodFragmentDoc}`;
-export const UmlAssociationFragmentDoc = gql`
-    fragment UmlAssociation on UmlAssociation {
-  assocType
-  assocName
-  firstEnd
-  firstMult
-  secondEnd
-  secondMult
-}
-    `;
-export const UmlImplementationFragmentDoc = gql`
-    fragment UmlImplementation on UmlImplementation {
-  subClass
-  superClass
-}
-    `;
 export const UmlClassDiagramFragmentDoc = gql`
     fragment UmlClassDiagram on UmlClassDiagram {
   classes {
@@ -2537,9 +4061,163 @@ export const LoggedInUserWithTokenFragmentDoc = gql`
   jwt
 }
     `;
+export const FlaskCorrectionDocument = gql`
+    mutation FlaskCorrection($collId: Int!, $exId: Int!, $part: FlaskExercisePart!, $solution: FilesSolutionInput!) {
+  me {
+    flaskExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...FlaskCorrectionResult
+      }
+    }
+  }
+}
+    ${FlaskCorrectionResultFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class FlaskCorrectionGQL extends Apollo.Mutation<FlaskCorrectionMutation, FlaskCorrectionMutationVariables> {
+    document = FlaskCorrectionDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ProgrammingCorrectionDocument = gql`
+    mutation ProgrammingCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: FilesSolutionInput!) {
+  me {
+    programmingExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...ProgrammingCorrectionResult
+      }
+    }
+  }
+}
+    ${ProgrammingCorrectionResultFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ProgrammingCorrectionGQL extends Apollo.Mutation<ProgrammingCorrectionMutation, ProgrammingCorrectionMutationVariables> {
+    document = ProgrammingCorrectionDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RegexCorrectionDocument = gql`
+    mutation RegexCorrection($collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
+  me {
+    regexExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...RegexCorrectionResult
+      }
+    }
+  }
+}
+    ${RegexCorrectionResultFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RegexCorrectionGQL extends Apollo.Mutation<RegexCorrectionMutation, RegexCorrectionMutationVariables> {
+    document = RegexCorrectionDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const SqlCorrectionDocument = gql`
+    mutation SqlCorrection($collId: Int!, $exId: Int!, $part: SqlExPart!, $solution: String!) {
+  me {
+    sqlExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...SqlCorrectionResult
+      }
+    }
+  }
+}
+    ${SqlCorrectionResultFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class SqlCorrectionGQL extends Apollo.Mutation<SqlCorrectionMutation, SqlCorrectionMutationVariables> {
+    document = SqlCorrectionDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UmlCorrectionDocument = gql`
+    mutation UmlCorrection($collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
+  me {
+    umlExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...UmlCorrectionResult
+      }
+    }
+  }
+}
+    ${UmlCorrectionResultFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UmlCorrectionGQL extends Apollo.Mutation<UmlCorrectionMutation, UmlCorrectionMutationVariables> {
+    document = UmlCorrectionDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const WebCorrectionDocument = gql`
+    mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution: FilesSolutionInput!) {
+  me {
+    webExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...WebCorrectionResult
+      }
+    }
+  }
+}
+    ${WebCorrectionResultFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class WebCorrectionGQL extends Apollo.Mutation<WebCorrectionMutation, WebCorrectionMutationVariables> {
+    document = WebCorrectionDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const XmlCorrectionDocument = gql`
+    mutation XmlCorrection($collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
+  me {
+    xmlExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...XmlCorrectionResult
+      }
+    }
+  }
+}
+    ${XmlCorrectionResultFragmentDoc}`;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class XmlCorrectionGQL extends Apollo.Mutation<XmlCorrectionMutation, XmlCorrectionMutationVariables> {
+    document = XmlCorrectionDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const LessonsForToolDocument = gql`
-    query LessonsForTool($userJwt: String!, $toolId: String!) {
-  me(userJwt: $userJwt) {
+    query LessonsForTool($toolId: String!) {
+  me {
     tool(toolId: $toolId) {
       name
       lessons {
@@ -2561,8 +4239,8 @@ export const LessonsForToolDocument = gql`
     }
   }
 export const LessonOverviewDocument = gql`
-    query LessonOverview($userJwt: String!, $toolId: String!, $lessonId: Int!) {
-  me(userJwt: $userJwt) {
+    query LessonOverview($toolId: String!, $lessonId: Int!) {
+  me {
     tool(toolId: $toolId) {
       lesson(lessonId: $lessonId) {
         ...LessonOverview
@@ -2583,8 +4261,8 @@ export const LessonOverviewDocument = gql`
     }
   }
 export const LessonAsTextDocument = gql`
-    query LessonAsText($userJwt: String!, $toolId: String!, $lessonId: Int!) {
-  me(userJwt: $userJwt) {
+    query LessonAsText($toolId: String!, $lessonId: Int!) {
+  me {
     tool(toolId: $toolId) {
       lesson(lessonId: $lessonId) {
         ...LessonAsText
@@ -2605,8 +4283,8 @@ export const LessonAsTextDocument = gql`
     }
   }
 export const LessonAsVideoDocument = gql`
-    query LessonAsVideo($userJwt: String!, $toolId: String!, $lessonId: Int!) {
-  me(userJwt: $userJwt) {
+    query LessonAsVideo($toolId: String!, $lessonId: Int!) {
+  me {
     tool(toolId: $toolId) {
       lesson(lessonId: $lessonId) {
         title
@@ -2628,8 +4306,8 @@ export const LessonAsVideoDocument = gql`
     }
   }
 export const ToolOverviewDocument = gql`
-    query ToolOverview($userJwt: String!) {
-  me(userJwt: $userJwt) {
+    query ToolOverview {
+  me {
     tools {
       ...CollectionTool
     }
@@ -2648,8 +4326,8 @@ export const ToolOverviewDocument = gql`
     }
   }
 export const CollectionToolOverviewDocument = gql`
-    query CollectionToolOverview($userJwt: String!, $toolId: String!) {
-  me(userJwt: $userJwt) {
+    query CollectionToolOverview($toolId: String!) {
+  me {
     tool(toolId: $toolId) {
       id
       name
@@ -2675,8 +4353,8 @@ export const CollectionToolOverviewDocument = gql`
     }
   }
 export const AllExercisesOverviewDocument = gql`
-    query AllExercisesOverview($userJwt: String!, $toolId: String!) {
-  me(userJwt: $userJwt) {
+    query AllExercisesOverview($toolId: String!) {
+  me {
     tool(toolId: $toolId) {
       allExercises {
         topicsWithLevels {
@@ -2701,8 +4379,8 @@ ${FieldsForLinkFragmentDoc}`;
     }
   }
 export const CollectionListDocument = gql`
-    query CollectionList($userJwt: String!, $toolId: String!) {
-  me(userJwt: $userJwt) {
+    query CollectionList($toolId: String!) {
+  me {
     tool(toolId: $toolId) {
       id
       name
@@ -2725,8 +4403,8 @@ export const CollectionListDocument = gql`
     }
   }
 export const CollectionOverviewDocument = gql`
-    query CollectionOverview($userJwt: String!, $toolId: String!, $collId: Int!) {
-  me(userJwt: $userJwt) {
+    query CollectionOverview($toolId: String!, $collId: Int!) {
+  me {
     tool(toolId: $toolId) {
       ...CollOverviewTool
     }
@@ -2745,8 +4423,8 @@ export const CollectionOverviewDocument = gql`
     }
   }
 export const ExerciseOverviewDocument = gql`
-    query ExerciseOverview($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!) {
-  me(userJwt: $userJwt) {
+    query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
+  me {
     tool(toolId: $toolId) {
       id
       name
@@ -2773,8 +4451,8 @@ export const ExerciseOverviewDocument = gql`
     }
   }
 export const ExerciseDocument = gql`
-    query Exercise($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
-  me(userJwt: $userJwt) {
+    query Exercise($toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
+  me {
     tool(toolId: $toolId) {
       collection(collId: $collId) {
         exercise(exId: $exId) {

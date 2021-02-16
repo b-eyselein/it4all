@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
 import {LessonAsVideoGQL, LessonAsVideoQuery} from '../../../../_services/apollo_services';
-import {AuthenticationService} from '../../../../_services/authentication.service';
 import {ActivatedRoute} from '@angular/router';
 
 @Component({
@@ -28,7 +27,6 @@ export class LessonAsVideoComponent implements OnInit, OnDestroy {
   lessonAsVideoQuery: LessonAsVideoQuery;
 
   constructor(
-    private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
     private lessonAsVideoGQL: LessonAsVideoGQL,
     private domSanitizer: DomSanitizer
@@ -36,14 +34,12 @@ export class LessonAsVideoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const userJwt = this.authenticationService.currentUserValue.jwt;
-
     this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
       const lessonId = parseInt(paramMap.get('lessonId'), 10);
 
       this.lessonAsVideoGQL
-        .watch({userJwt, toolId, lessonId})
+        .watch({toolId, lessonId})
         .valueChanges
         .subscribe(({data}) => this.lessonAsVideoQuery = data);
     });

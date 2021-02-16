@@ -2,20 +2,19 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {
   ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
-  FlaskExerciseContentFragment
-} from "../../../../_services/apollo_services";
-import {ComponentWithExerciseDirective} from "../../_helpers/component-with-exercise.directive";
-import {FilesSolution, FilesSolutionInput, FlaskExercisePart} from "../../../../_interfaces/graphql-types";
-import {AuthenticationService} from "../../../../_services/authentication.service";
-import {DexieService} from "../../../../_services/dexie.service";
-import {
+  FilesSolution,
+  FilesSolutionInput,
   FlaskAbstractCorrectionResultFragment,
   FlaskCorrectionGQL,
   FlaskCorrectionMutation,
   FlaskCorrectionMutationVariables,
   FlaskCorrectionResultFragment,
+  FlaskExerciseContentFragment,
+  FlaskExercisePart,
   FlaskResultFragment
-} from "../flask-apollo-mutations.service";
+} from "../../../../_services/apollo_services";
+import {ComponentWithExerciseDirective} from "../../_helpers/component-with-exercise.directive";
+import {DexieService} from "../../../../_services/dexie.service";
 import {FilesExerciseComponent} from "../../_components/files-exercise/files-exercise.component";
 
 import 'codemirror/mode/jinja2/jinja2';
@@ -46,7 +45,7 @@ export class FlaskExerciseComponent
 
   exerciseFileFragments: ExerciseFileFragment[] = [];
 
-  constructor(private authenticationService: AuthenticationService, flaskCorrectionGQL: FlaskCorrectionGQL, dexieService: DexieService) {
+  constructor(flaskCorrectionGQL: FlaskCorrectionGQL, dexieService: DexieService) {
     super(flaskCorrectionGQL, dexieService);
   }
 
@@ -74,7 +73,6 @@ export class FlaskExerciseComponent
 
   protected getMutationQueryVariables(): FlaskCorrectionMutationVariables {
     return {
-      userJwt: this.authenticationService.currentUserValue.jwt,
       exId: this.exerciseFragment.exerciseId,
       collId: this.exerciseFragment.collectionId,
       part: FlaskExercisePart.FlaskSingleExPart,

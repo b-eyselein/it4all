@@ -14,61 +14,10 @@ generates:
     config:
       apolloClientVersion: 2
 
-  src/app/_interfaces/graphql-types.ts:
-    plugins:
-      - typescript
-
   src/app/_services/apollo_services.ts:
-    documents: src/**queries.graphql
-    plugins:
-      - typescript
-      - typescript-operations
-      - typescript-apollo-angular
-
-  src/app/tools/collection-tools/flask/flask-apollo-mutations.service.ts:
-    documents: src/app/tools/collection-tools/flask/flask-mutations.graphql
-    plugins:
-      - typescript
-      - typescript-operations
-      - typescript-apollo-angular
-
-  src/app/tools/collection-tools/programming/programming-apollo-mutations.service.ts:
-    documents: src/app/tools/collection-tools/programming/programming-mutations.graphql
-    plugins:
-      - typescript
-      - typescript-operations
-      - typescript-apollo-angular
-
-  src/app/tools/collection-tools/regex/regex-apollo-mutations.service.ts:
-    documents: src/app/tools/collection-tools/regex/regex-mutations.graphql
-    plugins:
-      - typescript
-      - typescript-operations
-      - typescript-apollo-angular
-
-  src/app/tools/collection-tools/sql/sql-apollo-mutations.service.ts:
-    documents: src/app/tools/collection-tools/sql/sql-mutations.graphql
-    plugins:
-      - typescript
-      - typescript-operations
-      - typescript-apollo-angular
-
-  src/app/tools/collection-tools/uml/uml-apollo-mutations.service.ts:
-    documents: src/app/tools/collection-tools/uml/uml-mutations.graphql
-    plugins:
-      - typescript
-      - typescript-operations
-      - typescript-apollo-angular
-
-  src/app/tools/collection-tools/web/web-apollo-mutations.service.ts:
-    documents: src/app/tools/collection-tools/web/web-mutations.graphql
-    plugins:
-      - typescript
-      - typescript-operations
-      - typescript-apollo-angular
-
-  src/app/tools/collection-tools/xml/xml-apollo-mutations.service.ts:
-    documents: src/app/tools/collection-tools/xml/xml-mutations.graphql
+    documents:
+      - src/**queries.graphql
+      - src/app/tools/collection-tools/**/**mutations.graphql
     plugins:
       - typescript
       - typescript-operations

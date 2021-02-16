@@ -1,25 +1,24 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
-import {DexieService} from '../../../../_services/dexie.service';
 import {
   ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
-  WebExerciseContentFragment
-} from '../../../../_services/apollo_services';
-import {
+  FilesSolution,
+  FilesSolutionInput,
   WebAbstractResultFragment,
   WebCorrectionGQL,
   WebCorrectionMutation,
   WebCorrectionMutationVariables,
   WebCorrectionResultFragment,
+  WebExerciseContentFragment,
+  WebExPart,
   WebInternalErrorResultFragment,
   WebResultFragment
-} from '../web-apollo-mutations.service';
-import {FilesSolution, FilesSolutionInput, WebExPart} from '../../../../_interfaces/graphql-types';
-import {AuthenticationService} from '../../../../_services/authentication.service';
+} from '../../../../_services/apollo_services';
+import {FilesExerciseComponent} from "../../_components/files-exercise/files-exercise.component";
 
 import 'codemirror/mode/htmlmixed/htmlmixed';
-import {FilesExerciseComponent} from "../../_components/files-exercise/files-exercise.component";
+import {DexieService} from "../../../../_services/dexie.service";
 
 export function getIdForWebExPart(webExPart: WebExPart): string {
   switch (webExPart) {
@@ -49,7 +48,7 @@ export class WebExerciseComponent
 
   exerciseFiles: ExerciseFileFragment[] = [];
 
-  constructor(private authenticationService: AuthenticationService, webCorrectionGQL: WebCorrectionGQL, dexieService: DexieService) {
+  constructor(webCorrectionGQL: WebCorrectionGQL, dexieService: DexieService) {
     super(webCorrectionGQL, dexieService);
   }
 
@@ -83,7 +82,6 @@ export class WebExerciseComponent
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
       part: this.contentFragment.webPart,
-      userJwt: this.authenticationService.currentUserValue.jwt
     };
   }
 

@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {UmlAssociationMatch, UmlMultiplicity} from '../../../../../_interfaces/graphql-types';
+import {UmlAssociationMatch, UmlMultiplicity} from '../../../../../_services/apollo_services';
 
 function printCardinality(c: UmlMultiplicity): string {
   switch (c) {

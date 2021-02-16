@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {NormalExecutionResultFragment} from '../../programming-apollo-mutations.service';
+import {NormalExecutionResultFragment} from "../../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-programming-normal-result',

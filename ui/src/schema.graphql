@@ -189,7 +189,7 @@ interface MatchingResult {
 type Mutation {
   register(registerValues: RegisterValues!): String
   login(credentials: UserCredentials!): LoggedInUserWithToken
-  me(userJwt: String!): UserMutations
+  me: UserMutations
 }
 
 interface NewMatch {
@@ -912,7 +912,7 @@ type ProgrammingExerciseContent {
 }
 
 type Query {
-  me(userJwt: String!): User
+  me: User
 }
 
 enum RegexCorrectionType {

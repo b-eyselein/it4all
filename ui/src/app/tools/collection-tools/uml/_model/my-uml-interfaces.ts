@@ -7,7 +7,7 @@ import {
   UmlImplementationInput,
   UmlMethod,
   UmlMultiplicity
-} from '../../../../_interfaces/graphql-types';
+} from '../../../../_services/apollo_services';
 
 export const CLASS_TYPES = ['CLASS', 'ABSTRACT', 'INTERFACE'];
 

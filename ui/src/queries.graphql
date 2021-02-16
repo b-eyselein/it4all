@@ -9,8 +9,8 @@ fragment CollectionTool on CollectionTool {
   exerciseCount
 }
 
-query ToolOverview($userJwt: String!) {
-  me(userJwt: $userJwt) {
+query ToolOverview {
+  me {
     tools {
       ...CollectionTool
     }
@@ -18,8 +18,8 @@ query ToolOverview($userJwt: String!) {
 }
 
 # /tools/:toolId
-query CollectionToolOverview($userJwt: String!, $toolId: String!) {
-  me(userJwt: $userJwt) {
+query CollectionToolOverview($toolId: String!) {
+  me {
     tool(toolId: $toolId) {
       id
       name
@@ -45,8 +45,8 @@ fragment UserProficiency on UserProficiency {
 }
 
 # /tools/:toolId/allExercises
-query AllExercisesOverview($userJwt: String!, $toolId: String!) {
-  me(userJwt: $userJwt) {
+query AllExercisesOverview($toolId: String!) {
+  me {
     tool(toolId: $toolId) {
       allExercises {
         topicsWithLevels {
@@ -65,8 +65,8 @@ fragment CollectionValues on ExerciseCollection {
   exerciseCount
 }
 
-query CollectionList($userJwt: String!, $toolId: String!) {
-  me(userJwt: $userJwt){
+query CollectionList($toolId: String!) {
+  me {
     tool(toolId: $toolId) {
       id
       name
@@ -91,8 +91,8 @@ fragment CollOverviewTool on CollectionTool {
 }
 
 
-query CollectionOverview($userJwt: String!, $toolId: String!, $collId: Int!) {
-  me(userJwt: $userJwt){
+query CollectionOverview($toolId: String!, $collId: Int!) {
+  me {
     tool(toolId: $toolId) {
       ...CollOverviewTool
     }
@@ -116,8 +116,8 @@ fragment ExerciseOverview on Exercise {
   }
 }
 
-query ExerciseOverview($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!) {
-  me (userJwt: $userJwt) {
+query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
+  me {
     tool(toolId: $toolId) {
       id
       name
@@ -153,8 +153,8 @@ fragment ExerciseSolveFields on Exercise {
   }
 }
 
-query Exercise($userJwt: String!, $toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
-  me (userJwt: $userJwt) {
+query Exercise($toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
+  me {
     tool(toolId: $toolId) {
       collection(collId: $collId) {
         exercise(exId: $exId) {

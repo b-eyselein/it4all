@@ -27,7 +27,7 @@ describe('SqlResultComponent', () => {
         joinExpressionComparison: {maxPoints: -1, points: -1, allMatches: []},
         tableComparison: {maxPoints: -1, points: -1, allMatches: []},
         columnComparison: {maxPoints: -1, points: -1, allMatches: []},
-        additionalComparisons: {}
+        additionalComparisons: {},
       },
       executionResult: {
         sampleResult: null,

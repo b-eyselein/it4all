@@ -1,5 +1,5 @@
-mutation RegexCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
-  me(userJwt: $userJwt) {
+mutation RegexCorrection($collId: Int!, $exId: Int!, $part: RegexExPart!, $solution: String!) {
+  me {
     regexExercise(collId: $collId, exId: $exId) {
       correct(part:$part, solution: $solution) {
         ...RegexCorrectionResult

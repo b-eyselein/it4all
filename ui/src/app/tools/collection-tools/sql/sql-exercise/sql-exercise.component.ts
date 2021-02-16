@@ -1,23 +1,23 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {getDefaultEditorOptions} from '../../collection-tool-helpers';
-import {DexieService} from '../../../../_services/dexie.service';
 import {DbSolution} from '../../../../_interfaces/exercise';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
-import {ExerciseSolveFieldsFragment, SqlExerciseContentFragment} from '../../../../_services/apollo_services';
 import {
-  SqlAbstractResultFragment,
-  SqlCorrectionGQL,
+  ExerciseSolveFieldsFragment,
+  SqlAbstractResultFragment, SqlCorrectionGQL,
   SqlCorrectionMutation,
   SqlCorrectionMutationVariables,
   SqlCorrectionResultFragment,
+  SqlExerciseContentFragment,
+  SqlExPart,
+  SqlInternalErrorResult,
   SqlInternalErrorResultFragment,
   SqlResultFragment
-} from '../sql-apollo-mutations.service';
-import {SqlExPart, SqlInternalErrorResult} from '../../../../_interfaces/graphql-types';
-import {AuthenticationService} from '../../../../_services/authentication.service';
+} from '../../../../_services/apollo_services';
 
 import 'codemirror/mode/sql/sql';
 import {HasSampleSolutions} from "../../_helpers/correction-helpers";
+import {DexieService} from "../../../../_services/dexie.service";
 
 
 function getIdForSqlExPart(sqlExPart: SqlExPart): string {
@@ -46,7 +46,7 @@ export class SqlExerciseComponent
 
   solution = '';
 
-  constructor(private authenticationService: AuthenticationService, sqlCorrectionGQL: SqlCorrectionGQL, dexieService: DexieService) {
+  constructor(sqlCorrectionGQL: SqlCorrectionGQL, dexieService: DexieService) {
     super(sqlCorrectionGQL, dexieService);
   }
 
@@ -86,7 +86,6 @@ export class SqlExerciseComponent
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
       part: SqlExPart.SqlSingleExPart,
-      userJwt: this.authenticationService.currentUserValue.jwt
     };
   }
 

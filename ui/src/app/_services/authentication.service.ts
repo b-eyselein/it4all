@@ -5,6 +5,14 @@ import {map, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {LoggedInUserWithTokenFragment, LoginGQL} from './apollo_services';
 
+const currentUserField = 'currentUser';
+
+export function getCurrentUser(): LoggedInUserWithTokenFragment | undefined {
+  const json: string | null = localStorage.getItem(currentUserField);
+
+  return json ? JSON.parse(json) : null;
+}
+
 @Injectable({providedIn: 'root'})
 export class AuthenticationService {
 
@@ -12,7 +20,7 @@ export class AuthenticationService {
   public currentUser: Observable<LoggedInUserWithTokenFragment>;
 
   constructor(private http: HttpClient, private loginGQL: LoginGQL, private router: Router) {
-    this.currentUserSubject = new BehaviorSubject<LoggedInUserWithTokenFragment>(JSON.parse(localStorage.getItem('currentUser')));
+    this.currentUserSubject = new BehaviorSubject<LoggedInUserWithTokenFragment>(getCurrentUser());
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
@@ -21,7 +29,7 @@ export class AuthenticationService {
   }
 
   private activateLogin(user: LoggedInUserWithTokenFragment): void {
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    localStorage.setItem(currentUserField, JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
 
@@ -43,7 +51,7 @@ export class AuthenticationService {
   }
 
   logout() {
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem(currentUserField);
     this.currentUserSubject.next(null);
     // noinspection JSIgnoredPromiseFromCall
     this.router.navigate(['/loginForm']);

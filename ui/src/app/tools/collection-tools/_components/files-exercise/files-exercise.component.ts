@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
-import {ExerciseFile, FilesSolution} from "../../../../_interfaces/graphql-types";
 import {CorrectionHelpers, HasSampleSolutions} from "../../_helpers/correction-helpers";
 import {TabsComponent} from "../../../../shared/tabs/tabs.component";
+import {ExerciseFile, FilesSolution} from "../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-files-exercise',

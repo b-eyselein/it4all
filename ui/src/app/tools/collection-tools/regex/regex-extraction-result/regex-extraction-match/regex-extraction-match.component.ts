@@ -1,6 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {RegexExtractionMatchFragment} from '../../regex-apollo-mutations.service';
-import {MatchType} from '../../../../../_interfaces/graphql-types';
+import {MatchType, RegexExtractionMatchFragment} from "../../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-regex-extraction-match',

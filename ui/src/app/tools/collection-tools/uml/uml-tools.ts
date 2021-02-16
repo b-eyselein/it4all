@@ -1,6 +1,10 @@
 import {distinctStringArray} from '../../../helpers';
-import {ExerciseSolveFieldsFragment, UmlExerciseContentFragment} from '../../../_services/apollo_services';
-import {KeyValueObject, UmlExPart} from '../../../_interfaces/graphql-types';
+import {
+  ExerciseSolveFieldsFragment,
+  KeyValueObject,
+  UmlExerciseContentFragment,
+  UmlExPart
+} from '../../../_services/apollo_services';
 
 export function getIdForUmlExPart(umlExPart: UmlExPart): string {
   switch (umlExPart) {

@@ -6,7 +6,6 @@ import {
   UserProficiencyFragment
 } from '../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
-import {AuthenticationService} from '../../../_services/authentication.service';
 import {BreadCrumbPart} from "../../../shared/breadcrumbs/breadcrumbs.component";
 
 @Component({templateUrl: './collection-tool-overview.component.html'})
@@ -16,11 +15,7 @@ export class CollectionToolOverviewComponent implements OnInit, OnDestroy {
 
   collectionToolOverviewQuery: CollectionToolOverviewQuery;
 
-  constructor(
-    private route: ActivatedRoute,
-    private authenticationService: AuthenticationService,
-    private collectionToolOverviewGQL: CollectionToolOverviewGQL
-  ) {
+  constructor(private route: ActivatedRoute, private collectionToolOverviewGQL: CollectionToolOverviewGQL) {
   }
 
   ngOnInit(): void {
@@ -28,7 +23,7 @@ export class CollectionToolOverviewComponent implements OnInit, OnDestroy {
       const toolId = paramMap.get('toolId');
 
       this.collectionToolOverviewGQL
-        .watch({toolId, userJwt: this.authenticationService.currentUserValue.jwt})
+        .watch({toolId})
         .valueChanges
         .subscribe(({data}) => this.collectionToolOverviewQuery = data);
     });

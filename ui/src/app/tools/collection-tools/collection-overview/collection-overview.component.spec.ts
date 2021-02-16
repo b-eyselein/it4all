@@ -1,10 +1,9 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 
 import {CollectionOverviewComponent} from './collection-overview.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {RouterTestingModule} from '@angular/router/testing';
-import {TagComponent} from '../_components/tag/tag.component';
 import {ActivatedRoute} from '@angular/router';
 
 describe('CollectionOverviewComponent', () => {
@@ -14,7 +13,7 @@ describe('CollectionOverviewComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([]), CodemirrorModule],
-      declarations: [CollectionOverviewComponent, TagComponent],
+      declarations: [CollectionOverviewComponent],
       providers: [
         {
           provide: ActivatedRoute,

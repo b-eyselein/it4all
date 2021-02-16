@@ -1,19 +1,19 @@
 import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {DexieService} from '../../../../_services/dexie.service';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
-import {ExerciseSolveFieldsFragment, RegexExerciseContentFragment} from '../../../../_services/apollo_services';
 import {
+  ExerciseSolveFieldsFragment,
   RegexAbstractResultFragment,
   RegexCorrectionGQL,
   RegexCorrectionMutation,
   RegexCorrectionMutationVariables,
   RegexCorrectionResultFragment,
+  RegexExerciseContentFragment,
+  RegexExPart,
   RegexExtractionResultFragment,
   RegexInternalErrorResultFragment,
   RegexMatchingResultFragment
-} from '../regex-apollo-mutations.service';
-import {RegexExPart} from '../../../../_interfaces/graphql-types';
-import {AuthenticationService} from '../../../../_services/authentication.service';
+} from '../../../../_services/apollo_services';
 import {HasSampleSolutions} from "../../_helpers/correction-helpers";
 
 
@@ -41,7 +41,7 @@ export class RegexExerciseComponent
 
   readonly partId: string = getIdForRegexExercisePart(RegexExPart.RegexSingleExPart);
 
-  constructor(private authenticationService: AuthenticationService, regexCorrectionGQL: RegexCorrectionGQL, dexieService: DexieService) {
+  constructor(regexCorrectionGQL: RegexCorrectionGQL, dexieService: DexieService) {
     super(regexCorrectionGQL, dexieService);
   }
 
@@ -73,7 +73,6 @@ export class RegexExerciseComponent
       collId: this.exerciseFragment.collectionId,
       solution: this.getSolution(),
       part: RegexExPart.RegexSingleExPart,
-      userJwt: this.authenticationService.currentUserValue.jwt
     };
   }
 

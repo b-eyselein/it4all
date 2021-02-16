@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {LessonOverviewFragment, LessonOverviewGQL, LessonOverviewQuery} from '../../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
-import {AuthenticationService} from '../../../../_services/authentication.service';
 
 @Component({
   selector: 'it4all-lesson-overview',
@@ -20,7 +19,8 @@ import {AuthenticationService} from '../../../../_services/authentication.servic
             <a class="button is-fullwidth" *ngIf="lessonOverviewFragment.video" routerLink="video">Als Video</a>
           </div>
           <div class="column">
-            <a class="button is-fullwidth" *ngIf="lessonOverviewFragment.contentCount > 0" routerLink="text">Als Text</a>
+            <a class="button is-fullwidth" *ngIf="lessonOverviewFragment.contentCount > 0" routerLink="text">Als
+              Text</a>
           </div>
         </div>
 
@@ -39,22 +39,16 @@ export class LessonOverviewComponent implements OnInit, OnDestroy {
 
   lessonOverviewQuery: LessonOverviewQuery;
 
-  constructor(
-    private authenticationService: AuthenticationService,
-    private route: ActivatedRoute,
-    private lessonOverviewGQL: LessonOverviewGQL
-  ) {
+  constructor(private route: ActivatedRoute, private lessonOverviewGQL: LessonOverviewGQL) {
   }
 
   ngOnInit(): void {
-    const userJwt = this.authenticationService.currentUserValue.jwt;
-
     this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
       const lessonId = parseInt(paramMap.get('lessonId'), 10);
 
       this.lessonOverviewGQL
-        .watch({userJwt, toolId, lessonId})
+        .watch({toolId, lessonId})
         .valueChanges
         .subscribe(({data}) => this.lessonOverviewQuery = data);
     });

@@ -1,5 +1,5 @@
-mutation ProgrammingCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: FilesSolutionInput!) {
-  me(userJwt: $userJwt) {
+mutation ProgrammingCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: FilesSolutionInput!) {
+  me {
     programmingExercise(collId: $collId, exId: $exId) {
       correct(part: $part, solution: $solution) {
         ...ProgrammingCorrectionResult

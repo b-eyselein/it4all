@@ -7,7 +7,6 @@ import {
   FieldsForLinkFragment
 } from '../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
-import {AuthenticationService} from '../../../_services/authentication.service';
 import {BreadCrumbPart} from "../../../shared/breadcrumbs/breadcrumbs.component";
 
 const SLICE_COUNT: number = 12;
@@ -28,22 +27,16 @@ export class CollectionOverviewComponent implements OnInit, OnDestroy {
 
   pages: number[] = [];
 
-  constructor(
-    private authenticationService: AuthenticationService,
-    private route: ActivatedRoute,
-    private collectionOverviewGQL: CollectionOverviewGQL
-  ) {
+  constructor(private route: ActivatedRoute, private collectionOverviewGQL: CollectionOverviewGQL) {
   }
 
   ngOnInit() {
-    const userJwt = this.authenticationService.currentUserValue.jwt;
-
     this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId: string = paramMap.get('toolId');
       const collId: number = parseInt(paramMap.get('collId'), 10);
 
       this.collectionOverviewGQL
-        .watch({userJwt, toolId, collId})
+        .watch({toolId, collId})
         .valueChanges
         .subscribe(({data}) => {
           this.collectionOverviewQuery = data;

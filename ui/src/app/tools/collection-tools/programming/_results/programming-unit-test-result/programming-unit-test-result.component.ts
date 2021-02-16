@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {UnitTestCorrectionResultFragment} from '../../programming-apollo-mutations.service';
+import {UnitTestCorrectionResultFragment} from "../../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-programming-unit-test-result',

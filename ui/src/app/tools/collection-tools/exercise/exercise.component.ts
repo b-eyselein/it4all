@@ -13,7 +13,6 @@ import {
   XmlExerciseContentFragment
 } from '../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
-import {AuthenticationService} from '../../../_services/authentication.service';
 
 
 @Component({templateUrl: './exercise.component.html'})
@@ -24,16 +23,10 @@ export class ExerciseComponent implements OnInit, OnDestroy {
 
   exerciseQuery: ExerciseQuery;
 
-  constructor(
-    private authenticationService: AuthenticationService,
-    private route: ActivatedRoute,
-    private exerciseGQL: ExerciseGQL
-  ) {
+  constructor(private route: ActivatedRoute, private exerciseGQL: ExerciseGQL) {
   }
 
   ngOnInit() {
-    const userJwt = this.authenticationService.currentUserValue.jwt;
-
     this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
       const collId = parseInt(paramMap.get('collId'), 10);
@@ -41,7 +34,7 @@ export class ExerciseComponent implements OnInit, OnDestroy {
       const partId = paramMap.get('partId');
 
       this.apolloSub = this.exerciseGQL
-        .watch({userJwt, toolId, collId, exId, partId})
+        .watch({toolId, collId, exId, partId})
         .valueChanges
         .subscribe(({data}) => this.exerciseQuery = data);
     });

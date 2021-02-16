@@ -7,8 +7,8 @@ fragment LessonIdentifier on Lesson {
 
 # /tools/:toolId/lessons
 
-query LessonsForTool($userJwt: String!, $toolId: String!) {
-  me(userJwt: $userJwt) {
+query LessonsForTool($toolId: String!) {
+  me {
     tool(toolId: $toolId) {
       name
       lessons {
@@ -27,8 +27,8 @@ fragment LessonOverview on Lesson {
   contentCount
 }
 
-query LessonOverview($userJwt: String!, $toolId: String!, $lessonId: Int!) {
-  me(userJwt: $userJwt) {
+query LessonOverview($toolId: String!, $lessonId: Int!) {
+  me {
     tool(toolId: $toolId) {
       lesson(lessonId: $lessonId) {
         ...LessonOverview
@@ -81,8 +81,8 @@ fragment LessonAsText on Lesson {
   }
 }
 
-query LessonAsText($userJwt: String!, $toolId: String!, $lessonId: Int!) {
-  me(userJwt: $userJwt) {
+query LessonAsText($toolId: String!, $lessonId: Int!) {
+  me {
     tool(toolId: $toolId) {
       lesson(lessonId: $lessonId) {
         ...LessonAsText
@@ -93,8 +93,8 @@ query LessonAsText($userJwt: String!, $toolId: String!, $lessonId: Int!) {
 
 # /tools/:toolId/lesson/:lessonId/asVideo
 
-query LessonAsVideo($userJwt: String!, $toolId: String!, $lessonId: Int!) {
-  me(userJwt: $userJwt) {
+query LessonAsVideo($toolId: String!, $lessonId: Int!) {
+  me {
     tool(toolId: $toolId) {
       lesson(lessonId: $lessonId) {
         title

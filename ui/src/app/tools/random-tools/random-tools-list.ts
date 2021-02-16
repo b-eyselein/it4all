@@ -1,5 +1,4 @@
 import {RandomTool} from './random-tool';
-import {ToolState} from "../../_interfaces/graphql-types";
 
 export const randomTools: RandomTool[] = [
   {

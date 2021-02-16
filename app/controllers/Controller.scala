@@ -1,11 +1,8 @@
 package controllers
 
-import java.util.UUID
-
 import com.github.t3hnar.bcrypt._
-import javax.inject.{Inject, Singleton}
 import model._
-import model.graphql.{GraphQLModel, GraphQLRequest}
+import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
 import model.lti.BasicLtiLaunchRequest
 import pdi.jwt.JwtSession
 import play.api.http.HttpErrorHandler
@@ -17,6 +14,8 @@ import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
 import sangria.marshalling.playJson._
 import sangria.parser.QueryParser
 
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -55,6 +54,8 @@ class Controller @Inject() (
   private implicit val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
 
   def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest]) { implicit request =>
+    val authHeader = request.headers.get("Authorization").flatMap(deserializeJwt)
+
     QueryParser.parse(request.body.query) match {
       case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
       case Success(queryAst) =>
@@ -62,6 +63,7 @@ class Controller @Inject() (
           .execute(
             schema,
             queryAst,
+            userContext = GraphQLContext(authHeader),
             operationName = request.body.operationName,
             variables = request.body.variables.getOrElse(Json.obj())
           )

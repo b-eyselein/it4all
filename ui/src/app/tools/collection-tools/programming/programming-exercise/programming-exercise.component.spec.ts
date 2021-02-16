@@ -1,16 +1,16 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 
 import {ProgrammingExerciseComponent} from './programming-exercise.component';
 import {ExerciseFilesEditorComponent} from '../../_components/exercise-files-editor/exercise-files-editor.component';
 import {TabComponent} from '../../../../shared/tab/tab.component';
 import {SolutionSavedComponent} from '../../../../shared/solution-saved/solution-saved.component';
 import {ProgrammingSimplifiedResultComponent} from '../_results/programming-simplified-result/programming-simplified-result.component';
-import {ProgrammingUnittestResultComponent} from '../_results/programming-unittest-result/programming-unittest-result.component';
 import {ExerciseFileCardComponent} from '../../_components/exercise-file-card/exercise-file-card.component';
 import {TabsComponent} from '../../../../shared/tabs/tabs.component';
 import {FormsModule} from '@angular/forms';
 import {CodemirrorModule} from '@ctrl/ngx-codemirror';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {ProgExPart} from "../../../../_services/apollo_services";
 
 
 describe('ProgrammingExerciseComponent', () => {
@@ -24,7 +24,7 @@ describe('ProgrammingExerciseComponent', () => {
       declarations: [
         ProgrammingExerciseComponent, ExerciseFilesEditorComponent,
         TabComponent, TabsComponent,
-        SolutionSavedComponent, ProgrammingSimplifiedResultComponent, ProgrammingUnittestResultComponent,
+        SolutionSavedComponent, ProgrammingSimplifiedResultComponent,
         ExerciseFileCardComponent, ExerciseFilesEditorComponent
       ],
     }).compileComponents();
@@ -35,7 +35,18 @@ describe('ProgrammingExerciseComponent', () => {
     component = fixture.componentInstance;
     component.exerciseFiles = [];
     component.exerciseFragment = {
-      id: 0, collectionId: 0, toolId: 'programming', title: '', text: ''
+      id: 0,
+      collectionId: 0,
+      toolId: 'programming',
+      title: '',
+      text: '',
+      content: {
+        __typename: 'ProgrammingExerciseContent',
+        implementationPart: {files: []},
+        programmingPart: ProgExPart.Implementation,
+        programmingSampleSolutions: [],
+        unitTestPart: {simplifiedTestMainFile: {}, unitTestFiles: []}
+      }
     };
     fixture.detectChanges();
   });

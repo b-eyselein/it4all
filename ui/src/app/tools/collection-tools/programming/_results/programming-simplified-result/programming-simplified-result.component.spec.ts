@@ -1,6 +1,7 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 
 import {ProgrammingSimplifiedResultComponent} from './programming-simplified-result.component';
+import {SuccessType} from "../../../../../_services/apollo_services";
 
 describe('ProgrammingSimplifiedResultComponent', () => {
   let component: ProgrammingSimplifiedResultComponent;
@@ -18,7 +19,7 @@ describe('ProgrammingSimplifiedResultComponent', () => {
     component = fixture.componentInstance;
     component.result = {
       id: 1,
-      success: 'COMPLETE',
+      success: SuccessType.Complete,
       gotten: '',
       awaited: '',
       input: {},

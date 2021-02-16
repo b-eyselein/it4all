@@ -9,7 +9,6 @@ import {
   TopicWithLevelFragment
 } from '../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
-import {AuthenticationService} from '../../../_services/authentication.service';
 
 @Component({templateUrl: './all-exercises-overview.component.html'})
 export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
@@ -21,21 +20,15 @@ export class AllExercisesOverviewComponent implements OnInit, OnDestroy {
   filteredExercises: FieldsForLinkFragment[];
   filtersActivated: Map<TopicFragment, boolean> = new Map();
 
-  constructor(
-    private authenticationService: AuthenticationService,
-    private route: ActivatedRoute,
-    private allExercisesOverviewGQL: AllExercisesOverviewGQL
-  ) {
+  constructor(private route: ActivatedRoute, private allExercisesOverviewGQL: AllExercisesOverviewGQL) {
   }
 
   ngOnInit() {
-    const userJwt = this.authenticationService.currentUserValue.jwt;
-
     this.sub = this.route.paramMap.subscribe((paramMap) => {
       const toolId = paramMap.get('toolId');
 
       this.allExercisesOverviewGQL
-        .watch({userJwt, toolId})
+        .watch({toolId})
         .valueChanges
         .subscribe(({data}) => {
           this.allExercisesOverviewQuery = data;

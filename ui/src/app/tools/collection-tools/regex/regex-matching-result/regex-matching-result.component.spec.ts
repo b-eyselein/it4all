@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
 import {RegexMatchingResultComponent} from './regex-matching-result.component';
 import {FormsModule} from '@angular/forms';
-import {BinaryClassificationResultType} from '../../../../_interfaces/graphql-types';
+import {BinaryClassificationResultType} from '../../../../_services/apollo_services';
 
 describe('RegexMatchingResultComponent', () => {
   let component: RegexMatchingResultComponent;

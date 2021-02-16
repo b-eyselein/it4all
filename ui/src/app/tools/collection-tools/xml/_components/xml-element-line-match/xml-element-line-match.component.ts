@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {XmlElementLineMatchFragment} from '../../xml-apollo-mutations.service';
-import {MatchType} from '../../xml-apollo-mutations.service';
+import {MatchType, XmlElementLineMatchFragment} from "../../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-xml-element-line-match',

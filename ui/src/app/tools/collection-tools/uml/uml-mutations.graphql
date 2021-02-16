@@ -1,5 +1,5 @@
-mutation UmlCorrection($userJwt: String!, $collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
-  me(userJwt: $userJwt) {
+mutation UmlCorrection($collId: Int!, $exId: Int!, $part: UmlExPart!, $solution: UmlClassDiagramInput!) {
+  me {
     umlExercise(collId: $collId, exId: $exId) {
       correct(part: $part, solution: $solution) {
         ...UmlCorrectionResult
