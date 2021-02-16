@@ -1,8 +1,9 @@
+import {Mutation} from 'apollo-angular';
 import {TabsComponent} from '../../../shared/tabs/tabs.component';
 import {Directive, ViewChild} from '@angular/core';
 import {DexieService} from '../../../_services/dexie.service';
 import {ExerciseSolveFieldsFragment} from '../../../_services/apollo_services';
-import {Mutation} from 'apollo-angular';
+
 import {CorrectionHelpers} from "./correction-helpers";
 
 @Directive()

@@ -13,11 +13,13 @@ import {
   XmlCorrectionMutationVariables,
   XmlCorrectionResultFragment,
   XmlDocumentResultFragment,
+  XmlExPart,
   XmlGrammarResultFragment,
   XmlInternalErrorResultFragment,
-  XmlResultFragment
+  XmlResultFragment,
+  XmlSolution,
+  XmlSolutionInput
 } from '../xml-apollo-mutations.service';
-import {XmlExPart, XmlSolution, XmlSolutionInput} from '../../../../_interfaces/graphql-types';
 import {AuthenticationService} from '../../../../_services/authentication.service';
 
 import 'codemirror/mode/dtd/dtd';

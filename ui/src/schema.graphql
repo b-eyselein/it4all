@@ -1,6 +1,3 @@
-# source: http://localhost:9000/api/graphql
-# timestamp: Wed Nov 18 2020 14:09:14 GMT+0100 (Mitteleuropäische Normalzeit)
-
 interface AbstractCorrectionResult {
   points: Float!
   maxPoints: Float!
@@ -17,25 +14,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  FalseNegative
-  FalsePositive
-  TrueNegative
   TruePositive
-}
-
-type CollectionTool {
-  id: ID!
-  name: String!
-  state: ToolState!
-  lessonCount: Long!
-  lessons: [Lesson!]!
-  lesson(lessonId: Int!): Lesson
-  collectionCount: Long!
-  collections: [ExerciseCollection!]!
-  collection(collId: Int!): ExerciseCollection
-  exerciseCount: Long!
-  allExercises: [Exercise!]!
-  proficiencies: [UserProficiency!]!
+  FalsePositive
+  FalseNegative
+  TrueNegative
 }
 
 type DTDParseException {
@@ -70,53 +52,11 @@ type ElementLineMatch implements NewMatch {
   sampleArgDescription: String
 }
 
-type Exercise {
-  exerciseId: Int!
-  collectionId: Int!
-  toolId: String!
-  title: String!
-  authors: [String!]!
-  text: String!
-  topicsWithLevels: [TopicWithLevel!]!
-  difficulty: Int!
-  content: ExerciseContentUnionType!
-  parts: [ExPart!]!
-}
-
-type ExerciseCollection {
-  collectionId: Int!
-  title: String!
-  authors: [String!]!
-  exerciseCount: Long!
-  exercises: [Exercise!]!
-  exercise(exId: Int!): Exercise
-}
-
-union ExerciseContentUnionType = FlaskExerciseContent | ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
-
-type ExerciseFile {
-  name: String!
-  fileType: String!
-  editable: Boolean!
-  content: String!
-}
-
 input ExerciseFileInput {
   name: String!
   fileType: String!
   editable: Boolean!
   content: String!
-}
-
-type ExPart {
-  id: String!
-  name: String!
-  isEntryPart: Boolean!
-  solved: Boolean!
-}
-
-type FilesSolution {
-  files: [ExerciseFile!]!
 }
 
 input FilesSolutionInput {
@@ -133,13 +73,6 @@ type FlaskCorrectionResult {
   resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: FlaskAbstractCorrectionResult!
-}
-
-type FlaskExerciseContent {
-  files: [ExerciseFile!]!
-  testFiles: [ExerciseFile!]!
-  testConfig: FlaskTestsConfig!
-  sampleSolutions: [FilesSolution!]!
 }
 
 type FlaskExerciseMutations {
@@ -162,26 +95,12 @@ type FlaskResult implements FlaskAbstractCorrectionResult & AbstractCorrectionRe
   maxPoints: Float!
 }
 
-type FlaskSingleTestConfig {
-  id: Int!
-  description: String!
-  maxPoints: Int!
-  testName: String!
-  dependencies: [String!]
-}
-
 type FlaskTestResult {
   testId: Int!
   testName: String!
   successful: Boolean!
   stdout: [String!]!
   stderr: [String!]!
-}
-
-type FlaskTestsConfig {
-  testFileName: String!
-  testClassName: String!
-  tests: [FlaskSingleTestConfig!]!
 }
 
 type GradedHtmlTaskResult {
@@ -232,17 +151,6 @@ type GradedTextResult {
   maxPoints: Float!
 }
 
-type HtmlTask {
-  text: String!
-}
-
-type ImplementationPart {
-  base: String!
-  files: [ExerciseFile!]!
-  implFileName: String!
-  sampleSolFileNames: [String!]!
-}
-
 type JsAction {
   xpathQuery: String!
   actionType: JsActionType!
@@ -252,6 +160,678 @@ type JsAction {
 enum JsActionType {
   Click
   FillOut
+}
+
+type LoggedInUser {
+  username: String!
+  isAdmin: Boolean!
+}
+
+type LoggedInUserWithToken {
+  loggedInUser: LoggedInUser!
+  jwt: String!
+}
+
+enum MatchType {
+  SUCCESSFUL_MATCH
+  PARTIAL_MATCH
+  ONLY_SAMPLE
+  UNSUCCESSFUL_MATCH
+  ONLY_USER
+}
+
+interface MatchingResult {
+  points: Float!
+  maxPoints: Float!
+  allMatches: [NewMatch!]!
+}
+
+type Mutation {
+  register(registerValues: RegisterValues!): String
+  login(credentials: UserCredentials!): LoggedInUserWithToken
+  me(userJwt: String!): UserMutations
+}
+
+interface NewMatch {
+  matchType: MatchType!
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type NormalExecutionResult {
+  successful: Boolean!
+  logs: String!
+}
+
+interface ProgrammingAbstractResult {
+  points: Float!
+  maxPoints: Float!
+}
+
+type ProgrammingCorrectionResult {
+  solutionSaved: Boolean!
+  resultSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: ProgrammingAbstractResult!
+}
+
+type ProgrammingExerciseMutations {
+  correct(part: ProgExPart!, solution: FilesSolutionInput!): ProgrammingCorrectionResult!
+}
+
+type ProgrammingInternalErrorResult implements ProgrammingAbstractResult & AbstractCorrectionResult {
+  msg: String!
+  points: Float!
+  maxPoints: Float!
+}
+
+type ProgrammingResult implements ProgrammingAbstractResult & AbstractCorrectionResult {
+  proficienciesUpdated: Boolean
+  simplifiedResults: [SimplifiedExecutionResult!]!
+  normalResult: NormalExecutionResult
+  unitTestResults: [UnitTestCorrectionResult!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+interface RegexAbstractResult {
+  points: Float!
+  maxPoints: Float!
+}
+
+type RegexCorrectionResult {
+  solutionSaved: Boolean!
+  resultSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: RegexAbstractResult!
+}
+
+type RegexExerciseMutations {
+  correct(part: RegexExPart!, solution: String!): RegexCorrectionResult!
+}
+
+type RegexExtractedValuesComparisonMatchingResult implements MatchingResult {
+  allMatches: [RegexMatchMatch!]!
+  notMatchedForUser: [String!]!
+  notMatchedForSample: [String!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type RegexExtractionResult implements RegexAbstractResult & AbstractCorrectionResult {
+  extractionResults: [RegexExtractionSingleResult!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type RegexExtractionSingleResult {
+  base: String!
+  extractionMatchingResult: RegexExtractedValuesComparisonMatchingResult!
+  correct: Boolean!
+}
+
+type RegexInternalErrorResult implements RegexAbstractResult & AbstractCorrectionResult {
+  msg: String!
+  points: Float!
+  maxPoints: Float!
+}
+
+type RegexMatchMatch implements NewMatch {
+  sampleArg: String
+  userArg: String
+  matchType: MatchType!
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type RegexMatchingResult implements RegexAbstractResult & AbstractCorrectionResult {
+  matchingResults: [RegexMatchingSingleResult!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type RegexMatchingSingleResult {
+  matchData: String!
+  isIncluded: Boolean!
+  resultType: BinaryClassificationResultType!
+}
+
+input RegisterValues {
+  username: String!
+  firstPassword: String!
+  secondPassword: String!
+}
+
+type SelectAdditionalComparisons {
+  groupByComparison: StringMatchingResult!
+  orderByComparison: StringMatchingResult!
+  limitComparison: SqlLimitComparisonMatchingResult!
+}
+
+type SimplifiedExecutionResult {
+  testId: Int!
+  success: SuccessType!
+  stdout: String
+  testInput: String!
+  awaited: String!
+  gotten: String!
+}
+
+interface SqlAbstractResult {
+  points: Float!
+  maxPoints: Float!
+}
+
+type SqlBinaryExpressionComparisonMatchingResult implements MatchingResult {
+  allMatches: [SqlBinaryExpressionMatch!]!
+  notMatchedForUser: [String!]!
+  notMatchedForSample: [String!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type SqlBinaryExpressionMatch implements NewMatch {
+  sampleArg: String
+  userArg: String
+  matchType: MatchType!
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type SqlColumnComparisonMatchingResult implements MatchingResult {
+  allMatches: [SqlColumnMatch!]!
+  notMatchedForUser: [String!]!
+  notMatchedForSample: [String!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type SqlColumnMatch implements NewMatch {
+  sampleArg: String
+  userArg: String
+  matchType: MatchType!
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type SqlCorrectionResult {
+  solutionSaved: Boolean!
+  resultSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: SqlAbstractResult!
+}
+
+type SqlExecutionResult {
+  userResult: SqlQueryResult
+  sampleResult: SqlQueryResult
+}
+
+type SqlExerciseMutations {
+  correct(part: SqlExPart!, solution: String!): SqlCorrectionResult!
+}
+
+type SqlInternalErrorResult implements SqlAbstractResult & AbstractCorrectionResult {
+  msg: String!
+  points: Float!
+  maxPoints: Float!
+}
+
+type SqlLimitComparisonMatchingResult implements MatchingResult {
+  allMatches: [SqlLimitMatch!]!
+  notMatchedForUser: [String!]!
+  notMatchedForSample: [String!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type SqlLimitMatch implements NewMatch {
+  sampleArg: String
+  userArg: String
+  matchType: MatchType!
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type SqlQueriesStaticComparison {
+  columnComparison: SqlColumnComparisonMatchingResult!
+  tableComparison: StringMatchingResult!
+  joinExpressionComparison: SqlBinaryExpressionComparisonMatchingResult!
+  whereComparison: SqlBinaryExpressionComparisonMatchingResult!
+  additionalComparisons: AdditionalComparison!
+}
+
+type SqlResult implements SqlAbstractResult & AbstractCorrectionResult {
+  staticComparison: SqlQueriesStaticComparison!
+  executionResult: SqlExecutionResult!
+  points: Float!
+  maxPoints: Float!
+}
+
+type StringMatch {
+  matchType: MatchType!
+  userArg: String
+  sampleArg: String
+}
+
+type StringMatchingResult {
+  points: Float!
+  maxPoints: Float!
+  allMatches: [StringMatch!]!
+  notMatchedForUser: [String!]!
+  notMatchedForSample: [String!]!
+}
+
+enum SuccessType {
+  COMPLETE
+  ERROR
+  NONE
+  PARTIALLY
+}
+
+interface UmlAbstractResult {
+  points: Float!
+  maxPoints: Float!
+}
+
+type UmlAssociationAnalysisResult {
+  endsParallel: Boolean!
+  assocTypeEqual: Boolean!
+  correctAssocType: UmlAssociationType!
+  multiplicitiesEqual: Boolean!
+}
+
+input UmlAssociationInput {
+  assocType: UmlAssociationType
+  assocName: String
+  firstEnd: String!
+  firstMult: UmlMultiplicity!
+  secondEnd: String!
+  secondMult: UmlMultiplicity!
+}
+
+type UmlAssociationMatch implements NewMatch {
+  matchType: MatchType!
+  userArg: UmlAssociation
+  sampleArg: UmlAssociation
+  maybeAnalysisResult: UmlAssociationAnalysisResult
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type UmlAssociationMatchingResult implements MatchingResult {
+  allMatches: [UmlAssociationMatch!]!
+  notMatchedForUser: [UmlAssociation!]!
+  notMatchedForSample: [UmlAssociation!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type UmlAttributeAnalysisResult {
+  visibilityComparison: Boolean!
+  correctVisibility: UmlVisibility!
+  typeComparison: Boolean!
+  correctType: String!
+  staticCorrect: Boolean!
+  correctStatic: Boolean!
+  derivedCorrect: Boolean!
+  correctDerived: Boolean!
+  abstractCorrect: Boolean!
+  correctAbstract: Boolean!
+}
+
+input UmlAttributeInput {
+  visibility: UmlVisibility
+  memberName: String!
+  memberType: String!
+  isStatic: Boolean
+  isDerived: Boolean
+  isAbstract: Boolean
+}
+
+type UmlAttributeMatch implements NewMatch {
+  matchType: MatchType!
+  userArg: UmlAttribute
+  sampleArg: UmlAttribute
+  maybeAnalysisResult: UmlAttributeAnalysisResult
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type UmlAttributeMatchingResult implements MatchingResult {
+  allMatches: [UmlAttributeMatch!]!
+  notMatchedForUser: [UmlAttribute!]!
+  notMatchedForSample: [UmlAttribute!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+input UmlClassDiagramInput {
+  classes: [UmlClassInput!]!
+  associations: [UmlAssociationInput!]!
+  implementations: [UmlImplementationInput!]!
+}
+
+input UmlClassInput {
+  classType: UmlClassType
+  name: String!
+  attributes: [UmlAttributeInput!]
+  methods: [UmlMethodInput!]
+}
+
+type UmlClassMatch implements NewMatch {
+  matchType: MatchType!
+  userArg: UmlClass
+  sampleArg: UmlClass
+  compAM: Boolean!
+  analysisResult: UmlClassMatchAnalysisResult
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type UmlClassMatchAnalysisResult {
+  classTypeCorrect: Boolean!
+  correctClassType: UmlClassType!
+  maybeAttributeMatchingResult: UmlAttributeMatchingResult
+  maybeMethodMatchingResult: UmlMethodMatchingResult
+}
+
+type UmlClassMatchingResult implements MatchingResult {
+  allMatches: [UmlClassMatch!]!
+  notMatchedForUser: [UmlClass!]!
+  notMatchedForSample: [UmlClass!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type UmlCorrectionResult {
+  solutionSaved: Boolean!
+  resultSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: UmlAbstractResult!
+}
+
+type UmlExerciseMutations {
+  correct(part: UmlExPart!, solution: UmlClassDiagramInput!): UmlCorrectionResult!
+}
+
+input UmlImplementationInput {
+  subClass: String!
+  superClass: String!
+}
+
+type UmlImplementationMatch implements NewMatch {
+  matchType: MatchType!
+  userArg: UmlImplementation
+  sampleArg: UmlImplementation
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type UmlImplementationMatchingResult implements MatchingResult {
+  allMatches: [UmlImplementationMatch!]!
+  notMatchedForUser: [UmlImplementation!]!
+  notMatchedForSample: [UmlImplementation!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type UmlInternalErrorResult implements UmlAbstractResult {
+  msg: String!
+  points: Float!
+  maxPoints: Float!
+}
+
+type UmlMethodAnalysisResult {
+  visibilityComparison: Boolean!
+  correctVisibility: UmlVisibility!
+  typeComparison: Boolean!
+  correctType: String!
+  parameterComparison: Boolean!
+  correctParameters: String!
+  staticCorrect: Boolean!
+  correctStatic: Boolean!
+  abstractCorrect: Boolean!
+  correctAbstract: Boolean!
+}
+
+input UmlMethodInput {
+  visibility: UmlVisibility
+  memberName: String!
+  memberType: String!
+  parameters: String!
+  isStatic: Boolean
+  isAbstract: Boolean
+}
+
+type UmlMethodMatch implements NewMatch {
+  matchType: MatchType!
+  userArg: UmlMethod
+  sampleArg: UmlMethod
+  maybeAnalysisResult: UmlMethodAnalysisResult
+  userArgDescription: String
+  sampleArgDescription: String
+}
+
+type UmlMethodMatchingResult implements MatchingResult {
+  allMatches: [UmlMethodMatch!]!
+  notMatchedForUser: [UmlMethod!]!
+  notMatchedForSample: [UmlMethod!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type UmlResult implements UmlAbstractResult {
+  classResult: UmlClassMatchingResult
+  assocResult: UmlAssociationMatchingResult
+  implResult: UmlImplementationMatchingResult
+  points: Float!
+  maxPoints: Float!
+}
+
+type UnitTestCorrectionResult {
+  testId: Int!
+  description: String!
+  successful: Boolean!
+  stdout: [String!]!
+  stderr: [String!]!
+}
+
+input UserCredentials {
+  username: String!
+  password: String!
+}
+
+type UserMutations {
+  flaskExercise(collId: Int!, exId: Int!): FlaskExerciseMutations
+  programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
+  regexExercise(collId: Int!, exId: Int!): RegexExerciseMutations
+  sqlExercise(collId: Int!, exId: Int!): SqlExerciseMutations
+  umlExercise(collId: Int!, exId: Int!): UmlExerciseMutations
+  webExercise(collId: Int!, exId: Int!): WebExerciseMutations
+  xmlExercise(collId: Int!, exId: Int!): XmlExerciseMutations
+}
+
+interface WebAbstractResult {
+  points: Float!
+  maxPoints: Float!
+}
+
+type WebCorrectionResult {
+  solutionSaved: Boolean!
+  resultSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: WebAbstractResult!
+}
+
+type WebExerciseMutations {
+  correct(part: WebExPart!, solution: FilesSolutionInput!): WebCorrectionResult!
+}
+
+type WebInternalErrorResult implements WebAbstractResult & AbstractCorrectionResult {
+  msg: String!
+  points: Float!
+  maxPoints: Float!
+}
+
+type WebResult implements WebAbstractResult & AbstractCorrectionResult {
+  gradedHtmlTaskResults: [GradedHtmlTaskResult!]!
+  gradedJsTaskResults: [GradedJsTaskResult!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+interface XmlAbstractResult {
+  points: Float!
+  maxPoints: Float!
+}
+
+type XmlCorrectionResult {
+  solutionSaved: Boolean!
+  resultSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: XmlAbstractResult!
+}
+
+type XmlDocumentResult {
+  errors: [XmlError!]!
+}
+
+type XmlElementLineComparisonMatchingResult implements MatchingResult {
+  allMatches: [ElementLineMatch!]!
+  notMatchedForUser: [ElementLine!]!
+  notMatchedForSample: [ElementLine!]!
+  points: Float!
+  maxPoints: Float!
+}
+
+type XmlError {
+  errorType: XmlErrorType!
+  errorMessage: String!
+  line: Int!
+  success: SuccessType!
+}
+
+enum XmlErrorType {
+  ERROR
+  FATAL
+  WARNING
+}
+
+type XmlExerciseMutations {
+  correct(part: XmlExPart!, solution: XmlSolutionInput!): XmlCorrectionResult!
+}
+
+type XmlGrammarResult {
+  parseErrors: [DTDParseException!]!
+  results: XmlElementLineComparisonMatchingResult!
+}
+
+type XmlInternalErrorResult implements XmlAbstractResult & AbstractCorrectionResult {
+  msg: String!
+  points: Float!
+  maxPoints: Float!
+}
+
+type XmlResult implements XmlAbstractResult & AbstractCorrectionResult {
+  successType: SuccessType!
+  documentResult: XmlDocumentResult
+  grammarResult: XmlGrammarResult
+  points: Float!
+  maxPoints: Float!
+}
+
+input XmlSolutionInput {
+  document: String!
+  grammar: String!
+}
+
+type CollectionTool {
+  id: ID!
+  name: String!
+  state: ToolState!
+  lessonCount: Long!
+  lessons: [Lesson!]!
+  lesson(lessonId: Int!): Lesson
+  collectionCount: Long!
+  collections: [ExerciseCollection!]!
+  collection(collId: Int!): ExerciseCollection
+  exerciseCount: Long!
+  allExercises: [Exercise!]!
+  proficiencies: [UserProficiency!]!
+}
+
+type ExPart {
+  id: String!
+  name: String!
+  isEntryPart: Boolean!
+  solved: Boolean!
+}
+
+type Exercise {
+  exerciseId: Int!
+  collectionId: Int!
+  toolId: String!
+  title: String!
+  authors: [String!]!
+  text: String!
+  topicsWithLevels: [TopicWithLevel!]!
+  difficulty: Int!
+  content: ExerciseContentUnionType!
+  parts: [ExPart!]!
+}
+
+type ExerciseCollection {
+  collectionId: Int!
+  title: String!
+  authors: [String!]!
+  exerciseCount: Long!
+  exercises: [Exercise!]!
+  exercise(exId: Int!): Exercise
+}
+
+union ExerciseContentUnionType = FlaskExerciseContent | ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
+
+type ExerciseFile {
+  name: String!
+  fileType: String!
+  editable: Boolean!
+  content: String!
+}
+
+type FilesSolution {
+  files: [ExerciseFile!]!
+}
+
+type FlaskExerciseContent {
+  files: [ExerciseFile!]!
+  testFiles: [ExerciseFile!]!
+  testConfig: FlaskTestsConfig!
+  sampleSolutions: [FilesSolution!]!
+}
+
+type FlaskSingleTestConfig {
+  id: Int!
+  description: String!
+  maxPoints: Int!
+  testName: String!
+  dependencies: [String!]
+}
+
+type FlaskTestsConfig {
+  testFileName: String!
+  testClassName: String!
+  tests: [FlaskSingleTestConfig!]!
+}
+
+type HtmlTask {
+  text: String!
+}
+
+type ImplementationPart {
+  base: String!
+  files: [ExerciseFile!]!
+  implFileName: String!
+  sampleSolFileNames: [String!]!
 }
 
 type KeyValueObject {
@@ -307,53 +887,6 @@ type Level {
   levelIndex: Int!
 }
 
-type LoggedInUser {
-  username: String!
-  isAdmin: Boolean!
-}
-
-type LoggedInUserWithToken {
-  loggedInUser: LoggedInUser!
-  jwt: String!
-}
-
-"""
-The `Long` scalar type represents non-fractional signed whole numeric values.
-Long can represent values between -(2^63) and 2^63 - 1.
-"""
-scalar Long
-
-interface MatchingResult {
-  points: Float!
-  maxPoints: Float!
-  allMatches: [NewMatch!]!
-}
-
-enum MatchType {
-  ONLY_SAMPLE
-  SUCCESSFUL_MATCH
-  UNSUCCESSFUL_MATCH
-  ONLY_USER
-  PARTIAL_MATCH
-}
-
-type Mutation {
-  register(registerValues: RegisterValues!): String
-  login(credentials: UserCredentials!): LoggedInUserWithToken
-  me(userJwt: String!): UserMutations
-}
-
-interface NewMatch {
-  matchType: MatchType!
-  userArgDescription: String
-  sampleArgDescription: String
-}
-
-type NormalExecutionResult {
-  successful: Boolean!
-  logs: String!
-}
-
 type NormalUnitTestPart {
   unitTestsDescription: String!
   unitTestFiles: [ExerciseFile!]!
@@ -370,18 +903,6 @@ enum ProgExPart {
   ActivityDiagram
 }
 
-interface ProgrammingAbstractResult {
-  points: Float!
-  maxPoints: Float!
-}
-
-type ProgrammingCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
-  proficienciesUpdated: Boolean
-  result: ProgrammingAbstractResult!
-}
-
 type ProgrammingExerciseContent {
   filename: String!
   implementationPart: ImplementationPart!
@@ -390,44 +911,17 @@ type ProgrammingExerciseContent {
   part(partId: String!): ProgExPart
 }
 
-type ProgrammingExerciseMutations {
-  correct(part: ProgExPart!, solution: FilesSolutionInput!): ProgrammingCorrectionResult!
-}
-
-type ProgrammingInternalErrorResult implements ProgrammingAbstractResult & AbstractCorrectionResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
-}
-
-type ProgrammingResult implements ProgrammingAbstractResult & AbstractCorrectionResult {
-  proficienciesUpdated: Boolean
-  simplifiedResults: [SimplifiedExecutionResult!]!
-  normalResult: NormalExecutionResult
-  unitTestResults: [UnitTestCorrectionResult!]!
-  points: Float!
-  maxPoints: Float!
-}
-
 type Query {
   me(userJwt: String!): User
 }
 
-interface RegexAbstractResult {
-  points: Float!
-  maxPoints: Float!
-}
-
-type RegexCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
-  proficienciesUpdated: Boolean
-  result: RegexAbstractResult!
-}
-
 enum RegexCorrectionType {
-  EXTRACTION
   MATCHING
+  EXTRACTION
+}
+
+enum RegexExPart {
+  RegexSingleExPart
 }
 
 type RegexExerciseContent {
@@ -439,90 +933,15 @@ type RegexExerciseContent {
   part(partId: String!): RegexExPart
 }
 
-type RegexExerciseMutations {
-  correct(part: RegexExPart!, solution: String!): RegexCorrectionResult!
-}
-
-enum RegexExPart {
-  RegexSingleExPart
-}
-
-type RegexExtractedValuesComparisonMatchingResult implements MatchingResult {
-  allMatches: [RegexMatchMatch!]!
-  notMatchedForUser: [String!]!
-  notMatchedForSample: [String!]!
-  points: Float!
-  maxPoints: Float!
-}
-
-type RegexExtractionResult implements RegexAbstractResult & AbstractCorrectionResult {
-  extractionResults: [RegexExtractionSingleResult!]!
-  points: Float!
-  maxPoints: Float!
-}
-
-type RegexExtractionSingleResult {
-  base: String!
-  extractionMatchingResult: RegexExtractedValuesComparisonMatchingResult!
-  correct: Boolean!
-}
-
 type RegexExtractionTestData {
   id: Int!
   base: String!
-}
-
-type RegexInternalErrorResult implements RegexAbstractResult & AbstractCorrectionResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
-}
-
-type RegexMatchingResult implements RegexAbstractResult & AbstractCorrectionResult {
-  matchingResults: [RegexMatchingSingleResult!]!
-  points: Float!
-  maxPoints: Float!
-}
-
-type RegexMatchingSingleResult {
-  matchData: String!
-  isIncluded: Boolean!
-  resultType: BinaryClassificationResultType!
-}
-
-type RegexMatchMatch implements NewMatch {
-  sampleArg: String
-  userArg: String
-  matchType: MatchType!
-  userArgDescription: String
-  sampleArgDescription: String
 }
 
 type RegexMatchTestData {
   id: Int!
   data: String!
   isIncluded: Boolean!
-}
-
-input RegisterValues {
-  username: String!
-  firstPassword: String!
-  secondPassword: String!
-}
-
-type SelectAdditionalComparisons {
-  groupByComparison: StringMatchingResult!
-  orderByComparison: StringMatchingResult!
-  limitComparison: SqlLimitComparisonMatchingResult!
-}
-
-type SimplifiedExecutionResult {
-  testId: Int!
-  success: SuccessType!
-  stdout: String
-  testInput: String!
-  awaited: String!
-  gotten: String!
 }
 
 type SimplifiedUnitTestPart {
@@ -536,59 +955,14 @@ type SiteSpec {
   jsTaskCount: Int!
 }
 
-interface SqlAbstractResult {
-  points: Float!
-  maxPoints: Float!
-}
-
-type SqlBinaryExpressionComparisonMatchingResult implements MatchingResult {
-  allMatches: [SqlBinaryExpressionMatch!]!
-  notMatchedForUser: [String!]!
-  notMatchedForSample: [String!]!
-  points: Float!
-  maxPoints: Float!
-}
-
-type SqlBinaryExpressionMatch implements NewMatch {
-  sampleArg: String
-  userArg: String
-  matchType: MatchType!
-  userArgDescription: String
-  sampleArgDescription: String
-}
-
 type SqlCell {
   colName: String!
   content: String
   different: Boolean!
 }
 
-type SqlColumnComparisonMatchingResult implements MatchingResult {
-  allMatches: [SqlColumnMatch!]!
-  notMatchedForUser: [String!]!
-  notMatchedForSample: [String!]!
-  points: Float!
-  maxPoints: Float!
-}
-
-type SqlColumnMatch implements NewMatch {
-  sampleArg: String
-  userArg: String
-  matchType: MatchType!
-  userArgDescription: String
-  sampleArgDescription: String
-}
-
-type SqlCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
-  proficienciesUpdated: Boolean
-  result: SqlAbstractResult!
-}
-
-type SqlExecutionResult {
-  userResult: SqlQueryResult
-  sampleResult: SqlQueryResult
+enum SqlExPart {
+  SqlSingleExPart
 }
 
 type SqlExerciseContent {
@@ -600,55 +974,17 @@ type SqlExerciseContent {
   sqlDbContents: [SqlQueryResult!]!
 }
 
-type SqlExerciseMutations {
-  correct(part: SqlExPart!, solution: String!): SqlCorrectionResult!
-}
-
 enum SqlExerciseType {
-  CREATE
-  UPDATE
   INSERT
-  DELETE
+  CREATE
   SELECT
-}
-
-enum SqlExPart {
-  SqlSingleExPart
-}
-
-type SqlInternalErrorResult implements SqlAbstractResult & AbstractCorrectionResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
+  DELETE
+  UPDATE
 }
 
 type SqlKeyCellValueObject {
   key: String!
   value: SqlCell!
-}
-
-type SqlLimitComparisonMatchingResult implements MatchingResult {
-  allMatches: [SqlLimitMatch!]!
-  notMatchedForUser: [String!]!
-  notMatchedForSample: [String!]!
-  points: Float!
-  maxPoints: Float!
-}
-
-type SqlLimitMatch implements NewMatch {
-  sampleArg: String
-  userArg: String
-  matchType: MatchType!
-  userArgDescription: String
-  sampleArgDescription: String
-}
-
-type SqlQueriesStaticComparison {
-  columnComparison: SqlColumnComparisonMatchingResult!
-  tableComparison: StringMatchingResult!
-  joinExpressionComparison: SqlBinaryExpressionComparisonMatchingResult!
-  whereComparison: SqlBinaryExpressionComparisonMatchingResult!
-  additionalComparisons: AdditionalComparison!
 }
 
 type SqlQueryResult {
@@ -657,43 +993,15 @@ type SqlQueryResult {
   tableName: String!
 }
 
-type SqlResult implements SqlAbstractResult & AbstractCorrectionResult {
-  staticComparison: SqlQueriesStaticComparison!
-  executionResult: SqlExecutionResult!
-  points: Float!
-  maxPoints: Float!
-}
-
 type SqlRow {
   cells: [SqlKeyCellValueObject!]!
 }
 
-type StringMatch {
-  matchType: MatchType!
-  userArg: String
-  sampleArg: String
-}
-
-type StringMatchingResult {
-  points: Float!
-  maxPoints: Float!
-  allMatches: [StringMatch!]!
-  notMatchedForUser: [String!]!
-  notMatchedForSample: [String!]!
-}
-
-enum SuccessType {
-  ERROR
-  NONE
-  PARTIALLY
-  COMPLETE
-}
-
 enum ToolState {
-  PRE_ALPHA
   ALPHA
   BETA
   LIVE
+  PRE_ALPHA
 }
 
 type Topic {
@@ -708,11 +1016,6 @@ type TopicWithLevel {
   level: Level!
 }
 
-interface UmlAbstractResult {
-  points: Float!
-  maxPoints: Float!
-}
-
 type UmlAssociation {
   assocType: UmlAssociationType!
   assocName: String
@@ -722,42 +1025,9 @@ type UmlAssociation {
   secondMult: UmlMultiplicity!
 }
 
-type UmlAssociationAnalysisResult {
-  endsParallel: Boolean!
-  assocTypeEqual: Boolean!
-  correctAssocType: UmlAssociationType!
-  multiplicitiesEqual: Boolean!
-}
-
-input UmlAssociationInput {
-  assocType: UmlAssociationType = ASSOCIATION
-  assocName: String
-  firstEnd: String!
-  firstMult: UmlMultiplicity!
-  secondEnd: String!
-  secondMult: UmlMultiplicity!
-}
-
-type UmlAssociationMatch implements NewMatch {
-  matchType: MatchType!
-  userArg: UmlAssociation
-  sampleArg: UmlAssociation
-  maybeAnalysisResult: UmlAssociationAnalysisResult
-  userArgDescription: String
-  sampleArgDescription: String
-}
-
-type UmlAssociationMatchingResult implements MatchingResult {
-  allMatches: [UmlAssociationMatch!]!
-  notMatchedForUser: [UmlAssociation!]!
-  notMatchedForSample: [UmlAssociation!]!
-  points: Float!
-  maxPoints: Float!
-}
-
 enum UmlAssociationType {
-  AGGREGATION
   ASSOCIATION
+  AGGREGATION
   COMPOSITION
 }
 
@@ -768,45 +1038,6 @@ type UmlAttribute {
   isStatic: Boolean!
   isDerived: Boolean!
   isAbstract: Boolean!
-}
-
-type UmlAttributeAnalysisResult {
-  visibilityComparison: Boolean!
-  correctVisibility: UmlVisibility!
-  typeComparison: Boolean!
-  correctType: String!
-  staticCorrect: Boolean!
-  correctStatic: Boolean!
-  derivedCorrect: Boolean!
-  correctDerived: Boolean!
-  abstractCorrect: Boolean!
-  correctAbstract: Boolean!
-}
-
-input UmlAttributeInput {
-  visibility: UmlVisibility = PUBLIC
-  memberName: String!
-  memberType: String!
-  isStatic: Boolean = false
-  isDerived: Boolean = false
-  isAbstract: Boolean = false
-}
-
-type UmlAttributeMatch implements NewMatch {
-  matchType: MatchType!
-  userArg: UmlAttribute
-  sampleArg: UmlAttribute
-  maybeAnalysisResult: UmlAttributeAnalysisResult
-  userArgDescription: String
-  sampleArgDescription: String
-}
-
-type UmlAttributeMatchingResult implements MatchingResult {
-  allMatches: [UmlAttributeMatch!]!
-  notMatchedForUser: [UmlAttribute!]!
-  notMatchedForSample: [UmlAttribute!]!
-  points: Float!
-  maxPoints: Float!
 }
 
 type UmlClass {
@@ -822,66 +1053,10 @@ type UmlClassDiagram {
   implementations: [UmlImplementation!]!
 }
 
-input UmlClassDiagramInput {
-  classes: [UmlClassInput!]!
-  associations: [UmlAssociationInput!]!
-  implementations: [UmlImplementationInput!]!
-}
-
-input UmlClassInput {
-  classType: UmlClassType = CLASS
-  name: String!
-  attributes: [UmlAttributeInput!] = []
-  methods: [UmlMethodInput!] = []
-}
-
-type UmlClassMatch implements NewMatch {
-  matchType: MatchType!
-  userArg: UmlClass
-  sampleArg: UmlClass
-  compAM: Boolean!
-  analysisResult: UmlClassMatchAnalysisResult
-  userArgDescription: String
-  sampleArgDescription: String
-}
-
-type UmlClassMatchAnalysisResult {
-  classTypeCorrect: Boolean!
-  correctClassType: UmlClassType!
-  maybeAttributeMatchingResult: UmlAttributeMatchingResult
-  maybeMethodMatchingResult: UmlMethodMatchingResult
-}
-
-type UmlClassMatchingResult implements MatchingResult {
-  allMatches: [UmlClassMatch!]!
-  notMatchedForUser: [UmlClass!]!
-  notMatchedForSample: [UmlClass!]!
-  points: Float!
-  maxPoints: Float!
-}
-
 enum UmlClassType {
   ABSTRACT
   CLASS
   INTERFACE
-}
-
-type UmlCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
-  proficienciesUpdated: Boolean
-  result: UmlAbstractResult!
-}
-
-type UmlExerciseContent {
-  toIgnore: [String!]!
-  sampleSolutions: [UmlClassDiagram!]!
-  part(partId: String!): UmlExPart
-  mappings: [KeyValueObject!]!
-}
-
-type UmlExerciseMutations {
-  correct(part: UmlExPart!, solution: UmlClassDiagramInput!): UmlCorrectionResult!
 }
 
 enum UmlExPart {
@@ -891,36 +1066,16 @@ enum UmlExPart {
   MemberAllocation
 }
 
+type UmlExerciseContent {
+  toIgnore: [String!]!
+  sampleSolutions: [UmlClassDiagram!]!
+  part(partId: String!): UmlExPart
+  mappings: [KeyValueObject!]!
+}
+
 type UmlImplementation {
   subClass: String!
   superClass: String!
-}
-
-input UmlImplementationInput {
-  subClass: String!
-  superClass: String!
-}
-
-type UmlImplementationMatch implements NewMatch {
-  matchType: MatchType!
-  userArg: UmlImplementation
-  sampleArg: UmlImplementation
-  userArgDescription: String
-  sampleArgDescription: String
-}
-
-type UmlImplementationMatchingResult implements MatchingResult {
-  allMatches: [UmlImplementationMatch!]!
-  notMatchedForUser: [UmlImplementation!]!
-  notMatchedForSample: [UmlImplementation!]!
-  points: Float!
-  maxPoints: Float!
-}
-
-type UmlInternalErrorResult implements UmlAbstractResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
 }
 
 type UmlMethod {
@@ -932,71 +1087,16 @@ type UmlMethod {
   isAbstract: Boolean!
 }
 
-type UmlMethodAnalysisResult {
-  visibilityComparison: Boolean!
-  correctVisibility: UmlVisibility!
-  typeComparison: Boolean!
-  correctType: String!
-  parameterComparison: Boolean!
-  correctParameters: String!
-  staticCorrect: Boolean!
-  correctStatic: Boolean!
-  abstractCorrect: Boolean!
-  correctAbstract: Boolean!
-}
-
-input UmlMethodInput {
-  visibility: UmlVisibility = PUBLIC
-  memberName: String!
-  memberType: String!
-  parameters: String!
-  isStatic: Boolean = false
-  isAbstract: Boolean = false
-}
-
-type UmlMethodMatch implements NewMatch {
-  matchType: MatchType!
-  userArg: UmlMethod
-  sampleArg: UmlMethod
-  maybeAnalysisResult: UmlMethodAnalysisResult
-  userArgDescription: String
-  sampleArgDescription: String
-}
-
-type UmlMethodMatchingResult implements MatchingResult {
-  allMatches: [UmlMethodMatch!]!
-  notMatchedForUser: [UmlMethod!]!
-  notMatchedForSample: [UmlMethod!]!
-  points: Float!
-  maxPoints: Float!
-}
-
 enum UmlMultiplicity {
   SINGLE
   UNBOUND
 }
 
-type UmlResult implements UmlAbstractResult {
-  classResult: UmlClassMatchingResult
-  assocResult: UmlAssociationMatchingResult
-  implResult: UmlImplementationMatchingResult
-  points: Float!
-  maxPoints: Float!
-}
-
 enum UmlVisibility {
-  PACKAGE
-  PRIVATE
-  PROTECTED
   PUBLIC
-}
-
-type UnitTestCorrectionResult {
-  testId: Int!
-  description: String!
-  successful: Boolean!
-  stdout: [String!]!
-  stderr: [String!]!
+  PACKAGE
+  PROTECTED
+  PRIVATE
 }
 
 union UnitTestPart = SimplifiedUnitTestPart | NormalUnitTestPart
@@ -1013,21 +1113,6 @@ type User {
   tool(toolId: String!): CollectionTool
 }
 
-input UserCredentials {
-  username: String!
-  password: String!
-}
-
-type UserMutations {
-  flaskExercise(collId: Int!, exId: Int!): FlaskExerciseMutations
-  programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
-  regexExercise(collId: Int!, exId: Int!): RegexExerciseMutations
-  sqlExercise(collId: Int!, exId: Int!): SqlExerciseMutations
-  umlExercise(collId: Int!, exId: Int!): UmlExerciseMutations
-  webExercise(collId: Int!, exId: Int!): WebExerciseMutations
-  xmlExercise(collId: Int!, exId: Int!): XmlExerciseMutations
-}
-
 type UserProficiency {
   username: String!
   topic: Topic!
@@ -1036,16 +1121,9 @@ type UserProficiency {
   level: Level!
 }
 
-interface WebAbstractResult {
-  points: Float!
-  maxPoints: Float!
-}
-
-type WebCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
-  proficienciesUpdated: Boolean
-  result: WebAbstractResult!
+enum WebExPart {
+  HtmlPart
+  JsPart
 }
 
 type WebExerciseContent {
@@ -1057,63 +1135,9 @@ type WebExerciseContent {
   part(partId: String!): WebExPart
 }
 
-type WebExerciseMutations {
-  correct(part: WebExPart!, solution: FilesSolutionInput!): WebCorrectionResult!
-}
-
-enum WebExPart {
-  HtmlPart
-  JsPart
-}
-
-type WebInternalErrorResult implements WebAbstractResult & AbstractCorrectionResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
-}
-
-type WebResult implements WebAbstractResult & AbstractCorrectionResult {
-  gradedHtmlTaskResults: [GradedHtmlTaskResult!]!
-  gradedJsTaskResults: [GradedJsTaskResult!]!
-  points: Float!
-  maxPoints: Float!
-}
-
-interface XmlAbstractResult {
-  points: Float!
-  maxPoints: Float!
-}
-
-type XmlCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
-  proficienciesUpdated: Boolean
-  result: XmlAbstractResult!
-}
-
-type XmlDocumentResult {
-  errors: [XmlError!]!
-}
-
-type XmlElementLineComparisonMatchingResult implements MatchingResult {
-  allMatches: [ElementLineMatch!]!
-  notMatchedForUser: [ElementLine!]!
-  notMatchedForSample: [ElementLine!]!
-  points: Float!
-  maxPoints: Float!
-}
-
-type XmlError {
-  errorType: XmlErrorType!
-  errorMessage: String!
-  line: Int!
-  success: SuccessType!
-}
-
-enum XmlErrorType {
-  ERROR
-  FATAL
-  WARNING
+enum XmlExPart {
+  GrammarCreationXmlPart
+  DocumentCreationXmlPart
 }
 
 type XmlExerciseContent {
@@ -1123,40 +1147,12 @@ type XmlExerciseContent {
   part(partId: String!): XmlExPart
 }
 
-type XmlExerciseMutations {
-  correct(part: XmlExPart!, solution: XmlSolutionInput!): XmlCorrectionResult!
-}
-
-enum XmlExPart {
-  GrammarCreationXmlPart
-  DocumentCreationXmlPart
-}
-
-type XmlGrammarResult {
-  parseErrors: [DTDParseException!]!
-  results: XmlElementLineComparisonMatchingResult!
-}
-
-type XmlInternalErrorResult implements XmlAbstractResult & AbstractCorrectionResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
-}
-
-type XmlResult implements XmlAbstractResult & AbstractCorrectionResult {
-  successType: SuccessType!
-  documentResult: XmlDocumentResult
-  grammarResult: XmlGrammarResult
-  points: Float!
-  maxPoints: Float!
-}
-
 type XmlSolution {
   document: String!
   grammar: String!
 }
 
-input XmlSolutionInput {
-  document: String!
-  grammar: String!
-}
+"""
+The `Long` scalar type represents non-fractional signed whole numeric values. Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long

@@ -3,15 +3,14 @@ import * as joint from 'jointjs';
 import * as _ from 'underscore';
 
 import './boolDrawingElements';
-
+import {BooleanFormula} from '../../_model/bool-formula';
+import {BooleanVariable} from '../../_model/bool-node';
 import Cell = joint.dia.Cell;
 import CellView = joint.dia.CellView;
 import Element = joint.dia.Element;
 import Graph = joint.dia.Graph;
 import Link = joint.dia.Link;
 import LinkView = joint.dia.LinkView;
-import {BooleanFormula} from '../../_model/bool-formula';
-import {BooleanVariable} from '../../_model/bool-node';
 
 export const graph: Graph = new Graph();
 
@@ -102,7 +101,9 @@ function initGraph(inputsToAdd, outputsToAdd): void {
 
 export function toggleLive(model: Cell, signal: boolean): void {
   // add 'live' class to the element if there is a positive signal
-  joint.V(paper.findViewByModel(model).el).toggleClass('live', signal);
+  // FIXME: cast should not work?
+  const x = (paper.findViewByModel(model).el as unknown) as SVGElement;
+  joint.V(x).toggleClass('live', signal);
 }
 
 export function broadcastSignal(gate: joint.shapes.logic.Gate, signal: boolean): void {
