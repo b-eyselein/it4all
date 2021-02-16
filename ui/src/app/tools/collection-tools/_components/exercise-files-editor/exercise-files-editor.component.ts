@@ -22,7 +22,7 @@ export class ExerciseFilesEditorComponent implements OnChanges, OnInit {
 
   currentFileName: string | undefined = undefined;
 
-  editorOptions: any;
+  editorOptions;
 
   private theContent = '';
 
