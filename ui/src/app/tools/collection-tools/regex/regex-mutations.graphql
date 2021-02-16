@@ -14,7 +14,9 @@ fragment RegexCorrectionResult on RegexCorrectionResult {
   proficienciesUpdated
   result {
     ...RegexAbstractResult
-    ...RegexInternalErrorResult
+    ...on RegexInternalErrorResult {
+      msg
+    }
     ...RegexMatchingResult
     ...RegexExtractionResult
   }
@@ -51,6 +53,8 @@ fragment ExtractionMatchingResult on RegexExtractedValuesComparisonMatchingResul
   allMatches {
     ...RegexExtractionMatch
   }
+  notMatchedForUser
+  notMatchedForSample
   points
   maxPoints
 }

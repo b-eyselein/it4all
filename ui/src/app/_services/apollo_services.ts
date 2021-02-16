@@ -36,10 +36,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  TruePositive = 'TruePositive',
-  FalsePositive = 'FalsePositive',
   FalseNegative = 'FalseNegative',
-  TrueNegative = 'TrueNegative'
+  FalsePositive = 'FalsePositive',
+  TrueNegative = 'TrueNegative',
+  TruePositive = 'TruePositive'
 }
 
 export type DtdParseException = {
@@ -72,9 +72,9 @@ export type ElementLineAnalysisResult = {
 export type ElementLineMatch = NewMatch & {
   __typename?: 'ElementLineMatch';
   matchType: MatchType;
-  userArg?: Maybe<ElementLine>;
-  sampleArg?: Maybe<ElementLine>;
-  maybeAnalysisResult?: Maybe<ElementLineAnalysisResult>;
+  userArg: ElementLine;
+  sampleArg: ElementLine;
+  analysisResult: ElementLineAnalysisResult;
   userArgDescription?: Maybe<Scalars['String']>;
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
@@ -219,17 +219,17 @@ export type LoggedInUserWithToken = {
 };
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
-  OnlySample = 'ONLY_SAMPLE',
-  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH',
-  OnlyUser = 'ONLY_USER'
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
 export type MatchingResult = {
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
   allMatches: Array<NewMatch>;
+  notMatchedForUserString: Array<Scalars['String']>;
+  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -333,6 +333,8 @@ export type RegexExtractedValuesComparisonMatchingResult = MatchingResult & {
   notMatchedForSample: Array<Scalars['String']>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+  notMatchedForUserString: Array<Scalars['String']>;
+  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type RegexExtractionResult = RegexAbstractResult & AbstractCorrectionResult & {
@@ -414,6 +416,8 @@ export type SqlBinaryExpressionComparisonMatchingResult = MatchingResult & {
   notMatchedForSample: Array<Scalars['String']>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+  notMatchedForUserString: Array<Scalars['String']>;
+  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type SqlBinaryExpressionMatch = NewMatch & {
@@ -432,6 +436,8 @@ export type SqlColumnComparisonMatchingResult = MatchingResult & {
   notMatchedForSample: Array<Scalars['String']>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+  notMatchedForUserString: Array<Scalars['String']>;
+  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type SqlColumnMatch = NewMatch & {
@@ -482,6 +488,8 @@ export type SqlLimitComparisonMatchingResult = MatchingResult & {
   notMatchedForSample: Array<Scalars['String']>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+  notMatchedForUserString: Array<Scalars['String']>;
+  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type SqlLimitMatch = NewMatch & {
@@ -513,8 +521,8 @@ export type SqlResult = SqlAbstractResult & AbstractCorrectionResult & {
 export type StringMatch = {
   __typename?: 'StringMatch';
   matchType: MatchType;
-  userArg?: Maybe<Scalars['String']>;
-  sampleArg?: Maybe<Scalars['String']>;
+  userArg: Scalars['String'];
+  sampleArg: Scalars['String'];
 };
 
 export type StringMatchingResult = {
@@ -558,9 +566,9 @@ export type UmlAssociationInput = {
 export type UmlAssociationMatch = NewMatch & {
   __typename?: 'UmlAssociationMatch';
   matchType: MatchType;
-  userArg?: Maybe<UmlAssociation>;
-  sampleArg?: Maybe<UmlAssociation>;
-  maybeAnalysisResult?: Maybe<UmlAssociationAnalysisResult>;
+  userArg: UmlAssociation;
+  sampleArg: UmlAssociation;
+  analysisResult: UmlAssociationAnalysisResult;
   userArgDescription?: Maybe<Scalars['String']>;
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
@@ -572,6 +580,8 @@ export type UmlAssociationMatchingResult = MatchingResult & {
   notMatchedForSample: Array<UmlAssociation>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+  notMatchedForUserString: Array<Scalars['String']>;
+  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type UmlAttributeAnalysisResult = {
@@ -600,9 +610,9 @@ export type UmlAttributeInput = {
 export type UmlAttributeMatch = NewMatch & {
   __typename?: 'UmlAttributeMatch';
   matchType: MatchType;
-  userArg?: Maybe<UmlAttribute>;
-  sampleArg?: Maybe<UmlAttribute>;
-  maybeAnalysisResult?: Maybe<UmlAttributeAnalysisResult>;
+  userArg: UmlAttribute;
+  sampleArg: UmlAttribute;
+  maybeAnalysisResult: UmlAttributeAnalysisResult;
   userArgDescription?: Maybe<Scalars['String']>;
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
@@ -614,6 +624,8 @@ export type UmlAttributeMatchingResult = MatchingResult & {
   notMatchedForSample: Array<UmlAttribute>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+  notMatchedForUserString: Array<Scalars['String']>;
+  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type UmlClassDiagramInput = {
@@ -632,10 +644,10 @@ export type UmlClassInput = {
 export type UmlClassMatch = NewMatch & {
   __typename?: 'UmlClassMatch';
   matchType: MatchType;
-  userArg?: Maybe<UmlClass>;
-  sampleArg?: Maybe<UmlClass>;
+  userArg: UmlClass;
+  sampleArg: UmlClass;
   compAM: Scalars['Boolean'];
-  analysisResult?: Maybe<UmlClassMatchAnalysisResult>;
+  analysisResult: UmlClassMatchAnalysisResult;
   userArgDescription?: Maybe<Scalars['String']>;
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
@@ -655,6 +667,8 @@ export type UmlClassMatchingResult = MatchingResult & {
   notMatchedForSample: Array<UmlClass>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+  notMatchedForUserString: Array<Scalars['String']>;
+  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type UmlCorrectionResult = {
@@ -684,8 +698,8 @@ export type UmlImplementationInput = {
 export type UmlImplementationMatch = NewMatch & {
   __typename?: 'UmlImplementationMatch';
   matchType: MatchType;
-  userArg?: Maybe<UmlImplementation>;
-  sampleArg?: Maybe<UmlImplementation>;
+  userArg: UmlImplementation;
+  sampleArg: UmlImplementation;
   userArgDescription?: Maybe<Scalars['String']>;
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
@@ -697,6 +711,8 @@ export type UmlImplementationMatchingResult = MatchingResult & {
   notMatchedForSample: Array<UmlImplementation>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+  notMatchedForUserString: Array<Scalars['String']>;
+  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type UmlInternalErrorResult = UmlAbstractResult & {
@@ -732,9 +748,9 @@ export type UmlMethodInput = {
 export type UmlMethodMatch = NewMatch & {
   __typename?: 'UmlMethodMatch';
   matchType: MatchType;
-  userArg?: Maybe<UmlMethod>;
-  sampleArg?: Maybe<UmlMethod>;
-  maybeAnalysisResult?: Maybe<UmlMethodAnalysisResult>;
+  userArg: UmlMethod;
+  sampleArg: UmlMethod;
+  maybeAnalysisResult: UmlMethodAnalysisResult;
   userArgDescription?: Maybe<Scalars['String']>;
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
@@ -746,6 +762,8 @@ export type UmlMethodMatchingResult = MatchingResult & {
   notMatchedForSample: Array<UmlMethod>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+  notMatchedForUserString: Array<Scalars['String']>;
+  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type UmlResult = UmlAbstractResult & {
@@ -888,6 +906,8 @@ export type XmlElementLineComparisonMatchingResult = MatchingResult & {
   notMatchedForSample: Array<ElementLine>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+  notMatchedForUserString: Array<Scalars['String']>;
+  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type XmlError = {
@@ -1159,8 +1179,8 @@ export type Query = {
 };
 
 export enum RegexCorrectionType {
-  Matching = 'MATCHING',
-  Extraction = 'EXTRACTION'
+  Extraction = 'EXTRACTION',
+  Matching = 'MATCHING'
 }
 
 export enum RegexExPart {
@@ -1235,11 +1255,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
+  Update = 'UPDATE',
   Insert = 'INSERT',
-  Create = 'CREATE',
   Select = 'SELECT',
-  Delete = 'DELETE',
-  Update = 'UPDATE'
+  Create = 'CREATE',
+  Delete = 'DELETE'
 }
 
 export type SqlKeyCellValueObject = {
@@ -1292,8 +1312,8 @@ export type UmlAssociation = {
 };
 
 export enum UmlAssociationType {
-  Association = 'ASSOCIATION',
   Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
   Composition = 'COMPOSITION'
 }
 
@@ -1370,10 +1390,10 @@ export enum UmlMultiplicity {
 }
 
 export enum UmlVisibility {
-  Public = 'PUBLIC',
   Package = 'PACKAGE',
+  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Private = 'PRIVATE'
+  Public = 'PUBLIC'
 }
 
 export type UnitTestPart = SimplifiedUnitTestPart | NormalUnitTestPart;
@@ -1630,8 +1650,8 @@ export type RegexCorrectionResultFragment = (
     & RegexExtractionResultFragment
   ) | (
     { __typename?: 'RegexInternalErrorResult' }
+    & Pick<RegexInternalErrorResult, 'msg'>
     & RegexAbstractResult_RegexInternalErrorResult_Fragment
-    & RegexInternalErrorResultFragment
   ) | (
     { __typename?: 'RegexMatchingResult' }
     & RegexAbstractResult_RegexMatchingResult_Fragment
@@ -1681,7 +1701,7 @@ export type RegexExtractionMatchFragment = (
 
 export type ExtractionMatchingResultFragment = (
   { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
-  & Pick<RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints'>
+  & Pick<RegexExtractedValuesComparisonMatchingResult, 'notMatchedForUser' | 'notMatchedForSample' | 'points' | 'maxPoints'>
   & { allMatches: Array<(
     { __typename?: 'RegexMatchMatch' }
     & RegexExtractionMatchFragment
@@ -1924,7 +1944,7 @@ export type NewMatchFragment = NewMatch_ElementLineMatch_Fragment | NewMatch_Reg
 
 type SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment = (
   { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
-  & Pick<RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints'>
+  & Pick<RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
   & { allMatches: Array<(
     { __typename?: 'RegexMatchMatch' }
     & NewMatch_RegexMatchMatch_Fragment
@@ -1933,7 +1953,7 @@ type SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment = (
 
 type SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-  & Pick<SqlBinaryExpressionComparisonMatchingResult, 'points' | 'maxPoints'>
+  & Pick<SqlBinaryExpressionComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
   & { allMatches: Array<(
     { __typename?: 'SqlBinaryExpressionMatch' }
     & NewMatch_SqlBinaryExpressionMatch_Fragment
@@ -1942,7 +1962,7 @@ type SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
 
 type SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlColumnComparisonMatchingResult' }
-  & Pick<SqlColumnComparisonMatchingResult, 'points' | 'maxPoints'>
+  & Pick<SqlColumnComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
   & { allMatches: Array<(
     { __typename?: 'SqlColumnMatch' }
     & NewMatch_SqlColumnMatch_Fragment
@@ -1951,7 +1971,7 @@ type SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment = (
 
 type SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment = (
   { __typename?: 'SqlLimitComparisonMatchingResult' }
-  & Pick<SqlLimitComparisonMatchingResult, 'points' | 'maxPoints'>
+  & Pick<SqlLimitComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
   & { allMatches: Array<(
     { __typename?: 'SqlLimitMatch' }
     & NewMatch_SqlLimitMatch_Fragment
@@ -1960,7 +1980,7 @@ type SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment = (
 
 type SqlMatchingResult_UmlAssociationMatchingResult_Fragment = (
   { __typename?: 'UmlAssociationMatchingResult' }
-  & Pick<UmlAssociationMatchingResult, 'points' | 'maxPoints'>
+  & Pick<UmlAssociationMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
   & { allMatches: Array<(
     { __typename?: 'UmlAssociationMatch' }
     & NewMatch_UmlAssociationMatch_Fragment
@@ -1969,7 +1989,7 @@ type SqlMatchingResult_UmlAssociationMatchingResult_Fragment = (
 
 type SqlMatchingResult_UmlAttributeMatchingResult_Fragment = (
   { __typename?: 'UmlAttributeMatchingResult' }
-  & Pick<UmlAttributeMatchingResult, 'points' | 'maxPoints'>
+  & Pick<UmlAttributeMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
   & { allMatches: Array<(
     { __typename?: 'UmlAttributeMatch' }
     & NewMatch_UmlAttributeMatch_Fragment
@@ -1978,7 +1998,7 @@ type SqlMatchingResult_UmlAttributeMatchingResult_Fragment = (
 
 type SqlMatchingResult_UmlClassMatchingResult_Fragment = (
   { __typename?: 'UmlClassMatchingResult' }
-  & Pick<UmlClassMatchingResult, 'points' | 'maxPoints'>
+  & Pick<UmlClassMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
   & { allMatches: Array<(
     { __typename?: 'UmlClassMatch' }
     & NewMatch_UmlClassMatch_Fragment
@@ -1987,7 +2007,7 @@ type SqlMatchingResult_UmlClassMatchingResult_Fragment = (
 
 type SqlMatchingResult_UmlImplementationMatchingResult_Fragment = (
   { __typename?: 'UmlImplementationMatchingResult' }
-  & Pick<UmlImplementationMatchingResult, 'points' | 'maxPoints'>
+  & Pick<UmlImplementationMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
   & { allMatches: Array<(
     { __typename?: 'UmlImplementationMatch' }
     & NewMatch_UmlImplementationMatch_Fragment
@@ -1996,7 +2016,7 @@ type SqlMatchingResult_UmlImplementationMatchingResult_Fragment = (
 
 type SqlMatchingResult_UmlMethodMatchingResult_Fragment = (
   { __typename?: 'UmlMethodMatchingResult' }
-  & Pick<UmlMethodMatchingResult, 'points' | 'maxPoints'>
+  & Pick<UmlMethodMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
   & { allMatches: Array<(
     { __typename?: 'UmlMethodMatch' }
     & NewMatch_UmlMethodMatch_Fragment
@@ -2005,7 +2025,7 @@ type SqlMatchingResult_UmlMethodMatchingResult_Fragment = (
 
 type SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment = (
   { __typename?: 'XmlElementLineComparisonMatchingResult' }
-  & Pick<XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints'>
+  & Pick<XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
   & { allMatches: Array<(
     { __typename?: 'ElementLineMatch' }
     & NewMatch_ElementLineMatch_Fragment
@@ -2087,19 +2107,25 @@ export type UmlClassMatchingResultFragment = (
   & { allMatches: Array<(
     { __typename?: 'UmlClassMatch' }
     & UmlClassMatchFragment
+  )>, notMatchedForUser: Array<(
+    { __typename?: 'UmlClass' }
+    & UmlSolutionClassFragment
+  )>, notMatchedForSample: Array<(
+    { __typename?: 'UmlClass' }
+    & UmlSolutionClassFragment
   )> }
 );
 
 export type UmlClassMatchFragment = (
   { __typename?: 'UmlClassMatch' }
   & Pick<UmlClassMatch, 'matchType'>
-  & { userArg?: Maybe<(
+  & { userArg: (
     { __typename?: 'UmlClass' }
     & UmlSolutionClassFragment
-  )>, sampleArg?: Maybe<(
+  ), sampleArg: (
     { __typename?: 'UmlClass' }
     & UmlSolutionClassFragment
-  )>, analysisResult?: Maybe<{ __typename: 'UmlClassMatchAnalysisResult' }> }
+  ), analysisResult: { __typename: 'UmlClassMatchAnalysisResult' } }
 );
 
 export type UmlSolutionClassFragment = (
@@ -2114,19 +2140,28 @@ export type UmlAssociationMatchingResultFragment = (
   & { allMatches: Array<(
     { __typename?: 'UmlAssociationMatch' }
     & UmlAssociationMatchFragment
+  )>, notMatchedForUser: Array<(
+    { __typename?: 'UmlAssociation' }
+    & UmlAssociationFragment
+  )>, notMatchedForSample: Array<(
+    { __typename?: 'UmlAssociation' }
+    & UmlAssociationFragment
   )> }
 );
 
 export type UmlAssociationMatchFragment = (
   { __typename?: 'UmlAssociationMatch' }
   & Pick<UmlAssociationMatch, 'matchType'>
-  & { userArg?: Maybe<(
+  & { userArg: (
     { __typename?: 'UmlAssociation' }
     & UmlAssociationFragment
-  )>, sampleArg?: Maybe<(
+  ), sampleArg: (
     { __typename?: 'UmlAssociation' }
     & UmlAssociationFragment
-  )>, maybeAnalysisResult?: Maybe<{ __typename: 'UmlAssociationAnalysisResult' }> }
+  ), analysisResult: (
+    { __typename?: 'UmlAssociationAnalysisResult' }
+    & Pick<UmlAssociationAnalysisResult, 'assocTypeEqual' | 'correctAssocType' | 'multiplicitiesEqual'>
+  ) }
 );
 
 export type UmlAssociationFragment = (
@@ -2140,19 +2175,25 @@ export type UmlImplementationMatchingResultFragment = (
   & { allMatches: Array<(
     { __typename?: 'UmlImplementationMatch' }
     & UmlImplementationMatchFragment
+  )>, notMatchedForUser: Array<(
+    { __typename?: 'UmlImplementation' }
+    & UmlImplementationFragment
+  )>, notMatchedForSample: Array<(
+    { __typename?: 'UmlImplementation' }
+    & UmlImplementationFragment
   )> }
 );
 
 export type UmlImplementationMatchFragment = (
   { __typename?: 'UmlImplementationMatch' }
   & Pick<UmlImplementationMatch, 'matchType'>
-  & { userArg?: Maybe<(
+  & { userArg: (
     { __typename?: 'UmlImplementation' }
     & UmlImplementationFragment
-  )>, sampleArg?: Maybe<(
+  ), sampleArg: (
     { __typename?: 'UmlImplementation' }
     & UmlImplementationFragment
-  )> }
+  ) }
 );
 
 export type UmlImplementationFragment = (
@@ -2349,22 +2390,28 @@ export type XmlElementLineMatchingResultFragment = (
   & { allMatches: Array<(
     { __typename?: 'ElementLineMatch' }
     & XmlElementLineMatchFragment
+  )>, notMatchedForUser: Array<(
+    { __typename?: 'ElementLine' }
+    & ElementLineFragment
+  )>, notMatchedForSample: Array<(
+    { __typename?: 'ElementLine' }
+    & ElementLineFragment
   )> }
 );
 
 export type XmlElementLineMatchFragment = (
   { __typename?: 'ElementLineMatch' }
   & Pick<ElementLineMatch, 'matchType'>
-  & { userArg?: Maybe<(
+  & { userArg: (
     { __typename?: 'ElementLine' }
     & ElementLineFragment
-  )>, sampleArg?: Maybe<(
+  ), sampleArg: (
     { __typename?: 'ElementLine' }
     & ElementLineFragment
-  )>, maybeAnalysisResult?: Maybe<(
+  ), analysisResult: (
     { __typename?: 'ElementLineAnalysisResult' }
     & XmlElementLineAnalysisResultFragment
-  )> }
+  ) }
 );
 
 export type XmlElementLineAnalysisResultFragment = (
@@ -3105,11 +3152,6 @@ export const RegexAbstractResultFragmentDoc = gql`
   maxPoints
 }
     `;
-export const RegexInternalErrorResultFragmentDoc = gql`
-    fragment RegexInternalErrorResult on RegexInternalErrorResult {
-  msg
-}
-    `;
 export const RegexMatchingSingleResultFragmentDoc = gql`
     fragment RegexMatchingSingleResult on RegexMatchingSingleResult {
   resultType
@@ -3135,6 +3177,8 @@ export const ExtractionMatchingResultFragmentDoc = gql`
   allMatches {
     ...RegexExtractionMatch
   }
+  notMatchedForUser
+  notMatchedForSample
   points
   maxPoints
 }
@@ -3162,15 +3206,21 @@ export const RegexCorrectionResultFragmentDoc = gql`
   proficienciesUpdated
   result {
     ...RegexAbstractResult
-    ...RegexInternalErrorResult
+    ... on RegexInternalErrorResult {
+      msg
+    }
     ...RegexMatchingResult
     ...RegexExtractionResult
   }
 }
     ${RegexAbstractResultFragmentDoc}
-${RegexInternalErrorResultFragmentDoc}
 ${RegexMatchingResultFragmentDoc}
 ${RegexExtractionResultFragmentDoc}`;
+export const RegexInternalErrorResultFragmentDoc = gql`
+    fragment RegexInternalErrorResult on RegexInternalErrorResult {
+  msg
+}
+    `;
 export const SqlAbstractResultFragmentDoc = gql`
     fragment SqlAbstractResult on SqlAbstractResult {
   __typename
@@ -3197,6 +3247,8 @@ export const SqlMatchingResultFragmentDoc = gql`
   allMatches {
     ...NewMatch
   }
+  notMatchedForUserString
+  notMatchedForSampleString
 }
     ${NewMatchFragmentDoc}`;
 export const ColumnComparisonFragmentDoc = gql`
@@ -3372,10 +3424,17 @@ export const UmlClassMatchingResultFragmentDoc = gql`
   allMatches {
     ...UmlClassMatch
   }
+  notMatchedForUser {
+    ...UmlSolutionClass
+  }
+  notMatchedForSample {
+    ...UmlSolutionClass
+  }
   points
   maxPoints
 }
-    ${UmlClassMatchFragmentDoc}`;
+    ${UmlClassMatchFragmentDoc}
+${UmlSolutionClassFragmentDoc}`;
 export const UmlAssociationFragmentDoc = gql`
     fragment UmlAssociation on UmlAssociation {
   assocType
@@ -3395,8 +3454,10 @@ export const UmlAssociationMatchFragmentDoc = gql`
   sampleArg {
     ...UmlAssociation
   }
-  maybeAnalysisResult {
-    __typename
+  analysisResult {
+    assocTypeEqual
+    correctAssocType
+    multiplicitiesEqual
   }
 }
     ${UmlAssociationFragmentDoc}`;
@@ -3405,10 +3466,17 @@ export const UmlAssociationMatchingResultFragmentDoc = gql`
   allMatches {
     ...UmlAssociationMatch
   }
+  notMatchedForUser {
+    ...UmlAssociation
+  }
+  notMatchedForSample {
+    ...UmlAssociation
+  }
   points
   maxPoints
 }
-    ${UmlAssociationMatchFragmentDoc}`;
+    ${UmlAssociationMatchFragmentDoc}
+${UmlAssociationFragmentDoc}`;
 export const UmlImplementationFragmentDoc = gql`
     fragment UmlImplementation on UmlImplementation {
   subClass
@@ -3431,10 +3499,17 @@ export const UmlImplementationMatchingResultFragmentDoc = gql`
   allMatches {
     ...UmlImplementationMatch
   }
+  notMatchedForUser {
+    ...UmlImplementation
+  }
+  notMatchedForSample {
+    ...UmlImplementation
+  }
   points
   maxPoints
 }
-    ${UmlImplementationMatchFragmentDoc}`;
+    ${UmlImplementationMatchFragmentDoc}
+${UmlImplementationFragmentDoc}`;
 export const UmlResultFragmentDoc = gql`
     fragment UmlResult on UmlResult {
   classResult {
@@ -3602,7 +3677,7 @@ export const XmlElementLineMatchFragmentDoc = gql`
   sampleArg {
     ...ElementLine
   }
-  maybeAnalysisResult {
+  analysisResult {
     ...XmlElementLineAnalysisResult
   }
 }
@@ -3613,8 +3688,15 @@ export const XmlElementLineMatchingResultFragmentDoc = gql`
   allMatches {
     ...XmlElementLineMatch
   }
+  notMatchedForUser {
+    ...ElementLine
+  }
+  notMatchedForSample {
+    ...ElementLine
+  }
 }
-    ${XmlElementLineMatchFragmentDoc}`;
+    ${XmlElementLineMatchFragmentDoc}
+${ElementLineFragmentDoc}`;
 export const XmlGrammarResultFragmentDoc = gql`
     fragment XmlGrammarResult on XmlGrammarResult {
   parseErrors {

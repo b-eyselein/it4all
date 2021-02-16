@@ -14,13 +14,7 @@ object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineMatch] {
 
   override protected def canMatch(el1: ElementLine, el2: ElementLine): Boolean = el1.elementName == el2.elementName
 
-  override protected def instantiateOnlySampleMatch(sa: ElementLine): ElementLineMatch =
-    ElementLineMatch(MatchType.ONLY_SAMPLE, None, Some(sa), None)
-
-  override protected def instantiateOnlyUserMatch(ua: ElementLine): ElementLineMatch =
-    ElementLineMatch(MatchType.ONLY_USER, Some(ua), None, None)
-
-  override protected def instantiateCompleteMatch(ua: ElementLine, sa: ElementLine): ElementLineMatch = {
+  override protected def instantiateMatch(ua: ElementLine, sa: ElementLine): ElementLineMatch = {
 
     val contentCorrect = ua.elementDefinition.contentAsString == sa.elementDefinition.contentAsString
 
@@ -45,6 +39,6 @@ object DocTypeDefMatcher extends Matcher[ElementLine, ElementLineMatch] {
       arg2Def.getOrElse("FEHLER!")
     )
 
-    ElementLineMatch(matchType, Some(ua), Some(sa), Some(ar))
+    ElementLineMatch(matchType, ua, sa, ar)
   }
 }

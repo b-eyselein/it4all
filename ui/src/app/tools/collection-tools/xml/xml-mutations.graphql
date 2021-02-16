@@ -56,6 +56,12 @@ fragment XmlElementLineMatchingResult on XmlElementLineComparisonMatchingResult 
   allMatches  {
     ...XmlElementLineMatch
   }
+  notMatchedForUser {
+    ...ElementLine
+  }
+  notMatchedForSample {
+    ...ElementLine
+  }
 }
 
 fragment XmlElementLineMatch on ElementLineMatch {
@@ -66,7 +72,7 @@ fragment XmlElementLineMatch on ElementLineMatch {
   sampleArg {
     ...ElementLine
   }
-  maybeAnalysisResult {
+  analysisResult {
     ...XmlElementLineAnalysisResult
   }
 }

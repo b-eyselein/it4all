@@ -14,8 +14,4 @@ object MatchType extends PlayEnum[MatchType] {
 
   case object UNSUCCESSFUL_MATCH extends MatchType
 
-  case object ONLY_USER extends MatchType
-
-  case object ONLY_SAMPLE extends MatchType
-
 }

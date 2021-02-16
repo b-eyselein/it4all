@@ -17,11 +17,11 @@ import {
   XmlSolution,
   XmlSolutionInput
 } from '../../../../_services/apollo_services';
+import {HasSampleSolutions} from "../../_helpers/correction-helpers";
+import {DexieService} from "../../../../_services/dexie.service";
 
 import 'codemirror/mode/dtd/dtd';
 import 'codemirror/mode/xml/xml';
-import {HasSampleSolutions} from "../../_helpers/correction-helpers";
-import {DexieService} from "../../../../_services/dexie.service";
 
 
 export function getIdForXmlExPart(xmlExPart: XmlExPart): string {

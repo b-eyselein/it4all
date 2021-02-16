@@ -7,11 +7,8 @@ import play.api.Logger
 import scala.util.matching.Regex
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-final case class RegexMatchMatch(
-  matchType: MatchType,
-  userArg: Option[RegexMatch],
-  sampleArg: Option[RegexMatch]
-) extends Match[RegexMatch] {
+final case class RegexMatchMatch(matchType: MatchType, userArg: RegexMatch, sampleArg: RegexMatch)
+    extends Match[RegexMatch] {
 
   override protected def argDescription: RegexMatch => String = _.group(0)
 
@@ -22,14 +19,8 @@ object RegexMatchMatcher extends Matcher[RegexMatch, RegexMatchMatch] {
   override protected def canMatch(t1: RegexMatch, t2: RegexMatch): Boolean =
     t1.source == t2.source && t1.start == t2.start && t1.end == t2.end
 
-  override protected def instantiateOnlySampleMatch(sa: RegexMatch): RegexMatchMatch =
-    RegexMatchMatch(MatchType.ONLY_SAMPLE, None, Some(sa))
-
-  override protected def instantiateOnlyUserMatch(ua: RegexMatch): RegexMatchMatch =
-    RegexMatchMatch(MatchType.ONLY_USER, Some(ua), None)
-
-  override protected def instantiateCompleteMatch(ua: RegexMatch, sa: RegexMatch): RegexMatchMatch =
-    RegexMatchMatch(MatchType.SUCCESSFUL_MATCH, Some(ua), Some(sa))
+  override protected def instantiateMatch(ua: RegexMatch, sa: RegexMatch): RegexMatchMatch =
+    RegexMatchMatch(MatchType.SUCCESSFUL_MATCH, ua, sa)
 }
 
 object RegexMatchingCorrector extends RegexAbstractCorrector {

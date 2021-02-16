@@ -57,9 +57,9 @@ object ElementLineMatch {
 
 final case class ElementLineMatch(
   matchType: MatchType,
-  userArg: Option[ElementLine],
-  sampleArg: Option[ElementLine],
-  maybeAnalysisResult: Option[ElementLineAnalysisResult]
+  userArg: ElementLine,
+  sampleArg: ElementLine,
+  analysisResult: ElementLineAnalysisResult
 ) extends Match[ElementLine]
     with XmlEvaluationResult {
 
@@ -74,23 +74,17 @@ final case class ElementLineMatch(
     SuccessType.NONE
   }
 
-  override def maxPoints: Points = sampleArg match {
-    case None     => zeroPoints
-    case Some(sa) => pointsForElement + pointsForElementLine(sa)
-  }
+  override def maxPoints: Points = pointsForElement + pointsForElementLine(sampleArg)
 
   override def points: Points = matchType match {
     case MatchType.SUCCESSFUL_MATCH                             => maxPoints
-    case MatchType.ONLY_SAMPLE | MatchType.ONLY_USER            => zeroPoints
     case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH =>
       // FIXME: calculate...
 
-      val pointsForContent = maybeAnalysisResult match {
-        case None => zeroPoints
-        case Some(ar) =>
-          val pointsForElemContent = if (ar.contentCorrect) singlePoint else zeroPoints
-          val pointsForAttributes  = if (ar.attributesCorrect) singlePoint else zeroPoints
-          pointsForElemContent + pointsForAttributes
+      val pointsForContent = {
+        val pointsForElemContent = if (analysisResult.contentCorrect) singlePoint else zeroPoints
+        val pointsForAttributes  = if (analysisResult.attributesCorrect) singlePoint else zeroPoints
+        pointsForElemContent + pointsForAttributes
       }
 
       pointsForElement + pointsForContent

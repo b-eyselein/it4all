@@ -5,11 +5,8 @@ import model.points._
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.schema.Column
 
-final case class BinaryExpressionMatch(
-  matchType: MatchType,
-  userArg: Option[BinaryExpression],
-  sampleArg: Option[BinaryExpression]
-) extends Match[BinaryExpression] {
+final case class BinaryExpressionMatch(matchType: MatchType, userArg: BinaryExpression, sampleArg: BinaryExpression)
+    extends Match[BinaryExpression] {
 
   override def points: Points = matchType match {
     case MatchType.SUCCESSFUL_MATCH   => singlePoint
@@ -17,10 +14,7 @@ final case class BinaryExpressionMatch(
     case _                            => zeroPoints
   }
 
-  override def maxPoints: Points = sampleArg match {
-    case None    => zeroPoints
-    case Some(_) => singlePoint
-  }
+  override val maxPoints: Points = singlePoint
 
 }
 
@@ -59,13 +53,7 @@ final case class BinaryExpressionMatcher(
         }
     }
 
-  override protected def instantiateOnlySampleMatch(sa: BinaryExpression): BinaryExpressionMatch =
-    BinaryExpressionMatch(MatchType.ONLY_SAMPLE, None, Some(sa))
-
-  override protected def instantiateOnlyUserMatch(ua: BinaryExpression): BinaryExpressionMatch =
-    BinaryExpressionMatch(MatchType.ONLY_USER, Some(ua), None)
-
-  override protected def instantiateCompleteMatch(ua: BinaryExpression, sa: BinaryExpression): BinaryExpressionMatch = {
+  override protected def instantiateMatch(ua: BinaryExpression, sa: BinaryExpression): BinaryExpressionMatch = {
     val (a1Left, a1Right) = (ua.getLeftExpression.toString, ua.getRightExpression.toString)
     val (a2Left, a2Right) = (sa.getLeftExpression.toString, sa.getRightExpression.toString)
 
@@ -78,6 +66,6 @@ final case class BinaryExpressionMatcher(
       MatchType.UNSUCCESSFUL_MATCH
     }
 
-    BinaryExpressionMatch(matchType, Some(ua), Some(sa))
+    BinaryExpressionMatch(matchType, ua, sa)
   }
 }

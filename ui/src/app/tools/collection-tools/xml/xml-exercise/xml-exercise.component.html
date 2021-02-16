@@ -74,9 +74,8 @@
                 </div>
               </div>
 
-              <div *ngFor="let gr of grammarResult.results.allMatches" class="content">
-                <it4all-xml-element-line-match [match]="gr"></it4all-xml-element-line-match>
-              </div>
+              <it4all-xml-element-line-match-result [result]="grammarResult.results">
+              </it4all-xml-element-line-match-result>
 
             </ng-container>
 

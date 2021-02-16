@@ -35,7 +35,7 @@ describe('ProgrammingExerciseComponent', () => {
     component = fixture.componentInstance;
     component.exerciseFiles = [];
     component.exerciseFragment = {
-      id: 0,
+      exerciseId: 0,
       collectionId: 0,
       toolId: 'programming',
       title: '',
@@ -45,7 +45,10 @@ describe('ProgrammingExerciseComponent', () => {
         implementationPart: {files: []},
         programmingPart: ProgExPart.Implementation,
         programmingSampleSolutions: [],
-        unitTestPart: {simplifiedTestMainFile: {}, unitTestFiles: []}
+        unitTestPart: {
+          __typename: "NormalUnitTestPart",
+          unitTestFiles: [],
+        }
       }
     };
     fixture.detectChanges();

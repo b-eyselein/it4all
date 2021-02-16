@@ -46,6 +46,12 @@ fragment UmlClassMatchingResult on UmlClassMatchingResult {
   allMatches {
     ...UmlClassMatch
   }
+  notMatchedForUser {
+    ...UmlSolutionClass
+  }
+  notMatchedForSample {
+    ...UmlSolutionClass
+  }
   points
   maxPoints
 }
@@ -78,6 +84,12 @@ fragment UmlAssociationMatchingResult on UmlAssociationMatchingResult  {
   allMatches {
     ...UmlAssociationMatch
   }
+  notMatchedForUser {
+    ...UmlAssociation
+  }
+  notMatchedForSample {
+    ...UmlAssociation
+  }
   points
   maxPoints
 }
@@ -90,8 +102,10 @@ fragment UmlAssociationMatch on UmlAssociationMatch {
   sampleArg {
     ...UmlAssociation
   }
-  maybeAnalysisResult {
-    __typename
+  analysisResult {
+    assocTypeEqual
+    correctAssocType
+    multiplicitiesEqual
   }
 }
 
@@ -107,6 +121,12 @@ fragment UmlAssociation on UmlAssociation {
 fragment UmlImplementationMatchingResult on UmlImplementationMatchingResult {
   allMatches {
     ...UmlImplementationMatch
+  }
+  notMatchedForUser {
+    ...UmlImplementation
+  }
+  notMatchedForSample {
+    ...UmlImplementation
   }
   points
   maxPoints

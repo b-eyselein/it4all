@@ -153,4 +153,6 @@ fragment SqlMatchingResult on MatchingResult  {
   allMatches {
     ...NewMatch
   }
+  notMatchedForUserString
+  notMatchedForSampleString
 }

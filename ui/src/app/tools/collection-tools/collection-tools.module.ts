@@ -29,10 +29,7 @@ import {UmlClassEditComponent} from './uml/_components/uml-class-edit/uml-class-
 import {UmlAssocEditComponent} from './uml/_components/uml-assoc-edit/uml-assoc-edit.component';
 import {ExerciseLinkCardComponent} from './_components/exercise-link-card/exercise-link-card.component';
 import {UmlDiagDrawingCorrectionComponent} from './uml/_components/uml-diag-drawing-correction/uml-diag-drawing-correction.component';
-import {UmlAssocMatchComponent} from './uml/_components/uml-assoc-match/uml-assoc-match.component';
-import {UmlImplMatchComponent} from './uml/_components/uml-impl-match/uml-impl-match.component';
 import {UmlMemberAllocationComponent} from './uml/uml-member-allocation/uml-member-allocation.component';
-import {XmlElementLineMatchComponent} from './xml/_components/xml-element-line-match/xml-element-line-match.component';
 import {XmlDocumentCorrectionComponent} from './xml/_components/xml-document-correction/xml-document-correction.component';
 import {SqlTableContentsComponent} from './sql/_components/sql-table-contents/sql-table-contents.component';
 import {StringSampleSolComponent} from './_components/string-sample-sol/string-sample-sol.component';
@@ -46,6 +43,10 @@ import {ProficiencyCardComponent} from './_components/proficiency-card/proficien
 import {LessonQuestionsContentComponent} from './lessons/lesson-questions/lesson-questions-content.component';
 import {FlaskExerciseComponent} from './flask/flask-exercise/flask-exercise.component';
 import {FilesExerciseComponent} from './_components/files-exercise/files-exercise.component';
+import {UmlImplResultComponent} from "./uml/_components/uml-impl-result/uml-impl-result.component";
+import {XmlElementLineMatchResultComponent} from './xml/_components/xml-element-line-match-result/xml-element-line-match-result.component';
+import {UmlAssocMatchResultComponent} from './uml/_components/uml-assoc-match-result/uml-assoc-match-result.component';
+import {BrowserModule} from "@angular/platform-browser";
 
 
 @NgModule({
@@ -78,14 +79,15 @@ import {FilesExerciseComponent} from './_components/files-exercise/files-exercis
     SqlExerciseComponent, SqlResultComponent, SqlMatchingResultComponent, SqlExecutionResultComponent, SqlTableContentsComponent, QueryResultTableComponent,
 
     UmlDiagramDrawingComponent, UmlClassEditComponent, UmlAssocEditComponent, UmlExerciseComponent, UmlClassSelectionComponent,
-    UmlDiagDrawingCorrectionComponent, UmlAssocMatchComponent, UmlImplMatchComponent, UmlMemberAllocationComponent,
+    UmlDiagDrawingCorrectionComponent, UmlMemberAllocationComponent,
 
     WebExerciseComponent, HtmlTaskResultComponent, HtmlAttributeResultComponent,
 
-    XmlExerciseComponent, XmlElementLineMatchComponent, XmlDocumentCorrectionComponent
+    XmlExerciseComponent, XmlDocumentCorrectionComponent, UmlImplResultComponent, UmlImplResultComponent, XmlElementLineMatchResultComponent, UmlAssocMatchResultComponent
   ],
   providers: [],
   imports: [
+    BrowserModule,
     CommonModule,
     FormsModule,
     CodemirrorModule,

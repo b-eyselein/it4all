@@ -14,6 +14,12 @@ import {MatchType, StringMatchFragment, StringMatchingResultFragment} from '../.
           Die Angabe {{matchSingularName}}
           <code>{{getArgDescription(match)}}</code> {{getTextForMatchType(match.matchType)}}.
         </li>
+        <li *ngFor="let notMatchedForUser of matchingResult.notMatchedForUser" class="has-text-danger">
+          Die Angabe {{matchSingularName}} <code>{{notMatchedForUser}}</code> ist falsch.
+        </li>
+        <li *ngFor="let notMatchedForSample of matchingResult.notMatchedForSample" class="has-text-danger">
+          Die Angabe {{matchSingularName}} <code>{{notMatchedForSample}}</code> fehlt.
+        </li>
       </ul>
     </div>
   `
@@ -37,20 +43,11 @@ export class SqlMatchingResultComponent implements OnChanges {
   }
 
   getArgDescription(match: StringMatchFragment): string {
-    return match.matchType === MatchType.OnlySample ? match.sampleArg : match.userArg;
+    return match.userArg;
   }
 
   getTextForMatchType(matchType: MatchType): string {
-    switch (matchType) {
-      case MatchType.SuccessfulMatch:
-        return 'ist korrekt';
-      case MatchType.OnlySample:
-        return 'fehlt';
-      case MatchType.OnlyUser:
-        return 'ist falsch';
-      default:
-        return 'ist nicht komplett richtig.';
-    }
+    return matchType === MatchType.SuccessfulMatch ? 'ist korrekt' : 'ist nicht komplett richtig.';
   }
 
 }

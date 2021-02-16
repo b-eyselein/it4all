@@ -29,7 +29,8 @@ function createApollo(httpLink: HttpLink): ApolloClientOptions<NormalizedCacheOb
     cache: new InMemoryCache(),
     defaultOptions: {
       watchQuery: {fetchPolicy: 'no-cache'},
-      query: {fetchPolicy: 'no-cache'}
+      query: {fetchPolicy: 'no-cache'},
+      mutate: {fetchPolicy: 'no-cache'}
     }
   };
 }

@@ -12,9 +12,9 @@ final case class UmlAssociationAnalysisResult(
 
 final case class UmlAssociationMatch(
   matchType: MatchType,
-  userArg: Option[UmlAssociation],
-  sampleArg: Option[UmlAssociation],
-  maybeAnalysisResult: Option[UmlAssociationAnalysisResult]
+  userArg: UmlAssociation,
+  sampleArg: UmlAssociation,
+  analysisResult: UmlAssociationAnalysisResult
 ) extends Match[UmlAssociation]
 
 object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch] {
@@ -28,13 +28,7 @@ object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch
   override protected def canMatch(a1: UmlAssociation, a2: UmlAssociation): Boolean =
     endsParallelEqual(a1, a2) || endsCrossedEqual(a1, a2)
 
-  override protected def instantiateOnlySampleMatch(sa: UmlAssociation): UmlAssociationMatch =
-    UmlAssociationMatch(MatchType.ONLY_SAMPLE, None, Some(sa), None)
-
-  override protected def instantiateOnlyUserMatch(ua: UmlAssociation): UmlAssociationMatch =
-    UmlAssociationMatch(MatchType.ONLY_USER, Some(ua), None, None)
-
-  override protected def instantiateCompleteMatch(ua: UmlAssociation, sa: UmlAssociation): UmlAssociationMatch = {
+  override protected def instantiateMatch(ua: UmlAssociation, sa: UmlAssociation): UmlAssociationMatch = {
 
     val endsParallel = UmlAssociationMatcher.endsParallelEqual(ua, sa)
 
@@ -49,12 +43,12 @@ object UmlAssociationMatcher extends Matcher[UmlAssociation, UmlAssociationMatch
     val ar: UmlAssociationAnalysisResult =
       UmlAssociationAnalysisResult(endsParallel, assocTypeEqual, sa.assocType, multiplicitiesEqual)
 
-    val matchType: MatchType = (assocTypeEqual, multiplicitiesEqual) match {
-      case (true, true)  => MatchType.SUCCESSFUL_MATCH
-      case (false, true) => MatchType.PARTIAL_MATCH
-      case _             => MatchType.UNSUCCESSFUL_MATCH
+    val matchType: MatchType = if (assocTypeEqual && multiplicitiesEqual) {
+      MatchType.SUCCESSFUL_MATCH
+    } else {
+      MatchType.PARTIAL_MATCH
     }
 
-    UmlAssociationMatch(matchType, Some(ua), Some(sa), Some(ar))
+    UmlAssociationMatch(matchType, ua, sa, ar)
   }
 }

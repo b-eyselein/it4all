@@ -19,7 +19,7 @@ fragment WebCorrectionResult on WebCorrectionResult {
   }
 }
 
-fragment WebAbstractResult on WebAbstractResult{
+fragment WebAbstractResult on WebAbstractResult {
   __typename
   points
   maxPoints

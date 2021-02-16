@@ -22,14 +22,22 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
 
   protected val matchTypeType: EnumType[MatchType] = deriveEnumType()
 
-  private def matchingResultInterface[T, M <: Match[T]]: InterfaceType[Unit, MatchingResult[T, M]] =
+  private def matchingResultInterface[T, M <: Match[T]](
+    describeArg: T => String
+  ): InterfaceType[Unit, MatchingResult[T, M]] =
     InterfaceType(
       "MatchingResult",
       () =>
         fields(
           Field("points", FloatType, resolve = _.value.points.asDouble),
           Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble),
-          Field("allMatches", ListType(newMatchInterface), resolve = _.value.allMatches)
+          Field("allMatches", ListType(newMatchInterface), resolve = _.value.allMatches),
+          Field("notMatchedForUserString", ListType(StringType), resolve = _.value.notMatchedForUser.map(describeArg)),
+          Field(
+            "notMatchedForSampleString",
+            ListType(StringType),
+            resolve = _.value.notMatchedForSample.map(describeArg)
+          )
         )
     )
 
@@ -58,11 +66,12 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
     name: String,
     mType: OutputType[M],
     tType: OutputType[TO],
-    t2to: T => TO
+    t2to: T => TO,
+    describeArg: T => String = (t: T) => t.toString
   ): ObjectType[Unit, MatchingResult[T, M]] =
     deriveObjectType(
       ObjectTypeName(s"${name}MatchingResult"),
-      Interfaces(matchingResultInterface[T, M]),
+      Interfaces(matchingResultInterface[T, M](describeArg)),
       ExcludeFields("points", "maxPoints"),
       ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches)),
       ReplaceField(

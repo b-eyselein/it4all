@@ -6,51 +6,55 @@ trait Matcher[T, M <: Match[T]] {
 
   protected def canMatch(t1: T, t2: T): Boolean = t1 == t2
 
-  protected def instantiateOnlyUserMatch(ua: T): M
+  protected def instantiateMatch(ua: T, sa: T): M
 
-  protected def instantiateOnlySampleMatch(sa: T): M
-
-  protected def instantiateCompleteMatch(ua: T, sa: T): M
-
-  private def findMatchInSecondCollection(firstHead: T, secondCollection: List[T]): (M, List[T]) = {
+  private def findMatchInSecondCollection(firstHead: T, secondCollection: List[T]): (Either[T, M], List[T]) = {
 
     @annotation.tailrec
-    def go(firstHead: T, secondCollection: List[T], notMatched: List[T]): (M, List[T]) =
-      secondCollection match {
-        case Nil => (instantiateOnlyUserMatch(firstHead), notMatched)
-        case secondHead :: secondTail =>
-          if (canMatch(firstHead, secondHead)) {
-            val m = instantiateCompleteMatch(firstHead, secondHead)
+    def go(firstHead: T, secondColl: List[T], notMatched: List[T]): (Either[T, M], List[T]) = secondColl match {
+      case Nil => (Left(firstHead), notMatched)
+      case secondHead :: secondTail =>
+        if (canMatch(firstHead, secondHead)) {
+          val m = instantiateMatch(firstHead, secondHead)
 
-            (m, notMatched ++ secondTail)
-          } else {
-            go(firstHead, secondTail, notMatched :+ secondHead)
-          }
+          (Right(m), notMatched ++ secondTail)
+        } else {
+          go(firstHead, secondTail, notMatched :+ secondHead)
+        }
 
-      }
+    }
 
     go(firstHead, secondCollection, List.empty)
   }
 
-  def doMatch(firstCollection: Seq[T], secondCollection: Seq[T]): MatchingResult[T, M] = {
+  def doMatch(userCollection: Seq[T], secondCollection: Seq[T]): MatchingResult[T, M] = {
 
     @annotation.tailrec
-    def go(firstCollection: List[T], secondCollection: List[T], matches: List[M]): MatchingResult[T, M] =
-      firstCollection match {
-        case Nil =>
-          val allMatches = matches ++ secondCollection.map(instantiateOnlySampleMatch)
+    def go(
+      firstColl: List[T],
+      secondColl: List[T],
+      matches: Seq[M],
+      notMatchedInFirst: Seq[T]
+    ): MatchingResult[T, M] = firstColl match {
+      case Nil =>
+        // FIXME: points!
+        // val allMatches = matches ++ secondColl.map(instantiateOnlySampleMatch)
 
-          val points: Points    = addUp(allMatches.map(_.points))
-          val maxPoints: Points = addUp(allMatches.map(_.maxPoints))
+        val points: Points    = (-1).points // addUp(allMatches.map(_.points))
+        val maxPoints: Points = (-1).points // addUp(allMatches.map(_.maxPoints))
 
-          MatchingResult(allMatches, Seq.empty, Seq.empty, points, maxPoints)
+        MatchingResult(matches, notMatchedInFirst, secondColl, points, maxPoints)
 
-        case firstHead :: firstTail =>
-          val (foundMatch, notMatchedInSecond) = findMatchInSecondCollection(firstHead, secondCollection)
-          go(firstTail, notMatchedInSecond, matches :+ foundMatch)
-      }
+      case firstHead :: firstTail =>
+        val (foundMatch, notMatchedInSecond) = findMatchInSecondCollection(firstHead, secondColl)
 
-    go(firstCollection.toList, secondCollection.toList, matches = List.empty)
+        foundMatch match {
+          case Left(t)  => go(firstTail, notMatchedInSecond, matches, notMatchedInFirst :+ t)
+          case Right(m) => go(firstTail, notMatchedInSecond, matches :+ m, notMatchedInFirst)
+        }
+    }
+
+    go(userCollection.toList, secondCollection.toList, matches = Seq.empty, Seq.empty)
   }
 
 }
