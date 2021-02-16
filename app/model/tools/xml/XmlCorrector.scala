@@ -2,7 +2,6 @@ package model.tools.xml
 
 import better.files.File
 import de.uniwue.dtd.parser.DocTypeDefParser
-import javax.xml.parsers.DocumentBuilderFactory
 import model.core.Levenshtein
 import model.points._
 import model.result.SuccessType
@@ -11,6 +10,7 @@ import model.tools.xml.XmlTool.ElementLineComparison
 import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
 import play.api.Logger
 
+import javax.xml.parsers.DocumentBuilderFactory
 import scala.collection.mutable
 
 class CorrectionErrorHandler extends ErrorHandler {
@@ -94,13 +94,12 @@ object XmlCorrector extends AbstractCorrector {
   private def findNearestGrammarSample(
     learnerSolution: String,
     sampleSolutions: Seq[XmlSolution]
-  ): Option[XmlSolution] =
-    sampleSolutions.reduceOption((sampleG1, sampleG2) => {
-      val dist1 = Levenshtein.levenshtein(learnerSolution, sampleG1.grammar)
-      val dist2 = Levenshtein.levenshtein(learnerSolution, sampleG2.grammar)
+  ): Option[XmlSolution] = sampleSolutions.reduceOption((sampleG1, sampleG2) => {
+    val dist1 = Levenshtein.levenshtein(learnerSolution, sampleG1.grammar)
+    val dist2 = Levenshtein.levenshtein(learnerSolution, sampleG2.grammar)
 
-      if (dist1 < dist2) sampleG1 else sampleG2
-    })
+    if (dist1 < dist2) sampleG1 else sampleG2
+  })
 
   def correctGrammar(
     solution: XmlSolution,
@@ -110,6 +109,7 @@ object XmlCorrector extends AbstractCorrector {
     // FIXME: points!
     val maxPoints = (-1).points
 
+    // TODO: check all grammars, use best?
     findNearestGrammarSample(solution.grammar, sampleSolutions) match {
       case None => onError("Could not find a sample grammar!", maxPoints)
       case Some(sampleSolution) =>

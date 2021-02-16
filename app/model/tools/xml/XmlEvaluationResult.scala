@@ -3,8 +3,8 @@ package model.tools.xml
 import de.uniwue.dtd.model._
 import enumeratum.{EnumEntry, PlayEnum}
 import model.matching.{Match, MatchType}
-import model.result.SuccessType
 import model.points._
+import model.result.SuccessType
 import org.xml.sax.SAXParseException
 
 sealed trait XmlEvaluationResult
@@ -27,16 +27,15 @@ object XmlErrorType extends PlayEnum[XmlErrorType] {
 
 object XmlError {
 
-  def fromSAXParseException(errorType: XmlErrorType, e: SAXParseException): XmlError =
-    XmlError(
-      errorType,
-      e.getMessage,
-      e.getLineNumber,
-      errorType match {
-        case XmlErrorType.WARNING => SuccessType.PARTIALLY
-        case _                    => SuccessType.NONE
-      }
-    )
+  def fromSAXParseException(errorType: XmlErrorType, e: SAXParseException): XmlError = XmlError(
+    errorType,
+    e.getMessage,
+    e.getLineNumber,
+    errorType match {
+      case XmlErrorType.WARNING => SuccessType.PARTIALLY
+      case _                    => SuccessType.NONE
+    }
+  )
 
 }
 
@@ -69,36 +68,33 @@ final case class ElementLineMatch(
   //  override protected def descArgForJson(arg: ElementLine): JsValue = Json.obj(nameName -> arg.elementName)
 
   // override
-  def success: SuccessType =
-    if (matchType == MatchType.SUCCESSFUL_MATCH) {
-      SuccessType.COMPLETE
-    } else {
-      SuccessType.NONE
-    }
+  def success: SuccessType = if (matchType == MatchType.SUCCESSFUL_MATCH) {
+    SuccessType.COMPLETE
+  } else {
+    SuccessType.NONE
+  }
 
-  override def maxPoints: Points =
-    sampleArg match {
-      case None     => zeroPoints
-      case Some(sa) => pointsForElement + pointsForElementLine(sa)
-    }
+  override def maxPoints: Points = sampleArg match {
+    case None     => zeroPoints
+    case Some(sa) => pointsForElement + pointsForElementLine(sa)
+  }
 
-  override def points: Points =
-    matchType match {
-      case MatchType.SUCCESSFUL_MATCH                             => maxPoints
-      case MatchType.ONLY_SAMPLE | MatchType.ONLY_USER            => zeroPoints
-      case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH =>
-        // FIXME: calculate...
+  override def points: Points = matchType match {
+    case MatchType.SUCCESSFUL_MATCH                             => maxPoints
+    case MatchType.ONLY_SAMPLE | MatchType.ONLY_USER            => zeroPoints
+    case MatchType.UNSUCCESSFUL_MATCH | MatchType.PARTIAL_MATCH =>
+      // FIXME: calculate...
 
-        val pointsForContent = maybeAnalysisResult match {
-          case None => zeroPoints
-          case Some(ar) =>
-            val pointsForElemContent = if (ar.contentCorrect) singlePoint else zeroPoints
-            val pointsForAttributes  = if (ar.attributesCorrect) singlePoint else zeroPoints
-            pointsForElemContent + pointsForAttributes
-        }
+      val pointsForContent = maybeAnalysisResult match {
+        case None => zeroPoints
+        case Some(ar) =>
+          val pointsForElemContent = if (ar.contentCorrect) singlePoint else zeroPoints
+          val pointsForAttributes  = if (ar.attributesCorrect) singlePoint else zeroPoints
+          pointsForElemContent + pointsForAttributes
+      }
 
-        pointsForElement + pointsForContent
-    }
+      pointsForElement + pointsForContent
+  }
 
   private def pointsForElementLine(elementLine: ElementLine): Points = {
     val pointsForElemContent: Points = pointsForElementContent(elementLine.elementDefinition.content)
