@@ -258,7 +258,8 @@ export type NewMatch = {
 export type NormalExecutionResult = {
   __typename?: 'NormalExecutionResult';
   successful: Scalars['Boolean'];
-  logs: Scalars['String'];
+  stdout: Array<Scalars['String']>;
+  stderr: Array<Scalars['String']>;
 };
 
 export type ProgrammingAbstractResult = {
@@ -1611,7 +1612,7 @@ export type SimplifiedExecutionResultFragment = (
 
 export type NormalExecutionResultFragment = (
   { __typename: 'NormalExecutionResult' }
-  & Pick<NormalExecutionResult, 'successful' | 'logs'>
+  & Pick<NormalExecutionResult, 'successful' | 'stdout' | 'stderr'>
 );
 
 export type UnitTestCorrectionResultFragment = (
@@ -3104,7 +3105,8 @@ export const NormalExecutionResultFragmentDoc = gql`
     fragment NormalExecutionResult on NormalExecutionResult {
   __typename
   successful
-  logs
+  stdout
+  stderr
 }
     `;
 export const UnitTestCorrectionResultFragmentDoc = gql`

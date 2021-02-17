@@ -14,6 +14,7 @@ import sangria.schema._
 
 import java.time.Clock
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries {
 
@@ -95,26 +96,41 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
       val partTypeInputArg: Argument[P] = Argument("part", tool.graphQlModels.partEnumType)
       val solTypeInputArg: Argument[S]  = Argument("solution", tool.graphQlModels.SolTypeInputType)
 
-      def correct(user: LoggedInUser, ex: Exercise[E], part: P, solution: S): Future[CorrectionResult[R]] =
-        for {
-          result <- tool.correctAbstract(user, solution, ex, part)
+      def correct(user: LoggedInUser, ex: Exercise[E], part: P, solution: S): Future[CorrectionResult[R]] = tool
+        .correctAbstract(user, solution, ex, part)
+        .transform {
+          // flatten Future[Try[_]] to Future[_] with implicit Try[_]
+          case Failure(exception)          => Failure(exception)
+          case Success(Failure(exception)) => Failure(exception)
+          case Success(success)            => success
+        }
+        .flatMap { result =>
+          for {
+            nextUserSolutionId <- nextUserSolutionId(ex, part)
 
-          nextUserSolutionId <- nextUserSolutionId(ex, part)
+            solutionSaved <- insertSolution(
+              UserSolution(
+                nextUserSolutionId,
+                ex.exerciseId,
+                ex.collectionId,
+                ex.toolId,
+                user.username,
+                solution,
+                part
+              ),
+              tool.jsonFormats.userSolutionFormat
+            )
 
-          solutionSaved <- insertSolution(
-            UserSolution(nextUserSolutionId, ex.exerciseId, ex.collectionId, ex.toolId, user.username, solution, part),
-            tool.jsonFormats.userSolutionFormat
-          )
+            resultSaved <- futureUpsertExerciseResult(
+              BasicExercisePartResult.forExerciseAndResult(user.username, ex, part.id, result)
+            )
 
-          resultSaved <- futureUpsertExerciseResult(
-            BasicExercisePartResult.forExerciseAndResult(user.username, ex, part.id, result)
-          )
+            proficienciesUpdated <-
+              if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, ex).map(Some.apply)
+              else Future.successful(None)
 
-          proficienciesUpdated <-
-            if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, ex).map(Some.apply)
-            else Future.successful(None)
-
-        } yield CorrectionResult(solutionSaved, resultSaved, proficienciesUpdated, result)
+          } yield CorrectionResult(solutionSaved, resultSaved, proficienciesUpdated, result)
+        }
 
       val correctionResultType: ObjectType[Unit, CorrectionResult[R]] = deriveObjectType(
         ObjectTypeName(s"${tool.id.capitalize}CorrectionResult"),
@@ -132,12 +148,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
             correctionResultType,
             arguments = partTypeInputArg :: solTypeInputArg :: Nil,
             resolve = context =>
-              correct(
-                context.value._1,
-                context.value._2,
-                context.arg(partTypeInputArg),
-                context.arg(solTypeInputArg)
-              )
+              correct(context.value._1, context.value._2, context.arg(partTypeInputArg), context.arg(solTypeInputArg))
           )
         )
       )

@@ -8,6 +8,7 @@ import model.result.AbstractCorrectionResult
 import model._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 // Tool states
 
@@ -54,7 +55,7 @@ abstract class Tool(val id: String, val name: String, val toolState: ToolState =
     solution: SolType,
     exercise: Exercise[ExContentType],
     part: PartType
-  )(implicit executionContext: ExecutionContext): Future[ResType]
+  )(implicit executionContext: ExecutionContext): Future[Try[ResType]]
 
   val allTopics: Seq[Topic] = Seq.empty
 

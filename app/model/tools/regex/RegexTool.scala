@@ -4,7 +4,6 @@ import initialData.InitialData
 import initialData.regex.RegexInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.matching.MatchingResult
-import model.points._
 import model.tools._
 import model.{Exercise, LoggedInUser}
 
@@ -38,22 +37,15 @@ object RegexTool extends Tool("regex", "Reguläre Ausdrücke") {
     solution: String,
     exercise: RegexExercise,
     part: RegexExPart
-  )(implicit executionContext: ExecutionContext): Future[RegexAbstractResult] =
-    Future.successful {
-      Try(solution.r).fold(
-        error =>
-          RegexInternalErrorResult(
-            "Your regex could not be parsed: " + error.getMessage,
-            exercise.content.maxPoints.points
-          ),
-        userRegex =>
-          exercise.content.correctionType match {
-            case RegexCorrectionType.MATCHING => RegexMatchingCorrector.correctMatching(exercise.content, userRegex)
-            case RegexCorrectionType.EXTRACTION =>
-              RegexExtractionCorrector.correctExtraction(exercise.content, userRegex)
-          }
-      )
-    }
+  )(implicit executionContext: ExecutionContext): Future[Try[RegexAbstractResult]] = Future.successful {
+    Try(solution.r)
+      .flatMap { userRegex =>
+        exercise.content.correctionType match {
+          case RegexCorrectionType.MATCHING   => RegexMatchingCorrector.correctMatching(exercise.content, userRegex)
+          case RegexCorrectionType.EXTRACTION => RegexExtractionCorrector.correctExtraction(exercise.content, userRegex)
+        }
+      }
+  }
 
   override val initialData: InitialData[RegexExerciseContent] = RegexInitialData
 

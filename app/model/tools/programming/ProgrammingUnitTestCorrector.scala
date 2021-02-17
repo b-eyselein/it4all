@@ -1,13 +1,13 @@
 package model.tools.programming
 
 import better.files.File
-import model.core.{DockerBind, DockerConnector, ResultsFileJsonFormat, RunContainerResult}
+import model.core.DockerBind
 import model.points._
-import model.tools.programming.ProgrammingToolJsonProtocol.{UnitTestTestData, unitTestCorrectionResultsFileJsonReads}
-import play.api.libs.json.Json
+import model.tools.programming.ProgrammingToolJsonProtocol.{UnitTestTestData, unitTestCorrectionResultReads}
+import play.api.libs.json.{Json, Reads}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.util.Try
 
 trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
 
@@ -17,9 +17,7 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
     exerciseContent: ProgrammingExerciseContent,
     unitTestPart: NormalUnitTestPart,
     resultFile: File
-  )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
-
-    val mp = maxPoints(unitTestPart)
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingAbstractResult]] = {
 
     // write test data file
 
@@ -59,37 +57,19 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
 
     val allDockerBinds = defaultFileMounts ++ unitTestSolFilesDockerBinds ++ exFilesMounts :+ testDataFileMount
 
-    DockerConnector
-      .runContainer(
-        imageName = programmingCorrectionDockerImage.name,
-        maybeDockerBinds = allDockerBinds,
-        deleteContainerAfterRun = _ == 0,
-        maybeCmd = Some(Seq("unit_test"))
+    runContainer(
+      allDockerBinds,
+      Reads.seq(unitTestCorrectionResultReads),
+      resultFile,
+      maybeCmd = Some(Seq("unit_test")),
+      deleteContainerAfterRun = _ == 0
+    )(results =>
+      ProgrammingResult(
+        unitTestResults = results,
+        points = results.count(_.successful).points,
+        maxPoints = maxPoints(unitTestPart)
       )
-      .map {
-        case Failure(exception) =>
-          onError("Error running programming unit test correction image", mp, Some(exception))
-        case Success(RunContainerResult(statusCode, logs)) =>
-          if (statusCode != 0) {
-            ProgrammingInternalErrorResult(logs, mp)
-          } else {
-            ResultsFileJsonFormat
-              .readDockerExecutionResultFile(resultFile, unitTestCorrectionResultsFileJsonReads)
-              .fold(
-                exception => onError("Error reading unit test correction result file", mp, Some(exception)),
-                unitTestCorrectionResultFileContent => {
-                  val results = unitTestCorrectionResultFileContent.results
-
-                  ProgrammingResult(
-                    unitTestResults = results,
-                    points = results.count(_.successful).points,
-                    maxPoints = mp
-                  )
-                }
-              )
-          }
-      }
-
+    )
   }
 
 }

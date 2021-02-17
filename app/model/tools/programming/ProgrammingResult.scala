@@ -45,15 +45,12 @@ final case class SimplifiedExecutionResult(
   stdout: Option[String]
 )
 
-final case class SimplifiedExecutionResultFileContent(
-  results: Seq[SimplifiedExecutionResult]
-)
-
 // Normal test results
 
 final case class NormalExecutionResult(
   successful: Boolean,
-  logs: String
+  stdout: Seq[String],
+  stderr: Seq[String]
 )
 
 // Unit Test Correction

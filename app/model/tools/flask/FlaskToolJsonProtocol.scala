@@ -26,10 +26,6 @@ object FlaskToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[FlaskEx
 
   // Result file content
 
-  val flaskCorrectionResultFileReads: Reads[FlaskCorrectionResultFileContent] = {
-    implicit val flaskCorrectionResultFormat: Reads[FlaskTestResult] = Json.reads
-
-    Json.reads
-  }
+  val flaskCorrectionResultReads: Reads[FlaskTestResult] = Json.reads
 
 }

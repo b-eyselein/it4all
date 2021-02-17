@@ -66,13 +66,16 @@ object ProgrammingToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[P
       )
     )
 
-  val simplifiedExecutionResultFileContentReads: Reads[SimplifiedExecutionResultFileContent] = {
-    implicit val simplifiedExecutionResultFormat: Reads[SimplifiedExecutionResult] = Json.reads
+  val simplifiedExecutionResultReads: Reads[SimplifiedExecutionResult] = Json.reads
+
+  // Normal execution
+
+  val normalExecutionResultFileJsonReads: Reads[NormalExecutionResult] = {
 
     Json.reads
   }
 
-  // Normal execution
+  // Unit test correction
 
   final case class UnitTestTestData(
     folderName: String,
@@ -87,10 +90,6 @@ object ProgrammingToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[P
     Json.writes
   }
 
-  val unitTestCorrectionResultsFileJsonReads: Reads[UnitTestCorrectionResultFileContent] = {
-    implicit val unitTestCorrectionResultFormat: OFormat[UnitTestCorrectionResult] = Json.format
-
-    Json.reads
-  }
+  val unitTestCorrectionResultReads: Reads[UnitTestCorrectionResult] = Json.reads
 
 }

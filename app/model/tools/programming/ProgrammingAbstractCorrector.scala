@@ -10,12 +10,7 @@ import scala.util.matching.Regex
 
 trait ProgrammingAbstractCorrector extends DockerExecutionCorrector {
 
-  override type AbstractResult = ProgrammingAbstractResult
-
-  override protected def buildInternalError(msg: String, maxPoints: Points): ProgrammingInternalErrorResult =
-    ProgrammingInternalErrorResult(msg, maxPoints)
-
-  val programmingCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "py_prog_corrector", "0.1.3")
+  val programmingCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "py_prog_corrector", "0.2.1")
 
   protected val testDataFileName = "test_data.json"
   protected val testMainFileName = "simplified_test_main.py"

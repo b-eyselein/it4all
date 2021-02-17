@@ -9,7 +9,6 @@ import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.insert.Insert
 import net.sf.jsqlparser.statement.select.SubSelect
 import net.sf.jsqlparser.statement.update.Update
-import play.api.Logger
 
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
@@ -22,13 +21,11 @@ abstract class ChangeCorrector(queryType: String) extends QueryCorrector(queryTy
 
 object InsertCorrector extends ChangeCorrector("INSERT") {
 
-  override protected val logger: Logger = Logger(InsertCorrector.getClass)
-
   override type Q = Insert
 
   private def expressionLists(query: Q): Seq[ExpressionList] =
     query.getItemsList match {
-      case mel: MultiExpressionList => mel.getExprList.asScala.toSeq
+      case mel: MultiExpressionList => mel.getExpressionLists.asScala.toSeq
       case el: ExpressionList       => Seq(el)
       case _: SubSelect             => ???
     }
@@ -59,8 +56,6 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
 
 object DeleteCorrector extends ChangeCorrector("DELETE") {
 
-  override protected val logger: Logger = Logger(DeleteCorrector.getClass)
-
   override type Q = Delete
 
   override protected def getTables(query: Q): Seq[Table] = query.getTables.asScala.toSeq
@@ -79,8 +74,6 @@ object DeleteCorrector extends ChangeCorrector("DELETE") {
 }
 
 object UpdateCorrector extends ChangeCorrector("UPDATE") {
-
-  override protected val logger: Logger = Logger(UpdateCorrector.getClass)
 
   override type Q = Update
 

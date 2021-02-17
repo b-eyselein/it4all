@@ -1,35 +1,27 @@
 package model.tools.flask
 
+import model.FilesSolution
 import model.core._
 import model.points._
 import model.tools.DockerExecutionCorrector
 import model.tools.flask.FlaskTool.{FlaskExercise, solutionDirForExercise}
-import model.tools.flask.FlaskToolJsonProtocol.{flaskCorrectionResultFileReads, flaskTestsConfigFormat}
-import model.{FilesSolution, points}
-import play.api.Logger
-import play.api.libs.json.Json
+import model.tools.flask.FlaskToolJsonProtocol.{flaskCorrectionResultReads, flaskTestsConfigFormat}
+import play.api.libs.json.{Json, Reads}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.util.Try
 
 object FlaskCorrector extends DockerExecutionCorrector {
 
-  val flaskCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "flask_tester", "0.0.3")
+  val flaskCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "flask_tester", "0.0.4")
 
-  override protected val logger: Logger = Logger(this.getClass)
-
-  override type AbstractResult = FlaskAbstractResult
-
-  override protected def buildInternalError(msg: String, maxPoints: points.Points): FlaskInternalErrorResult =
-    FlaskInternalErrorResult(msg, maxPoints)
+  override protected val dockerImage: ScalaDockerImage = flaskCorrectionDockerImage
 
   def correct(
     username: String,
     solution: FilesSolution,
     exercise: FlaskExercise
-  )(implicit executionContext: ExecutionContext): Future[FlaskAbstractResult] = {
-
-    val maxPoints = exercise.content.maxPoints.points
+  )(implicit executionContext: ExecutionContext): Future[Try[FlaskAbstractResult]] = {
 
     val solTargetDir = solutionDirForExercise(username, exercise.collectionId, exercise.exerciseId)
 
@@ -80,37 +72,26 @@ object FlaskCorrector extends DockerExecutionCorrector {
       DockerBind(fromPath = resultFile, toPath = baseBindPath / resultFileName)
     ) ++ testFileBinds
 
-    DockerConnector
-      .runContainer(
-        imageName = flaskCorrectionDockerImage.name,
-        maybeDockerBinds = dockerBinds,
-        deleteContainerAfterRun = _ == 0
+    runContainer(
+      dockerBinds,
+      Reads.seq(flaskCorrectionResultReads),
+      resultFile
+    )(testResults =>
+      FlaskResult(
+        testResults,
+        points = testResults
+          .filter(_.successful)
+          .map { tr =>
+            exercise.content.testConfig.tests
+              .find(_.id == tr.testId)
+              .map(_.maxPoints)
+              .getOrElse(0)
+          }
+          .sum
+          .points,
+        maxPoints = exercise.content.maxPoints.points
       )
-      .map {
-        case Failure(exception) => onError("Error running tester container", maxPoints, Some(exception))
-        case Success(RunContainerResult(_, _)) =>
-          ResultsFileJsonFormat
-            .readDockerExecutionResultFile(resultFile, flaskCorrectionResultFileReads)
-            .fold(
-              exception => onError("Error while reading result!", maxPoints, Some(exception)),
-              flaskCorrectionResultFileContent => {
-                val testResults = flaskCorrectionResultFileContent.results
-
-                val points = testResults
-                  .filter(_.successful)
-                  .map { tr =>
-                    exercise.content.testConfig.tests
-                      .find(_.id == tr.testId)
-                      .map(_.maxPoints)
-                      .getOrElse(0)
-                  }
-                  .sum
-                  .points
-
-                FlaskResult(testResults, points, maxPoints)
-              }
-            )
-      }
+    )
 
   }
 

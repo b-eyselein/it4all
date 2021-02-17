@@ -6,14 +6,11 @@ import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.{Column, Table}
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select._
-import play.api.Logger
 
 import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
 
 object SelectCorrector extends QueryCorrector("SELECT") {
-
-  override protected val logger: Logger = Logger(SelectCorrector.getClass)
 
   override type Q = net.sf.jsqlparser.statement.select.Select
 
@@ -23,65 +20,61 @@ object SelectCorrector extends QueryCorrector("SELECT") {
       case _               => Seq[SelectItem]()
     }
 
-  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] =
-    query.getSelectBody match {
-      case ps: PlainSelect =>
-        ps.getSelectItems.asScala.map { column =>
-          val columnName = column match {
-            case _: AllColumns             => "*"
-            case at: AllTableColumns       => at.toString
-            case set: SelectExpressionItem => set.getExpression.toString
-          }
-
-          SelectColumnWrapper(columnName, column)
-        }.toSeq
-      case _ => Seq[ColumnWrapper]()
-    }
-
-  override protected def getTables(query: Q): Seq[Table] =
-    query.getSelectBody match {
-      case plain: PlainSelect =>
-        val mainTable: Option[Table] = plain.getFromItem match {
-          case t: Table => Some(t)
-          case _        => None
+  override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getSelectBody match {
+    case ps: PlainSelect =>
+      ps.getSelectItems.asScala.map { column =>
+        val columnName = column match {
+          case _: AllColumns             => "*"
+          case at: AllTableColumns       => at.toString
+          case set: SelectExpressionItem => set.getExpression.toString
         }
 
-        val joinedTables: Seq[Table] = Option(plain.getJoins).map(_.asScala) match {
-          case None => Seq[Table]()
-          case Some(joins) =>
-            joins.flatMap { join =>
-              join.getRightItem match {
-                case t: Table => Some(t)
-                case _        => None
-              }
-            }.toSeq
-        }
+        SelectColumnWrapper(columnName, column)
+      }.toSeq
+    case _ => Seq[ColumnWrapper]()
+  }
 
-        mainTable.toSeq ++ joinedTables
-      case _ => Seq[Table]()
-    }
+  override protected def getTables(query: Q): Seq[Table] = query.getSelectBody match {
+    case plain: PlainSelect =>
+      val mainTable: Option[Table] = plain.getFromItem match {
+        case t: Table => Some(t)
+        case _        => None
+      }
 
-  override protected def getJoinExpressions(query: Select): Seq[BinaryExpression] =
-    query.getSelectBody match {
-      case ps: PlainSelect =>
-        Option(ps.getJoins).map(_.asScala) match {
-          case None => Seq.empty
-          case Some(joins) =>
-            joins.flatMap { join =>
-              Option(join.getOnExpression).flatMap {
-                case be: BinaryExpression => Some(be)
-                case _                    => None
-              }
-            }.toSeq
-        }
-      case _ => Seq.empty
-    }
+      val joinedTables: Seq[Table] = Option(plain.getJoins).map(_.asScala) match {
+        case None => Seq[Table]()
+        case Some(joins) =>
+          joins.flatMap { join =>
+            join.getRightItem match {
+              case t: Table => Some(t)
+              case _        => None
+            }
+          }.toSeq
+      }
 
-  override protected def getWhere(select: Q): Option[Expression] =
-    select.getSelectBody match {
-      case ps: PlainSelect => Option(ps.getWhere)
-      case _               => None
-    }
+      mainTable.toSeq ++ joinedTables
+    case _ => Seq[Table]()
+  }
+
+  override protected def getJoinExpressions(query: Select): Seq[BinaryExpression] = query.getSelectBody match {
+    case ps: PlainSelect =>
+      Option(ps.getJoins).map(_.asScala) match {
+        case None => Seq.empty
+        case Some(joins) =>
+          joins.flatMap { join =>
+            Option(join.getOnExpression).flatMap {
+              case be: BinaryExpression => Some(be)
+              case _                    => None
+            }
+          }.toSeq
+      }
+    case _ => Seq.empty
+  }
+
+  override protected def getWhere(select: Q): Option[Expression] = select.getSelectBody match {
+    case ps: PlainSelect => Option(ps.getWhere)
+    case _               => None
+  }
 
   override def performAdditionalComparisons(userQuery: Select, sampleQuery: Select): AdditionalComparison =
     AdditionalComparison(

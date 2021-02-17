@@ -28,9 +28,3 @@ final case class FlaskTestResult(
   stdout: Seq[String],
   stderr: Seq[String]
 )
-
-// Result file
-
-final case class FlaskCorrectionResultFileContent(
-  results: Seq[FlaskTestResult]
-)

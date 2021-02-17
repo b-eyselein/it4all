@@ -1,14 +1,14 @@
 package model.tools.programming
 
 import better.files.File
-import model.core.{DockerBind, DockerConnector, ResultsFileJsonFormat}
+import model.core.DockerBind
 import model.points._
 import model.result.SuccessType
-import model.tools.programming.ProgrammingToolJsonProtocol.simplifiedExecutionResultFileContentReads
-import play.api.libs.json.{JsValue, Json}
+import model.tools.programming.ProgrammingToolJsonProtocol.simplifiedExecutionResultReads
+import play.api.libs.json.{JsValue, Json, Reads}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.util.Try
 
 trait ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorrector {
 
@@ -20,9 +20,7 @@ trait ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorrec
     solTargetDir: File,
     simplifiedUnitTestPart: SimplifiedUnitTestPart,
     resultFile: File
-  )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
-
-    val mp = maxPoints(simplifiedUnitTestPart)
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingAbstractResult]] = {
 
     // write files
     val testMainFile = solTargetDir / testMainFileName
@@ -41,31 +39,18 @@ trait ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorrec
       DockerBind(testMainFile, baseBindPath / testMainFileName, isReadOnly = true)
     )
 
-    DockerConnector
-      .runContainer(
-        imageName = programmingCorrectionDockerImage.name,
-        maybeDockerBinds = defaultFileMounts ++ otherDockerBinds,
-        maybeCmd = Some(Seq("simplified")),
-        deleteContainerAfterRun = _ == 0
+    runContainer(
+      defaultFileMounts ++ otherDockerBinds,
+      Reads.seq(simplifiedExecutionResultReads),
+      resultFile,
+      maybeCmd = Some(Seq("simplified")),
+      deleteContainerAfterRun = _ == 0
+    )(results =>
+      ProgrammingResult(
+        simplifiedResults = results,
+        points = results.count(ser => ser.success == SuccessType.COMPLETE).points,
+        maxPoints = maxPoints(simplifiedUnitTestPart)
       )
-      .map {
-        case Failure(exception) =>
-          onError("Error while running programming simplified execution docker image", mp, Some(exception))
-        case Success(_) =>
-          ResultsFileJsonFormat
-            .readDockerExecutionResultFile(resultFile, simplifiedExecutionResultFileContentReads)
-            .fold(
-              exception => onError("Error while reading result file", mp, Some(exception)),
-              simplifiedExecutionResultFileContent => {
-                val results = simplifiedExecutionResultFileContent.results
-
-                ProgrammingResult(
-                  simplifiedResults = results,
-                  points = results.count(ser => ser.success == SuccessType.COMPLETE).points,
-                  maxPoints = mp
-                )
-              }
-            )
-      }
+    )
   }
 }

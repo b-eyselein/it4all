@@ -38,18 +38,15 @@ object DockerConnector {
 
   val DefaultWorkingDir: File = File("/data")
 
-  def imageExists(scalaDockerImage: ScalaDockerImage): Boolean =
+  def imageExists(scalaDockerImage: ScalaDockerImage)(implicit ec: ExecutionContext): Boolean =
     imageExists(scalaDockerImage.name)
 
-  def imageExists(imageName: String): Boolean = {
-    // FIXME: run in future?
-    dockerClient
-      .listImages()
-      .asScala
-      .map(_.repoTags)
-      .filter(_ != null)
-      .exists(_.contains(imageName))
-  }
+  def imageExists(imageName: String)(implicit ec: ExecutionContext): Boolean = dockerClient
+    .listImages()
+    .asScala
+    .map(_.repoTags)
+    .filter(_ != null)
+    .exists(_.contains(imageName))
 
   def pullImage(scalaDockerImage: ScalaDockerImage)(implicit ec: ExecutionContext): Future[Try[Unit]] =
     Future(Try(dockerClient.pull(scalaDockerImage.name)))
@@ -63,22 +60,21 @@ object DockerConnector {
     maybeEntryPoint: Option[Seq[String]] = None,
     maybeCmd: Option[Seq[String]] = None,
     binds: Seq[DockerBind] = Seq.empty
-  ): Try[ContainerCreation] =
-    Try {
+  ): Try[ContainerCreation] = Try {
 
-      val hostConfig = HostConfig.builder().binds(binds.map(_.toBind.toString).asJava).build()
+    val hostConfig = HostConfig.builder().binds(binds.map(_.toBind.toString).asJava).build()
 
-      val containerConfig: ContainerConfig = ContainerConfig
-        .builder()
-        .image(imageName)
-        .hostConfig(hostConfig)
-        .workingDir(maybeWorkingDir.orNull)
-        .entrypoint(maybeEntryPoint.map(_.asJava).orNull)
-        .cmd(maybeCmd.map(_.asJava).orNull)
-        .build()
+    val containerConfig: ContainerConfig = ContainerConfig
+      .builder()
+      .image(imageName)
+      .hostConfig(hostConfig)
+      .workingDir(maybeWorkingDir.orNull)
+      .entrypoint(maybeEntryPoint.map(_.asJava).orNull)
+      .cmd(maybeCmd.map(_.asJava).orNull)
+      .build()
 
-      dockerClient.createContainer(containerConfig)
-    }
+    dockerClient.createContainer(containerConfig)
+  }
 
   private def startContainer(container: String): Try[Unit] = Try(dockerClient.startContainer(container))
 
@@ -93,39 +89,33 @@ object DockerConnector {
     maybeCmd: Option[Seq[String]] = None,
     maybeDockerBinds: Seq[DockerBind] = Seq.empty,
     deleteContainerAfterRun: Int => Boolean = _ => true
-  )(implicit ec: ExecutionContext): Future[Try[RunContainerResult]] =
-    Future {
+  )(implicit ec: ExecutionContext): Future[Try[RunContainerResult]] = Future {
 
-      createContainer(imageName, maybeWorkingDir, maybeEntryPoint, maybeCmd, maybeDockerBinds).flatMap {
-        containerCreation: ContainerCreation =>
-          val containerId = containerCreation.id
+    createContainer(imageName, maybeWorkingDir, maybeEntryPoint, maybeCmd, maybeDockerBinds).flatMap {
+      containerCreation: ContainerCreation =>
+        val containerId = containerCreation.id
 
-          startContainer(containerId).flatMap { _ =>
-            waitForContainer(containerId).map { containerExit =>
-              val statusCode = containerExit.statusCode.toInt
+        startContainer(containerId).flatMap { _ =>
+          waitForContainer(containerId).map { containerExit =>
+            val statusCode = containerExit.statusCode.toInt
 
-              val result: RunContainerResult =
-                RunContainerResult(statusCode, getContainerLogs(containerId))
+            val result: RunContainerResult =
+              RunContainerResult(statusCode, getContainerLogs(containerId))
 
-              if (deleteContainerAfterRun(statusCode)) {
-                // Do not delete failed containers for now
-                val containerDeleted = deleteContainer(containerId)
-                if (containerDeleted.isFailure) logger.error("Could not delete container!")
-              }
-
-              result
+            if (deleteContainerAfterRun(statusCode)) {
+              // Do not delete failed containers for now
+              val containerDeleted = deleteContainer(containerId)
+              if (containerDeleted.isFailure) logger.error("Could not delete container!")
             }
-          }
-      }
-    }
 
-  private def getContainerLogs(containerId: String): String =
-    dockerClient
-      .logs(
-        containerId,
-        LogsParam.stdout(),
-        LogsParam.stderr()
-      )
-      .readFully()
+            result
+          }
+        }
+    }
+  }
+
+  private def getContainerLogs(containerId: String): String = dockerClient
+    .logs(containerId, LogsParam.stdout(), LogsParam.stderr())
+    .readFully()
 
 }

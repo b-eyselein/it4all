@@ -1,7 +1,5 @@
 package model.tools.web
 
-import java.nio.file.StandardOpenOption
-
 import better.files.File
 import better.files.File.OpenOptions
 import de.uniwue.webtester.WebCorrector
@@ -12,14 +10,12 @@ import model.points._
 import model.tools._
 import model.{Exercise, FilesSolution, LoggedInUser}
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import play.api.Logger
 
+import java.nio.file.StandardOpenOption
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 object WebTool extends Tool("web", "Web") {
-
-  private val logger = Logger(WebTool.getClass)
 
   override type SolType       = FilesSolution
   override type ExContentType = WebExerciseContent
@@ -28,14 +24,10 @@ object WebTool extends Tool("web", "Web") {
 
   type WebExercise = Exercise[WebExerciseContent]
 
-  // Yaml, Html forms, Json
-
   override val jsonFormats: FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebExPart] = WebToolJsonProtocol
 
   override val graphQlModels: FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebAbstractResult] =
     WebGraphQLModels
-
-  // DB
 
   private val openOptions: OpenOptions = Seq(
     StandardOpenOption.TRUNCATE_EXISTING,
@@ -43,14 +35,13 @@ object WebTool extends Tool("web", "Web") {
     StandardOpenOption.WRITE
   )
 
-  def writeFilesSolutionFiles(targetDir: File, webSolution: FilesSolution): Try[Seq[File]] =
-    Try {
-      webSolution.files.map { exerciseFile =>
-        (targetDir / exerciseFile.name)
-          .createFileIfNotExists(createParents = true)
-          .write(exerciseFile.content)(openOptions)
-      }
+  def writeFilesSolutionFiles(targetDir: File, webSolution: FilesSolution): Try[Seq[File]] = Try {
+    webSolution.files.map { exerciseFile =>
+      (targetDir / exerciseFile.name)
+        .createFileIfNotExists(createParents = true)
+        .write(exerciseFile.content)(openOptions)
     }
+  }
 
   // Correction
 
@@ -58,65 +49,50 @@ object WebTool extends Tool("web", "Web") {
     exContent: WebExerciseContent,
     part: WebExPart,
     driver: HtmlUnitDriver
-  ): Unit => WebResult =
-    _ => {
-      part match {
-        case WebExPart.HtmlPart =>
-          val gradedHtmlTaskResults: Seq[GradedHtmlTaskResult] = exContent.siteSpec.htmlTasks
-            .map(WebCorrector.evaluateHtmlTask(_, driver))
-            .map(WebGrader.gradeHtmlTaskResult)
+  ): WebResult = part match {
+    case WebExPart.HtmlPart =>
+      val gradedHtmlTaskResults: Seq[GradedHtmlTaskResult] = exContent.siteSpec.htmlTasks
+        .map(WebCorrector.evaluateHtmlTask(_, driver))
+        .map(WebGrader.gradeHtmlTaskResult)
 
-          val points    = addUp(gradedHtmlTaskResults.map(_.points))
-          val maxPoints = addUp(gradedHtmlTaskResults.map(_.maxPoints))
+      WebResult(
+        gradedHtmlTaskResults,
+        Seq.empty,
+        points = addUp(gradedHtmlTaskResults.map(_.points)),
+        maxPoints = addUp(gradedHtmlTaskResults.map(_.maxPoints))
+      )
 
-          WebResult(gradedHtmlTaskResults, Seq.empty, points, maxPoints)
+    case WebExPart.JsPart =>
+      val gradedJsTaskResults: Seq[GradedJsTaskResult] = exContent.siteSpec.jsTasks
+        .map(WebCorrector.evaluateJsTask(_, driver))
+        .map(WebGrader.gradeJsTaskResult)
 
-        case WebExPart.JsPart =>
-          val gradedJsTaskResults: Seq[GradedJsTaskResult] = exContent.siteSpec.jsTasks
-            .map(WebCorrector.evaluateJsTask(_, driver))
-            .map(WebGrader.gradeJsTaskResult)
-
-          val points    = addUp(gradedJsTaskResults.map(_.points))
-          val maxPoints = addUp(gradedJsTaskResults.map(_.maxPoints))
-
-          WebResult(Seq.empty, gradedJsTaskResults, points, maxPoints)
-      }
-    }
-
-  def onCorrectionError(msg: String): Throwable => WebAbstractResult =
-    error => {
-      logger.error(msg, error)
-
-      WebInternalErrorResult(msg, maxPoints = (-1).points)
-    }
+      WebResult(
+        Seq.empty,
+        gradedJsTaskResults,
+        points = addUp(gradedJsTaskResults.map(_.points)),
+        maxPoints = addUp(gradedJsTaskResults.map(_.maxPoints))
+      )
+  }
 
   override def correctAbstract(
     user: LoggedInUser,
     solution: FilesSolution,
     exercise: WebExercise,
     part: WebExPart
-  )(implicit executionContext: ExecutionContext): Future[WebAbstractResult] =
-    Future {
-      writeFilesSolutionFiles(
-        solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId),
-        solution
-      )
-        .fold(
-          onCorrectionError("Error while writing user solution"),
-          _ => {
-            val driver = new HtmlUnitDriver(true)
+  )(implicit executionContext: ExecutionContext): Future[Try[WebAbstractResult]] = Future {
+    writeFilesSolutionFiles(solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId), solution)
+      .flatMap { _ =>
+        val driver = new HtmlUnitDriver(true)
 
-            val fileName = exercise.content.siteSpec.fileName
-            val solutionUrl =
-              s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.exerciseId}/$fileName"
+        val fileName = exercise.content.siteSpec.fileName
+        val solutionUrl =
+          s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.exerciseId}/$fileName"
 
-            Try(driver.get(solutionUrl)).fold(
-              onCorrectionError(s"Error while looking up url $solutionUrl"),
-              onDriverGetSuccess(exercise.content, part, driver)
-            )
-          }
-        )
-    }
+        Try(driver.get(solutionUrl))
+          .map(_ => onDriverGetSuccess(exercise.content, part, driver))
+      }
+  }
 
   override val initialData: InitialData[WebExerciseContent] = WebInitialData
 

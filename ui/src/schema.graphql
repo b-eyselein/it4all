@@ -200,7 +200,8 @@ interface NewMatch {
 
 type NormalExecutionResult {
   successful: Boolean!
-  logs: String!
+  stdout: [String!]!
+  stderr: [String!]!
 }
 
 interface ProgrammingAbstractResult {

@@ -7,6 +7,7 @@ import model.tools._
 import model.{Exercise, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 object RoseTool extends Tool("rose", "Rose", ToolState.PRE_ALPHA) {
 
@@ -31,7 +32,7 @@ object RoseTool extends Tool("rose", "Rose", ToolState.PRE_ALPHA) {
     solution: String,
     exercise: RoseExercise,
     part: RoseExPart
-  )(implicit executionContext: ExecutionContext): Future[RoseAbstractResult] = {
+  )(implicit executionContext: ExecutionContext): Future[Try[RoseAbstractResult]] = {
 
     val solDir = solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId)
 

@@ -2,31 +2,29 @@ package model.tools.programming
 
 import better.files.File
 import model.FilesSolution
-import model.core.DockerBind
+import model.core.{DockerBind, ScalaDockerImage}
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
-import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 object ProgrammingCorrector
     extends ProgrammingSimpleImplementationCorrector
     with ProgrammingUnitTestCorrector
     with ProgrammingNormalImplementationCorrector {
 
-  override protected val logger: Logger = Logger(ProgrammingCorrector.getClass)
+  override protected val dockerImage: ScalaDockerImage = programmingCorrectionDockerImage
 
   def correct(
     exercise: ProgrammingExercise,
     solution: FilesSolution,
     solutionTargetDir: File,
     part: ProgExPart
-  )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingAbstractResult]] = {
 
     // Create or truncate result file
     val resultFile = solutionTargetDir / resultFileName
-    resultFile
-      .createIfNotExists(createParents = true)
-      .clear()
+    resultFile.createIfNotExists(createParents = true).clear()
 
     val defaultFileMounts = solution.files
       .map { ef =>
@@ -61,7 +59,8 @@ object ProgrammingCorrector
               defaultFileMounts,
               solutionTargetDir,
               exercise.content,
-              normalUnitTestPart
+              normalUnitTestPart,
+              resultFile
             )
         }
     }

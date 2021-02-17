@@ -7,6 +7,7 @@ import model.tools.{FilesSampleSolutionToolJsonProtocol, Tool, ToolState}
 import model.{Exercise, FilesSolution, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 object FlaskTool extends Tool("flask", "Flask", ToolState.ALPHA) {
 
@@ -29,7 +30,7 @@ object FlaskTool extends Tool("flask", "Flask", ToolState.ALPHA) {
     solution: FilesSolution,
     exercise: Exercise[FlaskExerciseContent],
     part: FlaskExPart
-  )(implicit executionContext: ExecutionContext): Future[FlaskAbstractResult] =
+  )(implicit executionContext: ExecutionContext): Future[Try[FlaskAbstractResult]] =
     FlaskCorrector.correct(user.username, solution, exercise)
 
   override val initialData: InitialData[FlaskExerciseContent] = FlaskInitialData

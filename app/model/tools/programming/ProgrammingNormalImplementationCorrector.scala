@@ -2,11 +2,12 @@ package model.tools.programming
 
 import better.files.File
 import model.FilesSolution
-import model.core.{DockerBind, DockerConnector, RunContainerResult}
+import model.core.DockerBind
 import model.points._
+import model.tools.programming.ProgrammingToolJsonProtocol.normalExecutionResultFileJsonReads
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Try}
 
 trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrector {
 
@@ -14,20 +15,18 @@ trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrec
     solutionFilesMounts: Seq[DockerBind],
     solTargetDir: File,
     exerciseContent: ProgrammingExerciseContent,
-    normalUnitTestPart: NormalUnitTestPart
-  )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
-
-    val mp = maxPoints(normalUnitTestPart)
-
+    normalUnitTestPart: NormalUnitTestPart,
+    resultFile: File
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingAbstractResult]] =
     exerciseContent.sampleSolutions.headOption match {
-      case None => Future.successful(onError("No sample solution found!", mp))
+      case None => Future.successful(Failure(new Exception("No sample solution found!")))
       case Some(FilesSolution(files)) =>
         val maybeTestFileContent = files
           .find(_.name == normalUnitTestPart.testFileName)
           .map(_.content)
 
         maybeTestFileContent match {
-          case None => Future.successful(onError("No content for unit test file found!", mp))
+          case None => Future.successful(Failure(new Exception("No content for unit test file found!")))
           case Some(unitTestFileContent) =>
             val unitTestFileName = s"${exerciseContent.filename}_test.py"
 
@@ -38,23 +37,20 @@ trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrec
 
             val unitTestFileMount = DockerBind(unitTestFile, baseBindPath / unitTestFileName, isReadOnly = true)
 
-            DockerConnector
-              .runContainer(
-                programmingCorrectionDockerImage.name,
-                maybeDockerBinds = solutionFilesMounts :+ unitTestFileMount,
-                maybeCmd = Some(Seq("normal"))
+            runContainer(
+              solutionFilesMounts :+ unitTestFileMount,
+              normalExecutionResultFileJsonReads,
+              resultFile,
+              maybeCmd = Some(Seq("normal"))
+            )(normalExecutionResult =>
+              //FIXME: points!
+              ProgrammingResult(
+                normalResult = Some(normalExecutionResult),
+                points = (-1).points /* normalUnitTestPart.unitTestTestConfigs.size.points */,
+                maxPoints = maxPoints(normalUnitTestPart)
               )
-              .map {
-                case Failure(exception) => onError("Error while running docker container", mp, Some(exception))
-                case Success(RunContainerResult(statusCode, logs)) =>
-                  ProgrammingResult(
-                    normalResult = Some(NormalExecutionResult(statusCode == 0, logs)),
-                    points = normalUnitTestPart.unitTestTestConfigs.size.points,
-                    maxPoints = mp
-                  )
-              }
+            )
         }
     }
-  }
 
 }

@@ -2,10 +2,10 @@ package model.tools.regex
 
 import model.matching._
 import model.points._
-import play.api.Logger
 
 import scala.util.matching.Regex
 import scala.util.matching.Regex.{Match => RegexMatch}
+import scala.util.{Success, Try}
 
 final case class RegexMatchMatch(matchType: MatchType, userArg: RegexMatch, sampleArg: RegexMatch)
     extends Match[RegexMatch] {
@@ -23,14 +23,12 @@ object RegexMatchMatcher extends Matcher[RegexMatch, RegexMatchMatch] {
     RegexMatchMatch(MatchType.SUCCESSFUL_MATCH, ua, sa)
 }
 
-object RegexMatchingCorrector extends RegexAbstractCorrector {
-
-  override protected val logger: Logger = Logger(RegexMatchingCorrector.getClass)
+object RegexMatchingCorrector {
 
   def correctMatching(
     exerciseContent: RegexExerciseContent,
     userRegex: Regex
-  ): RegexAbstractResult = {
+  ): Try[RegexAbstractResult] = Success {
 
     val matchResults = exerciseContent.matchTestData.map { matchTestData =>
       val classificationResultType: BinaryClassificationResultType = matchTestData.data match {

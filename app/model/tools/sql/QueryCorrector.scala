@@ -1,8 +1,6 @@
 package model.tools.sql
 
 import model.matching.StringMatcher
-import model.points._
-import model.tools.AbstractCorrector
 import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
@@ -10,14 +8,9 @@ import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Try}
+import scala.util.{Failure, Success, Try}
 
-abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
-
-  override type AbstractResult = SqlAbstractResult
-
-  override protected def buildInternalError(msg: String, maxPoints: Points): SqlInternalErrorResult =
-    SqlInternalErrorResult(msg, maxPoints)
+abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
@@ -29,50 +22,36 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
     schemaName: String,
     learnerSolution: String,
     sampleSolutions: Seq[String]
-  )(implicit ec: ExecutionContext): SqlAbstractResult =
-    parseStatement(learnerSolution).fold(
-      exception => SqlInternalErrorResult("Your query could not be parsed: " + exception.getMessage),
-      userQ =>
-        checkStatement(userQ).fold(
-          _ => SqlInternalErrorResult("Wrong type of statement!"),
-          userQ => {
-            val userColumns         = getColumnWrappers(userQ)
-            val userTables          = getTables(userQ)
-            val userJoinExpressions = getJoinExpressions(userQ)
-            val userExpressions     = getExpressions(userQ)
-            val userTableAliases    = resolveAliases(userTables)
+  )(implicit ec: ExecutionContext): Try[SqlAbstractResult] = parseStatement(learnerSolution).flatMap { userQ =>
+    checkStatement(userQ).flatMap { userQ =>
+      val userTables = getTables(userQ)
 
-            val maybeStaticComparison: Option[(Q, SqlQueriesStaticComparison)] =
-              sampleSolutions
-                .flatMap { sample =>
-                  parseStatement(sample).toOption
-                    .flatMap(ps => checkStatement(ps).toOption)
-                    .map { sampleQ =>
-                      val staticComp = performStaticComparison(
-                        userQ,
-                        sampleQ,
-                        userColumns,
-                        userTables,
-                        userJoinExpressions,
-                        userExpressions,
-                        userTableAliases
-                      )
-                      (sampleQ, staticComp)
-                    }
-
-                }
-                .minOption(queryAndStaticCompOrdering)
-
-            maybeStaticComparison match {
-              case None => ???
-              case Some((sampleQ, sc)) =>
-                val executionResult = database.executeQueries(schemaName, userQ, sampleQ)
-
-                SqlResult(sc, executionResult)
+      val maybeStaticComparison: Option[(Q, SqlQueriesStaticComparison)] = sampleSolutions
+        .flatMap { sample =>
+          parseStatement(sample).toOption
+            .flatMap(ps => checkStatement(ps).toOption)
+            .map { sampleQ =>
+              val staticComp = performStaticComparison(
+                userQ,
+                sampleQ,
+                userColumns = getColumnWrappers(userQ),
+                userTables,
+                userJoinExpressions = getJoinExpressions(userQ),
+                userExpressions = getExpressions(userQ),
+                userTableAliases = resolveAliases(userTables)
+              )
+              (sampleQ, staticComp)
             }
-          }
-        )
-    )
+
+        }
+        .minOption(queryAndStaticCompOrdering)
+
+      maybeStaticComparison match {
+        case None                => Failure(new Exception("There has been an internal error!"))
+        case Some((sampleQ, sc)) => Success(SqlResult(sc, database.executeQueries(schemaName, userQ, sampleQ)))
+      }
+    }
+  }
 
   private def performStaticComparison(
     userQ: Q,
@@ -118,7 +97,8 @@ abstract class QueryCorrector(val queryType: String) extends AbstractCorrector {
 
   protected def getWhere(query: Q): Option[Expression]
 
-  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): AdditionalComparison
+  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): AdditionalComparison =
+    AdditionalComparison(None, None)
 
   // Parsing
 

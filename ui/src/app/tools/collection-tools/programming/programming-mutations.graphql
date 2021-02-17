@@ -54,7 +54,8 @@ fragment SimplifiedExecutionResult on SimplifiedExecutionResult {
 fragment NormalExecutionResult on NormalExecutionResult {
   __typename
   successful
-  logs
+  stdout
+  stderr
 }
 
 fragment UnitTestCorrectionResult on UnitTestCorrectionResult {

@@ -5,12 +5,16 @@ import {NormalExecutionResultFragment} from "../../../../../_services/apollo_ser
   selector: 'it4all-programming-normal-result',
   template: `
     <div class="notification" [ngClass]="normalResult.successful ? 'is-success': 'is-danger'">
-      <pre>{{normalResult.logs}}</pre>
+      <pre>{{stderr}}</pre>
     </div>
   `
 })
 export class ProgrammingNormalResultComponent {
 
   @Input() normalResult: NormalExecutionResultFragment;
+
+  get stderr(): string {
+    return this.normalResult.stderr.join('\n');
+  }
 
 }

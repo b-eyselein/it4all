@@ -11,6 +11,7 @@ import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.statement.select.Limit
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Try}
 
 object SqlTool extends Tool("sql", "Sql") {
 
@@ -53,9 +54,9 @@ object SqlTool extends Tool("sql", "Sql") {
     solution: SolType,
     exercise: SqlExercise,
     part: SqlExPart
-  )(implicit executionContext: ExecutionContext): Future[SqlAbstractResult] = Future {
+  )(implicit executionContext: ExecutionContext): Future[Try[SqlAbstractResult]] = Future {
     correctorsAndDaos.get(exercise.content.exerciseType) match {
-      case None => SqlInternalErrorResult("There has been an internal error")
+      case None => Failure(new Exception("There has been an internal error"))
       case Some((corrector, dao)) =>
         corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions)
     }

@@ -9,6 +9,7 @@ import model.tools._
 import model.{Exercise, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 object XmlTool extends Tool("xml", "Xml") {
 
@@ -35,19 +36,18 @@ object XmlTool extends Tool("xml", "Xml") {
     solution: XmlSolution,
     exercise: XmlExercise,
     part: XmlExPart
-  )(implicit executionContext: ExecutionContext): Future[XmlAbstractResult] =
-    Future.successful {
-      part match {
-        case XmlExPart.GrammarCreationXmlPart => XmlCorrector.correctGrammar(solution, exercise.content.sampleSolutions)
+  )(implicit executionContext: ExecutionContext): Future[Try[XmlAbstractResult]] = Future.successful {
+    part match {
+      case XmlExPart.GrammarCreationXmlPart => XmlCorrector.correctGrammar(solution, exercise.content.sampleSolutions)
 
-        case XmlExPart.DocumentCreationXmlPart =>
-          XmlCorrector.correctDocument(
-            solution,
-            solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId).createDirectories(),
-            exercise.content
-          )
-      }
+      case XmlExPart.DocumentCreationXmlPart =>
+        XmlCorrector.correctDocument(
+          solution,
+          solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId).createDirectories(),
+          exercise.content
+        )
     }
+  }
 
   override val initialData: InitialData[XmlExerciseContent] = XmlInitialData
 

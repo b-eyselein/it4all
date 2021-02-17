@@ -7,6 +7,7 @@ import model.tools.{Tool, ToolJsonProtocol, ToolState}
 import model.{Exercise, FilesSolution, LoggedInUser, Topic}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.BETA) {
 
@@ -35,7 +36,7 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.B
     solution: FilesSolution,
     exercise: ProgrammingExercise,
     part: ProgExPart
-  )(implicit ec: ExecutionContext): Future[ProgrammingAbstractResult] = {
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingAbstractResult]] = {
 
     val solTargetDir = solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId) / part.id
 
