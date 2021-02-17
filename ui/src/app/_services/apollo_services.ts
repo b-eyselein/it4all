@@ -1710,7 +1710,7 @@ export type ExtractionMatchingResultFragment = (
 
 export type RegexExtractionSingleResultFragment = (
   { __typename?: 'RegexExtractionSingleResult' }
-  & Pick<RegexExtractionSingleResult, 'base' | 'correct'>
+  & Pick<RegexExtractionSingleResult, 'base'>
   & { extractionMatchingResult: (
     { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
     & ExtractionMatchingResultFragment
@@ -3186,7 +3186,6 @@ export const ExtractionMatchingResultFragmentDoc = gql`
 export const RegexExtractionSingleResultFragmentDoc = gql`
     fragment RegexExtractionSingleResult on RegexExtractionSingleResult {
   base
-  correct
   extractionMatchingResult {
     ...ExtractionMatchingResult
   }

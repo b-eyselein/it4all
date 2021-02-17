@@ -37,16 +37,15 @@ object BasicExercisePartResult {
     exercise: Exercise[_ <: ExerciseContent],
     partId: String,
     result: AbstractCorrectionResult
-  ): BasicExercisePartResult =
-    BasicExercisePartResult(
-      username,
-      exercise.exerciseId,
-      exercise.collectionId,
-      exercise.toolId,
-      partId,
-      result.points,
-      result.maxPoints
-    )
+  ): BasicExercisePartResult = BasicExercisePartResult(
+    username,
+    exercise.exerciseId,
+    exercise.collectionId,
+    exercise.toolId,
+    partId,
+    result.points,
+    result.maxPoints
+  )
 
 }
 

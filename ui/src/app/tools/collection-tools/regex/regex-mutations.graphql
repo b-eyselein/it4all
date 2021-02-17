@@ -61,7 +61,6 @@ fragment ExtractionMatchingResult on RegexExtractedValuesComparisonMatchingResul
 
 fragment RegexExtractionSingleResult on RegexExtractionSingleResult {
   base
-  correct
   extractionMatchingResult {
     ...ExtractionMatchingResult
   }
