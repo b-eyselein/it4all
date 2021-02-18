@@ -13,9 +13,8 @@ export abstract class ComponentWithExerciseDirective<SolutionInputType, Mutation
 
   isCorrecting = false;
 
-  resultQuery: MutationQueryType | undefined;
-
-  queryError: GraphQLError;
+  resultQuery?: MutationQueryType;
+  queryError?: GraphQLError;
 
   @ViewChild(TabsComponent) tabsComponent: TabsComponent | undefined;
 
@@ -29,7 +28,15 @@ export abstract class ComponentWithExerciseDirective<SolutionInputType, Mutation
     }
   }
 
-  protected correctAbstract(exerciseFragment: ExerciseSolveFieldsFragment, partId: string, onComplete?: () => void): void {
+  private onCorrectionEnd(onComplete: () => void = () => {
+  }): void {
+    this.isCorrecting = false;
+
+    onComplete();
+  }
+
+  protected correctAbstract(exerciseFragment: ExerciseSolveFieldsFragment, partId: string, onComplete: () => void = () => {
+  }): void {
     const solution: SolutionInputType | undefined = this.getSolution();
 
     if (!solution) {
@@ -48,18 +55,13 @@ export abstract class ComponentWithExerciseDirective<SolutionInputType, Mutation
         ({data}) => {
           this.queryError = null;
           this.resultQuery = data;
-          this.activateCorrectionTab();
+          this.onCorrectionEnd(onComplete);
         },
         (error: GraphQLError) => {
           this.queryError = error;
           this.resultQuery = null;
-          console.error('There has been an graphQL error:', error);
-        },
-        () => {
-          this.isCorrecting = false;
-          if (onComplete) {
-            onComplete();
-          }
+          this.onCorrectionEnd(onComplete);
+          console.error('There has been an graphQL error:', this.queryError);
         }
       );
   }

@@ -52,15 +52,14 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
 
   protected def buildStringMatchTypeType[T, M <: Match[T]](
     name: String
-  )(implicit _x: ClassTag[M]): ObjectType[Unit, M] =
-    ObjectType(
-      name,
-      interfaces[Unit, M](newMatchInterface),
-      fields[Unit, M](
-        Field("sampleArg", OptionType(StringType), resolve = _.value.sampleArgDescription),
-        Field("userArg", OptionType(StringType), resolve = _.value.userArgDescription)
-      )
+  )(implicit _x: ClassTag[M]): ObjectType[Unit, M] = ObjectType(
+    name,
+    interfaces[Unit, M](newMatchInterface),
+    fields[Unit, M](
+      Field("sampleArg", OptionType(StringType), resolve = _.value.sampleArgDescription),
+      Field("userArg", OptionType(StringType), resolve = _.value.userArgDescription)
     )
+  )
 
   protected def matchingResultType[T, M <: Match[T], TO](
     name: String,
@@ -68,21 +67,20 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
     tType: OutputType[TO],
     t2to: T => TO,
     describeArg: T => String = (t: T) => t.toString
-  ): ObjectType[Unit, MatchingResult[T, M]] =
-    deriveObjectType(
-      ObjectTypeName(s"${name}MatchingResult"),
-      Interfaces(matchingResultInterface[T, M](describeArg)),
-      ExcludeFields("points", "maxPoints"),
-      ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches)),
-      ReplaceField(
-        "notMatchedForUser",
-        Field("notMatchedForUser", ListType(tType), resolve = _.value.notMatchedForUser.map(t2to))
-      ),
-      ReplaceField(
-        "notMatchedForSample",
-        Field("notMatchedForSample", ListType(tType), resolve = _.value.notMatchedForUser.map(t2to))
-      )
+  ): ObjectType[Unit, MatchingResult[T, M]] = deriveObjectType(
+    ObjectTypeName(s"${name}MatchingResult"),
+    Interfaces(matchingResultInterface[T, M](describeArg)),
+    ExcludeFields("points", "maxPoints"),
+    ReplaceField("allMatches", Field("allMatches", ListType(mType), resolve = _.value.allMatches)),
+    ReplaceField(
+      "notMatchedForUser",
+      Field("notMatchedForUser", ListType(tType), resolve = _.value.notMatchedForUser.map(t2to))
+    ),
+    ReplaceField(
+      "notMatchedForSample",
+      Field("notMatchedForSample", ListType(tType), resolve = _.value.notMatchedForUser.map(t2to))
     )
+  )
 
   private val stringMatchType: ObjectType[Unit, StringMatch] = {
     implicit val mtt: EnumType[MatchType] = matchTypeType

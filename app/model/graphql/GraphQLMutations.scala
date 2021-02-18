@@ -98,8 +98,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
 
       def correct(user: LoggedInUser, ex: Exercise[E], part: P, solution: S): Future[CorrectionResult[R]] = tool
         .correctAbstract(user, solution, ex, part)
-        .transform {
-          // flatten Future[Try[_]] to Future[_] with implicit Try[_]
+        .transform { // flatten Future[Try[_]] to Future[_] with implicit Try[_]
           case Failure(exception)          => Failure(exception)
           case Success(Failure(exception)) => Failure(exception)
           case Success(success)            => success
@@ -148,7 +147,12 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
             correctionResultType,
             arguments = partTypeInputArg :: solTypeInputArg :: Nil,
             resolve = context =>
-              correct(context.value._1, context.value._2, context.arg(partTypeInputArg), context.arg(solTypeInputArg))
+              correct(
+                context.value._1,
+                context.value._2,
+                context.arg(partTypeInputArg),
+                context.arg(solTypeInputArg)
+              )
           )
         )
       )

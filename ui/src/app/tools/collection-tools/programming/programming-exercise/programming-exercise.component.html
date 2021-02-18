@@ -8,32 +8,33 @@
     <span [innerHTML]="exerciseFragment.text"></span>
   </ng-container>
   <ng-container correctionContent>
+
+    <div class="message is-danger" *ngIf="queryError">
+      <div class="message-header">Es gab einen internen Fehler bei der Korrektur:</div>
+      <div class="message-body">
+        <pre>{{queryError.message}}</pre>
+      </div>
+    </div>
+
     <ng-container *ngIf="correctionResult">
 
-      <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
-
-      <br>
-
-      <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
-      </it4all-points-notification>
-
-      <br>
-
-      <div class="message is-danger" *ngIf="queryError">
-        <div class="message-header">Es gab einen internen Fehler bei der Korrektur:</div>
-        <div class="message-body">
-          <pre>{{queryError.message}}</pre>
-        </div>
+      <div class="my-3">
+        <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
       </div>
 
-      <div class="columns is-multiline" *ngIf="simplifiedResults && simplifiedResults.length > 0">
+      <div class="my-3">
+        <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
+        </it4all-points-notification>
+      </div>
+
+      <div class="columns is-multiline my-3" *ngIf="simplifiedResults && simplifiedResults.length > 0">
         <div class="column is-half-desktop" *ngFor="let simplifiedResult of simplifiedResults">
           <it4all-programming-simplified-result [result]="simplifiedResult">
           </it4all-programming-simplified-result>
         </div>
       </div>
 
-      <div class="content" *ngIf="unitTestResults && unitTestResults.length > 0">
+      <div class="content my-3" *ngIf="unitTestResults && unitTestResults.length > 0">
         <ul *ngFor="let unitTestResult of unitTestResults">
           <it4all-programming-unit-test-result [unitTestResult]="unitTestResult">
           </it4all-programming-unit-test-result>

@@ -3,12 +3,14 @@ package model.tools
 import better.files.File
 import model.core.{DockerBind, DockerConnector, RunContainerResult, ScalaDockerImage}
 import play.api.libs.json.{Json, Reads}
+import sangria.execution.UserFacingError
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 final case class DockerCorrectionExecutionError(logs: String)
     extends Exception(s"There has been an error executing a docker container:\n$logs")
+    with UserFacingError
 
 trait DockerExecutionCorrector {
 
@@ -50,11 +52,13 @@ trait DockerExecutionCorrector {
           maybeCmd = maybeCmd,
           deleteContainerAfterRun = deleteContainerAfterRun
         )
-        .map { case Success(RunContainerResult(statusCode, logs)) =>
-          statusCode match {
-            case 0 => readDockerExecutionResultFile(resultFile, jsFormat).map(convertResult)
-            case _ => Failure(DockerCorrectionExecutionError(logs))
-          }
+        .map {
+          case Failure(exception) => Failure(exception)
+          case Success(RunContainerResult(statusCode, logs)) =>
+            statusCode match {
+              case 0 => readDockerExecutionResultFile(resultFile, jsFormat).map(convertResult)
+              case _ => Failure(DockerCorrectionExecutionError(logs))
+            }
         }
   }
 
