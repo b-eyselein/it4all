@@ -7,109 +7,41 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl5Ex3 extends ProgrammingInitialExercise(5, 3) {
+object ProgrammingColl5Ex3 extends ProgrammingInitialExercise(5, 3, "tuples_and_dicts") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("tuples_and_dicts.py", fileType, maybeOtherFileName = Some("tuples_and_dicts_declaration.py")),
-        FileLoadConfig(
-          "test_tuples_and_dicts.py",
-          fileType,
-          editable = true,
-          Some("test_tuples_and_dicts_declaration.py")
-        )
-      )
-    ),
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "tuples_and_dicts_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "tuples_and_dicts_0.py")
-        )
+      unitTestTestConfig(id = 0, description = "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(
+        1,
+        "Die Funktion tuple_list_to_dict soll den ersten Eintrag im Tupel als Schlüssel und den zweiten Eintrag als Wert setzen."
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description =
-          "Die Funktion tuple_list_to_dict soll den ersten Eintrag im Tupel als Schlüssel und den zweiten Eintrag als Wert setzen.",
-        file = ExerciseFile(
-          name = "tuples_and_dicts_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "tuples_and_dicts_1.py")
-        )
+      unitTestTestConfig(
+        2,
+        "Die Funktion tuple_list_to_dict soll den ersten Wert verwenden, falls ein Schlüssel mehrmals vorkommt."
       ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description =
-          "Die Funktion tuple_list_to_dict soll den ersten Wert verwenden, falls ein Schlüssel mehrmals vorkommt.",
-        file = ExerciseFile(
-          name = "tuples_and_dicts_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "tuples_and_dicts_2.py")
-        )
+      unitTestTestConfig(
+        3,
+        "Die Funktion tuple_list_to_dict soll ein leeres Dictionary zurückgeben, falls eine leere Liste übergeben wird."
       ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description =
-          "Die Funktion tuple_list_to_dict soll ein leeres Dictionary zurückgeben, falls eine leere Liste übergeben wird.",
-        file = ExerciseFile(
-          name = "tuples_and_dicts_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "tuples_and_dicts_3.py")
-        )
+      unitTestTestConfig(
+        4,
+        "Die Funktion intersect_dicts soll ein leeres Dictionary zurückgeben, falls keine übereinstimmenden Schlüsseln in den übergebenen Dictionaries existieren."
       ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description =
-          "Die Funktion intersect_dicts soll ein leeres Dictionary zurückgeben, falls keine übereinstimmenden Schlüsseln in den übergebenen Dictionaries existieren.",
-        file = ExerciseFile(
-          name = "tuples_and_dicts_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "tuples_and_dicts_4.py")
-        )
+      unitTestTestConfig(
+        5,
+        "Die Funktion intersect_dicts soll ein Dictionary mit den korrekten Werten bei übereinstimmenden Schlüsseln zurückgeben."
       ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description =
-          "Die Funktion intersect_dicts soll ein Dictionary mit den korrekten Werten bei übereinstimmenden Schlüsseln zurückgeben.",
-        file = ExerciseFile(
-          name = "tuples_and_dicts_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "tuples_and_dicts_5.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description =
-          "Die Funktion intersect_dicts soll ein leeres Dictionary zurückgeben, falls die beiden übergebenen Dictionaries leer sind.",
-        file = ExerciseFile(
-          name = "tuples_and_dicts_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "tuples_and_dicts_6.py")
-        )
+      unitTestTestConfig(
+        6,
+        "Die Funktion intersect_dicts soll ein leeres Dictionary zurückgeben, falls die beiden übergebenen Dictionaries leer sind."
       )
     ),
     testFileName = "test_tuples_and_dicts.py",
-    folderName = "tuples_and_dicts",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_tuples_and_dicts.py")
   )
 
@@ -124,14 +56,6 @@ object ProgrammingColl5Ex3 extends ProgrammingInitialExercise(5, 3) {
     ),
     implFileName = "tuples_and_dicts.py",
     sampleSolFileNames = Seq("tuples_and_dicts.py")
-  )
-
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("tuples_and_dicts.py", fileType),
-      FileLoadConfig("test_tuples_and_dicts.py", fileType)
-    )
   )
 
   val programmingColl5Ex3: ProgrammingExercise = Exercise(
@@ -150,7 +74,7 @@ object ProgrammingColl5Ex3 extends ProgrammingInitialExercise(5, 3) {
     ),
     difficulty = 3,
     content = ProgrammingExerciseContent(
-      filename = "tuples_and_dicts",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

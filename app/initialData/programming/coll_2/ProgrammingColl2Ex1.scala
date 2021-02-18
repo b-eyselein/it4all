@@ -7,7 +7,7 @@ import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 import play.api.libs.json.{JsBoolean, JsString}
 
-object ProgrammingColl2Ex1 extends ProgrammingInitialExercise(2, 1) {
+object ProgrammingColl2Ex1 extends ProgrammingInitialExercise(2, 1, "palindrome") {
 
   private val unitTestPart = SimplifiedUnitTestPart(
     simplifiedTestMainFile = ExerciseFile(
@@ -33,15 +33,15 @@ object ProgrammingColl2Ex1 extends ProgrammingInitialExercise(2, 1) {
       ExerciseFile(
         name = "palindrome.py",
         fileType,
-        editable = true,
-        content = loadTextFromFile(exResPath / "palindrome_declaration.py")
+        content = loadTextFromFile(exResPath / "palindrome_declaration.py"),
+        editable = true
       )
     ),
     implFileName = "palindrome.py",
     sampleSolFileNames = Seq("palindrome.py")
   )
 
-  private val sampleSolutionFiles = Seq(
+  override protected val sampleSolutionFiles = Seq(
     ExerciseFile(
       name = "palindrome.py",
       fileType,
@@ -63,7 +63,7 @@ object ProgrammingColl2Ex1 extends ProgrammingInitialExercise(2, 1) {
     ),
     difficulty = 1,
     content = ProgrammingExerciseContent(
-      filename = "palindrome",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

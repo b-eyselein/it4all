@@ -58,8 +58,8 @@ final case class Exercise[C <: ExerciseContent](
 final case class ExerciseFile(
   name: String,
   fileType: String,
-  editable: Boolean,
-  content: String
+  content: String,
+  editable: Boolean
 )
 
 final case class FilesSolution(

@@ -8,9 +8,7 @@ import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 import play.api.libs.json.{JsNull, JsString, Json}
 
-object ProgrammingColl4Ex2 extends ProgrammingInitialExercise(4, 2) {
-
-  private val sampleSolutionFiles = loadFilesFromFolder(exResPath, Seq(FileLoadConfig("longest_string.py", fileType)))
+object ProgrammingColl4Ex2 extends ProgrammingInitialExercise(4, 2, "longest_string") {
 
   private val implementationPart = ImplementationPart(
     base = """from typing import List
@@ -43,6 +41,9 @@ object ProgrammingColl4Ex2 extends ProgrammingInitialExercise(4, 2) {
     )
   )
 
+  override protected val sampleSolutionFiles =
+    loadFilesFromFolder(exResPath, Seq(FileLoadConfig("longest_string.py", fileType)))
+
   val programmingColl4Ex2: ProgrammingExercise = Exercise(
     exerciseId = 2,
     collectionId = 4,
@@ -58,7 +59,7 @@ object ProgrammingColl4Ex2 extends ProgrammingInitialExercise(4, 2) {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      filename = "longest_string",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

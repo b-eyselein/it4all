@@ -7,135 +7,44 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl5Ex2 extends ProgrammingInitialExercise(5, 2) {
+object ProgrammingColl5Ex2 extends ProgrammingInitialExercise(5, 2, "dicts") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("dicts.py", fileType, maybeOtherFileName = Some("dicts_declaration.py")),
-        FileLoadConfig("test_dicts.py", fileType, editable = true, Some("test_dicts_declaration.py"))
-      )
-    ),
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "dicts_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "dicts_0.py")
-        )
+      unitTestTestConfig(id = 0, description = "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(
+        1,
+        "Die Funktion count_char_occurences soll nicht zwischen Groß- und Kleinschreibung unterscheiden."
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = "Die Funktion count_char_occurences soll nicht zwischen Groß- und Kleinschreibung unterscheiden.",
-        file = ExerciseFile(
-          name = "dicts_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "dicts_1.py")
-        )
+      unitTestTestConfig(2, "Die Funktion count_char_occurences soll die einzelnen Buchstaben korrekt zählen."),
+      unitTestTestConfig(
+        3,
+        "Falls der übergebene String leer ist, soll die Funktion count_char_occurences ein leeres Dictionary zurückgeben."
       ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description = "Die Funktion count_char_occurences soll die einzelnen Buchstaben korrekt zählen.",
-        file = ExerciseFile(
-          name = "dicts_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "dicts_2.py")
-        )
+      unitTestTestConfig(4, "Die Funktion word_position_list soll die korrekten Indizes der Wörter angeben."),
+      unitTestTestConfig(
+        5,
+        "Die Funktion word_position_list soll alle Indizes angeben, falls ein Wort mehrmals vorkommt."
       ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description =
-          "Falls der übergebene String leer ist, soll die Funktion count_char_occurences ein leeres Dictionary zurückgeben.",
-        file = ExerciseFile(
-          name = "dicts_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "dicts_3.py")
-        )
+      unitTestTestConfig(
+        6,
+        """Falls der übergebene String leer ist, soll die Funktion word_position_list ein leeres Dictionary zurückgeben. !!!TODO - Falls der Test self.assertEqual({}, word_position_list("")) eingefügt wird, werden auch alle anderen Tests der anderen Methoden grün!!!"""
       ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = "Die Funktion word_position_list soll die korrekten Indizes der Wörter angeben.",
-        file = ExerciseFile(
-          name = "dicts_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "dicts_4.py")
-        )
+      unitTestTestConfig(7, "Die Funktion merge_dicts_with_add soll die beiden Dictionaries zusammenfügen."),
+      unitTestTestConfig(
+        8,
+        "Die Funktion merge_dicts_with_add soll die Werte im Ergebnisdictionary, bei gleichen Schlüsseln in den Ausgangsdictionaries, addieren."
       ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description = "Die Funktion word_position_list soll alle Indizes angeben, falls ein Wort mehrmals vorkommt.",
-        file = ExerciseFile(
-          name = "dicts_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "dicts_5.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description =
-          """Falls der übergebene String leer ist, soll die Funktion word_position_list ein leeres Dictionary zurückgeben. !!!TODO - Falls der Test self.assertEqual({}, word_position_list("")) eingefügt wird, werden auch alle anderen Tests der anderen Methoden grün!!!""",
-        file = ExerciseFile(
-          name = "dicts_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "dicts_6.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 7,
-        shouldFail = true,
-        description = "Die Funktion merge_dicts_with_add soll die beiden Dictionaries zusammenfügen.",
-        file = ExerciseFile(
-          name = "dicts_7.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "dicts_7.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 8,
-        shouldFail = true,
-        description =
-          "Die Funktion merge_dicts_with_add soll die Werte im Ergebnisdictionary, bei gleichen Schlüsseln in den Ausgangsdictionaries, addieren.",
-        file = ExerciseFile(
-          name = "dicts_8.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "dicts_8.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 9,
-        shouldFail = true,
-        description =
-          "Falls beide Ausgangsdictionaries leer sind, soll die Funktion merge_dicts_with_add ein leeres Dictionary zurückgeben.",
-        file = ExerciseFile(
-          name = "dicts_9.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "dicts_9.py")
-        )
+      unitTestTestConfig(
+        9,
+        "Falls beide Ausgangsdictionaries leer sind, soll die Funktion merge_dicts_with_add ein leeres Dictionary zurückgeben."
       )
     ),
     testFileName = "test_dicts.py",
-    folderName = "dicts",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_dicts.py")
   )
 
@@ -150,14 +59,6 @@ object ProgrammingColl5Ex2 extends ProgrammingInitialExercise(5, 2) {
     ),
     implFileName = "dicts.py",
     sampleSolFileNames = Seq("dicts.py")
-  )
-
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("dicts.py", fileType),
-      FileLoadConfig("test_dicts.py", fileType)
-    )
   )
 
   val programmingColl5Ex2: ProgrammingExercise = Exercise(
@@ -176,7 +77,7 @@ object ProgrammingColl5Ex2 extends ProgrammingInitialExercise(5, 2) {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      filename = "dicts",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

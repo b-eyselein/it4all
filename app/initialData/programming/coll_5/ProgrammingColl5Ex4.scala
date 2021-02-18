@@ -7,99 +7,32 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl5Ex4 extends ProgrammingInitialExercise(5, 4) {
+object ProgrammingColl5Ex4 extends ProgrammingInitialExercise(5, 4, "reindeers") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("reindeers.py", fileType, maybeOtherFileName = Some("reindeers_declaration.py")),
-        FileLoadConfig("test_reindeers.py", fileType, editable = true, Some("test_reindeers_declaration.py"))
-      )
-    ),
+    // FIXME: unit tests descriptions!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "reindeers_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "reindeers_0.py")
-        )
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "Die Funktion calculate_bmi soll den korrekten BMI berechnen."),
+      unitTestTestConfig(2, "Die Funktion calculate_bmi soll den korrekten BMI berechnen."),
+      unitTestTestConfig(3, "Die Funktion calculate_bmi soll den korrekten BMI berechnen."),
+      unitTestTestConfig(
+        4,
+        "Die Funktion calculate_reindeer_bmis soll den korrekten BMI für jedes Rentier zurückgeben."
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = "Die Funktion calculate_bmi soll den korrekten BMI berechnen.",
-        file = ExerciseFile(
-          name = "reindeers_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "reindeers_1.py")
-        )
+      unitTestTestConfig(
+        5,
+        "Die Funktion calculate_reindeer_bmis soll den korrekten Namen für jedes Rentier zurückgeben."
       ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description = "Die Funktion calculate_bmi soll den korrekten BMI berechnen.",
-        file = ExerciseFile(
-          name = "reindeers_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "reindeers_2.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description = "Die Funktion calculate_bmi soll den korrekten BMI berechnen.",
-        file = ExerciseFile(
-          name = "reindeers_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "reindeers_3.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = "Die Funktion calculate_reindeer_bmis soll den korrekten BMI für jedes Rentier zurückgeben.",
-        file = ExerciseFile(
-          name = "reindeers_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "reindeers_4.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description = "Die Funktion calculate_reindeer_bmis soll den korrekten Namen für jedes Rentier zurückgeben.",
-        file = ExerciseFile(
-          name = "reindeers_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "reindeers_5.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description =
-          "Die Funktion calculate_reindeer_bmis soll ein leeres Dictionary zurückgeben, falls das übergebene Dictionary leer ist.",
-        file = ExerciseFile(
-          name = "reindeers_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "reindeers_6.py")
-        )
+      unitTestTestConfig(
+        6,
+        "Die Funktion calculate_reindeer_bmis soll ein leeres Dictionary zurückgeben, falls das übergebene Dictionary leer ist."
       )
     ),
     testFileName = "test_reindeers.py",
-    folderName = "reindeers",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_reindeers.py")
   )
 
@@ -116,14 +49,6 @@ object ProgrammingColl5Ex4 extends ProgrammingInitialExercise(5, 4) {
     sampleSolFileNames = Seq("reindeers.py")
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("reindeers.py", fileType),
-      FileLoadConfig("test_reindeers.py", fileType)
-    )
-  )
-
   val programmingColl5Ex4: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -138,7 +63,7 @@ object ProgrammingColl5Ex4 extends ProgrammingInitialExercise(5, 4) {
     ),
     difficulty = 3,
     content = ProgrammingExerciseContent(
-      filename = "reindeers",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

@@ -22,6 +22,7 @@ final case class ProgrammingExerciseContent(
 
 sealed trait UnitTestPart
 
+@deprecated
 final case class SimplifiedUnitTestPart(
   simplifiedTestMainFile: ExerciseFile,
   sampleTestData: Seq[ProgTestData]
@@ -33,11 +34,15 @@ final case class NormalUnitTestPart(
   unitTestTestConfigs: Seq[UnitTestTestConfig],
   testFileName: String,
   folderName: String,
-  sampleSolFileNames: Seq[String],
-  simplifiedTestMainFile: Option[ExerciseFile] = None
+  sampleSolFileNames: Seq[String]
 ) extends UnitTestPart
 
-final case class UnitTestTestConfig(id: Int, shouldFail: Boolean, description: String, file: ExerciseFile)
+final case class UnitTestTestConfig(
+  id: Int,
+  description: String,
+  file: ExerciseFile,
+  shouldFail: Boolean = true
+)
 
 final case class ImplementationPart(
   base: String,

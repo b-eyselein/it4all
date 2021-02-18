@@ -1,6 +1,6 @@
 package model.tools.programming
 
-import better.files.File
+import better.files._
 import model.FilesSolution
 import model.core.DockerBind
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
@@ -24,11 +24,21 @@ object ProgrammingCorrector
     val resultFile = solutionTargetDir / resultFileName
     resultFile.createIfNotExists(createParents = true).clear()
 
-    val defaultFileMounts = solution.files
+    val resultFileMount = DockerBind(resultFile, baseBindPath / resultFileName)
+
+    // Mount other files
+    val solutionFileMounts = solution.files
       .map { ef =>
-        val targetPath = writeExerciseFileToDirectory(ef, solutionTargetDir)
+        val targetPath = solutionTargetDir / ef.name
+
+        targetPath
+          .createIfNotExists(createParents = true)
+          .write(ef.content)
+
         DockerBind(targetPath, baseBindPath / ef.name)
-      } :+ DockerBind(resultFile, baseBindPath / resultFileName)
+      }
+
+    val defaultFileMounts = solutionFileMounts :+ resultFileMount
 
     part match {
       case ProgExPart.TestCreation =>

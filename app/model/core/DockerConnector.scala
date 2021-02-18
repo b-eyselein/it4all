@@ -20,6 +20,8 @@ final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = 
       .readOnly(isReadOnly)
       .build()
 
+  def explain = s"${fromPath.name} --> ${toPath.name}"
+
 }
 
 final case class ScalaDockerImage(repo: String, image: String, version: String = "latest") {

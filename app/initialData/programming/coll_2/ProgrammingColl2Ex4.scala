@@ -7,76 +7,27 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex4 extends ProgrammingInitialExercise(2, 4) {
+object ProgrammingColl2Ex4 extends ProgrammingInitialExercise(2, 4, "name_search") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("name_search.py", fileType, maybeOtherFileName = Some("name_search_declaration.py")),
-        FileLoadConfig("test_name_search.py", fileType, editable = true, Some("test_name_search_declaration.py"))
-      )
-    ),
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "name_search_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "name_search_0.py")
-        )
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "Es soll das korrekte Präfix zurückgegeben werden."),
+      unitTestTestConfig(2, "Es soll das korrekte Suffix zurückgegeben werden."),
+      unitTestTestConfig(
+        3,
+        "Falls das Fragment in mehreren Namen enthalten ist sollen alle Namen zurückgegeben werden."
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = "Es soll das korrekte Präfix zurückgegeben werden.",
-        file = ExerciseFile(
-          name = "name_search_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "name_search_1.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description = "Es soll das korrekte Suffix zurückgegeben werden.",
-        file = ExerciseFile(
-          name = "name_search_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "name_search_2.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description = "Falls das Fragment in mehreren Namen enthalten ist sollen alle Namen zurückgegeben werden.",
-        file = ExerciseFile(
-          name = "name_search_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "name_search_3.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = "Falls das Fragment in keinem Namen enthalten ist soll eine leere Liste zurückgegeben werden.",
-        file = ExerciseFile(
-          name = "name_search_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "name_search_4.py")
-        )
+      unitTestTestConfig(
+        4,
+        "Falls das Fragment in keinem Namen enthalten ist soll eine leere Liste zurückgegeben werden."
       )
     ),
     testFileName = "test_name_search.py",
-    folderName = "name_search",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_name_search.py")
   )
 
@@ -97,14 +48,6 @@ object ProgrammingColl2Ex4 extends ProgrammingInitialExercise(2, 4) {
     sampleSolFileNames = Seq("name_search.py")
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("name_search.py", fileType),
-      FileLoadConfig("test_name_search.py", fileType)
-    )
-  )
-
   val programmingColl2Ex4: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -120,7 +63,7 @@ object ProgrammingColl2Ex4 extends ProgrammingInitialExercise(2, 4) {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      filename = "name_search",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

@@ -7,98 +7,29 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl3Ex2 extends ProgrammingInitialExercise(3, 2) {
+object ProgrammingColl3Ex2 extends ProgrammingInitialExercise(3, 2, "discount") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("discount.py", fileType, maybeOtherFileName = Some("discount_declaration.py")),
-        FileLoadConfig("test_discount.py", fileType, editable = true, Some("test_discount_declaration.py"))
-      )
-    ),
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "discount_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "discount_0.py")
-        )
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "Falls der Kunde einen Hund besitzt, soll der korrekte Rabatt gewährt werden."),
+      unitTestTestConfig(2, "Falls der Kunde eine Katze besitzt, soll der korrekte Rabatt gewährt werden."),
+      unitTestTestConfig(
+        3,
+        "Falls der Kunde einen Hund und eine Katze besitzt, soll der korrekte Rabatt gewährt werden."
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = "Falls der Kunde einen Hund besitzt, soll der korrekte Rabatt gewährt werden.",
-        file = ExerciseFile(
-          name = "discount_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "discount_1.py")
-        )
+      unitTestTestConfig(
+        4,
+        "Falls der Kunde keinen Hund und keine Katze besitzt, soll der korrekte Rabatt gewährt werden."
       ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description = "Falls der Kunde eine Katze besitzt, soll der korrekte Rabatt gewährt werden.",
-        file = ExerciseFile(
-          name = "discount_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "discount_2.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description = "Falls der Kunde einen Hund und eine Katze besitzt, soll der korrekte Rabatt gewährt werden.",
-        file = ExerciseFile(
-          name = "discount_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "discount_3.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = "Falls der Kunde keinen Hund und keine Katze besitzt, soll der korrekte Rabatt gewährt werden.",
-        file = ExerciseFile(
-          name = "discount_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "discount_4.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description = "Falls der Kunde einen Hamster besitzt, soll der korrekte Rabatt gewährt werden.",
-        file = ExerciseFile(
-          name = "discount_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "discount_5.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description = "Falls der Kunde keinen Hamster besitzt, soll der korrekte Rabatt gewährt werden.",
-        file = ExerciseFile(
-          name = "discount_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "discount_6.py")
-        )
-      )
+      unitTestTestConfig(5, "Falls der Kunde einen Hamster besitzt, soll der korrekte Rabatt gewährt werden."),
+      unitTestTestConfig(6, "Falls der Kunde keinen Hamster besitzt, soll der korrekte Rabatt gewährt werden.")
     ),
     testFileName = "test_discount.py",
-    folderName = "discount",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_discount.py")
   )
 
@@ -117,14 +48,6 @@ object ProgrammingColl3Ex2 extends ProgrammingInitialExercise(3, 2) {
     sampleSolFileNames = Seq("discount.py")
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("discount.py", fileType),
-      FileLoadConfig("test_discount.py", fileType)
-    )
-  )
-
   val programmingColl3Ex2: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -138,7 +61,7 @@ object ProgrammingColl3Ex2 extends ProgrammingInitialExercise(3, 2) {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      filename = "discount",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

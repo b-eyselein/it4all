@@ -7,109 +7,24 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl3Ex1 extends ProgrammingInitialExercise(3, 1) {
+object ProgrammingColl3Ex1 extends ProgrammingInitialExercise(3, 1, "lottery") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("lottery.py", fileType, maybeOtherFileName = Some("lottery_declaration.py")),
-        FileLoadConfig("test_lottery.py", fileType, editable = true, Some("test_lottery_declaration.py"))
-      )
-    ),
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "lottery_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "lottery_0.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = "Bei Gewinnstufe 0 soll der korrekte Gewinn zurückgegeben werden.",
-        file = ExerciseFile(
-          name = "lottery_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "lottery_1.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description = "Bei Gewinnstufe 1 soll der korrekte Gewinn zurückgegeben werden.",
-        file = ExerciseFile(
-          name = "lottery_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "lottery_2.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description = "Bei Gewinnstufe 2 soll der korrekte Gewinn zurückgegeben werden.",
-        file = ExerciseFile(
-          name = "lottery_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "lottery_3.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = "Bei Gewinnstufe 3 soll der korrekte Gewinn zurückgegeben werden.",
-        file = ExerciseFile(
-          name = "lottery_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "lottery_4.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description = "Bei Gewinnstufe 4 soll der korrekte Gewinn zurückgegeben werden.",
-        file = ExerciseFile(
-          name = "lottery_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "lottery_5.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description = "Bei Gewinnstufe 5 soll der korrekte Gewinn zurückgegeben werden.",
-        file = ExerciseFile(
-          name = "lottery_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "lottery_6.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 7,
-        shouldFail = true,
-        description = "Bei einer Gewinnststufe kleiner 0 oder größer 5 soll die Gewinnstufe 0 angenommen werden.",
-        file = ExerciseFile(
-          name = "lottery_7.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "lottery_7.py")
-        )
-      )
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "Bei Gewinnstufe 0 soll der korrekte Gewinn zurückgegeben werden."),
+      unitTestTestConfig(2, "Bei Gewinnstufe 1 soll der korrekte Gewinn zurückgegeben werden."),
+      unitTestTestConfig(3, "Bei Gewinnstufe 2 soll der korrekte Gewinn zurückgegeben werden."),
+      unitTestTestConfig(4, "Bei Gewinnstufe 3 soll der korrekte Gewinn zurückgegeben werden."),
+      unitTestTestConfig(5, "Bei Gewinnstufe 4 soll der korrekte Gewinn zurückgegeben werden."),
+      unitTestTestConfig(6, "Bei Gewinnstufe 5 soll der korrekte Gewinn zurückgegeben werden."),
+      unitTestTestConfig(7, "Bei einer Gewinnststufe kleiner 0 oder größer 5 soll die Gewinnstufe 0 angenommen werden.")
     ),
     testFileName = "test_lottery.py",
-    folderName = "lottery",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_lottery.py")
   )
 
@@ -128,14 +43,6 @@ object ProgrammingColl3Ex1 extends ProgrammingInitialExercise(3, 1) {
     sampleSolFileNames = Seq("lottery.py")
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("lottery.py", fileType),
-      FileLoadConfig("test_lottery.py", fileType)
-    )
-  )
-
   val programmingColl3Ex1: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -149,7 +56,7 @@ object ProgrammingColl3Ex1 extends ProgrammingInitialExercise(3, 1) {
     ),
     difficulty = 1,
     content = ProgrammingExerciseContent(
-      filename = "lottery",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

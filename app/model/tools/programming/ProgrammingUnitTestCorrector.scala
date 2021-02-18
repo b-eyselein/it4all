@@ -42,15 +42,24 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
 
     val unitTestSolFilesDockerBinds: Seq[DockerBind] = unitTestPart.unitTestTestConfigs
       .filter { tc => implFileRegex.matches(tc.file.name) }
-      .map { case UnitTestTestConfig(_, _, _, ef) =>
-        val targetPath = writeExerciseFileToDirectory(ef, solTargetDir)
+      .map { case UnitTestTestConfig(_, _, ef, _) =>
+        val targetPath = solTargetDir / ef.name
+
+        targetPath
+          .createIfNotExists(createParents = true)
+          .write(ef.content)
+
         DockerBind(targetPath, bindDirectory / ef.name)
       }
 
     val exFilesMounts = unitTestPart.unitTestFiles
       .filter(ef => ef.name != unitTestPart.testFileName && ef.name != exerciseContent.implementationPart.implFileName)
       .map { ef =>
-        val targetPath = writeExerciseFileToDirectory(ef, solTargetDir)
+        val targetPath = solTargetDir / ef.name
+
+        targetPath
+          .createIfNotExists(createParents = true)
+          .write(ef.content)
 
         DockerBind(targetPath, bindDirectory / ef.name)
       }

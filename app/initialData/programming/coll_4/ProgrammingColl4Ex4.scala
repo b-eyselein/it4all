@@ -7,135 +7,41 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl4Ex4 extends ProgrammingInitialExercise(4, 4) {
+object ProgrammingColl4Ex4 extends ProgrammingInitialExercise(4, 4, "slicing") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("slicing.py", fileType, maybeOtherFileName = Some("slicing_declaration.py")),
-        FileLoadConfig("test_slicing.py", fileType, editable = true, Some("test_slicing_declaration.py"))
-      )
-    ),
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "slicing_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "slicing_0.py")
-        )
+      unitTestTestConfig(id = 0, description = "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "Die Funktion even_indexes soll alle Elemente an geraden Indizes zurückgeben."),
+      unitTestTestConfig(
+        2,
+        "Die Funktion even_indexes soll alle Elemente an geraden Indizes und nicht an ungeraden Indizes zurückgeben."
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = "Die Funktion even_indexes soll alle Elemente an geraden Indizes zurückgeben.",
-        file = ExerciseFile(
-          name = "slicing_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "slicing_1.py")
-        )
+      unitTestTestConfig(
+        3,
+        "Die Funktion even_indexes soll alle Elemente an gerade Indizes und nicht am 0. Index zurückgeben."
       ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description =
-          "Die Funktion even_indexes soll alle Elemente an geraden Indizes und nicht an ungeraden Indizes zurückgeben.",
-        file = ExerciseFile(
-          name = "slicing_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "slicing_2.py")
-        )
+      unitTestTestConfig(4, "Die Funktion reversed_special soll vom vorletzten Element aus beginnen."),
+      unitTestTestConfig(
+        5,
+        "Die Funktion reversed_special soll jedes dritte Element, vom vorletzten Element aus beginnend, ausgeben."
       ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description =
-          "Die Funktion even_indexes soll alle Elemente an gerade Indizes und nicht am 0. Index zurückgeben.",
-        file = ExerciseFile(
-          name = "slicing_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "slicing_3.py")
-        )
+      unitTestTestConfig(6, "Die Funktion first_half soll die erste Hälfte der Liste zurückgeben."),
+      unitTestTestConfig(7, "Die Funktion first_half soll bei ungeraden Längen abrunden."),
+      unitTestTestConfig(
+        8,
+        "Die Funktion rotate_right soll für jede Umdrehung das letzte Element der Liste an den Anfang der Liste setzen."
       ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = "Die Funktion reversed_special soll vom vorletzten Element aus beginnen.",
-        file = ExerciseFile(
-          name = "slicing_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "slicing_4.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description =
-          "Die Funktion reversed_special soll jedes dritte Element, vom vorletzten Element aus beginnend, ausgeben.",
-        file = ExerciseFile(
-          name = "slicing_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "slicing_5.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description = "Die Funktion first_half soll die erste Hälfte der Liste zurückgeben.",
-        file = ExerciseFile(
-          name = "slicing_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "slicing_6.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 7,
-        shouldFail = true,
-        description = "Die Funktion first_half soll bei ungeraden Längen abrunden.",
-        file = ExerciseFile(
-          name = "slicing_7.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "slicing_7.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 8,
-        shouldFail = true,
-        description =
-          "Die Funktion rotate_right soll für jede Umdrehung das letzte Element der Liste an den Anfang der Liste setzen.",
-        file = ExerciseFile(
-          name = "slicing_8.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "slicing_8.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 9,
-        shouldFail = true,
-        description = "Die Funktion rotate_right soll die korrekte Anzahl an übergebenen Umdrehungen durchführen.",
-        file = ExerciseFile(
-          name = "slicing_9.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "slicing_9.py")
-        )
+      unitTestTestConfig(
+        9,
+        "Die Funktion rotate_right soll die korrekte Anzahl an übergebenen Umdrehungen durchführen."
       )
     ),
     testFileName = "test_slicing.py",
-    folderName = "slicing",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_slicing.py")
   )
 
@@ -152,14 +58,6 @@ object ProgrammingColl4Ex4 extends ProgrammingInitialExercise(4, 4) {
     sampleSolFileNames = Seq("slicing.py")
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("slicing.py", fileType),
-      FileLoadConfig("test_slicing.py", fileType)
-    )
-  )
-
   val programmingColl4Ex4: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -173,7 +71,7 @@ object ProgrammingColl4Ex4 extends ProgrammingInitialExercise(4, 4) {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      filename = "slicing",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

@@ -7,10 +7,11 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex5 extends ProgrammingInitialExercise(2, 5) {
+object ProgrammingColl2Ex5 extends ProgrammingInitialExercise(2, 5, "three_chinese") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
     unitTestFiles = loadFilesFromFolder(
       exResPath,
       Seq(
@@ -19,130 +20,20 @@ object ProgrammingColl2Ex5 extends ProgrammingInitialExercise(2, 5) {
       )
     ),
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "three_chinese_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "three_chinese_0.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = "Die Vokale sollen durch den übergebenen Vokal ersetzt werden.",
-        file = ExerciseFile(
-          name = "three_chinese_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "three_chinese_1.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description = "Aufeinanderfolgende Vokale sollen auf einen einzigen Vokal reduziert werden.",
-        file = ExerciseFile(
-          name = "three_chinese_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "three_chinese_2.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description = "Der Vokal A bzw. a soll durch den übergebenen Vokal ersetzt werden.",
-        file = ExerciseFile(
-          name = "three_chinese_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "three_chinese_3.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = "Der Vokal E bzw. e soll durch den übergebenen Vokal ersetzt werden.",
-        file = ExerciseFile(
-          name = "three_chinese_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "three_chinese_4.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description = "Der Vokal I bzw. i soll durch den übergebenen Vokal ersetzt werden.",
-        file = ExerciseFile(
-          name = "three_chinese_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "three_chinese_5.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description = "Der Vokal O bzw. o soll durch den übergebenen Vokal ersetzt werden.",
-        file = ExerciseFile(
-          name = "three_chinese_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "three_chinese_6.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 7,
-        shouldFail = true,
-        description = "Der Vokal U bzw. u soll durch den übergebenen Vokal ersetzt werden.",
-        file = ExerciseFile(
-          name = "three_chinese_7.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "three_chinese_7.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 8,
-        shouldFail = true,
-        description = "Der Umlaut Ä bzw. ä soll durch den übergebenen Vokal ersetzt werden.",
-        file = ExerciseFile(
-          name = "three_chinese_8.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "three_chinese_8.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 9,
-        shouldFail = true,
-        description = "Der Umlaut Ö bzw. ö soll durch den übergebenen Vokal ersetzt werden.",
-        file = ExerciseFile(
-          name = "three_chinese_9.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "three_chinese_9.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 10,
-        shouldFail = true,
-        description = "Der Umlaut Ü bzw. ü soll durch den übergebenen Vokal ersetzt werden.",
-        file = ExerciseFile(
-          name = "three_chinese_10.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "three_chinese_10.py")
-        )
-      )
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "Die Vokale sollen durch den übergebenen Vokal ersetzt werden."),
+      unitTestTestConfig(2, "Aufeinanderfolgende Vokale sollen auf einen einzigen Vokal reduziert werden."),
+      unitTestTestConfig(3, "Der Vokal A bzw. a soll durch den übergebenen Vokal ersetzt werden."),
+      unitTestTestConfig(4, "Der Vokal E bzw. e soll durch den übergebenen Vokal ersetzt werden."),
+      unitTestTestConfig(5, "Der Vokal I bzw. i soll durch den übergebenen Vokal ersetzt werden."),
+      unitTestTestConfig(6, "Der Vokal O bzw. o soll durch den übergebenen Vokal ersetzt werden."),
+      unitTestTestConfig(7, "Der Vokal U bzw. u soll durch den übergebenen Vokal ersetzt werden."),
+      unitTestTestConfig(8, "Der Umlaut Ä bzw. ä soll durch den übergebenen Vokal ersetzt werden."),
+      unitTestTestConfig(9, "Der Umlaut Ö bzw. ö soll durch den übergebenen Vokal ersetzt werden."),
+      unitTestTestConfig(10, "Der Umlaut Ü bzw. ü soll durch den übergebenen Vokal ersetzt werden.")
     ),
     testFileName = "test_three_chinese.py",
-    folderName = "three_chinese",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_three_chinese.py")
   )
 
@@ -160,14 +51,6 @@ object ProgrammingColl2Ex5 extends ProgrammingInitialExercise(2, 5) {
     sampleSolFileNames = Seq("three_chinese.py")
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("three_chinese.py", fileType),
-      FileLoadConfig("test_three_chinese.py", fileType)
-    )
-  )
-
   val programmingColl2Ex5: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -182,7 +65,7 @@ object ProgrammingColl2Ex5 extends ProgrammingInitialExercise(2, 5) {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      filename = "three_chinese",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

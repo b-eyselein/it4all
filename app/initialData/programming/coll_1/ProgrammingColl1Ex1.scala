@@ -6,24 +6,22 @@ import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
-import play.api.libs.json.{JsNumber, Json}
 
-object ProgrammingColl1Ex1 extends ProgrammingInitialExercise(1, 1) {
+object ProgrammingColl1Ex1 extends ProgrammingInitialExercise(1, 1, "ggt") {
 
-  private val unitTestPart = SimplifiedUnitTestPart(
-    simplifiedTestMainFile = ExerciseFile(
-      name = "test_main.py",
-      fileType,
-      editable = false,
-      content = loadTextFromFile(exResPath / "test_main.py")
+  private val unitTestPart = NormalUnitTestPart(
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
+    unitTestTestConfigs = Seq(
+      unitTestTestConfig(0, "Diese Implementierung ist korrekt und sollte alle Tests bestehen.", shouldFail = false),
+      unitTestTestConfig(1, "TODO!"),
+      unitTestTestConfig(2, "TODO!"),
+      unitTestTestConfig(3, "TODO!")
     ),
-    sampleTestData = Seq(
-      ProgTestData(id = 1, input = Json.arr(12, 4), output = JsNumber(4)),
-      ProgTestData(id = 2, input = Json.arr(3, 7), output = JsNumber(1)),
-      ProgTestData(id = 3, input = Json.arr(64, 46), output = JsNumber(2)),
-      ProgTestData(id = 4, input = Json.arr(777, 111), output = JsNumber(111)),
-      ProgTestData(id = 5, input = Json.arr(15, 25), output = JsNumber(5))
-    )
+    testFileName = "test_ggt.py",
+    folderName = exerciseBaseName,
+    sampleSolFileNames = Seq("test_ggt.py")
   )
 
   private val implementationPart = ImplementationPart(
@@ -32,14 +30,14 @@ object ProgrammingColl1Ex1 extends ProgrammingInitialExercise(1, 1) {
              |""".stripMargin,
     files = loadFilesFromFolder(
       exResPath,
-      Seq(FileLoadConfig("ggt.py", fileType, editable = true, Some("ggt_declaration.py")))
+      Seq(
+        FileLoadConfig("test_ggt.py", fileType),
+        FileLoadConfig("ggt.py", fileType, editable = true, Some("ggt_declaration.py"))
+      )
     ),
     implFileName = "ggt.py",
     sampleSolFileNames = Seq("ggt.py")
   )
-
-  private val sampleSolutionFiles =
-    loadFilesFromFolder(exResPath, Seq(FileLoadConfig("ggt.py", fileType, editable = true)))
 
   val programmingColl1Ex1: ProgrammingExercise = Exercise(
     exerciseId,
@@ -55,7 +53,7 @@ object ProgrammingColl1Ex1 extends ProgrammingInitialExercise(1, 1) {
       TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner)
     ),
     content = ProgrammingExerciseContent(
-      filename = "ggt",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

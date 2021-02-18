@@ -82,8 +82,8 @@ export type ElementLineMatch = NewMatch & {
 export type ExerciseFileInput = {
   name: Scalars['String'];
   fileType: Scalars['String'];
-  editable: Scalars['Boolean'];
   content: Scalars['String'];
+  editable: Scalars['Boolean'];
 };
 
 export type FilesSolutionInput = {
@@ -726,6 +726,7 @@ export type UnitTestCorrectionResult = {
   testId: Scalars['Int'];
   description: Scalars['String'];
   successful: Scalars['Boolean'];
+  shouldFail: Scalars['Boolean'];
   stdout: Array<Scalars['String']>;
   stderr: Array<Scalars['String']>;
 };
@@ -953,8 +954,8 @@ export type ExerciseFile = {
   __typename?: 'ExerciseFile';
   name: Scalars['String'];
   fileType: Scalars['String'];
-  editable: Scalars['Boolean'];
   content: Scalars['String'];
+  editable: Scalars['Boolean'];
 };
 
 export type FilesSolution = {
@@ -1072,7 +1073,6 @@ export type NormalUnitTestPart = {
   testFileName: Scalars['String'];
   folderName: Scalars['String'];
   sampleSolFileNames: Array<Scalars['String']>;
-  simplifiedTestMainFile?: Maybe<ExerciseFile>;
 };
 
 export enum ProgExPart {
@@ -1323,9 +1323,9 @@ export type UnitTestPart = SimplifiedUnitTestPart | NormalUnitTestPart;
 export type UnitTestTestConfig = {
   __typename?: 'UnitTestTestConfig';
   id: Scalars['Int'];
-  shouldFail: Scalars['Boolean'];
   description: Scalars['String'];
   file: ExerciseFile;
+  shouldFail: Scalars['Boolean'];
 };
 
 export type User = {
@@ -1496,7 +1496,7 @@ export type NormalExecutionResultFragment = (
 
 export type UnitTestCorrectionResultFragment = (
   { __typename: 'UnitTestCorrectionResult' }
-  & Pick<UnitTestCorrectionResult, 'testId' | 'successful' | 'description'>
+  & Pick<UnitTestCorrectionResult, 'testId' | 'successful' | 'shouldFail' | 'description' | 'stderr'>
 );
 
 export type RegexCorrectionMutationVariables = Exact<{
@@ -2869,7 +2869,9 @@ export const UnitTestCorrectionResultFragmentDoc = gql`
   __typename
   testId
   successful
+  shouldFail
   description
+  stderr
 }
     `;
 export const ProgrammingResultFragmentDoc = gql`

@@ -52,5 +52,7 @@ fragment UnitTestCorrectionResult on UnitTestCorrectionResult {
   __typename
   testId
   successful
+  shouldFail
   description
+  stderr
 }

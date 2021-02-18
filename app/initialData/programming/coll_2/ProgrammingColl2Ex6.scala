@@ -7,192 +7,66 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex6 extends ProgrammingInitialExercise(2, 6) {
+object ProgrammingColl2Ex6 extends ProgrammingInitialExercise(2, 6, "xmas_tree") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("xmas_tree.py", fileType, maybeOtherFileName = Some("xmas_tree_declaration.py")),
-        FileLoadConfig("test_xmas_tree.py", fileType, editable = true, Some("test_xmas_tree_declaration.py"))
-      )
-    ),
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "xmas_tree_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_0.py")
-        )
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, """Die Funktion xmas_tree_top_simple soll die Ränder mit einer \# kennzeichnen."""),
+      unitTestTestConfig(
+        2,
+        """Die Funktion xmas_tree_top_simple soll den Zwischenraum (kein Rand und kein Weihnachtsbaum)
+          |durch die korrekte Anzahl an Leerzeichen füllen.""".stripMargin
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = """Die Funktion xmas_tree_top_simple soll die Ränder mit einer \# kennzeichnen.""",
-        file = ExerciseFile(
-          name = "xmas_tree_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_1.py")
-        )
+      unitTestTestConfig(
+        3,
+        "Die Funktion xmas_tree_top_simple soll den Weihnachtsbaum durch die korrekte Anzahl an * kennzeichnen."
       ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description = """Die Funktion xmas_tree_top_simple soll den Zwischenraum (kein Rand und kein Weihnachtsbaum)
-                        |durch die korrekte Anzahl an Leerzeichen füllen.""".stripMargin,
-        file = ExerciseFile(
-          name = "xmas_tree_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_2.py")
-        )
+      unitTestTestConfig(4, """Die Funktion xmas_tree_top_design soll die Ränder mit einer \# kennzeichnen"""),
+      unitTestTestConfig(
+        5,
+        """Die Funktion xmas_tree_top_design soll den Zwischenraum (kein Rand und kein Weihnachtsbaum)
+          |durch die korrekte Anzahl an Leerzeichen füllen.""".stripMargin
       ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description =
-          "Die Funktion xmas_tree_top_simple soll den Weihnachtsbaum durch die korrekte Anzahl an * kennzeichnen.",
-        file = ExerciseFile(
-          name = "xmas_tree_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_3.py")
-        )
+      unitTestTestConfig(
+        6,
+        "Die Funktion xmas_tree_top_design soll den Weihnachtsbaum durch die korrekte Anzahl an * kennzeichnen."
       ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = """Die Funktion xmas_tree_top_design soll die Ränder mit einer \# kennzeichnen""",
-        file = ExerciseFile(
-          name = "xmas_tree_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_4.py")
-        )
+      unitTestTestConfig(
+        7,
+        "Die Funktion xmas_tree_top_design soll die korrekte Anzahl Dekoration in den Weihnachtsbaum einfügen."
       ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description = """Die Funktion xmas_tree_top_design soll den Zwischenraum (kein Rand und kein Weihnachtsbaum)
-                        |durch die korrekte Anzahl an Leerzeichen füllen.""".stripMargin,
-        file = ExerciseFile(
-          name = "xmas_tree_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_5.py")
-        )
+      unitTestTestConfig(8, """Die Funktion xmas_tree_stub soll die Ränder mit einer \# kennzeichnen."""),
+      unitTestTestConfig(
+        9,
+        "Die Funktion xmas_tree_stub soll den Zwischenraum (kein Rand und kein Stumpf) durch die korrekte Anzahl an Leerzeichen füllen."
       ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description =
-          "Die Funktion xmas_tree_top_design soll den Weihnachtsbaum durch die korrekte Anzahl an * kennzeichnen.",
-        file = ExerciseFile(
-          name = "xmas_tree_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_6.py")
-        )
+      unitTestTestConfig(
+        10,
+        "Die Funktion xmas_tree_stub soll den Stumpf durch die korrekte Anzahl an I kennzeichnen."
       ),
-      UnitTestTestConfig(
-        id = 7,
-        shouldFail = true,
-        description =
-          "Die Funktion xmas_tree_top_design soll die korrekte Anzahl Dekoration in den Weihnachtsbaum einfügen.",
-        file = ExerciseFile(
-          name = "xmas_tree_7.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_7.py")
-        )
+      unitTestTestConfig(
+        11,
+        "Die Funktion xmas_tree_simple soll den korrekten Weihnachtsbaum ohne Dekoration erstellen."
       ),
-      UnitTestTestConfig(
-        id = 8,
-        shouldFail = true,
-        description = """Die Funktion xmas_tree_stub soll die Ränder mit einer \# kennzeichnen.""",
-        file = ExerciseFile(
-          name = "xmas_tree_8.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_8.py")
-        )
+      unitTestTestConfig(
+        12,
+        "Die Funktion xmas_tree_simple soll den korrekten Weihnachtsbaum ohne Dekoration erstellen."
       ),
-      UnitTestTestConfig(
-        id = 9,
-        shouldFail = true,
-        description =
-          "Die Funktion xmas_tree_stub soll den Zwischenraum (kein Rand und kein Stumpf) durch die korrekte Anzahl an Leerzeichen füllen.",
-        file = ExerciseFile(
-          name = "xmas_tree_9.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_9.py")
-        )
+      unitTestTestConfig(
+        13,
+        "Die Funktion xmas_tree_design soll den korrekten Weihnachtsbaum mit Dekoration erstellen."
       ),
-      UnitTestTestConfig(
-        id = 10,
-        shouldFail = true,
-        description = "Die Funktion xmas_tree_stub soll den Stumpf durch die korrekte Anzahl an I kennzeichnen.",
-        file = ExerciseFile(
-          name = "xmas_tree_10.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_10.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 11,
-        shouldFail = true,
-        description = "Die Funktion xmas_tree_simple soll den korrekten Weihnachtsbaum ohne Dekoration erstellen.",
-        file = ExerciseFile(
-          name = "xmas_tree_11.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_11.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 12,
-        shouldFail = true,
-        description = "Die Funktion xmas_tree_simple soll den korrekten Weihnachtsbaum ohne Dekoration erstellen.",
-        file = ExerciseFile(
-          name = "xmas_tree_12.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_12.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 13,
-        shouldFail = true,
-        description = "Die Funktion xmas_tree_design soll den korrekten Weihnachtsbaum mit Dekoration erstellen.",
-        file = ExerciseFile(
-          name = "xmas_tree_13.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_13.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 14,
-        shouldFail = true,
-        description = "Die Funktion xmas_tree_design soll den korrekten Weihnachtsbaum mit Dekoration erstellen.",
-        file = ExerciseFile(
-          name = "xmas_tree_14.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "xmas_tree_14.py")
-        )
+      unitTestTestConfig(
+        14,
+        "Die Funktion xmas_tree_design soll den korrekten Weihnachtsbaum mit Dekoration erstellen."
       )
     ),
     testFileName = "test_xmas_tree.py",
-    folderName = "xmas_tree",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_xmas_tree.py")
   )
 
@@ -209,14 +83,6 @@ object ProgrammingColl2Ex6 extends ProgrammingInitialExercise(2, 6) {
     sampleSolFileNames = Seq("xmas_tree.py")
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("xmas_tree.py", fileType),
-      FileLoadConfig("test_xmas_tree.py", fileType)
-    )
-  )
-
   val programmingColl2Ex6: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -231,7 +97,7 @@ object ProgrammingColl2Ex6 extends ProgrammingInitialExercise(2, 6) {
     ),
     difficulty = 3,
     content = ProgrammingExerciseContent(
-      filename = "xmas_tree",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

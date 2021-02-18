@@ -7,172 +7,65 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl6Ex1 extends ProgrammingInitialExercise(6, 1) {
+object ProgrammingColl6Ex1 extends ProgrammingInitialExercise(6, 1, "temperatures") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("temperatures.py", fileType, maybeOtherFileName = Some("temperatures_declaration.py")),
-        FileLoadConfig("test_temperatures.py", fileType, editable = true, Some("test_temperatures_declaration.py"))
-      )
-    ),
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "temperatures_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_0.py")
-        )
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(
+        1,
+        "Die Funktion celsius_to_fahrenheit soll die Temperatur korrekt von Celsius in Fahrenheit umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description =
-          "Die Funktion celsius_to_fahrenheit soll die Temperatur korrekt von Celsius in Fahrenheit umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_1.py")
-        )
+      unitTestTestConfig(
+        2,
+        "Die Funktion celsius_to_fahrenheit soll die Temperatur korrekt von Celsius in Fahrenheit umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description =
-          "Die Funktion celsius_to_fahrenheit soll die Temperatur korrekt von Celsius in Fahrenheit umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_2.py")
-        )
+      unitTestTestConfig(
+        3,
+        "Die Funktion celsius_to_kelvin soll die Temperatur korrekt von Celsius in Kelvin umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description = "Die Funktion celsius_to_kelvin soll die Temperatur korrekt von Celsius in Kelvin umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_3.py")
-        )
+      unitTestTestConfig(
+        4,
+        "Die Funktion celsius_to_kelvin soll die Temperatur korrekt von Celsius in Kelvin umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = "Die Funktion celsius_to_kelvin soll die Temperatur korrekt von Celsius in Kelvin umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_4.py")
-        )
+      unitTestTestConfig(
+        5,
+        "Die Funktion fahrenheit_to_celsius soll die Temperatur korrekt von Fahrenheit in Celsius umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description =
-          "Die Funktion fahrenheit_to_celsius soll die Temperatur korrekt von Fahrenheit in Celsius umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_5.py")
-        )
+      unitTestTestConfig(
+        6,
+        "Die Funktion fahrenheit_to_celsius soll die Temperatur korrekt von Fahrenheit in Celsius umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description =
-          "Die Funktion fahrenheit_to_celsius soll die Temperatur korrekt von Fahrenheit in Celsius umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_6.py")
-        )
+      unitTestTestConfig(
+        7,
+        "Die Funktion fahrenheit_to_kelvin soll die Temperatur korrekt von Fahrenheit in Kelvin umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 7,
-        shouldFail = true,
-        description =
-          "Die Funktion fahrenheit_to_kelvin soll die Temperatur korrekt von Fahrenheit in Kelvin umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_7.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_7.py")
-        )
+      unitTestTestConfig(
+        8,
+        "Die Funktion fahrenheit_to_kelvin soll die Temperatur korrekt von Fahrenheit in Kelvin umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 8,
-        shouldFail = true,
-        description =
-          "Die Funktion fahrenheit_to_kelvin soll die Temperatur korrekt von Fahrenheit in Kelvin umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_8.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_8.py")
-        )
+      unitTestTestConfig(
+        9,
+        "Die Funktion kelvin_to_celsius soll die Temperatur korrekt von Kelvin in Celsius umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 9,
-        shouldFail = true,
-        description = "Die Funktion kelvin_to_celsius soll die Temperatur korrekt von Kelvin in Celsius umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_9.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_9.py")
-        )
+      unitTestTestConfig(
+        10,
+        "Die Funktion kelvin_to_celsius soll die Temperatur korrekt von Kelvin in Celsius umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 10,
-        shouldFail = true,
-        description = "Die Funktion kelvin_to_celsius soll die Temperatur korrekt von Kelvin in Celsius umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_10.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_10.py")
-        )
+      unitTestTestConfig(
+        11,
+        "Die Funktion kelvin_to_fahrenheit soll die Temperatur korrekt von Kelvin in Fahrenheit umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 11,
-        shouldFail = true,
-        description =
-          "Die Funktion kelvin_to_fahrenheit soll die Temperatur korrekt von Kelvin in Fahrenheit umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_11.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_11.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 12,
-        shouldFail = true,
-        description =
-          "Die Funktion kelvin_to_fahrenheit soll die Temperatur korrekt von Kelvin in Fahrenheit umrechnen.",
-        file = ExerciseFile(
-          name = "temperatures_12.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "temperatures_12.py")
-        )
+      unitTestTestConfig(
+        12,
+        "Die Funktion kelvin_to_fahrenheit soll die Temperatur korrekt von Kelvin in Fahrenheit umrechnen."
       )
     ),
     testFileName = "test_temperatures.py",
-    folderName = "temperatures",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_temperatures.py")
   )
 
@@ -189,14 +82,6 @@ object ProgrammingColl6Ex1 extends ProgrammingInitialExercise(6, 1) {
     sampleSolFileNames = Seq("temperatures.py")
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("temperatures.py", fileType),
-      FileLoadConfig("test_temperatures.py", fileType)
-    )
-  )
-
   val programmingColl6Ex1: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -209,7 +94,7 @@ object ProgrammingColl6Ex1 extends ProgrammingInitialExercise(6, 1) {
     ),
     difficulty = 1,
     content = ProgrammingExerciseContent(
-      filename = "temperatures",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

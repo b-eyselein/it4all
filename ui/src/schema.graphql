@@ -55,8 +55,8 @@ type ElementLineMatch implements NewMatch {
 input ExerciseFileInput {
   name: String!
   fileType: String!
-  editable: Boolean!
   content: String!
+  editable: Boolean!
 }
 
 input FilesSolutionInput {
@@ -601,6 +601,7 @@ type UnitTestCorrectionResult {
   testId: Int!
   description: String!
   successful: Boolean!
+  shouldFail: Boolean!
   stdout: [String!]!
   stderr: [String!]!
 }
@@ -743,8 +744,8 @@ union ExerciseContentUnionType = FlaskExerciseContent | ProgrammingExerciseConte
 type ExerciseFile {
   name: String!
   fileType: String!
-  editable: Boolean!
   content: String!
+  editable: Boolean!
 }
 
 type FilesSolution {
@@ -843,7 +844,6 @@ type NormalUnitTestPart {
   testFileName: String!
   folderName: String!
   sampleSolFileNames: [String!]!
-  simplifiedTestMainFile: ExerciseFile
 }
 
 enum ProgExPart {
@@ -1052,9 +1052,9 @@ union UnitTestPart = SimplifiedUnitTestPart | NormalUnitTestPart
 
 type UnitTestTestConfig {
   id: Int!
-  shouldFail: Boolean!
   description: String!
   file: ExerciseFile!
+  shouldFail: Boolean!
 }
 
 type User {

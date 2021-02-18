@@ -7,121 +7,34 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex7 extends ProgrammingInitialExercise(2, 7) {
+object ProgrammingColl2Ex7 extends ProgrammingInitialExercise(2, 7, "a1z26") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("a1z26.py", fileType, maybeOtherFileName = Some("a1z26_declaration.py")),
-        FileLoadConfig("test_a1z26.py", fileType, editable = true, Some("test_a1z26_declaration.py"))
-      )
-    ),
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "a1z26_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "a1z26_0.py")
-        )
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(
+        1,
+        "encrypt_letter soll den übergebenen Buchstaben durch die korrekte Ganzzahl verschlüsseln."
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = "encrypt_letter soll den übergebenen Buchstaben durch die korrekte Ganzzahl verschlüsseln.",
-        file = ExerciseFile(
-          name = "a1z26_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "a1z26_1.py")
-        )
+      unitTestTestConfig(2, "decrypt_letter soll die übergebene Ganzzahl in den korrekten Buchstaben entschlüsseln."),
+      unitTestTestConfig(
+        3,
+        "encrypt_word soll jeden Buchstaben des übergebenen Wortes verschlüsseln und alle Ganzzahlen in der Liste zurückgegeben."
       ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description = "decrypt_letter soll die übergebene Ganzzahl in den korrekten Buchstaben entschlüsseln.",
-        file = ExerciseFile(
-          name = "a1z26_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "a1z26_2.py")
-        )
+      unitTestTestConfig(
+        4,
+        "encrpyt_word soll die richtigen, im übergebenen Wort enthaltenen, Buchstaben verschlüsseln"
       ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description =
-          "encrypt_word soll jeden Buchstaben des übergebenen Wortes verschlüsseln und alle Ganzzahlen in der Liste zurückgegeben.",
-        file = ExerciseFile(
-          name = "a1z26_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "a1z26_3.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = "encrpyt_word soll die richtigen, im übergebenen Wort enthaltenen, Buchstaben verschlüsseln",
-        file = ExerciseFile(
-          name = "a1z26_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "a1z26_4.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description = "encrypt_word soll bei einem leeren String eine leere Liste zurückgeben.",
-        file = ExerciseFile(
-          name = "a1z26_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "a1z26_5.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description = "decrypt_word soll das gesamte entschlüsselte Wort zurückgeben.",
-        file = ExerciseFile(
-          name = "a1z26_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "a1z26_6.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 7,
-        shouldFail = true,
-        description = "decrypt_word soll die korrekte Ganzzahl entschlüsseln.",
-        file = ExerciseFile(
-          name = "a1z26_7.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "a1z26_7.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 8,
-        shouldFail = true,
-        description = "decrypt_word soll bei einer leeren Liste einen leeren String zurückgeben.",
-        file = ExerciseFile(
-          name = "a1z26_8.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "a1z26_8.py")
-        )
-      )
+      unitTestTestConfig(5, "encrypt_word soll bei einem leeren String eine leere Liste zurückgeben."),
+      unitTestTestConfig(6, "decrypt_word soll das gesamte entschlüsselte Wort zurückgeben."),
+      unitTestTestConfig(7, "decrypt_word soll die korrekte Ganzzahl entschlüsseln."),
+      unitTestTestConfig(8, "decrypt_word soll bei einer leeren Liste einen leeren String zurückgeben.")
     ),
     testFileName = "test_a1z26.py",
-    folderName = "a1z26",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_a1z26.py")
   )
 
@@ -138,14 +51,6 @@ object ProgrammingColl2Ex7 extends ProgrammingInitialExercise(2, 7) {
     sampleSolFileNames = Seq("a1z26.py")
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("a1z26.py", fileType),
-      FileLoadConfig("test_a1z26.py", fileType)
-    )
-  )
-
   val programmingColl2Ex7: ProgrammingExercise = Exercise(
     exerciseId = 7,
     collectionId = 2,
@@ -160,7 +65,7 @@ object ProgrammingColl2Ex7 extends ProgrammingInitialExercise(2, 7) {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      filename = "a1z26",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

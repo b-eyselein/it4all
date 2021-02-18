@@ -8,9 +8,7 @@ import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 import play.api.libs.json.{JsArray, JsNull, JsNumber, Json}
 
-object ProgrammingColl4Ex1 extends ProgrammingInitialExercise(4, 1) {
-
-  private val sampleSolutionFiles = loadFilesFromFolder(exResPath, Seq(FileLoadConfig("average.py", fileType)))
+object ProgrammingColl4Ex1 extends ProgrammingInitialExercise(4, 1, "average") {
 
   private val unitTestPart = SimplifiedUnitTestPart(
     simplifiedTestMainFile = ExerciseFile(
@@ -41,6 +39,9 @@ object ProgrammingColl4Ex1 extends ProgrammingInitialExercise(4, 1) {
     sampleSolFileNames = Seq("average.py")
   )
 
+  override protected val sampleSolutionFiles =
+    loadFilesFromFolder(exResPath, Seq(FileLoadConfig("average.py", fileType)))
+
   val programmingColl4Ex1: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -54,7 +55,7 @@ object ProgrammingColl4Ex1 extends ProgrammingInitialExercise(4, 1) {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      filename = "average",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

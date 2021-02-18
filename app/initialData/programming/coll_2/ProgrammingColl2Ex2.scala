@@ -7,86 +7,24 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex2 extends ProgrammingInitialExercise(2, 2) {
+object ProgrammingColl2Ex2 extends ProgrammingInitialExercise(2, 2, "floating_point_exponential") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig(
-          "floating_point_exponential.py",
-          fileType,
-          maybeOtherFileName = Some("floating_point_exponential_declaration.py")
-        ),
-        FileLoadConfig(
-          "test_floating_point_exponential.py",
-          fileType,
-          editable = true,
-          Some("test_floating_point_exponential_declaration.py")
-        )
-      )
-    ),
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "floating_point_exponential_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "floating_point_exponential_0.py")
-        )
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "Die Mantisse soll alle Dezimalstellen beinhalten."),
+      unitTestTestConfig(
+        2,
+        "Die Zahl 10 soll mit der Variable <code>exponent</code> potenziert und nicht multipliziert werden."
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = "Die Mantisse soll alle Dezimalstellen beinhalten.",
-        file = ExerciseFile(
-          name = "floating_point_exponential_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "floating_point_exponential_1.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description =
-          "Die Zahl 10 soll mit der Variable <code>exponent</code> potenziert und nicht multipliziert werden.",
-        file = ExerciseFile(
-          name = "floating_point_exponential_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "floating_point_exponential_2.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description = "Die Zahl 10 soll mit der Variable <code>exponent</code> potenziert werden.",
-        file = ExerciseFile(
-          name = "floating_point_exponential_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "floating_point_exponential_3.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = "Die Ausgabe soll richtig formatiert sein {Mantisse}e{Exponent}.",
-        file = ExerciseFile(
-          name = "floating_point_exponential_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "floating_point_exponential_4.py")
-        )
-      )
+      unitTestTestConfig(3, "Die Zahl 10 soll mit der Variable <code>exponent</code> potenziert werden."),
+      unitTestTestConfig(4, "Die Ausgabe soll richtig formatiert sein {Mantisse}e{Exponent}.")
     ),
     testFileName = "test_floating_point_exponential.py",
-    folderName = "floating_point_exponential",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_floating_point_exponential.py")
   )
 
@@ -112,14 +50,6 @@ object ProgrammingColl2Ex2 extends ProgrammingInitialExercise(2, 2) {
     sampleSolFileNames = Seq("floating_point_exponential.py")
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("floating_point_exponential.py", fileType),
-      FileLoadConfig("test_floating_point_exponential.py", fileType)
-    )
-  )
-
   val programmingColl2Ex2: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -133,7 +63,7 @@ object ProgrammingColl2Ex2 extends ProgrammingInitialExercise(2, 2) {
     ),
     difficulty = 1,
     content = ProgrammingExerciseContent(
-      filename = "floating_point_exponential",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

@@ -51,6 +51,7 @@ final case class UnitTestCorrectionResult(
   testId: Int,
   description: String,
   successful: Boolean,
+  shouldFail: Boolean,
   stdout: Seq[String],
   stderr: Seq[String]
 )

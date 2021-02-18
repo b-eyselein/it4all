@@ -7,123 +7,33 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl7Ex1 extends ProgrammingInitialExercise(7, 1) {
+object ProgrammingColl7Ex1 extends ProgrammingInitialExercise(7, 1, "circle") {
 
   private val unitTestPart = NormalUnitTestPart(
     unitTestsDescription = loadTextFromFile(exResPath / "unit_tests_description.html"),
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("circle.py", fileType, maybeOtherFileName = Some("circle_declaration.py")),
-        FileLoadConfig("test_circle.py", fileType, editable = true, Some("test_circle_declaration.py"))
-      )
-    ),
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "circle_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "circle_0.py")
-        )
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "Die X-Koordinate sollte eine Ganz- oder Fließkommazahl sein."),
+      unitTestTestConfig(
+        2,
+        "Der Wert des Konstruktorarguments 'center_x' sollte unter dem selben Namen als Argument zugänglich sein."
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = "Die X-Koordinate sollte eine Ganz- oder Fließkommazahl sein.",
-        file = ExerciseFile(
-          name = "circle_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "circle_1.py")
-        )
+      unitTestTestConfig(3, "Die Y-Koordinate sollte eine Ganz- oder Fließkommazahl sein."),
+      unitTestTestConfig(
+        4,
+        "Der Wert des Konstruktorarguments 'center_y' sollte unter dem selben Namen als Argument zugänglich sein."
       ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description =
-          "Der Wert des Konstruktorarguments 'center_x' sollte unter dem selben Namen als Argument zugänglich sein.",
-        file = ExerciseFile(
-          name = "circle_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "circle_2.py")
-        )
+      unitTestTestConfig(5, "Der Radius sollte eine Ganz- oder Fließkommazahl sein."),
+      unitTestTestConfig(6, "Der Radius sollte größer oder gleich 0 sein."),
+      unitTestTestConfig(
+        7,
+        "Der Wert des Konstruktorarguments 'radius' sollte unter dem selben Namen als Argument zugänglich sein."
       ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description = "Die Y-Koordinate sollte eine Ganz- oder Fließkommazahl sein.",
-        file = ExerciseFile(
-          name = "circle_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "circle_3.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description =
-          "Der Wert des Konstruktorarguments 'center_y' sollte unter dem selben Namen als Argument zugänglich sein.",
-        file = ExerciseFile(
-          name = "circle_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "circle_4.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description = "Der Radius sollte eine Ganz- oder Fließkommazahl sein.",
-        file = ExerciseFile(
-          name = "circle_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "circle_5.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description = "Der Radius sollte größer oder gleich 0 sein.",
-        file = ExerciseFile(
-          name = "circle_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "circle_6.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 7,
-        shouldFail = true,
-        description =
-          "Der Wert des Konstruktorarguments 'radius' sollte unter dem selben Namen als Argument zugänglich sein.",
-        file = ExerciseFile(
-          name = "circle_7.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "circle_7.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 8,
-        shouldFail = true,
-        description = "Die Fläche des Kreises sollte richtig berechnet werden",
-        file = ExerciseFile(
-          name = "circle_8.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "circle_8.py")
-        )
-      )
+      unitTestTestConfig(8, "Die Fläche des Kreises sollte richtig berechnet werden")
     ),
     testFileName = "test_circle.py",
-    folderName = "circle",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_circle.py")
   )
 
@@ -138,14 +48,6 @@ object ProgrammingColl7Ex1 extends ProgrammingInitialExercise(7, 1) {
     ),
     implFileName = "circle.py",
     sampleSolFileNames = Seq("circle.py")
-  )
-
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("circle.py", fileType),
-      FileLoadConfig("test_circle.py", fileType)
-    )
   )
 
   val programmingColl7Ex1: ProgrammingExercise = Exercise(
@@ -163,7 +65,7 @@ object ProgrammingColl7Ex1 extends ProgrammingInitialExercise(7, 1) {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      filename = "circle",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))

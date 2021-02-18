@@ -7,208 +7,45 @@ import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl6Ex2 extends ProgrammingInitialExercise(6, 2) {
+object ProgrammingColl6Ex2 extends ProgrammingInitialExercise(6, 2, "distances") {
 
   private val unitTestPart = NormalUnitTestPart(
-    unitTestsDescription = "",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("distances.py", fileType, maybeOtherFileName = Some("distances_declaration.py")),
-        FileLoadConfig("test_distances.py", fileType, editable = true, Some("test_distances_declaration.py"))
-      )
-    ),
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
-      UnitTestTestConfig(
-        id = 0,
-        shouldFail = false,
-        description = "Musterlösung...",
-        file = ExerciseFile(
-          name = "distances_0.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_0.py")
-        )
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "Die Funktion yards_to_meters soll die Distanz korrekt von Yards in Meter umrechnen."),
+      unitTestTestConfig(2, "Die Funktion yards_to_meters soll die Distanz korrekt von Yards in Meter umrechnen."),
+      unitTestTestConfig(3, "Die Funktion meters_to_yards soll die Distanz korrekt von Meter in Yards umrechnen."),
+      unitTestTestConfig(4, "Die Funktion meters_to_yards soll die Distanz korrekt von Meter in Yards umrechnen."),
+      unitTestTestConfig(5, "Die Funktion miles_to_meters soll die Distanz korrekt von Meilen in Meter umrechnen."),
+      unitTestTestConfig(6, "Die Funktion miles_to_meters soll die Distanz korrekt von Meilen in Meter umrechnen."),
+      unitTestTestConfig(7, "Die Funktion meters_to_miles soll die Distanz korrekt von Meter in Meilen umrechnen."),
+      unitTestTestConfig(8, "Die Funktion meters_to_miles soll die Distanz korrekt von Meter in Meilen umrechnen."),
+      unitTestTestConfig(
+        9,
+        "Die Funktion seamiles_to_meters soll die Distanz korrekt von Seemeilen in Meter umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 1,
-        shouldFail = true,
-        description = "Die Funktion yards_to_meters soll die Distanz korrekt von Yards in Meter umrechnen.",
-        file = ExerciseFile(
-          name = "distances_1.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_1.py")
-        )
+      unitTestTestConfig(
+        10,
+        "Die Funktion seamiles_to_meters soll die Distanz korrekt von Seemeilen in Meter umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 2,
-        shouldFail = true,
-        description = "Die Funktion yards_to_meters soll die Distanz korrekt von Yards in Meter umrechnen.",
-        file = ExerciseFile(
-          name = "distances_2.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_2.py")
-        )
+      unitTestTestConfig(
+        11,
+        "Die Funktion meters_to_seamiles soll die Distanz korrekt von Meter in Seemeilen umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 3,
-        shouldFail = true,
-        description = "Die Funktion meters_to_yards soll die Distanz korrekt von Meter in Yards umrechnen.",
-        file = ExerciseFile(
-          name = "distances_3.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_3.py")
-        )
+      unitTestTestConfig(
+        12,
+        "Die Funktion meters_to_seamiles soll die Distanz korrekt von Meter in Seemeilen umrechnen."
       ),
-      UnitTestTestConfig(
-        id = 4,
-        shouldFail = true,
-        description = "Die Funktion meters_to_yards soll die Distanz korrekt von Meter in Yards umrechnen.",
-        file = ExerciseFile(
-          name = "distances_4.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_4.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 5,
-        shouldFail = true,
-        description = "Die Funktion miles_to_meters soll die Distanz korrekt von Meilen in Meter umrechnen.",
-        file = ExerciseFile(
-          name = "distances_5.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_5.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 6,
-        shouldFail = true,
-        description = "Die Funktion miles_to_meters soll die Distanz korrekt von Meilen in Meter umrechnen.",
-        file = ExerciseFile(
-          name = "distances_6.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_6.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 7,
-        shouldFail = true,
-        description = "Die Funktion meters_to_miles soll die Distanz korrekt von Meter in Meilen umrechnen.",
-        file = ExerciseFile(
-          name = "distances_7.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_7.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 8,
-        shouldFail = true,
-        description = "Die Funktion meters_to_miles soll die Distanz korrekt von Meter in Meilen umrechnen.",
-        file = ExerciseFile(
-          name = "distances_8.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_8.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 9,
-        shouldFail = true,
-        description = "Die Funktion seamiles_to_meters soll die Distanz korrekt von Seemeilen in Meter umrechnen.",
-        file = ExerciseFile(
-          name = "distances_9.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_9.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 10,
-        shouldFail = true,
-        description = "Die Funktion seamiles_to_meters soll die Distanz korrekt von Seemeilen in Meter umrechnen.",
-        file = ExerciseFile(
-          name = "distances_10.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_10.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 11,
-        shouldFail = true,
-        description = "Die Funktion meters_to_seamiles soll die Distanz korrekt von Meter in Seemeilen umrechnen.",
-        file = ExerciseFile(
-          name = "distances_11.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_11.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 12,
-        shouldFail = true,
-        description = "Die Funktion meters_to_seamiles soll die Distanz korrekt von Meter in Seemeilen umrechnen.",
-        file = ExerciseFile(
-          name = "distances_12.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_12.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 13,
-        shouldFail = true,
-        description = "Die Funktion inches_to_meters soll die Distanz korrekt von Zoll in Meter umrechnen.",
-        file = ExerciseFile(
-          name = "distances_13.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_13.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 14,
-        shouldFail = true,
-        description = "Die Funktion inches_to_meters soll die Distanz korrekt von Zoll in Meter umrechnen.",
-        file = ExerciseFile(
-          name = "distances_14.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_14.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 15,
-        shouldFail = true,
-        description = "Die Funktion meters_to_inches soll die Distanz korrekt von Meter in Zoll umrechnen.",
-        file = ExerciseFile(
-          name = "distances_15.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_15.py")
-        )
-      ),
-      UnitTestTestConfig(
-        id = 16,
-        shouldFail = true,
-        description = "Die Funktion meters_to_inches soll die Distanz korrekt von Meter in Zoll umrechnen.",
-        file = ExerciseFile(
-          name = "distances_16.py",
-          fileType,
-          editable = false,
-          content = loadTextFromFile(exResPath / "unit_test_sols" / "distances_16.py")
-        )
-      )
+      unitTestTestConfig(13, "Die Funktion inches_to_meters soll die Distanz korrekt von Zoll in Meter umrechnen."),
+      unitTestTestConfig(14, "Die Funktion inches_to_meters soll die Distanz korrekt von Zoll in Meter umrechnen."),
+      unitTestTestConfig(15, "Die Funktion meters_to_inches soll die Distanz korrekt von Meter in Zoll umrechnen."),
+      unitTestTestConfig(16, "Die Funktion meters_to_inches soll die Distanz korrekt von Meter in Zoll umrechnen.")
     ),
     testFileName = "test_distances.py",
-    folderName = "distances",
+    folderName = exerciseBaseName,
     sampleSolFileNames = Seq("test_distances.py")
   )
 
@@ -225,14 +62,6 @@ object ProgrammingColl6Ex2 extends ProgrammingInitialExercise(6, 2) {
     sampleSolFileNames = Seq("distances.py")
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("distances.py", fileType),
-      FileLoadConfig("test_distances.py", fileType)
-    )
-  )
-
   val programmingColl6Ex2: ProgrammingExercise = Exercise(
     exerciseId,
     collectionId,
@@ -245,7 +74,7 @@ object ProgrammingColl6Ex2 extends ProgrammingInitialExercise(6, 2) {
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(
-      filename = "distances",
+      filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
       Seq(FilesSolution(sampleSolutionFiles))
