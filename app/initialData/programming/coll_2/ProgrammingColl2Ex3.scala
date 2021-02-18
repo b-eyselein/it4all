@@ -1,6 +1,5 @@
 package initialData.programming.coll_2
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -37,31 +36,8 @@ object ProgrammingColl2Ex3 extends ProgrammingInitialExercise(2, 3, "file_name_a
         "Bei Dateien mit mehreren Endungen soll der Dateiname mit allen Endungen außer der letzten und die letzte Endung ausgegeben werden."
       )
     ),
-    testFileName = "test_file_name_and_ending.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_file_name_and_ending.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = """from typing import Tuple
-             |
-             |
-             |def file_name_and_ending(filename: str) -> Tuple[str, str]:
-             |    pass""".stripMargin,
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_file_name_and_ending.py", fileType),
-        FileLoadConfig(
-          "file_name_and_ending.py",
-          fileType,
-          editable = true,
-          Some("file_name_and_ending_declaration.py")
-        )
-      )
-    ),
-    implFileName = "file_name_and_ending.py",
-    sampleSolFileNames = Seq("file_name_and_ending.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl2Ex3: ProgrammingExercise = Exercise(
@@ -79,8 +55,8 @@ object ProgrammingColl2Ex3 extends ProgrammingInitialExercise(2, 3, "file_name_a
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

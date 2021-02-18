@@ -1,6 +1,5 @@
 package initialData.programming.coll_5
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -43,22 +42,8 @@ object ProgrammingColl5Ex2 extends ProgrammingInitialExercise(5, 2, "dicts") {
         "Falls beide Ausgangsdictionaries leer sind, soll die Funktion merge_dicts_with_add ein leeres Dictionary zurückgeben."
       )
     ),
-    testFileName = "test_dicts.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_dicts.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_dicts.py", fileType),
-        FileLoadConfig("dicts.py", fileType, editable = true, Some("dicts_declaration.py"))
-      )
-    ),
-    implFileName = "dicts.py",
-    sampleSolFileNames = Seq("dicts.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl5Ex2: ProgrammingExercise = Exercise(
@@ -79,8 +64,8 @@ object ProgrammingColl5Ex2 extends ProgrammingInitialExercise(5, 2, "dicts") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

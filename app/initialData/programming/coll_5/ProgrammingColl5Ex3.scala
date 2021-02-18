@@ -1,6 +1,5 @@
 package initialData.programming.coll_5
 
-import initialData.FileLoadConfig
 import initialData.InitialData.loadTextFromFile
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -40,22 +39,8 @@ object ProgrammingColl5Ex3 extends ProgrammingInitialExercise(5, 3, "tuples_and_
         "Die Funktion intersect_dicts soll ein leeres Dictionary zurückgeben, falls die beiden übergebenen Dictionaries leer sind."
       )
     ),
-    testFileName = "test_tuples_and_dicts.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_tuples_and_dicts.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_tuples_and_dicts.py", fileType),
-        FileLoadConfig("tuples_and_dicts.py", fileType, editable = true, Some("tuples_and_dicts_declaration.py"))
-      )
-    ),
-    implFileName = "tuples_and_dicts.py",
-    sampleSolFileNames = Seq("tuples_and_dicts.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl5Ex3: ProgrammingExercise = Exercise(
@@ -76,8 +61,8 @@ object ProgrammingColl5Ex3 extends ProgrammingInitialExercise(5, 3, "tuples_and_
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

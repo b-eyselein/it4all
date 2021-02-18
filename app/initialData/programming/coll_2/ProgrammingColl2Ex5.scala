@@ -1,6 +1,5 @@
 package initialData.programming.coll_2
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -12,13 +11,7 @@ object ProgrammingColl2Ex5 extends ProgrammingInitialExercise(2, 5, "three_chine
   private val unitTestPart = NormalUnitTestPart(
     // FIXME: unit tests description!
     unitTestsDescription = "TODO!",
-    unitTestFiles = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("three_chinese.py", fileType, maybeOtherFileName = Some("three_chinese_declaration.py")),
-        FileLoadConfig("test_three_chinese.py", fileType, editable = true, Some("test_three_chinese_declaration.py"))
-      )
-    ),
+    unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(
       unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
       unitTestTestConfig(1, "Die Vokale sollen durch den übergebenen Vokal ersetzt werden."),
@@ -32,23 +25,8 @@ object ProgrammingColl2Ex5 extends ProgrammingInitialExercise(2, 5, "three_chine
       unitTestTestConfig(9, "Der Umlaut Ö bzw. ö soll durch den übergebenen Vokal ersetzt werden."),
       unitTestTestConfig(10, "Der Umlaut Ü bzw. ü soll durch den übergebenen Vokal ersetzt werden.")
     ),
-    testFileName = "test_three_chinese.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_three_chinese.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = """def three_chinese(line: str, target_vowel: str) -> str:
-             |    pass""".stripMargin,
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_three_chinese.py", fileType),
-        FileLoadConfig("three_chinese.py", fileType, editable = true, Some("three_chinese_declaration.py"))
-      )
-    ),
-    implFileName = "three_chinese.py",
-    sampleSolFileNames = Seq("three_chinese.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl2Ex5: ProgrammingExercise = Exercise(
@@ -67,8 +45,8 @@ object ProgrammingColl2Ex5 extends ProgrammingInitialExercise(2, 5, "three_chine
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

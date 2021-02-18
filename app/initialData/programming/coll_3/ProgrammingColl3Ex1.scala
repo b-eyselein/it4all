@@ -1,6 +1,5 @@
 package initialData.programming.coll_3
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -23,24 +22,8 @@ object ProgrammingColl3Ex1 extends ProgrammingInitialExercise(3, 1, "lottery") {
       unitTestTestConfig(6, "Bei Gewinnstufe 5 soll der korrekte Gewinn zurückgegeben werden."),
       unitTestTestConfig(7, "Bei einer Gewinnststufe kleiner 0 oder größer 5 soll die Gewinnstufe 0 angenommen werden.")
     ),
-    testFileName = "test_lottery.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_lottery.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = """def calculate_lottery_win(pot: float, win_class: int) > float:
-             |    pass
-             |""".stripMargin,
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_lottery.py", fileType),
-        FileLoadConfig("lottery.py", fileType, editable = true, Some("lottery_declaration.py"))
-      )
-    ),
-    implFileName = "lottery.py",
-    sampleSolFileNames = Seq("lottery.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl3Ex1: ProgrammingExercise = Exercise(
@@ -58,8 +41,8 @@ object ProgrammingColl3Ex1 extends ProgrammingInitialExercise(3, 1, "lottery") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

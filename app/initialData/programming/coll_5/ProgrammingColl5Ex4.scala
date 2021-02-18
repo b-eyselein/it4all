@@ -1,6 +1,5 @@
 package initialData.programming.coll_5
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -31,22 +30,8 @@ object ProgrammingColl5Ex4 extends ProgrammingInitialExercise(5, 4, "reindeers")
         "Die Funktion calculate_reindeer_bmis soll ein leeres Dictionary zurückgeben, falls das übergebene Dictionary leer ist."
       )
     ),
-    testFileName = "test_reindeers.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_reindeers.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_reindeers.py", fileType),
-        FileLoadConfig("reindeers.py", fileType, editable = true, Some("reindeers_declaration.py"))
-      )
-    ),
-    implFileName = "reindeers.py",
-    sampleSolFileNames = Seq("reindeers.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl5Ex4: ProgrammingExercise = Exercise(
@@ -65,8 +50,8 @@ object ProgrammingColl5Ex4 extends ProgrammingInitialExercise(5, 4, "reindeers")
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 }

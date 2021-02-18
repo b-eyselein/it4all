@@ -1,46 +1,26 @@
 package initialData.programming.coll_4
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
-import play.api.libs.json.{JsArray, JsNull, JsNumber, Json}
 
 object ProgrammingColl4Ex1 extends ProgrammingInitialExercise(4, 1, "average") {
 
-  private val unitTestPart = SimplifiedUnitTestPart(
-    simplifiedTestMainFile = ExerciseFile(
-      name = "test_main.py",
-      fileType,
-      editable = false,
-      content = loadTextFromFile(exResPath / "test_main.py")
+  private val unitTestPart = NormalUnitTestPart(
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
+    unitTestTestConfigs = Seq(
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "TODO!"),
+      unitTestTestConfig(2, "TODO!"),
+      unitTestTestConfig(3, "TODO!")
     ),
-    sampleTestData = Seq(
-      ProgTestData(id = 1, input = JsArray(), output = JsNull),
-      ProgTestData(id = 2, input = Json.arr(1), output = JsNumber(1.0)),
-      ProgTestData(id = 3, input = Json.arr(3, 5, 7), output = JsNumber(5.0))
-    )
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
-
-  private val implementationPart = ImplementationPart(
-    base = """from typing import List
-             |
-             |def average(my_list: List[int]) -> float:
-             |    return 0""".stripMargin,
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("average.py", fileType, editable = true, Some("average_declaration.py"))
-      )
-    ),
-    implFileName = "average.py",
-    sampleSolFileNames = Seq("average.py")
-  )
-
-  override protected val sampleSolutionFiles =
-    loadFilesFromFolder(exResPath, Seq(FileLoadConfig("average.py", fileType)))
 
   val programmingColl4Ex1: ProgrammingExercise = Exercise(
     exerciseId,
@@ -57,8 +37,8 @@ object ProgrammingColl4Ex1 extends ProgrammingInitialExercise(4, 1, "average") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

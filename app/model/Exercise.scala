@@ -38,6 +38,12 @@ trait ExerciseContent {
 
 }
 
+trait FileExerciseContent extends ExerciseContent {
+
+  override protected type S = FilesSolution
+
+}
+
 final case class TopicWithLevel(
   topic: Topic,
   level: Level

@@ -1,6 +1,5 @@
 package initialData.programming.coll_3
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -28,24 +27,8 @@ object ProgrammingColl3Ex2 extends ProgrammingInitialExercise(3, 2, "discount") 
       unitTestTestConfig(5, "Falls der Kunde einen Hamster besitzt, soll der korrekte Rabatt gewährt werden."),
       unitTestTestConfig(6, "Falls der Kunde keinen Hamster besitzt, soll der korrekte Rabatt gewährt werden.")
     ),
-    testFileName = "test_discount.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_discount.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = """def calculate_discount(has_dog: bool, has_cat: bool, has_hamster: bool) -> int:
-             |pass
-             |""".stripMargin,
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_discount.py", fileType),
-        FileLoadConfig("discount.py", fileType, editable = true, Some("discount_declaration.py"))
-      )
-    ),
-    implFileName = "discount.py",
-    sampleSolFileNames = Seq("discount.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl3Ex2: ProgrammingExercise = Exercise(
@@ -63,8 +46,8 @@ object ProgrammingColl3Ex2 extends ProgrammingInitialExercise(3, 2, "discount") 
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

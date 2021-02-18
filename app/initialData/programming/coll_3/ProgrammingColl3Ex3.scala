@@ -1,6 +1,5 @@
 package initialData.programming.coll_3
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -29,23 +28,8 @@ object ProgrammingColl3Ex3 extends ProgrammingInitialExercise(3, 3, "greet") {
         "Für eine ungültige Zeit größer als 24 soll 'I do not know this time' zurückgegeben werden."
       )
     ),
-    testFileName = "test_greet.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_greet.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = """def greet(hour: int) -> str:
-             |    pass""".stripMargin,
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_greet.py", fileType),
-        FileLoadConfig("greet.py", fileType, editable = true, Some("greet_declaration.py"))
-      )
-    ),
-    implFileName = "greet.py",
-    sampleSolFileNames = Seq("greet.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl3Ex3: ProgrammingExercise = Exercise(
@@ -63,8 +47,8 @@ object ProgrammingColl3Ex3 extends ProgrammingInitialExercise(3, 3, "greet") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

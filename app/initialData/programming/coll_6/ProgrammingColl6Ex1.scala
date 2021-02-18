@@ -1,6 +1,5 @@
 package initialData.programming.coll_6
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -64,22 +63,8 @@ object ProgrammingColl6Ex1 extends ProgrammingInitialExercise(6, 1, "temperature
         "Die Funktion kelvin_to_fahrenheit soll die Temperatur korrekt von Kelvin in Fahrenheit umrechnen."
       )
     ),
-    testFileName = "test_temperatures.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_temperatures.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_temperatures.py", fileType),
-        FileLoadConfig("temperatures.py", fileType, editable = true, Some("temperatures_declaration.py"))
-      )
-    ),
-    implFileName = "temperatures.py",
-    sampleSolFileNames = Seq("temperatures.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl6Ex1: ProgrammingExercise = Exercise(
@@ -96,8 +81,8 @@ object ProgrammingColl6Ex1 extends ProgrammingInitialExercise(6, 1, "temperature
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

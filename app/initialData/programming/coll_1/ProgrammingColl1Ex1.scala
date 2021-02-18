@@ -1,6 +1,5 @@
 package initialData.programming.coll_1
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -19,24 +18,8 @@ object ProgrammingColl1Ex1 extends ProgrammingInitialExercise(1, 1, "ggt") {
       unitTestTestConfig(2, "TODO!"),
       unitTestTestConfig(3, "TODO!")
     ),
-    testFileName = "test_ggt.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_ggt.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = """def ggt(a: int, b: int) -> int:
-             |    return 0
-             |""".stripMargin,
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_ggt.py", fileType),
-        FileLoadConfig("ggt.py", fileType, editable = true, Some("ggt_declaration.py"))
-      )
-    ),
-    implFileName = "ggt.py",
-    sampleSolFileNames = Seq("ggt.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl1Ex1: ProgrammingExercise = Exercise(
@@ -55,8 +38,8 @@ object ProgrammingColl1Ex1 extends ProgrammingInitialExercise(1, 1, "ggt") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

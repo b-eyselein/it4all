@@ -1,6 +1,5 @@
 package initialData.programming.coll_2
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -65,22 +64,8 @@ object ProgrammingColl2Ex6 extends ProgrammingInitialExercise(2, 6, "xmas_tree")
         "Die Funktion xmas_tree_design soll den korrekten Weihnachtsbaum mit Dekoration erstellen."
       )
     ),
-    testFileName = "test_xmas_tree.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_xmas_tree.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_xmas_tree.py", fileType),
-        FileLoadConfig("xmas_tree.py", fileType, editable = true, Some("xmas_tree_declaration.py"))
-      )
-    ),
-    implFileName = "xmas_tree.py",
-    sampleSolFileNames = Seq("xmas_tree.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl2Ex6: ProgrammingExercise = Exercise(
@@ -99,8 +84,8 @@ object ProgrammingColl2Ex6 extends ProgrammingInitialExercise(2, 6, "xmas_tree")
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

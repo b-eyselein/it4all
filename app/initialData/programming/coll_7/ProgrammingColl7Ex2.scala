@@ -1,6 +1,5 @@
 package initialData.programming.coll_7
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -42,22 +41,8 @@ object ProgrammingColl7Ex2 extends ProgrammingInitialExercise(7, 2, "maumau") {
         "Die Funktion playable_cards soll eine leere Liste zurückgeben, falls keine Handkarten vorhanden sind."
       )
     ),
-    testFileName = "test_maumau.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_maumau.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_maumau.py", fileType),
-        FileLoadConfig("maumau.py", fileType, editable = true, Some("maumau_declaration.py"))
-      )
-    ),
-    implFileName = "maumau.py",
-    sampleSolFileNames = Seq("maumau.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl7Ex2: ProgrammingExercise = Exercise(
@@ -77,8 +62,8 @@ object ProgrammingColl7Ex2 extends ProgrammingInitialExercise(7, 2, "maumau") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

@@ -1,6 +1,5 @@
 package initialData.programming.coll_1
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -28,24 +27,8 @@ object ProgrammingColl1Ex2 extends ProgrammingInitialExercise(1, 2, "factorial")
       ),
       unitTestTestConfig(3, "Die Funktion soll das richtige Resultat zurückliefern.")
     ),
-    testFileName = "test_factorial.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_factorial.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = """def factorial(n: int) -> int:
-             |    pass
-             |""".stripMargin,
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_factorial.py", fileType),
-        FileLoadConfig("factorial.py", fileType, editable = true, Some("factorial_declaration.py"))
-      )
-    ),
-    implFileName = "factorial.py",
-    sampleSolFileNames = Seq("factorial.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl1Ex2: ProgrammingExercise = Exercise(
@@ -64,8 +47,8 @@ object ProgrammingColl1Ex2 extends ProgrammingInitialExercise(1, 2, "factorial")
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

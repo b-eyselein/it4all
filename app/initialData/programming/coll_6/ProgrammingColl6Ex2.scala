@@ -1,6 +1,5 @@
 package initialData.programming.coll_6
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -44,22 +43,8 @@ object ProgrammingColl6Ex2 extends ProgrammingInitialExercise(6, 2, "distances")
       unitTestTestConfig(15, "Die Funktion meters_to_inches soll die Distanz korrekt von Meter in Zoll umrechnen."),
       unitTestTestConfig(16, "Die Funktion meters_to_inches soll die Distanz korrekt von Meter in Zoll umrechnen.")
     ),
-    testFileName = "test_distances.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_distances.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_distances.py", fileType),
-        FileLoadConfig("distances.py", fileType, editable = true, Some("distances_declaration.py"))
-      )
-    ),
-    implFileName = "distances.py",
-    sampleSolFileNames = Seq("distances.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl6Ex2: ProgrammingExercise = Exercise(
@@ -76,8 +61,8 @@ object ProgrammingColl6Ex2 extends ProgrammingInitialExercise(6, 2, "distances")
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

@@ -1,6 +1,5 @@
 package initialData.programming.coll_1
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -30,22 +29,8 @@ object ProgrammingColl1Ex3 extends ProgrammingInitialExercise(1, 3, "babylonian_
         "Die Funktion sollte das korrekte Ergebnis liefern, indem sie die korrekte Anzahl an Iterationen durchführt."
       )
     ),
-    testFileName = "test_babylonian_root.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_babylonian_root.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = "",
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_babylonian_root.py", fileType),
-        FileLoadConfig("babylonian_root.py", fileType, editable = true, Some("babylonian_root_declaration.py"))
-      )
-    ),
-    implFileName = "babylonian_root.py",
-    sampleSolFileNames = Seq("babylonian_root.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl1Ex3: ProgrammingExercise = Exercise(
@@ -64,8 +49,8 @@ object ProgrammingColl1Ex3 extends ProgrammingInitialExercise(1, 3, "babylonian_
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

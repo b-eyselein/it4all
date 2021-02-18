@@ -1,6 +1,5 @@
 package initialData.programming.coll_7
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -32,22 +31,8 @@ object ProgrammingColl7Ex1 extends ProgrammingInitialExercise(7, 1, "circle") {
       ),
       unitTestTestConfig(8, "Die Fläche des Kreises sollte richtig berechnet werden")
     ),
-    testFileName = "test_circle.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_circle.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_circle.py", fileType),
-        FileLoadConfig("circle.py", fileType, editable = true, Some("circle_declaration.py"))
-      )
-    ),
-    implFileName = "circle.py",
-    sampleSolFileNames = Seq("circle.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl7Ex1: ProgrammingExercise = Exercise(
@@ -67,8 +52,8 @@ object ProgrammingColl7Ex1 extends ProgrammingInitialExercise(7, 1, "circle") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

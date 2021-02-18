@@ -1,48 +1,25 @@
 package initialData.programming.coll_4
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
-import play.api.libs.json.{JsNull, JsString, Json}
 
 object ProgrammingColl4Ex2 extends ProgrammingInitialExercise(4, 2, "longest_string") {
 
-  private val implementationPart = ImplementationPart(
-    base = """from typing import List
-             |
-             |def longest_string(my_list: List[str]) -> str:
-             |    return ''
-  """.stripMargin,
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig(name = "longest_string.py", fileType, editable = true, Some("longest_string_declaration.py"))
-      )
+  private val unitTestPart = NormalUnitTestPart(
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
+    unitTestTestConfigs = Seq(
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "TODO!"),
+      unitTestTestConfig(2, "TODO!"),
     ),
-    implFileName = "longest_string.py",
-    sampleSolFileNames = Seq("longest_string.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
-
-  private val unitTestPart = SimplifiedUnitTestPart(
-    simplifiedTestMainFile = ExerciseFile(
-      name = "test_main.py",
-      fileType,
-      editable = false,
-      content = loadTextFromFile(exResPath / "test_main.py")
-    ),
-    sampleTestData = Seq(
-      ProgTestData(id = 1, input = Json.arr(), output = JsNull),
-      ProgTestData(id = 2, input = Json.arr("0"), output = JsString("0")),
-      ProgTestData(id = 3, input = Json.arr("1", "11", "111"), output = JsString("111")),
-      ProgTestData(id = 4, input = Json.arr("1", "121", "12321", "232", "3"), output = JsString("12321"))
-    )
-  )
-
-  override protected val sampleSolutionFiles =
-    loadFilesFromFolder(exResPath, Seq(FileLoadConfig("longest_string.py", fileType)))
 
   val programmingColl4Ex2: ProgrammingExercise = Exercise(
     exerciseId = 2,
@@ -61,8 +38,8 @@ object ProgrammingColl4Ex2 extends ProgrammingInitialExercise(4, 2, "longest_str
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

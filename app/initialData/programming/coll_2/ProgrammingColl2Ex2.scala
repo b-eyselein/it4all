@@ -1,6 +1,5 @@
 package initialData.programming.coll_2
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -23,31 +22,8 @@ object ProgrammingColl2Ex2 extends ProgrammingInitialExercise(2, 2, "floating_po
       unitTestTestConfig(3, "Die Zahl 10 soll mit der Variable <code>exponent</code> potenziert werden."),
       unitTestTestConfig(4, "Die Ausgabe soll richtig formatiert sein {Mantisse}e{Exponent}.")
     ),
-    testFileName = "test_floating_point_exponential.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_floating_point_exponential.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = """from math import log10
-             |
-             |
-             |def format_floating_point_exponential(number: float) -> str:
-             |    pass""".stripMargin,
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_floating_point_exponential.py", fileType),
-        FileLoadConfig(
-          "floating_point_exponential.py",
-          fileType,
-          editable = true,
-          Some("floating_point_exponential_declaration.py")
-        )
-      )
-    ),
-    implFileName = "floating_point_exponential.py",
-    sampleSolFileNames = Seq("floating_point_exponential.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl2Ex2: ProgrammingExercise = Exercise(
@@ -65,8 +41,8 @@ object ProgrammingColl2Ex2 extends ProgrammingInitialExercise(2, 2, "floating_po
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

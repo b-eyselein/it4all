@@ -5,49 +5,20 @@ import initialData.programming.ProgrammingInitialExercise
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
-import play.api.libs.json.{JsBoolean, JsString}
 
 object ProgrammingColl2Ex1 extends ProgrammingInitialExercise(2, 1, "palindrome") {
 
-  private val unitTestPart = SimplifiedUnitTestPart(
-    simplifiedTestMainFile = ExerciseFile(
-      name = "test_main.py",
-      fileType,
-      editable = false,
-      content = loadTextFromFile(exResPath / "test_main.py")
+  private val unitTestPart = NormalUnitTestPart(
+    // FIXME: unit tests description!
+    unitTestsDescription = "TODO!",
+    unitTestFiles = unitTestFiles,
+    unitTestTestConfigs = Seq(
+      unitTestTestConfig(0, "Musterlösung...", shouldFail = false),
+      unitTestTestConfig(1, "TODO!"),
+      unitTestTestConfig(2, "TODO!")
     ),
-    sampleTestData = Seq(
-      ProgTestData(id = 1, input = JsString("anna"), output = JsBoolean(true)),
-      ProgTestData(id = 2, input = JsString("ananas"), output = JsBoolean(false)),
-      ProgTestData(id = 3, input = JsString(""), output = JsBoolean(true)),
-      ProgTestData(id = 4, input = JsString("qwertzuiiuztrewq"), output = JsBoolean(true)),
-      ProgTestData(id = 5, input = JsString("qwertzuiyiuztrewq"), output = JsBoolean(true)),
-      ProgTestData(id = 6, input = JsString("Tacocat"), output = JsBoolean(true))
-    )
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = """def is_palindrome(word: str) -> bool:
-             |    return False """.stripMargin,
-    files = Seq(
-      ExerciseFile(
-        name = "palindrome.py",
-        fileType,
-        content = loadTextFromFile(exResPath / "palindrome_declaration.py"),
-        editable = true
-      )
-    ),
-    implFileName = "palindrome.py",
-    sampleSolFileNames = Seq("palindrome.py")
-  )
-
-  override protected val sampleSolutionFiles = Seq(
-    ExerciseFile(
-      name = "palindrome.py",
-      fileType,
-      editable = false,
-      content = loadTextFromFile(exResPath / "palindrome.py")
-    )
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl2Ex1: ProgrammingExercise = Exercise(
@@ -65,8 +36,8 @@ object ProgrammingColl2Ex1 extends ProgrammingInitialExercise(2, 1, "palindrome"
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

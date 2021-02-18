@@ -16,29 +16,8 @@ object ProgrammingColl2Ex8 extends ProgrammingInitialExercise(2, 8, "ceasar") {
       unitTestTestConfig(0, "Musterlösung...", shouldFail = false)
       // FIXME: more unit tests...
     ),
-    testFileName = "test_ceasar.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_ceasar.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = Seq(
-      ExerciseFile(
-        name = "test_ceasar.py",
-        fileType,
-        editable = false,
-        content = loadTextFromFile(exResPath / "test_ceasar.py")
-      ),
-      ExerciseFile(
-        name = "ceasar.py",
-        fileType,
-        content = loadTextFromFile(exResPath / "ceasar_declaration.py"),
-        editable = true
-      )
-    ),
-    implFileName = "ceasar.py",
-    sampleSolFileNames = Seq("ceasar.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl2Ex8: ProgrammingExercise = Exercise(
@@ -57,8 +36,8 @@ object ProgrammingColl2Ex8 extends ProgrammingInitialExercise(2, 8, "ceasar") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

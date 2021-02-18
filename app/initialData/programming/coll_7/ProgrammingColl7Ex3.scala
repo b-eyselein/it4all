@@ -1,6 +1,5 @@
 package initialData.programming.coll_7
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -65,22 +64,8 @@ object ProgrammingColl7Ex3 extends ProgrammingInitialExercise(7, 3, "vector2d") 
       ),
       unitTestTestConfig(17, "Die Funktion dot soll das korrekt berechnete Skalarprodukt zurückgeben.")
     ),
-    testFileName = "test_vector2d.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_vector2d.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_vector2d.py", fileType),
-        FileLoadConfig("vector2d.py", fileType, editable = true, Some("vector2d_declaration.py"))
-      )
-    ),
-    implFileName = "vector2d.py",
-    sampleSolFileNames = Seq("vector2d.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl7Ex3: ProgrammingExercise = Exercise(
@@ -99,8 +84,8 @@ object ProgrammingColl7Ex3 extends ProgrammingInitialExercise(7, 3, "vector2d") 
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

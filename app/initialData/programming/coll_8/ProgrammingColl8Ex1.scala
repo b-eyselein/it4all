@@ -34,23 +34,20 @@ object ProgrammingColl8Ex1 extends ProgrammingInitialExercise(8, 1, "table") {
       unitTestTestConfig(5, "Die neue Anzahl an Zeilen muss um genau 1 höher sein."),
       unitTestTestConfig(6, "Zahlen in der neuen Zeile sollen automatisch von Strings zu floats konvertiert werden.")
     ),
-    testFileName = "test_table.py",
-    folderName = "pysql",
-    sampleSolFileNames = Seq("test_table.py")
+    testFileName = testFileName,
+    folderName = "pysql"
   )
 
   private val implementationPart = ImplementationPart(
-    base = "",
     files = loadFilesFromFolder(
       exResPath,
       Seq(
-        FileLoadConfig("test_table.py", fileType, maybeOtherFileName = Some("test_table_declaration.py")),
-        FileLoadConfig("table.py", fileType, editable = true, Some("table_declaration.py")),
+        FileLoadConfig(testFileName, fileType),
+        FileLoadConfig(implFileName, fileType, editable = true, Some(implDeclFileName)),
         FileLoadConfig("raum.csv", fileType)
       )
     ),
-    implFileName = "table.py",
-    sampleSolFileNames = Seq("table.py")
+    implFileName = implFileName
   )
 
   val programmingColl8Ex1: ProgrammingExercise = Exercise(
@@ -71,7 +68,7 @@ object ProgrammingColl8Ex1 extends ProgrammingInitialExercise(8, 1, "table") {
       filename = exerciseBaseName,
       unitTestPart,
       implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

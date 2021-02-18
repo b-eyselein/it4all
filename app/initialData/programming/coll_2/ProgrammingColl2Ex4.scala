@@ -1,6 +1,5 @@
 package initialData.programming.coll_2
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -26,26 +25,8 @@ object ProgrammingColl2Ex4 extends ProgrammingInitialExercise(2, 4, "name_search
         "Falls das Fragment in keinem Namen enthalten ist soll eine leere Liste zurückgegeben werden."
       )
     ),
-    testFileName = "test_name_search.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_name_search.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = """from typing import Tuple, List
-
-
-             |def name_search(all_names: List[str], fragment: str) -> List[Tuple[str, str]]:
-             |    pass""".stripMargin,
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_name_search.py", fileType),
-        FileLoadConfig("name_search.py", fileType, editable = true, Some("name_search_declaration.py"))
-      )
-    ),
-    implFileName = "name_search.py",
-    sampleSolFileNames = Seq("name_search.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl2Ex4: ProgrammingExercise = Exercise(
@@ -65,8 +46,8 @@ object ProgrammingColl2Ex4 extends ProgrammingInitialExercise(2, 4, "name_search
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

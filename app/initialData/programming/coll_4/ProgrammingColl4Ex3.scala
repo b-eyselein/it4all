@@ -1,6 +1,5 @@
 package initialData.programming.coll_4
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -76,22 +75,8 @@ object ProgrammingColl4Ex3 extends ProgrammingInitialExercise(4, 3, "general") {
         "Die Funktion flatten_lists soll eine leere Liste zurückgeben, falls die übergebene Liste leer ist."
       )
     ),
-    testFileName = "test_general.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_general.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_general.py", fileType, maybeOtherFileName = Some("test_general.py")),
-        FileLoadConfig("general.py", fileType, editable = true, Some("general_declaration.py"))
-      )
-    ),
-    implFileName = "general.py",
-    sampleSolFileNames = Seq("general.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl4Ex3: ProgrammingExercise = Exercise(
@@ -111,8 +96,8 @@ object ProgrammingColl4Ex3 extends ProgrammingInitialExercise(4, 3, "general") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

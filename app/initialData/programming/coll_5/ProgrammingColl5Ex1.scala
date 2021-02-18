@@ -1,6 +1,5 @@
 package initialData.programming.coll_5
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -36,22 +35,8 @@ object ProgrammingColl5Ex1 extends ProgrammingInitialExercise(5, 1, "tuples") {
       ),
       unitTestTestConfig(8, "Falls die übergebene Liste leer ist, soll die Funktion stock_value -1 zurückgeben.")
     ),
-    testFileName = "test_tuples.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_tuples.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_tuples.py", fileType),
-        FileLoadConfig("tuples.py", fileType, editable = true, Some("tuples_declaration.py"))
-      )
-    ),
-    implFileName = "tuples.py",
-    sampleSolFileNames = Seq("tuples.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl5Ex1: ProgrammingExercise = Exercise(
@@ -71,8 +56,8 @@ object ProgrammingColl5Ex1 extends ProgrammingInitialExercise(5, 1, "tuples") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

@@ -1,6 +1,5 @@
 package initialData.programming.coll_2
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -33,22 +32,8 @@ object ProgrammingColl2Ex7 extends ProgrammingInitialExercise(2, 7, "a1z26") {
       unitTestTestConfig(7, "decrypt_word soll die korrekte Ganzzahl entschlüsseln."),
       unitTestTestConfig(8, "decrypt_word soll bei einer leeren Liste einen leeren String zurückgeben.")
     ),
-    testFileName = "test_a1z26.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_a1z26.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_a1z26.py", fileType),
-        FileLoadConfig("a1z26.py", fileType, editable = true, Some("a1z26_declaration.py"))
-      )
-    ),
-    implFileName = "a1z26.py",
-    sampleSolFileNames = Seq("a1z26.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl2Ex7: ProgrammingExercise = Exercise(
@@ -67,8 +52,8 @@ object ProgrammingColl2Ex7 extends ProgrammingInitialExercise(2, 7, "a1z26") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 

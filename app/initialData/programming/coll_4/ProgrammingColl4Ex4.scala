@@ -1,6 +1,5 @@
 package initialData.programming.coll_4
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.programming.ProgrammingInitialExercise
 import model._
@@ -40,22 +39,8 @@ object ProgrammingColl4Ex4 extends ProgrammingInitialExercise(4, 4, "slicing") {
         "Die Funktion rotate_right soll die korrekte Anzahl an übergebenen Umdrehungen durchführen."
       )
     ),
-    testFileName = "test_slicing.py",
-    folderName = exerciseBaseName,
-    sampleSolFileNames = Seq("test_slicing.py")
-  )
-
-  private val implementationPart = ImplementationPart(
-    base = loadTextFromFile(exResPath / "base.py"),
-    files = loadFilesFromFolder(
-      exResPath,
-      Seq(
-        FileLoadConfig("test_slicing.py", fileType),
-        FileLoadConfig("slicing.py", fileType, editable = true, Some("slicing_declaration.py"))
-      )
-    ),
-    implFileName = "slicing.py",
-    sampleSolFileNames = Seq("slicing.py")
+    testFileName = testFileName,
+    folderName = exerciseBaseName
   )
 
   val programmingColl4Ex4: ProgrammingExercise = Exercise(
@@ -73,8 +58,8 @@ object ProgrammingColl4Ex4 extends ProgrammingInitialExercise(4, 4, "slicing") {
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,
-      implementationPart,
-      Seq(FilesSolution(sampleSolutionFiles))
+      defaultImplementationPart,
+      Seq(FilesSolution(defaultSampleSolutionFiles))
     )
   )
 
