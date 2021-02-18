@@ -17,8 +17,6 @@ trait ProgrammingAbstractCorrector extends DockerExecutionCorrector {
 
   protected val implFileRegex: Regex = """.*_\d*\.py""".r
 
-  protected def maxPoints(utp: NormalUnitTestPart): Points = utp.unitTestTestConfigs.size.points
-
-  protected def maxPoints(utp: SimplifiedUnitTestPart): Points = utp.sampleTestData.size.points
+  protected def maxPoints(utp: UnitTestPart): Points = utp.unitTestTestConfigs.size.points
 
 }

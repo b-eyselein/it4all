@@ -4,7 +4,6 @@ import {RegexMatchingResultComponent} from './regex/regex-matching-result/regex-
 import {RegexExtractionResultComponent} from './regex/regex-extraction-result/regex-extraction-result.component';
 import {RegexExtractionMatchComponent} from './regex/regex-extraction-result/regex-extraction-match/regex-extraction-match.component';
 import {RegexCheatsheetComponent} from './regex/regex-cheatsheet/regex-cheatsheet.component';
-import {ProgrammingSimplifiedResultComponent} from './programming/_results/programming-simplified-result/programming-simplified-result.component';
 import {SqlResultComponent} from './sql/_results/sql-result/sql-result.component';
 import {SqlMatchingResultComponent} from './sql/_results/sql-matching-result/sql-matching-result.component';
 import {collectionToolRoutingComponents, CollectionToolRoutingModule} from './collection-tools.routing';
@@ -35,7 +34,7 @@ import {SqlTableContentsComponent} from './sql/_components/sql-table-contents/sq
 import {StringSampleSolComponent} from './_components/string-sample-sol/string-sample-sol.component';
 import {QueryResultTableComponent} from './sql/_components/query-result-table/query-result-table.component';
 import {ProgrammingUnitTestResultComponent} from './programming/_results/programming-unit-test-result/programming-unit-test-result.component';
-import {ProgrammingNormalResultComponent} from './programming/_results/programming-normal-result/programming-normal-result.component';
+import {ProgrammingImplementationCorrectionResultComponent} from './programming/_results/programming-normal-result/programming-implementation-correction-result.component';
 import {HtmlTaskResultComponent} from './web/_components/html-task-result/html-task-result.component';
 import {HtmlAttributeResultComponent} from './web/_components/html-attribute-result/html-attribute-result.component';
 import {FilledPointsComponent} from './_components/filled-points/filled-points.component';
@@ -71,7 +70,7 @@ import {BrowserModule} from "@angular/platform-browser";
 
     FlaskExerciseComponent,
 
-    ProgrammingExerciseComponent, ProgrammingSimplifiedResultComponent, ProgrammingUnitTestResultComponent, ProgrammingNormalResultComponent,
+    ProgrammingExerciseComponent, ProgrammingUnitTestResultComponent, ProgrammingImplementationCorrectionResultComponent,
 
     RegexExerciseComponent, RegexMatchingResultComponent, RegexExtractionResultComponent, RegexExtractionMatchComponent,
     RegexCheatsheetComponent,

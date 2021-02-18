@@ -1,9 +1,7 @@
 package model.tools.programming
 
 import model.graphql.{FilesSolutionToolGraphQLModelBasics, GraphQLArguments}
-import model.result.SuccessType
 import model.{ExerciseFile, FilesSolution}
-import play.api.libs.json.Json
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -22,13 +20,7 @@ object ProgrammingGraphQLModels
     deriveObjectType()
   }
 
-  private val simplifiedUnitTestPartType: ObjectType[Unit, SimplifiedUnitTestPart] = {
-    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
-
-    deriveObjectType(ExcludeFields("sampleTestData"))
-  }
-
-  private val normalUnitTestPartType: ObjectType[Unit, NormalUnitTestPart] = {
+  private val unitTestPartType: ObjectType[Unit, UnitTestPart] = {
     implicit val uttct: ObjectType[Unit, UnitTestTestConfig] = unitTestTestConfigType
     implicit val exFileType: ObjectType[Unit, ExerciseFile]  = exerciseFileType
 
@@ -41,17 +33,12 @@ object ProgrammingGraphQLModels
     deriveObjectType()
   }
 
-  private val unitTestPartType: UnionType[Unit] = UnionType(
-    "UnitTestPart",
-    types = List(simplifiedUnitTestPartType, normalUnitTestPartType)
-  )
-
   override val exerciseContentType: ObjectType[Unit, ProgrammingExerciseContent] = {
+    implicit val upt: ObjectType[Unit, UnitTestPart]       = unitTestPartType
     implicit val ipt: ObjectType[Unit, ImplementationPart] = implementationPartType
     implicit val sst: ObjectType[Unit, FilesSolution]      = solutionType
 
     deriveObjectType(
-      ReplaceField("unitTestPart", Field("unitTestPart", unitTestPartType, resolve = _.value.unitTestPart)),
       AddFields(
         Field(
           "part",
@@ -63,27 +50,9 @@ object ProgrammingGraphQLModels
     )
   }
 
-  // Solution types
-
-  private val simplifiedExecutionResultType: ObjectType[Unit, SimplifiedExecutionResult] = {
-    implicit val stt: EnumType[SuccessType] = successTypeType
-
-    deriveObjectType(
-      ReplaceField(
-        "testInput",
-        Field("testInput", StringType, resolve = context => Json.stringify(context.value.testInput))
-      ),
-      ReplaceField("awaited", Field("awaited", StringType, resolve = context => Json.stringify(context.value.awaited))),
-      ReplaceField("gotten", Field("gotten", StringType, resolve = context => Json.stringify(context.value.gotten)))
-    )
-  }
-
-  // Abstract result
-
   override val resultType: OutputType[ProgrammingResult] = {
-    implicit val nert: ObjectType[Unit, NormalExecutionResult]     = deriveObjectType()
-    implicit val sert: ObjectType[Unit, SimplifiedExecutionResult] = simplifiedExecutionResultType
-    implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = deriveObjectType()
+    implicit val nert: ObjectType[Unit, ImplementationCorrectionResult] = deriveObjectType()
+    implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult]      = deriveObjectType()
 
     deriveObjectType[Unit, ProgrammingResult](
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),

@@ -11,46 +11,44 @@ import scala.util.{Failure, Try}
 
 trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrector {
 
-  def correctNormalImplementation(
+  def correctImplementationPart(
     solutionFilesMounts: Seq[DockerBind],
     solTargetDir: File,
     exerciseContent: ProgrammingExerciseContent,
-    normalUnitTestPart: NormalUnitTestPart,
     resultFile: File
-  )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] =
-    exerciseContent.sampleSolutions.headOption match {
-      case None => Future.successful(Failure(new Exception("No sample solution found!")))
-      case Some(FilesSolution(files)) =>
-        val maybeTestFileContent = files
-          .find(_.name == normalUnitTestPart.testFileName)
-          .map(_.content)
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] = exerciseContent.sampleSolutions.headOption match {
+    case None => Future.successful(Failure(new Exception("No sample solution found!")))
+    case Some(FilesSolution(files)) =>
+      val maybeTestFileContent = files
+        .find(_.name == exerciseContent.unitTestPart.testFileName)
+        .map(_.content)
 
-        maybeTestFileContent match {
-          case None => Future.successful(Failure(new Exception("No content for unit test file found!")))
-          case Some(unitTestFileContent) =>
-            val unitTestFileName = s"${exerciseContent.filename}_test.py"
+      maybeTestFileContent match {
+        case None => Future.successful(Failure(new Exception("No content for unit test file found!")))
+        case Some(unitTestFileContent) =>
+          val unitTestFileName = s"${exerciseContent.filename}_test.py"
 
-            val unitTestFile = solTargetDir / unitTestFileName
-            unitTestFile
-              .createIfNotExists(createParents = true)
-              .write(unitTestFileContent)
+          val unitTestFile = solTargetDir / unitTestFileName
+          unitTestFile
+            .createIfNotExists(createParents = true)
+            .write(unitTestFileContent)
 
-            val unitTestFileMount = DockerBind(unitTestFile, baseBindPath / unitTestFileName, isReadOnly = true)
+          val unitTestFileMount = DockerBind(unitTestFile, baseBindPath / unitTestFileName, isReadOnly = true)
 
-            runContainer(
-              solutionFilesMounts :+ unitTestFileMount,
-              normalExecutionResultFileJsonReads,
-              resultFile,
-              maybeCmd = Some(Seq("normal"))
-            )(normalExecutionResult =>
-              //FIXME: points!
-              ProgrammingResult(
-                normalResult = Some(normalExecutionResult),
-                points = (-1).points /* normalUnitTestPart.unitTestTestConfigs.size.points */,
-                maxPoints = maxPoints(normalUnitTestPart)
-              )
+          runContainer(
+            solutionFilesMounts :+ unitTestFileMount,
+            normalExecutionResultFileJsonReads,
+            resultFile,
+            maybeCmd = Some(Seq("normal"))
+          )(normalExecutionResult =>
+            //FIXME: points!
+            ProgrammingResult(
+              implementationCorrectionResult = Some(normalExecutionResult),
+              points = (-1).points /* normalUnitTestPart.unitTestTestConfigs.size.points */,
+              maxPoints = maxPoints(exerciseContent.unitTestPart)
             )
-        }
-    }
+          )
+      }
+  }
 
 }

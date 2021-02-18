@@ -8,7 +8,7 @@ import model.tools.programming._
 
 object ProgrammingColl4Ex2 extends ProgrammingInitialExercise(4, 2, "longest_string") {
 
-  private val unitTestPart = NormalUnitTestPart(
+  private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description!
     unitTestsDescription = "TODO!",
     unitTestFiles = unitTestFiles,

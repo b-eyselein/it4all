@@ -8,7 +8,7 @@ import model.tools.programming._
 
 object ProgrammingColl2Ex6 extends ProgrammingInitialExercise(2, 6, "xmas_tree") {
 
-  private val unitTestPart = NormalUnitTestPart(
+  private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description!
     unitTestsDescription = "TODO!",
     unitTestFiles = unitTestFiles,

@@ -10,7 +10,7 @@ object ProgrammingColl4Ex3 extends ProgrammingInitialExercise(4, 3, "general") {
 
   // TODO: split in multiple, smaller exercises!
 
-  private val unitTestPart = NormalUnitTestPart(
+  private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description!
     unitTestsDescription = "TODO!",
     unitTestFiles = unitTestFiles,

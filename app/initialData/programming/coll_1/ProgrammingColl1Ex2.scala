@@ -8,7 +8,7 @@ import model.tools.programming._
 
 object ProgrammingColl1Ex2 extends ProgrammingInitialExercise(1, 2, "factorial") {
 
-  private val unitTestPart = NormalUnitTestPart(
+  private val unitTestPart = UnitTestPart(
     unitTestsDescription = """Schreiben Sie Unittests für die Funktion <code>factorial(n= int) -> int</code>.
                              |Diese soll die Fakultät der Zahl <code>n</code> berechnen.
                              |Der Funktionsparameter <code>n</code> soll größer als 0 sein.""".stripMargin

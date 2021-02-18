@@ -9,7 +9,7 @@ import model.tools.programming._
 
 object ProgrammingColl8Ex1 extends ProgrammingInitialExercise(8, 1, "table") {
 
-  private val unitTestPart = NormalUnitTestPart(
+  private val unitTestPart = UnitTestPart(
     unitTestsDescription = loadTextFromFile(exResPath / "unit_test_description.html"),
     unitTestFiles = loadFilesFromFolder(
       exResPath,

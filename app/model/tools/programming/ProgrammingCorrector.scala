@@ -8,10 +8,7 @@ import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-object ProgrammingCorrector
-    extends ProgrammingSimpleImplementationCorrector
-    with ProgrammingUnitTestCorrector
-    with ProgrammingNormalImplementationCorrector {
+object ProgrammingCorrector extends ProgrammingUnitTestCorrector with ProgrammingNormalImplementationCorrector {
 
   def correct(
     exercise: ProgrammingExercise,
@@ -42,35 +39,8 @@ object ProgrammingCorrector
 
     part match {
       case ProgExPart.TestCreation =>
-        exercise.content.unitTestPart match {
-          case normalUnitTestPart: NormalUnitTestPart =>
-            correctUnitTestPart(
-              defaultFileMounts,
-              solutionTargetDir,
-              exercise.content,
-              normalUnitTestPart,
-              resultFile
-            )
-          case _ => ???
-        }
-      case _ =>
-        exercise.content.unitTestPart match {
-          case simplifiedUnitTestPart: SimplifiedUnitTestPart =>
-            correctSimplifiedImplementation(
-              defaultFileMounts,
-              solutionTargetDir,
-              simplifiedUnitTestPart,
-              resultFile
-            )
-          case normalUnitTestPart: NormalUnitTestPart =>
-            correctNormalImplementation(
-              defaultFileMounts,
-              solutionTargetDir,
-              exercise.content,
-              normalUnitTestPart,
-              resultFile
-            )
-        }
+        correctUnitTestPart(defaultFileMounts, solutionTargetDir, exercise.content, resultFile)
+      case _ => correctImplementationPart(defaultFileMounts, solutionTargetDir, exercise.content, resultFile)
     }
   }
 

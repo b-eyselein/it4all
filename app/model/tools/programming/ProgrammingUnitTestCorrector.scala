@@ -15,9 +15,10 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
     defaultFileMounts: Seq[DockerBind],
     solTargetDir: File,
     exerciseContent: ProgrammingExerciseContent,
-    unitTestPart: NormalUnitTestPart,
     resultFile: File
   )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] = {
+
+    val unitTestPart: UnitTestPart = exerciseContent.unitTestPart
 
     // write test data file
 

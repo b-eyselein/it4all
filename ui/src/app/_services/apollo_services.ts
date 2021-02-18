@@ -182,6 +182,13 @@ export type GradedTextResult = {
   maxPoints: Scalars['Float'];
 };
 
+export type ImplementationCorrectionResult = {
+  __typename?: 'ImplementationCorrectionResult';
+  successful: Scalars['Boolean'];
+  stdout: Array<Scalars['String']>;
+  stderr: Array<Scalars['String']>;
+};
+
 export type JsAction = {
   __typename?: 'JsAction';
   xpathQuery: Scalars['String'];
@@ -243,13 +250,6 @@ export type NewMatch = {
   sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
-export type NormalExecutionResult = {
-  __typename?: 'NormalExecutionResult';
-  successful: Scalars['Boolean'];
-  stdout: Array<Scalars['String']>;
-  stderr: Array<Scalars['String']>;
-};
-
 export type ProgrammingCorrectionResult = {
   __typename?: 'ProgrammingCorrectionResult';
   solutionSaved: Scalars['Boolean'];
@@ -272,8 +272,7 @@ export type ProgrammingExerciseMutationsCorrectArgs = {
 export type ProgrammingResult = {
   __typename?: 'ProgrammingResult';
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
-  simplifiedResults: Array<SimplifiedExecutionResult>;
-  normalResult?: Maybe<NormalExecutionResult>;
+  implementationCorrectionResult?: Maybe<ImplementationCorrectionResult>;
   unitTestResults: Array<UnitTestCorrectionResult>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
@@ -362,16 +361,6 @@ export type SelectAdditionalComparisons = {
   groupByComparison: StringMatchingResult;
   orderByComparison: StringMatchingResult;
   limitComparison: SqlLimitComparisonMatchingResult;
-};
-
-export type SimplifiedExecutionResult = {
-  __typename?: 'SimplifiedExecutionResult';
-  testId: Scalars['Int'];
-  success: SuccessType;
-  stdout?: Maybe<Scalars['String']>;
-  testInput: Scalars['String'];
-  awaited: Scalars['String'];
-  gotten: Scalars['String'];
 };
 
 export type SqlBinaryExpressionComparisonMatchingResult = MatchingResult & {
@@ -994,10 +983,8 @@ export type HtmlTask = {
 
 export type ImplementationPart = {
   __typename?: 'ImplementationPart';
-  base: Scalars['String'];
   files: Array<ExerciseFile>;
   implFileName: Scalars['String'];
-  sampleSolFileNames: Array<Scalars['String']>;
 };
 
 export type KeyValueObject = {
@@ -1065,16 +1052,6 @@ export type Level = {
   levelIndex: Scalars['Int'];
 };
 
-export type NormalUnitTestPart = {
-  __typename?: 'NormalUnitTestPart';
-  unitTestsDescription: Scalars['String'];
-  unitTestFiles: Array<ExerciseFile>;
-  unitTestTestConfigs: Array<UnitTestTestConfig>;
-  testFileName: Scalars['String'];
-  folderName: Scalars['String'];
-  sampleSolFileNames: Array<Scalars['String']>;
-};
-
 export enum ProgExPart {
   TestCreation = 'TestCreation',
   Implementation = 'Implementation',
@@ -1084,9 +1061,9 @@ export enum ProgExPart {
 export type ProgrammingExerciseContent = {
   __typename?: 'ProgrammingExerciseContent';
   filename: Scalars['String'];
+  unitTestPart: UnitTestPart;
   implementationPart: ImplementationPart;
   sampleSolutions: Array<FilesSolution>;
-  unitTestPart: UnitTestPart;
   part?: Maybe<ProgExPart>;
 };
 
@@ -1135,11 +1112,6 @@ export type RegexMatchTestData = {
   id: Scalars['Int'];
   data: Scalars['String'];
   isIncluded: Scalars['Boolean'];
-};
-
-export type SimplifiedUnitTestPart = {
-  __typename?: 'SimplifiedUnitTestPart';
-  simplifiedTestMainFile: ExerciseFile;
 };
 
 export type SiteSpec = {
@@ -1318,7 +1290,14 @@ export enum UmlVisibility {
   Public = 'PUBLIC'
 }
 
-export type UnitTestPart = SimplifiedUnitTestPart | NormalUnitTestPart;
+export type UnitTestPart = {
+  __typename?: 'UnitTestPart';
+  unitTestsDescription: Scalars['String'];
+  unitTestFiles: Array<ExerciseFile>;
+  unitTestTestConfigs: Array<UnitTestTestConfig>;
+  testFileName: Scalars['String'];
+  folderName: Scalars['String'];
+};
 
 export type UnitTestTestConfig = {
   __typename?: 'UnitTestTestConfig';
@@ -1472,30 +1451,22 @@ export type ProgrammingCorrectionResultFragment = (
 export type ProgrammingResultFragment = (
   { __typename?: 'ProgrammingResult' }
   & Pick<ProgrammingResult, 'points' | 'maxPoints'>
-  & { simplifiedResults: Array<(
-    { __typename?: 'SimplifiedExecutionResult' }
-    & SimplifiedExecutionResultFragment
-  )>, normalResult?: Maybe<(
-    { __typename?: 'NormalExecutionResult' }
-    & NormalExecutionResultFragment
+  & { implementationCorrectionResult?: Maybe<(
+    { __typename?: 'ImplementationCorrectionResult' }
+    & ImplementationCorrectionResultFragment
   )>, unitTestResults: Array<(
     { __typename?: 'UnitTestCorrectionResult' }
     & UnitTestCorrectionResultFragment
   )> }
 );
 
-export type SimplifiedExecutionResultFragment = (
-  { __typename: 'SimplifiedExecutionResult' }
-  & Pick<SimplifiedExecutionResult, 'testId' | 'success' | 'testInput' | 'awaited' | 'gotten'>
-);
-
-export type NormalExecutionResultFragment = (
-  { __typename: 'NormalExecutionResult' }
-  & Pick<NormalExecutionResult, 'successful' | 'stdout' | 'stderr'>
+export type ImplementationCorrectionResultFragment = (
+  { __typename?: 'ImplementationCorrectionResult' }
+  & Pick<ImplementationCorrectionResult, 'successful' | 'stdout' | 'stderr'>
 );
 
 export type UnitTestCorrectionResultFragment = (
-  { __typename: 'UnitTestCorrectionResult' }
+  { __typename?: 'UnitTestCorrectionResult' }
   & Pick<UnitTestCorrectionResult, 'testId' | 'successful' | 'shouldFail' | 'description' | 'stderr'>
 );
 
@@ -2649,16 +2620,8 @@ export type FlaskExerciseContentFragment = (
   )> }
 );
 
-export type SimplifiedUnitTestPartFragment = (
-  { __typename?: 'SimplifiedUnitTestPart' }
-  & { simplifiedTestMainFile: (
-    { __typename?: 'ExerciseFile' }
-    & ExerciseFileFragment
-  ) }
-);
-
-export type NormalUnitTestPartFragment = (
-  { __typename?: 'NormalUnitTestPart' }
+export type UnitTestPartFragment = (
+  { __typename?: 'UnitTestPart' }
   & { unitTestFiles: Array<(
     { __typename?: 'ExerciseFile' }
     & ExerciseFileFragment
@@ -2669,11 +2632,8 @@ export type ProgrammingExerciseContentFragment = (
   { __typename?: 'ProgrammingExerciseContent' }
   & { programmingPart: ProgrammingExerciseContent['part'] }
   & { unitTestPart: (
-    { __typename: 'SimplifiedUnitTestPart' }
-    & SimplifiedUnitTestPartFragment
-  ) | (
-    { __typename: 'NormalUnitTestPart' }
-    & NormalUnitTestPartFragment
+    { __typename?: 'UnitTestPart' }
+    & UnitTestPartFragment
   ), implementationPart: (
     { __typename?: 'ImplementationPart' }
     & { files: Array<(
@@ -2846,19 +2806,8 @@ export const FlaskCorrectionResultFragmentDoc = gql`
   }
 }
     ${FlaskResultFragmentDoc}`;
-export const SimplifiedExecutionResultFragmentDoc = gql`
-    fragment SimplifiedExecutionResult on SimplifiedExecutionResult {
-  __typename
-  testId
-  success
-  testInput
-  awaited
-  gotten
-}
-    `;
-export const NormalExecutionResultFragmentDoc = gql`
-    fragment NormalExecutionResult on NormalExecutionResult {
-  __typename
+export const ImplementationCorrectionResultFragmentDoc = gql`
+    fragment ImplementationCorrectionResult on ImplementationCorrectionResult {
   successful
   stdout
   stderr
@@ -2866,7 +2815,6 @@ export const NormalExecutionResultFragmentDoc = gql`
     `;
 export const UnitTestCorrectionResultFragmentDoc = gql`
     fragment UnitTestCorrectionResult on UnitTestCorrectionResult {
-  __typename
   testId
   successful
   shouldFail
@@ -2878,18 +2826,14 @@ export const ProgrammingResultFragmentDoc = gql`
     fragment ProgrammingResult on ProgrammingResult {
   points
   maxPoints
-  simplifiedResults {
-    ...SimplifiedExecutionResult
-  }
-  normalResult {
-    ...NormalExecutionResult
+  implementationCorrectionResult {
+    ...ImplementationCorrectionResult
   }
   unitTestResults {
     ...UnitTestCorrectionResult
   }
 }
-    ${SimplifiedExecutionResultFragmentDoc}
-${NormalExecutionResultFragmentDoc}
+    ${ImplementationCorrectionResultFragmentDoc}
 ${UnitTestCorrectionResultFragmentDoc}`;
 export const ProgrammingCorrectionResultFragmentDoc = gql`
     fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
@@ -3652,16 +3596,9 @@ export const FlaskExerciseContentFragmentDoc = gql`
 }
     ${ExerciseFileFragmentDoc}
 ${FilesSolutionFragmentDoc}`;
-export const NormalUnitTestPartFragmentDoc = gql`
-    fragment NormalUnitTestPart on NormalUnitTestPart {
+export const UnitTestPartFragmentDoc = gql`
+    fragment UnitTestPart on UnitTestPart {
   unitTestFiles {
-    ...ExerciseFile
-  }
-}
-    ${ExerciseFileFragmentDoc}`;
-export const SimplifiedUnitTestPartFragmentDoc = gql`
-    fragment SimplifiedUnitTestPart on SimplifiedUnitTestPart {
-  simplifiedTestMainFile {
     ...ExerciseFile
   }
 }
@@ -3669,9 +3606,7 @@ export const SimplifiedUnitTestPartFragmentDoc = gql`
 export const ProgrammingExerciseContentFragmentDoc = gql`
     fragment ProgrammingExerciseContent on ProgrammingExerciseContent {
   unitTestPart {
-    __typename
-    ...NormalUnitTestPart
-    ...SimplifiedUnitTestPart
+    ...UnitTestPart
   }
   implementationPart {
     files {
@@ -3683,8 +3618,7 @@ export const ProgrammingExerciseContentFragmentDoc = gql`
   }
   programmingPart: part(partId: $partId)
 }
-    ${NormalUnitTestPartFragmentDoc}
-${SimplifiedUnitTestPartFragmentDoc}
+    ${UnitTestPartFragmentDoc}
 ${ExerciseFileFragmentDoc}
 ${FilesSolutionFragmentDoc}`;
 export const RegexExerciseContentFragmentDoc = gql`

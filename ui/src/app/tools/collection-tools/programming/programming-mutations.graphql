@@ -21,35 +21,21 @@ fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
 fragment ProgrammingResult on ProgrammingResult {
   points
   maxPoints
-  simplifiedResults {
-    ...SimplifiedExecutionResult
-  }
-  normalResult {
-    ...NormalExecutionResult
+  implementationCorrectionResult {
+    ...ImplementationCorrectionResult
   }
   unitTestResults {
     ...UnitTestCorrectionResult
   }
 }
 
-fragment SimplifiedExecutionResult on SimplifiedExecutionResult {
-  __typename
-  testId
-  success
-  testInput
-  awaited
-  gotten
-}
-
-fragment NormalExecutionResult on NormalExecutionResult {
-  __typename
+fragment ImplementationCorrectionResult on ImplementationCorrectionResult {
   successful
   stdout
   stderr
 }
 
 fragment UnitTestCorrectionResult on UnitTestCorrectionResult {
-  __typename
   testId
   successful
   shouldFail

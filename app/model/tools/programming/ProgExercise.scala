@@ -1,7 +1,6 @@
 package model.tools.programming
 
 import model.{ExerciseFile, FileExerciseContent, FilesSolution}
-import play.api.libs.json.JsValue
 
 final case class ProgrammingExerciseContent(
   filename: String,
@@ -10,11 +9,7 @@ final case class ProgrammingExerciseContent(
   override val sampleSolutions: Seq[FilesSolution]
 ) extends FileExerciseContent {
 
-  def parts: Seq[ProgExPart] =
-    unitTestPart match {
-      case _: SimplifiedUnitTestPart => Seq(ProgExPart.Implementation)
-      case _                         => Seq(ProgExPart.TestCreation, ProgExPart.Implementation)
-    }
+  override def parts: Seq[ProgExPart] = Seq(ProgExPart.TestCreation, ProgExPart.Implementation) // ProgExPart.values
 
 }
 
@@ -25,25 +20,13 @@ sealed trait ProgrammingExerciseContentPart {
 
 }
 
-sealed trait UnitTestPart extends ProgrammingExerciseContentPart
-
-@deprecated
-final case class SimplifiedUnitTestPart(
-  simplifiedTestMainFile: ExerciseFile,
-  sampleTestData: Seq[ProgTestData]
-) extends UnitTestPart {
-
-  override def sampleSolFileNames: Seq[String] = ???
-
-}
-
-final case class NormalUnitTestPart(
+final case class UnitTestPart(
   unitTestsDescription: String,
   unitTestFiles: Seq[ExerciseFile],
   unitTestTestConfigs: Seq[UnitTestTestConfig],
   testFileName: String,
   folderName: String
-) extends UnitTestPart {
+) extends ProgrammingExerciseContentPart {
 
   override def sampleSolFileNames: Seq[String] = Seq(testFileName)
 
@@ -64,5 +47,3 @@ final case class ImplementationPart(
   override def sampleSolFileNames: Seq[String] = Seq(implFileName)
 
 }
-
-final case class ProgTestData(id: Int, input: JsValue, output: JsValue)

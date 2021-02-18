@@ -5,9 +5,7 @@ import {
   ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
   FilesSolution,
-  FilesSolutionInput,
-  NormalExecutionResultFragment,
-  NormalUnitTestPartFragment,
+  FilesSolutionInput, ImplementationCorrectionResultFragment,
   ProgExPart,
   ProgrammingCorrectionGQL,
   ProgrammingCorrectionMutation,
@@ -15,7 +13,6 @@ import {
   ProgrammingCorrectionResultFragment,
   ProgrammingExerciseContentFragment,
   ProgrammingResultFragment,
-  SimplifiedExecutionResultFragment,
   UnitTestCorrectionResultFragment
 } from '../../../../_services/apollo_services';
 import {FilesExerciseComponent} from "../../_components/files-exercise/files-exercise.component";
@@ -56,9 +53,9 @@ export class ProgrammingExerciseComponent
   ngOnInit(): void {
     this.partId = getIdForProgExPart(this.contentFragment.programmingPart);
 
-    this.exerciseFiles = (this.contentFragment.programmingPart === ProgExPart.Implementation) ?
-      this.contentFragment.implementationPart.files :
-      (this.contentFragment.unitTestPart as NormalUnitTestPartFragment).unitTestFiles;
+    this.exerciseFiles = (this.contentFragment.programmingPart === ProgExPart.Implementation)
+      ? this.contentFragment.implementationPart.files
+      : this.contentFragment.unitTestPart.unitTestFiles;
 
     this.loadOldSolutionAbstract(this.exerciseFragment, this.partId, (oldSol: FilesSolutionInput) => this.exerciseFiles = oldSol.files);
   }
@@ -102,16 +99,12 @@ export class ProgrammingExerciseComponent
     return this.correctionResult?.result;
   }
 
-  get simplifiedResults(): SimplifiedExecutionResultFragment[] {
-    return this.abstractResult?.simplifiedResults || [];
-  }
-
   get unitTestResults(): UnitTestCorrectionResultFragment[] {
     return this.abstractResult.unitTestResults || [];
   }
 
-  get normalResult(): NormalExecutionResultFragment | null {
-    return this.abstractResult?.normalResult;
+  get implementationCorrectionResult(): ImplementationCorrectionResultFragment | null {
+    return this.abstractResult?.implementationCorrectionResult;
   }
 
 }

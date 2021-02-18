@@ -243,13 +243,7 @@ fragment FlaskExerciseContent on FlaskExerciseContent {
 
 # Programming
 
-fragment SimplifiedUnitTestPart on SimplifiedUnitTestPart {
-  simplifiedTestMainFile {
-    ...ExerciseFile
-  }
-}
-
-fragment NormalUnitTestPart on NormalUnitTestPart {
+fragment UnitTestPart on UnitTestPart {
   unitTestFiles {
     ...ExerciseFile
   }
@@ -257,9 +251,7 @@ fragment NormalUnitTestPart on NormalUnitTestPart {
 
 fragment ProgrammingExerciseContent on ProgrammingExerciseContent {
   unitTestPart {
-    __typename
-    ...NormalUnitTestPart
-    ...SimplifiedUnitTestPart
+    ...UnitTestPart
   }
   implementationPart {
     files {

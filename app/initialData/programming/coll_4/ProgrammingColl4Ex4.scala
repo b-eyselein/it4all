@@ -8,7 +8,7 @@ import model.tools.programming._
 
 object ProgrammingColl4Ex4 extends ProgrammingInitialExercise(4, 4, "slicing") {
 
-  private val unitTestPart = NormalUnitTestPart(
+  private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description!
     unitTestsDescription = "TODO!",
     unitTestFiles = unitTestFiles,

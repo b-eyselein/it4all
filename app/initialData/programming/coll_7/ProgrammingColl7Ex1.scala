@@ -8,7 +8,7 @@ import model.tools.programming._
 
 object ProgrammingColl7Ex1 extends ProgrammingInitialExercise(7, 1, "circle") {
 
-  private val unitTestPart = NormalUnitTestPart(
+  private val unitTestPart = UnitTestPart(
     unitTestsDescription = loadTextFromFile(exResPath / "unit_tests_description.html"),
     unitTestFiles = unitTestFiles,
     unitTestTestConfigs = Seq(

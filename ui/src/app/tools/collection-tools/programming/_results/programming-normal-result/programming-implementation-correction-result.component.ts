@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {NormalExecutionResultFragment} from "../../../../../_services/apollo_services";
+import {ImplementationCorrectionResult} from "../../../../../_services/apollo_services";
 
 @Component({
   selector: 'it4all-programming-normal-result',
@@ -9,9 +9,9 @@ import {NormalExecutionResultFragment} from "../../../../../_services/apollo_ser
     </div>
   `
 })
-export class ProgrammingNormalResultComponent {
+export class ProgrammingImplementationCorrectionResultComponent {
 
-  @Input() normalResult: NormalExecutionResultFragment;
+  @Input() normalResult: ImplementationCorrectionResult;
 
   get stderr(): string {
     return this.normalResult.stderr.join('\n');

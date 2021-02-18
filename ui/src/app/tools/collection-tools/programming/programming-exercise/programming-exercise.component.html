@@ -27,13 +27,6 @@
         </it4all-points-notification>
       </div>
 
-      <div class="columns is-multiline my-3" *ngIf="simplifiedResults && simplifiedResults.length > 0">
-        <div class="column is-half-desktop" *ngFor="let simplifiedResult of simplifiedResults">
-          <it4all-programming-simplified-result [result]="simplifiedResult">
-          </it4all-programming-simplified-result>
-        </div>
-      </div>
-
       <div class="content my-3" *ngIf="unitTestResults && unitTestResults.length > 0">
         <ul *ngFor="let unitTestResult of unitTestResults">
           <it4all-programming-unit-test-result [unitTestResult]="unitTestResult">
@@ -41,7 +34,8 @@
         </ul>
       </div>
 
-      <it4all-programming-normal-result *ngIf="normalResult" [normalResult]="normalResult">
+      <it4all-programming-normal-result *ngIf="implementationCorrectionResult"
+                                        [normalResult]="implementationCorrectionResult">
       </it4all-programming-normal-result>
     </ng-container>
   </ng-container>

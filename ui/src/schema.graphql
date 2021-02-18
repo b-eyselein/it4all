@@ -140,6 +140,12 @@ type GradedTextResult {
   maxPoints: Float!
 }
 
+type ImplementationCorrectionResult {
+  successful: Boolean!
+  stdout: [String!]!
+  stderr: [String!]!
+}
+
 type JsAction {
   xpathQuery: String!
   actionType: JsActionType!
@@ -187,12 +193,6 @@ interface NewMatch {
   sampleArgDescription: String
 }
 
-type NormalExecutionResult {
-  successful: Boolean!
-  stdout: [String!]!
-  stderr: [String!]!
-}
-
 type ProgrammingCorrectionResult {
   solutionSaved: Boolean!
   resultSaved: Boolean!
@@ -206,8 +206,7 @@ type ProgrammingExerciseMutations {
 
 type ProgrammingResult {
   proficienciesUpdated: Boolean
-  simplifiedResults: [SimplifiedExecutionResult!]!
-  normalResult: NormalExecutionResult
+  implementationCorrectionResult: ImplementationCorrectionResult
   unitTestResults: [UnitTestCorrectionResult!]!
   points: Float!
   maxPoints: Float!
@@ -281,15 +280,6 @@ type SelectAdditionalComparisons {
   groupByComparison: StringMatchingResult!
   orderByComparison: StringMatchingResult!
   limitComparison: SqlLimitComparisonMatchingResult!
-}
-
-type SimplifiedExecutionResult {
-  testId: Int!
-  success: SuccessType!
-  stdout: String
-  testInput: String!
-  awaited: String!
-  gotten: String!
 }
 
 type SqlBinaryExpressionComparisonMatchingResult implements MatchingResult {
@@ -778,10 +768,8 @@ type HtmlTask {
 }
 
 type ImplementationPart {
-  base: String!
   files: [ExerciseFile!]!
   implFileName: String!
-  sampleSolFileNames: [String!]!
 }
 
 type KeyValueObject {
@@ -837,15 +825,6 @@ type Level {
   levelIndex: Int!
 }
 
-type NormalUnitTestPart {
-  unitTestsDescription: String!
-  unitTestFiles: [ExerciseFile!]!
-  unitTestTestConfigs: [UnitTestTestConfig!]!
-  testFileName: String!
-  folderName: String!
-  sampleSolFileNames: [String!]!
-}
-
 enum ProgExPart {
   TestCreation
   Implementation
@@ -854,9 +833,9 @@ enum ProgExPart {
 
 type ProgrammingExerciseContent {
   filename: String!
+  unitTestPart: UnitTestPart!
   implementationPart: ImplementationPart!
   sampleSolutions: [FilesSolution!]!
-  unitTestPart: UnitTestPart!
   part(partId: String!): ProgExPart
 }
 
@@ -891,10 +870,6 @@ type RegexMatchTestData {
   id: Int!
   data: String!
   isIncluded: Boolean!
-}
-
-type SimplifiedUnitTestPart {
-  simplifiedTestMainFile: ExerciseFile!
 }
 
 type SiteSpec {
@@ -1048,7 +1023,13 @@ enum UmlVisibility {
   PUBLIC
 }
 
-union UnitTestPart = SimplifiedUnitTestPart | NormalUnitTestPart
+type UnitTestPart {
+  unitTestsDescription: String!
+  unitTestFiles: [ExerciseFile!]!
+  unitTestTestConfigs: [UnitTestTestConfig!]!
+  testFileName: String!
+  folderName: String!
+}
 
 type UnitTestTestConfig {
   id: Int!

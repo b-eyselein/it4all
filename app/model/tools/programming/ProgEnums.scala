@@ -1,6 +1,5 @@
 package model.tools.programming
 
-import enumeratum.{EnumEntry, PlayEnum}
 import model.{ExPart, ExParts, Topic}
 
 // Exercise Parts
@@ -15,6 +14,7 @@ object ProgExPart extends ExParts[ProgExPart] {
 
   case object Implementation extends ProgExPart(partName = "Implementierung", id = "implementation")
 
+  @deprecated
   case object ActivityDiagram extends ProgExPart(partName = "Als Aktivitätsdiagramm", id = "activity")
 
 }
@@ -50,20 +50,4 @@ object ProgrammingTopics {
     Slicing,
     Recursion
   )
-}
-
-// Unit Test Types
-
-@deprecated
-sealed trait UnitTestType extends EnumEntry
-
-@deprecated
-case object UnitTestType extends PlayEnum[UnitTestType] {
-
-  override val values: IndexedSeq[UnitTestType] = findValues
-
-  case object Simplified extends UnitTestType
-
-  case object Normal extends UnitTestType
-
 }
