@@ -5,6 +5,7 @@ import {DexieService} from '../../../_services/dexie.service';
 import {ExerciseSolveFieldsFragment} from '../../../_services/apollo_services';
 
 import {CorrectionHelpers} from "./correction-helpers";
+import {GraphQLError} from "graphql";
 
 @Directive()
 export abstract class ComponentWithExerciseDirective<SolutionInputType, MutationQueryType, MutationVariablesType>
@@ -13,6 +14,8 @@ export abstract class ComponentWithExerciseDirective<SolutionInputType, Mutation
   isCorrecting = false;
 
   resultQuery: MutationQueryType | undefined;
+
+  queryError: GraphQLError;
 
   @ViewChild(TabsComponent) tabsComponent: TabsComponent | undefined;
 
@@ -43,10 +46,15 @@ export abstract class ComponentWithExerciseDirective<SolutionInputType, Mutation
       .mutate(this.getMutationQueryVariables())
       .subscribe(
         ({data}) => {
+          this.queryError = null;
           this.resultQuery = data;
           this.activateCorrectionTab();
         },
-        (error) => console.error('There has been an graphQL error:', error),
+        (error: GraphQLError) => {
+          this.queryError = error;
+          this.resultQuery = null;
+          console.error('There has been an graphQL error:', error);
+        },
         () => {
           this.isCorrecting = false;
           if (onComplete) {

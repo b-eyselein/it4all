@@ -23,8 +23,17 @@
 
     <br>
 
-    <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
+    <it4all-points-notification [points]="result.points" [maxPoints]="result.maxPoints">
     </it4all-points-notification>
+
+    <br>
+
+    <div class="message" *ngIf="queryError">
+      <div class="message-header">Es gab einen Fehler bei der Korrektur:</div>
+      <div class="message-body">
+        <pre>{{queryError.message}}</pre>
+      </div>
+    </div>
 
     <br>
 

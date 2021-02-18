@@ -15,7 +15,7 @@ object UmlCorrector {
     userClassDiagram: UmlClassDiagram,
     exercise: UmlExercise,
     part: UmlExPart
-  ): Try[UmlAbstractResult] = exercise.content.sampleSolutions.headOption match {
+  ): Try[UmlResult] = exercise.content.sampleSolutions.headOption match {
     case None => Failure(new Exception("There is no sample solution!"))
     case Some(sampleClassDiagram) =>
       val classResult = part match {

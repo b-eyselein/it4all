@@ -6,7 +6,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 object FlaskToolGraphQLModels
-    extends FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskExPart, FlaskAbstractResult] {
+    extends FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskExPart, FlaskResult] {
 
   private val flaskTestsConfigType: ObjectType[Unit, FlaskTestsConfig] = {
     implicit val flaskSingleTestConfigType: ObjectType[Unit, FlaskSingleTestConfig] = deriveObjectType()
@@ -27,28 +27,12 @@ object FlaskToolGraphQLModels
     deriveObjectType()
   }
 
-  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, FlaskAbstractResult] = InterfaceType(
-    "FlaskAbstractCorrectionResult",
-    fields[Unit, FlaskAbstractResult](
-      Field("points", FloatType, resolve = _.value.points.asDouble),
-      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
-    ),
-    interfaces[Unit, FlaskAbstractResult](abstractResultInterfaceType)
-  ).withPossibleTypes(() => List(flaskCorrectionResultType, flaskInternalErrorResultType))
-
-  private val flaskCorrectionResultType: ObjectType[Unit, FlaskResult] = {
+  override val resultType: OutputType[FlaskResult] = {
     implicit val flaskTestResultType: ObjectType[Unit, FlaskTestResult] = deriveObjectType()
 
-    deriveObjectType(
-      Interfaces(toolAbstractResultTypeInterfaceType),
-      ExcludeFields("points", "maxPoints")
-    )
-  }
-
-  private val flaskInternalErrorResultType: ObjectType[Unit, FlaskInternalErrorResult] = {
-    deriveObjectType(
-      Interfaces(toolAbstractResultTypeInterfaceType),
-      ExcludeFields("maxPoints")
+    deriveObjectType[Unit, FlaskResult](
+      ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
+      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
     )
   }
 

@@ -4,14 +4,12 @@ import {DbSolution} from '../../../../_interfaces/exercise';
 import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exercise.directive';
 import {
   ExerciseSolveFieldsFragment,
-  SqlAbstractResultFragment, SqlCorrectionGQL,
+  SqlCorrectionGQL,
   SqlCorrectionMutation,
   SqlCorrectionMutationVariables,
   SqlCorrectionResultFragment,
   SqlExerciseContentFragment,
   SqlExPart,
-  SqlInternalErrorResult,
-  SqlInternalErrorResultFragment,
   SqlResultFragment
 } from '../../../../_services/apollo_services';
 
@@ -62,16 +60,8 @@ export class SqlExerciseComponent
     return this.resultQuery?.me.sqlExercise?.correct;
   }
 
-  get abstractResult(): SqlAbstractResultFragment & (SqlInternalErrorResultFragment | SqlResultFragment) | null {
-    return this.correctionResult?.result;
-  }
-
-  get sqlInternalErrorResult(): SqlInternalErrorResult | null {
-    return this.abstractResult?.__typename === 'SqlInternalErrorResult' ? this.abstractResult : null;
-  }
-
   get sqlResult(): SqlResultFragment | null {
-    return this.abstractResult?.__typename === 'SqlResult' ? this.abstractResult : null;
+    return this.correctionResult?.result;
   }
 
   // Correction

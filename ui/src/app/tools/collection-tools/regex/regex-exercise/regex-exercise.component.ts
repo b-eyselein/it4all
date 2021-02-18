@@ -11,7 +11,6 @@ import {
   RegexExerciseContentFragment,
   RegexExPart,
   RegexExtractionResultFragment,
-  RegexInternalErrorResultFragment,
   RegexMatchingResultFragment
 } from '../../../../_services/apollo_services';
 import {HasSampleSolutions} from "../../_helpers/correction-helpers";
@@ -91,12 +90,8 @@ export class RegexExerciseComponent
     return this.resultQuery?.me.regexExercise?.correct;
   }
 
-  get abstractResult(): RegexAbstractResultFragment & (RegexInternalErrorResultFragment | RegexMatchingResultFragment | RegexExtractionResultFragment) {
+  get abstractResult(): RegexAbstractResultFragment & (RegexMatchingResultFragment | RegexExtractionResultFragment) | null {
     return this.correctionResult?.result;
-  }
-
-  get regexInternalErrorResult(): RegexInternalErrorResultFragment | null {
-    return this.abstractResult?.__typename === 'RegexInternalErrorResult' ? this.abstractResult : null;
   }
 
   get regexMatchingResult(): RegexMatchingResultFragment | null {

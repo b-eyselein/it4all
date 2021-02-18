@@ -2,7 +2,7 @@ package model.tools.sql
 
 import model.matching.StringMatcher.StringMatchingResult
 import model.points._
-import model.result.{AbstractCorrectionResult, InternalErrorResult}
+import model.result.AbstractCorrectionResult
 import model.tools.sql.SqlTool._
 
 final case class WrongStatementTypeException(awaited: String, gotten: String)
@@ -81,18 +81,10 @@ final case class SqlQueriesStaticComparison(
 
 // Complete result
 
-sealed trait SqlAbstractResult extends AbstractCorrectionResult
-
-final case class SqlInternalErrorResult(
-  msg: String,
-  maxPoints: Points = (-1).points
-) extends SqlAbstractResult
-    with InternalErrorResult
-
 final case class SqlResult(
   staticComparison: SqlQueriesStaticComparison,
   executionResult: SqlExecutionResult
-) extends SqlAbstractResult {
+) extends AbstractCorrectionResult {
 
   override def points: Points = staticComparison.points
 

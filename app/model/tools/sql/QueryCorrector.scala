@@ -22,7 +22,7 @@ abstract class QueryCorrector(val queryType: String) {
     schemaName: String,
     learnerSolution: String,
     sampleSolutions: Seq[String]
-  )(implicit ec: ExecutionContext): Try[SqlAbstractResult] = parseStatement(learnerSolution).flatMap { userQ =>
+  )(implicit ec: ExecutionContext): Try[SqlResult] = parseStatement(learnerSolution).flatMap { userQ =>
     checkStatement(userQ).flatMap { userQ =>
       val userTables = getTables(userQ)
 

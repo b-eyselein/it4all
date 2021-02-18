@@ -17,7 +17,7 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
     exerciseContent: ProgrammingExerciseContent,
     unitTestPart: NormalUnitTestPart,
     resultFile: File
-  )(implicit ec: ExecutionContext): Future[Try[ProgrammingAbstractResult]] = {
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] = {
 
     // write test data file
 

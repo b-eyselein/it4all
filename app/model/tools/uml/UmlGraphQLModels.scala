@@ -6,12 +6,12 @@ import model.matching.{MatchType, MatchingResult}
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
 import play.api.libs.json.OFormat
-import sangria.macros.derive._
-import sangria.marshalling.playJson._
+import sangria.macros.derive.{ReplaceField, _}
 import sangria.schema._
+import sangria.marshalling.playJson._
 
 object UmlGraphQLModels
-    extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlAbstractResult]
+    extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[UmlExPart] = EnumType(
@@ -205,17 +205,7 @@ object UmlGraphQLModels
     )
   }
 
-  // Abstract result
-
-  private val umlAbstractResultType = InterfaceType(
-    "UmlAbstractResult",
-    fields[Unit, UmlAbstractResult](
-      Field("points", FloatType, resolve = _.value.points.asDouble),
-      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
-    )
-  ).withPossibleTypes(() => List(umlResultType, umlInternalErrorResultType))
-
-  private val umlResultType: ObjectType[Unit, UmlResult] = {
+  override val resultType: OutputType[UmlResult] = {
     implicit val cct: ObjectType[Unit, ClassComparison] =
       matchingResultType("UmlClass", umlClassMatchType, umlClassType, identity)
 
@@ -226,16 +216,9 @@ object UmlGraphQLModels
       matchingResultType("UmlImplementation", umlImplementationMatchType, umlImplementationType, identity)
 
     deriveObjectType[Unit, UmlResult](
-      Interfaces(umlAbstractResultType),
-      ExcludeFields("points", "maxPoints")
+      ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
+      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
     )
   }
-
-  private val umlInternalErrorResultType: ObjectType[Unit, UmlInternalErrorResult] = deriveObjectType(
-    Interfaces(umlAbstractResultType),
-    ExcludeFields("maxPoints")
-  )
-
-  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, UmlAbstractResult] = umlAbstractResultType
 
 }

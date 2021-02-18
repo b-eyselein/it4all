@@ -2,7 +2,7 @@ package model.tools.programming
 
 import better.files.File
 import model.FilesSolution
-import model.core.{DockerBind, ScalaDockerImage}
+import model.core.DockerBind
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -13,14 +13,12 @@ object ProgrammingCorrector
     with ProgrammingUnitTestCorrector
     with ProgrammingNormalImplementationCorrector {
 
-  override protected val dockerImage: ScalaDockerImage = programmingCorrectionDockerImage
-
   def correct(
     exercise: ProgrammingExercise,
     solution: FilesSolution,
     solutionTargetDir: File,
     part: ProgExPart
-  )(implicit ec: ExecutionContext): Future[Try[ProgrammingAbstractResult]] = {
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] = {
 
     // Create or truncate result file
     val resultFile = solutionTargetDir / resultFileName

@@ -16,7 +16,7 @@ object UmlTool extends Tool("uml", "Uml", ToolState.BETA) {
   override type SolType       = UmlClassDiagram
   override type ExContentType = UmlExerciseContent
   override type PartType      = UmlExPart
-  override type ResType       = UmlAbstractResult
+  override type ResType       = UmlResult
 
   type UmlExercise = Exercise[UmlExerciseContent]
 
@@ -30,8 +30,7 @@ object UmlTool extends Tool("uml", "Uml", ToolState.BETA) {
 
   override val jsonFormats: ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] = UmlToolJsonProtocol
 
-  override val graphQlModels
-    : ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlAbstractResult] =
+  override val graphQlModels: ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlResult] =
     UmlGraphQLModels
 
   // Correction
@@ -41,7 +40,7 @@ object UmlTool extends Tool("uml", "Uml", ToolState.BETA) {
     solution: UmlClassDiagram,
     exercise: UmlExercise,
     part: UmlExPart
-  )(implicit executionContext: ExecutionContext): Future[Try[UmlAbstractResult]] =
+  )(implicit executionContext: ExecutionContext): Future[Try[UmlResult]] =
     Future.successful { UmlCorrector.correct(solution, exercise, part) }
 
   override val initialData: InitialData[UmlExerciseContent] = UmlInitialData

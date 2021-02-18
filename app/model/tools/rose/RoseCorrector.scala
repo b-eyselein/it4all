@@ -27,7 +27,7 @@ object RoseCorrector extends DockerExecutionCorrector {
     learnerSolution: String,
     exercise: RoseExercise,
     solutionTargetDir: File
-  )(implicit ec: ExecutionContext): Future[Try[RoseAbstractResult]] =
+  )(implicit ec: ExecutionContext): Future[Try[RoseResult]] =
     exercise.content.sampleSolutions.headOption match {
       case None => Future.successful(Failure(new Exception("No sample solution for rose exercise!")))
       case Some(sample) =>

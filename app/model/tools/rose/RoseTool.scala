@@ -14,7 +14,7 @@ object RoseTool extends Tool("rose", "Rose", ToolState.PRE_ALPHA) {
   override type SolType       = String
   override type ExContentType = RoseExerciseContent
   override type PartType      = RoseExPart
-  override type ResType       = RoseAbstractResult
+  override type ResType       = RoseResult
 
   type RoseExercise = Exercise[RoseExerciseContent]
 
@@ -22,7 +22,7 @@ object RoseTool extends Tool("rose", "Rose", ToolState.PRE_ALPHA) {
 
   override val jsonFormats: ToolJsonProtocol[String, RoseExerciseContent, RoseExPart] = RoseToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExPart, RoseAbstractResult] =
+  override val graphQlModels: ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExPart, RoseResult] =
     RoseGraphQLModels
 
   // Correction
@@ -32,7 +32,7 @@ object RoseTool extends Tool("rose", "Rose", ToolState.PRE_ALPHA) {
     solution: String,
     exercise: RoseExercise,
     part: RoseExPart
-  )(implicit executionContext: ExecutionContext): Future[Try[RoseAbstractResult]] = {
+  )(implicit executionContext: ExecutionContext): Future[Try[RoseResult]] = {
 
     val solDir = solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId)
 

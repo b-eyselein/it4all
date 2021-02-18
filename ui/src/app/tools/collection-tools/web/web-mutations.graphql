@@ -13,23 +13,13 @@ fragment WebCorrectionResult on WebCorrectionResult {
   resultSaved
   proficienciesUpdated
   result {
-    ...WebAbstractResult
     ...WebResult
-    ...WebInternalErrorResult
   }
 }
 
-fragment WebAbstractResult on WebAbstractResult {
-  __typename
+fragment WebResult on WebResult {
   points
   maxPoints
-}
-
-fragment WebInternalErrorResult on WebInternalErrorResult {
-  msg
-}
-
-fragment WebResult on WebResult {
   gradedHtmlTaskResults {
     ...GradedHtmlTaskResult
   }

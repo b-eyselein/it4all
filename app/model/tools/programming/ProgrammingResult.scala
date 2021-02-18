@@ -1,16 +1,8 @@
 package model.tools.programming
 
 import model.points._
-import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
+import model.result.{AbstractCorrectionResult, SuccessType}
 import play.api.libs.json.JsValue
-
-trait ProgrammingAbstractResult extends AbstractCorrectionResult
-
-final case class ProgrammingInternalErrorResult(
-  msg: String,
-  maxPoints: Points
-) extends ProgrammingAbstractResult
-    with InternalErrorResult
 
 final case class ProgrammingResult(
   proficienciesUpdated: Option[Boolean] = None,
@@ -19,7 +11,7 @@ final case class ProgrammingResult(
   unitTestResults: Seq[UnitTestCorrectionResult] = Seq.empty,
   points: Points,
   maxPoints: Points
-) extends ProgrammingAbstractResult {
+) extends AbstractCorrectionResult {
 
   override def isCompletelyCorrect: Boolean = {
 

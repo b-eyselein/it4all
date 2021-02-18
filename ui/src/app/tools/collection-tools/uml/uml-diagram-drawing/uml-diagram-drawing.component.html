@@ -63,8 +63,15 @@
         </it4all-tab>
         <it4all-tab [title]="correctionTabTitle">
 
-          <it4all-solution-saved *ngIf="umlAbstractResult" [solutionSaved]="correctionResult.solutionSaved">
+          <it4all-solution-saved *ngIf="result" [solutionSaved]="correctionResult.solutionSaved">
           </it4all-solution-saved>
+
+          <div class="message" *ngIf="queryError">
+            <div class="message-header">Es gab einen Fehler bei der Korrektur:</div>
+            <div class="message-body">
+              <pre>{{queryError.message}}</pre>
+            </div>
+          </div>
 
           <it4all-uml-diag-drawing-correction *ngIf="resultQuery" [result]="result">
           </it4all-uml-diag-drawing-correction>

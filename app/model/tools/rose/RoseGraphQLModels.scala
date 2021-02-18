@@ -5,7 +5,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 object RoseGraphQLModels
-    extends ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExPart, RoseAbstractResult]
+    extends ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExPart, RoseResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[RoseExPart] = EnumType(
@@ -19,28 +19,10 @@ object RoseGraphQLModels
 
   // Abstract result
 
-  private val roseAbstractResultType: InterfaceType[Unit, RoseAbstractResult] = InterfaceType(
-    "RoseAbstractResult",
-    fields[Unit, RoseAbstractResult](
-      Field("points", FloatType, resolve = _.value.points.asDouble),
-      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
-    ),
-    interfaces[Unit, RoseAbstractResult](abstractResultInterfaceType)
-  ).withPossibleTypes(() => List(roseResultType, roseInternalErrorResultType))
-
-  private val roseResultType: ObjectType[Unit, RoseResult] = deriveObjectType[Unit, RoseResult](
-    Interfaces(roseAbstractResultType),
-    ExcludeFields("points", "maxPoints", "result"),
-    AddFields(
-      Field("_x", BooleanType, resolve = _ => false)
-    )
+  override val resultType: OutputType[RoseResult] = deriveObjectType[Unit, RoseResult](
+    ExcludeFields("result"),
+    ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
+    ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
   )
-
-  private val roseInternalErrorResultType: ObjectType[Unit, RoseInternalErrorResult] = deriveObjectType(
-    Interfaces(roseAbstractResultType),
-    ExcludeFields("maxPoints")
-  )
-
-  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, RoseAbstractResult] = roseAbstractResultType
 
 }

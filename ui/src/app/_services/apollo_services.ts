@@ -90,17 +90,12 @@ export type FilesSolutionInput = {
   files: Array<ExerciseFileInput>;
 };
 
-export type FlaskAbstractCorrectionResult = {
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
 export type FlaskCorrectionResult = {
   __typename?: 'FlaskCorrectionResult';
   solutionSaved: Scalars['Boolean'];
   resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
-  result: FlaskAbstractCorrectionResult;
+  result: FlaskResult;
 };
 
 export type FlaskExerciseMutations = {
@@ -118,14 +113,7 @@ export enum FlaskExercisePart {
   FlaskSingleExPart = 'FlaskSingleExPart'
 }
 
-export type FlaskInternalErrorResult = FlaskAbstractCorrectionResult & AbstractCorrectionResult & {
-  __typename?: 'FlaskInternalErrorResult';
-  msg: Scalars['String'];
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
-export type FlaskResult = FlaskAbstractCorrectionResult & AbstractCorrectionResult & {
+export type FlaskResult = {
   __typename?: 'FlaskResult';
   testResults: Array<FlaskTestResult>;
   points: Scalars['Float'];
@@ -262,17 +250,12 @@ export type NormalExecutionResult = {
   stderr: Array<Scalars['String']>;
 };
 
-export type ProgrammingAbstractResult = {
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
 export type ProgrammingCorrectionResult = {
   __typename?: 'ProgrammingCorrectionResult';
   solutionSaved: Scalars['Boolean'];
   resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
-  result: ProgrammingAbstractResult;
+  result: ProgrammingResult;
 };
 
 export type ProgrammingExerciseMutations = {
@@ -286,14 +269,7 @@ export type ProgrammingExerciseMutationsCorrectArgs = {
   solution: FilesSolutionInput;
 };
 
-export type ProgrammingInternalErrorResult = ProgrammingAbstractResult & AbstractCorrectionResult & {
-  __typename?: 'ProgrammingInternalErrorResult';
-  msg: Scalars['String'];
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
-export type ProgrammingResult = ProgrammingAbstractResult & AbstractCorrectionResult & {
+export type ProgrammingResult = {
   __typename?: 'ProgrammingResult';
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   simplifiedResults: Array<SimplifiedExecutionResult>;
@@ -352,13 +328,6 @@ export type RegexExtractionSingleResult = {
   correct: Scalars['Boolean'];
 };
 
-export type RegexInternalErrorResult = RegexAbstractResult & AbstractCorrectionResult & {
-  __typename?: 'RegexInternalErrorResult';
-  msg: Scalars['String'];
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
 export type RegexMatchMatch = NewMatch & {
   __typename?: 'RegexMatchMatch';
   sampleArg?: Maybe<Scalars['String']>;
@@ -403,11 +372,6 @@ export type SimplifiedExecutionResult = {
   testInput: Scalars['String'];
   awaited: Scalars['String'];
   gotten: Scalars['String'];
-};
-
-export type SqlAbstractResult = {
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
 };
 
 export type SqlBinaryExpressionComparisonMatchingResult = MatchingResult & {
@@ -455,7 +419,7 @@ export type SqlCorrectionResult = {
   solutionSaved: Scalars['Boolean'];
   resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
-  result: SqlAbstractResult;
+  result: SqlResult;
 };
 
 export type SqlExecutionResult = {
@@ -473,13 +437,6 @@ export type SqlExerciseMutations = {
 export type SqlExerciseMutationsCorrectArgs = {
   part: SqlExPart;
   solution: Scalars['String'];
-};
-
-export type SqlInternalErrorResult = SqlAbstractResult & AbstractCorrectionResult & {
-  __typename?: 'SqlInternalErrorResult';
-  msg: Scalars['String'];
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
 };
 
 export type SqlLimitComparisonMatchingResult = MatchingResult & {
@@ -511,7 +468,7 @@ export type SqlQueriesStaticComparison = {
   additionalComparisons: AdditionalComparison;
 };
 
-export type SqlResult = SqlAbstractResult & AbstractCorrectionResult & {
+export type SqlResult = {
   __typename?: 'SqlResult';
   staticComparison: SqlQueriesStaticComparison;
   executionResult: SqlExecutionResult;
@@ -541,11 +498,6 @@ export enum SuccessType {
   None = 'NONE',
   Partially = 'PARTIALLY'
 }
-
-export type UmlAbstractResult = {
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
 
 export type UmlAssociationAnalysisResult = {
   __typename?: 'UmlAssociationAnalysisResult';
@@ -677,7 +629,7 @@ export type UmlCorrectionResult = {
   solutionSaved: Scalars['Boolean'];
   resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
-  result: UmlAbstractResult;
+  result: UmlResult;
 };
 
 export type UmlExerciseMutations = {
@@ -714,13 +666,6 @@ export type UmlImplementationMatchingResult = MatchingResult & {
   maxPoints: Scalars['Float'];
   notMatchedForUserString: Array<Scalars['String']>;
   notMatchedForSampleString: Array<Scalars['String']>;
-};
-
-export type UmlInternalErrorResult = UmlAbstractResult & {
-  __typename?: 'UmlInternalErrorResult';
-  msg: Scalars['String'];
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
 };
 
 export type UmlMethodAnalysisResult = {
@@ -767,7 +712,7 @@ export type UmlMethodMatchingResult = MatchingResult & {
   notMatchedForSampleString: Array<Scalars['String']>;
 };
 
-export type UmlResult = UmlAbstractResult & {
+export type UmlResult = {
   __typename?: 'UmlResult';
   classResult?: Maybe<UmlClassMatchingResult>;
   assocResult?: Maybe<UmlAssociationMatchingResult>;
@@ -843,17 +788,12 @@ export type UserMutationsXmlExerciseArgs = {
   exId: Scalars['Int'];
 };
 
-export type WebAbstractResult = {
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
 export type WebCorrectionResult = {
   __typename?: 'WebCorrectionResult';
   solutionSaved: Scalars['Boolean'];
   resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
-  result: WebAbstractResult;
+  result: WebResult;
 };
 
 export type WebExerciseMutations = {
@@ -867,22 +807,10 @@ export type WebExerciseMutationsCorrectArgs = {
   solution: FilesSolutionInput;
 };
 
-export type WebInternalErrorResult = WebAbstractResult & AbstractCorrectionResult & {
-  __typename?: 'WebInternalErrorResult';
-  msg: Scalars['String'];
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
-export type WebResult = WebAbstractResult & AbstractCorrectionResult & {
+export type WebResult = {
   __typename?: 'WebResult';
   gradedHtmlTaskResults: Array<GradedHtmlTaskResult>;
   gradedJsTaskResults: Array<GradedJsTaskResult>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
-export type XmlAbstractResult = {
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
 };
@@ -892,7 +820,7 @@ export type XmlCorrectionResult = {
   solutionSaved: Scalars['Boolean'];
   resultSaved: Scalars['Boolean'];
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
-  result: XmlAbstractResult;
+  result: XmlResult;
 };
 
 export type XmlDocumentResult = {
@@ -942,14 +870,7 @@ export type XmlGrammarResult = {
   results: XmlElementLineComparisonMatchingResult;
 };
 
-export type XmlInternalErrorResult = XmlAbstractResult & AbstractCorrectionResult & {
-  __typename?: 'XmlInternalErrorResult';
-  msg: Scalars['String'];
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
-export type XmlResult = XmlAbstractResult & AbstractCorrectionResult & {
+export type XmlResult = {
   __typename?: 'XmlResult';
   successType: SuccessType;
   documentResult?: Maybe<XmlDocumentResult>;
@@ -1256,11 +1177,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Update = 'UPDATE',
   Insert = 'INSERT',
   Select = 'SELECT',
-  Create = 'CREATE',
-  Delete = 'DELETE'
+  Delete = 'DELETE',
+  Update = 'UPDATE',
+  Create = 'CREATE'
 }
 
 export type SqlKeyCellValueObject = {
@@ -1498,35 +1419,14 @@ export type FlaskCorrectionResultFragment = (
   { __typename?: 'FlaskCorrectionResult' }
   & Pick<FlaskCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
-    { __typename?: 'FlaskInternalErrorResult' }
-    & FlaskAbstractCorrectionResult_FlaskInternalErrorResult_Fragment
-  ) | (
     { __typename?: 'FlaskResult' }
-    & FlaskAbstractCorrectionResult_FlaskResult_Fragment
+    & FlaskResultFragment
   ) }
-);
-
-type FlaskAbstractCorrectionResult_FlaskInternalErrorResult_Fragment = (
-  { __typename: 'FlaskInternalErrorResult' }
-  & Pick<FlaskInternalErrorResult, 'points' | 'maxPoints'>
-  & FlaskInternalErrorResultFragment
-);
-
-type FlaskAbstractCorrectionResult_FlaskResult_Fragment = (
-  { __typename: 'FlaskResult' }
-  & Pick<FlaskResult, 'points' | 'maxPoints'>
-  & FlaskResultFragment
-);
-
-export type FlaskAbstractCorrectionResultFragment = FlaskAbstractCorrectionResult_FlaskInternalErrorResult_Fragment | FlaskAbstractCorrectionResult_FlaskResult_Fragment;
-
-export type FlaskInternalErrorResultFragment = (
-  { __typename?: 'FlaskInternalErrorResult' }
-  & Pick<FlaskInternalErrorResult, 'msg'>
 );
 
 export type FlaskResultFragment = (
   { __typename?: 'FlaskResult' }
+  & Pick<FlaskResult, 'points' | 'maxPoints'>
   & { testResults: Array<(
     { __typename?: 'FlaskTestResult' }
     & FlaskTestResultFragment
@@ -1564,35 +1464,14 @@ export type ProgrammingCorrectionResultFragment = (
   { __typename: 'ProgrammingCorrectionResult' }
   & Pick<ProgrammingCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
-    { __typename?: 'ProgrammingInternalErrorResult' }
-    & ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment
-    & ProgrammingInternalErrorResultFragment
-  ) | (
     { __typename?: 'ProgrammingResult' }
-    & ProgrammingAbstractResult_ProgrammingResult_Fragment
     & ProgrammingResultFragment
   ) }
 );
 
-type ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment = (
-  { __typename: 'ProgrammingInternalErrorResult' }
-  & Pick<ProgrammingInternalErrorResult, 'points' | 'maxPoints'>
-);
-
-type ProgrammingAbstractResult_ProgrammingResult_Fragment = (
-  { __typename: 'ProgrammingResult' }
-  & Pick<ProgrammingResult, 'points' | 'maxPoints'>
-);
-
-export type ProgrammingAbstractResultFragment = ProgrammingAbstractResult_ProgrammingInternalErrorResult_Fragment | ProgrammingAbstractResult_ProgrammingResult_Fragment;
-
-export type ProgrammingInternalErrorResultFragment = (
-  { __typename?: 'ProgrammingInternalErrorResult' }
-  & Pick<ProgrammingInternalErrorResult, 'msg'>
-);
-
 export type ProgrammingResultFragment = (
   { __typename?: 'ProgrammingResult' }
+  & Pick<ProgrammingResult, 'points' | 'maxPoints'>
   & { simplifiedResults: Array<(
     { __typename?: 'SimplifiedExecutionResult' }
     & SimplifiedExecutionResultFragment
@@ -1650,10 +1529,6 @@ export type RegexCorrectionResultFragment = (
     & RegexAbstractResult_RegexExtractionResult_Fragment
     & RegexExtractionResultFragment
   ) | (
-    { __typename?: 'RegexInternalErrorResult' }
-    & Pick<RegexInternalErrorResult, 'msg'>
-    & RegexAbstractResult_RegexInternalErrorResult_Fragment
-  ) | (
     { __typename?: 'RegexMatchingResult' }
     & RegexAbstractResult_RegexMatchingResult_Fragment
     & RegexMatchingResultFragment
@@ -1665,22 +1540,12 @@ type RegexAbstractResult_RegexExtractionResult_Fragment = (
   & Pick<RegexExtractionResult, 'points' | 'maxPoints'>
 );
 
-type RegexAbstractResult_RegexInternalErrorResult_Fragment = (
-  { __typename: 'RegexInternalErrorResult' }
-  & Pick<RegexInternalErrorResult, 'points' | 'maxPoints'>
-);
-
 type RegexAbstractResult_RegexMatchingResult_Fragment = (
   { __typename: 'RegexMatchingResult' }
   & Pick<RegexMatchingResult, 'points' | 'maxPoints'>
 );
 
-export type RegexAbstractResultFragment = RegexAbstractResult_RegexExtractionResult_Fragment | RegexAbstractResult_RegexInternalErrorResult_Fragment | RegexAbstractResult_RegexMatchingResult_Fragment;
-
-export type RegexInternalErrorResultFragment = (
-  { __typename?: 'RegexInternalErrorResult' }
-  & Pick<RegexInternalErrorResult, 'msg'>
-);
+export type RegexAbstractResultFragment = RegexAbstractResult_RegexExtractionResult_Fragment | RegexAbstractResult_RegexMatchingResult_Fragment;
 
 export type RegexMatchingSingleResultFragment = (
   { __typename?: 'RegexMatchingSingleResult' }
@@ -1752,31 +1617,9 @@ export type SqlCorrectionResultFragment = (
   { __typename?: 'SqlCorrectionResult' }
   & Pick<SqlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
-    { __typename?: 'SqlInternalErrorResult' }
-    & SqlAbstractResult_SqlInternalErrorResult_Fragment
-    & SqlInternalErrorResultFragment
-  ) | (
     { __typename?: 'SqlResult' }
-    & SqlAbstractResult_SqlResult_Fragment
     & SqlResultFragment
   ) }
-);
-
-type SqlAbstractResult_SqlInternalErrorResult_Fragment = (
-  { __typename: 'SqlInternalErrorResult' }
-  & Pick<SqlInternalErrorResult, 'points' | 'maxPoints'>
-);
-
-type SqlAbstractResult_SqlResult_Fragment = (
-  { __typename: 'SqlResult' }
-  & Pick<SqlResult, 'points' | 'maxPoints'>
-);
-
-export type SqlAbstractResultFragment = SqlAbstractResult_SqlInternalErrorResult_Fragment | SqlAbstractResult_SqlResult_Fragment;
-
-export type SqlInternalErrorResultFragment = (
-  { __typename?: 'SqlInternalErrorResult' }
-  & Pick<SqlInternalErrorResult, 'msg'>
 );
 
 export type ColumnComparisonFragment = (
@@ -1810,6 +1653,7 @@ export type SelectAdditionalComparisonFragment = (
 
 export type SqlResultFragment = (
   { __typename?: 'SqlResult' }
+  & Pick<SqlResult, 'points' | 'maxPoints'>
   & { staticComparison: (
     { __typename?: 'SqlQueriesStaticComparison' }
     & { columnComparison: (
@@ -2061,35 +1905,14 @@ export type UmlCorrectionResultFragment = (
   { __typename?: 'UmlCorrectionResult' }
   & Pick<UmlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
-    { __typename?: 'UmlInternalErrorResult' }
-    & UmlAbstractResult_UmlInternalErrorResult_Fragment
-    & UmlInternalErrorResultFragment
-  ) | (
     { __typename?: 'UmlResult' }
-    & UmlAbstractResult_UmlResult_Fragment
     & UmlResultFragment
   ) }
 );
 
-type UmlAbstractResult_UmlInternalErrorResult_Fragment = (
-  { __typename: 'UmlInternalErrorResult' }
-  & Pick<UmlInternalErrorResult, 'points' | 'maxPoints'>
-);
-
-type UmlAbstractResult_UmlResult_Fragment = (
-  { __typename: 'UmlResult' }
-  & Pick<UmlResult, 'points' | 'maxPoints'>
-);
-
-export type UmlAbstractResultFragment = UmlAbstractResult_UmlInternalErrorResult_Fragment | UmlAbstractResult_UmlResult_Fragment;
-
-export type UmlInternalErrorResultFragment = (
-  { __typename?: 'UmlInternalErrorResult' }
-  & Pick<UmlInternalErrorResult, 'msg'>
-);
-
 export type UmlResultFragment = (
   { __typename?: 'UmlResult' }
+  & Pick<UmlResult, 'points' | 'maxPoints'>
   & { classResult?: Maybe<(
     { __typename?: 'UmlClassMatchingResult' }
     & UmlClassMatchingResultFragment
@@ -2228,35 +2051,14 @@ export type WebCorrectionResultFragment = (
   { __typename?: 'WebCorrectionResult' }
   & Pick<WebCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
-    { __typename?: 'WebInternalErrorResult' }
-    & WebAbstractResult_WebInternalErrorResult_Fragment
-    & WebInternalErrorResultFragment
-  ) | (
     { __typename?: 'WebResult' }
-    & WebAbstractResult_WebResult_Fragment
     & WebResultFragment
   ) }
 );
 
-type WebAbstractResult_WebInternalErrorResult_Fragment = (
-  { __typename: 'WebInternalErrorResult' }
-  & Pick<WebInternalErrorResult, 'points' | 'maxPoints'>
-);
-
-type WebAbstractResult_WebResult_Fragment = (
-  { __typename: 'WebResult' }
-  & Pick<WebResult, 'points' | 'maxPoints'>
-);
-
-export type WebAbstractResultFragment = WebAbstractResult_WebInternalErrorResult_Fragment | WebAbstractResult_WebResult_Fragment;
-
-export type WebInternalErrorResultFragment = (
-  { __typename?: 'WebInternalErrorResult' }
-  & Pick<WebInternalErrorResult, 'msg'>
-);
-
 export type WebResultFragment = (
   { __typename?: 'WebResult' }
+  & Pick<WebResult, 'points' | 'maxPoints'>
   & { gradedHtmlTaskResults: Array<(
     { __typename?: 'GradedHtmlTaskResult' }
     & GradedHtmlTaskResultFragment
@@ -2335,36 +2137,14 @@ export type XmlCorrectionResultFragment = (
   { __typename?: 'XmlCorrectionResult' }
   & Pick<XmlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
   & { result: (
-    { __typename?: 'XmlInternalErrorResult' }
-    & XmlAbstractResult_XmlInternalErrorResult_Fragment
-    & XmlInternalErrorResultFragment
-  ) | (
     { __typename?: 'XmlResult' }
-    & XmlAbstractResult_XmlResult_Fragment
     & XmlResultFragment
   ) }
 );
 
-type XmlAbstractResult_XmlInternalErrorResult_Fragment = (
-  { __typename: 'XmlInternalErrorResult' }
-  & Pick<XmlInternalErrorResult, 'points' | 'maxPoints'>
-);
-
-type XmlAbstractResult_XmlResult_Fragment = (
-  { __typename: 'XmlResult' }
-  & Pick<XmlResult, 'points' | 'maxPoints'>
-);
-
-export type XmlAbstractResultFragment = XmlAbstractResult_XmlInternalErrorResult_Fragment | XmlAbstractResult_XmlResult_Fragment;
-
-export type XmlInternalErrorResultFragment = (
-  { __typename?: 'XmlInternalErrorResult' }
-  & Pick<XmlInternalErrorResult, 'msg'>
-);
-
 export type XmlResultFragment = (
   { __typename?: 'XmlResult' }
-  & Pick<XmlResult, 'successType'>
+  & Pick<XmlResult, 'points' | 'maxPoints' | 'successType'>
   & { grammarResult?: Maybe<(
     { __typename?: 'XmlGrammarResult' }
     & XmlGrammarResultFragment
@@ -3039,11 +2819,6 @@ export type LoginMutation = (
   )> }
 );
 
-export const FlaskInternalErrorResultFragmentDoc = gql`
-    fragment FlaskInternalErrorResult on FlaskInternalErrorResult {
-  msg
-}
-    `;
 export const FlaskTestResultFragmentDoc = gql`
     fragment FlaskTestResult on FlaskTestResult {
   testName
@@ -3054,43 +2829,23 @@ export const FlaskTestResultFragmentDoc = gql`
     `;
 export const FlaskResultFragmentDoc = gql`
     fragment FlaskResult on FlaskResult {
+  points
+  maxPoints
   testResults {
     ...FlaskTestResult
   }
 }
     ${FlaskTestResultFragmentDoc}`;
-export const FlaskAbstractCorrectionResultFragmentDoc = gql`
-    fragment FlaskAbstractCorrectionResult on FlaskAbstractCorrectionResult {
-  __typename
-  points
-  maxPoints
-  ...FlaskInternalErrorResult
-  ...FlaskResult
-}
-    ${FlaskInternalErrorResultFragmentDoc}
-${FlaskResultFragmentDoc}`;
 export const FlaskCorrectionResultFragmentDoc = gql`
     fragment FlaskCorrectionResult on FlaskCorrectionResult {
   solutionSaved
   resultSaved
   proficienciesUpdated
   result {
-    ...FlaskAbstractCorrectionResult
+    ...FlaskResult
   }
 }
-    ${FlaskAbstractCorrectionResultFragmentDoc}`;
-export const ProgrammingAbstractResultFragmentDoc = gql`
-    fragment ProgrammingAbstractResult on ProgrammingAbstractResult {
-  __typename
-  points
-  maxPoints
-}
-    `;
-export const ProgrammingInternalErrorResultFragmentDoc = gql`
-    fragment ProgrammingInternalErrorResult on ProgrammingInternalErrorResult {
-  msg
-}
-    `;
+    ${FlaskResultFragmentDoc}`;
 export const SimplifiedExecutionResultFragmentDoc = gql`
     fragment SimplifiedExecutionResult on SimplifiedExecutionResult {
   __typename
@@ -3119,6 +2874,8 @@ export const UnitTestCorrectionResultFragmentDoc = gql`
     `;
 export const ProgrammingResultFragmentDoc = gql`
     fragment ProgrammingResult on ProgrammingResult {
+  points
+  maxPoints
   simplifiedResults {
     ...SimplifiedExecutionResult
   }
@@ -3139,14 +2896,10 @@ export const ProgrammingCorrectionResultFragmentDoc = gql`
   resultSaved
   proficienciesUpdated
   result {
-    ...ProgrammingAbstractResult
-    ...ProgrammingInternalErrorResult
     ...ProgrammingResult
   }
 }
-    ${ProgrammingAbstractResultFragmentDoc}
-${ProgrammingInternalErrorResultFragmentDoc}
-${ProgrammingResultFragmentDoc}`;
+    ${ProgrammingResultFragmentDoc}`;
 export const RegexAbstractResultFragmentDoc = gql`
     fragment RegexAbstractResult on RegexAbstractResult {
   __typename
@@ -3207,9 +2960,6 @@ export const RegexCorrectionResultFragmentDoc = gql`
   proficienciesUpdated
   result {
     ...RegexAbstractResult
-    ... on RegexInternalErrorResult {
-      msg
-    }
     ...RegexMatchingResult
     ...RegexExtractionResult
   }
@@ -3217,23 +2967,6 @@ export const RegexCorrectionResultFragmentDoc = gql`
     ${RegexAbstractResultFragmentDoc}
 ${RegexMatchingResultFragmentDoc}
 ${RegexExtractionResultFragmentDoc}`;
-export const RegexInternalErrorResultFragmentDoc = gql`
-    fragment RegexInternalErrorResult on RegexInternalErrorResult {
-  msg
-}
-    `;
-export const SqlAbstractResultFragmentDoc = gql`
-    fragment SqlAbstractResult on SqlAbstractResult {
-  __typename
-  points
-  maxPoints
-}
-    `;
-export const SqlInternalErrorResultFragmentDoc = gql`
-    fragment SqlInternalErrorResult on SqlInternalErrorResult {
-  msg
-}
-    `;
 export const NewMatchFragmentDoc = gql`
     fragment NewMatch on NewMatch {
   matchType
@@ -3337,6 +3070,8 @@ export const SqlExecutionResultFragmentDoc = gql`
     ${SqlQueryResultFragmentDoc}`;
 export const SqlResultFragmentDoc = gql`
     fragment SqlResult on SqlResult {
+  points
+  maxPoints
   staticComparison {
     columnComparison {
       ...ColumnComparison
@@ -3374,26 +3109,10 @@ export const SqlCorrectionResultFragmentDoc = gql`
   resultSaved
   proficienciesUpdated
   result {
-    ...SqlAbstractResult
-    ...SqlInternalErrorResult
     ...SqlResult
   }
 }
-    ${SqlAbstractResultFragmentDoc}
-${SqlInternalErrorResultFragmentDoc}
-${SqlResultFragmentDoc}`;
-export const UmlAbstractResultFragmentDoc = gql`
-    fragment UmlAbstractResult on UmlAbstractResult {
-  __typename
-  points
-  maxPoints
-}
-    `;
-export const UmlInternalErrorResultFragmentDoc = gql`
-    fragment UmlInternalErrorResult on UmlInternalErrorResult {
-  msg
-}
-    `;
+    ${SqlResultFragmentDoc}`;
 export const UmlSolutionClassFragmentDoc = gql`
     fragment UmlSolutionClass on UmlClass {
   classType
@@ -3513,6 +3232,8 @@ export const UmlImplementationMatchingResultFragmentDoc = gql`
 ${UmlImplementationFragmentDoc}`;
 export const UmlResultFragmentDoc = gql`
     fragment UmlResult on UmlResult {
+  points
+  maxPoints
   classResult {
     ...UmlClassMatchingResult
   }
@@ -3532,21 +3253,10 @@ export const UmlCorrectionResultFragmentDoc = gql`
   resultSaved
   proficienciesUpdated
   result {
-    ...UmlAbstractResult
-    ...UmlInternalErrorResult
     ...UmlResult
   }
 }
-    ${UmlAbstractResultFragmentDoc}
-${UmlInternalErrorResultFragmentDoc}
-${UmlResultFragmentDoc}`;
-export const WebAbstractResultFragmentDoc = gql`
-    fragment WebAbstractResult on WebAbstractResult {
-  __typename
-  points
-  maxPoints
-}
-    `;
+    ${UmlResultFragmentDoc}`;
 export const GradedTextContentResultFragmentDoc = gql`
     fragment GradedTextContentResult on GradedTextResult {
   keyName
@@ -3608,6 +3318,8 @@ export const GradedJsTaskResultFragmentDoc = gql`
 ${GradedJsActionResultFragmentDoc}`;
 export const WebResultFragmentDoc = gql`
     fragment WebResult on WebResult {
+  points
+  maxPoints
   gradedHtmlTaskResults {
     ...GradedHtmlTaskResult
   }
@@ -3617,37 +3329,16 @@ export const WebResultFragmentDoc = gql`
 }
     ${GradedHtmlTaskResultFragmentDoc}
 ${GradedJsTaskResultFragmentDoc}`;
-export const WebInternalErrorResultFragmentDoc = gql`
-    fragment WebInternalErrorResult on WebInternalErrorResult {
-  msg
-}
-    `;
 export const WebCorrectionResultFragmentDoc = gql`
     fragment WebCorrectionResult on WebCorrectionResult {
   solutionSaved
   resultSaved
   proficienciesUpdated
   result {
-    ...WebAbstractResult
     ...WebResult
-    ...WebInternalErrorResult
   }
 }
-    ${WebAbstractResultFragmentDoc}
-${WebResultFragmentDoc}
-${WebInternalErrorResultFragmentDoc}`;
-export const XmlAbstractResultFragmentDoc = gql`
-    fragment XmlAbstractResult on XmlAbstractResult {
-  __typename
-  points
-  maxPoints
-}
-    `;
-export const XmlInternalErrorResultFragmentDoc = gql`
-    fragment XmlInternalErrorResult on XmlInternalErrorResult {
-  msg
-}
-    `;
+    ${WebResultFragmentDoc}`;
 export const ElementLineFragmentDoc = gql`
     fragment ElementLine on ElementLine {
   elementName
@@ -3728,6 +3419,8 @@ export const XmlDocumentResultFragmentDoc = gql`
     ${XmlErrorFragmentDoc}`;
 export const XmlResultFragmentDoc = gql`
     fragment XmlResult on XmlResult {
+  points
+  maxPoints
   successType
   grammarResult {
     ...XmlGrammarResult
@@ -3744,14 +3437,10 @@ export const XmlCorrectionResultFragmentDoc = gql`
   resultSaved
   proficienciesUpdated
   result {
-    ...XmlAbstractResult
-    ...XmlInternalErrorResult
     ...XmlResult
   }
 }
-    ${XmlAbstractResultFragmentDoc}
-${XmlInternalErrorResultFragmentDoc}
-${XmlResultFragmentDoc}`;
+    ${XmlResultFragmentDoc}`;
 export const LessonIdentifierFragmentDoc = gql`
     fragment LessonIdentifier on Lesson {
   lessonId

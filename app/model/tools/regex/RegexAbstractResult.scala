@@ -1,7 +1,7 @@
 package model.tools.regex
 
 import model.points._
-import model.result.{AbstractCorrectionResult, InternalErrorResult}
+import model.result.AbstractCorrectionResult
 import model.tools.regex.RegexTool.ExtractedValuesComparison
 
 // single matching result
@@ -23,12 +23,6 @@ final case class RegexExtractionSingleResult(
 // complete result
 
 sealed trait RegexAbstractResult extends AbstractCorrectionResult
-
-final case class RegexInternalErrorResult(
-  msg: String,
-  maxPoints: Points = (-1).points
-) extends RegexAbstractResult
-    with InternalErrorResult
 
 final case class RegexMatchingResult(
   matchingResults: Seq[RegexMatchingSingleResult],

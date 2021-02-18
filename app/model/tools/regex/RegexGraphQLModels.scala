@@ -72,12 +72,7 @@ object RegexGraphQLModels
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     ),
     interfaces[Unit, RegexAbstractResult](abstractResultInterfaceType)
-  ).withPossibleTypes(() => List(regexInternalErrorResultType, regexMatchingResultType, regexExtractionResultType))
-
-  private val regexInternalErrorResultType: ObjectType[Unit, RegexInternalErrorResult] = deriveObjectType(
-    Interfaces(regexAbstractResultType),
-    ExcludeFields("maxPoints")
-  )
+  ).withPossibleTypes(() => List(regexMatchingResultType, regexExtractionResultType))
 
   private val regexMatchingResultType: ObjectType[Unit, RegexMatchingResult] = {
     implicit val rmert: ObjectType[Unit, RegexMatchingSingleResult] = regexMatchingEvaluationResultType
@@ -97,6 +92,6 @@ object RegexGraphQLModels
     )
   }
 
-  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, RegexAbstractResult] = regexAbstractResultType
+  override val resultType: OutputType[RegexAbstractResult] = regexAbstractResultType
 
 }

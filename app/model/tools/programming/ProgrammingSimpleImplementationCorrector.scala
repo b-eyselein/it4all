@@ -20,7 +20,7 @@ trait ProgrammingSimpleImplementationCorrector extends ProgrammingAbstractCorrec
     solTargetDir: File,
     simplifiedUnitTestPart: SimplifiedUnitTestPart,
     resultFile: File
-  )(implicit ec: ExecutionContext): Future[Try[ProgrammingAbstractResult]] = {
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] = {
 
     // write files
     val testMainFile = solTargetDir / testMainFileName

@@ -4,7 +4,6 @@ import {
   ExerciseSolveFieldsFragment,
   FilesSolution,
   FilesSolutionInput,
-  FlaskAbstractCorrectionResultFragment,
   FlaskCorrectionGQL,
   FlaskCorrectionMutation,
   FlaskCorrectionMutationVariables,
@@ -94,12 +93,8 @@ export class FlaskExerciseComponent
     return this.resultQuery?.me.flaskExercise?.correct;
   }
 
-  get abstractResult(): FlaskAbstractCorrectionResultFragment | undefined {
-    return this.correctionResult?.result;
-  }
-
   get result(): FlaskResultFragment | undefined {
-    return (this.abstractResult.__typename === 'FlaskResult') ? this.abstractResult : undefined;
+    return this.correctionResult?.result;
   }
 
 }

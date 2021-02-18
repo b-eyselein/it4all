@@ -2,16 +2,8 @@ package model.tools.uml
 
 import model.matching.MatchType
 import model.points._
-import model.result.{AbstractCorrectionResult, InternalErrorResult}
+import model.result.AbstractCorrectionResult
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
-
-trait UmlAbstractResult extends AbstractCorrectionResult
-
-final case class UmlInternalErrorResult(
-  msg: String,
-  maxPoints: Points
-) extends UmlAbstractResult
-    with InternalErrorResult
 
 final case class UmlResult(
   classResult: Option[ClassComparison],
@@ -19,7 +11,7 @@ final case class UmlResult(
   implResult: Option[ImplementationComparison],
   points: Points,
   maxPoints: Points
-) extends UmlAbstractResult {
+) extends AbstractCorrectionResult {
 
   override def isCompletelyCorrect: Boolean = {
 

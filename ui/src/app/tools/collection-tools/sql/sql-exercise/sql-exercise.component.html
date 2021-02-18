@@ -36,15 +36,15 @@
 
             <br>
 
-            <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
+            <it4all-points-notification [points]="sqlResult.points" [maxPoints]="sqlResult.maxPoints">
             </it4all-points-notification>
 
             <br>
 
-            <div class="message" *ngIf="sqlInternalErrorResult">
+            <div class="message" *ngIf="queryError">
               <div class="message-header">Es gab einen Fehler bei der Korrektur:</div>
               <div class="message-body">
-                <pre>{{sqlInternalErrorResult.msg}}</pre>
+                <pre>{{queryError.message}}</pre>
               </div>
             </div>
 

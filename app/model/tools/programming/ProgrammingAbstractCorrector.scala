@@ -12,6 +12,8 @@ trait ProgrammingAbstractCorrector extends DockerExecutionCorrector {
 
   val programmingCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "py_prog_corrector", "0.2.1")
 
+  override protected val dockerImage: ScalaDockerImage = programmingCorrectionDockerImage
+
   protected val testDataFileName = "test_data.json"
   protected val testMainFileName = "simplified_test_main.py"
 

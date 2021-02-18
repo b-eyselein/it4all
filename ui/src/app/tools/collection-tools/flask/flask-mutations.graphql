@@ -13,23 +13,13 @@ fragment FlaskCorrectionResult on FlaskCorrectionResult {
   resultSaved
   proficienciesUpdated
   result {
-    ...FlaskAbstractCorrectionResult
+    ...FlaskResult
   }
 }
 
-fragment FlaskAbstractCorrectionResult on FlaskAbstractCorrectionResult {
-  __typename
+fragment FlaskResult on FlaskResult {
   points
   maxPoints
-  ...FlaskInternalErrorResult
-  ...FlaskResult
-}
-
-fragment FlaskInternalErrorResult on FlaskInternalErrorResult {
-  msg
-}
-
-fragment FlaskResult on FlaskResult {
   testResults {
     ...FlaskTestResult
   }

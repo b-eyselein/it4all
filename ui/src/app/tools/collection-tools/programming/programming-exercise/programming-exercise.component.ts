@@ -9,13 +9,11 @@ import {
   NormalExecutionResultFragment,
   NormalUnitTestPartFragment,
   ProgExPart,
-  ProgrammingAbstractResultFragment,
   ProgrammingCorrectionGQL,
   ProgrammingCorrectionMutation,
   ProgrammingCorrectionMutationVariables,
   ProgrammingCorrectionResultFragment,
   ProgrammingExerciseContentFragment,
-  ProgrammingInternalErrorResultFragment,
   ProgrammingResultFragment,
   SimplifiedExecutionResultFragment,
   UnitTestCorrectionResultFragment
@@ -100,28 +98,20 @@ export class ProgrammingExerciseComponent
     return this.resultQuery?.me.programmingExercise?.correct;
   }
 
-  get abstractResult(): ProgrammingAbstractResultFragment & (ProgrammingResultFragment | ProgrammingInternalErrorResultFragment) {
+  get abstractResult(): ProgrammingResultFragment | null {
     return this.correctionResult?.result;
   }
 
-  get internalErrorResult(): ProgrammingInternalErrorResultFragment | null {
-    return this.abstractResult?.__typename === 'ProgrammingInternalErrorResult' ? this.abstractResult : null;
-  }
-
-  private get result(): ProgrammingResultFragment | null {
-    return this.abstractResult?.__typename === 'ProgrammingResult' ? this.abstractResult : null;
-  }
-
   get simplifiedResults(): SimplifiedExecutionResultFragment[] {
-    return this.result ? this.result.simplifiedResults : [];
+    return this.abstractResult?.simplifiedResults || [];
   }
 
   get unitTestResults(): UnitTestCorrectionResultFragment[] {
-    return this.result ? this.result.unitTestResults : [];
+    return this.abstractResult.unitTestResults || [];
   }
 
   get normalResult(): NormalExecutionResultFragment | null {
-    return this.result?.normalResult;
+    return this.abstractResult?.normalResult;
   }
 
 }

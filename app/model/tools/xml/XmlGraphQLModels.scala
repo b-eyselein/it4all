@@ -9,7 +9,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 object XmlGraphQLModels
-    extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlAbstractResult]
+    extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[XmlExPart] = EnumType(
@@ -97,31 +97,15 @@ object XmlGraphQLModels
 
   // Abstract result
 
-  private val xmlAbstractResultType: InterfaceType[Unit, XmlAbstractResult] = InterfaceType(
-    "XmlAbstractResult",
-    fields[Unit, XmlAbstractResult](
-      Field("points", FloatType, resolve = _.value.points.asDouble),
-      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
-    ),
-    interfaces[Unit, XmlAbstractResult](abstractResultInterfaceType)
-  ).withPossibleTypes(() => List(xmlResultType, xmlInternalErrorResultType))
-
-  private val xmlResultType: ObjectType[Unit, XmlResult] = {
+  override val resultType: OutputType[XmlResult] = {
     implicit val st: EnumType[SuccessType]                 = successTypeType
     implicit val xdrt: ObjectType[Unit, XmlDocumentResult] = xmlDocumentResultType
     implicit val xgrt: ObjectType[Unit, XmlGrammarResult]  = xmlGrammarResultType
 
     deriveObjectType[Unit, XmlResult](
-      Interfaces(xmlAbstractResultType),
-      ExcludeFields("points", "maxPoints")
+      ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
+      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
     )
   }
-
-  private val xmlInternalErrorResultType: ObjectType[Unit, XmlInternalErrorResult] = deriveObjectType(
-    Interfaces(xmlAbstractResultType),
-    ExcludeFields("maxPoints")
-  )
-
-  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, XmlAbstractResult] = xmlAbstractResultType
 
 }

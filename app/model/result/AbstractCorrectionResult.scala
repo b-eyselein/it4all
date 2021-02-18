@@ -20,16 +20,6 @@ trait AbstractCorrectionResult {
 
 }
 
-trait InternalErrorResult extends AbstractCorrectionResult {
-
-  val msg: String
-
-  override final def points: Points = zeroPoints
-
-  override def isCompletelyCorrect: Boolean = false
-
-}
-
 object BasicExercisePartResult {
 
   def forExerciseAndResult(

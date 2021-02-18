@@ -136,7 +136,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
         ObjectTypeName(s"${tool.id.capitalize}CorrectionResult"),
         ReplaceField(
           "result",
-          Field("result", tool.graphQlModels.toolAbstractResultTypeInterfaceType, resolve = _.value.result)
+          Field("result", tool.graphQlModels.resultType, resolve = _.value.result)
         )
       )
 

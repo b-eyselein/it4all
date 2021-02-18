@@ -3,7 +3,6 @@ import {ComponentWithExerciseDirective} from '../../_helpers/component-with-exer
 import {
   ExerciseFileFragment,
   ExerciseSolveFieldsFragment,
-  XmlAbstractResultFragment,
   XmlCorrectionGQL,
   XmlCorrectionMutation,
   XmlCorrectionMutationVariables,
@@ -12,7 +11,6 @@ import {
   XmlExerciseContentFragment,
   XmlExPart,
   XmlGrammarResultFragment,
-  XmlInternalErrorResultFragment,
   XmlResultFragment,
   XmlSolution,
   XmlSolutionInput
@@ -131,12 +129,8 @@ export class XmlExerciseComponent
     return this.resultQuery?.me.xmlExercise?.correct;
   }
 
-  get xmlAbstractResult(): XmlAbstractResultFragment & (XmlResultFragment | XmlInternalErrorResultFragment) | null {
+  get xmlResult(): XmlResultFragment | null {
     return this.correctionResult?.result;
-  }
-
-  private get xmlResult(): XmlResultFragment | null {
-    return this.xmlAbstractResult?.__typename === 'XmlResult' ? this.xmlAbstractResult : null;
   }
 
   get grammarResult(): XmlGrammarResultFragment | null {

@@ -13,23 +13,13 @@ fragment UmlCorrectionResult on UmlCorrectionResult {
   resultSaved
   proficienciesUpdated
   result {
-    ...UmlAbstractResult
-    ...UmlInternalErrorResult
     ...UmlResult
   }
 }
 
-fragment UmlAbstractResult on UmlAbstractResult {
-  __typename
+fragment UmlResult on UmlResult {
   points
   maxPoints
-}
-
-fragment UmlInternalErrorResult on UmlInternalErrorResult {
-  msg
-}
-
-fragment UmlResult on UmlResult {
   classResult {
     ...UmlClassMatchingResult
   }

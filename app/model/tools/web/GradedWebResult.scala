@@ -2,22 +2,14 @@ package model.tools.web
 
 import de.uniwue.webtester.sitespec.{JsAction, JsActionType}
 import model.points._
-import model.result.{AbstractCorrectionResult, InternalErrorResult, SuccessType}
-
-sealed trait WebAbstractResult extends AbstractCorrectionResult
-
-final case class WebInternalErrorResult(
-  msg: String,
-  maxPoints: Points
-) extends WebAbstractResult
-    with InternalErrorResult
+import model.result.{AbstractCorrectionResult, SuccessType}
 
 final case class WebResult(
   gradedHtmlTaskResults: Seq[GradedHtmlTaskResult],
   gradedJsTaskResults: Seq[GradedJsTaskResult],
   points: Points,
   maxPoints: Points
-) extends WebAbstractResult {
+) extends AbstractCorrectionResult {
 
   override def isCompletelyCorrect: Boolean = {
 

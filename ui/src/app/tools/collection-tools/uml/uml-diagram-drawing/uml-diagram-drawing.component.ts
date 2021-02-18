@@ -9,7 +9,6 @@ import {DexieService} from '../../../../_services/dexie.service';
 import {environment} from '../../../../../environments/environment';
 import {
   ExerciseSolveFieldsFragment,
-  UmlAbstractResultFragment,
   UmlClassDiagramInput,
   UmlCorrectionGQL,
   UmlCorrectionMutation,
@@ -17,7 +16,6 @@ import {
   UmlCorrectionResultFragment,
   UmlExerciseContentFragment,
   UmlExPart,
-  UmlInternalErrorResultFragment,
   UmlResultFragment
 } from '../../../../_services/apollo_services';
 
@@ -254,12 +252,8 @@ export class UmlDiagramDrawingComponent
     return this.resultQuery?.me.umlExercise?.correct;
   }
 
-  get umlAbstractResult(): UmlAbstractResultFragment & (UmlInternalErrorResultFragment | UmlResultFragment) | null {
-    return this.correctionResult?.result;
-  }
-
   get result(): UmlResultFragment | null {
-    return this.umlAbstractResult?.__typename === 'UmlResult' ? this.umlAbstractResult : null;
+    return this.correctionResult?.result;
   }
 
   // Correction

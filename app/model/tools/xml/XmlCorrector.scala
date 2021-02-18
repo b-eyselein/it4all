@@ -53,7 +53,7 @@ object XmlCorrector {
     solution: XmlSolution,
     solutionBaseDir: File,
     exerciseContent: XmlExerciseContent
-  ): Try[XmlAbstractResult] = exerciseContent.sampleSolutions.headOption match {
+  ): Try[XmlResult] = exerciseContent.sampleSolutions.headOption match {
     case None            => Failure(new Exception("There is no sample solution!"))
     case Some(xmlSample) =>
       // Write grammar
@@ -90,7 +90,7 @@ object XmlCorrector {
   })
 
   // TODO: check all grammars, use best?
-  def correctGrammar(solution: XmlSolution, sampleSolutions: Seq[XmlSolution]): Try[XmlAbstractResult] =
+  def correctGrammar(solution: XmlSolution, sampleSolutions: Seq[XmlSolution]): Try[XmlResult] =
     findNearestGrammarSample(solution.grammar, sampleSolutions) match {
       case None => Failure(new Exception("Could not find a sample grammar!"))
       case Some(sampleSolution) =>

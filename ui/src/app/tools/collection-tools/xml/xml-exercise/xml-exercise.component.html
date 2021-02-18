@@ -45,10 +45,20 @@
             <br>
 
             <it4all-points-notification
-              *ngIf="isGrammarPart && xmlAbstractResult"
-              [points]="xmlAbstractResult.points"
-              [maxPoints]="xmlAbstractResult.maxPoints">
+              *ngIf="isGrammarPart && xmlResult"
+              [points]="xmlResult.points"
+              [maxPoints]="xmlResult.maxPoints">
             </it4all-points-notification>
+
+            <br>
+
+            <div class="message" *ngIf="queryError">
+              <div class="message-header">Es gab einen Fehler bei der Korrektur:</div>
+              <div class="message-body">
+                <pre>{{queryError.message}}</pre>
+              </div>
+            </div>
+
 
             <br>
 
@@ -57,7 +67,7 @@
               <it4all-xml-document-correction [result]="documentResult"></it4all-xml-document-correction>
             </ng-container>
             <ng-container *ngIf="documentResult && documentResult.errors.length === 0">
-
+              <!-- todo: what is missing here? -->
             </ng-container>
 
             <ng-container *ngIf="grammarResult">

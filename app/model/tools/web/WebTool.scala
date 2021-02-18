@@ -20,13 +20,13 @@ object WebTool extends Tool("web", "Web") {
   override type SolType       = FilesSolution
   override type ExContentType = WebExerciseContent
   override type PartType      = WebExPart
-  override type ResType       = WebAbstractResult
+  override type ResType       = WebResult
 
   type WebExercise = Exercise[WebExerciseContent]
 
   override val jsonFormats: FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebExPart] = WebToolJsonProtocol
 
-  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebAbstractResult] =
+  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebResult] =
     WebGraphQLModels
 
   private val openOptions: OpenOptions = Seq(
@@ -80,7 +80,7 @@ object WebTool extends Tool("web", "Web") {
     solution: FilesSolution,
     exercise: WebExercise,
     part: WebExPart
-  )(implicit executionContext: ExecutionContext): Future[Try[WebAbstractResult]] = Future {
+  )(implicit executionContext: ExecutionContext): Future[Try[WebResult]] = Future {
     writeFilesSolutionFiles(solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId), solution)
       .flatMap { _ =>
         val driver = new HtmlUnitDriver(true)

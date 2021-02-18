@@ -28,7 +28,7 @@ object SqlTool extends Tool("sql", "Sql") {
   override type SolType       = String
   override type ExContentType = SqlExerciseContent
   override type PartType      = SqlExPart
-  override type ResType       = SqlAbstractResult
+  override type ResType       = SqlResult
 
   type SqlExercise = Exercise[SqlExerciseContent]
 
@@ -42,7 +42,7 @@ object SqlTool extends Tool("sql", "Sql") {
   override val jsonFormats: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] =
     SqlToolJsonProtocols
 
-  override val graphQlModels: ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlAbstractResult] =
+  override val graphQlModels: ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlResult] =
     SqlGraphQLModels
 
   override val allTopics: Seq[Topic] = SqlTopics.values
@@ -54,7 +54,7 @@ object SqlTool extends Tool("sql", "Sql") {
     solution: SolType,
     exercise: SqlExercise,
     part: SqlExPart
-  )(implicit executionContext: ExecutionContext): Future[Try[SqlAbstractResult]] = Future {
+  )(implicit executionContext: ExecutionContext): Future[Try[SqlResult]] = Future {
     correctorsAndDaos.get(exercise.content.exerciseType) match {
       case None => Failure(new Exception("There has been an internal error"))
       case Some((corrector, dao)) =>

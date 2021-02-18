@@ -13,20 +13,8 @@ fragment SqlCorrectionResult on SqlCorrectionResult {
   resultSaved
   proficienciesUpdated
   result {
-    ...SqlAbstractResult
-    ...SqlInternalErrorResult
     ...SqlResult
   }
-}
-
-fragment SqlAbstractResult on SqlAbstractResult {
-  __typename
-  points
-  maxPoints
-}
-
-fragment SqlInternalErrorResult on SqlInternalErrorResult {
-  msg
 }
 
 # Column comparison
@@ -64,6 +52,8 @@ fragment SelectAdditionalComparison on SelectAdditionalComparisons {
 # Complete result
 
 fragment SqlResult on SqlResult {
+  points
+  maxPoints
   staticComparison {
     columnComparison {
       ...ColumnComparison

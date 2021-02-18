@@ -17,7 +17,7 @@ trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrec
     exerciseContent: ProgrammingExerciseContent,
     normalUnitTestPart: NormalUnitTestPart,
     resultFile: File
-  )(implicit ec: ExecutionContext): Future[Try[ProgrammingAbstractResult]] =
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] =
     exerciseContent.sampleSolutions.headOption match {
       case None => Future.successful(Failure(new Exception("No sample solution found!")))
       case Some(FilesSolution(files)) =>

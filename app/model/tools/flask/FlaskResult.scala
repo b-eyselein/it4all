@@ -1,21 +1,13 @@
 package model.tools.flask
 
 import model.points.Points
-import model.result.{AbstractCorrectionResult, InternalErrorResult}
-
-trait FlaskAbstractResult extends AbstractCorrectionResult
-
-final case class FlaskInternalErrorResult(
-  msg: String,
-  maxPoints: Points
-) extends FlaskAbstractResult
-    with InternalErrorResult
+import model.result.AbstractCorrectionResult
 
 final case class FlaskResult(
   testResults: Seq[FlaskTestResult],
   points: Points,
   maxPoints: Points
-) extends FlaskAbstractResult {
+) extends AbstractCorrectionResult {
 
   override def isCompletelyCorrect: Boolean = testResults.forall(_.successful)
 

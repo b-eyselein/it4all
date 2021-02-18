@@ -14,7 +14,7 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.B
   override type SolType       = FilesSolution
   override type ExContentType = ProgrammingExerciseContent
   override type PartType      = ProgExPart
-  override type ResType       = ProgrammingAbstractResult
+  override type ResType       = ProgrammingResult
 
   type ProgrammingExercise = Exercise[ProgrammingExerciseContent]
 
@@ -24,7 +24,7 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.B
     ProgrammingToolJsonProtocol
 
   override val graphQlModels
-    : ToolGraphQLModelBasics[FilesSolution, ProgrammingExerciseContent, ProgExPart, ProgrammingAbstractResult] =
+    : ToolGraphQLModelBasics[FilesSolution, ProgrammingExerciseContent, ProgExPart, ProgrammingResult] =
     ProgrammingGraphQLModels
 
   override val allTopics: Seq[Topic] = ProgrammingTopics.values
@@ -36,7 +36,7 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.B
     solution: FilesSolution,
     exercise: ProgrammingExercise,
     part: ProgExPart
-  )(implicit ec: ExecutionContext): Future[Try[ProgrammingAbstractResult]] = {
+  )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] = {
 
     val solTargetDir = solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId) / part.id
 

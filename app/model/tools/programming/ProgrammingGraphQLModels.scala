@@ -8,7 +8,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 object ProgrammingGraphQLModels
-    extends FilesSolutionToolGraphQLModelBasics[ProgrammingExerciseContent, ProgExPart, ProgrammingAbstractResult]
+    extends FilesSolutionToolGraphQLModelBasics[ProgrammingExerciseContent, ProgExPart, ProgrammingResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[ProgExPart] = EnumType(
@@ -80,30 +80,15 @@ object ProgrammingGraphQLModels
 
   // Abstract result
 
-  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, ProgrammingAbstractResult] =
-    InterfaceType(
-      "ProgrammingAbstractResult",
-      fields[Unit, ProgrammingAbstractResult](
-        Field("points", FloatType, resolve = _.value.points.asDouble),
-        Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
-      ),
-      interfaces[Unit, ProgrammingAbstractResult](abstractResultInterfaceType)
-    ).withPossibleTypes(() => List(programmingInternalErrorResultType, programmingResultType))
-
-  private val programmingResultType: ObjectType[Unit, ProgrammingResult] = {
+  override val resultType: OutputType[ProgrammingResult] = {
     implicit val nert: ObjectType[Unit, NormalExecutionResult]     = deriveObjectType()
     implicit val sert: ObjectType[Unit, SimplifiedExecutionResult] = simplifiedExecutionResultType
     implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = deriveObjectType()
 
     deriveObjectType[Unit, ProgrammingResult](
-      Interfaces(toolAbstractResultTypeInterfaceType),
-      ExcludeFields("points", "maxPoints")
+      ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
+      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
     )
   }
-
-  private val programmingInternalErrorResultType: ObjectType[Unit, ProgrammingInternalErrorResult] = deriveObjectType(
-    Interfaces(toolAbstractResultTypeInterfaceType),
-    ExcludeFields("maxPoints")
-  )
 
 }

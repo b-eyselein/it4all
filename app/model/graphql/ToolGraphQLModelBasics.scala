@@ -114,7 +114,7 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
 
   val exerciseContentType: ObjectType[Unit, C]
 
-  val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, ResType]
+  val resultType: OutputType[ResType]
 
 }
 

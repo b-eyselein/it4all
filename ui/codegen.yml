@@ -7,13 +7,6 @@ generates:
     plugins:
       - schema-ast
 
-  src/introspection-result.ts:
-    documents: src/**/*.graphql
-    plugins:
-      - fragment-matcher
-    config:
-      apolloClientVersion: 2
-
   src/app/_services/apollo_services.ts:
     documents:
       - src/**queries.graphql

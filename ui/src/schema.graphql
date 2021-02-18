@@ -63,16 +63,11 @@ input FilesSolutionInput {
   files: [ExerciseFileInput!]!
 }
 
-interface FlaskAbstractCorrectionResult {
-  points: Float!
-  maxPoints: Float!
-}
-
 type FlaskCorrectionResult {
   solutionSaved: Boolean!
   resultSaved: Boolean!
   proficienciesUpdated: Boolean
-  result: FlaskAbstractCorrectionResult!
+  result: FlaskResult!
 }
 
 type FlaskExerciseMutations {
@@ -83,13 +78,7 @@ enum FlaskExercisePart {
   FlaskSingleExPart
 }
 
-type FlaskInternalErrorResult implements FlaskAbstractCorrectionResult & AbstractCorrectionResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
-}
-
-type FlaskResult implements FlaskAbstractCorrectionResult & AbstractCorrectionResult {
+type FlaskResult {
   testResults: [FlaskTestResult!]!
   points: Float!
   maxPoints: Float!
@@ -204,29 +193,18 @@ type NormalExecutionResult {
   stderr: [String!]!
 }
 
-interface ProgrammingAbstractResult {
-  points: Float!
-  maxPoints: Float!
-}
-
 type ProgrammingCorrectionResult {
   solutionSaved: Boolean!
   resultSaved: Boolean!
   proficienciesUpdated: Boolean
-  result: ProgrammingAbstractResult!
+  result: ProgrammingResult!
 }
 
 type ProgrammingExerciseMutations {
   correct(part: ProgExPart!, solution: FilesSolutionInput!): ProgrammingCorrectionResult!
 }
 
-type ProgrammingInternalErrorResult implements ProgrammingAbstractResult & AbstractCorrectionResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
-}
-
-type ProgrammingResult implements ProgrammingAbstractResult & AbstractCorrectionResult {
+type ProgrammingResult {
   proficienciesUpdated: Boolean
   simplifiedResults: [SimplifiedExecutionResult!]!
   normalResult: NormalExecutionResult
@@ -273,12 +251,6 @@ type RegexExtractionSingleResult {
   correct: Boolean!
 }
 
-type RegexInternalErrorResult implements RegexAbstractResult & AbstractCorrectionResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
-}
-
 type RegexMatchMatch implements NewMatch {
   sampleArg: String
   userArg: String
@@ -318,11 +290,6 @@ type SimplifiedExecutionResult {
   testInput: String!
   awaited: String!
   gotten: String!
-}
-
-interface SqlAbstractResult {
-  points: Float!
-  maxPoints: Float!
 }
 
 type SqlBinaryExpressionComparisonMatchingResult implements MatchingResult {
@@ -365,7 +332,7 @@ type SqlCorrectionResult {
   solutionSaved: Boolean!
   resultSaved: Boolean!
   proficienciesUpdated: Boolean
-  result: SqlAbstractResult!
+  result: SqlResult!
 }
 
 type SqlExecutionResult {
@@ -375,12 +342,6 @@ type SqlExecutionResult {
 
 type SqlExerciseMutations {
   correct(part: SqlExPart!, solution: String!): SqlCorrectionResult!
-}
-
-type SqlInternalErrorResult implements SqlAbstractResult & AbstractCorrectionResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
 }
 
 type SqlLimitComparisonMatchingResult implements MatchingResult {
@@ -409,7 +370,7 @@ type SqlQueriesStaticComparison {
   additionalComparisons: AdditionalComparison!
 }
 
-type SqlResult implements SqlAbstractResult & AbstractCorrectionResult {
+type SqlResult {
   staticComparison: SqlQueriesStaticComparison!
   executionResult: SqlExecutionResult!
   points: Float!
@@ -435,11 +396,6 @@ enum SuccessType {
   ERROR
   NONE
   PARTIALLY
-}
-
-interface UmlAbstractResult {
-  points: Float!
-  maxPoints: Float!
 }
 
 type UmlAssociationAnalysisResult {
@@ -562,7 +518,7 @@ type UmlCorrectionResult {
   solutionSaved: Boolean!
   resultSaved: Boolean!
   proficienciesUpdated: Boolean
-  result: UmlAbstractResult!
+  result: UmlResult!
 }
 
 type UmlExerciseMutations {
@@ -590,12 +546,6 @@ type UmlImplementationMatchingResult implements MatchingResult {
   maxPoints: Float!
   notMatchedForUserString: [String!]!
   notMatchedForSampleString: [String!]!
-}
-
-type UmlInternalErrorResult implements UmlAbstractResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
 }
 
 type UmlMethodAnalysisResult {
@@ -639,7 +589,7 @@ type UmlMethodMatchingResult implements MatchingResult {
   notMatchedForSampleString: [String!]!
 }
 
-type UmlResult implements UmlAbstractResult {
+type UmlResult {
   classResult: UmlClassMatchingResult
   assocResult: UmlAssociationMatchingResult
   implResult: UmlImplementationMatchingResult
@@ -670,36 +620,20 @@ type UserMutations {
   xmlExercise(collId: Int!, exId: Int!): XmlExerciseMutations
 }
 
-interface WebAbstractResult {
-  points: Float!
-  maxPoints: Float!
-}
-
 type WebCorrectionResult {
   solutionSaved: Boolean!
   resultSaved: Boolean!
   proficienciesUpdated: Boolean
-  result: WebAbstractResult!
+  result: WebResult!
 }
 
 type WebExerciseMutations {
   correct(part: WebExPart!, solution: FilesSolutionInput!): WebCorrectionResult!
 }
 
-type WebInternalErrorResult implements WebAbstractResult & AbstractCorrectionResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
-}
-
-type WebResult implements WebAbstractResult & AbstractCorrectionResult {
+type WebResult {
   gradedHtmlTaskResults: [GradedHtmlTaskResult!]!
   gradedJsTaskResults: [GradedJsTaskResult!]!
-  points: Float!
-  maxPoints: Float!
-}
-
-interface XmlAbstractResult {
   points: Float!
   maxPoints: Float!
 }
@@ -708,7 +642,7 @@ type XmlCorrectionResult {
   solutionSaved: Boolean!
   resultSaved: Boolean!
   proficienciesUpdated: Boolean
-  result: XmlAbstractResult!
+  result: XmlResult!
 }
 
 type XmlDocumentResult {
@@ -747,13 +681,7 @@ type XmlGrammarResult {
   results: XmlElementLineComparisonMatchingResult!
 }
 
-type XmlInternalErrorResult implements XmlAbstractResult & AbstractCorrectionResult {
-  msg: String!
-  points: Float!
-  maxPoints: Float!
-}
-
-type XmlResult implements XmlAbstractResult & AbstractCorrectionResult {
+type XmlResult {
   successType: SuccessType!
   documentResult: XmlDocumentResult
   grammarResult: XmlGrammarResult
@@ -996,11 +924,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  UPDATE
   INSERT
   SELECT
-  CREATE
   DELETE
+  UPDATE
+  CREATE
 }
 
 type SqlKeyCellValueObject {

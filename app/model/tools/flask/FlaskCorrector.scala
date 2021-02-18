@@ -21,7 +21,7 @@ object FlaskCorrector extends DockerExecutionCorrector {
     username: String,
     solution: FilesSolution,
     exercise: FlaskExercise
-  )(implicit executionContext: ExecutionContext): Future[Try[FlaskAbstractResult]] = {
+  )(implicit executionContext: ExecutionContext): Future[Try[FlaskResult]] = {
 
     val solTargetDir = solutionDirForExercise(username, exercise.collectionId, exercise.exerciseId)
 

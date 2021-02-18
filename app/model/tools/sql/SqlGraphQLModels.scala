@@ -10,7 +10,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 object SqlGraphQLModels
-    extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlAbstractResult]
+    extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[SqlExPart] = EnumType(
@@ -98,28 +98,17 @@ object SqlGraphQLModels
 
   // Abstract result
 
-  private val sqlAbstractResultType: InterfaceType[Unit, SqlAbstractResult] = InterfaceType(
-    "SqlAbstractResult",
-    fields[Unit, SqlAbstractResult](
-      Field("points", FloatType, resolve = _.value.points.asDouble),
-      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
-    ),
-    interfaces[Unit, SqlAbstractResult](abstractResultInterfaceType)
-  ).withPossibleTypes(() => List(sqlInternalErrorResultType, sqlResultType))
-
-  private val sqlInternalErrorResultType: ObjectType[Unit, SqlInternalErrorResult] = deriveObjectType(
-    Interfaces(sqlAbstractResultType),
-    ExcludeFields("maxPoints")
-  )
-
-  private val sqlResultType: ObjectType[Unit, SqlResult] = {
+  override val resultType: OutputType[SqlResult] = {
     implicit val sqsct: ObjectType[Unit, SqlQueriesStaticComparison] = sqlQueriesStaticComparisonType
     implicit val sert: ObjectType[Unit, SqlExecutionResult]          = sqlExecutionResultType
 
-    deriveObjectType(Interfaces(sqlAbstractResultType))
+    deriveObjectType[Unit, SqlResult](
+      AddFields(
+        Field("points", FloatType, resolve = _.value.points.asDouble),
+        Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
+      )
+    )
   }
-
-  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, SqlAbstractResult] = sqlAbstractResultType
 
   private val dbContentQueryField: Field[Unit, SqlExerciseContent] = Field(
     "sqlDbContents",

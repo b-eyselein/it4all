@@ -8,7 +8,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 object WebGraphQLModels
-    extends FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebAbstractResult]
+    extends FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebResult]
     with GraphQLArguments {
 
   override val partEnumType: EnumType[WebExPart] = EnumType(
@@ -112,32 +112,14 @@ object WebGraphQLModels
     )
   }
 
-// Abstract result
-
-  private val webAbstractResultType: InterfaceType[Unit, WebAbstractResult] = InterfaceType(
-    "WebAbstractResult",
-    fields[Unit, WebAbstractResult](
-      Field("points", FloatType, resolve = _.value.points.asDouble),
-      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
-    ),
-    interfaces[Unit, WebAbstractResult](abstractResultInterfaceType)
-  ).withPossibleTypes(() => List(webResultType, webInternalErrorResultType))
-
-  private val webInternalErrorResultType: ObjectType[Unit, WebInternalErrorResult] = deriveObjectType(
-    Interfaces(webAbstractResultType),
-    ExcludeFields("maxPoints")
-  )
-
-  private val webResultType: ObjectType[Unit, WebResult] = {
+  override val resultType: OutputType[WebResult] = {
     implicit val ghtrt: ObjectType[Unit, GradedHtmlTaskResult] = gradedHtmlTaskResultType
     implicit val gjtrt: ObjectType[Unit, GradedJsTaskResult]   = gradedJsTaskResultType
 
-    deriveObjectType(
-      Interfaces(webAbstractResultType),
-      ExcludeFields("points", "maxPoints")
+    deriveObjectType[Unit, WebResult](
+      ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
+      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
     )
   }
-
-  override val toolAbstractResultTypeInterfaceType: InterfaceType[Unit, WebAbstractResult] = webAbstractResultType
 
 }

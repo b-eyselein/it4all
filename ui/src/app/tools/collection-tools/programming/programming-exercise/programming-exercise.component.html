@@ -19,10 +19,10 @@
 
       <br>
 
-      <div class="message is-danger" *ngIf="internalErrorResult">
+      <div class="message is-danger" *ngIf="queryError">
         <div class="message-header">Es gab einen internen Fehler bei der Korrektur:</div>
         <div class="message-body">
-          <pre>{{internalErrorResult.msg}}</pre>
+          <pre>{{queryError.message}}</pre>
         </div>
       </div>
 

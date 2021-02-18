@@ -16,7 +16,7 @@ object XmlTool extends Tool("xml", "Xml") {
   override type SolType       = XmlSolution
   override type ExContentType = XmlExerciseContent
   override type PartType      = XmlExPart
-  override type ResType       = XmlAbstractResult
+  override type ResType       = XmlResult
 
   type XmlExercise = Exercise[XmlExerciseContent]
 
@@ -26,7 +26,7 @@ object XmlTool extends Tool("xml", "Xml") {
 
   override val jsonFormats: ToolJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] = XmlToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlAbstractResult] =
+  override val graphQlModels: ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlResult] =
     XmlGraphQLModels
 
   // Correction
@@ -36,7 +36,7 @@ object XmlTool extends Tool("xml", "Xml") {
     solution: XmlSolution,
     exercise: XmlExercise,
     part: XmlExPart
-  )(implicit executionContext: ExecutionContext): Future[Try[XmlAbstractResult]] = Future.successful {
+  )(implicit executionContext: ExecutionContext): Future[Try[XmlResult]] = Future.successful {
     part match {
       case XmlExPart.GrammarCreationXmlPart => XmlCorrector.correctGrammar(solution, exercise.content.sampleSolutions)
 

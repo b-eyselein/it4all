@@ -5,14 +5,12 @@ import {
   ExerciseSolveFieldsFragment,
   FilesSolution,
   FilesSolutionInput,
-  WebAbstractResultFragment,
   WebCorrectionGQL,
   WebCorrectionMutation,
   WebCorrectionMutationVariables,
   WebCorrectionResultFragment,
   WebExerciseContentFragment,
   WebExPart,
-  WebInternalErrorResultFragment,
   WebResultFragment
 } from '../../../../_services/apollo_services';
 import {FilesExerciseComponent} from "../../_components/files-exercise/files-exercise.component";
@@ -99,12 +97,8 @@ export class WebExerciseComponent
     return this.resultQuery?.me.webExercise?.correct;
   }
 
-  get abstractResult(): WebAbstractResultFragment & (WebInternalErrorResultFragment | WebResultFragment) | null {
-    return this.correctionResult?.result;
-  }
-
   get result(): WebResultFragment | null {
-    return this.abstractResult?.__typename === 'WebResult' ? this.abstractResult : null;
+    return this.correctionResult?.result;
   }
 
 }

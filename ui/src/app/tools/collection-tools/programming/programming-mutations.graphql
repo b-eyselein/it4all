@@ -14,23 +14,13 @@ fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
   resultSaved
   proficienciesUpdated
   result {
-    ...ProgrammingAbstractResult
-    ...ProgrammingInternalErrorResult
     ...ProgrammingResult
   }
 }
 
-fragment ProgrammingAbstractResult on ProgrammingAbstractResult {
-  __typename
+fragment ProgrammingResult on ProgrammingResult {
   points
   maxPoints
-}
-
-fragment ProgrammingInternalErrorResult on ProgrammingInternalErrorResult {
-  msg
-}
-
-fragment ProgrammingResult on ProgrammingResult {
   simplifiedResults {
     ...SimplifiedExecutionResult
   }
