@@ -4,11 +4,12 @@ import model.matching.StringMatcher.StringMatchingResult
 import model.points._
 import model.result.AbstractCorrectionResult
 import model.tools.sql.SqlTool._
+import sangria.execution.UserFacingError
 
 final case class WrongStatementTypeException(awaited: String, gotten: String)
     extends Exception(s"Wrong type of statement! Expected '$awaited', bot got '$gotten'")
 
-class SqlStatementException(cause: Throwable) extends Exception(cause) {
+class SqlStatementException(cause: Throwable) extends Exception(cause) with UserFacingError {
 
   override def getMessage: String = {
 

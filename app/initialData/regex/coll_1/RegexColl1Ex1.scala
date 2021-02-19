@@ -29,7 +29,7 @@ object RegexColl1Ex1 {
         RegexMatchTestData(id = 7, data = "654321", isIncluded = false)
       ),
       extractionTestData = Seq.empty,
-      sampleSolutions = Seq("""\d{5}""", """[0-9]{}""", """\d\d\d\d\d""")
+      sampleSolutions = Seq("""\d{5}""", """[0-9]{5}""", """\d\d\d\d\d""")
     )
   )
 

@@ -38,39 +38,36 @@
         </it4all-tab>
         <it4all-tab [title]="correctionTabTitle">
 
+          <div class="message is-danger" *ngIf="queryError">
+            <div class="message-header">Es gab einen Fehler bei der Korrektur:</div>
+            <div class="message-body">
+              <pre>{{queryError.message}}</pre>
+            </div>
+          </div>
+
+
           <ng-container *ngIf="resultQuery">
-
-            <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
-
-            <br>
-
-            <it4all-points-notification
-              *ngIf="isGrammarPart && xmlResult"
-              [points]="xmlResult.points"
-              [maxPoints]="xmlResult.maxPoints">
-            </it4all-points-notification>
-
-            <br>
-
-            <div class="message" *ngIf="queryError">
-              <div class="message-header">Es gab einen Fehler bei der Korrektur:</div>
-              <div class="message-body">
-                <pre>{{queryError.message}}</pre>
-              </div>
+            <div class="my-3">
+              <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
             </div>
 
+            <div class="my-3">
+              <it4all-points-notification
+                *ngIf="isGrammarPart && xmlResult"
+                [points]="xmlResult.points"
+                [maxPoints]="xmlResult.maxPoints">
+              </it4all-points-notification>
+            </div>
 
-            <br>
-
-            <ng-container *ngIf="documentResult">
+            <div class="my-3" *ngIf="documentResult">
               <!-- Document correction! -->
               <it4all-xml-document-correction [result]="documentResult"></it4all-xml-document-correction>
-            </ng-container>
+            </div>
             <ng-container *ngIf="documentResult && documentResult.errors.length === 0">
               <!-- todo: what is missing here? -->
             </ng-container>
 
-            <ng-container *ngIf="grammarResult">
+            <div class="my-3" *ngIf="grammarResult">
               <!-- Grammar correction -->
 
               <div *ngFor="let parseError of grammarResult.parseErrors" class="message is-danger">
@@ -87,7 +84,7 @@
               <it4all-xml-element-line-match-result [result]="grammarResult.results">
               </it4all-xml-element-line-match-result>
 
-            </ng-container>
+            </div>
 
           </ng-container>
 

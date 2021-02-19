@@ -16,17 +16,7 @@
     </div>
   </div>
 
-  <ng-container correctionContent *ngIf="resultQuery">
-
-    <div class="my-3">
-      <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
-    </div>
-
-    <div class="my-3">
-      <it4all-points-notification [points]="result.points" [maxPoints]="result.maxPoints">
-      </it4all-points-notification>
-    </div>
-
+  <ng-container correctionContent>
 
     <div class="message is-danger" *ngIf="queryError">
       <div class="message-header">Es gab einen internen Fehler bei der Korrektur:</div>
@@ -35,15 +25,26 @@
       </div>
     </div>
 
-    <div *ngFor="let testResult of result.testResults" class="my-3">
-      <div class="message" [ngClass]="testResult.successful ? 'is-success' : 'is-danger'">
-        <header class="message-header">{{testResult.testName}}</header>
-        <div class="message-body">
-          <pre>{{testResult.stderr.join("\n")}}</pre>
-        </div>
+    <ng-container *ngIf="resultQuery">
+      <div class="my-3">
+        <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
       </div>
 
-    </div>
+      <div class="my-3">
+        <it4all-points-notification [points]="result.points" [maxPoints]="result.maxPoints">
+        </it4all-points-notification>
+      </div>
+
+      <div *ngFor="let testResult of result.testResults" class="my-3">
+        <div class="message" [ngClass]="testResult.successful ? 'is-success' : 'is-danger'">
+          <header class="message-header">{{testResult.testName}}</header>
+          <div class="message-body">
+            <pre>{{testResult.stderr.join("\n")}}</pre>
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
   </ng-container>
 
 </it4all-files-exercise>

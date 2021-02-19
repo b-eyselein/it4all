@@ -30,25 +30,28 @@
         </it4all-tab>
 
         <it4all-tab [title]="correctionTabTitle">
+
+          <div class="message is-danger my-3" *ngIf="queryError">
+            <div class="message-header">Es gab einen Fehler bei der Korrektur:</div>
+            <div class="message-body">
+              <pre>{{queryError.message}}</pre>
+            </div>
+          </div>
+
           <ng-container *ngIf="resultQuery">
 
-            <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
-
-            <br>
-
-            <it4all-points-notification [points]="sqlResult.points" [maxPoints]="sqlResult.maxPoints">
-            </it4all-points-notification>
-
-            <br>
-
-            <div class="message" *ngIf="queryError">
-              <div class="message-header">Es gab einen Fehler bei der Korrektur:</div>
-              <div class="message-body">
-                <pre>{{queryError.message}}</pre>
-              </div>
+            <div class="my-3">
+              <it4all-solution-saved [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
             </div>
 
-            <it4all-sql-result *ngIf="sqlResult" [result]="sqlResult"></it4all-sql-result>
+            <div class="my-3">
+              <it4all-points-notification [points]="sqlResult.points" [maxPoints]="sqlResult.maxPoints">
+              </it4all-points-notification>
+            </div>
+
+            <div class="my-3">
+              <it4all-sql-result *ngIf="sqlResult" [result]="sqlResult"></it4all-sql-result>
+            </div>
 
           </ng-container>
         </it4all-tab>

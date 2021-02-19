@@ -102,11 +102,8 @@ abstract class QueryCorrector(val queryType: String) {
 
   // Parsing
 
-  private def parseStatement(str: String): Try[Statement] =
-    Try(CCJSqlParserUtil.parse(str)) match {
-      case Failure(e) => Failure(new SqlStatementException(e))
-      case other      => other
-    }
+  private def parseStatement(str: String): Try[Statement] = Try(CCJSqlParserUtil.parse(str))
+    .recoverWith { e => Failure(new SqlStatementException(e)) }
 
   protected def checkStatement(statement: Statement): Try[Q] // FIXME: Failure!?!
 

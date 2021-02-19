@@ -22,15 +22,13 @@ export abstract class ComponentWithExerciseDirective<SolutionInputType, Mutation
     super();
   }
 
-  protected activateCorrectionTab(): void {
-    if (this.tabsComponent) {
-      this.tabsComponent.selectTabByTitle(this.correctionTabTitle);
-    }
-  }
-
   private onCorrectionEnd(onComplete: () => void = () => {
   }): void {
     this.isCorrecting = false;
+
+    if (this.tabsComponent) {
+      this.tabsComponent.selectTabByTitle(this.correctionTabTitle);
+    }
 
     onComplete();
   }

@@ -35,37 +35,38 @@
     <div class="column">
       <it4all-tabs>
         <it4all-tab [title]="correctionTabTitle">
+
+          <div class="message is-danger" *ngIf="queryError">
+            <div class="message-header">Fehler beim Parsen des regulären Ausdrucks:</div>
+            <div class="message-body">
+              <pre>{{queryError.message}}</pre>
+            </div>
+          </div>
+
+
           <ng-container *ngIf="resultQuery">
 
-            <it4all-solution-saved *ngIf="correctionResult"
-                                   [solutionSaved]="correctionResult.solutionSaved"></it4all-solution-saved>
-
-            <br>
-
-            <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
-            </it4all-points-notification>
-
-            <br>
-
-            <div class="message is-danger" *ngIf="queryError">
-              <div class="message-header">Fehler beim Parsen des regulären Ausdrucks:</div>
-              <div class="message-body">
-                <pre>{{queryError.message}}</pre>
-              </div>
+            <div class="my-3">
+              <it4all-solution-saved *ngIf="correctionResult" [solutionSaved]="correctionResult.solutionSaved">
+              </it4all-solution-saved>
             </div>
 
-            <div class="columns is-multiline" *ngIf="regexMatchingResult">
+
+            <div class="my-3">
+              <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
+              </it4all-points-notification>
+            </div>
+
+            <div class="columns is-multiline my-3" *ngIf="regexMatchingResult">
               <div class="column is-half-desktop" *ngFor="let matchingResult of regexMatchingResult.matchingResults">
                 <it4all-regex-matching-result [matchingResult]="matchingResult"></it4all-regex-matching-result>
               </div>
             </div>
 
             <ng-container *ngIf="regexExtractionResult">
-              <ng-container *ngFor="let extractionResult of regexExtractionResult.extractionResults">
+              <div class="my-3" *ngFor="let extractionResult of regexExtractionResult.extractionResults">
                 <it4all-regex-extraction-result [extractionResult]="extractionResult"></it4all-regex-extraction-result>
-
-                <br>
-              </ng-container>
+              </div>
             </ng-container>
 
           </ng-container>

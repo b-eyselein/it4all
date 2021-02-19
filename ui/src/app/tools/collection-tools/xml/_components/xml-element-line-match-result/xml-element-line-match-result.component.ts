@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {
   MatchType,
   XmlElementLineMatchFragment,
@@ -14,7 +14,7 @@ import {
         Die Definition des Element <code>{{m.userArg.elementName}}</code> ist {{isCorrect(m) ? '' : 'nicht' }}
         korrekt.
 
-        <ul *ngIf="m.analysisResult && !isCorrect">
+        <ul *ngIf="m.analysisResult && !isCorrect(m)">
           <li [ngClass]="m.analysisResult.contentCorrect ? 'has-text-dark-success': 'has-text-danger'">
             Der Inhalt des Elements war {{m.analysisResult.contentCorrect ? '' : 'nicht'}} korrekt.
 
@@ -44,12 +44,9 @@ import {
     </div>
   `
 })
-export class XmlElementLineMatchResultComponent implements OnInit {
+export class XmlElementLineMatchResultComponent {
 
   @Input() result: XmlElementLineMatchingResultFragment;
-
-  ngOnInit(): void {
-  }
 
   isCorrect(m: XmlElementLineMatchFragment): boolean {
     return m.matchType === MatchType.SuccessfulMatch
