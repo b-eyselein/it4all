@@ -8,7 +8,7 @@ import scala.util.matching.Regex
 
 trait ProgrammingAbstractCorrector extends DockerExecutionCorrector {
 
-  val programmingCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "py_prog_corrector", "0.2.2")
+  val programmingCorrectionDockerImage: ScalaDockerImage = ScalaDockerImage("ls6uniwue", "py_prog_corrector", "0.3.0")
 
   override protected val dockerImage: ScalaDockerImage = programmingCorrectionDockerImage
 

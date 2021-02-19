@@ -14,10 +14,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  FalseNegative
-  FalsePositive
-  TrueNegative
   TruePositive
+  FalsePositive
+  FalseNegative
+  TrueNegative
 }
 
 type DTDParseException {
@@ -140,10 +140,11 @@ type GradedTextResult {
   maxPoints: Float!
 }
 
-type ImplementationCorrectionResult {
-  successful: Boolean!
+type ImplementationCorrectionResult implements ProgrammingTestCorrectionResult {
+  testSuccessful: Boolean!
   stdout: [String!]!
   stderr: [String!]!
+  successful: Boolean!
 }
 
 type JsAction {
@@ -168,8 +169,8 @@ type LoggedInUserWithToken {
 }
 
 enum MatchType {
-  PARTIAL_MATCH
   SUCCESSFUL_MATCH
+  PARTIAL_MATCH
   UNSUCCESSFUL_MATCH
 }
 
@@ -210,6 +211,10 @@ type ProgrammingResult {
   unitTestResults: [UnitTestCorrectionResult!]!
   points: Float!
   maxPoints: Float!
+}
+
+interface ProgrammingTestCorrectionResult {
+  successful: Boolean!
 }
 
 interface RegexAbstractResult {
@@ -382,10 +387,10 @@ type StringMatchingResult {
 }
 
 enum SuccessType {
-  COMPLETE
   ERROR
   NONE
   PARTIALLY
+  COMPLETE
 }
 
 type UmlAssociationAnalysisResult {
@@ -587,13 +592,14 @@ type UmlResult {
   maxPoints: Float!
 }
 
-type UnitTestCorrectionResult {
+type UnitTestCorrectionResult implements ProgrammingTestCorrectionResult {
   testId: Int!
   description: String!
-  successful: Boolean!
   shouldFail: Boolean!
+  testSuccessful: Boolean!
   stdout: [String!]!
   stderr: [String!]!
+  successful: Boolean!
 }
 
 input UserCredentials {
@@ -844,8 +850,8 @@ type Query {
 }
 
 enum RegexCorrectionType {
-  EXTRACTION
   MATCHING
+  EXTRACTION
 }
 
 enum RegexExPart {
@@ -899,11 +905,11 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
+  CREATE
   INSERT
+  UPDATE
   SELECT
   DELETE
-  UPDATE
-  CREATE
 }
 
 type SqlKeyCellValueObject {
@@ -922,10 +928,10 @@ type SqlRow {
 }
 
 enum ToolState {
+  PRE_ALPHA
   ALPHA
   BETA
   LIVE
-  PRE_ALPHA
 }
 
 type Topic {
@@ -950,8 +956,8 @@ type UmlAssociation {
 }
 
 enum UmlAssociationType {
-  AGGREGATION
   ASSOCIATION
+  AGGREGATION
   COMPOSITION
 }
 
@@ -1017,10 +1023,10 @@ enum UmlMultiplicity {
 }
 
 enum UmlVisibility {
-  PACKAGE
-  PRIVATE
-  PROTECTED
   PUBLIC
+  PACKAGE
+  PROTECTED
+  PRIVATE
 }
 
 type UnitTestPart {

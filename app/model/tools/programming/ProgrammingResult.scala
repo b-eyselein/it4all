@@ -11,32 +11,44 @@ final case class ProgrammingResult(
   maxPoints: Points
 ) extends AbstractCorrectionResult {
 
-  override def isCompletelyCorrect: Boolean = {
+  private def allResults: Seq[ProgrammingTestCorrectionResult] = unitTestResults ++ implementationCorrectionResult
 
-    val normalResultOk = implementationCorrectionResult.isEmpty || implementationCorrectionResult.forall(_.successful)
+  override def isCompletelyCorrect: Boolean = allResults.isEmpty || allResults.forall(_.successful)
 
-    val unitTestResultsOk = unitTestResults.isEmpty || unitTestResults.forall(_.successful)
+}
 
-    normalResultOk && unitTestResultsOk
-  }
+sealed trait ProgrammingTestCorrectionResult {
+  val testSuccessful: Boolean
+  val stdout: Seq[String]
+  val stderr: Seq[String]
 
+  def successful: Boolean
 }
 
 // Normal test results
 
 final case class ImplementationCorrectionResult(
-  successful: Boolean,
+  testSuccessful: Boolean,
   stdout: Seq[String],
   stderr: Seq[String]
-)
+) extends ProgrammingTestCorrectionResult {
+
+  override def successful: Boolean = testSuccessful
+
+}
 
 // Unit Test Correction
 
 final case class UnitTestCorrectionResult(
   testId: Int,
+  @deprecated
   description: String,
-  successful: Boolean,
   shouldFail: Boolean,
+  testSuccessful: Boolean,
   stdout: Seq[String],
   stderr: Seq[String]
-)
+) extends ProgrammingTestCorrectionResult {
+
+  override def successful: Boolean = shouldFail != testSuccessful
+
+}

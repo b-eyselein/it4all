@@ -36,10 +36,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  FalseNegative = 'FalseNegative',
+  TruePositive = 'TruePositive',
   FalsePositive = 'FalsePositive',
-  TrueNegative = 'TrueNegative',
-  TruePositive = 'TruePositive'
+  FalseNegative = 'FalseNegative',
+  TrueNegative = 'TrueNegative'
 }
 
 export type DtdParseException = {
@@ -182,11 +182,12 @@ export type GradedTextResult = {
   maxPoints: Scalars['Float'];
 };
 
-export type ImplementationCorrectionResult = {
+export type ImplementationCorrectionResult = ProgrammingTestCorrectionResult & {
   __typename?: 'ImplementationCorrectionResult';
-  successful: Scalars['Boolean'];
+  testSuccessful: Scalars['Boolean'];
   stdout: Array<Scalars['String']>;
   stderr: Array<Scalars['String']>;
+  successful: Scalars['Boolean'];
 };
 
 export type JsAction = {
@@ -214,8 +215,8 @@ export type LoggedInUserWithToken = {
 };
 
 export enum MatchType {
-  PartialMatch = 'PARTIAL_MATCH',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
@@ -276,6 +277,10 @@ export type ProgrammingResult = {
   unitTestResults: Array<UnitTestCorrectionResult>;
   points: Scalars['Float'];
   maxPoints: Scalars['Float'];
+};
+
+export type ProgrammingTestCorrectionResult = {
+  successful: Scalars['Boolean'];
 };
 
 export type RegexAbstractResult = {
@@ -482,10 +487,10 @@ export type StringMatchingResult = {
 };
 
 export enum SuccessType {
-  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY'
+  Partially = 'PARTIALLY',
+  Complete = 'COMPLETE'
 }
 
 export type UmlAssociationAnalysisResult = {
@@ -710,14 +715,15 @@ export type UmlResult = {
   maxPoints: Scalars['Float'];
 };
 
-export type UnitTestCorrectionResult = {
+export type UnitTestCorrectionResult = ProgrammingTestCorrectionResult & {
   __typename?: 'UnitTestCorrectionResult';
   testId: Scalars['Int'];
   description: Scalars['String'];
-  successful: Scalars['Boolean'];
   shouldFail: Scalars['Boolean'];
+  testSuccessful: Scalars['Boolean'];
   stdout: Array<Scalars['String']>;
   stderr: Array<Scalars['String']>;
+  successful: Scalars['Boolean'];
 };
 
 export type UserCredentials = {
@@ -1078,8 +1084,8 @@ export type Query = {
 };
 
 export enum RegexCorrectionType {
-  Extraction = 'EXTRACTION',
-  Matching = 'MATCHING'
+  Matching = 'MATCHING',
+  Extraction = 'EXTRACTION'
 }
 
 export enum RegexExPart {
@@ -1149,11 +1155,11 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
+  Create = 'CREATE',
   Insert = 'INSERT',
-  Select = 'SELECT',
-  Delete = 'DELETE',
   Update = 'UPDATE',
-  Create = 'CREATE'
+  Select = 'SELECT',
+  Delete = 'DELETE'
 }
 
 export type SqlKeyCellValueObject = {
@@ -1175,10 +1181,10 @@ export type SqlRow = {
 };
 
 export enum ToolState {
+  PreAlpha = 'PRE_ALPHA',
   Alpha = 'ALPHA',
   Beta = 'BETA',
-  Live = 'LIVE',
-  PreAlpha = 'PRE_ALPHA'
+  Live = 'LIVE'
 }
 
 export type Topic = {
@@ -1206,8 +1212,8 @@ export type UmlAssociation = {
 };
 
 export enum UmlAssociationType {
-  Aggregation = 'AGGREGATION',
   Association = 'ASSOCIATION',
+  Aggregation = 'AGGREGATION',
   Composition = 'COMPOSITION'
 }
 
@@ -1284,10 +1290,10 @@ export enum UmlMultiplicity {
 }
 
 export enum UmlVisibility {
+  Public = 'PUBLIC',
   Package = 'PACKAGE',
-  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Public = 'PUBLIC'
+  Private = 'PRIVATE'
 }
 
 export type UnitTestPart = {

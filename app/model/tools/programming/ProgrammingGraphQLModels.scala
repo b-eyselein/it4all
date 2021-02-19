@@ -50,9 +50,21 @@ object ProgrammingGraphQLModels
     )
   }
 
+  private val programmingTestCorrectionResultInterfaceType: InterfaceType[Unit, ProgrammingTestCorrectionResult] =
+    InterfaceType(
+      "ProgrammingTestCorrectionResult",
+      fields[Unit, ProgrammingTestCorrectionResult](
+        Field("successful", BooleanType, resolve = _.value.successful)
+      )
+    )
+
   override val resultType: OutputType[ProgrammingResult] = {
-    implicit val nert: ObjectType[Unit, ImplementationCorrectionResult] = deriveObjectType()
-    implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult]      = deriveObjectType()
+    implicit val nert: ObjectType[Unit, ImplementationCorrectionResult] = deriveObjectType(
+      Interfaces(programmingTestCorrectionResultInterfaceType)
+    )
+    implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = deriveObjectType(
+      Interfaces(programmingTestCorrectionResultInterfaceType)
+    )
 
     deriveObjectType[Unit, ProgrammingResult](
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
