@@ -43,7 +43,7 @@ object RegexGraphQLModels
 
   // Solution types
 
-  override val SolTypeInputType: InputType[String] = StringType
+  override val solutionInputType: InputType[String] = StringType
 
   // Result types
 

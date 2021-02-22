@@ -7,7 +7,9 @@ abstract class FlaskInitialExercise(collectionId: Int, exerciseId: Int)
     extends InitialFilesExercise("flask", collectionId, exerciseId) {
 
   protected val declarationPath: File = exResPath / "declaration"
+  protected val solPath: File         = exResPath / "solution"
 
-  protected val solPath: File = exResPath / "solution"
+  protected val pythonFileType = "python"
+  protected val jinjaFileType  = "jinja2"
 
 }

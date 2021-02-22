@@ -25,10 +25,11 @@ object SqlTool extends Tool("sql", "Sql") {
 
   // Abstract types
 
-  override type SolType       = String
-  override type ExContentType = SqlExerciseContent
-  override type PartType      = SqlExPart
-  override type ResType       = SqlResult
+  override type SolutionType      = String
+  override type SolutionInputType = String
+  override type ExContentType     = SqlExerciseContent
+  override type PartType          = SqlExPart
+  override type ResType           = SqlResult
 
   type SqlExercise = Exercise[SqlExerciseContent]
 
@@ -39,7 +40,7 @@ object SqlTool extends Tool("sql", "Sql") {
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] =
+  override val jsonFormats: StringSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] =
     SqlToolJsonProtocols
 
   override val graphQlModels: ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlResult] =
@@ -51,7 +52,7 @@ object SqlTool extends Tool("sql", "Sql") {
 
   override def correctAbstract(
     user: LoggedInUser,
-    solution: SolType,
+    solution: SolutionType,
     exercise: SqlExercise,
     part: SqlExPart
   )(implicit executionContext: ExecutionContext): Future[Try[SqlResult]] = Future {

@@ -1,10 +1,9 @@
 package initialData.programming
 
 import better.files.File
-import initialData.InitialData.loadTextFromFile
 import initialData.{FileLoadConfig, InitialFilesExercise}
-import model.ExerciseFile
 import model.tools.programming.{ImplementationPart, UnitTestTestConfig}
+import model.{ExerciseFile, PathExerciseFile}
 
 abstract class ProgrammingInitialExercise(collectionId: Int, exerciseId: Int, protected val exerciseBaseName: String)
     extends InitialFilesExercise("programming", collectionId, exerciseId) {
@@ -19,9 +18,7 @@ abstract class ProgrammingInitialExercise(collectionId: Int, exerciseId: Int, pr
   protected val unitTestSolsDir: File = exResPath / "unit_test_sols"
 
   protected def unitTestTestConfig(id: Int, description: String, shouldFail: Boolean = true): UnitTestTestConfig = {
-    val fileName = s"${exerciseBaseName}_$id.py"
-
-    val file = ExerciseFile(fileName, fileType, loadTextFromFile(unitTestSolsDir / fileName), editable = false)
+    val file = PathExerciseFile(s"${exerciseBaseName}_$id.py", fileType, unitTestSolsDir, editable = false)
 
     UnitTestTestConfig(id, description, file, shouldFail)
   }

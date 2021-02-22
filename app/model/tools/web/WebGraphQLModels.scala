@@ -47,7 +47,7 @@ object WebGraphQLModels
   override val exerciseContentType: ObjectType[Unit, WebExerciseContent] = {
     implicit val siteSpecT: ObjectType[Unit, SiteSpec] = siteSpecType
     implicit val eft: ObjectType[Unit, ExerciseFile]   = exerciseFileType
-    implicit val sst: ObjectType[Unit, FilesSolution]  = solutionType
+    implicit val sst: ObjectType[Unit, FilesSolution]  = solutionOutputType
 
     deriveObjectType(
       AddFields(

@@ -59,8 +59,8 @@ object UmlGraphQLModels
     implicit val uat: InputObjectType[UmlAttribute] = umlAttributeInputType
     implicit val umt: InputObjectType[UmlMethod]    = umlMethodInputType
 
-    implicit val uaf: OFormat[UmlAttribute] = UmlClassDiagramJsonFormat.umlAttributeFormat
-    implicit val umf: OFormat[UmlMethod]    = UmlClassDiagramJsonFormat.umlMethodFormat
+    implicit val uaf: OFormat[UmlAttribute] = UmlToolJsonProtocol.umlAttributeFormat
+    implicit val umf: OFormat[UmlMethod]    = UmlToolJsonProtocol.umlMethodFormat
 
     deriveInputObjectType(InputObjectTypeName("UmlClassInput"))
   }
@@ -114,7 +114,7 @@ object UmlGraphQLModels
 
   // Solution types
 
-  override val SolTypeInputType: InputType[UmlClassDiagram] = {
+  override val solutionInputType: InputType[UmlClassDiagram] = {
     implicit val ucit: InputObjectType[UmlClass]       = umlClassInputType
     implicit val uait: InputObjectType[UmlAssociation] = umlAssociationInputType
     implicit val uiit: InputObjectType[UmlImplementation] = deriveInputObjectType(

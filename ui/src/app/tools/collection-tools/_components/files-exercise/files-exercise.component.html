@@ -33,7 +33,9 @@
             Die Korrektur läuft gerade...
           </div>
 
-          <ng-content select="[correctionContent]"></ng-content>
+          <div class="overflow-hidden">
+            <ng-content select="[correctionContent]"></ng-content>
+          </div>
         </it4all-tab>
 
         <it4all-tab [title]="livePreviewTabTitle" *ngIf="hasLivePreview">
@@ -48,13 +50,15 @@
           </div>
 
           <ng-container *ngIf="displaySampleSolutions">
-            <ng-container *ngFor="let sample of sampleSolutions; let lastList = last">
-              <div class="mb-3" *ngFor="let exFile of sample.files">
-                <it4all-exercise-file-card [exerciseFile]="exFile"></it4all-exercise-file-card>
-              </div>
+            <div class="overflow-hidden">
+              <ng-container *ngFor="let sample of sampleSolutions; let lastList = last">
+                <div class="mb-3" *ngFor="let exFile of sample.files">
+                  <it4all-exercise-file-card [exerciseFile]="exFile"></it4all-exercise-file-card>
+                </div>
 
-              <br *ngIf="!lastList">
-            </ng-container>
+                <br *ngIf="!lastList">
+              </ng-container>
+            </div>
 
           </ng-container>
         </it4all-tab>

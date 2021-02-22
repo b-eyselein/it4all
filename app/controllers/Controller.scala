@@ -57,7 +57,9 @@ class Controller @Inject() (
     val authHeader = request.headers.get("Authorization").flatMap(deserializeJwt)
 
     QueryParser.parse(request.body.query) match {
-      case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
+      case Failure(error) =>
+        logger.error("Query could not be parsed", error)
+        Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
       case Success(queryAst) =>
         Executor
           .execute(
@@ -72,7 +74,9 @@ class Controller @Inject() (
             case error: QueryAnalysisError =>
               logger.error("There has been a query error", error)
               BadRequest(error.resolveError)
-            case error: ErrorWithResolver => InternalServerError(error.resolveError)
+            case error: ErrorWithResolver =>
+              logger.error("There has been a query resolve error", error)
+              InternalServerError(error.resolveError)
           }
     }
   }

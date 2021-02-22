@@ -1,6 +1,7 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {
   ExerciseFileFragment,
+  ExerciseFileInput,
   ExerciseSolveFieldsFragment,
   FilesSolution,
   FilesSolutionInput,
@@ -67,7 +68,12 @@ export class FlaskExerciseComponent
   // Correction
 
   protected getSolution(): FilesSolutionInput | undefined {
-    return {files: this.exerciseFileFragments};
+    const files: ExerciseFileInput[] = this.exerciseFileFragments
+      .map(({name, fileType, content, editable}) => {
+        return {name, fileType, content, editable};
+      });
+
+    return {files};
   }
 
   protected getMutationQueryVariables(): FlaskCorrectionMutationVariables {

@@ -32,26 +32,24 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
   protected def writeJsonWebToken(user: LoggedInUserWithToken): JsValue =
     JsonProtocols.loggedInUserWithTokenFormat.writes(user)
 
-  protected def deserializeJwt(jwtString: String): Option[LoggedInUser] =
-    JwtSession
-      .deserialize(jwtString)(configuration, clock)
-      .getAs[LoggedInUser](userFieldName)
+  protected def deserializeJwt(jwtString: String): Option[LoggedInUser] = JwtSession
+    .deserialize(jwtString)(configuration, clock)
+    .getAs[LoggedInUser](userFieldName)
 
-  private def register(registerValues: RegisterValues): Future[Option[String]] =
-    if (registerValues.isInvalid) {
-      Future.successful(None)
-    } else {
-      futureUserByUsername(registerValues.username).flatMap {
-        case Some(_) => Future.successful(None)
-        case None =>
-          val newUser = User(registerValues.username, Some(registerValues.firstPassword.boundedBcrypt))
+  private def register(registerValues: RegisterValues): Future[Option[String]] = if (registerValues.isInvalid) {
+    Future.successful(None)
+  } else {
+    futureUserByUsername(registerValues.username).flatMap {
+      case Some(_) => Future.successful(None)
+      case None =>
+        val newUser = User(registerValues.username, Some(registerValues.firstPassword.boundedBcrypt))
 
-          futureInsertUser(newUser).map {
-            case false => None
-            case true  => Some(newUser.username)
-          }
-      }
+        futureInsertUser(newUser).map {
+          case false => None
+          case true  => Some(newUser.username)
+        }
     }
+  }
 
   private def authenticate(credentials: UserCredentials): Future[Option[LoggedInUserWithToken]] =
     futureUserByUsername(credentials.username).map { maybeUser =>
@@ -72,29 +70,28 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
   private def updateAllUserProficiencies[EC <: ExerciseContent](
     username: String,
     exercise: Exercise[EC]
-  ): Future[Boolean] =
-    Future
-      .sequence {
-        exercise.topicsWithLevels.map { topicWithLevel =>
-          updateUserProficiency(username, exercise, topicWithLevel)
-            .recover { _ => false }
-        }
+  ): Future[Boolean] = Future
+    .sequence {
+      exercise.topicsWithLevels.map { topicWithLevel =>
+        updateUserProficiency(username, exercise, topicWithLevel)
+          .recover { _ => false }
       }
-      .map { updateResults => updateResults.forall(identity) }
+    }
+    .map { updateResults => updateResults.forall(identity) }
 
   private val loggedInUserMutationType: ObjectType[Unit, LoggedInUser] = ObjectType(
     "UserMutations",
     fields = ToolList.tools.map { tool =>
       type P = tool.PartType
-      type S = tool.SolType
+      type S = tool.SolutionInputType
       type E = tool.ExContentType
       type R = tool.ResType
 
       implicit val partFormat: Format[P]    = tool.jsonFormats.partTypeFormat
-      implicit val solTypeFormat: Format[S] = tool.jsonFormats.solutionFormat
+      implicit val solTypeFormat: Format[S] = tool.jsonFormats.solutionInputFormat
 
       val partTypeInputArg: Argument[P] = Argument("part", tool.graphQlModels.partEnumType)
-      val solTypeInputArg: Argument[S]  = Argument("solution", tool.graphQlModels.SolTypeInputType)
+      val solTypeInputArg: Argument[S]  = Argument("solution", tool.graphQlModels.solutionInputType)
 
       def correct(user: LoggedInUser, ex: Exercise[E], part: P, solution: S): Future[CorrectionResult[R]] = tool
         .correctAbstract(user, solution, ex, part)
@@ -108,7 +105,7 @@ trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with
             nextUserSolutionId <- nextUserSolutionId(ex, part)
 
             solutionSaved <- insertSolution(
-              UserSolution(
+              UserSolution[S, P](
                 nextUserSolutionId,
                 ex.exerciseId,
                 ex.collectionId,

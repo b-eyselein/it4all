@@ -2,10 +2,10 @@ package model.tools.web
 
 import de.uniwue.webtester.sitespec._
 import model.tools._
-import model.{ExerciseFile, FilesSolution, JsonProtocols}
+import model.{ExerciseFile, FilesSolution}
 import play.api.libs.json.{Format, Json, OFormat}
 
-object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebExPart] {
+object WebToolJsonProtocol extends FilesSolutionToolJsonProtocol[WebExerciseContent, WebExPart] {
 
   override val partTypeFormat: Format[WebExPart] = WebExPart.jsonFormat
 
@@ -42,7 +42,7 @@ object WebToolJsonProtocol extends FilesSampleSolutionToolJsonProtocol[WebExerci
   }
 
   override val exerciseContentFormat: OFormat[WebExerciseContent] = {
-    implicit val eff: Format[ExerciseFile]    = JsonProtocols.exerciseFileFormat
+    implicit val eff: Format[ExerciseFile]    = exerciseFileFormat
     implicit val ssf: Format[SiteSpec]        = siteSpecFormat
     implicit val sasof: Format[FilesSolution] = solutionFormat
 

@@ -14,10 +14,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  TruePositive
-  FalsePositive
   FalseNegative
+  FalsePositive
   TrueNegative
+  TruePositive
 }
 
 type DTDParseException {
@@ -169,8 +169,8 @@ type LoggedInUserWithToken {
 }
 
 enum MatchType {
-  SUCCESSFUL_MATCH
   PARTIAL_MATCH
+  SUCCESSFUL_MATCH
   UNSUCCESSFUL_MATCH
 }
 
@@ -387,10 +387,10 @@ type StringMatchingResult {
 }
 
 enum SuccessType {
+  COMPLETE
   ERROR
   NONE
   PARTIALLY
-  COMPLETE
 }
 
 type UmlAssociationAnalysisResult {
@@ -740,8 +740,8 @@ union ExerciseContentUnionType = FlaskExerciseContent | ProgrammingExerciseConte
 type ExerciseFile {
   name: String!
   fileType: String!
-  content: String!
   editable: Boolean!
+  content: String!
 }
 
 type FilesSolution {
@@ -850,8 +850,8 @@ type Query {
 }
 
 enum RegexCorrectionType {
-  MATCHING
   EXTRACTION
+  MATCHING
 }
 
 enum RegexExPart {
@@ -905,10 +905,10 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  CREATE
+  SELECT
   INSERT
   UPDATE
-  SELECT
+  CREATE
   DELETE
 }
 
@@ -956,8 +956,8 @@ type UmlAssociation {
 }
 
 enum UmlAssociationType {
-  ASSOCIATION
   AGGREGATION
+  ASSOCIATION
   COMPOSITION
 }
 
@@ -1023,10 +1023,10 @@ enum UmlMultiplicity {
 }
 
 enum UmlVisibility {
-  PUBLIC
   PACKAGE
-  PROTECTED
   PRIVATE
+  PROTECTED
+  PUBLIC
 }
 
 type UnitTestPart {

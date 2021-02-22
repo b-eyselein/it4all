@@ -1,7 +1,7 @@
 package model.tools.programming
 
 import better.files._
-import model.FilesSolution
+import model.IFilesSolution
 import model.core.DockerBind
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 
@@ -12,7 +12,7 @@ object ProgrammingCorrector extends ProgrammingUnitTestCorrector with Programmin
 
   def correct(
     exercise: ProgrammingExercise,
-    solution: FilesSolution,
+    solution: IFilesSolution,
     solutionTargetDir: File,
     part: ProgExPart
   )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] = {

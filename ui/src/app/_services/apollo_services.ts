@@ -36,10 +36,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  TruePositive = 'TruePositive',
-  FalsePositive = 'FalsePositive',
   FalseNegative = 'FalseNegative',
-  TrueNegative = 'TrueNegative'
+  FalsePositive = 'FalsePositive',
+  TrueNegative = 'TrueNegative',
+  TruePositive = 'TruePositive'
 }
 
 export type DtdParseException = {
@@ -215,8 +215,8 @@ export type LoggedInUserWithToken = {
 };
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
@@ -487,10 +487,10 @@ export type StringMatchingResult = {
 };
 
 export enum SuccessType {
+  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY',
-  Complete = 'COMPLETE'
+  Partially = 'PARTIALLY'
 }
 
 export type UmlAssociationAnalysisResult = {
@@ -949,8 +949,8 @@ export type ExerciseFile = {
   __typename?: 'ExerciseFile';
   name: Scalars['String'];
   fileType: Scalars['String'];
-  content: Scalars['String'];
   editable: Scalars['Boolean'];
+  content: Scalars['String'];
 };
 
 export type FilesSolution = {
@@ -1084,8 +1084,8 @@ export type Query = {
 };
 
 export enum RegexCorrectionType {
-  Matching = 'MATCHING',
-  Extraction = 'EXTRACTION'
+  Extraction = 'EXTRACTION',
+  Matching = 'MATCHING'
 }
 
 export enum RegexExPart {
@@ -1155,10 +1155,10 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Create = 'CREATE',
+  Select = 'SELECT',
   Insert = 'INSERT',
   Update = 'UPDATE',
-  Select = 'SELECT',
+  Create = 'CREATE',
   Delete = 'DELETE'
 }
 
@@ -1212,8 +1212,8 @@ export type UmlAssociation = {
 };
 
 export enum UmlAssociationType {
-  Association = 'ASSOCIATION',
   Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
   Composition = 'COMPOSITION'
 }
 
@@ -1290,10 +1290,10 @@ export enum UmlMultiplicity {
 }
 
 export enum UmlVisibility {
-  Public = 'PUBLIC',
   Package = 'PACKAGE',
+  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Private = 'PRIVATE'
+  Public = 'PUBLIC'
 }
 
 export type UnitTestPart = {

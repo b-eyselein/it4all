@@ -5,10 +5,10 @@ import better.files.File.OpenOptions
 import de.uniwue.webtester.WebCorrector
 import initialData.InitialData
 import initialData.web.WebInitialData
+import model._
 import model.graphql.FilesSolutionToolGraphQLModelBasics
 import model.points._
 import model.tools._
-import model.{Exercise, FilesSolution, LoggedInUser}
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 
 import java.nio.file.StandardOpenOption
@@ -17,14 +17,15 @@ import scala.util.Try
 
 object WebTool extends Tool("web", "Web") {
 
-  override type SolType       = FilesSolution
-  override type ExContentType = WebExerciseContent
-  override type PartType      = WebExPart
-  override type ResType       = WebResult
+  override type SolutionType      = FilesSolution
+  override type SolutionInputType = FilesSolutionInput
+  override type ExContentType     = WebExerciseContent
+  override type PartType          = WebExPart
+  override type ResType           = WebResult
 
   type WebExercise = Exercise[WebExerciseContent]
 
-  override val jsonFormats: FilesSampleSolutionToolJsonProtocol[WebExerciseContent, WebExPart] = WebToolJsonProtocol
+  override val jsonFormats: FilesSolutionToolJsonProtocol[WebExerciseContent, WebExPart] = WebToolJsonProtocol
 
   override val graphQlModels: FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebResult] =
     WebGraphQLModels
@@ -35,7 +36,7 @@ object WebTool extends Tool("web", "Web") {
     StandardOpenOption.WRITE
   )
 
-  def writeFilesSolutionFiles(targetDir: File, webSolution: FilesSolution): Try[Seq[File]] = Try {
+  def writeFilesSolutionFiles(targetDir: File, webSolution: IFilesSolution): Try[Seq[File]] = Try {
     webSolution.files.map { exerciseFile =>
       (targetDir / exerciseFile.name)
         .createFileIfNotExists(createParents = true)
@@ -77,7 +78,7 @@ object WebTool extends Tool("web", "Web") {
 
   override def correctAbstract(
     user: LoggedInUser,
-    solution: FilesSolution,
+    solution: FilesSolutionInput,
     exercise: WebExercise,
     part: WebExPart
   )(implicit executionContext: ExecutionContext): Future[Try[WebResult]] = Future {

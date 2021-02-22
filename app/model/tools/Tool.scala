@@ -3,9 +3,9 @@ package model.tools
 import better.files.File
 import enumeratum.{EnumEntry, PlayEnum}
 import initialData.InitialData
+import model._
 import model.graphql.ToolGraphQLModelBasics
 import model.result.AbstractCorrectionResult
-import model._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -34,16 +34,17 @@ abstract class Tool(val id: String, val name: String, val toolState: ToolState =
 
   // Abstract types
 
-  type SolType
+  type SolutionType
+  type SolutionInputType
   type ExContentType <: ExerciseContent
   type PartType <: ExPart
   type ResType <: AbstractCorrectionResult
 
   // Json & GraphQL Formats
 
-  val jsonFormats: ToolJsonProtocol[SolType, ExContentType, PartType]
+  val jsonFormats: ToolJsonProtocol[SolutionType, SolutionInputType, ExContentType, PartType]
 
-  val graphQlModels: ToolGraphQLModelBasics[SolType, ExContentType, PartType, ResType]
+  val graphQlModels: ToolGraphQLModelBasics[SolutionInputType, ExContentType, PartType, ResType]
 
   // Other helper methods
 
@@ -52,7 +53,7 @@ abstract class Tool(val id: String, val name: String, val toolState: ToolState =
 
   def correctAbstract(
     user: LoggedInUser,
-    solution: SolType,
+    solution: SolutionInputType,
     exercise: Exercise[ExContentType],
     part: PartType
   )(implicit executionContext: ExecutionContext): Future[Try[ResType]]

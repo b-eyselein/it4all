@@ -1,9 +1,9 @@
 package model.tools.regex
 
-import model.tools.StringSampleSolutionToolJsonProtocol
+import model.tools.StringSolutionToolJsonProtocol
 import play.api.libs.json.{Format, Json, OFormat}
 
-object RegexToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] {
+object RegexToolJsonProtocol extends StringSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] {
 
   override val partTypeFormat: Format[RegexExPart] = RegexExPart.jsonFormat
 

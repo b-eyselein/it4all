@@ -2,13 +2,6 @@ package model
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-final case class Topic(
-  abbreviation: String,
-  toolId: String,
-  title: String,
-  maxLevel: Level = Level.Expert
-)
-
 final case class ExerciseCollection(
   collectionId: Int,
   toolId: String,
@@ -44,11 +37,6 @@ trait FileExerciseContent extends ExerciseContent {
 
 }
 
-final case class TopicWithLevel(
-  topic: Topic,
-  level: Level
-)
-
 final case class Exercise[C <: ExerciseContent](
   exerciseId: Int,
   collectionId: Int,
@@ -59,10 +47,6 @@ final case class Exercise[C <: ExerciseContent](
   topicsWithLevels: Seq[TopicWithLevel] = Seq.empty,
   difficulty: Int,
   content: C
-)
-
-final case class FilesSolution(
-  files: Seq[ExerciseFile]
 )
 
 final case class UserSolution[SolType, PartType <: ExPart](

@@ -9,12 +9,12 @@ import sangria.schema._
 
 import scala.reflect.ClassTag
 
-trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: AbstractCorrectionResult]
+trait ToolGraphQLModelBasics[SolutionInputType, C <: ExerciseContent, PT <: ExPart, ResType <: AbstractCorrectionResult]
     extends BasicGraphQLModels {
 
   // Arguments
 
-  val SolTypeInputType: InputType[S]
+  val solutionInputType: InputType[SolutionInputType]
 
   val partEnumType: EnumType[PT]
 
@@ -113,24 +113,5 @@ trait ToolGraphQLModelBasics[S, C <: ExerciseContent, PT <: ExPart, ResType <: A
   val exerciseContentType: ObjectType[Unit, C]
 
   val resultType: OutputType[ResType]
-
-}
-
-trait FilesSolutionToolGraphQLModelBasics[C <: ExerciseContent, PT <: ExPart, ResType <: AbstractCorrectionResult]
-    extends ToolGraphQLModelBasics[FilesSolution, C, PT, ResType] {
-
-  override val SolTypeInputType: InputObjectType[FilesSolution] = {
-    implicit val efit: InputObjectType[ExerciseFile] = exerciseFileInputType
-
-    deriveInputObjectType(
-      InputObjectTypeName("FilesSolutionInput")
-    )
-  }
-
-  protected val solutionType: ObjectType[Unit, FilesSolution] = {
-    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
-
-    deriveObjectType()
-  }
 
 }

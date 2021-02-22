@@ -36,7 +36,7 @@ object XmlGraphQLModels
 
   // Solution types
 
-  override val SolTypeInputType: InputType[XmlSolution] =
+  override val solutionInputType: InputType[XmlSolution] =
     deriveInputObjectType[XmlSolution](InputObjectTypeName("XmlSolutionInput"))
 
   // Result types

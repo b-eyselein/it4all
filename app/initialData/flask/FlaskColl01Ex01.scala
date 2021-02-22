@@ -11,24 +11,24 @@ object FlaskColl01Ex01 extends FlaskInitialExercise(1, 1) {
   private val sampleSolutionFiles = loadFilesFromFolder(
     solPath,
     Seq(
-      FileLoadConfig("server.py", "python"),
-      FileLoadConfig("templates/base.html", "jinja2"),
-      FileLoadConfig("templates/index.html", "jinja2"),
-      FileLoadConfig("templates/login.html", "jinja2"),
-      FileLoadConfig("templates/register.html", "jinja2")
+      FileLoadConfig("server.py", pythonFileType),
+      FileLoadConfig("templates/base.html", jinjaFileType),
+      FileLoadConfig("templates/index.html", jinjaFileType),
+      FileLoadConfig("templates/login.html", jinjaFileType),
+      FileLoadConfig("templates/register.html", jinjaFileType)
     )
   )
 
-  private val testFiles = loadFilesFromFolder(exResPath, Seq(FileLoadConfig("test_login.py", "python")))
+  private val testFiles = loadFilesFromFolder(exResPath, Seq(FileLoadConfig("test_login.py", pythonFileType)))
 
   private val files: Seq[ExerciseFile] = loadFilesFromFolder(
     declarationPath,
     Seq(
-      FileLoadConfig("server.py", "python", editable = true),
-      FileLoadConfig("templates/base.html", "jinja2", editable = true),
-      FileLoadConfig("templates/index.html", "jinja2", editable = true),
-      FileLoadConfig("templates/login.html", "jinja2", editable = true),
-      FileLoadConfig("templates/register.html", "jinja2", editable = true)
+      FileLoadConfig("server.py", pythonFileType, editable = true),
+      FileLoadConfig("templates/base.html", jinjaFileType, editable = true),
+      FileLoadConfig("templates/index.html", jinjaFileType, editable = true),
+      FileLoadConfig("templates/login.html", jinjaFileType, editable = true),
+      FileLoadConfig("templates/register.html", jinjaFileType, editable = true)
     )
   )
 

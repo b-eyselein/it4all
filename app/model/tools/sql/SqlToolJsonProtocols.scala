@@ -1,9 +1,9 @@
 package model.tools.sql
 
-import model.tools.StringSampleSolutionToolJsonProtocol
+import model.tools.StringSolutionToolJsonProtocol
 import play.api.libs.json._
 
-object SqlToolJsonProtocols extends StringSampleSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] {
+object SqlToolJsonProtocols extends StringSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] {
 
   override val partTypeFormat: Format[SqlExPart] = SqlExPart.jsonFormat
 

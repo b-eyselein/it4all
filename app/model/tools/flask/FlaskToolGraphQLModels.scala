@@ -22,7 +22,7 @@ object FlaskToolGraphQLModels
   override val exerciseContentType: ObjectType[Unit, FlaskExerciseContent] = {
     implicit val eft: ObjectType[Unit, ExerciseFile]      = exerciseFileType
     implicit val ftct: ObjectType[Unit, FlaskTestsConfig] = flaskTestsConfigType
-    implicit val sst: ObjectType[Unit, FilesSolution]     = solutionType
+    implicit val sst: ObjectType[Unit, FilesSolution]     = solutionOutputType
 
     deriveObjectType()
   }

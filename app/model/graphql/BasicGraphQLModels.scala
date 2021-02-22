@@ -1,8 +1,8 @@
 package model.graphql
 
-import model.{KeyValueObject, _}
 import model.result.SuccessType
 import model.tools.ToolState
+import model.{KeyValueObject, _}
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -51,12 +51,6 @@ trait BasicGraphQLModels {
       ExcludeFields("pointsForExercises")
     )
   }
-
-  protected val exerciseFileType: ObjectType[Unit, ExerciseFile] = deriveObjectType()
-
-  protected val exerciseFileInputType: InputObjectType[ExerciseFile] = deriveInputObjectType(
-    InputObjectTypeName("ExerciseFileInput")
-  )
 
   protected val KeyValueObjectType: ObjectType[Unit, KeyValueObject] = deriveObjectType()
 

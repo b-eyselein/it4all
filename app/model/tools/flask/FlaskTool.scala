@@ -3,22 +3,23 @@ package model.tools.flask
 import initialData.InitialData
 import initialData.flask.FlaskInitialData
 import model.graphql.FilesSolutionToolGraphQLModelBasics
-import model.tools.{FilesSampleSolutionToolJsonProtocol, Tool, ToolState}
-import model.{Exercise, FilesSolution, LoggedInUser}
+import model.tools.{FilesSolutionToolJsonProtocol, Tool, ToolState}
+import model.{Exercise, FilesSolution, FilesSolutionInput, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 object FlaskTool extends Tool("flask", "Flask", ToolState.ALPHA) {
 
-  override type SolType       = FilesSolution
-  override type ExContentType = FlaskExerciseContent
-  override type PartType      = FlaskExPart
-  override type ResType       = FlaskResult
+  override type SolutionType      = FilesSolution
+  override type SolutionInputType = FilesSolutionInput
+  override type ExContentType     = FlaskExerciseContent
+  override type PartType          = FlaskExPart
+  override type ResType           = FlaskResult
 
   type FlaskExercise = Exercise[FlaskExerciseContent]
 
-  override val jsonFormats: FilesSampleSolutionToolJsonProtocol[FlaskExerciseContent, FlaskExPart] =
+  override val jsonFormats: FilesSolutionToolJsonProtocol[FlaskExerciseContent, FlaskExPart] =
     FlaskToolJsonProtocol
 
   override val graphQlModels: FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskExPart, FlaskResult] =
@@ -26,7 +27,7 @@ object FlaskTool extends Tool("flask", "Flask", ToolState.ALPHA) {
 
   override def correctAbstract(
     user: LoggedInUser,
-    solution: FilesSolution,
+    solution: FilesSolutionInput,
     exercise: Exercise[FlaskExerciseContent],
     part: FlaskExPart
   )(implicit executionContext: ExecutionContext): Future[Try[FlaskResult]] =

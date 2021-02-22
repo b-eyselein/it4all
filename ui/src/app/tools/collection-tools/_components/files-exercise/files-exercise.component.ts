@@ -5,7 +5,13 @@ import {ExerciseFile, FilesSolution} from "../../../../_services/apollo_services
 
 @Component({
   selector: 'it4all-files-exercise',
-  templateUrl: './files-exercise.component.html'
+  templateUrl: './files-exercise.component.html',
+  styles: [
+    `.overflow-hidden {
+      max-height: 750px;
+      overflow-y: auto;
+    }`
+  ]
 })
 export class FilesExerciseComponent
   extends CorrectionHelpers

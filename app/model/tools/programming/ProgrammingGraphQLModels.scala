@@ -36,7 +36,7 @@ object ProgrammingGraphQLModels
   override val exerciseContentType: ObjectType[Unit, ProgrammingExerciseContent] = {
     implicit val upt: ObjectType[Unit, UnitTestPart]       = unitTestPartType
     implicit val ipt: ObjectType[Unit, ImplementationPart] = implementationPartType
-    implicit val sst: ObjectType[Unit, FilesSolution]      = solutionType
+    implicit val sst: ObjectType[Unit, FilesSolution]      = solutionOutputType
 
     deriveObjectType(
       AddFields(

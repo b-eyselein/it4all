@@ -1,19 +1,15 @@
 package initialData
 
 import better.files.File
-import initialData.InitialData.{exerciseResourcesPath, loadTextFromFile}
-import model.ExerciseFile
+import initialData.InitialData.exerciseResourcesPath
+import model.{ExerciseFile, PathExerciseFile}
 
 final case class FileLoadConfig(
   name: String,
   fileType: String,
   editable: Boolean = false,
   maybeOtherFileName: Option[String] = None
-) {
-
-  def fileName: String = maybeOtherFileName.getOrElse(name)
-
-}
+)
 
 abstract class InitialFilesExercise(
   protected val toolId: String,
@@ -23,14 +19,13 @@ abstract class InitialFilesExercise(
 
   protected val exResPath: File = exerciseResourcesPath(toolId, collectionId, exerciseId)
 
-  protected def loadFilesFromFolder(folder: File, fileLoadConfigs: Seq[FileLoadConfig]): Seq[ExerciseFile] =
-    fileLoadConfigs.map { fileLoadConfig =>
-      ExerciseFile(
-        name = fileLoadConfig.name,
-        fileType = fileLoadConfig.fileType,
-        editable = fileLoadConfig.editable,
-        content = loadTextFromFile(folder / fileLoadConfig.fileName)
-      )
-    }
+  protected def loadFilesFromFolder(
+    directory: File,
+    fileLoadConfigs: Seq[FileLoadConfig]
+  ): Seq[ExerciseFile] = fileLoadConfigs.map { case FileLoadConfig(name, fileType, editable, maybeOtherFileName) =>
+    val fileName = maybeOtherFileName.getOrElse(name)
+
+    PathExerciseFile(fileName, fileType, directory, editable)
+  }
 
 }

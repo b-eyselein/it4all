@@ -5,7 +5,7 @@ import model.points._
 import model.tools.DockerExecutionCorrector
 import model.tools.flask.FlaskTool.{FlaskExercise, solutionDirForExercise}
 import model.tools.flask.FlaskToolJsonProtocol.{flaskCorrectionResultReads, flaskTestsConfigFormat}
-import model.{ExerciseFile, FilesSolution}
+import model.{ContentExerciseFile, IFilesSolution}
 import play.api.libs.json.{Json, Reads}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -19,7 +19,7 @@ object FlaskCorrector extends DockerExecutionCorrector {
 
   def correct(
     username: String,
-    solution: FilesSolution,
+    solution: IFilesSolution,
     exercise: FlaskExercise
   )(implicit executionContext: ExecutionContext): Future[Try[FlaskResult]] = {
 
@@ -36,7 +36,7 @@ object FlaskCorrector extends DockerExecutionCorrector {
       .clear()
 
     // Write test config
-    val testConfigExerciseFile = ExerciseFile(
+    val testConfigExerciseFile = ContentExerciseFile(
       testConfigFileName,
       fileType = "json",
       content = Json.stringify(

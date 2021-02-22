@@ -1,13 +1,11 @@
 package model.tools.rose
 
-import model.tools.StringSampleSolutionToolJsonProtocol
+import model.tools.StringSolutionToolJsonProtocol
 import play.api.libs.json._
 
-object RoseToolJsonProtocol extends StringSampleSolutionToolJsonProtocol[RoseExerciseContent, RoseExPart] {
+object RoseToolJsonProtocol extends StringSolutionToolJsonProtocol[RoseExerciseContent, RoseExPart] {
 
   override val partTypeFormat: Format[RoseExPart] = RoseExPart.jsonFormat
-
-  override val solutionFormat: Format[String] = Format(Reads.StringReads, Writes.StringWrites)
 
   override protected val exerciseContentFormat: OFormat[RoseExerciseContent] = Json.format
 
