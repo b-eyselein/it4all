@@ -1,11 +1,11 @@
 package model.tools.flask
 
-import model.FilesSolution
 import model.core._
 import model.points._
 import model.tools.DockerExecutionCorrector
 import model.tools.flask.FlaskTool.{FlaskExercise, solutionDirForExercise}
 import model.tools.flask.FlaskToolJsonProtocol.{flaskCorrectionResultReads, flaskTestsConfigFormat}
+import model.{ExerciseFile, FilesSolution}
 import play.api.libs.json.{Json, Reads}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,39 +27,28 @@ object FlaskCorrector extends DockerExecutionCorrector {
 
     // Write solution files
     val appUnderTestTargetDir = solTargetDir / "app"
-    solution.files.foreach { f =>
-      val targetFile = appUnderTestTargetDir / f.name
-
-      targetFile
-        .createIfNotExists(createParents = true)
-        .write(f.content)
-    }
+    solution.files.foreach(_.writeOrCopyToDirectory(appUnderTestTargetDir))
 
     // Write helper files
     val resultFile = solTargetDir / resultFileName
-
     resultFile
       .createIfNotExists(createParents = true)
       .clear()
 
     // Write test config
-    val testConfigFile = solTargetDir / testConfigFileName
-
-    val testConfigFileContent = Json.stringify(
-      flaskTestsConfigFormat.writes(exercise.content.testConfig)
+    val testConfigExerciseFile = ExerciseFile(
+      testConfigFileName,
+      fileType = "json",
+      content = Json.stringify(
+        flaskTestsConfigFormat.writes(exercise.content.testConfig)
+      ),
+      editable = false
     )
-
-    testConfigFile
-      .createIfNotExists(createParents = true)
-      .write(testConfigFileContent)
+    val testConfigFile = testConfigExerciseFile.writeOrCopyToDirectory(solTargetDir)
 
     // write test files
     val testFileBinds = exercise.content.testFiles.map { f =>
-      val targetFile = solTargetDir / f.name
-
-      targetFile
-        .createIfNotExists(createParents = true)
-        .write(f.content)
+      val targetFile = f.writeOrCopyToDirectory(solTargetDir)
 
       DockerBind(fromPath = targetFile, baseBindPath / f.name, isReadOnly = true)
     }

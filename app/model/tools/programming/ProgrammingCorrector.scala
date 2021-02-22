@@ -24,16 +24,11 @@ object ProgrammingCorrector extends ProgrammingUnitTestCorrector with Programmin
     val resultFileMount = DockerBind(resultFile, baseBindPath / resultFileName)
 
     // Mount other files
-    val solutionFileMounts = solution.files
-      .map { ef =>
-        val targetPath = solutionTargetDir / ef.name
+    val solutionFileMounts = solution.files.map { ef =>
+      val targetPath = ef.writeOrCopyToDirectory(solutionTargetDir)
 
-        targetPath
-          .createIfNotExists(createParents = true)
-          .write(ef.content)
-
-        DockerBind(targetPath, baseBindPath / ef.name)
-      }
+      DockerBind(targetPath, baseBindPath / ef.name)
+    }
 
     val defaultFileMounts = solutionFileMounts :+ resultFileMount
 

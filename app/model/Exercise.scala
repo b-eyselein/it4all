@@ -61,13 +61,6 @@ final case class Exercise[C <: ExerciseContent](
   content: C
 )
 
-final case class ExerciseFile(
-  name: String,
-  fileType: String,
-  content: String,
-  editable: Boolean
-)
-
 final case class FilesSolution(
   files: Seq[ExerciseFile]
 )
