@@ -5,7 +5,7 @@ import {MatchType, StringMatchFragment, StringMatchingResultFragment} from '../.
   selector: 'it4all-sql-matching-result',
   template: `
     <div [ngClass]="successful ? 'has-text-success' : 'has-text-danger'">
-      ({{matchingResult.points.toFixed(1)}} / {{matchingResult.maxPoints.toFixed(1)}} P)
+      <!-- ({{matchingResult.points.toFixed(1)}} / {{matchingResult.maxPoints.toFixed(1)}} P) -->
       Der Vergleich der {{matchName}} war {{successful ? "" : "nicht"}} erfolgreich.
     </div>
     <div class="content" *ngIf="!successful">

@@ -12,17 +12,13 @@ import {
   SqlExPart,
   SqlResultFragment
 } from '../../../../_services/apollo_services';
-
-import 'codemirror/mode/sql/sql';
 import {HasSampleSolutions} from "../../_helpers/correction-helpers";
 import {DexieService} from "../../../../_services/dexie.service";
 
+import 'codemirror/mode/sql/sql';
 
 function getIdForSqlExPart(sqlExPart: SqlExPart): string {
-  switch (sqlExPart) {
-    case SqlExPart.SqlSingleExPart:
-      return 'solve';
-  }
+  return 'solve';
 }
 
 @Component({

@@ -1,73 +1,77 @@
-<div class="columns">
-  <div class="column is-half-desktop is-offset-one-quarter-desktop">
+<div class="container">
 
-    <label class="label has-text-centered" for="max">Maximalwert</label>
-    <div class="field has-addons">
-      <div class="control">
-        <button class="button" (click)="doubleMax()" [disabled]="max === maximalMax">* 2</button>
-      </div>
-      <div class="control is-expanded">
-        <input class="input has-text-centered" type="number" id="max" value="{{max}}">
-      </div>
-      <div class="control">
-        <button class="button" (click)="halveMax()" [disabled]="max === minimalMax">/ 2</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <label for="numberSystem" class="label has-text-centered">Zahlensystem</label>
-      <div class="control">
-        <div class="select is-fullwidth">
-          <select [(ngModel)]="system" (change)="update()" id="numberSystem">
-            <option *ngFor="let ns of numberingSystems" [ngValue]="ns">{{ns.radix}} - {{ns.name}}</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <hr>
-
-    <it4all-nary-number-read-only-input [naryNumberInput]="firstSummandInput"></it4all-nary-number-read-only-input>
-
-    <br>
-
-    <it4all-nary-number-read-only-input [naryNumberInput]="secondSummandInput"></it4all-nary-number-read-only-input>
-
-    <hr>
-
-    <div class="field">
+  <div class="columns">
+    <div class="column">
+      <label class="label has-text-centered" for="max">Maximalwert</label>
       <div class="field has-addons">
         <div class="control">
-          <div class="button is-static">
-            <label for="solution">Lösung:</label>
-          </div>
+          <button class="button" (click)="doubleMax()" [disabled]="max === maximalMax">* 2</button>
         </div>
         <div class="control is-expanded">
-          <input type="text" class="input" id="solution" [(ngModel)]="solutionString"
-                 [ngClass]="{'is-success': checked && correct, 'is-danger': checked && !correct}"
-                 placeholder="Lösung" autofocus autocomplete="off">
+          <input class="input has-text-centered" type="number" id="max" value="{{max}}">
         </div>
         <div class="control">
-          <div class="button is-static">
-            <sub>{{system.radix}}</sub>
-          </div>
+          <button class="button" (click)="halveMax()" [disabled]="max === minimalMax">/ 2</button>
         </div>
       </div>
     </div>
 
-    <div class="notification has-text-centered is-danger" *ngIf="checked && !correct">
-      &#10008; Die Lösung ist nicht korrekt.
+    <div class="column">
+      <div class="field">
+        <label for="numberSystem" class="label has-text-centered">Zahlensystem</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select [(ngModel)]="system" (change)="update()" id="numberSystem">
+              <option *ngFor="let ns of numberingSystems" [ngValue]="ns">{{ns.radix}} - {{ns.name}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="notification has-text-centered is-success" *ngIf="checked && correct">
-      &#10004; Die Lösung ist korrekt.
-    </div>
-
-    <br>
-
-    <it4all-random-solve-buttons
-      (correctEmitter)="checkSolution()"
-      (nextEmitter)="update()">
-    </it4all-random-solve-buttons>
-
   </div>
+
+  <hr/>
+
+  <div class="my-3">
+    <it4all-nary-number-read-only-input [naryNumberInput]="firstSummandInput"></it4all-nary-number-read-only-input>
+  </div>
+
+  <div class="my-3">
+    <it4all-nary-number-read-only-input [naryNumberInput]="secondSummandInput"></it4all-nary-number-read-only-input>
+  </div>
+
+  <hr/>
+
+  <div class="field">
+    <div class="field has-addons">
+      <div class="control">
+        <div class="button is-static">
+          <label for="solution">Lösung:</label>
+        </div>
+      </div>
+      <div class="control is-expanded">
+        <input type="text" class="input" id="solution" [(ngModel)]="solutionString"
+               [ngClass]="{'is-success': checked && correct, 'is-danger': checked && !correct}"
+               placeholder="Lösung" autofocus autocomplete="off">
+      </div>
+      <div class="control">
+        <div class="button is-static">
+          <sub>{{system.radix}}</sub>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notification has-text-centered is-danger" *ngIf="checked && !correct">
+    &#10008; Die Lösung ist nicht korrekt.
+  </div>
+  <div class="notification has-text-centered is-success" *ngIf="checked && correct">
+    &#10004; Die Lösung ist korrekt.
+  </div>
+
+  <br>
+
+  <it4all-random-solve-buttons (correctEmitter)="checkSolution()" (nextEmitter)="update()">
+  </it4all-random-solve-buttons>
+
 </div>

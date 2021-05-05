@@ -1,7 +1,28 @@
 import {Component, Input} from '@angular/core';
 import {NaryReadOnlyNumberInput} from '../../nary';
 
-@Component({selector: 'it4all-nary-number-read-only-input', templateUrl: './nary-number-read-only-input.component.html'})
+@Component({
+  selector: 'it4all-nary-number-read-only-input',
+  template: `
+    <div class="field has-addons">
+      <div class="control">
+        <div class="button is-static">
+          <label for="{{naryNumberInput.fieldId}}">{{naryNumberInput.labelContent}}</label>
+        </div>
+      </div>
+      <div class="control is-expanded">
+        <input class="input has-text-right" id="{{naryNumberInput.fieldId}}" [value]="getSummandNary()"
+               [placeholder]="naryNumberInput.labelContent" readonly>
+      </div>
+      <div class="control">
+        <div class="button is-static">
+          <sub>{{naryNumberInput.numberingSystem.radix}}</sub>
+        </div>
+      </div>
+    </div>
+
+  `
+})
 export class NaryNumberReadOnlyInputComponent {
 
   @Input() naryNumberInput: NaryReadOnlyNumberInput;
