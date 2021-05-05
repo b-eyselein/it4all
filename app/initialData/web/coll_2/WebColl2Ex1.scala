@@ -1,11 +1,11 @@
 package initialData.web.coll_2
 
-import de.uniwue.webtester.sitespec._
 import initialData.FileLoadConfig
 import initialData.InitialData._
 import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
+import model.tools.web.sitespec._
 import model.{Exercise, FilesSolution}
 
 object WebColl2Ex1 extends WebInitialExercise(2, 1) {

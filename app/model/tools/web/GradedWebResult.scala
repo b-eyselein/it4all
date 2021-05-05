@@ -1,8 +1,8 @@
 package model.tools.web
 
-import de.uniwue.webtester.sitespec.{JsAction, JsActionType}
 import model.points._
 import model.result.{AbstractCorrectionResult, SuccessType}
+import model.tools.web.sitespec.{JsAction, JsActionType}
 
 final case class WebResult(
   gradedHtmlTaskResults: Seq[GradedHtmlTaskResult],

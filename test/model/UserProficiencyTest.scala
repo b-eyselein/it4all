@@ -1,9 +1,10 @@
 package model
 
 import model.tools.programming.ProgrammingTopics
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class UserProficiencyTest extends FlatSpec with Matchers {
+class UserProficiencyTest extends AnyFlatSpec with Matchers {
 
   private val topic: Topic = ProgrammingTopics.Slicing
 

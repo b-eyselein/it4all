@@ -1,9 +1,9 @@
 package model.tools.web
 
-import de.uniwue.webtester.result._
-import de.uniwue.webtester.sitespec.HtmlElementSpec
-import model.result.SuccessType
 import model.points._
+import model.result.SuccessType
+import model.tools.web.result._
+import model.tools.web.sitespec.HtmlElementSpec
 
 object WebGrader {
 

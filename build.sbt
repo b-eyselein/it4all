@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.1"
 
-scalaVersion := "2.13.4"
+scalaVersion := "2.13.5"
 
 scalacOptions ++= CompilerOptions.allOptions
 
@@ -21,9 +21,9 @@ wartremoverWarnings ++= Warts.allBut(
   Wart.Product
 )
 
-wartremoverExcluded ++= routes.in(Compile).value
+wartremoverExcluded ++= (Compile / routes).value
 wartremoverExcluded += sourceManaged.value
-wartremoverExcluded += (target in TwirlKeys.compileTemplates).value
+wartremoverExcluded += (TwirlKeys.compileTemplates / target).value
 
 updateOptions := updateOptions.value.withCachedResolution(true)
 
@@ -32,9 +32,9 @@ JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(
-    packageName in Universal := s"${name.value}",
-    sources in (Compile,doc) := Seq.empty,
-    publishArtifact in (Compile, packageDoc) := false
+    Universal / packageName := s"${name.value}",
+    Compile / doc / sources := Seq.empty,
+    Compile / packageDoc / publishArtifact := false
   )
 
 val artifactoryUrl = "http://artifactory-ls6.informatik.uni-wuerzburg.de/artifactory"
@@ -58,8 +58,8 @@ libraryDependencies ++= Seq(
   "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.0.3-play29", // Apache 2.0
 
   // Other helpers
-  "com.beachape"         %% "enumeratum-play"      % "1.6.1", // MIT
-  "com.beachape"         %% "enumeratum-play-json" % "1.6.1", // MIT
+  "com.beachape"         %% "enumeratum-play"      % "1.6.3", // MIT
+  "com.beachape"         %% "enumeratum-play-json" % "1.6.3", // MIT
   "com.github.t3hnar"    %% "scala-bcrypt"         % "4.3.0", // Apache 2.0
   "com.github.pathikrit" %% "better-files"         % "3.9.1", // MIT
 
@@ -67,16 +67,18 @@ libraryDependencies ++= Seq(
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
 
   // GraphQL
-  "org.sangria-graphql" %% "sangria"           % "2.1.0", // Apache 2.0
+  "org.sangria-graphql" %% "sangria"           % "2.1.3", // Apache 2.0
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.1", // Apache 2.0
 
   // Sql
-  "mysql"                 % "mysql-connector-java" % "8.0.23", // GPL 2.0
+  "mysql"                 % "mysql-connector-java" % "8.0.24", // GPL 2.0
   "com.typesafe.play"    %% "play-slick"           % "5.0.0", // Apache 2.0
   "com.github.jsqlparser" % "jsqlparser"           % "4.0", // Apache 2.0
 
-  // DTD Parser
+  // DTD Parser,
   "de.uniwue" %% "it4all_dtd_parser" % "0.5.0",
-  // Web tester
-  "de.uniwue" %% "it4all_webtester" % "0.5.0"
+  // Web correction
+  "org.nanohttpd"           % "nanohttpd-webserver" % "2.3.1" % Test,
+  "org.seleniumhq.selenium" % "selenium-java"       % "3.141.59",
+  "org.seleniumhq.selenium" % "htmlunit-driver"     % "2.36.0"
 )
