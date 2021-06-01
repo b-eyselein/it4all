@@ -142,6 +142,7 @@ fragment ExerciseSolveFields on Exercise {
   text
   content {
     __typename
+    ...EbnfExerciseContent
     ...FlaskExerciseContent
     ...ProgrammingExerciseContent
     ...ProgrammingExerciseContent
@@ -221,6 +222,11 @@ fragment FieldsForLink on Exercise {
   parts {
     ...FieldsPart
   }
+}
+
+#Ebnf
+fragment EbnfExerciseContent on EbnfExerciseContent {
+  sampleSolutions
 }
 
 # Flask

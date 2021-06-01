@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.1"
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.6"
 
 scalacOptions ++= CompilerOptions.allOptions
 
@@ -54,8 +54,8 @@ libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-play" % "5.0.0", // Apache 2.0
 
   // Mongo database
-  "org.reactivemongo" %% "play2-reactivemongo"            % "1.0.3-play28", // Apache 2.0
-  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.0.3-play29", // Apache 2.0
+  "org.reactivemongo" %% "play2-reactivemongo"            % "1.0.4-play28", // Apache 2.0
+  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.0.4-play29", // Apache 2.0
 
   // Other helpers
   "com.beachape"         %% "enumeratum-play"      % "1.6.3", // MIT
@@ -71,7 +71,7 @@ libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.1", // Apache 2.0
 
   // Sql
-  "mysql"                 % "mysql-connector-java" % "8.0.24", // GPL 2.0
+  "mysql"                 % "mysql-connector-java" % "8.0.25", // GPL 2.0
   "com.typesafe.play"    %% "play-slick"           % "5.0.0", // Apache 2.0
   "com.github.jsqlparser" % "jsqlparser"           % "4.0", // Apache 2.0
 
@@ -80,5 +80,5 @@ libraryDependencies ++= Seq(
   // Web correction
   "org.nanohttpd"           % "nanohttpd-webserver" % "2.3.1" % Test,
   "org.seleniumhq.selenium" % "selenium-java"       % "3.141.59",
-  "org.seleniumhq.selenium" % "htmlunit-driver"     % "2.36.0"
+  "org.seleniumhq.selenium" % "htmlunit-driver"     % "2.50.0"
 )

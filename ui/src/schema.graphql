@@ -14,15 +14,38 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  FalseNegative
-  FalsePositive
-  TrueNegative
   TruePositive
+  FalsePositive
+  FalseNegative
+  TrueNegative
 }
 
 type DTDParseException {
   msg: String!
   parsedLine: String!
+}
+
+type EbnfCorrectionResult {
+  solutionSaved: Boolean!
+  resultSaved: Boolean!
+  proficienciesUpdated: Boolean
+  result: EbnfResult!
+}
+
+enum EbnfExPart {
+  GrammarCreation
+}
+
+type EbnfExerciseMutations {
+  correct(part: EbnfExPart!, solution: EbnfGrammarInput!): EbnfCorrectionResult!
+}
+
+input EbnfGrammarInput {
+  startSymbol: String!
+}
+
+type EbnfResult {
+  x: String!
 }
 
 type ElementDefinition {
@@ -169,8 +192,8 @@ type LoggedInUserWithToken {
 }
 
 enum MatchType {
-  PARTIAL_MATCH
   SUCCESSFUL_MATCH
+  PARTIAL_MATCH
   UNSUCCESSFUL_MATCH
 }
 
@@ -387,10 +410,10 @@ type StringMatchingResult {
 }
 
 enum SuccessType {
-  COMPLETE
   ERROR
   NONE
   PARTIALLY
+  COMPLETE
 }
 
 type UmlAssociationAnalysisResult {
@@ -608,6 +631,7 @@ input UserCredentials {
 }
 
 type UserMutations {
+  ebnfExercise(collId: Int!, exId: Int!): EbnfExerciseMutations
   flaskExercise(collId: Int!, exId: Int!): FlaskExerciseMutations
   programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
   regexExercise(collId: Int!, exId: Int!): RegexExerciseMutations
@@ -706,6 +730,10 @@ type CollectionTool {
   proficiencies: [UserProficiency!]!
 }
 
+type EbnfExerciseContent {
+  sampleSolutions: [String!]!
+}
+
 type ExPart {
   id: String!
   name: String!
@@ -735,7 +763,7 @@ type ExerciseCollection {
   exercise(exId: Int!): Exercise
 }
 
-union ExerciseContentUnionType = FlaskExerciseContent | ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
+union ExerciseContentUnionType = EbnfExerciseContent | FlaskExerciseContent | ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
 
 type ExerciseFile {
   name: String!
@@ -850,8 +878,8 @@ type Query {
 }
 
 enum RegexCorrectionType {
-  EXTRACTION
   MATCHING
+  EXTRACTION
 }
 
 enum RegexExPart {
@@ -905,10 +933,10 @@ type SqlExerciseContent {
 }
 
 enum SqlExerciseType {
-  SELECT
   INSERT
   UPDATE
   CREATE
+  SELECT
   DELETE
 }
 
@@ -956,8 +984,8 @@ type UmlAssociation {
 }
 
 enum UmlAssociationType {
-  AGGREGATION
   ASSOCIATION
+  AGGREGATION
   COMPOSITION
 }
 
@@ -1023,10 +1051,10 @@ enum UmlMultiplicity {
 }
 
 enum UmlVisibility {
-  PACKAGE
-  PRIVATE
-  PROTECTED
   PUBLIC
+  PACKAGE
+  PROTECTED
+  PRIVATE
 }
 
 type UnitTestPart {

@@ -112,15 +112,15 @@ fragment ExerciseOverview on Exercise {
   }
 }
 
-query ExerciseOverview($toolId: String!, $collId: Int!, $exId: Int!) {
+query ExerciseOverview($toolId: String!, $collectionId: Int!, $exerciseId: Int!) {
   me {
     tool(toolId: $toolId) {
       id
       name
-      collection(collId: $collId) {
+      collection(collId: $collectionId) {
         collectionId
         title
-        exercise(exId: $exId) {
+        exercise(exId: $exerciseId) {
           ...ExerciseOverview
         }
       }
@@ -149,11 +149,11 @@ fragment ExerciseSolveFields on Exercise {
   }
 }
 
-query Exercise($toolId: String!, $collId: Int!, $exId: Int!, $partId: String!) {
+query Exercise($toolId: String!, $collectionId: Int!, $exerciseId: Int!, $partId: String!) {
   me {
     tool(toolId: $toolId) {
-      collection(collId: $collId) {
-        exercise(exId: $exId) {
+      collection(collId: $collectionId) {
+        exercise(exId: $exerciseId) {
           ...ExerciseSolveFields
         }
       }

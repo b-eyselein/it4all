@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {
+  EbnfExerciseContentFragment,
   ExerciseGQL,
   ExerciseQuery,
   ExerciseSolveFieldsFragment,
@@ -13,6 +14,7 @@ import {
   XmlExerciseContentFragment
 } from '../../../_services/apollo_services';
 import {Subscription} from 'rxjs';
+import {EbnfExerciseComponent} from "../ebnf/ebnf-exercise/ebnf-exercise.component";
 
 
 @Component({templateUrl: './exercise.component.html'})
@@ -49,6 +51,10 @@ export class ExerciseComponent implements OnInit, OnDestroy {
 
   get exercise(): ExerciseSolveFieldsFragment {
     return this.exerciseQuery.me.tool.collection.exercise;
+  }
+
+  get ebnfExerciseContent(): EbnfExerciseContentFragment | null {
+    return this.exercise.content.__typename === 'EbnfExerciseContent' ? this.exercise.content : null;
   }
 
   get flaskExerciseContent(): FlaskExerciseContentFragment | null {

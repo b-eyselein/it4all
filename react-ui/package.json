@@ -13,7 +13,7 @@
     "classnames": "^2.2.6",
     "formik": "^2.2.6",
     "graphql": "^15.5.0",
-    "i18next": "^19.9.2",
+    "i18next": "^20.3.1",
     "node-sass": "^5.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -26,7 +26,7 @@
     "yup": "^0.32.9"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=3010 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -52,19 +52,19 @@
     ]
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "1.21.3",
-    "@graphql-codegen/introspection": "1.18.1",
+    "@graphql-codegen/cli": "^1.21.5",
+    "@graphql-codegen/introspection": "^1.18.2",
     "@graphql-codegen/schema-ast": "^1.18.1",
-    "@graphql-codegen/typescript": "1.21.1",
-    "@graphql-codegen/typescript-operations": "1.17.15",
-    "@graphql-codegen/typescript-react-apollo": "2.2.3",
+    "@graphql-codegen/typescript": "^1.22.1",
+    "@graphql-codegen/typescript-operations": "^1.18.0",
+    "@graphql-codegen/typescript-react-apollo": "^2.2.5",
     "@types/classnames": "^2.2.11",
     "@types/jest": "^26.0.20",
-    "@types/node": "^12.20.6",
+    "@types/node": "^15.6.1",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
     "@types/react-router-dom": "^5.1.7",
     "@types/yup": "^0.29.11",
-    "i18next-parser": "^3.7.0"
+    "i18next-parser": "^4.2.0"
   }
 }

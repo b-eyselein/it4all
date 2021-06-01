@@ -31,8 +31,8 @@ export function LoginForm(): JSX.Element {
   const [loginMutation, {loading, error}] = useLoginMutation();
   const currentUser = useSelector(currentUserSelector);
 
-  if (currentUser) {
-    return <Redirect to={'/'}/>
+  if (!!currentUser) {
+    return <Redirect to={'/'}/>;
   }
 
   function handleSubmit(variables: LoginMutationVariables): void {

@@ -36,16 +36,48 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  FalseNegative = 'FalseNegative',
+  TruePositive = 'TruePositive',
   FalsePositive = 'FalsePositive',
-  TrueNegative = 'TrueNegative',
-  TruePositive = 'TruePositive'
+  FalseNegative = 'FalseNegative',
+  TrueNegative = 'TrueNegative'
 }
 
 export type DtdParseException = {
   __typename?: 'DTDParseException';
   msg: Scalars['String'];
   parsedLine: Scalars['String'];
+};
+
+export type EbnfCorrectionResult = {
+  __typename?: 'EbnfCorrectionResult';
+  solutionSaved: Scalars['Boolean'];
+  resultSaved: Scalars['Boolean'];
+  proficienciesUpdated?: Maybe<Scalars['Boolean']>;
+  result: EbnfResult;
+};
+
+export enum EbnfExPart {
+  GrammarCreation = 'GrammarCreation'
+}
+
+export type EbnfExerciseMutations = {
+  __typename?: 'EbnfExerciseMutations';
+  correct: EbnfCorrectionResult;
+};
+
+
+export type EbnfExerciseMutationsCorrectArgs = {
+  part: EbnfExPart;
+  solution: EbnfGrammarInput;
+};
+
+export type EbnfGrammarInput = {
+  startSymbol: Scalars['String'];
+};
+
+export type EbnfResult = {
+  __typename?: 'EbnfResult';
+  x: Scalars['String'];
 };
 
 export type ElementDefinition = {
@@ -215,8 +247,8 @@ export type LoggedInUserWithToken = {
 };
 
 export enum MatchType {
-  PartialMatch = 'PARTIAL_MATCH',
   SuccessfulMatch = 'SUCCESSFUL_MATCH',
+  PartialMatch = 'PARTIAL_MATCH',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
@@ -487,10 +519,10 @@ export type StringMatchingResult = {
 };
 
 export enum SuccessType {
-  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY'
+  Partially = 'PARTIALLY',
+  Complete = 'COMPLETE'
 }
 
 export type UmlAssociationAnalysisResult = {
@@ -733,6 +765,7 @@ export type UserCredentials = {
 
 export type UserMutations = {
   __typename?: 'UserMutations';
+  ebnfExercise?: Maybe<EbnfExerciseMutations>;
   flaskExercise?: Maybe<FlaskExerciseMutations>;
   programmingExercise?: Maybe<ProgrammingExerciseMutations>;
   regexExercise?: Maybe<RegexExerciseMutations>;
@@ -740,6 +773,12 @@ export type UserMutations = {
   umlExercise?: Maybe<UmlExerciseMutations>;
   webExercise?: Maybe<WebExerciseMutations>;
   xmlExercise?: Maybe<XmlExerciseMutations>;
+};
+
+
+export type UserMutationsEbnfExerciseArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
 };
 
 
@@ -906,6 +945,11 @@ export type CollectionToolCollectionArgs = {
   collId: Scalars['Int'];
 };
 
+export type EbnfExerciseContent = {
+  __typename?: 'EbnfExerciseContent';
+  sampleSolutions: Array<Scalars['String']>;
+};
+
 export type ExPart = {
   __typename?: 'ExPart';
   id: Scalars['String'];
@@ -943,7 +987,7 @@ export type ExerciseCollectionExerciseArgs = {
   exId: Scalars['Int'];
 };
 
-export type ExerciseContentUnionType = FlaskExerciseContent | ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent;
+export type ExerciseContentUnionType = EbnfExerciseContent | FlaskExerciseContent | ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent;
 
 export type ExerciseFile = {
   __typename?: 'ExerciseFile';
@@ -1084,8 +1128,8 @@ export type Query = {
 };
 
 export enum RegexCorrectionType {
-  Extraction = 'EXTRACTION',
-  Matching = 'MATCHING'
+  Matching = 'MATCHING',
+  Extraction = 'EXTRACTION'
 }
 
 export enum RegexExPart {
@@ -1155,10 +1199,10 @@ export type SqlExerciseContentPartArgs = {
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
   Insert = 'INSERT',
   Update = 'UPDATE',
   Create = 'CREATE',
+  Select = 'SELECT',
   Delete = 'DELETE'
 }
 
@@ -1212,8 +1256,8 @@ export type UmlAssociation = {
 };
 
 export enum UmlAssociationType {
-  Aggregation = 'AGGREGATION',
   Association = 'ASSOCIATION',
+  Aggregation = 'AGGREGATION',
   Composition = 'COMPOSITION'
 }
 
@@ -1290,10 +1334,10 @@ export enum UmlMultiplicity {
 }
 
 export enum UmlVisibility {
+  Public = 'PUBLIC',
   Package = 'PACKAGE',
-  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Public = 'PUBLIC'
+  Private = 'PRIVATE'
 }
 
 export type UnitTestPart = {
@@ -2505,6 +2549,9 @@ export type ExerciseSolveFieldsFragment = (
   { __typename?: 'Exercise' }
   & Pick<Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'text'>
   & { content: (
+    { __typename: 'EbnfExerciseContent' }
+    & EbnfExerciseContentFragment
+  ) | (
     { __typename: 'FlaskExerciseContent' }
     & FlaskExerciseContentFragment
   ) | (
@@ -2607,6 +2654,11 @@ export type FieldsForLinkFragment = (
     { __typename?: 'ExPart' }
     & FieldsPartFragment
   )> }
+);
+
+export type EbnfExerciseContentFragment = (
+  { __typename?: 'EbnfExerciseContent' }
+  & Pick<EbnfExerciseContent, 'sampleSolutions'>
 );
 
 export type FlaskExerciseContentFragment = (
@@ -3567,6 +3619,11 @@ export const ExerciseOverviewFragmentDoc = gql`
   }
 }
     ${PartFragmentDoc}`;
+export const EbnfExerciseContentFragmentDoc = gql`
+    fragment EbnfExerciseContent on EbnfExerciseContent {
+  sampleSolutions
+}
+    `;
 export const ExerciseFileFragmentDoc = gql`
     fragment ExerciseFile on ExerciseFile {
   name
@@ -3749,6 +3806,7 @@ export const ExerciseSolveFieldsFragmentDoc = gql`
   text
   content {
     __typename
+    ...EbnfExerciseContent
     ...FlaskExerciseContent
     ...ProgrammingExerciseContent
     ...ProgrammingExerciseContent
@@ -3759,7 +3817,8 @@ export const ExerciseSolveFieldsFragmentDoc = gql`
     ...XmlExerciseContent
   }
 }
-    ${FlaskExerciseContentFragmentDoc}
+    ${EbnfExerciseContentFragmentDoc}
+${FlaskExerciseContentFragmentDoc}
 ${ProgrammingExerciseContentFragmentDoc}
 ${RegexExerciseContentFragmentDoc}
 ${SqlExerciseContentFragmentDoc}

@@ -1,16 +1,17 @@
 import React from 'react';
 import {Link, Route, Switch} from 'react-router-dom';
 import {useTranslation} from "react-i18next";
-import {LoggedInUserWithToken} from "./generated/graphql";
 import {Home} from "./Home";
 import {LoginForm} from './LoginForm';
 import {ToolBase} from './ToolBase';
 import {RandomToolBase} from "./randomTools/RandomToolBase";
+import {currentUserSelector} from "./store/store";
+import {useSelector} from "react-redux";
 
 export function App() {
 
   const {t} = useTranslation('common');
-  const currentUser: LoggedInUserWithToken | null = null;
+  const currentUser = useSelector(currentUserSelector);
 
   const langs = ['de', 'en'];
 
@@ -51,7 +52,7 @@ export function App() {
             <div className="navbar-item">
               {currentUser
                 ? <button onClick={logout} className="button is-light">
-                  {t('logout')}&nbsp;{currentUser/*.loggedInUser.username*/}
+                  {t('logout')}&nbsp;{currentUser.loggedInUser.username}
                 </button>
                 : <div className="buttons">
                   <Link to="/loginForm" className="button is-light">{t('login')}</Link>

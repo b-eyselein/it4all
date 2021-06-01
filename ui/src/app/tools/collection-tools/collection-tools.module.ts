@@ -46,6 +46,7 @@ import {UmlImplResultComponent} from "./uml/_components/uml-impl-result/uml-impl
 import {XmlElementLineMatchResultComponent} from './xml/_components/xml-element-line-match-result/xml-element-line-match-result.component';
 import {UmlAssocMatchResultComponent} from './uml/_components/uml-assoc-match-result/uml-assoc-match-result.component';
 import {BrowserModule} from "@angular/platform-browser";
+import {EbnfExerciseComponent} from "./ebnf/ebnf-exercise/ebnf-exercise.component";
 
 
 @NgModule({
@@ -67,6 +68,8 @@ import {BrowserModule} from "@angular/platform-browser";
     StringSampleSolComponent, FilledPointsComponent,
 
     FilesExerciseComponent,
+
+    EbnfExerciseComponent,
 
     FlaskExerciseComponent,
 
