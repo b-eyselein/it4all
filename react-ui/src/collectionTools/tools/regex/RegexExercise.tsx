@@ -1,10 +1,11 @@
-import React, {useState} from "react";
-import {ExerciseSolveFieldsFragment, RegexExerciseContentFragment} from "../../../generated/graphql";
+import React, {useRef, useState} from "react";
+import {ExerciseSolveFieldsFragment, RegexExerciseContentFragment, useRegexCorrectionMutation} from "../../../generated/graphql";
 import {RegexCheatSheet} from './RegexCheatSheet';
 import {BulmaTabs, TabConfig} from "../../../helpers/BulmaTabs";
 import {useTranslation} from "react-i18next";
 import {RegexCorrection} from './RegexCorrection';
 import {StringSampleSolution} from "../StringSampleSolution";
+import {Link} from "react-router-dom";
 
 interface IProps {
   exerciseFragment: ExerciseSolveFieldsFragment;
@@ -16,13 +17,25 @@ export function RegexExercise({exerciseFragment, contentFragment}: IProps): JSX.
   const {t} = useTranslation('common');
   const [showInfo, setShowInfo] = useState(false);
   const [showSampleSolutions, setShowSampleSolutions] = useState(false);
+  const solutionInput = useRef<HTMLInputElement>(null);
+
+  const [correctExercise, correctionMutationResult] = useRegexCorrectionMutation();
 
   function correct(): void {
-    console.info('TODO'!);
+    if (solutionInput.current) {
+      correctExercise({
+        variables: {
+          collectionId: exerciseFragment.collectionId,
+          exerciseId: exerciseFragment.exerciseId,
+          part: contentFragment.regexPart!!,
+          solution: solutionInput.current.value
+        }
+      }).catch((error) => console.error(error));
+    }
   }
 
   const tabConfigs: TabConfig[] = [
-    {id: 'correction', name: t('correction'), render: () => <RegexCorrection/>},
+    {id: 'correction', name: t('correction'), render: () => <RegexCorrection mutationResult={correctionMutationResult}/>},
     {
       id: 'sampleSolutions', name: t('sampleSolution_plural'), render: () => <div>
         <div className="buttons">
@@ -46,21 +59,20 @@ export function RegexExercise({exerciseFragment, contentFragment}: IProps): JSX.
 
           <div className="field has-addons">
             <div className="control">
-              <label className="button is-static" htmlFor="solution">Ihre Lösung:</label>
+              <label className="button is-static" htmlFor="solution">{t('yourSolution')}:</label>
             </div>
             <div className="control is-expanded">
               {/* [(ngModel)]="solution" */}
-              <input type="text" className="input" id="solution" placeholder="Ihre Lösung" autoFocus autoComplete="off"/>
+              <input type="text" className="input" id="solution" ref={solutionInput} placeholder="Ihre Lösung" autoFocus autoComplete="off"/>
             </div>
           </div>
 
           <div className="columns">
             <div className="column">
-              <button className="button is-link is-fullwidth" onClick={correct}>Lösung testen</button>
+              <button className="button is-link is-fullwidth" onClick={correct}>{t('checkSolution')}</button>
             </div>
             <div className="column">
-              {/* [routerLink]="['../..']" */}
-              <a className="button is-dark is-fullwidth">Bearbeiten beenden</a>
+              <Link to={`./../../${exerciseFragment.exerciseId}`} className="button is-dark is-fullwidth">{t('endSolve')}</Link>
             </div>
           </div>
           <div className="buttons">
@@ -74,13 +86,6 @@ export function RegexExercise({exerciseFragment, contentFragment}: IProps): JSX.
 
         <div className="column">
           <BulmaTabs tabs={tabConfigs}/>
-          {/*    <it4all-tabs>
-
-        <it4all-tab [title]="sampleSolutionsTabTitle">
-
-        </it4all-tab>
-      </it4all-tabs>
-      */}
         </div>
       </div>
     </div>

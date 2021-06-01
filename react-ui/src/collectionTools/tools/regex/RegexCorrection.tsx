@@ -1,43 +1,39 @@
 import React from "react";
+import {RegexCorrectionMutation, RegexCorrectionResultFragment} from "../../../generated/graphql";
+import {MutationResult} from "@apollo/client";
+import {WithQuery} from "../../../WithQuery";
+import {SolutionSaved} from "../../../helpers/SolutionSaved";
+import {PointsNotification} from "../../../helpers/PointsNotification";
+import {RegexExtractionResultDisplay} from './RegexExtractionResultDisplay';
+import {RegexMatchingResultDisplay} from './RegexMatchingResultDisplay';
 
-export function RegexCorrection(): JSX.Element {
+interface IProps {
+  mutationResult: MutationResult<RegexCorrectionMutation>;
+}
 
-  /*
-           <div className="message is-danger" *ngIf="queryError">
-             <div className="message-header">Fehler beim Parsen des regulären Ausdrucks:</div>
-             <div className="message-body">
-               <pre>{{queryError.message}}</pre>
-             </div>
-           </div>
+export function RegexCorrection({mutationResult}: IProps): JSX.Element {
 
+  function render({me}: RegexCorrectionMutation): JSX.Element {
+    if (!me || !me.regexExercise) {
+      return <div className="notification is-danger">There has been a correction error!</div>;
+    }
 
-           <ng-container *ngIf="resultQuery">
+    const {result, resultSaved, solutionSaved, proficienciesUpdated}: RegexCorrectionResultFragment = me.regexExercise.correct;
 
-             <div className="my-3">
-               <it4all-solution-saved *ngIf="correctionResult" [solutionSaved]="correctionResult.solutionSaved">
-               </it4all-solution-saved>
-             </div>
+    return <>
 
+      <SolutionSaved solutionSaved={solutionSaved}/>
 
-             <div className="my-3">
-               <it4all-points-notification [points]="abstractResult.points" [maxPoints]="abstractResult.maxPoints">
-               </it4all-points-notification>
-             </div>
+      <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 
-             <div className="columns is-multiline my-3" *ngIf="regexMatchingResult">
-               <div className="column is-half-desktop" *ngFor="let matchingResult of regexMatchingResult.matchingResults">
-                 <it4all-regex-matching-result [matchingResult]="matchingResult"></it4all-regex-matching-result>
-               </div>
-             </div>
+      {result.__typename === 'RegexExtractionResult'
+        ? <RegexExtractionResultDisplay result={result}/>
+        : <RegexMatchingResultDisplay result={result}/>}
 
-             <ng-container *ngIf="regexExtractionResult">
-               <div className="my-3" *ngFor="let extractionResult of regexExtractionResult.extractionResults">
-                 <it4all-regex-extraction-result [extractionResult]="extractionResult"></it4all-regex-extraction-result>
-               </div>
-             </ng-container>
+    </>;
+  }
 
-           </ng-container>
-   */
-
-  return <div>TODO!</div>;
+  return !mutationResult.called
+    ? <></>
+    : <WithQuery query={mutationResult} children={render}/>;
 }

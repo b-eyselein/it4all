@@ -40,11 +40,11 @@ export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIPr
           <BreadCrumbs parts={breadCrumbs}/>
         </div>
 
-        <div className="notification is-light-grey">{exercise.text}</div>
+        <div className="notification is-light-grey" dangerouslySetInnerHTML={{__html: exercise.text}}/>
 
         <div className="columns">
           {entryParts.map((part) =>
-            <div className="column">
+            <div className="column" key={part.id}>
               <Link className=" button is-link is-fullwidth" to={`${url}/parts/${part.id}`}>{part.name}</Link>
             </div>
           )}

@@ -744,11 +744,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
-  Insert = 'INSERT',
-  Update = 'UPDATE',
   Create = 'CREATE',
-  Delete = 'DELETE'
+  Select = 'SELECT',
+  Update = 'UPDATE',
+  Delete = 'DELETE',
+  Insert = 'INSERT'
 }
 
 export type SqlKeyCellValueObject = {
@@ -1420,6 +1420,86 @@ export type XmlSolutionInput = {
   grammar: Scalars['String'];
 };
 
+export type RegexCorrectionMutationVariables = Exact<{
+  collectionId: Scalars['Int'];
+  exerciseId: Scalars['Int'];
+  part: RegexExPart;
+  solution: Scalars['String'];
+}>;
+
+
+export type RegexCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { regexExercise?: Maybe<(
+      { __typename?: 'RegexExerciseMutations' }
+      & { correct: (
+        { __typename?: 'RegexCorrectionResult' }
+        & RegexCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type RegexCorrectionResultFragment = (
+  { __typename?: 'RegexCorrectionResult' }
+  & Pick<RegexCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename: 'RegexExtractionResult' }
+    & Pick<RegexExtractionResult, 'points' | 'maxPoints'>
+    & RegexExtractionResultFragment
+  ) | (
+    { __typename: 'RegexMatchingResult' }
+    & Pick<RegexMatchingResult, 'points' | 'maxPoints'>
+    & RegexMatchingResultFragment
+  ) }
+);
+
+export type RegexMatchingSingleResultFragment = (
+  { __typename?: 'RegexMatchingSingleResult' }
+  & Pick<RegexMatchingSingleResult, 'resultType' | 'matchData'>
+);
+
+export type RegexMatchingResultFragment = (
+  { __typename?: 'RegexMatchingResult' }
+  & { matchingResults: Array<(
+    { __typename?: 'RegexMatchingSingleResult' }
+    & RegexMatchingSingleResultFragment
+  )> }
+);
+
+export type RegexExtractionMatchFragment = (
+  { __typename?: 'RegexMatchMatch' }
+  & Pick<RegexMatchMatch, 'matchType' | 'userArg' | 'sampleArg'>
+);
+
+export type ExtractionMatchingResultFragment = (
+  { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
+  & Pick<RegexExtractedValuesComparisonMatchingResult, 'notMatchedForUser' | 'notMatchedForSample' | 'points' | 'maxPoints'>
+  & { allMatches: Array<(
+    { __typename?: 'RegexMatchMatch' }
+    & RegexExtractionMatchFragment
+  )> }
+);
+
+export type RegexExtractionSingleResultFragment = (
+  { __typename?: 'RegexExtractionSingleResult' }
+  & Pick<RegexExtractionSingleResult, 'base'>
+  & { extractionMatchingResult: (
+    { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
+    & ExtractionMatchingResultFragment
+  ) }
+);
+
+export type RegexExtractionResultFragment = (
+  { __typename?: 'RegexExtractionResult' }
+  & { extractionResults: Array<(
+    { __typename?: 'RegexExtractionSingleResult' }
+    & RegexExtractionSingleResultFragment
+  )> }
+);
+
 export type CollectionToolFragment = (
   { __typename?: 'CollectionTool' }
   & Pick<CollectionTool, 'id' | 'name' | 'state' | 'collectionCount' | 'lessonCount' | 'exerciseCount'>
@@ -1909,6 +1989,67 @@ export type LoginMutation = (
   )> }
 );
 
+export const RegexMatchingSingleResultFragmentDoc = gql`
+    fragment RegexMatchingSingleResult on RegexMatchingSingleResult {
+  resultType
+  matchData
+}
+    `;
+export const RegexMatchingResultFragmentDoc = gql`
+    fragment RegexMatchingResult on RegexMatchingResult {
+  matchingResults {
+    ...RegexMatchingSingleResult
+  }
+}
+    ${RegexMatchingSingleResultFragmentDoc}`;
+export const RegexExtractionMatchFragmentDoc = gql`
+    fragment RegexExtractionMatch on RegexMatchMatch {
+  matchType
+  userArg
+  sampleArg
+}
+    `;
+export const ExtractionMatchingResultFragmentDoc = gql`
+    fragment ExtractionMatchingResult on RegexExtractedValuesComparisonMatchingResult {
+  allMatches {
+    ...RegexExtractionMatch
+  }
+  notMatchedForUser
+  notMatchedForSample
+  points
+  maxPoints
+}
+    ${RegexExtractionMatchFragmentDoc}`;
+export const RegexExtractionSingleResultFragmentDoc = gql`
+    fragment RegexExtractionSingleResult on RegexExtractionSingleResult {
+  base
+  extractionMatchingResult {
+    ...ExtractionMatchingResult
+  }
+}
+    ${ExtractionMatchingResultFragmentDoc}`;
+export const RegexExtractionResultFragmentDoc = gql`
+    fragment RegexExtractionResult on RegexExtractionResult {
+  extractionResults {
+    ...RegexExtractionSingleResult
+  }
+}
+    ${RegexExtractionSingleResultFragmentDoc}`;
+export const RegexCorrectionResultFragmentDoc = gql`
+    fragment RegexCorrectionResult on RegexCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    __typename
+    points
+    maxPoints
+    ...RegexMatchingResult
+    ...RegexExtractionResult
+  }
+}
+    ${RegexMatchingResultFragmentDoc}
+${RegexExtractionResultFragmentDoc}`;
 export const CollectionToolFragmentDoc = gql`
     fragment CollectionTool on CollectionTool {
   id
@@ -2267,6 +2408,46 @@ export const LoggedInUserWithTokenFragmentDoc = gql`
   jwt
 }
     `;
+export const RegexCorrectionDocument = gql`
+    mutation RegexCorrection($collectionId: Int!, $exerciseId: Int!, $part: RegexExPart!, $solution: String!) {
+  me {
+    regexExercise(collId: $collectionId, exId: $exerciseId) {
+      correct(part: $part, solution: $solution) {
+        ...RegexCorrectionResult
+      }
+    }
+  }
+}
+    ${RegexCorrectionResultFragmentDoc}`;
+export type RegexCorrectionMutationFn = Apollo.MutationFunction<RegexCorrectionMutation, RegexCorrectionMutationVariables>;
+
+/**
+ * __useRegexCorrectionMutation__
+ *
+ * To run a mutation, you first call `useRegexCorrectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegexCorrectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [regexCorrectionMutation, { data, loading, error }] = useRegexCorrectionMutation({
+ *   variables: {
+ *      collectionId: // value for 'collectionId'
+ *      exerciseId: // value for 'exerciseId'
+ *      part: // value for 'part'
+ *      solution: // value for 'solution'
+ *   },
+ * });
+ */
+export function useRegexCorrectionMutation(baseOptions?: Apollo.MutationHookOptions<RegexCorrectionMutation, RegexCorrectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegexCorrectionMutation, RegexCorrectionMutationVariables>(RegexCorrectionDocument, options);
+      }
+export type RegexCorrectionMutationHookResult = ReturnType<typeof useRegexCorrectionMutation>;
+export type RegexCorrectionMutationResult = Apollo.MutationResult<RegexCorrectionMutation>;
+export type RegexCorrectionMutationOptions = Apollo.BaseMutationOptions<RegexCorrectionMutation, RegexCorrectionMutationVariables>;
 export const ToolOverviewDocument = gql`
     query ToolOverview {
   me {

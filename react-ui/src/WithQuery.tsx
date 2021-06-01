@@ -1,10 +1,16 @@
-import {QueryResult} from "@apollo/client";
+import {ApolloError} from "@apollo/client";
 import classNames from "classnames";
 import React from "react";
 import {useTranslation} from "react-i18next";
 
+interface MyQueryResult<T> {
+  data?: T | null | undefined;
+  error?: ApolloError;
+  loading: boolean;
+}
+
 interface IProps<T> {
-  query: QueryResult<T>;
+  query: MyQueryResult<T>;
   children: (t: T) => JSX.Element;
 }
 

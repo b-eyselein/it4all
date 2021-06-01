@@ -1,0 +1,62 @@
+mutation RegexCorrection($collectionId: Int!, $exerciseId: Int!, $part: RegexExPart!, $solution: String!) {
+  me {
+    regexExercise(collId: $collectionId, exId: $exerciseId) {
+      correct(part: $part, solution: $solution) {
+        ...RegexCorrectionResult
+      }
+    }
+  }
+}
+
+fragment RegexCorrectionResult on RegexCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    __typename
+    points
+    maxPoints
+    ...RegexMatchingResult
+    ...RegexExtractionResult
+  }
+}
+
+fragment RegexMatchingSingleResult on RegexMatchingSingleResult {
+  resultType
+  matchData
+}
+
+fragment RegexMatchingResult on RegexMatchingResult {
+  matchingResults {
+    ...RegexMatchingSingleResult
+  }
+}
+
+fragment RegexExtractionMatch on RegexMatchMatch {
+  matchType
+  userArg
+  sampleArg
+}
+
+fragment ExtractionMatchingResult on RegexExtractedValuesComparisonMatchingResult {
+  allMatches {
+    ...RegexExtractionMatch
+  }
+  notMatchedForUser
+  notMatchedForSample
+  points
+  maxPoints
+}
+
+fragment RegexExtractionSingleResult on RegexExtractionSingleResult {
+  base
+  extractionMatchingResult {
+    ...ExtractionMatchingResult
+  }
+}
+
+fragment RegexExtractionResult on RegexExtractionResult {
+  extractionResults {
+    ...RegexExtractionSingleResult
+  }
+}
