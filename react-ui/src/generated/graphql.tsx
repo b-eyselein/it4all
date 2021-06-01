@@ -1500,6 +1500,284 @@ export type RegexExtractionResultFragment = (
   )> }
 );
 
+export type SqlCorrectionMutationVariables = Exact<{
+  collectionId: Scalars['Int'];
+  exerciseId: Scalars['Int'];
+  part: SqlExPart;
+  solution: Scalars['String'];
+}>;
+
+
+export type SqlCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { sqlExercise?: Maybe<(
+      { __typename?: 'SqlExerciseMutations' }
+      & { correct: (
+        { __typename?: 'SqlCorrectionResult' }
+        & SqlCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type SqlCorrectionResultFragment = (
+  { __typename?: 'SqlCorrectionResult' }
+  & Pick<SqlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'SqlResult' }
+    & SqlResultFragment
+  ) }
+);
+
+export type SelectAdditionalComparisonFragment = (
+  { __typename?: 'SelectAdditionalComparisons' }
+  & { groupByComparison: (
+    { __typename?: 'StringMatchingResult' }
+    & StringMatchingResultFragment
+  ), orderByComparison: (
+    { __typename?: 'StringMatchingResult' }
+    & StringMatchingResultFragment
+  ), limitComparison: (
+    { __typename?: 'SqlLimitComparisonMatchingResult' }
+    & SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment
+  ) }
+);
+
+export type StaticComparisonFragment = (
+  { __typename?: 'SqlQueriesStaticComparison' }
+  & { columnComparison: (
+    { __typename?: 'SqlColumnComparisonMatchingResult' }
+    & SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment
+  ), tableComparison: (
+    { __typename?: 'StringMatchingResult' }
+    & StringMatchingResultFragment
+  ), joinExpressionComparison: (
+    { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
+    & SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment
+  ), whereComparison: (
+    { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
+    & SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment
+  ), additionalComparisons: (
+    { __typename?: 'AdditionalComparison' }
+    & { selectComparisons?: Maybe<(
+      { __typename?: 'SelectAdditionalComparisons' }
+      & SelectAdditionalComparisonFragment
+    )>, insertComparison?: Maybe<(
+      { __typename?: 'StringMatchingResult' }
+      & StringMatchingResultFragment
+    )> }
+  ) }
+);
+
+export type SqlResultFragment = (
+  { __typename?: 'SqlResult' }
+  & Pick<SqlResult, 'points' | 'maxPoints'>
+  & { staticComparison: (
+    { __typename?: 'SqlQueriesStaticComparison' }
+    & StaticComparisonFragment
+  ), executionResult: (
+    { __typename?: 'SqlExecutionResult' }
+    & SqlExecutionResultFragment
+  ) }
+);
+
+export type SqlExecutionResultFragment = (
+  { __typename?: 'SqlExecutionResult' }
+  & { userResult?: Maybe<(
+    { __typename?: 'SqlQueryResult' }
+    & SqlQueryResultFragment
+  )>, sampleResult?: Maybe<(
+    { __typename?: 'SqlQueryResult' }
+    & SqlQueryResultFragment
+  )> }
+);
+
+export type SqlQueryResultFragment = (
+  { __typename?: 'SqlQueryResult' }
+  & Pick<SqlQueryResult, 'tableName' | 'columnNames'>
+  & { rows: Array<(
+    { __typename?: 'SqlRow' }
+    & SqlRowFragment
+  )> }
+);
+
+export type SqlRowFragment = (
+  { __typename?: 'SqlRow' }
+  & { cells: Array<(
+    { __typename?: 'SqlKeyCellValueObject' }
+    & Pick<SqlKeyCellValueObject, 'key'>
+    & { value: (
+      { __typename?: 'SqlCell' }
+      & SqlCellFragment
+    ) }
+  )> }
+);
+
+export type SqlCellFragment = (
+  { __typename?: 'SqlCell' }
+  & Pick<SqlCell, 'colName' | 'content' | 'different'>
+);
+
+export type StringMatchFragment = (
+  { __typename?: 'StringMatch' }
+  & Pick<StringMatch, 'matchType' | 'sampleArg' | 'userArg'>
+);
+
+export type StringMatchingResultFragment = (
+  { __typename?: 'StringMatchingResult' }
+  & Pick<StringMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUser' | 'notMatchedForSample'>
+  & { allMatches: Array<(
+    { __typename?: 'StringMatch' }
+    & StringMatchFragment
+  )> }
+);
+
+type NewMatch_ElementLineMatch_Fragment = (
+  { __typename?: 'ElementLineMatch' }
+  & Pick<ElementLineMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_RegexMatchMatch_Fragment = (
+  { __typename?: 'RegexMatchMatch' }
+  & Pick<RegexMatchMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlBinaryExpressionMatch_Fragment = (
+  { __typename?: 'SqlBinaryExpressionMatch' }
+  & Pick<SqlBinaryExpressionMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlColumnMatch_Fragment = (
+  { __typename?: 'SqlColumnMatch' }
+  & Pick<SqlColumnMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_SqlLimitMatch_Fragment = (
+  { __typename?: 'SqlLimitMatch' }
+  & Pick<SqlLimitMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlAssociationMatch_Fragment = (
+  { __typename?: 'UmlAssociationMatch' }
+  & Pick<UmlAssociationMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlAttributeMatch_Fragment = (
+  { __typename?: 'UmlAttributeMatch' }
+  & Pick<UmlAttributeMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlClassMatch_Fragment = (
+  { __typename?: 'UmlClassMatch' }
+  & Pick<UmlClassMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlImplementationMatch_Fragment = (
+  { __typename?: 'UmlImplementationMatch' }
+  & Pick<UmlImplementationMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+type NewMatch_UmlMethodMatch_Fragment = (
+  { __typename?: 'UmlMethodMatch' }
+  & Pick<UmlMethodMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
+);
+
+export type NewMatchFragment = NewMatch_ElementLineMatch_Fragment | NewMatch_RegexMatchMatch_Fragment | NewMatch_SqlBinaryExpressionMatch_Fragment | NewMatch_SqlColumnMatch_Fragment | NewMatch_SqlLimitMatch_Fragment | NewMatch_UmlAssociationMatch_Fragment | NewMatch_UmlAttributeMatch_Fragment | NewMatch_UmlClassMatch_Fragment | NewMatch_UmlImplementationMatch_Fragment | NewMatch_UmlMethodMatch_Fragment;
+
+type SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment = (
+  { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
+  & Pick<RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
+  & { allMatches: Array<(
+    { __typename?: 'RegexMatchMatch' }
+    & NewMatch_RegexMatchMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
+  & Pick<SqlBinaryExpressionComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlBinaryExpressionMatch' }
+    & NewMatch_SqlBinaryExpressionMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlColumnComparisonMatchingResult' }
+  & Pick<SqlColumnComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlColumnMatch' }
+    & NewMatch_SqlColumnMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment = (
+  { __typename?: 'SqlLimitComparisonMatchingResult' }
+  & Pick<SqlLimitComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
+  & { allMatches: Array<(
+    { __typename?: 'SqlLimitMatch' }
+    & NewMatch_SqlLimitMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_UmlAssociationMatchingResult_Fragment = (
+  { __typename?: 'UmlAssociationMatchingResult' }
+  & Pick<UmlAssociationMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlAssociationMatch' }
+    & NewMatch_UmlAssociationMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_UmlAttributeMatchingResult_Fragment = (
+  { __typename?: 'UmlAttributeMatchingResult' }
+  & Pick<UmlAttributeMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlAttributeMatch' }
+    & NewMatch_UmlAttributeMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_UmlClassMatchingResult_Fragment = (
+  { __typename?: 'UmlClassMatchingResult' }
+  & Pick<UmlClassMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlClassMatch' }
+    & NewMatch_UmlClassMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_UmlImplementationMatchingResult_Fragment = (
+  { __typename?: 'UmlImplementationMatchingResult' }
+  & Pick<UmlImplementationMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlImplementationMatch' }
+    & NewMatch_UmlImplementationMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_UmlMethodMatchingResult_Fragment = (
+  { __typename?: 'UmlMethodMatchingResult' }
+  & Pick<UmlMethodMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
+  & { allMatches: Array<(
+    { __typename?: 'UmlMethodMatch' }
+    & NewMatch_UmlMethodMatch_Fragment
+  )> }
+);
+
+type SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment = (
+  { __typename?: 'XmlElementLineComparisonMatchingResult' }
+  & Pick<XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
+  & { allMatches: Array<(
+    { __typename?: 'ElementLineMatch' }
+    & NewMatch_ElementLineMatch_Fragment
+  )> }
+);
+
+export type SqlMatchingResultFragment = SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment | SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment | SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment | SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment | SqlMatchingResult_UmlAssociationMatchingResult_Fragment | SqlMatchingResult_UmlAttributeMatchingResult_Fragment | SqlMatchingResult_UmlClassMatchingResult_Fragment | SqlMatchingResult_UmlImplementationMatchingResult_Fragment | SqlMatchingResult_UmlMethodMatchingResult_Fragment | SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment;
+
 export type CollectionToolFragment = (
   { __typename?: 'CollectionTool' }
   & Pick<CollectionTool, 'id' | 'name' | 'state' | 'collectionCount' | 'lessonCount' | 'exerciseCount'>
@@ -1835,32 +2113,6 @@ export type SqlExerciseContentFragment = (
   )> }
 );
 
-export type SqlQueryResultFragment = (
-  { __typename?: 'SqlQueryResult' }
-  & Pick<SqlQueryResult, 'tableName' | 'columnNames'>
-  & { rows: Array<(
-    { __typename?: 'SqlRow' }
-    & SqlRowFragment
-  )> }
-);
-
-export type SqlRowFragment = (
-  { __typename?: 'SqlRow' }
-  & { cells: Array<(
-    { __typename?: 'SqlKeyCellValueObject' }
-    & Pick<SqlKeyCellValueObject, 'key'>
-    & { value: (
-      { __typename?: 'SqlCell' }
-      & SqlCellFragment
-    ) }
-  )> }
-);
-
-export type SqlCellFragment = (
-  { __typename?: 'SqlCell' }
-  & Pick<SqlCell, 'colName' | 'content' | 'different'>
-);
-
 export type UmlExerciseContentFragment = (
   { __typename?: 'UmlExerciseContent' }
   & Pick<UmlExerciseContent, 'toIgnore'>
@@ -2050,6 +2302,141 @@ export const RegexCorrectionResultFragmentDoc = gql`
 }
     ${RegexMatchingResultFragmentDoc}
 ${RegexExtractionResultFragmentDoc}`;
+export const NewMatchFragmentDoc = gql`
+    fragment NewMatch on NewMatch {
+  matchType
+  sampleArgDescription
+  userArgDescription
+}
+    `;
+export const SqlMatchingResultFragmentDoc = gql`
+    fragment SqlMatchingResult on MatchingResult {
+  points
+  maxPoints
+  allMatches {
+    ...NewMatch
+  }
+  notMatchedForUserString
+  notMatchedForSampleString
+}
+    ${NewMatchFragmentDoc}`;
+export const StringMatchFragmentDoc = gql`
+    fragment StringMatch on StringMatch {
+  matchType
+  sampleArg
+  userArg
+}
+    `;
+export const StringMatchingResultFragmentDoc = gql`
+    fragment StringMatchingResult on StringMatchingResult {
+  points
+  maxPoints
+  allMatches {
+    ...StringMatch
+  }
+  notMatchedForUser
+  notMatchedForSample
+}
+    ${StringMatchFragmentDoc}`;
+export const SelectAdditionalComparisonFragmentDoc = gql`
+    fragment SelectAdditionalComparison on SelectAdditionalComparisons {
+  groupByComparison {
+    ...StringMatchingResult
+  }
+  orderByComparison {
+    ...StringMatchingResult
+  }
+  limitComparison {
+    ...SqlMatchingResult
+  }
+}
+    ${StringMatchingResultFragmentDoc}
+${SqlMatchingResultFragmentDoc}`;
+export const StaticComparisonFragmentDoc = gql`
+    fragment StaticComparison on SqlQueriesStaticComparison {
+  columnComparison {
+    ...SqlMatchingResult
+  }
+  tableComparison {
+    ...StringMatchingResult
+  }
+  joinExpressionComparison {
+    ...SqlMatchingResult
+  }
+  whereComparison {
+    ...SqlMatchingResult
+  }
+  additionalComparisons {
+    selectComparisons {
+      ...SelectAdditionalComparison
+    }
+    insertComparison {
+      ...StringMatchingResult
+    }
+  }
+}
+    ${SqlMatchingResultFragmentDoc}
+${StringMatchingResultFragmentDoc}
+${SelectAdditionalComparisonFragmentDoc}`;
+export const SqlCellFragmentDoc = gql`
+    fragment SqlCell on SqlCell {
+  colName
+  content
+  different
+}
+    `;
+export const SqlRowFragmentDoc = gql`
+    fragment SqlRow on SqlRow {
+  cells {
+    key
+    value {
+      ...SqlCell
+    }
+  }
+}
+    ${SqlCellFragmentDoc}`;
+export const SqlQueryResultFragmentDoc = gql`
+    fragment SqlQueryResult on SqlQueryResult {
+  tableName
+  columnNames
+  rows {
+    ...SqlRow
+  }
+}
+    ${SqlRowFragmentDoc}`;
+export const SqlExecutionResultFragmentDoc = gql`
+    fragment SqlExecutionResult on SqlExecutionResult {
+  userResult {
+    ...SqlQueryResult
+  }
+  sampleResult {
+    ...SqlQueryResult
+  }
+}
+    ${SqlQueryResultFragmentDoc}`;
+export const SqlResultFragmentDoc = gql`
+    fragment SqlResult on SqlResult {
+  points
+  maxPoints
+  staticComparison {
+    ...StaticComparison
+  }
+  executionResult {
+    ...SqlExecutionResult
+  }
+}
+    ${StaticComparisonFragmentDoc}
+${SqlExecutionResultFragmentDoc}`;
+export const SqlCorrectionResultFragmentDoc = gql`
+    fragment SqlCorrectionResult on SqlCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...SqlResult
+  }
+}
+    ${SqlResultFragmentDoc}`;
 export const CollectionToolFragmentDoc = gql`
     fragment CollectionTool on CollectionTool {
   id
@@ -2224,32 +2611,6 @@ export const RegexExerciseContentFragmentDoc = gql`
   regexPart: part(partId: $partId)
 }
     `;
-export const SqlCellFragmentDoc = gql`
-    fragment SqlCell on SqlCell {
-  colName
-  content
-  different
-}
-    `;
-export const SqlRowFragmentDoc = gql`
-    fragment SqlRow on SqlRow {
-  cells {
-    key
-    value {
-      ...SqlCell
-    }
-  }
-}
-    ${SqlCellFragmentDoc}`;
-export const SqlQueryResultFragmentDoc = gql`
-    fragment SqlQueryResult on SqlQueryResult {
-  tableName
-  columnNames
-  rows {
-    ...SqlRow
-  }
-}
-    ${SqlRowFragmentDoc}`;
 export const SqlExerciseContentFragmentDoc = gql`
     fragment SqlExerciseContent on SqlExerciseContent {
   hint
@@ -2448,6 +2809,46 @@ export function useRegexCorrectionMutation(baseOptions?: Apollo.MutationHookOpti
 export type RegexCorrectionMutationHookResult = ReturnType<typeof useRegexCorrectionMutation>;
 export type RegexCorrectionMutationResult = Apollo.MutationResult<RegexCorrectionMutation>;
 export type RegexCorrectionMutationOptions = Apollo.BaseMutationOptions<RegexCorrectionMutation, RegexCorrectionMutationVariables>;
+export const SqlCorrectionDocument = gql`
+    mutation SqlCorrection($collectionId: Int!, $exerciseId: Int!, $part: SqlExPart!, $solution: String!) {
+  me {
+    sqlExercise(collId: $collectionId, exId: $exerciseId) {
+      correct(part: $part, solution: $solution) {
+        ...SqlCorrectionResult
+      }
+    }
+  }
+}
+    ${SqlCorrectionResultFragmentDoc}`;
+export type SqlCorrectionMutationFn = Apollo.MutationFunction<SqlCorrectionMutation, SqlCorrectionMutationVariables>;
+
+/**
+ * __useSqlCorrectionMutation__
+ *
+ * To run a mutation, you first call `useSqlCorrectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSqlCorrectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sqlCorrectionMutation, { data, loading, error }] = useSqlCorrectionMutation({
+ *   variables: {
+ *      collectionId: // value for 'collectionId'
+ *      exerciseId: // value for 'exerciseId'
+ *      part: // value for 'part'
+ *      solution: // value for 'solution'
+ *   },
+ * });
+ */
+export function useSqlCorrectionMutation(baseOptions?: Apollo.MutationHookOptions<SqlCorrectionMutation, SqlCorrectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SqlCorrectionMutation, SqlCorrectionMutationVariables>(SqlCorrectionDocument, options);
+      }
+export type SqlCorrectionMutationHookResult = ReturnType<typeof useSqlCorrectionMutation>;
+export type SqlCorrectionMutationResult = Apollo.MutationResult<SqlCorrectionMutation>;
+export type SqlCorrectionMutationOptions = Apollo.BaseMutationOptions<SqlCorrectionMutation, SqlCorrectionMutationVariables>;
 export const ToolOverviewDocument = gql`
     query ToolOverview {
   me {

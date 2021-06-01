@@ -1,0 +1,134 @@
+mutation SqlCorrection($collectionId: Int!, $exerciseId: Int!, $part: SqlExPart!, $solution: String!) {
+  me {
+    sqlExercise(collId: $collectionId, exId: $exerciseId) {
+      correct(part: $part, solution: $solution) {
+        ...SqlCorrectionResult
+      }
+    }
+  }
+}
+
+fragment SqlCorrectionResult on SqlCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...SqlResult
+  }
+}
+
+# Select additional comparisons
+
+fragment SelectAdditionalComparison on SelectAdditionalComparisons {
+  groupByComparison {
+    ...StringMatchingResult
+  }
+  orderByComparison {
+    ...StringMatchingResult
+  }
+  limitComparison {
+    ...SqlMatchingResult
+  }
+}
+
+# Complete result
+
+fragment StaticComparison on SqlQueriesStaticComparison {
+  columnComparison {
+    ...SqlMatchingResult
+  }
+  tableComparison {
+    ...StringMatchingResult
+  }
+  joinExpressionComparison {
+    ...SqlMatchingResult
+  }
+  whereComparison {
+    ...SqlMatchingResult
+  }
+  additionalComparisons {
+    selectComparisons {
+      ...SelectAdditionalComparison
+    }
+    insertComparison {
+      ...StringMatchingResult
+    }
+  }
+}
+
+fragment SqlResult on SqlResult {
+  points
+  maxPoints
+  staticComparison {
+    ...StaticComparison
+  }
+  executionResult {
+    ...SqlExecutionResult
+  }
+}
+
+fragment SqlExecutionResult on SqlExecutionResult {
+  userResult {
+    ...SqlQueryResult
+  }
+  sampleResult {
+    ...SqlQueryResult
+  }
+}
+
+fragment SqlQueryResult on SqlQueryResult {
+  tableName
+  columnNames
+  rows {
+    ...SqlRow
+  }
+}
+
+fragment SqlRow on SqlRow {
+  cells {
+    key
+    value {
+      ...SqlCell
+    }
+  }
+}
+
+fragment SqlCell on SqlCell {
+  colName
+  content
+  different
+}
+
+# other fragments
+
+fragment StringMatch on StringMatch {
+  matchType
+  sampleArg
+  userArg
+}
+
+fragment StringMatchingResult on StringMatchingResult {
+  points
+  maxPoints
+  allMatches {
+    ...StringMatch
+  }
+  notMatchedForUser
+  notMatchedForSample
+}
+
+fragment NewMatch on NewMatch {
+  matchType
+  sampleArgDescription
+  userArgDescription
+}
+
+fragment SqlMatchingResult on MatchingResult  {
+  points
+  maxPoints
+  allMatches {
+    ...NewMatch
+  }
+  notMatchedForUserString
+  notMatchedForSampleString
+}

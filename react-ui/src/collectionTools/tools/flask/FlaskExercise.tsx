@@ -1,5 +1,5 @@
 import React from "react";
-import {ExerciseSolveFieldsFragment, FlaskExerciseContentFragment} from "../../generated/graphql";
+import {ExerciseSolveFieldsFragment, FlaskExerciseContentFragment} from "../../../generated/graphql";
 
 interface IProps {
   exerciseFragment: ExerciseSolveFieldsFragment;

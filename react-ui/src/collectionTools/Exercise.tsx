@@ -4,6 +4,7 @@ import {Redirect, useRouteMatch} from "react-router-dom";
 import {ExerciseQuery, useExerciseQuery} from "../generated/graphql";
 import {WithQuery} from "../WithQuery";
 import {RegexExercise} from './tools/regex/RegexExercise';
+import {SqlExercise} from './tools/sql/SqlExercise';
 
 export function Exercise({toolId, collectionId, exerciseId}: ExerciseIProps): JSX.Element {
 
@@ -25,6 +26,8 @@ export function Exercise({toolId, collectionId, exerciseId}: ExerciseIProps): JS
     } else*/
     if (content.__typename === 'RegexExerciseContent') {
       return <RegexExercise exerciseFragment={exercise} contentFragment={content}/>;
+    } else if (content.__typename === 'SqlExerciseContent') {
+      return <SqlExercise exerciseFragment={exercise} contentFragment={content}/>;
     } else {
       return <div>{JSON.stringify(exercise)}</div>
     }

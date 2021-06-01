@@ -1,24 +1,26 @@
 import React from "react";
-import {RegexCorrectionMutation, RegexCorrectionResultFragment} from "../../../generated/graphql";
-import {MutationResult} from "@apollo/client";
+import {RegexCorrectionMutation, RegexCorrectionMutationResult, RegexCorrectionResultFragment} from "../../../generated/graphql";
 import {WithQuery} from "../../../WithQuery";
 import {SolutionSaved} from "../../../helpers/SolutionSaved";
 import {PointsNotification} from "../../../helpers/PointsNotification";
 import {RegexExtractionResultDisplay} from './RegexExtractionResultDisplay';
 import {RegexMatchingResultDisplay} from './RegexMatchingResultDisplay';
+import {useTranslation} from "react-i18next";
 
 interface IProps {
-  mutationResult: MutationResult<RegexCorrectionMutation>;
+  mutationResult: RegexCorrectionMutationResult;
 }
 
 export function RegexCorrection({mutationResult}: IProps): JSX.Element {
 
+  const {t} = useTranslation('common');
+
   function render({me}: RegexCorrectionMutation): JSX.Element {
     if (!me || !me.regexExercise) {
-      return <div className="notification is-danger">There has been a correction error!</div>;
+      return <div className="notification is-danger">{t('correctionError')}</div>;
     }
 
-    const {result, resultSaved, solutionSaved, proficienciesUpdated}: RegexCorrectionResultFragment = me.regexExercise.correct;
+    const {solutionSaved, result/* TODO:, resultSaved, proficienciesUpdated*/}: RegexCorrectionResultFragment = me.regexExercise.correct;
 
     return <>
 
@@ -33,7 +35,7 @@ export function RegexCorrection({mutationResult}: IProps): JSX.Element {
     </>;
   }
 
-  return !mutationResult.called
-    ? <></>
-    : <WithQuery query={mutationResult} children={render}/>;
+  return mutationResult.called
+    ? <WithQuery query={mutationResult} children={render}/>
+    : <></>;
 }
