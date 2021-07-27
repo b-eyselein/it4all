@@ -48,7 +48,7 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
   private def insertInitialCollection(coll: ExerciseCollection): Future[Unit] =
     futureCollectionById(coll.toolId, coll.collectionId)
       .flatMap {
-        case Some(_) => Future.successful()
+        case Some(_) => Future.successful(())
         case None =>
           val key = s"(${coll.toolId}, ${coll.collectionId})"
 
@@ -68,7 +68,7 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
   ): Future[Unit] =
     futureExerciseExists(ex.toolId, ex.collectionId, ex.exerciseId)
       .flatMap {
-        case true => Future.successful()
+        case true => Future.successful(())
         case false =>
           val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"
 

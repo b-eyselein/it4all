@@ -5,67 +5,48 @@ import model._
 import model.mongo.MongoClientQueries
 import model.result.{BasicExercisePartResult, CorrectionResult}
 import model.tools.ToolList
-import pdi.jwt.JwtSession
-import play.api.Configuration
 import play.api.libs.json._
 import sangria.macros.derive._
 import sangria.marshalling.playJson._
 import sangria.schema._
 
-import java.time.Clock
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries {
-
-  private val userFieldName = "user"
-  private val clock         = Clock.systemDefaultZone()
-
-  private implicit val userFormat: OFormat[LoggedInUser] = JsonProtocols.loggedInUserFormat
-
-  protected val configuration: Configuration
-
-  protected def createJwtSession(user: LoggedInUser): JwtSession = {
-    JwtSession()(configuration, clock) + (userFieldName, user)
-  }
-
-  protected def writeJsonWebToken(user: LoggedInUserWithToken): JsValue =
-    JsonProtocols.loggedInUserWithTokenFormat.writes(user)
-
-  protected def deserializeJwt(jwtString: String): Option[LoggedInUser] = JwtSession
-    .deserialize(jwtString)(configuration, clock)
-    .getAs[LoggedInUser](userFieldName)
+trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries with JwtHelpers {
 
   private def register(registerValues: RegisterValues): Future[Option[String]] = if (registerValues.isInvalid) {
     Future.successful(None)
   } else {
-    futureUserByUsername(registerValues.username).flatMap {
-      case Some(_) => Future.successful(None)
-      case None =>
-        val newUser = User(registerValues.username, Some(registerValues.firstPassword.boundedBcrypt))
+    for {
+      maybeUser <- futureUserByUsername(registerValues.username)
+      newUser <- maybeUser match {
+        case Some(_) => Future.successful(None)
+        case None =>
+          val newUser = User(registerValues.username, Some(registerValues.firstPassword.boundedBcrypt))
 
-        futureInsertUser(newUser).map {
-          case false => None
-          case true  => Some(newUser.username)
-        }
-    }
+          futureInsertUser(newUser).map {
+            case false => None
+            case true  => Some(newUser.username)
+          }
+      }
+    } yield newUser
   }
 
-  private def authenticate(credentials: UserCredentials): Future[Option[LoggedInUserWithToken]] =
-    futureUserByUsername(credentials.username).map { maybeUser =>
-      for {
-        user: User      <- maybeUser
-        pwHash: String  <- user.pwHash
-        pwOkay: Boolean <- credentials.password.isBcryptedSafeBounded(pwHash).toOption
-        maybeUser <-
-          if (pwOkay) {
-            val loggedInUser = LoggedInUser(user.username, user.isAdmin)
+  private def authenticate(credentials: UserCredentials): Future[Option[LoggedInUserWithToken]] = futureUserByUsername(credentials.username).map { maybeUser =>
+    for {
+      user: User      <- maybeUser
+      pwHash: String  <- user.pwHash
+      pwOkay: Boolean <- credentials.password.isBcryptedSafeBounded(pwHash).toOption
+      maybeUser <-
+        if (pwOkay) {
+          val loggedInUser = LoggedInUser(user.username, user.isAdmin)
 
-            Some(LoggedInUserWithToken(loggedInUser, createJwtSession(loggedInUser).serialize))
-          } else None
+          Some(LoggedInUserWithToken(loggedInUser, createJwtSession(user.username).serialize))
+        } else None
 
-      } yield maybeUser
-    }
+    } yield maybeUser
+  }
 
   private def updateAllUserProficiencies[EC <: ExerciseContent](
     username: String,

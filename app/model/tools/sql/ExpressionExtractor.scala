@@ -2,7 +2,7 @@ package model.tools.sql
 
 import net.sf.jsqlparser.expression._
 import net.sf.jsqlparser.expression.operators.arithmetic._
-import net.sf.jsqlparser.expression.operators.conditional.{AndExpression, OrExpression}
+import net.sf.jsqlparser.expression.operators.conditional.{AndExpression, OrExpression, XorExpression}
 import net.sf.jsqlparser.expression.operators.relational._
 import net.sf.jsqlparser.schema.Column
 import net.sf.jsqlparser.statement.select.SubSelect
@@ -122,6 +122,11 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
     orExpression.getRightExpression.accept(this)
   }
 
+  override def visit(orExpression: XorExpression): Unit = {
+    orExpression.getLeftExpression.accept(this)
+    orExpression.getRightExpression.accept(this)
+  }
+
   override def visit(parenthesis: Parenthesis): Unit = parenthesis.getExpression.accept(this)
 
   override def visit(rexpr: RegExpMatchOperator): Unit = {}
@@ -172,4 +177,9 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   override def visit(variableAssignment: VariableAssignment): Unit = {}
 
+  override def visit(rowGetExpression: RowGetExpression): Unit = {}
+
+  override def visit(aThis: ArrayConstructor): Unit = {}
+
+  override def visit(aThis: TimezoneExpression): Unit = {}
 }

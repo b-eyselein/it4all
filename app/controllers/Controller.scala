@@ -54,30 +54,28 @@ class Controller @Inject() (
   private implicit val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
 
   def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest]) { implicit request =>
-    val authHeader = request.headers.get("Authorization").flatMap(deserializeJwt)
-
-    QueryParser.parse(request.body.query) match {
-      case Failure(error) =>
-        logger.error("Query could not be parsed", error)
-        Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
-      case Success(queryAst) =>
-        Executor
-          .execute(
-            schema,
-            queryAst,
-            userContext = GraphQLContext(authHeader),
-            operationName = request.body.operationName,
-            variables = request.body.variables.getOrElse(Json.obj())
-          )
-          .map(Ok(_))
-          .recover {
-            case error: QueryAnalysisError =>
-              logger.error("There has been a query error", error)
-              BadRequest(error.resolveError)
-            case error: ErrorWithResolver =>
-              logger.error("There has been a query resolve error", error)
-              InternalServerError(error.resolveError)
-          }
+    userFromRequestHeader(request).flatMap { maybeUser =>
+      QueryParser.parse(request.body.query) match {
+        case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
+        case Success(queryAst) =>
+          Executor
+            .execute(
+              schema,
+              queryAst,
+              userContext = GraphQLContext(maybeUser),
+              operationName = request.body.operationName,
+              variables = request.body.variables.getOrElse(Json.obj())
+            )
+            .map(Ok(_))
+            .recover {
+              case error: QueryAnalysisError =>
+                logger.error("There has been a query error", error)
+                BadRequest(error.resolveError)
+              case error: ErrorWithResolver =>
+                logger.error("There has been a query resolve error", error)
+                InternalServerError(error.resolveError)
+            }
+      }
     }
   }
 
@@ -103,7 +101,7 @@ class Controller @Inject() (
         getOrCreateUser(basicLtiRequest.ltiExt.username) map { user =>
           val uuid = UUID.randomUUID()
 
-          jwtHashesToClaim.put(uuid, (createJwtSession(user), user))
+          jwtHashesToClaim.put(uuid, (createJwtSession(user.username), user))
 
           Redirect(s"/de/lti/${uuid.toString}").withNewSession
         }
@@ -125,18 +123,14 @@ class Controller @Inject() (
   def apiAuthenticate: Action[UserCredentials] = Action.async(parse.json[UserCredentials]) { implicit request =>
     futureUserByUsername(request.body.username).map {
       case None => BadRequest("Invalid username!")
-      case Some(user) =>
-        user.pwHash match {
+      case Some(User(username, pwHash, _)) =>
+        pwHash match {
           case None => BadRequest("No password found!")
           case Some(pwHash) =>
             if (request.body.password.isBcryptedBounded(pwHash)) {
-              val loggedInUser = LoggedInUser(user.username)
+              val loggedInUser = LoggedInUser(username)
 
-              Ok(
-                writeJsonWebToken(
-                  LoggedInUserWithToken(loggedInUser, createJwtSession(loggedInUser).serialize)
-                )
-              )
+              Ok(writeJsonWebToken(LoggedInUserWithToken(loggedInUser, createJwtSession(username).serialize)))
             } else {
               BadRequest("Password invalid!")
             }
