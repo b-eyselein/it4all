@@ -1,11 +1,11 @@
-import React from "react";
-import {ToolBaseParams} from "../ToolBase";
-import {CollectionListQuery, useCollectionListQuery} from "../generated/graphql";
-import {WithQuery} from "../WithQuery";
-import {Redirect} from "react-router-dom";
-import {BreadCrumbPart, BreadCrumbs} from "../helpers/BreadCrumbs";
-import {useTranslation} from "react-i18next";
-import {BulmaCard} from "../helpers/BulmaCard";
+import React from 'react';
+import {ToolBaseParams} from '../ToolBase';
+import {CollectionListQuery, useCollectionListQuery} from '../graphql';
+import {WithQuery} from '../WithQuery';
+import {Redirect} from 'react-router-dom';
+import {BreadCrumbPart, BreadCrumbs} from '../helpers/BreadCrumbs';
+import {useTranslation} from 'react-i18next';
+import {BulmaCard} from '../helpers/BulmaCard';
 
 export function CollectionList({toolId}: ToolBaseParams): JSX.Element {
 
@@ -36,8 +36,7 @@ export function CollectionList({toolId}: ToolBaseParams): JSX.Element {
         <div className="columns is-multiline">
           {collections.map(({collectionId, title, exerciseCount}) =>
             <div className="column is-one-quarter" key={collectionId}>
-              <BulmaCard title={`${collectionId}. ${title}`}
-                         footerItems={[{link: `./collections/${collectionId}`, title: t('toCollection')}]}>
+              <BulmaCard title={`${collectionId}. ${title}`} footerItems={[{link: `./collections/${collectionId}`, title: t('toCollection')}]}>
                 {() => <>{exerciseCount} {t('exercise_plural')}</>}
               </BulmaCard>
             </div>
@@ -47,5 +46,5 @@ export function CollectionList({toolId}: ToolBaseParams): JSX.Element {
     );
   }
 
-  return <WithQuery query={query} children={render}/>;
+  return <WithQuery query={query} render={render}/>;
 }

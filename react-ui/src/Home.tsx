@@ -1,10 +1,10 @@
-import React from "react";
-import {useTranslation} from "react-i18next";
-import {ToolOverviewQuery, useToolOverviewQuery} from "./generated/graphql";
-import {Redirect} from "react-router-dom";
-import {WithQuery} from "./WithQuery";
-import {BulmaCard, FooterItem} from "./helpers/BulmaCard";
-import {randomTools} from "./randomTools/randomTools";
+import React from 'react';
+import {useTranslation} from 'react-i18next';
+import {ToolOverviewQuery, useToolOverviewQuery} from './graphql';
+import {Redirect} from 'react-router-dom';
+import {WithQuery} from './WithQuery';
+import {BulmaCard, FooterItem} from './helpers/BulmaCard';
+import {randomTools} from './randomTools/randomTools';
 
 export function Home(): JSX.Element {
 
@@ -22,7 +22,7 @@ export function Home(): JSX.Element {
     const collectionTools = me?.tools;
 
     if (!collectionTools) {
-      return <Redirect to={'/loginForm'}/>
+      return <Redirect to={'/loginForm'}/>;
     }
 
     return <>
@@ -55,7 +55,7 @@ export function Home(): JSX.Element {
           </div>
         )}
 
-        <WithQuery query={query} children={render}/>
+        <WithQuery query={query} render={render}/>
       </div>
     </div>
   );

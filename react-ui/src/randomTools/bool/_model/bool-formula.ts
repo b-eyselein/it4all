@@ -77,11 +77,11 @@ export class BooleanFormula {
     return this.right.evaluate(assignment);
   }
 
-  asString() {
+  asString(): string {
     return this.left.variable + ' = ' + this.right.asString();
   }
 
-  asHtmlString() {
+  asHtmlString(): string {
     return this.left.variable + ' = ' + this.right.asHtmlString();
   }
 

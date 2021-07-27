@@ -1,5 +1,5 @@
-import React from "react";
-import {UserProficiencyFragment} from "../generated/graphql";
+import React from 'react';
+import {UserProficiencyFragment} from '../graphql';
 import {FilledPoints} from './FilledPoints';
 
 interface IProps {

@@ -1,12 +1,12 @@
-import React from "react";
-import {NaryReadOnlyNumberInput} from "./nary";
+import React from 'react';
+import {NaryReadOnlyNumberInput} from './nary';
 
 
 interface IProps {
   naryNumberInput: NaryReadOnlyNumberInput;
 }
 
-export function NaryNumberReadOnlyInputComponent({naryNumberInput}: IProps) {
+export function NaryNumberReadOnlyInputComponent({naryNumberInput}: IProps): JSX.Element {
 
   function getSummandNary(): string {
     const radix = naryNumberInput.numberingSystem.radix;
@@ -30,8 +30,7 @@ export function NaryNumberReadOnlyInputComponent({naryNumberInput}: IProps) {
         </div>
       </div>
       <div className="control is-expanded">
-        <input className="input has-text-right" id={naryNumberInput.fieldId} value={getSummandNary()}
-               placeholder={naryNumberInput.labelContent} readOnly/>
+        <input className="input has-text-right" id={naryNumberInput.fieldId} value={getSummandNary()} placeholder={naryNumberInput.labelContent} readOnly/>
       </div>
       <div className="control">
         <div className="button is-static">
@@ -40,6 +39,6 @@ export function NaryNumberReadOnlyInputComponent({naryNumberInput}: IProps) {
       </div>
     </div>
 
-  )
+  );
 
 }

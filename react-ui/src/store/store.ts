@@ -1,5 +1,5 @@
 import {createStore} from 'redux';
-import {LoggedInUserWithTokenFragment} from "../generated/graphql";
+import {LoggedInUserWithTokenFragment} from '../graphql';
 import {CHANGE_LANGUAGE, StoreAction, USER_LOGIN, USER_LOGOUT} from './actions';
 import i18next from 'i18next';
 
@@ -13,23 +13,21 @@ interface StoreState {
 
 function rootReducer(store: StoreState = {}, action: StoreAction): StoreState {
   switch (action.type) {
-    case USER_LOGIN:
-      localStorage.setItem(userField, JSON.stringify(action.user));
-      return {...store, currentUser: action.user};
-    case USER_LOGOUT:
-      localStorage.removeItem(userField);
-      return {...store, currentUser: undefined};
-    case CHANGE_LANGUAGE:
-      const languageCode = action.languageCode;
+  case USER_LOGIN:
+    localStorage.setItem(userField, JSON.stringify(action.user));
+    return {...store, currentUser: action.user};
+  case USER_LOGOUT:
+    localStorage.removeItem(userField);
+    return {...store, currentUser: undefined};
+  case CHANGE_LANGUAGE:
+    localStorage.setItem(languageField, action.languageCode);
 
-      localStorage.setItem(languageField, languageCode);
+    // noinspection JSIgnoredPromiseFromCall
+    i18next.changeLanguage(action.languageCode);
 
-      // noinspection JSIgnoredPromiseFromCall
-      i18next.changeLanguage(languageCode);
-
-      return {...store, chosenLanguage: action.languageCode};
-    default:
-      return store;
+    return {...store, chosenLanguage: action.languageCode};
+  default:
+    return store;
   }
 }
 

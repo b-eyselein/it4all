@@ -1,5 +1,5 @@
-import {Action} from "redux";
-import {LoggedInUserWithTokenFragment} from "../generated/graphql";
+import {Action} from 'redux';
+import {LoggedInUserWithTokenFragment} from '../graphql';
 
 // User login
 
@@ -17,8 +17,7 @@ export function userLoginAction(user: LoggedInUserWithTokenFragment): UserLoginA
 
 export const USER_LOGOUT = 'USER_LOGOUT';
 
-interface UserLogoutAction extends Action<typeof USER_LOGOUT> {
-}
+type UserLogoutAction = Action<typeof USER_LOGOUT>;
 
 export function userLogoutAction(): UserLogoutAction {
   return {type: USER_LOGOUT};

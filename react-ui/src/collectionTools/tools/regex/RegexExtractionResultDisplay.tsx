@@ -1,6 +1,6 @@
-import React from "react";
-import {MatchType, RegexExtractionMatchFragment, RegexExtractionResultFragment, RegexExtractionSingleResultFragment} from "../../../generated/graphql";
-import classNames from "classnames";
+import React from 'react';
+import {MatchType, RegexExtractionMatchFragment, RegexExtractionResultFragment, RegexExtractionSingleResultFragment} from '../../../graphql';
+import classNames from 'classnames';
 
 interface IProps {
   result: RegexExtractionResultFragment;
@@ -45,7 +45,7 @@ function RegexExtractionSingleResultDisplay({m: {extractionMatchingResult, base}
 
       </div>
     </div>
-  )
+  );
 }
 
 export function RegexExtractionResultDisplay({result}: IProps): JSX.Element {

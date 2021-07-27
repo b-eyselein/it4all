@@ -1,8 +1,8 @@
-import React, {useState} from "react";
-import {ExerciseIProps} from "../ToolBase";
-import {Redirect, useRouteMatch} from "react-router-dom";
-import {ExerciseQuery, ExerciseSolveFieldsFragment, useExerciseQuery} from "../generated/graphql";
-import {WithQuery} from "../WithQuery";
+import React, {useState} from 'react';
+import {ExerciseIProps} from '../ToolBase';
+import {Redirect, useRouteMatch} from 'react-router-dom';
+import {ExerciseQuery, ExerciseSolveFieldsFragment, useExerciseQuery} from '../graphql';
+import {WithQuery} from '../WithQuery';
 import {RegexExercise} from './tools/regex/RegexExercise';
 import {SqlExercise} from './tools/sql/SqlExercise';
 
@@ -45,10 +45,10 @@ export function Exercise({toolId, collectionId, exerciseId}: ExerciseIProps): JS
       return <SqlExercise exerciseFragment={exercise} contentFragment={content} showSampleSolutions={showSampleSolution}
                           toggleSampleSolutions={toggleShowSampleSolutions}/>;
     } else {
-      return <div>{JSON.stringify(exercise)}</div>
+      return <div>{JSON.stringify(exercise)}</div>;
     }
   }
 
-  return <WithQuery query={exerciseQuery} children={render}/>;
+  return <WithQuery query={exerciseQuery} render={render}/>;
 
 }

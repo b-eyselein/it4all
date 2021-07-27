@@ -1,8 +1,8 @@
-import React from "react";
-import {Link, Route, Switch, useRouteMatch} from "react-router-dom";
-import {boolRandomTool, naryRandomTool, RandomTool} from "./randomTools";
-import {useTranslation} from "react-i18next";
-import {BoolFillout} from "./BoolFillout";
+import React from 'react';
+import {Link, Route, Switch, useRouteMatch} from 'react-router-dom';
+import {boolRandomTool, naryRandomTool, RandomTool} from './randomTools';
+import {useTranslation} from 'react-i18next';
+import {BoolFillout} from './BoolFillout';
 import {NaryAddition} from './NaryAddition';
 
 interface RouteParams {
@@ -68,5 +68,5 @@ export function RandomSolveButtons({correct, nextExercise}: RandomSolveButtonsIP
     <div className="column is-one-third-desktop">
       <Link className="button is-dark is-fullwidth" to="..">Bearbeiten beenden</Link>
     </div>
-  </div>
+  </div>;
 }

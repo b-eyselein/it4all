@@ -1,7 +1,7 @@
-import React, {useState} from "react";
-import {SqlQueryResultFragment} from "../../../generated/graphql";
-import classNames from "classnames";
-import {SqlQueryResultTable} from "./SqlQueryResultTable";
+import React, {useState} from 'react';
+import {SqlQueryResultFragment} from '../../../graphql';
+import classNames from 'classnames';
+import {SqlQueryResultTable} from './SqlQueryResultTable';
 
 interface IProps {
   tables: SqlQueryResultFragment[];

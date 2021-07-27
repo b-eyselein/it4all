@@ -88,7 +88,7 @@ export class BooleanConstant extends BooleanNode {
     super();
   }
 
-  evaluate(assignments: Map<string, boolean>): boolean {
+  evaluate(/*assignments: Map<string, boolean>*/): boolean {
     return this.value || false;
   }
 
@@ -226,7 +226,7 @@ export class BooleanXNor extends BooleanBinaryNode {
 export class BooleanEquivalency extends BooleanBinaryNode {
   protected operator = 'equiv';
 
-  protected evalFunc(a: boolean, b: boolean) {
+  protected evalFunc(a: boolean, b: boolean): boolean {
     return a === b;
   }
 }
@@ -241,22 +241,22 @@ export class BooleanImplication extends BooleanBinaryNode {
 
 export function instantiateOperator(leftOp: BooleanNode, opString: string, rightOp: BooleanNode): BooleanBinaryNode {
   switch (opString) {
-    case 'or':
-      return new BooleanOr(leftOp, rightOp);
-    case 'xor':
-      return new BooleanXOr(leftOp, rightOp);
-    case 'nor':
-      return new BooleanNOr(leftOp, rightOp);
-    case 'xnor':
-      return new BooleanXNor(leftOp, rightOp);
-    case 'nand':
-      return new BooleanNAnd(leftOp, rightOp);
-    case 'equiv':
-      return new BooleanEquivalency(leftOp, rightOp);
-    case 'impl':
-      return new BooleanImplication(leftOp, rightOp);
-    case 'and':
-    default:
-      return new BooleanAnd(leftOp, rightOp);
+  case 'or':
+    return new BooleanOr(leftOp, rightOp);
+  case 'xor':
+    return new BooleanXOr(leftOp, rightOp);
+  case 'nor':
+    return new BooleanNOr(leftOp, rightOp);
+  case 'xnor':
+    return new BooleanXNor(leftOp, rightOp);
+  case 'nand':
+    return new BooleanNAnd(leftOp, rightOp);
+  case 'equiv':
+    return new BooleanEquivalency(leftOp, rightOp);
+  case 'impl':
+    return new BooleanImplication(leftOp, rightOp);
+  case 'and':
+  default:
+    return new BooleanAnd(leftOp, rightOp);
   }
 }

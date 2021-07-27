@@ -1,7 +1,7 @@
-import {ApolloError} from "@apollo/client";
-import classNames from "classnames";
-import React from "react";
-import {useTranslation} from "react-i18next";
+import {ApolloError} from '@apollo/client';
+import classNames from 'classnames';
+import React from 'react';
+import {useTranslation} from 'react-i18next';
 
 interface MyQueryResult<T> {
   data?: T | null | undefined;
@@ -11,10 +11,10 @@ interface MyQueryResult<T> {
 
 interface IProps<T> {
   query: MyQueryResult<T>;
-  children: (t: T) => JSX.Element;
+  render: (t: T) => JSX.Element;
 }
 
-export function WithQuery<T>({query: {data, loading, error}, children}: IProps<T>): JSX.Element {
+export function WithQuery<T>({query: {data, loading, error}, render}: IProps<T>): JSX.Element {
 
   const {t} = useTranslation('common');
 
@@ -22,9 +22,9 @@ export function WithQuery<T>({query: {data, loading, error}, children}: IProps<T
     return <div className={classNames('notification', 'has-text-centered', {'is-info': loading, 'is-warning': !!error})}>
       {loading && <span>{t('loading_data')}...</span>}
       {error && error.message}
-    </div>
+    </div>;
   } else {
-    return children(data);
+    return render(data);
   }
 
 }

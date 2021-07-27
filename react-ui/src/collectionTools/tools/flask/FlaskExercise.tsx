@@ -1,11 +1,9 @@
-import React from "react";
-import {ExerciseSolveFieldsFragment, FlaskExerciseContentFragment} from "../../../generated/graphql";
+import React from 'react';
+import {FlaskExerciseContentFragment} from '../../../graphql';
+import {ConcreteExerciseIProps} from '../../Exercise';
 
-interface IProps {
-  exerciseFragment: ExerciseSolveFieldsFragment;
-  contentFragment: FlaskExerciseContentFragment;
-}
+type IProps = ConcreteExerciseIProps<FlaskExerciseContentFragment>;
 
-export function FlaskExercise({exerciseFragment,contentFragment}: IProps): JSX.Element {
+export function FlaskExercise({/*exerciseFragment, contentFragment,showSampleSolutions,toggleSampleSolutions*/}: IProps): JSX.Element {
   return <div>TODO!</div>;
 }

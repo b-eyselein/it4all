@@ -1,14 +1,14 @@
 import React from 'react';
 import {Link, Route, Switch} from 'react-router-dom';
-import {useTranslation} from "react-i18next";
-import {Home} from "./Home";
+import {useTranslation} from 'react-i18next';
+import {Home} from './Home';
 import {LoginForm} from './LoginForm';
 import {ToolBase} from './ToolBase';
-import {RandomToolBase} from "./randomTools/RandomToolBase";
-import {currentUserSelector} from "./store/store";
-import {useSelector} from "react-redux";
+import {RandomToolBase} from './randomTools/RandomToolBase';
+import {currentUserSelector} from './store/store';
+import {useSelector} from 'react-redux';
 
-export function App() {
+export function App(): JSX.Element {
 
   const {t} = useTranslation('common');
   const currentUser = useSelector(currentUserSelector);
@@ -40,12 +40,10 @@ export function App() {
               </div>
             </div>
 
-            <a className="navbar-item" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/impressum/"
-               rel="noreferrer">
+            <a className="navbar-item" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/impressum/" rel="noreferrer">
               {t('imprint')}
             </a>
-            <a className="navbar-item" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/datenschutz/"
-               rel="noreferrer">
+            <a className="navbar-item" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/datenschutz/" rel="noreferrer">
               {t('dataProtection')}
             </a>
 

@@ -1,11 +1,11 @@
-import React from "react";
-import {RegexCorrectionMutation, RegexCorrectionMutationResult, RegexCorrectionResultFragment} from "../../../generated/graphql";
-import {WithQuery} from "../../../WithQuery";
-import {SolutionSaved} from "../../../helpers/SolutionSaved";
-import {PointsNotification} from "../../../helpers/PointsNotification";
+import React from 'react';
+import {RegexCorrectionMutation, RegexCorrectionMutationResult, RegexCorrectionResultFragment} from '../../../graphql';
+import {WithQuery} from '../../../WithQuery';
+import {SolutionSaved} from '../../../helpers/SolutionSaved';
+import {PointsNotification} from '../../../helpers/PointsNotification';
 import {RegexExtractionResultDisplay} from './RegexExtractionResultDisplay';
 import {RegexMatchingResultDisplay} from './RegexMatchingResultDisplay';
-import {useTranslation} from "react-i18next";
+import {useTranslation} from 'react-i18next';
 
 interface IProps {
   mutationResult: RegexCorrectionMutationResult;
@@ -36,6 +36,6 @@ export function RegexCorrection({mutationResult}: IProps): JSX.Element {
   }
 
   return mutationResult.called
-    ? <WithQuery query={mutationResult} children={render}/>
+    ? <WithQuery query={mutationResult} render={render}/>
     : <></>;
 }

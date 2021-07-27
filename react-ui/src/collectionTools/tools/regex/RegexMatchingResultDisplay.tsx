@@ -1,6 +1,6 @@
-import React from "react";
-import {BinaryClassificationResultType, RegexMatchingResultFragment, RegexMatchingSingleResultFragment} from "../../../generated/graphql";
-import classNames from "classnames";
+import React from 'react';
+import {BinaryClassificationResultType, RegexMatchingResultFragment, RegexMatchingSingleResultFragment} from '../../../graphql';
+import classNames from 'classnames';
 
 interface IProps {
   result: RegexMatchingResultFragment;
@@ -27,5 +27,5 @@ export function RegexMatchingResultDisplay({result}: IProps): JSX.Element {
     {result.matchingResults.map((matchingResult, index) =>
       <RegexMatchingSingleResultDisplay m={matchingResult} key={index}/>
     )}
-  </>
+  </>;
 }

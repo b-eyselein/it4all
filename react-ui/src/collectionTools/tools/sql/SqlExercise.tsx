@@ -1,18 +1,18 @@
-import React, {useState} from "react";
+import React, {useState} from 'react';
 import './SqlExercise.sass';
-import {SqlExecutionResultFragment, SqlExerciseContentFragment, useSqlCorrectionMutation} from "../../../generated/graphql";
-import classNames from "classnames";
-import {useTranslation} from "react-i18next";
+import {SqlExecutionResultFragment, SqlExerciseContentFragment, useSqlCorrectionMutation} from '../../../graphql';
+import classNames from 'classnames';
+import {useTranslation} from 'react-i18next';
 import CodeMirror from '@uiw/react-codemirror';
-import {getDefaultCodeMirrorEditorOptions} from "../codeMirrorOptions";
-import {BulmaTabs, Tabs} from "../../../helpers/BulmaTabs";
-import {SqlTableContents} from "./SqlTableContents";
+import {getDefaultCodeMirrorEditorOptions} from '../codeMirrorOptions';
+import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
+import {SqlTableContents} from './SqlTableContents';
 import {SqlCorrection} from './SqlCorrection';
-import {StringSampleSolution} from "../StringSampleSolution";
+import {StringSampleSolution} from '../StringSampleSolution';
 import {SqlExecutionResultDisplay} from './SqlExecutionResultDisplay';
-import {Link} from "react-router-dom";
-import {ConcreteExerciseIProps} from "../../Exercise";
-import {SampleSolutionTabContent} from "../../SampleSolutionTabContent";
+import {Link} from 'react-router-dom';
+import {ConcreteExerciseIProps} from '../../Exercise';
+import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 
 type IProps = ConcreteExerciseIProps<SqlExerciseContentFragment>
 
@@ -28,29 +28,41 @@ export function SqlExercise({exerciseFragment, contentFragment, showSampleSoluti
     ? correctionMutationResult.data.me?.sqlExercise?.correct.result.executionResult
     : undefined;
 
+  if (!contentFragment.sqlPart) {
+    throw new Error('TODO!');
+  }
+
+  const part = contentFragment.sqlPart;
+
   function correct(): void {
     correctExercise({
       variables: {
         collectionId: exerciseFragment.collectionId,
         exerciseId: exerciseFragment.exerciseId,
-        part: contentFragment.sqlPart!!,
+        part,
         solution
       }
     }).catch((error) => console.error(error));
   }
 
-  const tabConfigs: Tabs = {
-    databaseContent: {name: t('databaseContent'), render: () => <SqlTableContents tables={contentFragment.sqlDbContents}/>},
-    correction: {name: t('correction'), render: () => <SqlCorrection mutationResult={correctionMutationResult}/>},
-    sampleSolution: {
-      name: t('sampleSolution_plural'), render: () =>
-        <SampleSolutionTabContent showSampleSolutions={showSampleSolutions} toggleSampleSolutions={toggleSampleSolutions}
-                                  renderSampleSolutions={() => contentFragment.sqlSampleSolutions.map((sample) =>
-                                    <StringSampleSolution sample={sample} key={sample}/>
-                                  )}/>
-    }
-  };
+  const databaseContentRender = () => <SqlTableContents tables={contentFragment.sqlDbContents}/>;
+  databaseContentRender.displayName = 'SqlDatabaseContentRender';
 
+  const correctionTabRender = () => <SqlCorrection mutationResult={correctionMutationResult}/>;
+  correctionTabRender.display = 'SqlCorrectionTabRender';
+
+  const sampleSolutionTabRender = () =>
+    <SampleSolutionTabContent showSampleSolutions={showSampleSolutions} toggleSampleSolutions={toggleSampleSolutions}
+                              renderSampleSolutions={() => contentFragment.sqlSampleSolutions.map((sample) =>
+                                <StringSampleSolution sample={sample} key={sample}/>
+                              )}/>;
+  sampleSolutionTabRender.displayName = 'SqlSampleSolutionTabRender';
+
+  const tabConfigs: Tabs = {
+    databaseContent: {name: t('databaseContent'), render: databaseContentRender},
+    correction: {name: t('correction'), render: correctionTabRender},
+    sampleSolution: {name: t('sampleSolution_plural'), render: sampleSolutionTabRender}
+  };
 
   return (
     <div className="container is-fluid">

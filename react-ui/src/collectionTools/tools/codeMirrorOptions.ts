@@ -1,4 +1,4 @@
-import CodeMirror from "codemirror";
+import CodeMirror from 'codemirror';
 
 export function getDefaultCodeMirrorEditorOptions(mode: string): CodeMirror.EditorConfiguration {
   return {

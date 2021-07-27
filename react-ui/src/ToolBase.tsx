@@ -1,9 +1,9 @@
-import React from "react";
-import {Route, Switch, useRouteMatch} from "react-router-dom";
-import {CollectionList} from "./collectionTools/CollectionList";
+import React from 'react';
+import {Route, Switch, useRouteMatch} from 'react-router-dom';
+import {CollectionList} from './collectionTools/CollectionList';
 import {CollectionOverview} from './collectionTools/CollectionOverview';
 import {ToolOverview} from './collectionTools/ToolOverview';
-import {ExerciseOverview} from "./collectionTools/ExerciseOverview";
+import {ExerciseOverview} from './collectionTools/ExerciseOverview';
 import {Exercise} from './collectionTools/Exercise';
 
 interface ToolRouteProps {
@@ -37,7 +37,7 @@ function CollectionBase({toolId}: ToolBaseParams): JSX.Element {
   return <Switch>
     <Route path={url} exact render={() => <CollectionOverview toolId={toolId} collectionId={collectionId}/>}/>
     <Route path={`${url}/exercises/:exerciseId`} render={() => <ExerciseBase toolId={toolId} collectionId={collectionId}/>}/>
-  </Switch>
+  </Switch>;
 }
 
 
@@ -53,5 +53,5 @@ function ExerciseBase({toolId, collectionId}: CollectionBaseParams): JSX.Element
   return <Switch>
     <Route path={url} exact render={() => <ExerciseOverview exerciseId={exerciseId} collectionId={collectionId} toolId={toolId}/>}/>
     <Route path={`${url}/parts/:partId`} render={() => <Exercise toolId={toolId} collectionId={collectionId} exerciseId={exerciseId}/>}/>
-  </Switch>
+  </Switch>;
 }

@@ -1,9 +1,9 @@
-import React from "react";
-import {ExerciseOverviewQuery, PartFragment, useExerciseOverviewQuery} from "../generated/graphql";
-import {ExerciseIProps} from "../ToolBase";
-import {Link, Redirect, useRouteMatch} from "react-router-dom";
-import {BreadCrumbPart, BreadCrumbs} from "../helpers/BreadCrumbs";
-import {WithQuery} from "../WithQuery";
+import React from 'react';
+import {ExerciseOverviewQuery, PartFragment, useExerciseOverviewQuery} from '../graphql';
+import {ExerciseIProps} from '../ToolBase';
+import {Link, Redirect, useRouteMatch} from 'react-router-dom';
+import {BreadCrumbPart, BreadCrumbs} from '../helpers/BreadCrumbs';
+import {WithQuery} from '../WithQuery';
 
 export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIProps): JSX.Element {
 
@@ -13,7 +13,7 @@ export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIPr
 
   function render({me}: ExerciseOverviewQuery): JSX.Element {
     if (!me || !me.tool || !me.tool.collection || !me.tool.collection.exercise) {
-      return <Redirect to={'/'}/>
+      return <Redirect to={'/'}/>;
     }
 
     const tool = me.tool;
@@ -55,5 +55,5 @@ export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIPr
 
   }
 
-  return <WithQuery query={exerciseOverviewQuery} children={render}/>;
+  return <WithQuery query={exerciseOverviewQuery} render={render}/>;
 }

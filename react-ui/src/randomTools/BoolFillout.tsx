@@ -1,9 +1,9 @@
-import React, {useState} from "react";
-import {BooleanFormula, generateBooleanFormula} from "./bool/_model/bool-formula";
-import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from "./bool/_model/bool-component-helper";
-import classNames from "classnames";
-import {RandomSolveButtons} from "./RandomToolBase";
-import {BooleanNode, calculateAssignments} from "./bool/_model/bool-node";
+import React, {useState} from 'react';
+import {BooleanFormula, generateBooleanFormula} from './bool/_model/bool-formula';
+import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './bool/_model/bool-component-helper';
+import classNames from 'classnames';
+import {RandomSolveButtons} from './RandomToolBase';
+import {BooleanNode, calculateAssignments} from './bool/_model/bool-node';
 
 type Assignment = Map<string, boolean>;
 
@@ -14,7 +14,7 @@ interface IState {
   withSubFormulas: boolean;
 }
 
-function initState(formula: BooleanFormula, withSubFormulas: boolean = false): IState {
+function initState(formula: BooleanFormula, withSubFormulas = false): IState {
   const subFormulas = formula.getSubFormulas();
 
   const assignments = calculateAssignments(formula.getVariables());
@@ -41,11 +41,11 @@ export function BoolFillout(): JSX.Element {
   }
 
   function correct(): void {
-
+    console.error('TODO: correct...');
   }
 
   function nextExercise(): void {
-
+    console.error('TODO: next exercise...');
   }
 
   return (
@@ -73,8 +73,9 @@ export function BoolFillout(): JSX.Element {
               {state.formula.getVariables().map(({variable}) =>
                 <th className="has-text-centered" key={variable}>{variable}</th>
               )}
-              {state.withSubFormulas && state.subFormulas.map((subFormula) => <th
-                className="has-text-centered">{subFormula.asHtmlString()}</th>)}
+              {state.withSubFormulas && state.subFormulas.map((subFormula) =>
+                <th key={subFormula.asString()} className="has-text-centered">{subFormula.asHtmlString()}</th>
+              )}
               <th className="has-text-centered">{learnerVariable.variable}</th>
             </tr>
           </thead>
@@ -82,18 +83,16 @@ export function BoolFillout(): JSX.Element {
             {state.assignments.map((assignment, index) =>
               <tr key={index}>
                 {state.formula.getVariables().map((variable) =>
-                  <td className="has-text-centered"
-                      key={variable.variable}>{displayAssignmentValue(assignment, variable)}</td>
+                  <td className="has-text-centered" key={variable.variable}>{displayAssignmentValue(assignment, variable)}</td>
                 )}
-                {state.withSubFormulas && state.subFormulas.map((subFormula) =>
-                  <th>{/* FIXME: button for subFormula... */}</th>)}
+                {state.withSubFormulas && state.subFormulas.map((subFormula, index) =>
+                  <th key={index}>{/* FIXME: button for subFormula... */}</th>)}
 
                 <td className={classNames({
                   'has-background-danger': corrected && !isCorrect(assignment),
                   'has-background-success': corrected && isCorrect(assignment)
                 }, 'has-text-centered')}>
-                  <button onClick={() => updateAssignment(assignment)}
-                          className={classNames('button', {'is-link': assignment.get(learnerVariable.variable)})}>
+                  <button onClick={() => updateAssignment(assignment)} className={classNames('button', {'is-link': assignment.get(learnerVariable.variable)})}>
                     {displayAssignmentValue(assignment, learnerVariable)}
                   </button>
                   &nbsp;

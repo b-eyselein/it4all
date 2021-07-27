@@ -1,13 +1,13 @@
-import React, {useRef, useState} from "react";
-import {RegexExerciseContentFragment, useRegexCorrectionMutation} from "../../../generated/graphql";
+import React, {useRef, useState} from 'react';
+import {RegexExerciseContentFragment, useRegexCorrectionMutation} from '../../../graphql';
 import {RegexCheatSheet} from './RegexCheatSheet';
-import {BulmaTabs, Tabs} from "../../../helpers/BulmaTabs";
-import {useTranslation} from "react-i18next";
+import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
+import {useTranslation} from 'react-i18next';
 import {RegexCorrection} from './RegexCorrection';
-import {StringSampleSolution} from "../StringSampleSolution";
-import {Link} from "react-router-dom";
-import {ConcreteExerciseIProps} from "../../Exercise";
-import {SampleSolutionTabContent} from "../../SampleSolutionTabContent";
+import {StringSampleSolution} from '../StringSampleSolution';
+import {Link} from 'react-router-dom';
+import {ConcreteExerciseIProps} from '../../Exercise';
+import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 
 type IProps = ConcreteExerciseIProps<RegexExerciseContentFragment>;
 
@@ -19,28 +19,38 @@ export function RegexExercise({exerciseFragment, contentFragment, showSampleSolu
 
   const [correctExercise, correctionMutationResult] = useRegexCorrectionMutation();
 
+  if (!contentFragment.regexPart) {
+    throw new Error('TODO');
+  }
+
+  const part = contentFragment.regexPart;
+
   function correct(): void {
     if (solutionInput.current) {
       correctExercise({
         variables: {
           collectionId: exerciseFragment.collectionId,
           exerciseId: exerciseFragment.exerciseId,
-          part: contentFragment.regexPart!!,
+          part,
           solution: solutionInput.current.value
         }
       }).catch((error) => console.error(error));
     }
   }
 
+  const correctionTabRender = () => <RegexCorrection mutationResult={correctionMutationResult}/>;
+  correctionTabRender.displayName = 'RegexCorrectionTabRender';
+
+  const sampleSolutionTabRender = () =>
+    <SampleSolutionTabContent showSampleSolutions={showSampleSolutions} toggleSampleSolutions={toggleSampleSolutions}
+                              renderSampleSolutions={() => contentFragment.regexSampleSolutions.map((sample, index) =>
+                                <StringSampleSolution sample={sample} key={index}/>
+                              )}/>;
+  sampleSolutionTabRender.displayName = 'RegexSampleSolutionTabRender';
+
   const tabConfigs: Tabs = {
-    correction: {name: t('correction'), render: () => <RegexCorrection mutationResult={correctionMutationResult}/>},
-    sampleSolution: {
-      name: t('sampleSolution_plural'), render: () =>
-        <SampleSolutionTabContent showSampleSolutions={showSampleSolutions} toggleSampleSolutions={toggleSampleSolutions}
-                                  renderSampleSolutions={() => contentFragment.regexSampleSolutions.map((sample, index) =>
-                                    <StringSampleSolution sample={sample} key={index}/>
-                                  )}/>
-    }
+    correction: {name: t('correction'), render: correctionTabRender},
+    sampleSolution: {name: t('sampleSolution_plural'), render: sampleSolutionTabRender}
   };
 
   return (
@@ -82,8 +92,5 @@ export function RegexExercise({exerciseFragment, contentFragment, showSampleSolu
         </div>
       </div>
     </div>
-
-
-  )
-
+  );
 }

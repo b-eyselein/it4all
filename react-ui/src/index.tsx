@@ -4,10 +4,10 @@ import './index.sass';
 import {App} from './App';
 import reportWebVitals from './reportWebVitals';
 import {Provider} from 'react-redux';
-import i18next from "i18next";
-import {I18nextProvider, initReactI18next} from "react-i18next";
-import {ApolloClient, ApolloLink, ApolloProvider, concat, HttpLink, InMemoryCache} from "@apollo/client";
-import {BrowserRouter} from "react-router-dom";
+import i18next from 'i18next';
+import {I18nextProvider, initReactI18next} from 'react-i18next';
+import {ApolloClient, ApolloLink, ApolloProvider, concat, HttpLink, InMemoryCache} from '@apollo/client';
+import {BrowserRouter} from 'react-router-dom';
 import {store} from './store/store';
 import common_de from './locales/de/common.json';
 import common_en from './locales/en/common.json';
@@ -31,7 +31,7 @@ const apolloAuthMiddleware = new ApolloLink((operation, forward) => {
   operation.setContext({
     headers: {
       authorization: store.getState().currentUser?.jwt || null,
-      Language: "de" //chosenLanguageCodeSelector(store.getState()),
+      Language: 'de' //chosenLanguageCodeSelector(store.getState()),
     }
   });
 

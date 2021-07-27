@@ -1,10 +1,10 @@
-import React from "react";
-import {SqlCorrectionMutation, SqlCorrectionMutationResult} from "../../../generated/graphql";
-import {WithQuery} from "../../../WithQuery";
-import {useTranslation} from "react-i18next";
-import {SolutionSaved} from "../../../helpers/SolutionSaved";
-import {SqlMatchingResult} from "./SqlMatchingResult";
-import {SqlStringMatchingResult} from "./SqlStringMatchingResult";
+import React from 'react';
+import {SqlCorrectionMutation, SqlCorrectionMutationResult} from '../../../graphql';
+import {WithQuery} from '../../../WithQuery';
+import {useTranslation} from 'react-i18next';
+import {SolutionSaved} from '../../../helpers/SolutionSaved';
+import {SqlMatchingResult} from './SqlMatchingResult';
+import {SqlStringMatchingResult} from './SqlStringMatchingResult';
 
 interface IProps {
   mutationResult: SqlCorrectionMutationResult;
@@ -71,6 +71,6 @@ export function SqlCorrection({mutationResult}: IProps): JSX.Element {
   }
 
   return mutationResult.called
-    ? <WithQuery query={mutationResult} children={render}/>
+    ? <WithQuery query={mutationResult} render={render}/>
     : <></>;
 }

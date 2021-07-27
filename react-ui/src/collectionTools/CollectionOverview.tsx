@@ -1,15 +1,15 @@
-import React, {useState} from "react";
-import {CollectionBaseParams} from "../ToolBase";
-import {useTranslation} from "react-i18next";
-import {CollectionOverviewQuery, FieldsForLinkFragment, useCollectionOverviewQuery} from "../generated/graphql";
-import {BreadCrumbPart, BreadCrumbs} from "../helpers/BreadCrumbs";
-import {Redirect} from "react-router-dom";
-import {WithQuery} from "../WithQuery";
-import classNames from "classnames";
-import {FilledPoints} from "../helpers/FilledPoints";
-import {BulmaCard} from "../helpers/BulmaCard";
+import React, {useState} from 'react';
+import {CollectionBaseParams} from '../ToolBase';
+import {useTranslation} from 'react-i18next';
+import {CollectionOverviewQuery, FieldsForLinkFragment, useCollectionOverviewQuery} from '../graphql';
+import {BreadCrumbPart, BreadCrumbs} from '../helpers/BreadCrumbs';
+import {Redirect} from 'react-router-dom';
+import {WithQuery} from '../WithQuery';
+import classNames from 'classnames';
+import {FilledPoints} from '../helpers/FilledPoints';
+import {BulmaCard} from '../helpers/BulmaCard';
 
-const SLICE_COUNT: number = 12;
+const SLICE_COUNT = 12;
 
 export function CollectionOverview({toolId, collectionId}: CollectionBaseParams): JSX.Element {
 
@@ -25,7 +25,7 @@ export function CollectionOverview({toolId, collectionId}: CollectionBaseParams)
     const {name: toolName, collection: {title, exercises}} = me.tool;
 
     const paginationNeeded = exercises.length > SLICE_COUNT;
-    const maxPage = Math.ceil(exercises.length / SLICE_COUNT)
+    const maxPage = Math.ceil(exercises.length / SLICE_COUNT);
     const pages: number[] = Array(maxPage).fill(0).map((value, index) => index);
 
     function getExercisesPaginated(): FieldsForLinkFragment[] {
@@ -47,20 +47,17 @@ export function CollectionOverview({toolId, collectionId}: CollectionBaseParams)
       </div>
 
       {paginationNeeded && <nav className="pagination is-centered" role="navigation" aria-label="pagination">
-        <button className="button pagination-previous" onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage < 1}>
+        <button className="button pagination-previous" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage < 1}>
           {t('previous')}
         </button>
         <ul className="pagination-list">
           {pages.map((page) => <li key={page}>
-            <button className={classNames('button', 'pagination-link', {'is-current': page === currentPage})}
-                    onClick={() => setCurrentPage(page)}>
+            <button className={classNames('button', 'pagination-link', {'is-current': page === currentPage})} onClick={() => setCurrentPage(page)}>
               {page}
             </button>
           </li>)}
         </ul>
-        <button className="button pagination-next" onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage >= maxPage - 1}>
+        <button className="button pagination-next" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage >= maxPage - 1}>
           {t('next')}
         </button>
       </nav>}
@@ -76,9 +73,7 @@ export function CollectionOverview({toolId, collectionId}: CollectionBaseParams)
                   <div className="tag" title="Schwierigkeit">
                     <FilledPoints filledPoints={exercise.difficulty} maxPoints={5}/>
                   </div>
-                </>} footerItems={[
-                {link: `./${collectionId}/exercises/${exercise.exerciseId}`, title: t('toExercise')}
-              ]}>
+                </>} footerItems={[{link: `./${collectionId}/exercises/${exercise.exerciseId}`, title: t('toExercise')}]}>
                 {() => <>
 
                   <div className="tags">
@@ -102,10 +97,10 @@ export function CollectionOverview({toolId, collectionId}: CollectionBaseParams)
         </div>
         : <div className="notification is-danger has-text-centered">{t('noExercisesFound')}</div>}
 
-    </div>
+    </div>;
 
 
   }
 
-  return <WithQuery query={query} children={render}/>;
+  return <WithQuery query={query} render={render}/>;
 }

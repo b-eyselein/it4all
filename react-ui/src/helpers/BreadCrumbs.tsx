@@ -1,6 +1,6 @@
-import React from "react";
-import {Link} from "react-router-dom";
-import classNames from "classnames";
+import React from 'react';
+import {Link} from 'react-router-dom';
+import classNames from 'classnames';
 
 export interface BreadCrumbPart {
   routerLinkPart: string;
@@ -19,7 +19,7 @@ interface IProps {
 export function BreadCrumbs({parts}: IProps): JSX.Element {
 
   function breadCrumbs(): BreadCrumb[] {
-    let partAggregator: string[] = [];
+    const partAggregator: string[] = [];
 
     return parts.map(({routerLinkPart, title}) => {
       partAggregator.push(routerLinkPart);

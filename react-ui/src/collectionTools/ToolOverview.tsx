@@ -1,12 +1,12 @@
-import React from "react";
-import {CollectionToolOverviewQuery, useCollectionToolOverviewQuery} from "../generated/graphql";
-import {Redirect} from "react-router-dom";
-import {BreadCrumbPart, BreadCrumbs} from "../helpers/BreadCrumbs";
-import {ProficiencyCard} from "../helpers/ProficiencyCard";
-import {WithQuery} from "../WithQuery";
-import {ToolBaseParams} from "../ToolBase";
-import {BulmaCard} from "../helpers/BulmaCard";
-import {useTranslation} from "react-i18next";
+import React from 'react';
+import {CollectionToolOverviewQuery, useCollectionToolOverviewQuery} from '../graphql';
+import {Redirect} from 'react-router-dom';
+import {BreadCrumbPart, BreadCrumbs} from '../helpers/BreadCrumbs';
+import {ProficiencyCard} from '../helpers/ProficiencyCard';
+import {WithQuery} from '../WithQuery';
+import {ToolBaseParams} from '../ToolBase';
+import {BulmaCard} from '../helpers/BulmaCard';
+import {useTranslation} from 'react-i18next';
 
 export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
 
@@ -35,8 +35,7 @@ export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
 
         <div className="columns">
           <div className="column">
-            <BulmaCard title={t('collection_plural')}
-                       footerItems={[{link: `./${toolId}/collections`, title: t('toCollections')}]}>
+            <BulmaCard title={t('collection_plural')} footerItems={[{link: `./${toolId}/collections`, title: t('toCollections')}]}>
               {() => <>
                 {collectionCount} {t('collection_plural')} {t('with')} {exerciseCount} {t('exercise_plural')}
               </>}
@@ -44,8 +43,7 @@ export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
           </div>
 
           <div className="column">
-            <BulmaCard title={'allExercises'}
-                       footerItems={[{link: `./${toolId}/allExercises`, title: t('toAllExercises')}]}>
+            <BulmaCard title={'allExercises'} footerItems={[{link: `./${toolId}/allExercises`, title: t('toAllExercises')}]}>
               {() => <span>{exerciseCount} {t('exercise_plural')}</span>}
             </BulmaCard>
           </div>
@@ -76,5 +74,5 @@ export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
     );
   }
 
-  return <WithQuery query={query} children={render}/>;
+  return <WithQuery query={query} render={render}/>;
 }

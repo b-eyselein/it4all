@@ -1,5 +1,5 @@
-import React from "react";
-import {ErrorMessage, Field, FieldProps} from "formik";
+import React from 'react';
+import {ErrorMessage, Field, FieldProps} from 'formik';
 
 interface CustomInputFieldProps extends FieldProps {
   label: string;

@@ -1,17 +1,10 @@
-import React, {ChangeEvent, useState} from "react";
-import {RandomSolveButtons} from "./RandomToolBase";
-import classNames from "classnames";
-import {NaryNumberReadOnlyInputComponent} from "./NaryNumberReadOnlyInput";
-import {
-  allNumberingSystems,
-  BINARY_SYSTEM,
-  maximalMax,
-  minimalMax,
-  NaryReadOnlyNumberInput,
-  NumberingSystem
-} from "./nary";
-import {randomInt} from "./bool/_model/bool-formula";
-import {useTranslation} from "react-i18next";
+import React, {ChangeEvent, useState} from 'react';
+import {RandomSolveButtons} from './RandomToolBase';
+import classNames from 'classnames';
+import {NaryNumberReadOnlyInputComponent} from './NaryNumberReadOnlyInput';
+import {allNumberingSystems, BINARY_SYSTEM, maximalMax, minimalMax, NaryReadOnlyNumberInput, NumberingSystem} from './nary';
+import {randomInt} from './bool/_model/bool-formula';
+import {useTranslation} from 'react-i18next';
 
 const firstSummandFieldId = 'firstSummand';
 const secondSummandFieldId = 'secondSummand';
@@ -37,7 +30,7 @@ function generateExercise(max: number, system: NumberingSystem = BINARY_SYSTEM):
     maxValueForDigits: max,
     labelContent: 'Summand 1',
     numberingSystem: system
-  }
+  };
 
   const secondSummand: NaryReadOnlyNumberInput = {
     decimalNumber: target - firstSummandDecimal,
@@ -45,7 +38,7 @@ function generateExercise(max: number, system: NumberingSystem = BINARY_SYSTEM):
     maxValueForDigits: max,
     labelContent: 'Summand 2',
     numberingSystem: system
-  }
+  };
 
   return {system, target, firstSummand, secondSummand, checked: false, correct: false, solutionString: ''};
 }
@@ -57,7 +50,7 @@ export function NaryAddition(): JSX.Element {
   const [state, setState] = useState(generateExercise(max));
 
   function updateNumberingSystem(event: ChangeEvent<HTMLSelectElement>): void {
-
+    console.info('TODO: update...');
   }
 
   function nextExercise(): void {
@@ -107,7 +100,7 @@ export function NaryAddition(): JSX.Element {
               <div className=" select is-fullwidth">
                 {/*ngModel="system"*/}
                 <select onChange={updateNumberingSystem} id="numberSystem">
-                  {allNumberingSystems.map((ns) => <option value={ns.radix}>{ns.radix} - {ns.name}</option>)}
+                  {allNumberingSystems.map((ns) => <option key={ns.radix} value={ns.radix}>{ns.radix} - {ns.name}</option>)}
                 </select>
               </div>
             </div>

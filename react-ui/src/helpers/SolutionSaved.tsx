@@ -1,5 +1,5 @@
-import React from "react";
-import classNames from "classnames";
+import React from 'react';
+import classNames from 'classnames';
 
 export function SolutionSaved({solutionSaved}: { solutionSaved: boolean }): JSX.Element {
   return (
