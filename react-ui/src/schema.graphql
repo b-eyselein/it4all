@@ -585,11 +585,11 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  CREATE
   SELECT
-  UPDATE
   DELETE
+  UPDATE
   INSERT
+  CREATE
 }
 
 type SqlKeyCellValueObject {

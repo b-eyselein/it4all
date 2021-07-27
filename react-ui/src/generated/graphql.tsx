@@ -744,11 +744,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Create = 'CREATE',
   Select = 'SELECT',
-  Update = 'UPDATE',
   Delete = 'DELETE',
-  Insert = 'INSERT'
+  Update = 'UPDATE',
+  Insert = 'INSERT',
+  Create = 'CREATE'
 }
 
 export type SqlKeyCellValueObject = {

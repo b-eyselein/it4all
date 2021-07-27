@@ -1,23 +1,22 @@
 import React, {useState} from "react";
 import './SqlExercise.sass';
-import {ExerciseSolveFieldsFragment, SqlExecutionResultFragment, SqlExerciseContentFragment, useSqlCorrectionMutation} from "../../../generated/graphql";
+import {SqlExecutionResultFragment, SqlExerciseContentFragment, useSqlCorrectionMutation} from "../../../generated/graphql";
 import classNames from "classnames";
 import {useTranslation} from "react-i18next";
 import CodeMirror from '@uiw/react-codemirror';
 import {getDefaultCodeMirrorEditorOptions} from "../codeMirrorOptions";
-import {BulmaTabs, TabConfig} from "../../../helpers/BulmaTabs";
+import {BulmaTabs, Tabs} from "../../../helpers/BulmaTabs";
 import {SqlTableContents} from "./SqlTableContents";
 import {SqlCorrection} from './SqlCorrection';
 import {StringSampleSolution} from "../StringSampleSolution";
 import {SqlExecutionResultDisplay} from './SqlExecutionResultDisplay';
 import {Link} from "react-router-dom";
+import {ConcreteExerciseIProps} from "../../Exercise";
+import {SampleSolutionTabContent} from "../../SampleSolutionTabContent";
 
-interface IProps {
-  exerciseFragment: ExerciseSolveFieldsFragment;
-  contentFragment: SqlExerciseContentFragment;
-}
+type IProps = ConcreteExerciseIProps<SqlExerciseContentFragment>
 
-export function SqlExercise({exerciseFragment, contentFragment}: IProps): JSX.Element {
+export function SqlExercise({exerciseFragment, contentFragment, showSampleSolutions, toggleSampleSolutions}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [solution, setSolution] = useState('');
@@ -40,17 +39,18 @@ export function SqlExercise({exerciseFragment, contentFragment}: IProps): JSX.El
     }).catch((error) => console.error(error));
   }
 
-  const tabConfigs: TabConfig[] = [
-    {id: 'databaseContent', name: t('databaseContent'), render: () => <SqlTableContents tables={contentFragment.sqlDbContents}/>},
-    {id: 'correction', name: t('correction'), render: () => <SqlCorrection mutationResult={correctionMutationResult}/>},
-    {
-      id: 'sampleSolution', name: t('sampleSolution_plural'), render: () => <>
-        {contentFragment.sqlSampleSolutions.map((sample) =>
-          <StringSampleSolution sample={sample} key={sample}/>
-        )}
-      </>
+  const tabConfigs: Tabs = {
+    databaseContent: {name: t('databaseContent'), render: () => <SqlTableContents tables={contentFragment.sqlDbContents}/>},
+    correction: {name: t('correction'), render: () => <SqlCorrection mutationResult={correctionMutationResult}/>},
+    sampleSolution: {
+      name: t('sampleSolution_plural'), render: () =>
+        <SampleSolutionTabContent showSampleSolutions={showSampleSolutions} toggleSampleSolutions={toggleSampleSolutions}
+                                  renderSampleSolutions={() => contentFragment.sqlSampleSolutions.map((sample) =>
+                                    <StringSampleSolution sample={sample} key={sample}/>
+                                  )}/>
     }
-  ]
+  };
+
 
   return (
     <div className="container is-fluid">
@@ -72,8 +72,7 @@ export function SqlExercise({exerciseFragment, contentFragment}: IProps): JSX.El
               </button>
             </div>
             <div className="column">
-              {/* routerLink="../.." */}
-              <Link to={`./../../${exerciseFragment.exerciseId}`} className="button is-dark is-fullwidth">Bearbeiten beenden</Link>
+              <Link to={`./../../${exerciseFragment.exerciseId}`} className="button is-dark is-fullwidth">{t('endSolve')}</Link>
             </div>
           </div>
         </div>

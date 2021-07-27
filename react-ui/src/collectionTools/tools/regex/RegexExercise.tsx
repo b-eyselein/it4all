@@ -1,22 +1,20 @@
 import React, {useRef, useState} from "react";
-import {ExerciseSolveFieldsFragment, RegexExerciseContentFragment, useRegexCorrectionMutation} from "../../../generated/graphql";
+import {RegexExerciseContentFragment, useRegexCorrectionMutation} from "../../../generated/graphql";
 import {RegexCheatSheet} from './RegexCheatSheet';
-import {BulmaTabs, TabConfig} from "../../../helpers/BulmaTabs";
+import {BulmaTabs, Tabs} from "../../../helpers/BulmaTabs";
 import {useTranslation} from "react-i18next";
 import {RegexCorrection} from './RegexCorrection';
 import {StringSampleSolution} from "../StringSampleSolution";
 import {Link} from "react-router-dom";
+import {ConcreteExerciseIProps} from "../../Exercise";
+import {SampleSolutionTabContent} from "../../SampleSolutionTabContent";
 
-interface IProps {
-  exerciseFragment: ExerciseSolveFieldsFragment;
-  contentFragment: RegexExerciseContentFragment;
-}
+type IProps = ConcreteExerciseIProps<RegexExerciseContentFragment>;
 
-export function RegexExercise({exerciseFragment, contentFragment}: IProps): JSX.Element {
+export function RegexExercise({exerciseFragment, contentFragment, showSampleSolutions, toggleSampleSolutions}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [showInfo, setShowInfo] = useState(false);
-  const [showSampleSolutions, setShowSampleSolutions] = useState(false);
   const solutionInput = useRef<HTMLInputElement>(null);
 
   const [correctExercise, correctionMutationResult] = useRegexCorrectionMutation();
@@ -34,20 +32,16 @@ export function RegexExercise({exerciseFragment, contentFragment}: IProps): JSX.
     }
   }
 
-  const tabConfigs: TabConfig[] = [
-    {id: 'correction', name: t('correction'), render: () => <RegexCorrection mutationResult={correctionMutationResult}/>},
-    {
-      id: 'sampleSolutions', name: t('sampleSolution_plural'), render: () => <div>
-        <div className="buttons">
-          <button className="button is-primary is-fullwidth" onClick={() => setShowSampleSolutions((value) => !value)}>
-            Musterlösungen {showSampleSolutions ? 'ausblenden' : 'anzeigen'}
-          </button>
-        </div>
-
-        {showSampleSolutions && contentFragment.regexSampleSolutions.map((sample, index) => <StringSampleSolution sample={sample} key={index}/>)}
-      </div>
+  const tabConfigs: Tabs = {
+    correction: {name: t('correction'), render: () => <RegexCorrection mutationResult={correctionMutationResult}/>},
+    sampleSolution: {
+      name: t('sampleSolution_plural'), render: () =>
+        <SampleSolutionTabContent showSampleSolutions={showSampleSolutions} toggleSampleSolutions={toggleSampleSolutions}
+                                  renderSampleSolutions={() => contentFragment.regexSampleSolutions.map((sample, index) =>
+                                    <StringSampleSolution sample={sample} key={index}/>
+                                  )}/>
     }
-  ];
+  };
 
   return (
     <div className="container is-fluid">
@@ -62,7 +56,6 @@ export function RegexExercise({exerciseFragment, contentFragment}: IProps): JSX.
               <label className="button is-static" htmlFor="solution">{t('yourSolution')}:</label>
             </div>
             <div className="control is-expanded">
-              {/* [(ngModel)]="solution" */}
               <input type="text" className="input" id="solution" ref={solutionInput} placeholder="Ihre Lösung" autoFocus autoComplete="off"/>
             </div>
           </div>
