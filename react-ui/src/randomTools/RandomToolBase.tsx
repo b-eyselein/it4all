@@ -2,7 +2,7 @@ import React from 'react';
 import {Link, Route, Switch, useRouteMatch} from 'react-router-dom';
 import {boolRandomTool, naryRandomTool, RandomTool} from './randomTools';
 import {useTranslation} from 'react-i18next';
-import {BoolFillout} from './BoolFillout';
+import {BoolFillOut} from './BoolFillOut';
 import {NaryAddition} from './NaryAddition';
 
 interface RouteParams {
@@ -15,7 +15,7 @@ export function RandomToolBase(): JSX.Element {
 
   return <Switch>
     <Route path={`${url}/bool`} exact render={() => <RandomToolOverview tool={boolRandomTool}/>}/>
-    <Route path={`${url}/bool/fillOut`} component={BoolFillout}/>
+    <Route path={`${url}/bool/fillOut`} component={BoolFillOut}/>
     <Route path={`${url}/nary`} exact render={() => <RandomToolOverview tool={naryRandomTool}/>}/>
     <Route path={`${url}/nary/addition`} exact component={NaryAddition}/>
   </Switch>;

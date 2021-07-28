@@ -5,8 +5,10 @@ const HTML_REPLACERS: Map<RegExp, string> = new Map([
   [/impl/g, '&rArr;'], [/equiv/g, '&hArr;']
 ]);
 
-export function calculateAssignments(variables: BooleanVariable[]): Map<string, boolean>[] {
-  let assignments: Map<string, boolean>[] = [];
+export type Assignment = Map<string, boolean>;
+
+export function calculateAssignments(variables: BooleanVariable[]): Assignment[] {
+  let assignments: Assignment[] = [];
 
   for (const variable of variables) {
 
@@ -17,7 +19,7 @@ export function calculateAssignments(variables: BooleanVariable[]): Map<string, 
       ];
     } else {
       assignments = assignments.flatMap(
-        (assignment: Map<string, boolean>) => [
+        (assignment: Assignment) => [
           new Map([...assignment, [variable.variable, false]]),
           new Map([...assignment, [variable.variable, true]])
         ]
@@ -46,16 +48,13 @@ export abstract class BooleanNode {
 
   abstract getSubFormulas(): BooleanNode[];
 
-  abstract evaluate(assignments: Map<string, boolean>): boolean ;
+  abstract evaluate(assignments: Assignment): boolean ;
 
   abstract asString(): string;
 
   asHtmlString(): string {
-    let base: string = this.asString();
-
-    HTML_REPLACERS.forEach((replacer, replaced) => base = base.replace(replaced, replacer));
-
-    return base;
+    return Array.from(HTML_REPLACERS.entries())
+      .reduceRight<string>((acc, [toReplace, replacement]) => acc.replace(toReplace, replacement), this.asString());
   }
 
 }
@@ -65,7 +64,7 @@ export class BooleanVariable extends BooleanNode {
     super();
   }
 
-  evaluate(assignments: Map<string, boolean>): boolean {
+  evaluate(assignments: Assignment): boolean {
     return assignments.get(this.variable) || false;
   }
 
@@ -88,7 +87,7 @@ export class BooleanConstant extends BooleanNode {
     super();
   }
 
-  evaluate(/*assignments: Map<string, boolean>*/): boolean {
+  evaluate(/*assignments: Assignment*/): boolean {
     return this.value || false;
   }
 
@@ -115,7 +114,7 @@ export class BooleanNot extends BooleanNode {
     super();
   }
 
-  evaluate(assignments: Map<string, boolean>): boolean {
+  evaluate(assignments: Assignment): boolean {
     return !(this.child.evaluate(assignments));
   }
 
@@ -160,7 +159,7 @@ export abstract class BooleanBinaryNode extends BooleanNode {
     return leftChildString + ' ' + this.operator + ' ' + rightChildString;
   }
 
-  evaluate(assignments: Map<string, boolean>): boolean {
+  evaluate(assignments: Assignment): boolean {
     return this.evalFunc(this.left.evaluate(assignments), this.right.evaluate(assignments));
   }
 

@@ -3,18 +3,19 @@ import {BooleanFormula, generateBooleanFormula} from './bool/_model/bool-formula
 import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './bool/_model/bool-component-helper';
 import classNames from 'classnames';
 import {RandomSolveButtons} from './RandomToolBase';
-import {BooleanNode, calculateAssignments} from './bool/_model/bool-node';
-
-type Assignment = Map<string, boolean>;
+import {Assignment, BooleanNode, calculateAssignments} from './bool/_model/bool-node';
 
 interface IState {
   formula: BooleanFormula;
   assignments: Assignment[];
   subFormulas: BooleanNode[];
   withSubFormulas: boolean;
+  corrected: boolean;
 }
 
-function initState(formula: BooleanFormula, withSubFormulas = false): IState {
+function initState(withSubFormulas = false): IState {
+  const formula = generateBooleanFormula(sampleVariable);
+
   const subFormulas = formula.getSubFormulas();
 
   const assignments = calculateAssignments(formula.getVariables());
@@ -24,31 +25,30 @@ function initState(formula: BooleanFormula, withSubFormulas = false): IState {
     assignment.set(learnerVariable.variable, false);
   });
 
-  return {formula, assignments, subFormulas, withSubFormulas};
+  return {formula, assignments, subFormulas, withSubFormulas, corrected: false};
 }
 
-export function BoolFillout(): JSX.Element {
+export function BoolFillOut(): JSX.Element {
 
-  const corrected = false;
   const completelyCorrect = false;
 
-  const [state, setState] = useState<IState>(initState(generateBooleanFormula(sampleVariable), false));
+  const [state, setState] = useState<IState>(initState());
 
   function updateAssignment(assignment: Assignment): void {
     // FIXME: use assignment...
-    console.info(JSON.stringify(assignment));
+    console.info(assignment);
 
-    setState((state) => {
-      return {...state};
+    setState(({assignments, ...rest}) => {
+      return {...rest, assignments};
     });
   }
 
   function correct(): void {
-    console.error('TODO: correct...');
+    setState((state) => ({...state, corrected: true}));
   }
 
   function nextExercise(): void {
-    console.error('TODO: next exercise...');
+    setState(initState());
   }
 
   return (
@@ -66,7 +66,7 @@ export function BoolFillout(): JSX.Element {
       */}
 
         <div className="my-3">
-          <h2 className="subtitle is-4 has-text-centered"><code>{state.formula.asHtmlString()}</code></h2>
+          <h2 className="subtitle is-4 has-text-centered" dangerouslySetInnerHTML={{__html: `<code>${state.formula.asHtmlString()}</code>`}}/>
           <h3 className="subtitle is-5 has-text-centered has-text-grey">{state.formula.asString()}</h3>
         </div>
 
@@ -92,21 +92,21 @@ export function BoolFillout(): JSX.Element {
                   <th key={index}>{/* FIXME: button for subFormula... */}</th>)}
 
                 <td className={classNames({
-                  'has-background-danger': corrected && !isCorrect(assignment),
-                  'has-background-success': corrected && isCorrect(assignment)
+                  'has-background-danger': state.corrected && !isCorrect(assignment),
+                  'has-background-success': state.corrected && isCorrect(assignment)
                 }, 'has-text-centered')}>
                   <button onClick={() => updateAssignment(assignment)} className={classNames('button', {'is-link': assignment.get(learnerVariable.variable)})}>
                     {displayAssignmentValue(assignment, learnerVariable)}
                   </button>
                   &nbsp;
-                  {corrected && (isCorrect(assignment) ? <span>&#10004;</span> : <span>&#10008;</span>)}
+                  {state.corrected && (isCorrect(assignment) ? <span>&#10004;</span> : <span>&#10008;</span>)}
                 </td>
               </tr>
             )}
           </tbody>
         </table>
 
-        {corrected &&
+        {state.corrected &&
         <div
           className={classNames('notification', 'has-text-centered', completelyCorrect ? 'is-success' : 'is-danger')}>
           (completelyCorrect

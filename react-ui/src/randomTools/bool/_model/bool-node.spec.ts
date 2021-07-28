@@ -1,11 +1,13 @@
 import {
   BooleanAnd,
-  BooleanEquivalency, BooleanFalse,
+  BooleanEquivalency,
+  BooleanFalse,
   BooleanImplication,
   BooleanNAnd,
   BooleanNOr,
   BooleanNot,
-  BooleanOr, BooleanTrue,
+  BooleanOr,
+  BooleanTrue,
   BooleanVariable,
   BooleanXOr
 } from './bool-node';
@@ -39,12 +41,12 @@ describe('BooleanVariable', () => {
 });
 
 describe('BooleanConstant', () => {
-  it('should evaluate correclty', () => {
-    expect(BooleanTrue.evaluate(new Map())).toBeTruthy();
-    expect(BooleanFalse.evaluate(new Map())).toBeFalsy();
+  it('should evaluate correctly', () => {
+    expect(BooleanTrue.evaluate()).toBeTruthy();
+    expect(BooleanFalse.evaluate()).toBeFalsy();
   });
 
-  it('should convert to strng', () => {
+  it('should convert to string', () => {
     expect(BooleanTrue.asString()).toBe('1');
     expect(BooleanFalse.asString()).toBe('0');
   });
