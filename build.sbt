@@ -51,10 +51,10 @@ libraryDependencies ++= Seq(
 
   // GraphQL
   "org.sangria-graphql" %% "sangria"           % "2.1.3", // Apache 2.0
-  "org.sangria-graphql" %% "sangria-play-json" % "2.0.1", // Apache 2.0
+  "org.sangria-graphql" %% "sangria-play-json" % "2.0.2", // Apache 2.0
 
   // Sql
-  "mysql"                 % "mysql-connector-java" % "8.0.25", // GPL 2.0
+  "mysql"                 % "mysql-connector-java" % "8.0.26", // GPL 2.0
   "com.typesafe.play"    %% "play-slick"           % "5.0.0", // Apache 2.0
   "com.github.jsqlparser" % "jsqlparser"           % "4.1", // Apache 2.0
 
@@ -63,5 +63,5 @@ libraryDependencies ++= Seq(
   // Web correction
   "org.nanohttpd"           % "nanohttpd-webserver" % "2.3.1" % Test,
   "org.seleniumhq.selenium" % "selenium-java"       % "3.141.59",
-  "org.seleniumhq.selenium" % "htmlunit-driver"     % "2.50.0"
+  "org.seleniumhq.selenium" % "htmlunit-driver"     % "2.52.0"
 )
