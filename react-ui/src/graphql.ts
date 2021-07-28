@@ -1420,6 +1420,59 @@ export type XmlSolutionInput = {
   grammar: Scalars['String'];
 };
 
+export type ProgrammingCorrectionMutationVariables = Exact<{
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: ProgExPart;
+  solution: FilesSolutionInput;
+}>;
+
+
+export type ProgrammingCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { programmingExercise?: Maybe<(
+      { __typename?: 'ProgrammingExerciseMutations' }
+      & { correct: (
+        { __typename?: 'ProgrammingCorrectionResult' }
+        & ProgrammingCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type ProgrammingCorrectionResultFragment = (
+  { __typename: 'ProgrammingCorrectionResult' }
+  & Pick<ProgrammingCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'ProgrammingResult' }
+    & ProgrammingResultFragment
+  ) }
+);
+
+export type ProgrammingResultFragment = (
+  { __typename?: 'ProgrammingResult' }
+  & Pick<ProgrammingResult, 'points' | 'maxPoints'>
+  & { implementationCorrectionResult?: Maybe<(
+    { __typename?: 'ImplementationCorrectionResult' }
+    & ImplementationCorrectionResultFragment
+  )>, unitTestResults: Array<(
+    { __typename?: 'UnitTestCorrectionResult' }
+    & UnitTestCorrectionResultFragment
+  )> }
+);
+
+export type ImplementationCorrectionResultFragment = (
+  { __typename?: 'ImplementationCorrectionResult' }
+  & Pick<ImplementationCorrectionResult, 'successful' | 'stdout' | 'stderr'>
+);
+
+export type UnitTestCorrectionResultFragment = (
+  { __typename?: 'UnitTestCorrectionResult' }
+  & Pick<UnitTestCorrectionResult, 'testId' | 'successful' | 'shouldFail' | 'description' | 'stderr'>
+);
+
 export type RegexCorrectionMutationVariables = Exact<{
   collectionId: Scalars['Int'];
   exerciseId: Scalars['Int'];
@@ -1778,6 +1831,206 @@ type SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment = (
 
 export type SqlMatchingResultFragment = SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment | SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment | SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment | SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment | SqlMatchingResult_UmlAssociationMatchingResult_Fragment | SqlMatchingResult_UmlAttributeMatchingResult_Fragment | SqlMatchingResult_UmlClassMatchingResult_Fragment | SqlMatchingResult_UmlImplementationMatchingResult_Fragment | SqlMatchingResult_UmlMethodMatchingResult_Fragment | SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment;
 
+export type WebCorrectionMutationVariables = Exact<{
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: WebExPart;
+  solution: FilesSolutionInput;
+}>;
+
+
+export type WebCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { webExercise?: Maybe<(
+      { __typename?: 'WebExerciseMutations' }
+      & { correct: (
+        { __typename?: 'WebCorrectionResult' }
+        & WebCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type WebCorrectionResultFragment = (
+  { __typename?: 'WebCorrectionResult' }
+  & Pick<WebCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'WebResult' }
+    & WebResultFragment
+  ) }
+);
+
+export type WebResultFragment = (
+  { __typename?: 'WebResult' }
+  & Pick<WebResult, 'points' | 'maxPoints'>
+  & { gradedHtmlTaskResults: Array<(
+    { __typename?: 'GradedHtmlTaskResult' }
+    & GradedHtmlTaskResultFragment
+  )>, gradedJsTaskResults: Array<(
+    { __typename?: 'GradedJsTaskResult' }
+    & GradedJsTaskResultFragment
+  )> }
+);
+
+export type GradedHtmlTaskResultFragment = (
+  { __typename?: 'GradedHtmlTaskResult' }
+  & Pick<GradedHtmlTaskResult, 'id' | 'success' | 'elementFound' | 'isSuccessful' | 'points' | 'maxPoints'>
+  & { textContentResult?: Maybe<(
+    { __typename?: 'GradedTextResult' }
+    & GradedTextContentResultFragment
+  )>, attributeResults: Array<(
+    { __typename?: 'GradedTextResult' }
+    & GradedTextContentResultFragment
+  )> }
+);
+
+export type GradedTextContentResultFragment = (
+  { __typename?: 'GradedTextResult' }
+  & Pick<GradedTextResult, 'keyName' | 'awaitedContent' | 'maybeFoundContent' | 'isSuccessful' | 'points' | 'maxPoints'>
+);
+
+export type GradedJsTaskResultFragment = (
+  { __typename?: 'GradedJsTaskResult' }
+  & Pick<GradedJsTaskResult, 'id' | 'success' | 'points' | 'maxPoints'>
+  & { gradedPreResults: Array<(
+    { __typename?: 'GradedJsHtmlElementSpecResult' }
+    & GradedJsHtmlElementSpecResultFragment
+  )>, gradedJsActionResult: (
+    { __typename?: 'GradedJsActionResult' }
+    & GradedJsActionResultFragment
+  ), gradedPostResults: Array<(
+    { __typename?: 'GradedJsHtmlElementSpecResult' }
+    & GradedJsHtmlElementSpecResultFragment
+  )> }
+);
+
+export type GradedJsHtmlElementSpecResultFragment = (
+  { __typename?: 'GradedJsHtmlElementSpecResult' }
+  & Pick<GradedJsHtmlElementSpecResult, 'id'>
+);
+
+export type GradedJsActionResultFragment = (
+  { __typename?: 'GradedJsActionResult' }
+  & Pick<GradedJsActionResult, 'actionPerformed' | 'points' | 'maxPoints'>
+  & { jsAction: { __typename: 'JsAction' } }
+);
+
+export type XmlCorrectionMutationVariables = Exact<{
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: XmlExPart;
+  solution: XmlSolutionInput;
+}>;
+
+
+export type XmlCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { xmlExercise?: Maybe<(
+      { __typename?: 'XmlExerciseMutations' }
+      & { correct: (
+        { __typename?: 'XmlCorrectionResult' }
+        & XmlCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type XmlCorrectionResultFragment = (
+  { __typename?: 'XmlCorrectionResult' }
+  & Pick<XmlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'XmlResult' }
+    & XmlResultFragment
+  ) }
+);
+
+export type XmlResultFragment = (
+  { __typename?: 'XmlResult' }
+  & Pick<XmlResult, 'points' | 'maxPoints' | 'successType'>
+  & { grammarResult?: Maybe<(
+    { __typename?: 'XmlGrammarResult' }
+    & XmlGrammarResultFragment
+  )>, documentResult?: Maybe<(
+    { __typename?: 'XmlDocumentResult' }
+    & XmlDocumentResultFragment
+  )> }
+);
+
+export type XmlGrammarResultFragment = (
+  { __typename?: 'XmlGrammarResult' }
+  & { parseErrors: Array<(
+    { __typename?: 'DTDParseException' }
+    & Pick<DtdParseException, 'msg' | 'parsedLine'>
+  )>, results: (
+    { __typename?: 'XmlElementLineComparisonMatchingResult' }
+    & Pick<XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints'>
+    & XmlElementLineMatchingResultFragment
+  ) }
+);
+
+export type XmlElementLineMatchingResultFragment = (
+  { __typename?: 'XmlElementLineComparisonMatchingResult' }
+  & { allMatches: Array<(
+    { __typename?: 'ElementLineMatch' }
+    & XmlElementLineMatchFragment
+  )>, notMatchedForUser: Array<(
+    { __typename?: 'ElementLine' }
+    & ElementLineFragment
+  )>, notMatchedForSample: Array<(
+    { __typename?: 'ElementLine' }
+    & ElementLineFragment
+  )> }
+);
+
+export type XmlElementLineMatchFragment = (
+  { __typename?: 'ElementLineMatch' }
+  & Pick<ElementLineMatch, 'matchType'>
+  & { userArg: (
+    { __typename?: 'ElementLine' }
+    & ElementLineFragment
+  ), sampleArg: (
+    { __typename?: 'ElementLine' }
+    & ElementLineFragment
+  ), analysisResult: (
+    { __typename?: 'ElementLineAnalysisResult' }
+    & XmlElementLineAnalysisResultFragment
+  ) }
+);
+
+export type XmlElementLineAnalysisResultFragment = (
+  { __typename?: 'ElementLineAnalysisResult' }
+  & Pick<ElementLineAnalysisResult, 'attributesCorrect' | 'correctAttributes' | 'contentCorrect' | 'correctContent'>
+);
+
+export type ElementLineFragment = (
+  { __typename?: 'ElementLine' }
+  & Pick<ElementLine, 'elementName'>
+  & { elementDefinition: (
+    { __typename?: 'ElementDefinition' }
+    & Pick<ElementDefinition, 'elementName' | 'content'>
+  ), attributeLists: Array<(
+    { __typename?: 'AttributeList' }
+    & Pick<AttributeList, 'elementName' | 'attributeDefinitions'>
+  )> }
+);
+
+export type XmlDocumentResultFragment = (
+  { __typename?: 'XmlDocumentResult' }
+  & { errors: Array<(
+    { __typename?: 'XmlError' }
+    & XmlErrorFragment
+  )> }
+);
+
+export type XmlErrorFragment = (
+  { __typename?: 'XmlError' }
+  & Pick<XmlError, 'success' | 'line' | 'errorType' | 'errorMessage'>
+);
+
 export type CollectionToolFragment = (
   { __typename?: 'CollectionTool' }
   & Pick<CollectionTool, 'id' | 'name' | 'state' | 'collectionCount' | 'lessonCount' | 'exerciseCount'>
@@ -1950,7 +2203,10 @@ export type ExerciseOverviewQuery = (
 export type ExerciseSolveFieldsFragment = (
   { __typename?: 'Exercise' }
   & Pick<Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'text'>
-  & { content: { __typename: 'EbnfExerciseContent' } | (
+  & { content: (
+    { __typename: 'EbnfExerciseContent' }
+    & EbnfExerciseContentFragment
+  ) | (
     { __typename: 'FlaskExerciseContent' }
     & FlaskExerciseContentFragment
   ) | (
@@ -2053,6 +2309,11 @@ export type FieldsForLinkFragment = (
     { __typename?: 'ExPart' }
     & FieldsPartFragment
   )> }
+);
+
+export type EbnfExerciseContentFragment = (
+  { __typename?: 'EbnfExerciseContent' }
+  & Pick<EbnfExerciseContent, 'sampleSolutions'>
 );
 
 export type FlaskExerciseContentFragment = (
@@ -2241,6 +2502,46 @@ export type LoginMutation = (
   )> }
 );
 
+export const ImplementationCorrectionResultFragmentDoc = gql`
+    fragment ImplementationCorrectionResult on ImplementationCorrectionResult {
+  successful
+  stdout
+  stderr
+}
+    `;
+export const UnitTestCorrectionResultFragmentDoc = gql`
+    fragment UnitTestCorrectionResult on UnitTestCorrectionResult {
+  testId
+  successful
+  shouldFail
+  description
+  stderr
+}
+    `;
+export const ProgrammingResultFragmentDoc = gql`
+    fragment ProgrammingResult on ProgrammingResult {
+  points
+  maxPoints
+  implementationCorrectionResult {
+    ...ImplementationCorrectionResult
+  }
+  unitTestResults {
+    ...UnitTestCorrectionResult
+  }
+}
+    ${ImplementationCorrectionResultFragmentDoc}
+${UnitTestCorrectionResultFragmentDoc}`;
+export const ProgrammingCorrectionResultFragmentDoc = gql`
+    fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
+  __typename
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...ProgrammingResult
+  }
+}
+    ${ProgrammingResultFragmentDoc}`;
 export const RegexMatchingSingleResultFragmentDoc = gql`
     fragment RegexMatchingSingleResult on RegexMatchingSingleResult {
   resultType
@@ -2437,6 +2738,190 @@ export const SqlCorrectionResultFragmentDoc = gql`
   }
 }
     ${SqlResultFragmentDoc}`;
+export const GradedTextContentResultFragmentDoc = gql`
+    fragment GradedTextContentResult on GradedTextResult {
+  keyName
+  awaitedContent
+  maybeFoundContent
+  isSuccessful
+  points
+  maxPoints
+}
+    `;
+export const GradedHtmlTaskResultFragmentDoc = gql`
+    fragment GradedHtmlTaskResult on GradedHtmlTaskResult {
+  id
+  success
+  elementFound
+  textContentResult {
+    ...GradedTextContentResult
+  }
+  attributeResults {
+    ...GradedTextContentResult
+  }
+  isSuccessful
+  points
+  maxPoints
+}
+    ${GradedTextContentResultFragmentDoc}`;
+export const GradedJsHtmlElementSpecResultFragmentDoc = gql`
+    fragment GradedJsHtmlElementSpecResult on GradedJsHtmlElementSpecResult {
+  id
+}
+    `;
+export const GradedJsActionResultFragmentDoc = gql`
+    fragment GradedJsActionResult on GradedJsActionResult {
+  jsAction {
+    __typename
+  }
+  actionPerformed
+  points
+  maxPoints
+}
+    `;
+export const GradedJsTaskResultFragmentDoc = gql`
+    fragment GradedJsTaskResult on GradedJsTaskResult {
+  id
+  gradedPreResults {
+    ...GradedJsHtmlElementSpecResult
+  }
+  gradedJsActionResult {
+    ...GradedJsActionResult
+  }
+  gradedPostResults {
+    ...GradedJsHtmlElementSpecResult
+  }
+  success
+  points
+  maxPoints
+}
+    ${GradedJsHtmlElementSpecResultFragmentDoc}
+${GradedJsActionResultFragmentDoc}`;
+export const WebResultFragmentDoc = gql`
+    fragment WebResult on WebResult {
+  points
+  maxPoints
+  gradedHtmlTaskResults {
+    ...GradedHtmlTaskResult
+  }
+  gradedJsTaskResults {
+    ...GradedJsTaskResult
+  }
+}
+    ${GradedHtmlTaskResultFragmentDoc}
+${GradedJsTaskResultFragmentDoc}`;
+export const WebCorrectionResultFragmentDoc = gql`
+    fragment WebCorrectionResult on WebCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...WebResult
+  }
+}
+    ${WebResultFragmentDoc}`;
+export const ElementLineFragmentDoc = gql`
+    fragment ElementLine on ElementLine {
+  elementName
+  elementDefinition {
+    elementName
+    content
+  }
+  attributeLists {
+    elementName
+    attributeDefinitions
+  }
+}
+    `;
+export const XmlElementLineAnalysisResultFragmentDoc = gql`
+    fragment XmlElementLineAnalysisResult on ElementLineAnalysisResult {
+  attributesCorrect
+  correctAttributes
+  contentCorrect
+  correctContent
+}
+    `;
+export const XmlElementLineMatchFragmentDoc = gql`
+    fragment XmlElementLineMatch on ElementLineMatch {
+  matchType
+  userArg {
+    ...ElementLine
+  }
+  sampleArg {
+    ...ElementLine
+  }
+  analysisResult {
+    ...XmlElementLineAnalysisResult
+  }
+}
+    ${ElementLineFragmentDoc}
+${XmlElementLineAnalysisResultFragmentDoc}`;
+export const XmlElementLineMatchingResultFragmentDoc = gql`
+    fragment XmlElementLineMatchingResult on XmlElementLineComparisonMatchingResult {
+  allMatches {
+    ...XmlElementLineMatch
+  }
+  notMatchedForUser {
+    ...ElementLine
+  }
+  notMatchedForSample {
+    ...ElementLine
+  }
+}
+    ${XmlElementLineMatchFragmentDoc}
+${ElementLineFragmentDoc}`;
+export const XmlGrammarResultFragmentDoc = gql`
+    fragment XmlGrammarResult on XmlGrammarResult {
+  parseErrors {
+    msg
+    parsedLine
+  }
+  results {
+    points
+    maxPoints
+    ...XmlElementLineMatchingResult
+  }
+}
+    ${XmlElementLineMatchingResultFragmentDoc}`;
+export const XmlErrorFragmentDoc = gql`
+    fragment XmlError on XmlError {
+  success
+  line
+  errorType
+  errorMessage
+}
+    `;
+export const XmlDocumentResultFragmentDoc = gql`
+    fragment XmlDocumentResult on XmlDocumentResult {
+  errors {
+    ...XmlError
+  }
+}
+    ${XmlErrorFragmentDoc}`;
+export const XmlResultFragmentDoc = gql`
+    fragment XmlResult on XmlResult {
+  points
+  maxPoints
+  successType
+  grammarResult {
+    ...XmlGrammarResult
+  }
+  documentResult {
+    ...XmlDocumentResult
+  }
+}
+    ${XmlGrammarResultFragmentDoc}
+${XmlDocumentResultFragmentDoc}`;
+export const XmlCorrectionResultFragmentDoc = gql`
+    fragment XmlCorrectionResult on XmlCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...XmlResult
+  }
+}
+    ${XmlResultFragmentDoc}`;
 export const CollectionToolFragmentDoc = gql`
     fragment CollectionTool on CollectionTool {
   id
@@ -2545,6 +3030,11 @@ export const ExerciseOverviewFragmentDoc = gql`
   }
 }
     ${PartFragmentDoc}`;
+export const EbnfExerciseContentFragmentDoc = gql`
+    fragment EbnfExerciseContent on EbnfExerciseContent {
+  sampleSolutions
+}
+    `;
 export const ExerciseFileFragmentDoc = gql`
     fragment ExerciseFile on ExerciseFile {
   name
@@ -2743,6 +3233,7 @@ export const ExerciseSolveFieldsFragmentDoc = gql`
   text
   content {
     __typename
+    ...EbnfExerciseContent
     ...FlaskExerciseContent
     ...ProgrammingExerciseContent
     ...ProgrammingExerciseContent
@@ -2753,7 +3244,8 @@ export const ExerciseSolveFieldsFragmentDoc = gql`
     ...XmlExerciseContent
   }
 }
-    ${FlaskExerciseContentFragmentDoc}
+    ${EbnfExerciseContentFragmentDoc}
+${FlaskExerciseContentFragmentDoc}
 ${ProgrammingExerciseContentFragmentDoc}
 ${RegexExerciseContentFragmentDoc}
 ${SqlExerciseContentFragmentDoc}
@@ -2769,6 +3261,46 @@ export const LoggedInUserWithTokenFragmentDoc = gql`
   jwt
 }
     `;
+export const ProgrammingCorrectionDocument = gql`
+    mutation ProgrammingCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: FilesSolutionInput!) {
+  me {
+    programmingExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...ProgrammingCorrectionResult
+      }
+    }
+  }
+}
+    ${ProgrammingCorrectionResultFragmentDoc}`;
+export type ProgrammingCorrectionMutationFn = Apollo.MutationFunction<ProgrammingCorrectionMutation, ProgrammingCorrectionMutationVariables>;
+
+/**
+ * __useProgrammingCorrectionMutation__
+ *
+ * To run a mutation, you first call `useProgrammingCorrectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useProgrammingCorrectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [programmingCorrectionMutation, { data, loading, error }] = useProgrammingCorrectionMutation({
+ *   variables: {
+ *      collId: // value for 'collId'
+ *      exId: // value for 'exId'
+ *      part: // value for 'part'
+ *      solution: // value for 'solution'
+ *   },
+ * });
+ */
+export function useProgrammingCorrectionMutation(baseOptions?: Apollo.MutationHookOptions<ProgrammingCorrectionMutation, ProgrammingCorrectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ProgrammingCorrectionMutation, ProgrammingCorrectionMutationVariables>(ProgrammingCorrectionDocument, options);
+      }
+export type ProgrammingCorrectionMutationHookResult = ReturnType<typeof useProgrammingCorrectionMutation>;
+export type ProgrammingCorrectionMutationResult = Apollo.MutationResult<ProgrammingCorrectionMutation>;
+export type ProgrammingCorrectionMutationOptions = Apollo.BaseMutationOptions<ProgrammingCorrectionMutation, ProgrammingCorrectionMutationVariables>;
 export const RegexCorrectionDocument = gql`
     mutation RegexCorrection($collectionId: Int!, $exerciseId: Int!, $part: RegexExPart!, $solution: String!) {
   me {
@@ -2849,6 +3381,86 @@ export function useSqlCorrectionMutation(baseOptions?: Apollo.MutationHookOption
 export type SqlCorrectionMutationHookResult = ReturnType<typeof useSqlCorrectionMutation>;
 export type SqlCorrectionMutationResult = Apollo.MutationResult<SqlCorrectionMutation>;
 export type SqlCorrectionMutationOptions = Apollo.BaseMutationOptions<SqlCorrectionMutation, SqlCorrectionMutationVariables>;
+export const WebCorrectionDocument = gql`
+    mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution: FilesSolutionInput!) {
+  me {
+    webExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...WebCorrectionResult
+      }
+    }
+  }
+}
+    ${WebCorrectionResultFragmentDoc}`;
+export type WebCorrectionMutationFn = Apollo.MutationFunction<WebCorrectionMutation, WebCorrectionMutationVariables>;
+
+/**
+ * __useWebCorrectionMutation__
+ *
+ * To run a mutation, you first call `useWebCorrectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useWebCorrectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [webCorrectionMutation, { data, loading, error }] = useWebCorrectionMutation({
+ *   variables: {
+ *      collId: // value for 'collId'
+ *      exId: // value for 'exId'
+ *      part: // value for 'part'
+ *      solution: // value for 'solution'
+ *   },
+ * });
+ */
+export function useWebCorrectionMutation(baseOptions?: Apollo.MutationHookOptions<WebCorrectionMutation, WebCorrectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<WebCorrectionMutation, WebCorrectionMutationVariables>(WebCorrectionDocument, options);
+      }
+export type WebCorrectionMutationHookResult = ReturnType<typeof useWebCorrectionMutation>;
+export type WebCorrectionMutationResult = Apollo.MutationResult<WebCorrectionMutation>;
+export type WebCorrectionMutationOptions = Apollo.BaseMutationOptions<WebCorrectionMutation, WebCorrectionMutationVariables>;
+export const XmlCorrectionDocument = gql`
+    mutation XmlCorrection($collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
+  me {
+    xmlExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...XmlCorrectionResult
+      }
+    }
+  }
+}
+    ${XmlCorrectionResultFragmentDoc}`;
+export type XmlCorrectionMutationFn = Apollo.MutationFunction<XmlCorrectionMutation, XmlCorrectionMutationVariables>;
+
+/**
+ * __useXmlCorrectionMutation__
+ *
+ * To run a mutation, you first call `useXmlCorrectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useXmlCorrectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [xmlCorrectionMutation, { data, loading, error }] = useXmlCorrectionMutation({
+ *   variables: {
+ *      collId: // value for 'collId'
+ *      exId: // value for 'exId'
+ *      part: // value for 'part'
+ *      solution: // value for 'solution'
+ *   },
+ * });
+ */
+export function useXmlCorrectionMutation(baseOptions?: Apollo.MutationHookOptions<XmlCorrectionMutation, XmlCorrectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<XmlCorrectionMutation, XmlCorrectionMutationVariables>(XmlCorrectionDocument, options);
+      }
+export type XmlCorrectionMutationHookResult = ReturnType<typeof useXmlCorrectionMutation>;
+export type XmlCorrectionMutationResult = Apollo.MutationResult<XmlCorrectionMutation>;
+export type XmlCorrectionMutationOptions = Apollo.BaseMutationOptions<XmlCorrectionMutation, XmlCorrectionMutationVariables>;
 export const ToolOverviewDocument = gql`
     query ToolOverview {
   me {

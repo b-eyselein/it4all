@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE party SYSTEM "/home/bjorn/workspace/python/it4all-resources/data/xml/coll_1/ex_1/sol_1/party.dtd">
+<!DOCTYPE party SYSTEM "party.dtd">
 <party datum="1999-31-12">
-    <gast ledig="false" nuechtern="true">
-        <vorname>Jason</vorname>
-        <nachname>Bourne</nachname>
-        <getraenk>Wasser</getraenk>
-    </gast>
-    <gast ledig="true" nuechtern="false">
-        <vorname>James</vorname>
-        <nachname>Bourne</nachname>
-        <getraenk>Wodka Martini, geschüttelt nicht gerührt</getraenk>
-    </gast>
+  <gast ledig="false" nuechtern="true">
+    <vorname>Jason</vorname>
+    <nachname>Bourne</nachname>
+    <getraenk>Wasser</getraenk>
+  </gast>
+  <gast ledig="true" nuechtern="false">
+    <vorname>James</vorname>
+    <nachname>Bourne</nachname>
+    <getraenk>Wodka Martini, geschüttelt nicht gerührt</getraenk>
+  </gast>
 </party>

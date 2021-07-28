@@ -80,15 +80,15 @@ object WebColl1Ex1 extends WebInitialExercise(1, 1) {
     text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 1,
     content = WebExerciseContent(
-      SiteSpec("carList.html", html_tasks, jsTasks = Seq.empty),
-      loadFilesFromFolder(
-        exResPath,
-        Seq(
+      siteSpec = SiteSpec("carList.html", html_tasks, jsTasks = Seq.empty),
+      files = loadFilesFromFolder(
+        directory = exResPath,
+        fileLoadConfigs = Seq(
           FileLoadConfig("carList.html", htmlFileType, editable = true),
           FileLoadConfig("carListStyle.css", cssFileType)
         )
       ),
-      Seq(FilesSolution(sampleSolutionFiles))
+      sampleSolutions = Seq(FilesSolution(sampleSolutionFiles))
     )
   )
 

@@ -1,0 +1,82 @@
+mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution: FilesSolutionInput!) {
+  me {
+    webExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...WebCorrectionResult
+      }
+    }
+  }
+}
+
+fragment WebCorrectionResult on WebCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...WebResult
+  }
+}
+
+fragment WebResult on WebResult {
+  points
+  maxPoints
+  gradedHtmlTaskResults {
+    ...GradedHtmlTaskResult
+  }
+  gradedJsTaskResults {
+    ...GradedJsTaskResult
+  }
+}
+
+fragment GradedHtmlTaskResult on GradedHtmlTaskResult {
+  id
+  success
+  elementFound
+  textContentResult {
+    ...GradedTextContentResult
+  }
+  attributeResults {
+    ...GradedTextContentResult
+  }
+  isSuccessful
+  points
+  maxPoints
+}
+
+fragment GradedTextContentResult on GradedTextResult {
+  keyName
+  awaitedContent
+  maybeFoundContent
+  isSuccessful
+  points
+  maxPoints
+}
+
+fragment GradedJsTaskResult on GradedJsTaskResult {
+  id
+  gradedPreResults {
+    ...GradedJsHtmlElementSpecResult
+  }
+  gradedJsActionResult {
+    ...GradedJsActionResult
+  }
+  gradedPostResults {
+    ...GradedJsHtmlElementSpecResult
+  }
+  success
+  points
+  maxPoints
+}
+
+fragment GradedJsHtmlElementSpecResult on GradedJsHtmlElementSpecResult {
+  id
+}
+
+fragment GradedJsActionResult on GradedJsActionResult {
+  jsAction {
+    __typename
+  }
+  actionPerformed
+  points
+  maxPoints
+}

@@ -1,0 +1,44 @@
+mutation ProgrammingCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: FilesSolutionInput!) {
+  me {
+    programmingExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...ProgrammingCorrectionResult
+      }
+    }
+  }
+}
+
+fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
+  __typename
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...ProgrammingResult
+  }
+}
+
+fragment ProgrammingResult on ProgrammingResult {
+  points
+  maxPoints
+  implementationCorrectionResult {
+    ...ImplementationCorrectionResult
+  }
+  unitTestResults {
+    ...UnitTestCorrectionResult
+  }
+}
+
+fragment ImplementationCorrectionResult on ImplementationCorrectionResult {
+  successful
+  stdout
+  stderr
+}
+
+fragment UnitTestCorrectionResult on UnitTestCorrectionResult {
+  testId
+  successful
+  shouldFail
+  description
+  stderr
+}

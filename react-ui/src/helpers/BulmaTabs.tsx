@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
 export interface Tabs {
@@ -10,11 +10,13 @@ export interface Tabs {
 
 interface IProps {
   tabs: Tabs;
+  activeTabId: keyof Tabs;
+  setActiveTabId: (id: keyof Tabs) => void;
 }
 
-export function BulmaTabs({tabs}: IProps): JSX.Element {
+export function BulmaTabs({tabs, activeTabId, setActiveTabId}: IProps): JSX.Element {
 
-  const [activeTabId, setActiveTabId] = useState<keyof Tabs>(Object.keys(tabs)[0]);
+  // const [activeTabId, setActiveTabId] = useState<keyof Tabs>(Object.keys(tabs)[0]);
 
   return (
     <>

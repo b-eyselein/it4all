@@ -26,7 +26,7 @@ export function Home(): JSX.Element {
     }
 
     return <>
-      {collectionTools.map(({id, name, state, collectionCount, lessonCount, exerciseCount}) =>
+      {collectionTools.map(({id, name, /*state,*/ collectionCount, lessonCount, exerciseCount}) =>
         <div className="column is-one-quarter-desktop is-half-tablet" key={id}>
           {/* TODO: use state!*/}
           <BulmaCard title={name} footerItems={[{link: `/tools/${id}`, title: t('toTool')}]}>

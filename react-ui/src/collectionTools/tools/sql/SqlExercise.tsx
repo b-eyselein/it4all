@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import './SqlExercise.sass';
 import {SqlExecutionResultFragment, SqlExerciseContentFragment, useSqlCorrectionMutation} from '../../../graphql';
-import classNames from 'classnames';
 import {useTranslation} from 'react-i18next';
 import CodeMirror from '@uiw/react-codemirror';
 import {getDefaultCodeMirrorEditorOptions} from '../codeMirrorOptions';
@@ -10,13 +9,13 @@ import {SqlTableContents} from './SqlTableContents';
 import {SqlCorrection} from './SqlCorrection';
 import {StringSampleSolution} from '../StringSampleSolution';
 import {SqlExecutionResultDisplay} from './SqlExecutionResultDisplay';
-import {Link} from 'react-router-dom';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
+import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 
 type IProps = ConcreteExerciseIProps<SqlExerciseContentFragment>
 
-export function SqlExercise({exerciseFragment, contentFragment, showSampleSolutions, toggleSampleSolutions}: IProps): JSX.Element {
+export function SqlExercise({exercise, content}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [solution, setSolution] = useState('');
@@ -28,41 +27,39 @@ export function SqlExercise({exerciseFragment, contentFragment, showSampleSoluti
     ? correctionMutationResult.data.me?.sqlExercise?.correct.result.executionResult
     : undefined;
 
-  if (!contentFragment.sqlPart) {
+  if (!content.sqlPart) {
     throw new Error('TODO!');
   }
 
-  const part = contentFragment.sqlPart;
+  const part = content.sqlPart;
 
   function correct(): void {
-    correctExercise({
-      variables: {
-        collectionId: exerciseFragment.collectionId,
-        exerciseId: exerciseFragment.exerciseId,
-        part,
-        solution
-      }
-    }).catch((error) => console.error(error));
+    correctExercise({variables: {collectionId: exercise.collectionId, exerciseId: exercise.exerciseId, part, solution}})
+      .then(() => setActiveTabId('correction'))
+      .catch((error) => console.error(error));
   }
 
-  const databaseContentRender = () => <SqlTableContents tables={contentFragment.sqlDbContents}/>;
+  const databaseContentRender = () => <SqlTableContents tables={content.sqlDbContents}/>;
   databaseContentRender.displayName = 'SqlDatabaseContentRender';
 
   const correctionTabRender = () => <SqlCorrection mutationResult={correctionMutationResult}/>;
   correctionTabRender.display = 'SqlCorrectionTabRender';
 
-  const sampleSolutionTabRender = () =>
-    <SampleSolutionTabContent showSampleSolutions={showSampleSolutions} toggleSampleSolutions={toggleSampleSolutions}
-                              renderSampleSolutions={() => contentFragment.sqlSampleSolutions.map((sample) =>
-                                <StringSampleSolution sample={sample} key={sample}/>
-                              )}/>;
+  const sampleSolutionTabRender = () => <SampleSolutionTabContent>
+    {() => content.sqlSampleSolutions.map((sample) =>
+      <StringSampleSolution sample={sample} key={sample}/>
+    )}
+  </SampleSolutionTabContent>;
   sampleSolutionTabRender.displayName = 'SqlSampleSolutionTabRender';
 
-  const tabConfigs: Tabs = {
+
+  const tabs: Tabs = {
     databaseContent: {name: t('databaseContent'), render: databaseContentRender},
     correction: {name: t('correction'), render: correctionTabRender},
     sampleSolution: {name: t('sampleSolution_plural'), render: sampleSolutionTabRender}
   };
+
+  const [activeTabId, setActiveTabId] = useState<keyof Tabs>(Object.keys(tabs)[0]);
 
   return (
     <div className="container is-fluid">
@@ -70,27 +67,17 @@ export function SqlExercise({exerciseFragment, contentFragment, showSampleSoluti
       <div className="columns">
         <div className="column is-two-fifths-desktop">
           <h1 className="title is-3 has-text-centered">{t('exerciseText')}</h1>
-          <div className="notification is-light-grey">{exerciseFragment.text}</div>
+          <div className="notification is-light-grey">{exercise.text}</div>
 
-          <h1 className="title is-4 has-text-centered">Anfrage</h1>
+          <h1 className="title is-4 has-text-centered">{t('query')}</h1>
 
-          <CodeMirror value={solution} height={'200px'} options={getDefaultCodeMirrorEditorOptions('sql')}
-                      onChange={(editor) => setSolution(editor.getValue())}/>
+          <CodeMirror value={solution} height={'200px'} options={getDefaultCodeMirrorEditorOptions('sql')} onChange={(ed) => setSolution(ed.getValue())}/>
 
-          <div className="columns my-3">
-            <div className="column">
-              <button className={classNames('button', 'is-link', 'is-fullwidth', {'is-loading': correcting})} onClick={correct}>
-                {t('correct')}
-              </button>
-            </div>
-            <div className="column">
-              <Link to={`./../../${exerciseFragment.exerciseId}`} className="button is-dark is-fullwidth">{t('endSolve')}</Link>
-            </div>
-          </div>
+          <ExerciseControlButtons isCorrecting={correcting} correct={correct} endLink={`./../../${exercise.exerciseId}`}/>
         </div>
 
         <div className="column">
-          <BulmaTabs tabs={tabConfigs}/>
+          <BulmaTabs tabs={tabs} activeTabId={activeTabId} setActiveTabId={setActiveTabId}/>
         </div>
       </div>
 

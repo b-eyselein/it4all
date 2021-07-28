@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {useState} from 'react';
 import {RandomSolveButtons} from './RandomToolBase';
 import classNames from 'classnames';
 import {NaryNumberReadOnlyInputComponent} from './NaryNumberReadOnlyInput';
@@ -49,7 +49,7 @@ export function NaryAddition(): JSX.Element {
   const [max, setMax] = useState(256);
   const [state, setState] = useState(generateExercise(max));
 
-  function updateNumberingSystem(event: ChangeEvent<HTMLSelectElement>): void {
+  function updateNumberingSystem(/*event: ChangeEvent<HTMLSelectElement>*/): void {
     console.info('TODO: update...');
   }
 
@@ -58,6 +58,8 @@ export function NaryAddition(): JSX.Element {
   }
 
   function checkSolution(): void {
+    console.info('TODO');
+    /*
     const reversedSolutionString: string = state.solutionString
       .replace(/\s/g, '')
       .split('')
@@ -69,6 +71,7 @@ export function NaryAddition(): JSX.Element {
     const checked = true;
 
     const correct = solution === state.target;
+     */
   }
 
   return (

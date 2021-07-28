@@ -5,13 +5,13 @@ import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
 import {useTranslation} from 'react-i18next';
 import {RegexCorrection} from './RegexCorrection';
 import {StringSampleSolution} from '../StringSampleSolution';
-import {Link} from 'react-router-dom';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
+import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 
 type IProps = ConcreteExerciseIProps<RegexExerciseContentFragment>;
 
-export function RegexExercise({exerciseFragment, contentFragment, showSampleSolutions, toggleSampleSolutions}: IProps): JSX.Element {
+export function RegexExercise({exercise, content}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [showInfo, setShowInfo] = useState(false);
@@ -19,39 +19,37 @@ export function RegexExercise({exerciseFragment, contentFragment, showSampleSolu
 
   const [correctExercise, correctionMutationResult] = useRegexCorrectionMutation();
 
-  if (!contentFragment.regexPart) {
+  const correcting = correctionMutationResult.called && correctionMutationResult.loading;
+
+  if (!content.regexPart) {
     throw new Error('TODO');
   }
 
-  const part = contentFragment.regexPart;
+  const part = content.regexPart;
 
   function correct(): void {
     if (solutionInput.current) {
-      correctExercise({
-        variables: {
-          collectionId: exerciseFragment.collectionId,
-          exerciseId: exerciseFragment.exerciseId,
-          part,
-          solution: solutionInput.current.value
-        }
-      }).catch((error) => console.error(error));
+      correctExercise({variables: {collectionId: exercise.collectionId, exerciseId: exercise.exerciseId, part, solution: solutionInput.current.value}})
+        .then(() => setActiveTabId('correction'))
+        .catch((error) => console.error(error));
     }
   }
 
   const correctionTabRender = () => <RegexCorrection mutationResult={correctionMutationResult}/>;
   correctionTabRender.displayName = 'RegexCorrectionTabRender';
 
-  const sampleSolutionTabRender = () =>
-    <SampleSolutionTabContent showSampleSolutions={showSampleSolutions} toggleSampleSolutions={toggleSampleSolutions}
-                              renderSampleSolutions={() => contentFragment.regexSampleSolutions.map((sample, index) =>
-                                <StringSampleSolution sample={sample} key={index}/>
-                              )}/>;
+  const sampleSolutionTabRender = () => <SampleSolutionTabContent>
+    {() => content.regexSampleSolutions.map((sample, index) =>
+      <StringSampleSolution sample={sample} key={index}/>
+    )}
+  </SampleSolutionTabContent>;
   sampleSolutionTabRender.displayName = 'RegexSampleSolutionTabRender';
 
-  const tabConfigs: Tabs = {
+  const tabs: Tabs = {
     correction: {name: t('correction'), render: correctionTabRender},
     sampleSolution: {name: t('sampleSolution_plural'), render: sampleSolutionTabRender}
   };
+  const [activeTabId, setActiveTabId] = useState<keyof Tabs>(Object.keys(tabs)[0]);
 
   return (
     <div className="container is-fluid">
@@ -59,7 +57,7 @@ export function RegexExercise({exerciseFragment, contentFragment, showSampleSolu
       <div className="columns">
         <div className="column is-two-fifths-desktop">
           <h1 className="title is-3 has-text-centered">{t('exerciseText')}</h1>
-          <div className="notification is-light-grey">{exerciseFragment.text}</div>
+          <div className="notification is-light-grey">{exercise.text}</div>
 
           <div className="field has-addons">
             <div className="control">
@@ -70,25 +68,35 @@ export function RegexExercise({exerciseFragment, contentFragment, showSampleSolu
             </div>
           </div>
 
+          <ExerciseControlButtons isCorrecting={correcting} correct={correct} endLink={`./../../${exercise.exerciseId}`}>
+            <div className="column">
+              <button className="button is-info is-fullwidth" onClick={() => setShowInfo((value) => !value)}>
+                Hilfe {showInfo ? 'ausblenden' : 'anzeigen'}
+              </button>
+            </div>
+          </ExerciseControlButtons>
+          {/*
           <div className="columns">
             <div className="column">
               <button className="button is-link is-fullwidth" onClick={correct}>{t('checkSolution')}</button>
             </div>
             <div className="column">
-              <Link to={`./../../${exerciseFragment.exerciseId}`} className="button is-dark is-fullwidth">{t('endSolve')}</Link>
+              <Link to={`./../../${exercise.exerciseId}`} className="button is-dark is-fullwidth">{t('endSolve')}</Link>
             </div>
           </div>
           <div className="buttons">
             <button className="button is-info is-fullwidth" onClick={() => setShowInfo((value) => !value)}>
               Hilfe {showInfo ? 'ausblenden' : 'anzeigen'}
             </button>
-          </div>
+
+        </div>
+            */}
 
           {showInfo && <RegexCheatSheet/>}
         </div>
 
         <div className="column">
-          <BulmaTabs tabs={tabConfigs}/>
+          <BulmaTabs tabs={tabs} activeTabId={activeTabId} setActiveTabId={setActiveTabId}/>
         </div>
       </div>
     </div>

@@ -1,21 +1,22 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 interface IProps {
-  showSampleSolutions: boolean;
-  toggleSampleSolutions: () => void;
-  renderSampleSolutions: () => JSX.Element[];
+  children: () => JSX.Element[];
 }
 
-export function SampleSolutionTabContent({showSampleSolutions, toggleSampleSolutions, renderSampleSolutions}: IProps): JSX.Element {
+export function SampleSolutionTabContent({children}: IProps): JSX.Element {
+
+  const [showSampleSolutions, setShowSampleSolutions] = useState(false);
+
   return (
     <div>
       <div className="buttons">
-        <button className="button is-primary is-fullwidth" onClick={toggleSampleSolutions}>
+        <button className="button is-primary is-fullwidth" onClick={() => setShowSampleSolutions((value) => !value)}>
           Musterlösungen {showSampleSolutions ? 'ausblenden' : 'anzeigen'}
         </button>
       </div>
 
-      {showSampleSolutions && renderSampleSolutions()}
+      {showSampleSolutions && children()}
     </div>
   );
 }

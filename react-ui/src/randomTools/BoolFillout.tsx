@@ -35,6 +35,9 @@ export function BoolFillout(): JSX.Element {
   const [state, setState] = useState<IState>(initState(generateBooleanFormula(sampleVariable), false));
 
   function updateAssignment(assignment: Assignment): void {
+    // FIXME: use assignment...
+    console.info(JSON.stringify(assignment));
+
     setState((state) => {
       return {...state};
     });
