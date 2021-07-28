@@ -66,6 +66,7 @@ export function RandomSolveButtons({correct, nextExercise}: RandomSolveButtonsIP
       <button className="button is-primary is-fullwidth" onClick={nextExercise}>Nächste Aufgabe</button>
     </div>
     <div className="column is-one-third-desktop">
+      {/* FIXME: link target is not correct! */}
       <Link className="button is-dark is-fullwidth" to="..">Bearbeiten beenden</Link>
     </div>
   </div>;

@@ -12,31 +12,27 @@ import {
   BooleanXOr
 } from './bool-node';
 
-describe('BooleanVariable', () => {
-  const varStr = 'a';
-  const booleanVar: BooleanVariable = new BooleanVariable(varStr);
+const variableA: BooleanVariable = new BooleanVariable('a');
+const variableB: BooleanVariable = new BooleanVariable('b');
 
+describe('BooleanVariable', () => {
   it('should construct correctly', () => {
-    expect(booleanVar.variable).toBe(varStr);
+    expect(variableA.variable).toBe('a');
   });
 
   it('should evaluate correctly', () => {
-    const assignments: Map<string, boolean> = new Map<string, boolean>();
-
     // No assignment, expect false
-    expect(booleanVar.evaluate(assignments)).toBeFalsy();
+    expect(variableA.evaluate({})).toBeFalsy();
 
     // Assignment to false
-    assignments.set(booleanVar.variable, false);
-    expect(booleanVar.evaluate(assignments)).toBeFalsy();
+    expect(variableA.evaluate({[variableA.variable]: false})).toBeFalsy();
 
     // Assignment to true
-    assignments.set(booleanVar.variable, true);
-    expect(booleanVar.evaluate(assignments)).toBeTruthy();
+    expect(variableA.evaluate({[variableA.variable]: true})).toBeTruthy();
   });
 
   it('should convert to string', () => {
-    expect(booleanVar.asString()).toBe(varStr);
+    expect(variableA.asString()).toBe('a');
   });
 });
 
@@ -53,21 +49,16 @@ describe('BooleanConstant', () => {
 });
 
 describe('BooleanNot', () => {
-  const child: BooleanVariable = new BooleanVariable('a');
-  const booleanNot: BooleanNot = new BooleanNot(child);
+  const booleanNot: BooleanNot = new BooleanNot(variableA);
 
   it('should construct correctly', () => {
-    expect(booleanNot.child).toBe(child);
+    expect(booleanNot.child).toBe(variableA);
   });
 
   it('should evaluate correctly', () => {
-    const assignments: Map<string, boolean> = new Map<string, boolean>();
+    expect(booleanNot.evaluate({[variableA.variable]: false})).toBeTruthy();
 
-    assignments.set(child.variable, false);
-    expect(booleanNot.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(child.variable, true);
-    expect(booleanNot.evaluate(assignments)).toBeFalsy();
+    expect(booleanNot.evaluate({[variableA.variable]: true})).toBeFalsy();
   });
 
   it('should convert to string', () => {
@@ -76,34 +67,23 @@ describe('BooleanNot', () => {
 });
 
 describe('BooleanAnd', () => {
-  const left: BooleanVariable = new BooleanVariable('a');
-  const right: BooleanVariable = new BooleanVariable('b');
-  const boolAnd: BooleanAnd = new BooleanAnd(left, right);
+  const boolAnd: BooleanAnd = new BooleanAnd(variableA, variableB);
 
   it('should construct correctly', () => {
-    expect(boolAnd.left).toBe(left);
-    expect(boolAnd.right).toBe(right);
+    expect(boolAnd.left).toBe(variableA);
+    expect(boolAnd.right).toBe(variableB);
   });
 
-  it('should evaluate correctly', () => {
-    const assignments: Map<string, boolean> = new Map<string, boolean>();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, false);
-    expect(boolAnd.evaluate(assignments)).toBeFalsy();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, true);
-    expect(boolAnd.evaluate(assignments)).toBeFalsy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, false);
-    expect(boolAnd.evaluate(assignments)).toBeFalsy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, true);
-    expect(boolAnd.evaluate(assignments)).toBeTruthy();
-  });
+  test.each`
+  a | b | expected
+  ${false} | ${false} | ${false}
+  ${false} | ${true} | ${false}
+  ${true} | ${false} | ${false}
+  ${true} | ${true} | ${true}
+  `(
+    `${boolAnd.asString()} with a = $a and b = $b should evaluate to $expected`,
+    ({a, b, expected}) => expect(boolAnd.evaluate({[variableA.variable]: a, [variableB.variable]: b})).toBe(expected)
+  );
 
   it('should convert to string', () => {
     expect(boolAnd.asString()).toBe('a and b');
@@ -111,210 +91,143 @@ describe('BooleanAnd', () => {
 });
 
 describe('BooleanOr', () => {
-  const left: BooleanVariable = new BooleanVariable('a');
-  const right: BooleanVariable = new BooleanVariable('b');
-  const booleanOr: BooleanOr = new BooleanOr(left, right);
+  const boolOr: BooleanOr = new BooleanOr(variableA, variableB);
 
   it('should construct correctly', () => {
-    expect(booleanOr.left).toBe(left);
-    expect(booleanOr.right).toBe(right);
+    expect(boolOr.left).toBe(variableA);
+    expect(boolOr.right).toBe(variableB);
   });
 
-  it('should evaluate correctly', () => {
-    const assignments: Map<string, boolean> = new Map<string, boolean>();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, false);
-    expect(booleanOr.evaluate(assignments)).toBeFalsy();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, true);
-    expect(booleanOr.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, false);
-    expect(booleanOr.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, true);
-    expect(booleanOr.evaluate(assignments)).toBeTruthy();
-  });
+  test.each`
+  a | b | expected
+  ${false} | ${false} | ${false}
+  ${false} | ${true} | ${true}
+  ${true} | ${false} | ${true}
+  ${true} | ${true} | ${true}
+  `(
+    `${boolOr.asString()} with a = $a and b = $b should evaluate to $expected`,
+    ({a, b, expected}) => expect(boolOr.evaluate({[variableA.variable]: a, [variableB.variable]: b})).toBe(expected)
+  );
 
   it('should convert to string', () => {
-    expect(booleanOr.asString()).toBe('a or b');
+    expect(boolOr.asString()).toBe('a or b');
   });
 });
 
 describe('BooleanNAnd', () => {
-  const left: BooleanVariable = new BooleanVariable('a');
-  const right: BooleanVariable = new BooleanVariable('b');
-  const booleanNAnd: BooleanNAnd = new BooleanNAnd(left, right);
+  const boolNAnd: BooleanNAnd = new BooleanNAnd(variableA, variableB);
 
   it('should construct correctly', () => {
-    expect(booleanNAnd.left).toBe(left);
-    expect(booleanNAnd.right).toBe(right);
+    expect(boolNAnd.left).toBe(variableA);
+    expect(boolNAnd.right).toBe(variableB);
   });
 
-  it('should evaluate correctly', () => {
-    const assignments: Map<string, boolean> = new Map<string, boolean>();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, false);
-    expect(booleanNAnd.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, true);
-    expect(booleanNAnd.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, false);
-    expect(booleanNAnd.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, true);
-    expect(booleanNAnd.evaluate(assignments)).toBeFalsy();
-  });
+  test.each`
+  a | b | expected
+  ${false} | ${false} | ${true}
+  ${false} | ${true} | ${true}
+  ${true} | ${false} | ${true}
+  ${true} | ${true} | ${false}
+  `(
+    `${boolNAnd.asString()} with a = $a and b = $b should evaluate to $expected`,
+    ({a, b, expected}) => expect(boolNAnd.evaluate({[variableA.variable]: a, [variableB.variable]: b})).toBe(expected)
+  );
 
   it('should convert to string', () => {
-    expect(booleanNAnd.asString()).toBe('a nand b');
+    expect(boolNAnd.asString()).toBe('a nand b');
   });
 });
 
 describe('BooleanNOr', () => {
-  const left: BooleanVariable = new BooleanVariable('a');
-  const right: BooleanVariable = new BooleanVariable('b');
-  const booleanNOr: BooleanNOr = new BooleanNOr(left, right);
+  const boolNOr: BooleanNOr = new BooleanNOr(variableA, variableB);
 
   it('should construct correctly', () => {
-    expect(booleanNOr.left).toBe(left);
-    expect(booleanNOr.right).toBe(right);
+    expect(boolNOr.left).toBe(variableA);
+    expect(boolNOr.right).toBe(variableB);
   });
 
-  it('should evaluate correctly', () => {
-    const assignments: Map<string, boolean> = new Map<string, boolean>();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, false);
-    expect(booleanNOr.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, true);
-    expect(booleanNOr.evaluate(assignments)).toBeFalsy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, false);
-    expect(booleanNOr.evaluate(assignments)).toBeFalsy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, true);
-    expect(booleanNOr.evaluate(assignments)).toBeFalsy();
-  });
+  test.each`
+  a | b | expected
+  ${false} | ${false} | ${true}
+  ${false} | ${true} | ${false}
+  ${true} | ${false} | ${false}
+  ${true} | ${true} | ${false}
+  `(
+    `${boolNOr.asString()} with a = $a and b = $b should evaluate to $expected`,
+    ({a, b, expected}) => expect(boolNOr.evaluate({[variableA.variable]: a, [variableB.variable]: b})).toBe(expected)
+  );
 
   it('should convert to string', () => {
-    expect(booleanNOr.asString()).toBe('a nor b');
+    expect(boolNOr.asString()).toBe('a nor b');
   });
 });
 
 describe('BooleanXOr', () => {
-  const left: BooleanVariable = new BooleanVariable('a');
-  const right: BooleanVariable = new BooleanVariable('b');
-  const booleanXOr: BooleanXOr = new BooleanXOr(left, right);
+  const boolXOr: BooleanXOr = new BooleanXOr(variableA, variableB);
 
   it('should construct correctly', () => {
-    expect(booleanXOr.left).toBe(left);
-    expect(booleanXOr.right).toBe(right);
+    expect(boolXOr.left).toBe(variableA);
+    expect(boolXOr.right).toBe(variableB);
   });
 
-  it('should evaluate correctly', () => {
-    const assignments: Map<string, boolean> = new Map<string, boolean>();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, false);
-    expect(booleanXOr.evaluate(assignments)).toBeFalsy();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, true);
-    expect(booleanXOr.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, false);
-    expect(booleanXOr.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, true);
-    expect(booleanXOr.evaluate(assignments)).toBeFalsy();
-  });
+  test.each`
+  a | b | expected
+  ${false} | ${false} | ${false}
+  ${false} | ${true} | ${true}
+  ${true} | ${false} | ${true}
+  ${true} | ${true} | ${false}
+  `(
+    `${boolXOr.asString()} with a = $a and b = $b should evaluate to $expected`,
+    ({a, b, expected}) => expect(boolXOr.evaluate({[variableA.variable]: a, [variableB.variable]: b})).toBe(expected)
+  );
 
   it('should convert to string', () => {
-    expect(booleanXOr.asString()).toBe('a xor b');
+    expect(boolXOr.asString()).toBe('a xor b');
   });
 });
 
 describe('BooleanEquivalency', () => {
-  const left: BooleanVariable = new BooleanVariable('a');
-  const right: BooleanVariable = new BooleanVariable('b');
-  const booleanEquivalency: BooleanEquivalency = new BooleanEquivalency(left, right);
+  const booleanEquivalency: BooleanEquivalency = new BooleanEquivalency(variableA, variableB);
 
   it('should construct correctly', () => {
-    expect(booleanEquivalency.left).toBe(left);
-    expect(booleanEquivalency.right).toBe(right);
+    expect(booleanEquivalency.left).toBe(variableA);
+    expect(booleanEquivalency.right).toBe(variableB);
   });
 
-  it('should evaluate correctly', () => {
-    const assignments: Map<string, boolean> = new Map<string, boolean>();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, false);
-    expect(booleanEquivalency.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, true);
-    expect(booleanEquivalency.evaluate(assignments)).toBeFalsy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, false);
-    expect(booleanEquivalency.evaluate(assignments)).toBeFalsy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, true);
-    expect(booleanEquivalency.evaluate(assignments)).toBeTruthy();
-  });
+  test.each`
+  a | b | expected
+  ${false} | ${false} | ${true}
+  ${false} | ${true} | ${false}
+  ${true} | ${false} | ${false}
+  ${true} | ${true} | ${true}
+  `(
+    `${booleanEquivalency.asString()} with a = $a and b = $b should evaluate to $expected`,
+    ({a, b, expected}) => expect(booleanEquivalency.evaluate({[variableA.variable]: a, [variableB.variable]: b})).toBe(expected)
+  );
 
   it('should convert to string', () => {
     expect(booleanEquivalency.asString()).toBe('a equiv b');
   });
 });
 
-
 describe('BooleanImplication', () => {
-  const left: BooleanVariable = new BooleanVariable('a');
-  const right: BooleanVariable = new BooleanVariable('b');
-  const booleanImplication: BooleanImplication = new BooleanImplication(left, right);
+  const booleanImplication: BooleanImplication = new BooleanImplication(variableA, variableB);
 
   it('should construct correctly', () => {
-    expect(booleanImplication.left).toBe(left);
-    expect(booleanImplication.right).toBe(right);
+    expect(booleanImplication.left).toBe(variableA);
+    expect(booleanImplication.right).toBe(variableB);
   });
 
-  it('should evaluate correctly', () => {
-    const assignments: Map<string, boolean> = new Map<string, boolean>();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, false);
-    expect(booleanImplication.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(left.variable, false);
-    assignments.set(right.variable, true);
-    expect(booleanImplication.evaluate(assignments)).toBeTruthy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, false);
-    expect(booleanImplication.evaluate(assignments)).toBeFalsy();
-
-    assignments.set(left.variable, true);
-    assignments.set(right.variable, true);
-    expect(booleanImplication.evaluate(assignments)).toBeTruthy();
-  });
+  test.each`
+  a | b | expected
+  ${false} | ${false} | ${true}
+  ${false} | ${true} | ${true}
+  ${true} | ${false} | ${false}
+  ${true} | ${true} | ${true}
+  `(
+    `${booleanImplication.asString()} with a = $a and b = $b should evaluate to $expected`,
+    ({a, b, expected}) => expect(booleanImplication.evaluate({[variableA.variable]: a, [variableB.variable]: b})).toBe(expected)
+  );
 
   it('should convert to string', () => {
     expect(booleanImplication.asString()).toBe('a impl b');

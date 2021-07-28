@@ -1,4 +1,5 @@
 import {
+  Assignment,
   BooleanAnd,
   BooleanEquivalency,
   BooleanImplication,
@@ -55,7 +56,7 @@ function generateRandomOperator(left: BooleanNode, right: BooleanNode): BooleanN
 
 export class BooleanFormula {
 
-  private readonly assignments: Map<string, boolean>[];
+  private readonly assignments: Assignment[];
 
   constructor(public left: BooleanVariable, public right: BooleanNode) {
     this.assignments = calculateAssignments(right.getVariables());
@@ -69,11 +70,11 @@ export class BooleanFormula {
     return this.right.getSubFormulas();
   }
 
-  getAssignments(): Map<string, boolean>[] {
+  getAssignments(): Assignment[] {
     return this.assignments;
   }
 
-  getValueFor(assignment: Map<string, boolean>): boolean {
+  getValueFor(assignment: Assignment): boolean {
     return this.right.evaluate(assignment);
   }
 
@@ -85,7 +86,7 @@ export class BooleanFormula {
     return this.left.variable + ' = ' + this.right.asHtmlString();
   }
 
-  evaluate(assignments: Map<string, boolean>): boolean {
+  evaluate(assignments: Assignment): boolean {
     return this.right.evaluate(assignments);
   }
 

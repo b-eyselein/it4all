@@ -21,8 +21,8 @@ function initState(withSubFormulas = false): IState {
   const assignments = calculateAssignments(formula.getVariables());
 
   assignments.forEach((assignment) => {
-    assignment.set(sampleVariable.variable, formula.evaluate(assignment));
-    assignment.set(learnerVariable.variable, false);
+    assignment[sampleVariable.variable] = formula.evaluate(assignment);
+    assignment[learnerVariable.variable] = false;
   });
 
   return {formula, assignments, subFormulas, withSubFormulas, corrected: false};
@@ -30,22 +30,26 @@ function initState(withSubFormulas = false): IState {
 
 export function BoolFillOut(): JSX.Element {
 
-  const completelyCorrect = false;
-
   const [state, setState] = useState<IState>(initState());
 
-  function updateAssignment(assignment: Assignment): void {
-    // FIXME: use assignment...
-    console.info(assignment);
-
+  function updateAssignment(assignmentIndex: number): void {
     setState(({assignments, ...rest}) => {
-      return {...rest, assignments};
+      return {
+        ...rest,
+        assignments: assignments.map((a, index) => {
+          return assignmentIndex === index
+            ? {...a, [learnerVariable.variable]: !a[learnerVariable.variable]}
+            : a;
+        })
+      };
     });
   }
 
   function correct(): void {
     setState((state) => ({...state, corrected: true}));
   }
+
+  const completelyCorrect = state.assignments.every(isCorrect);
 
   function nextExercise(): void {
     setState(initState());
@@ -95,7 +99,7 @@ export function BoolFillOut(): JSX.Element {
                   'has-background-danger': state.corrected && !isCorrect(assignment),
                   'has-background-success': state.corrected && isCorrect(assignment)
                 }, 'has-text-centered')}>
-                  <button onClick={() => updateAssignment(assignment)} className={classNames('button', {'is-link': assignment.get(learnerVariable.variable)})}>
+                  <button onClick={() => updateAssignment(index)} className={classNames('button', {'is-link': assignment[learnerVariable.variable]})}>
                     {displayAssignmentValue(assignment, learnerVariable)}
                   </button>
                   &nbsp;
@@ -106,12 +110,11 @@ export function BoolFillOut(): JSX.Element {
           </tbody>
         </table>
 
-        {state.corrected &&
-        <div
+        {state.corrected && <div
           className={classNames('notification', 'has-text-centered', completelyCorrect ? 'is-success' : 'is-danger')}>
-          (completelyCorrect
-          ? <span>&#10004; Ihre Lösung ist korrekt.</span>
-          : <span>&#10008; Ihre Lösung ist nicht (komplett) korrekt.</span>)
+          {completelyCorrect
+            ? <span>&#10004; Ihre Lösung ist korrekt.</span>
+            : <span>&#10008; Ihre Lösung ist nicht (komplett) korrekt.</span>}
         </div>}
 
         <RandomSolveButtons correct={correct} nextExercise={nextExercise}/>

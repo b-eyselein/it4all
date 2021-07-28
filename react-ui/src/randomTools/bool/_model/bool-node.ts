@@ -5,23 +5,22 @@ const HTML_REPLACERS: Map<RegExp, string> = new Map([
   [/impl/g, '&rArr;'], [/equiv/g, '&hArr;']
 ]);
 
-export type Assignment = Map<string, boolean>;
+export type Assignment = { [key: string]: boolean };
 
 export function calculateAssignments(variables: BooleanVariable[]): Assignment[] {
   let assignments: Assignment[] = [];
 
   for (const variable of variables) {
-
     if (assignments.length === 0) {
       assignments = [
-        new Map([[variable.variable, false]]),
-        new Map([[variable.variable, true]])
+        {[variable.variable]: false},
+        {[variable.variable]: true}
       ];
     } else {
       assignments = assignments.flatMap(
         (assignment: Assignment) => [
-          new Map([...assignment, [variable.variable, false]]),
-          new Map([...assignment, [variable.variable, true]])
+          {...assignment, [variable.variable]: false},
+          {...assignment, [variable.variable]: true}
         ]
       );
     }
@@ -65,7 +64,7 @@ export class BooleanVariable extends BooleanNode {
   }
 
   evaluate(assignments: Assignment): boolean {
-    return assignments.get(this.variable) || false;
+    return assignments[this.variable] || false;
   }
 
   protected calculateVariables(): BooleanVariable[] {
