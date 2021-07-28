@@ -32,7 +32,7 @@ function testParse(formula: BooleanNode) {
 }
 
 function testParseString(formulaString: string, awaited: BooleanNode) {
-  const parsed: BooleanNode = parseBooleanFormula(formulaString);
+  const parsed: BooleanNode | undefined = parseBooleanFormula(formulaString);
   expect(parsed).toEqual(awaited);
 }
 
