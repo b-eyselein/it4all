@@ -1,0 +1,33 @@
+mutation FlaskCorrection($collId: Int!, $exId: Int!, $part: FlaskExercisePart!, $solution: FilesSolutionInput!) {
+  me {
+    flaskExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...FlaskCorrectionResult
+      }
+    }
+  }
+}
+
+fragment FlaskCorrectionResult on FlaskCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...FlaskResult
+  }
+}
+
+fragment FlaskResult on FlaskResult {
+  points
+  maxPoints
+  testResults {
+    ...FlaskTestResult
+  }
+}
+
+fragment FlaskTestResult on FlaskTestResult {
+  testName
+  successful
+  stdout
+  stderr
+}

@@ -1,11 +1,24 @@
 import React from 'react';
-import {FlaskExerciseContentFragment} from '../../../graphql';
+import {
+  ExerciseFileFragment,
+  FilesSolutionInput,
+  FlaskCorrectionMutation,
+  FlaskExerciseContentFragment,
+  FlaskExercisePart,
+  useFlaskCorrectionMutation
+} from '../../../graphql';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {FilesExercise} from '../FilesExercise';
+import {WithQuery} from '../../../WithQuery';
+import {SolutionSaved} from '../../../helpers/SolutionSaved';
+import {PointsNotification} from '../../../helpers/PointsNotification';
+import classNames from 'classnames';
 
 type IProps = ConcreteExerciseIProps<FlaskExerciseContentFragment>;
 
 export function FlaskExercise({exercise, content}: IProps): JSX.Element {
+
+  const [correctExercise, correctionMutationResult] = useFlaskCorrectionMutation();
 
   const exerciseDescription = <>
     <div className="mb-3" dangerouslySetInnerHTML={{__html: exercise.text}}/>
@@ -20,15 +33,46 @@ export function FlaskExercise({exercise, content}: IProps): JSX.Element {
     )}
   </>;
 
-  function correct(): void {
-    console.error('TODO: correct...');
+  function correct(files: ExerciseFileFragment[]): void {
+    const solution: FilesSolutionInput = {
+      files: files.map(({name, content, fileType, editable}) => ({name, content, fileType, editable}))
+    };
+
+    correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution, part: FlaskExercisePart.FlaskSingleExPart}})
+      .catch((err) => console.error(err));
   }
 
-  function correctionTabRender() {
-    return <div>TODO!</div>;
+  function renderCorrection({me}: FlaskCorrectionMutation): JSX.Element {
+    if (!me?.flaskExercise?.correct) {
+      throw new Error('TODO!');
+    }
+
+    const {solutionSaved,/*proficienciesUpdated, resultSaved,*/ result} = me.flaskExercise.correct;
+
+    console.info(JSON.stringify(result, null, 2));
+
+    return (
+      <>
+        <SolutionSaved solutionSaved={solutionSaved}/>
+
+        <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
+
+        {result.testResults.map((testResult, index) =>
+          <div className="my-3" key={index}>
+            <div className={classNames('message', testResult.successful ? 'is-success' : 'is-danger')}>
+              <header className="message-header">{testResult.testName}</header>
+              <div className="message-body">
+                <pre>{testResult.stderr.join('\n')}</pre>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
   }
 
   return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={exerciseDescription} initialFiles={content.files}
-                        sampleSolutions={content.flaskSampleSolutions} correct={correct} correctionTabRender={correctionTabRender}
+                        sampleSolutions={content.flaskSampleSolutions} correct={correct}
+                        correctionTabRender={() => <WithQuery query={correctionMutationResult} render={renderCorrection}/>}
                         isCorrecting={false /*TODO!*/}/>;
 }

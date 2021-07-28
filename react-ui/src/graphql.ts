@@ -1420,6 +1420,51 @@ export type XmlSolutionInput = {
   grammar: Scalars['String'];
 };
 
+export type FlaskCorrectionMutationVariables = Exact<{
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+  part: FlaskExercisePart;
+  solution: FilesSolutionInput;
+}>;
+
+
+export type FlaskCorrectionMutation = (
+  { __typename?: 'Mutation' }
+  & { me?: Maybe<(
+    { __typename?: 'UserMutations' }
+    & { flaskExercise?: Maybe<(
+      { __typename?: 'FlaskExerciseMutations' }
+      & { correct: (
+        { __typename?: 'FlaskCorrectionResult' }
+        & FlaskCorrectionResultFragment
+      ) }
+    )> }
+  )> }
+);
+
+export type FlaskCorrectionResultFragment = (
+  { __typename?: 'FlaskCorrectionResult' }
+  & Pick<FlaskCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
+  & { result: (
+    { __typename?: 'FlaskResult' }
+    & FlaskResultFragment
+  ) }
+);
+
+export type FlaskResultFragment = (
+  { __typename?: 'FlaskResult' }
+  & Pick<FlaskResult, 'points' | 'maxPoints'>
+  & { testResults: Array<(
+    { __typename?: 'FlaskTestResult' }
+    & FlaskTestResultFragment
+  )> }
+);
+
+export type FlaskTestResultFragment = (
+  { __typename?: 'FlaskTestResult' }
+  & Pick<FlaskTestResult, 'testName' | 'successful' | 'stdout' | 'stderr'>
+);
+
 export type ProgrammingCorrectionMutationVariables = Exact<{
   collId: Scalars['Int'];
   exId: Scalars['Int'];
@@ -2502,6 +2547,33 @@ export type LoginMutation = (
   )> }
 );
 
+export const FlaskTestResultFragmentDoc = gql`
+    fragment FlaskTestResult on FlaskTestResult {
+  testName
+  successful
+  stdout
+  stderr
+}
+    `;
+export const FlaskResultFragmentDoc = gql`
+    fragment FlaskResult on FlaskResult {
+  points
+  maxPoints
+  testResults {
+    ...FlaskTestResult
+  }
+}
+    ${FlaskTestResultFragmentDoc}`;
+export const FlaskCorrectionResultFragmentDoc = gql`
+    fragment FlaskCorrectionResult on FlaskCorrectionResult {
+  solutionSaved
+  resultSaved
+  proficienciesUpdated
+  result {
+    ...FlaskResult
+  }
+}
+    ${FlaskResultFragmentDoc}`;
 export const ImplementationCorrectionResultFragmentDoc = gql`
     fragment ImplementationCorrectionResult on ImplementationCorrectionResult {
   successful
@@ -3261,6 +3333,46 @@ export const LoggedInUserWithTokenFragmentDoc = gql`
   jwt
 }
     `;
+export const FlaskCorrectionDocument = gql`
+    mutation FlaskCorrection($collId: Int!, $exId: Int!, $part: FlaskExercisePart!, $solution: FilesSolutionInput!) {
+  me {
+    flaskExercise(collId: $collId, exId: $exId) {
+      correct(part: $part, solution: $solution) {
+        ...FlaskCorrectionResult
+      }
+    }
+  }
+}
+    ${FlaskCorrectionResultFragmentDoc}`;
+export type FlaskCorrectionMutationFn = Apollo.MutationFunction<FlaskCorrectionMutation, FlaskCorrectionMutationVariables>;
+
+/**
+ * __useFlaskCorrectionMutation__
+ *
+ * To run a mutation, you first call `useFlaskCorrectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useFlaskCorrectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [flaskCorrectionMutation, { data, loading, error }] = useFlaskCorrectionMutation({
+ *   variables: {
+ *      collId: // value for 'collId'
+ *      exId: // value for 'exId'
+ *      part: // value for 'part'
+ *      solution: // value for 'solution'
+ *   },
+ * });
+ */
+export function useFlaskCorrectionMutation(baseOptions?: Apollo.MutationHookOptions<FlaskCorrectionMutation, FlaskCorrectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<FlaskCorrectionMutation, FlaskCorrectionMutationVariables>(FlaskCorrectionDocument, options);
+      }
+export type FlaskCorrectionMutationHookResult = ReturnType<typeof useFlaskCorrectionMutation>;
+export type FlaskCorrectionMutationResult = Apollo.MutationResult<FlaskCorrectionMutation>;
+export type FlaskCorrectionMutationOptions = Apollo.BaseMutationOptions<FlaskCorrectionMutation, FlaskCorrectionMutationVariables>;
 export const ProgrammingCorrectionDocument = gql`
     mutation ProgrammingCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: FilesSolutionInput!) {
   me {
