@@ -132,6 +132,11 @@ export class BooleanNot extends BooleanNode {
 
 }
 
+export function not(c: BooleanNode): BooleanNot {
+  return new BooleanNot(c);
+}
+
+
 // Boolean binary nodes
 
 export abstract class BooleanBinaryNode extends BooleanNode {
@@ -166,8 +171,7 @@ export abstract class BooleanBinaryNode extends BooleanNode {
     const maybeLeftSubFormula = (this.left instanceof BooleanVariable) ? [] : [this.left];
     const maybeRightSubFormula = (this.right instanceof BooleanVariable) ? [] : [this.right];
 
-    return maybeLeftSubFormula.concat(maybeRightSubFormula);
-
+    return [...maybeLeftSubFormula, ...maybeRightSubFormula];
   }
 
   protected abstract evalFunc(a: boolean, b: boolean): boolean;
@@ -181,6 +185,11 @@ export class BooleanAnd extends BooleanBinaryNode {
   }
 }
 
+export function and(a: BooleanNode, b: BooleanNode): BooleanAnd {
+  return new BooleanAnd(a, b);
+}
+
+
 export class BooleanOr extends BooleanBinaryNode {
   protected operator = 'or';
 
@@ -188,6 +197,11 @@ export class BooleanOr extends BooleanBinaryNode {
     return a || b;
   }
 }
+
+export function or(a: BooleanNode, b: BooleanNode): BooleanOr {
+  return new BooleanOr(a, b);
+}
+
 
 export class BooleanNAnd extends BooleanBinaryNode {
   protected operator = 'nand';
@@ -197,6 +211,11 @@ export class BooleanNAnd extends BooleanBinaryNode {
   }
 }
 
+export function nand(a: BooleanNode, b: BooleanNode): BooleanNAnd {
+  return new BooleanNAnd(a, b);
+}
+
+
 export class BooleanNOr extends BooleanBinaryNode {
   protected operator = 'nor';
 
@@ -204,6 +223,11 @@ export class BooleanNOr extends BooleanBinaryNode {
     return !(a || b);
   }
 }
+
+export function nor(a: BooleanNode, b: BooleanNode): BooleanNOr {
+  return new BooleanNOr(a, b);
+}
+
 
 export class BooleanXOr extends BooleanBinaryNode {
   protected operator = 'xor';
@@ -213,6 +237,11 @@ export class BooleanXOr extends BooleanBinaryNode {
   }
 }
 
+export function xor(a: BooleanNode, b: BooleanNode): BooleanXOr {
+  return new BooleanXOr(a, b);
+}
+
+
 export class BooleanXNor extends BooleanBinaryNode {
   protected operator = 'xnor';
 
@@ -220,6 +249,11 @@ export class BooleanXNor extends BooleanBinaryNode {
     return (!a || b) && (a || !b);
   }
 }
+
+export function xnor(a: BooleanNode, b: BooleanNode): BooleanXNor {
+  return new BooleanXNor(a, b);
+}
+
 
 export class BooleanEquivalency extends BooleanBinaryNode {
   protected operator = 'equiv';
@@ -229,6 +263,11 @@ export class BooleanEquivalency extends BooleanBinaryNode {
   }
 }
 
+export function equiv(a: BooleanNode, b: BooleanNode): BooleanEquivalency {
+  return new BooleanEquivalency(a, b);
+}
+
+
 export class BooleanImplication extends BooleanBinaryNode {
   protected operator = 'impl';
 
@@ -236,6 +275,11 @@ export class BooleanImplication extends BooleanBinaryNode {
     return !a || b;
   }
 }
+
+export function impl(a: BooleanNode, b: BooleanNode): BooleanImplication {
+  return new BooleanImplication(a, b);
+}
+
 
 export function instantiateOperator(leftOp: BooleanNode, opString: string, rightOp: BooleanNode): BooleanBinaryNode {
   switch (opString) {

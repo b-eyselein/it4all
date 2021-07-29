@@ -32,11 +32,11 @@ const rightBracket = createToken({name: 'rightBracket', pattern: /\)/});
 const notOperator = createToken({name: 'notOperator', pattern: /not/});
 const andOperator = createToken({name: 'AndOperator', pattern: /and/});
 const orOperator = createToken({name: 'OrOperator', pattern: /or/});
-const otherOperators = createToken({name: 'Operators', pattern: /[x|n]or|nand|equiv|impl/});
+const otherOperators = createToken({name: 'Operators', pattern: /(x|n|xn)or|nand|equiv|impl/});
 
 
 const allTokens: TokenType[] = [
-//  andOperator, orOperator, xOrOperator, nOrOerator, nAndOperator, equivOperator, implOperator,
+//  andOperator, orOperator, xOrOperator, nOrOperator, nAndOperator, equivOperator, implOperator,
   leftBracket, rightBracket,
   notOperator, andOperator, orOperator, otherOperators,
   TRUE, FALSE, variable, whiteSpace
