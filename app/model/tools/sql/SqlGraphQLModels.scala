@@ -9,9 +9,7 @@ import net.sf.jsqlparser.statement.select.Limit
 import sangria.macros.derive._
 import sangria.schema._
 
-object SqlGraphQLModels
-    extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlResult]
-    with GraphQLArguments {
+object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlResult] with GraphQLArguments {
 
   override val partEnumType: EnumType[SqlExPart] = EnumType(
     "SqlExPart",
@@ -71,7 +69,7 @@ object SqlGraphQLModels
 
   private val sqlCellType: ObjectType[Unit, SqlCell] = deriveObjectType()
 
-  private val KeyCellValueObjectType = ObjectType(
+  private val KeyCellValueObjectType: ObjectType[Unit, (String, SqlCell)] = ObjectType(
     "SqlKeyCellValueObject",
     fields[Unit, (String, SqlCell)](
       Field("key", StringType, resolve = _.value._1),
@@ -79,10 +77,9 @@ object SqlGraphQLModels
     )
   )
 
-  private val sqlRowType: ObjectType[Unit, SqlRow] =
-    deriveObjectType(
-      ReplaceField("cells", Field("cells", ListType(KeyCellValueObjectType), resolve = _.value.cells.toSeq))
-    )
+  private val sqlRowType: ObjectType[Unit, SqlRow] = deriveObjectType(
+    ReplaceField("cells", Field("cells", ListType(KeyCellValueObjectType), resolve = _.value.cells.toSeq))
+  )
 
   private val sqlQueryResultType: ObjectType[Unit, SqlQueryResult] = {
     implicit val srt: ObjectType[Unit, SqlRow] = sqlRowType

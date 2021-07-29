@@ -16,10 +16,12 @@ export function SqlQueryResultTable({queryResult}: IProps): JSX.Element {
         </tr>
       </thead>
       <tbody>
-        {queryResult.rows.map((row, index) => <tr key={index}>
+        {queryResult.rows.map((row, index) =>
+          <tr key={index}>
             {queryResult.columnNames
               .map((colName) => row.cells.find((r) => r.key === colName)!.value)
-              .map(({colName, content, different}) => <td key={colName} className={classNames({'is-light-danger': different})}>{content}</td>
+              .map(({colName, content, different}) =>
+                <td key={colName} className={classNames({'is-light-danger': different})}>{content}</td>
               )}
           </tr>
         )}
