@@ -10,24 +10,20 @@ fragment CollectionTool on CollectionTool {
 }
 
 query ToolOverview {
-  me {
-    tools {
-      ...CollectionTool
-    }
+  tools {
+    ...CollectionTool
   }
 }
 
 # /tools/:toolId
 query CollectionToolOverview($toolId: String!) {
-  me {
-    tool(toolId: $toolId) {
-      name
-      collectionCount
-      exerciseCount
-      lessonCount
-      proficiencies {
-        ...UserProficiency
-      }
+  tool(toolId: $toolId) {
+    name
+    collectionCount
+    exerciseCount
+    lessonCount
+    proficiencies {
+      ...UserProficiency
     }
   }
 }
@@ -45,14 +41,12 @@ fragment UserProficiency on UserProficiency {
 
 # /tools/:toolId/allExercises
 query AllExercisesOverview($toolId: String!) {
-  me {
-    tool(toolId: $toolId) {
-      allExercises {
-        topicsWithLevels {
-          ...TopicWithLevel
-        }
-        ...FieldsForLink
+  tool(toolId: $toolId) {
+    allExercises {
+      topicsWithLevels {
+        ...TopicWithLevel
       }
+      ...FieldsForLink
     }
   }
 }
@@ -65,12 +59,10 @@ fragment CollectionValues on ExerciseCollection {
 }
 
 query CollectionList($toolId: String!) {
-  me {
-    tool(toolId: $toolId) {
-      name
-      collections {
-        ...CollectionValues
-      }
+  tool(toolId: $toolId) {
+    name
+    collections {
+      ...CollectionValues
     }
   }
 }
@@ -88,10 +80,8 @@ fragment CollOverviewTool on CollectionTool {
 
 
 query CollectionOverview($toolId: String!, $collId: Int!) {
-  me {
-    tool(toolId: $toolId) {
-      ...CollOverviewTool
-    }
+  tool(toolId: $toolId) {
+    ...CollOverviewTool
   }
 }
 
@@ -113,16 +103,14 @@ fragment ExerciseOverview on Exercise {
 }
 
 query ExerciseOverview($toolId: String!, $collectionId: Int!, $exerciseId: Int!) {
-  me {
-    tool(toolId: $toolId) {
-      id
-      name
-      collection(collId: $collectionId) {
-        collectionId
-        title
-        exercise(exId: $exerciseId) {
-          ...ExerciseOverview
-        }
+  tool(toolId: $toolId) {
+    id
+    name
+    collection(collId: $collectionId) {
+      collectionId
+      title
+      exercise(exId: $exerciseId) {
+        ...ExerciseOverview
       }
     }
   }
@@ -151,12 +139,10 @@ fragment ExerciseSolveFields on Exercise {
 }
 
 query Exercise($toolId: String!, $collectionId: Int!, $exerciseId: Int!, $partId: String!) {
-  me {
-    tool(toolId: $toolId) {
-      collection(collId: $collectionId) {
-        exercise(exId: $exerciseId) {
-          ...ExerciseSolveFields
-        }
+  tool(toolId: $toolId) {
+    collection(collId: $collectionId) {
+      exercise(exId: $exerciseId) {
+        ...ExerciseSolveFields
       }
     }
   }

@@ -13,12 +13,12 @@ export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
   const {t} = useTranslation('common');
   const query = useCollectionToolOverviewQuery({variables: {toolId}});
 
-  function render({me}: CollectionToolOverviewQuery): JSX.Element {
-    if (!me?.tool) {
+  function render({tool}: CollectionToolOverviewQuery): JSX.Element {
+    if (!tool) {
       return <Redirect to={'/'}/>;
     }
 
-    const {name, collectionCount, exerciseCount, lessonCount, proficiencies} = me.tool;
+    const {name, collectionCount, exerciseCount, lessonCount, proficiencies} = tool;
 
     const breadCrumbs: BreadCrumbPart[] = [
       {routerLinkPart: '/', title: 'Tools'},

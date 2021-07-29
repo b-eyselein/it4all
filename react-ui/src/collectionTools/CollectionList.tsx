@@ -12,12 +12,12 @@ export function CollectionList({toolId}: ToolBaseParams): JSX.Element {
   const {t} = useTranslation('common');
   const query = useCollectionListQuery({variables: {toolId}});
 
-  function render({me}: CollectionListQuery): JSX.Element {
-    if (!me?.tool?.collections) {
+  function render({tool}: CollectionListQuery): JSX.Element {
+    if (!tool) {
       return <Redirect to={''}/>;
     }
 
-    const {name, collections} = me.tool;
+    const {name, collections} = tool;
 
     const breadCrumbs: BreadCrumbPart[] = [
       {routerLinkPart: '/', title: t('tool_plural')},

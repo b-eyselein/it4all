@@ -1,7 +1,6 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {ToolOverviewQuery, useToolOverviewQuery} from './graphql';
-import {Redirect} from 'react-router-dom';
 import {WithQuery} from './WithQuery';
 import {BulmaCard, FooterItem} from './helpers/BulmaCard';
 import {randomTools} from './randomTools/randomTools';
@@ -18,13 +17,7 @@ export function Home(): JSX.Element {
     ];
   }
 
-  function render({me}: ToolOverviewQuery): JSX.Element {
-    const collectionTools = me?.tools;
-
-    if (!collectionTools) {
-      return <Redirect to={'/loginForm'}/>;
-    }
-
+  function render({tools: collectionTools}: ToolOverviewQuery): JSX.Element {
     return <>
       {collectionTools.map(({id, name, /*state,*/ collectionCount, lessonCount, exerciseCount}) =>
         <div className="column is-one-quarter-desktop is-half-tablet" key={id}>

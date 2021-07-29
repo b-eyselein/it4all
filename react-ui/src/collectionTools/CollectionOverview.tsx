@@ -17,12 +17,18 @@ export function CollectionOverview({toolId, collectionId}: CollectionBaseParams)
   const query = useCollectionOverviewQuery({variables: {toolId, collId: collectionId}});
   const [currentPage, setCurrentPage] = useState(0);
 
-  function render({me}: CollectionOverviewQuery): JSX.Element {
-    if (!me?.tool?.collection) {
+  function render({tool}: CollectionOverviewQuery): JSX.Element {
+    if (!tool) {
       return <Redirect to={''}/>;
     }
 
-    const {name: toolName, collection: {title, exercises}} = me.tool;
+    const {name: toolName, collection} = tool;
+
+    if (!collection) {
+      return <Redirect to={''}/>;
+    }
+
+    const {title, exercises} = collection;
 
     const paginationNeeded = exercises.length > SLICE_COUNT;
     const maxPage = Math.ceil(exercises.length / SLICE_COUNT);

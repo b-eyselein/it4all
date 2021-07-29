@@ -22,12 +22,24 @@ export function Exercise({toolId, collectionId, exerciseId}: ExerciseIProps): JS
 
   const exerciseQuery = useExerciseQuery({variables: {toolId, collectionId, exerciseId, partId}});
 
-  function render({me}: ExerciseQuery): JSX.Element {
-    if (!me || !me.tool || !me.tool.collection || !me.tool.collection.exercise) {
-      return <Redirect to={'/'}/>;
+  function render({tool}: ExerciseQuery): JSX.Element {
+
+    if (!tool) {
+      return <Redirect to={''}/>;
     }
 
-    const exercise = me.tool.collection.exercise;
+    const collection = tool.collection;
+
+    if (!collection) {
+      return <Redirect to={''}/>;
+    }
+
+    const exercise = collection.exercise;
+
+    if (!exercise) {
+      return <Redirect to={''}/>;
+    }
+
     const content = exercise.content;
 
 

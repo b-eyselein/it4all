@@ -1,7 +1,7 @@
 package model.graphql
 
-import model.mongo.MongoClientQueries
 import model._
+import model.mongo.MongoClientQueries
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -37,30 +37,29 @@ trait LessonGraphQLModel extends GraphQLArguments with MongoClientQueries {
     )
   }
 
-  val lessonType: ObjectType[Unit, (LoggedInUser, Lesson)] = ObjectType(
+  val lessonType: ObjectType[GraphQLContext, Lesson] = ObjectType(
     "Lesson",
-    fields[Unit, (LoggedInUser, Lesson)](
-      Field("lessonId", IntType, resolve = _.value._2.lessonId),
-      Field("toolId", StringType, resolve = _.value._2.toolId),
-      Field("title", StringType, resolve = _.value._2.title),
-      Field("description", StringType, resolve = _.value._2.description),
-      Field("video", OptionType(StringType), resolve = _.value._2.video),
+    fields[GraphQLContext, Lesson](
+      Field("lessonId", IntType, resolve = _.value.lessonId),
+      Field("toolId", StringType, resolve = _.value.toolId),
+      Field("title", StringType, resolve = _.value.title),
+      Field("description", StringType, resolve = _.value.description),
+      Field("video", OptionType(StringType), resolve = _.value.video),
       Field(
         "contentCount",
         LongType,
-        resolve = context => futureLessonContentCountForLesson(context.value._2.toolId, context.value._2.lessonId)
+        resolve = context => futureLessonContentCountForLesson(context.value.toolId, context.value.lessonId)
       ),
       Field(
         "contents",
         ListType(lessonContentType),
-        resolve = context => futureLessonContentsForLesson(context.value._2.toolId, context.value._2.lessonId)
+        resolve = context => futureLessonContentsForLesson(context.value.toolId, context.value.lessonId)
       ),
       Field(
         "content",
         OptionType(lessonContentType),
         arguments = lessonIdArgument :: Nil,
-        resolve = context =>
-          futureLessonContentById(context.value._2.toolId, context.value._2.lessonId, context.arg(lessonIdArgument))
+        resolve = context => futureLessonContentById(context.value.toolId, context.value.lessonId, context.arg(lessonIdArgument))
       )
     )
   )

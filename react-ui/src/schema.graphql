@@ -98,7 +98,7 @@ type ExPart {
   id: String!
   name: String!
   isEntryPart: Boolean!
-  solved: Boolean!
+  solved: Boolean
 }
 
 type Exercise {
@@ -404,7 +404,8 @@ interface ProgrammingTestCorrectionResult {
 }
 
 type Query {
-  me: User
+  tools: [CollectionTool!]!
+  tool(toolId: String!): CollectionTool
 }
 
 interface RegexAbstractResult {
@@ -585,11 +586,11 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  SELECT
   DELETE
+  CREATE
   UPDATE
   INSERT
-  CREATE
+  SELECT
 }
 
 type SqlKeyCellValueObject {
@@ -985,11 +986,6 @@ type UnitTestTestConfig {
   description: String!
   file: ExerciseFile!
   shouldFail: Boolean!
-}
-
-type User {
-  tools: [CollectionTool!]!
-  tool(toolId: String!): CollectionTool
 }
 
 input UserCredentials {

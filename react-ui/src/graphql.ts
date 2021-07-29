@@ -145,7 +145,7 @@ export type ExPart = {
   id: Scalars['String'];
   name: Scalars['String'];
   isEntryPart: Scalars['Boolean'];
-  solved: Scalars['Boolean'];
+  solved?: Maybe<Scalars['Boolean']>;
 };
 
 export type Exercise = {
@@ -519,7 +519,13 @@ export type ProgrammingTestCorrectionResult = {
 
 export type Query = {
   __typename?: 'Query';
-  me?: Maybe<User>;
+  tools: Array<CollectionTool>;
+  tool?: Maybe<CollectionTool>;
+};
+
+
+export type QueryToolArgs = {
+  toolId: Scalars['String'];
 };
 
 export type RegexAbstractResult = {
@@ -744,11 +750,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Select = 'SELECT',
   Delete = 'DELETE',
+  Create = 'CREATE',
   Update = 'UPDATE',
   Insert = 'INSERT',
-  Create = 'CREATE'
+  Select = 'SELECT'
 }
 
 export type SqlKeyCellValueObject = {
@@ -1193,17 +1199,6 @@ export type UnitTestTestConfig = {
   description: Scalars['String'];
   file: ExerciseFile;
   shouldFail: Scalars['Boolean'];
-};
-
-export type User = {
-  __typename?: 'User';
-  tools: Array<CollectionTool>;
-  tool?: Maybe<CollectionTool>;
-};
-
-
-export type UserToolArgs = {
-  toolId: Scalars['String'];
 };
 
 export type UserCredentials = {
@@ -2086,12 +2081,9 @@ export type ToolOverviewQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ToolOverviewQuery = (
   { __typename?: 'Query' }
-  & { me?: Maybe<(
-    { __typename?: 'User' }
-    & { tools: Array<(
-      { __typename?: 'CollectionTool' }
-      & CollectionToolFragment
-    )> }
+  & { tools: Array<(
+    { __typename?: 'CollectionTool' }
+    & CollectionToolFragment
   )> }
 );
 
@@ -2102,15 +2094,12 @@ export type CollectionToolOverviewQueryVariables = Exact<{
 
 export type CollectionToolOverviewQuery = (
   { __typename?: 'Query' }
-  & { me?: Maybe<(
-    { __typename?: 'User' }
-    & { tool?: Maybe<(
-      { __typename?: 'CollectionTool' }
-      & Pick<CollectionTool, 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
-      & { proficiencies: Array<(
-        { __typename?: 'UserProficiency' }
-        & UserProficiencyFragment
-      )> }
+  & { tool?: Maybe<(
+    { __typename?: 'CollectionTool' }
+    & Pick<CollectionTool, 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
+    & { proficiencies: Array<(
+      { __typename?: 'UserProficiency' }
+      & UserProficiencyFragment
     )> }
   )> }
 );
@@ -2134,18 +2123,15 @@ export type AllExercisesOverviewQueryVariables = Exact<{
 
 export type AllExercisesOverviewQuery = (
   { __typename?: 'Query' }
-  & { me?: Maybe<(
-    { __typename?: 'User' }
-    & { tool?: Maybe<(
-      { __typename?: 'CollectionTool' }
-      & { allExercises: Array<(
-        { __typename?: 'Exercise' }
-        & { topicsWithLevels: Array<(
-          { __typename?: 'TopicWithLevel' }
-          & TopicWithLevelFragment
-        )> }
-        & FieldsForLinkFragment
+  & { tool?: Maybe<(
+    { __typename?: 'CollectionTool' }
+    & { allExercises: Array<(
+      { __typename?: 'Exercise' }
+      & { topicsWithLevels: Array<(
+        { __typename?: 'TopicWithLevel' }
+        & TopicWithLevelFragment
       )> }
+      & FieldsForLinkFragment
     )> }
   )> }
 );
@@ -2162,15 +2148,12 @@ export type CollectionListQueryVariables = Exact<{
 
 export type CollectionListQuery = (
   { __typename?: 'Query' }
-  & { me?: Maybe<(
-    { __typename?: 'User' }
-    & { tool?: Maybe<(
-      { __typename?: 'CollectionTool' }
-      & Pick<CollectionTool, 'name'>
-      & { collections: Array<(
-        { __typename?: 'ExerciseCollection' }
-        & CollectionValuesFragment
-      )> }
+  & { tool?: Maybe<(
+    { __typename?: 'CollectionTool' }
+    & Pick<CollectionTool, 'name'>
+    & { collections: Array<(
+      { __typename?: 'ExerciseCollection' }
+      & CollectionValuesFragment
     )> }
   )> }
 );
@@ -2196,12 +2179,9 @@ export type CollectionOverviewQueryVariables = Exact<{
 
 export type CollectionOverviewQuery = (
   { __typename?: 'Query' }
-  & { me?: Maybe<(
-    { __typename?: 'User' }
-    & { tool?: Maybe<(
-      { __typename?: 'CollectionTool' }
-      & CollOverviewToolFragment
-    )> }
+  & { tool?: Maybe<(
+    { __typename?: 'CollectionTool' }
+    & CollOverviewToolFragment
   )> }
 );
 
@@ -2228,18 +2208,15 @@ export type ExerciseOverviewQueryVariables = Exact<{
 
 export type ExerciseOverviewQuery = (
   { __typename?: 'Query' }
-  & { me?: Maybe<(
-    { __typename?: 'User' }
-    & { tool?: Maybe<(
-      { __typename?: 'CollectionTool' }
-      & Pick<CollectionTool, 'id' | 'name'>
-      & { collection?: Maybe<(
-        { __typename?: 'ExerciseCollection' }
-        & Pick<ExerciseCollection, 'collectionId' | 'title'>
-        & { exercise?: Maybe<(
-          { __typename?: 'Exercise' }
-          & ExerciseOverviewFragment
-        )> }
+  & { tool?: Maybe<(
+    { __typename?: 'CollectionTool' }
+    & Pick<CollectionTool, 'id' | 'name'>
+    & { collection?: Maybe<(
+      { __typename?: 'ExerciseCollection' }
+      & Pick<ExerciseCollection, 'collectionId' | 'title'>
+      & { exercise?: Maybe<(
+        { __typename?: 'Exercise' }
+        & ExerciseOverviewFragment
       )> }
     )> }
   )> }
@@ -2286,16 +2263,13 @@ export type ExerciseQueryVariables = Exact<{
 
 export type ExerciseQuery = (
   { __typename?: 'Query' }
-  & { me?: Maybe<(
-    { __typename?: 'User' }
-    & { tool?: Maybe<(
-      { __typename?: 'CollectionTool' }
-      & { collection?: Maybe<(
-        { __typename?: 'ExerciseCollection' }
-        & { exercise?: Maybe<(
-          { __typename?: 'Exercise' }
-          & ExerciseSolveFieldsFragment
-        )> }
+  & { tool?: Maybe<(
+    { __typename?: 'CollectionTool' }
+    & { collection?: Maybe<(
+      { __typename?: 'ExerciseCollection' }
+      & { exercise?: Maybe<(
+        { __typename?: 'Exercise' }
+        & ExerciseSolveFieldsFragment
       )> }
     )> }
   )> }
@@ -3575,10 +3549,8 @@ export type XmlCorrectionMutationResult = Apollo.MutationResult<XmlCorrectionMut
 export type XmlCorrectionMutationOptions = Apollo.BaseMutationOptions<XmlCorrectionMutation, XmlCorrectionMutationVariables>;
 export const ToolOverviewDocument = gql`
     query ToolOverview {
-  me {
-    tools {
-      ...CollectionTool
-    }
+  tools {
+    ...CollectionTool
   }
 }
     ${CollectionToolFragmentDoc}`;
@@ -3611,15 +3583,13 @@ export type ToolOverviewLazyQueryHookResult = ReturnType<typeof useToolOverviewL
 export type ToolOverviewQueryResult = Apollo.QueryResult<ToolOverviewQuery, ToolOverviewQueryVariables>;
 export const CollectionToolOverviewDocument = gql`
     query CollectionToolOverview($toolId: String!) {
-  me {
-    tool(toolId: $toolId) {
-      name
-      collectionCount
-      exerciseCount
-      lessonCount
-      proficiencies {
-        ...UserProficiency
-      }
+  tool(toolId: $toolId) {
+    name
+    collectionCount
+    exerciseCount
+    lessonCount
+    proficiencies {
+      ...UserProficiency
     }
   }
 }
@@ -3654,14 +3624,12 @@ export type CollectionToolOverviewLazyQueryHookResult = ReturnType<typeof useCol
 export type CollectionToolOverviewQueryResult = Apollo.QueryResult<CollectionToolOverviewQuery, CollectionToolOverviewQueryVariables>;
 export const AllExercisesOverviewDocument = gql`
     query AllExercisesOverview($toolId: String!) {
-  me {
-    tool(toolId: $toolId) {
-      allExercises {
-        topicsWithLevels {
-          ...TopicWithLevel
-        }
-        ...FieldsForLink
+  tool(toolId: $toolId) {
+    allExercises {
+      topicsWithLevels {
+        ...TopicWithLevel
       }
+      ...FieldsForLink
     }
   }
 }
@@ -3697,12 +3665,10 @@ export type AllExercisesOverviewLazyQueryHookResult = ReturnType<typeof useAllEx
 export type AllExercisesOverviewQueryResult = Apollo.QueryResult<AllExercisesOverviewQuery, AllExercisesOverviewQueryVariables>;
 export const CollectionListDocument = gql`
     query CollectionList($toolId: String!) {
-  me {
-    tool(toolId: $toolId) {
-      name
-      collections {
-        ...CollectionValues
-      }
+  tool(toolId: $toolId) {
+    name
+    collections {
+      ...CollectionValues
     }
   }
 }
@@ -3737,10 +3703,8 @@ export type CollectionListLazyQueryHookResult = ReturnType<typeof useCollectionL
 export type CollectionListQueryResult = Apollo.QueryResult<CollectionListQuery, CollectionListQueryVariables>;
 export const CollectionOverviewDocument = gql`
     query CollectionOverview($toolId: String!, $collId: Int!) {
-  me {
-    tool(toolId: $toolId) {
-      ...CollOverviewTool
-    }
+  tool(toolId: $toolId) {
+    ...CollOverviewTool
   }
 }
     ${CollOverviewToolFragmentDoc}`;
@@ -3775,16 +3739,14 @@ export type CollectionOverviewLazyQueryHookResult = ReturnType<typeof useCollect
 export type CollectionOverviewQueryResult = Apollo.QueryResult<CollectionOverviewQuery, CollectionOverviewQueryVariables>;
 export const ExerciseOverviewDocument = gql`
     query ExerciseOverview($toolId: String!, $collectionId: Int!, $exerciseId: Int!) {
-  me {
-    tool(toolId: $toolId) {
-      id
-      name
-      collection(collId: $collectionId) {
-        collectionId
-        title
-        exercise(exId: $exerciseId) {
-          ...ExerciseOverview
-        }
+  tool(toolId: $toolId) {
+    id
+    name
+    collection(collId: $collectionId) {
+      collectionId
+      title
+      exercise(exId: $exerciseId) {
+        ...ExerciseOverview
       }
     }
   }
@@ -3822,12 +3784,10 @@ export type ExerciseOverviewLazyQueryHookResult = ReturnType<typeof useExerciseO
 export type ExerciseOverviewQueryResult = Apollo.QueryResult<ExerciseOverviewQuery, ExerciseOverviewQueryVariables>;
 export const ExerciseDocument = gql`
     query Exercise($toolId: String!, $collectionId: Int!, $exerciseId: Int!, $partId: String!) {
-  me {
-    tool(toolId: $toolId) {
-      collection(collId: $collectionId) {
-        exercise(exId: $exerciseId) {
-          ...ExerciseSolveFields
-        }
+  tool(toolId: $toolId) {
+    collection(collId: $collectionId) {
+      exercise(exId: $exerciseId) {
+        ...ExerciseSolveFields
       }
     }
   }

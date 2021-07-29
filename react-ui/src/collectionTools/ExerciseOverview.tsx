@@ -11,14 +11,23 @@ export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIPr
 
   const exerciseOverviewQuery = useExerciseOverviewQuery({variables: {toolId, collectionId, exerciseId}});
 
-  function render({me}: ExerciseOverviewQuery): JSX.Element {
-    if (!me || !me.tool || !me.tool.collection || !me.tool.collection.exercise) {
-      return <Redirect to={'/'}/>;
+  function render({tool}: ExerciseOverviewQuery): JSX.Element {
+
+    if (!tool) {
+      return <Redirect to={''}/>;
     }
 
-    const tool = me.tool;
-    const collection = me.tool.collection;
-    const exercise = me.tool.collection.exercise;
+    const collection = tool.collection;
+
+    if (!collection) {
+      return <Redirect to={''}/>;
+    }
+
+    const exercise = collection.exercise;
+
+    if(!exercise) {
+      return <Redirect to={''}/>;
+    }
 
     const entryParts: PartFragment[] = exercise.parts.filter((p) => p.isEntryPart);
 
