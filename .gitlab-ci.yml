@@ -7,9 +7,9 @@ stages:
 build-client:
   stage: build-client
   script:
-    - cd ui
+    - cd react-ui
     - npm install
-    - npm run build:prod
+    - npm run build
 
 test:
   stage: test
