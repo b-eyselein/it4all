@@ -1,153 +1,56 @@
-import {createToken, EmbeddedActionsParser, ILexingResult, IToken, Lexer, TokenType} from 'chevrotain';
-import {
-  BooleanAnd,
-  BooleanConstant,
-  BooleanFalse,
-  BooleanNode,
-  BooleanNot,
-  BooleanOr,
-  BooleanTrue,
-  BooleanVariable,
-  instantiateOperator
-} from './bool-node';
+import {alt, createLanguage, optWhitespace, Parser, regexp, Result, sepBy1, seq, string, whitespace} from 'parsimmon';
+import {and, BooleanFalse, BooleanNode, BooleanTrue, BooleanVariable, instantiateOperator, not, or} from './bool-node';
 
-type RuleType<T> = (idxInCallingRule?: number, ...args: any[]) => T;
-
-interface RuleRight {
-  operator: string;
-  right: BooleanNode;
+interface BooleanFormulaParser {
+  true: typeof BooleanTrue;
+  false: typeof BooleanFalse;
+  variable: BooleanVariable;
+  operators: string;
+  factor: BooleanNode;
+  notFactor: BooleanNode;
+  binaryTermComponent: BooleanNode;
+  andTermComponent: BooleanNode;
+  orTermComponent: BooleanNode;
+  booleanFormula: BooleanNode;
 }
 
-// Tokens
+const boolFormulaLanguage = createLanguage<BooleanFormulaParser>({
+  true: () => alt(string('1'), regexp(/true/i)).result(BooleanTrue),
+  false: () => alt(string('0'), regexp(/false/i)).result(BooleanFalse),
 
-const whiteSpace = createToken({name: 'WhiteSpace', pattern: /\s+/, group: Lexer.SKIPPED});
+  variable: () => regexp(/[a-z]/).map((variable) => new BooleanVariable(variable)),
 
-const variable = createToken({name: 'Variable', pattern: /[a-z]/});
-const TRUE = createToken({name: 'TRUE', pattern: /1|TRUE/i});
-const FALSE = createToken({name: 'FALSE', pattern: /0|FALSE/i});
+  operators: () => alt(string('xor'), string('nor'), string('xnor'), string('nand'), string('equiv'), string('impl')),
 
-const leftBracket = createToken({name: 'leftBracket', pattern: /\(/});
-const rightBracket = createToken({name: 'rightBracket', pattern: /\)/});
+  factor: (r) => alt(
+    r.booleanFormula.wrap(seq(string('('), optWhitespace), seq(optWhitespace, string(')'))),
+    r.true, r.false,
+    r.variable,
+  ),
 
-const notOperator = createToken({name: 'notOperator', pattern: /not/});
-const andOperator = createToken({name: 'AndOperator', pattern: /and/});
-const orOperator = createToken({name: 'OrOperator', pattern: /or/});
-const otherOperators = createToken({name: 'Operators', pattern: /(x|n|xn)or|nand|equiv|impl/});
+  notFactor: (r) => seq(string('not'), whitespace, r.factor).map(([, , child]) => not(child)),
 
+  binaryTermComponent: (r) => alt(r.notFactor, r.factor),
 
-const allTokens: TokenType[] = [
-//  andOperator, orOperator, xOrOperator, nOrOperator, nAndOperator, equivOperator, implOperator,
-  leftBracket, rightBracket,
-  notOperator, andOperator, orOperator, otherOperators,
-  TRUE, FALSE, variable, whiteSpace
-];
+  andTermComponent: (r) => {
+    const x: Parser<[string, string, string, BooleanNode][]> = seq(whitespace, r.operators, whitespace, r.binaryTermComponent).many();
 
-const BooleanFormulaLexer: Lexer = new Lexer(allTokens);
+    return seq(r.binaryTermComponent, x)
+      .map(([first, rest]) => rest.reduce((acc, [, op, , cur]) => instantiateOperator(acc, op, cur), first));
+  },
 
-export class BooleanFormulaParser extends EmbeddedActionsParser {
+  orTermComponent: (r) => sepBy1(r.andTermComponent, seq(whitespace, string('and'), whitespace))
+    .map(([first, ...rest]) => rest.reduce((acc, cur) => and(acc, cur), first)),
 
-  constructor() {
-    super(allTokens);
-    this.performSelfAnalysis();
-  }
+  booleanFormula: (r) =>
+    sepBy1(r.orTermComponent, seq(whitespace, string('or'), whitespace))
+      .map(([first, ...rest]) => rest.reduce((acc, cur) => or(acc, cur), first))
+});
 
-  private trueRule: RuleType<BooleanConstant> = this.RULE('trueRule', () => {
-    this.CONSUME(TRUE);
-    return BooleanTrue;
-  });
-
-  private falseRule: RuleType<BooleanConstant> = this.RULE('falseRule', () => {
-    this.CONSUME(FALSE);
-    return BooleanFalse;
-  });
-
-  private variableRule: RuleType<BooleanVariable> = this.RULE('variableRule', () => {
-    const variableToken: IToken = this.CONSUME(variable);
-    return new BooleanVariable(variableToken.image[0]);
-  });
-
-  private factor: RuleType<BooleanNode> = this.RULE('factor', () => {
-    return this.OR([
-      {
-        ALT: () => {
-          this.CONSUME(leftBracket);
-          const child = this.SUBRULE(this.booleanFormula);
-          this.CONSUME(rightBracket);
-          return child;
-        }
-      },
-      {ALT: () => this.SUBRULE(this.variableRule)},
-      {ALT: () => this.SUBRULE<BooleanNode>(this.trueRule)},
-      {ALT: () => this.SUBRULE<BooleanNode>(this.falseRule)},
-    ]);
-  });
-
-  private notFactor: RuleType<BooleanNode> = this.RULE('notFactor', () => {
-    const negated: boolean = this.OPTION(() => {
-      return this.CONSUME(notOperator);
-    }) !== undefined;
-
-    const child = this.SUBRULE(this.factor);
-
-    return negated ? new BooleanNot(child) : child;
-  });
-
-  private andTermComponent: RuleType<BooleanNode> = this.RULE('otherTerm', () => {
-    const left: BooleanNode = this.SUBRULE(this.notFactor);
-
-    const otherOpRights: RuleRight[] = [];
-
-    this.MANY(() => {
-      const operator: IToken = this.CONSUME(otherOperators);
-      const factor: BooleanNode = this.SUBRULE2(this.notFactor);
-
-      otherOpRights.push({operator: operator.image, right: factor});
-    });
-
-    if (otherOpRights.length === 0) {
-      return left;
-    } else {
-      return otherOpRights.reduce(
-        (prev: BooleanNode, curr: RuleRight) => instantiateOperator(prev, curr.operator, curr.right),
-        left
-      );
-    }
-  });
-
-  private orTermComponent: RuleType<BooleanNode> = this.RULE('orTerm', () => {
-    const left: BooleanNode = this.SUBRULE(this.andTermComponent);
-
-    const rightSides: BooleanNode[] = [];
-
-    this.MANY(() => {
-      this.CONSUME(andOperator);
-      rightSides.push(this.SUBRULE2(this.andTermComponent));
-    });
-
-    return rightSides.length > 0 ? new BooleanAnd(left, rightSides.reduce((l, r) => new BooleanAnd(l, r))) : left;
-  });
-
-  public booleanFormula: RuleType<BooleanNode> = this.RULE('booleanFormula', () => {
-    const left: BooleanNode = this.SUBRULE(this.orTermComponent);
-
-    const rightSides: BooleanNode[] = [];
-
-    this.MANY(() => {
-      this.CONSUME(orOperator);
-      rightSides.push(this.SUBRULE2(this.orTermComponent));
-    });
-
-    return rightSides.length > 0 ? new BooleanOr(left, rightSides.reduce((l, r) => new BooleanOr(l, r))) : left;
-  });
-
+export function parseBooleanFormulaFromLanguage(formula: string): Result<BooleanNode> {
+  return boolFormulaLanguage.booleanFormula.parse(formula);
 }
 
-export function parseBooleanFormula(formulaString: string): BooleanNode | undefined {
-  const lexResult: ILexingResult = BooleanFormulaLexer.tokenize(formulaString);
-
-  const parser: BooleanFormulaParser = new BooleanFormulaParser();
-
-  parser.input = lexResult.tokens;
-
-  return parser.booleanFormula();
+export function tryParseBooleanFormulaFromLanguage(formula: string): BooleanNode {
+  return boolFormulaLanguage.booleanFormula.tryParse(formula);
 }

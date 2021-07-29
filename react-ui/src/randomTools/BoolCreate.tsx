@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import {BooleanFormula, generateBooleanFormula} from './bool/_model/bool-formula';
-import {displayAssignmentValue, learnerVariable, sampleVariable} from './bool/_model/bool-component-helper';
+import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './bool/_model/bool-component-helper';
 import {useTranslation} from 'react-i18next';
-import {Assignment, calculateAssignments} from './bool/_model/bool-node';
+import {Assignment, BooleanNode, calculateAssignments} from './bool/_model/bool-node';
 import classNames from 'classnames';
 import {RandomSolveButtons} from './RandomToolBase';
 import {BoolCreateInstructions} from './BoolCreateInstructions';
-import {parseBooleanFormula} from './bool/_model/boolean-formula-parser';
+import {parseBooleanFormulaFromLanguage} from './bool/_model/boolean-formula-parser';
+import {Result} from 'parsimmon';
 
 interface IState {
   formula: BooleanFormula;
@@ -14,6 +15,7 @@ interface IState {
   corrected: boolean;
   showSampleSolutions: boolean;
   solution: string;
+  userSolutionFormula?: BooleanNode;
 }
 
 function initState(): IState {
@@ -34,16 +36,23 @@ export function BoolCreate(): JSX.Element {
   const [state, setState] = useState(initState());
   const [showInstructions, setShowInstructions] = useState(false);
 
-  function isCorrect(assignment: Assignment): boolean {
-    return false;
-  }
-
   function correct(): void {
-    const parsed = parseBooleanFormula(state.solution);
-    console.error(JSON.stringify(parsed));
+    const parsed: Result<BooleanNode> = parseBooleanFormulaFromLanguage(state.solution);
+
+    if (parsed.status) {
+
+      const userSolutionFormula = parsed.value;
+
+      setState(({assignments, ...rest}) => {
+        assignments.forEach((a) => a[learnerVariable.variable] = userSolutionFormula.evaluate(a));
+
+        return {...rest, userSolutionFormula, assignments, corrected: true};
+      });
+    } else {
+      setState((state) => ({...state, userSolutionFormula: undefined, corrected: true}));
+    }
   }
 
-  const corrected = false;
 
   return (
     <div className="container">
@@ -65,14 +74,14 @@ export function BoolCreate(): JSX.Element {
               )}
               <td className="has-text-centered">{displayAssignmentValue(assignment, sampleVariable)}</td>
               <td className={classNames({
-                'has-background-danger': corrected && !isCorrect(assignment),
-                'has-background-success': corrected && isCorrect(assignment),
-                'has-text-white': corrected
+                'has-background-danger': state.corrected && !isCorrect(assignment),
+                'has-background-success': state.corrected && isCorrect(assignment),
+                'has-text-white': state.corrected
               }, 'has-text-centered')}>
                 {displayAssignmentValue(assignment, learnerVariable)}
                 &nbsp;
-                {corrected && !isCorrect(assignment) && <span className="has-text-white">&#10008;</span>}
-                {corrected && !isCorrect(assignment) && <span className="has-text-white">&#10004;</span>}
+                {state.corrected && !isCorrect(assignment) && <span className="has-text-white">&#10008;</span>}
+                {state.corrected && !isCorrect(assignment) && <span className="has-text-white">&#10004;</span>}
               </td>
             </tr>
           )}
