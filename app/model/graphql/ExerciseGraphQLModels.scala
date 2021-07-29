@@ -8,15 +8,22 @@ import sangria.schema._
 
 import scala.concurrent.Future
 
+final case class GraphQLExPart(
+  toolId: String,
+  collectionId: Int,
+  exerciseId: Int,
+  part: ExPart
+)
+
 trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
   self: MongoExercisePartResultQueries =>
 
-  private val exPartType: ObjectType[GraphQLContext, (UntypedExercise, ExPart)] = ObjectType(
+  private val exPartType: ObjectType[GraphQLContext, GraphQLExPart] = ObjectType(
     "ExPart",
-    fields[GraphQLContext, (UntypedExercise, ExPart)](
-      Field("id", StringType, resolve = _.value._2.id),
-      Field("name", StringType, resolve = _.value._2.partName),
-      Field("isEntryPart", BooleanType, resolve = _.value._2.isEntryPart),
+    fields[GraphQLContext, GraphQLExPart](
+      Field("id", StringType, resolve = _.value.part.id),
+      Field("name", StringType, resolve = _.value.part.partName),
+      Field("isEntryPart", BooleanType, resolve = _.value.part.isEntryPart),
       Field(
         "solved",
         OptionType(BooleanType),
@@ -24,7 +31,7 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
           context.ctx.loggedInUser match {
             case None => Future.successful(None)
             case Some(LoggedInUser(username, _)) =>
-              futureExerciseResultById(username, context.value._1, context.value._2.id)
+              futureExerciseResultById(username, context.value.toolId, context.value.collectionId, context.value.exerciseId, context.value.part.id)
                 .map {
                   case None                          => Some(false)
                   case Some(basicExercisePartResult) => Some(basicExercisePartResult.isCorrect)
@@ -55,7 +62,8 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
       Field(
         "parts",
         ListType(exPartType),
-        resolve = context => context.value.content.parts.map { exPart => (context.value, exPart) }
+        resolve = context =>
+          context.value.content.parts.map { exPart => GraphQLExPart(context.value.toolId, context.value.collectionId, context.value.exerciseId, exPart) }
       )
     )
   )

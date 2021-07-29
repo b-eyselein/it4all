@@ -1,9 +1,7 @@
 mutation FlaskCorrection($collId: Int!, $exId: Int!, $part: FlaskExercisePart!, $solution: FilesSolutionInput!) {
-  me {
-    flaskExercise(collId: $collId, exId: $exId) {
-      correct(part: $part, solution: $solution) {
-        ...FlaskCorrectionResult
-      }
+  flaskExercise(collId: $collId, exId: $exId) {
+    correct(part: $part, solution: $solution) {
+      ...FlaskCorrectionResult
     }
   }
 }

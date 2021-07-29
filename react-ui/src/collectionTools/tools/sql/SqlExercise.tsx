@@ -24,7 +24,7 @@ export function SqlExercise({exercise, content}: IProps): JSX.Element {
   const correcting = correctionMutationResult.called && correctionMutationResult.loading;
 
   const executionResult: SqlExecutionResultFragment | undefined = correctionMutationResult.called && !!correctionMutationResult.data
-    ? correctionMutationResult.data.me?.sqlExercise?.correct.result.executionResult
+    ? correctionMutationResult.data.sqlExercise?.correct.result.executionResult
     : undefined;
 
   if (!content.sqlPart) {

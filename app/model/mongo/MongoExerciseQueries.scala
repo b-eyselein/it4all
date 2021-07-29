@@ -1,6 +1,7 @@
 package model.mongo
 
-import model.tools.Tool
+import model.tools.Helper.UntypedExercise
+import model.tools.{Tool, ToolList}
 import model.{Exercise, ExerciseContent}
 import play.api.libs.json.{Format, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
@@ -46,22 +47,22 @@ trait MongoExerciseQueries {
           .count(Some(BSONDocument("toolId" -> toolId, "collectionId" -> collectionId)))
     } yield exerciseCount
 
-  protected def futureExercisesForCollection(
-    tool: Tool,
-    collectionId: Int
-  ): Future[Seq[Exercise[tool.ExContentType]]] = {
-    implicit val ef: Format[Exercise[tool.ExContentType]] = tool.jsonFormats.exerciseFormat
+  protected def futureExercisesForCollection(toolId: String, collectionId: Int): Future[Seq[UntypedExercise]] =
+    ToolList.tools.find(_.id == toolId) match {
+      case None => Future.failed(new Exception("No such tool..."))
+      case Some(tool) =>
+        implicit val ef: Format[Exercise[tool.ExContentType]] = tool.jsonFormats.exerciseFormat
 
-    for {
-      exercisesCollection <- futureExercisesCollection
-      exercises <-
-        exercisesCollection
-          .find(BSONDocument("toolId" -> tool.id, "collectionId" -> collectionId), Option.empty[BSONDocument])
-          .sort(BSONDocument("exerciseId" -> 1))
-          .cursor[Exercise[tool.ExContentType]]()
-          .collect[Seq](-1, Cursor.FailOnError())
-    } yield exercises
-  }
+        for {
+          exercisesCollection <- futureExercisesCollection
+          exercises <-
+            exercisesCollection
+              .find(BSONDocument("toolId" -> tool.id, "collectionId" -> collectionId), Option.empty[BSONDocument])
+              .sort(BSONDocument("exerciseId" -> 1))
+              .cursor[Exercise[tool.ExContentType]]()
+              .collect[Seq](-1, Cursor.FailOnError())
+        } yield exercises
+    }
 
   protected def futureExerciseExists(toolId: String, collectionId: Int, exerciseId: Int): Future[Boolean] =
     for {

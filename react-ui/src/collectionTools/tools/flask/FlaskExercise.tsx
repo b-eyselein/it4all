@@ -42,12 +42,12 @@ export function FlaskExercise({exercise, content}: IProps): JSX.Element {
       .catch((err) => console.error(err));
   }
 
-  function renderCorrection({me}: FlaskCorrectionMutation): JSX.Element {
-    if (!me?.flaskExercise?.correct) {
+  function renderCorrection({flaskExercise}: FlaskCorrectionMutation): JSX.Element {
+    if (!flaskExercise) {
       throw new Error('TODO!');
     }
 
-    const {solutionSaved,/*proficienciesUpdated, resultSaved,*/ result} = me.flaskExercise.correct;
+    const {solutionSaved,/*proficienciesUpdated, resultSaved,*/ result} = flaskExercise.correct;
 
     console.info(JSON.stringify(result, null, 2));
 

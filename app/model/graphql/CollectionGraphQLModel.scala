@@ -21,7 +21,7 @@ trait CollectionGraphQLModel extends BasicGraphQLModels with ExerciseGraphQLMode
       Field(
         "exercises",
         ListType(exerciseType),
-        resolve = context => futureExercisesForCollection(context.value._1, context.value._2.collectionId)
+        resolve = context => futureExercisesForCollection(context.value._2.toolId, context.value._2.collectionId)
       ),
       Field(
         "exercise",

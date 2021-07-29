@@ -50,13 +50,13 @@ export function WebExercise({exercise, content}: IProps): JSX.Element {
       .catch((err) => console.error(err));
   }
 
-  function renderCorrection({me}: WebCorrectionMutation): JSX.Element {
+  function renderCorrection({webExercise}: WebCorrectionMutation): JSX.Element {
 
-    if (!me?.webExercise?.correct) {
+    if (!webExercise) {
       return <div className="notification is-danger has-text-centered">{t('errorWhileCorrection...')}</div>;
     }
 
-    const {solutionSaved,/*proficienciesUpdated,resultSaved,*/result} = me.webExercise.correct;
+    const {solutionSaved,/*proficienciesUpdated,resultSaved,*/result} = webExercise.correct;
 
     return (
       <>

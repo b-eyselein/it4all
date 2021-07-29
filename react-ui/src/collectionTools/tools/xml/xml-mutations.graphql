@@ -1,9 +1,7 @@
 mutation XmlCorrection($collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
-  me {
-    xmlExercise(collId: $collId, exId: $exId)  {
-      correct(part: $part, solution: $solution) {
-        ...XmlCorrectionResult
-      }
+  xmlExercise(collId: $collId, exId: $exId)  {
+    correct(part: $part, solution: $solution) {
+      ...XmlCorrectionResult
     }
   }
 }

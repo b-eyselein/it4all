@@ -1,9 +1,7 @@
 mutation RegexCorrection($collectionId: Int!, $exerciseId: Int!, $part: RegexExPart!, $solution: String!) {
-  me {
-    regexExercise(collId: $collectionId, exId: $exerciseId) {
-      correct(part: $part, solution: $solution) {
-        ...RegexCorrectionResult
-      }
+  regexExercise(collId: $collectionId, exId: $exerciseId) {
+    correct(part: $part, solution: $solution) {
+      ...RegexCorrectionResult
     }
   }
 }

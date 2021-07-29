@@ -52,7 +52,6 @@ export function XmlExercise({exercise, content}: IProps): JSX.Element {
     editable: !isGrammarPart,
   };
 
-
   const exerciseDescription = isGrammarPart
     ? <>
       <p className="has-text-weight-bold">Erstellen Sie eine DTD zu folgender Beschreibung:</p>
@@ -71,12 +70,12 @@ export function XmlExercise({exercise, content}: IProps): JSX.Element {
       .catch((err) => console.error(err));
   }
 
-  function renderCorrection({me}: XmlCorrectionMutation): JSX.Element {
-    if (!me?.xmlExercise?.correct) {
+  function renderCorrection({xmlExercise}: XmlCorrectionMutation): JSX.Element {
+    if (!xmlExercise) {
       return <div className="notification is-danger has-text-centered">{t('error while correction...')}</div>;
     }
 
-    const {solutionSaved, /*proficienciesUpdated, resultSaved,*/ result} = me.xmlExercise.correct;
+    const {solutionSaved, /*proficienciesUpdated, resultSaved,*/ result} = xmlExercise.correct;
 
     return (
       <>

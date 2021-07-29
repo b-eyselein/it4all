@@ -15,12 +15,12 @@ export function RegexCorrection({mutationResult}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
 
-  function render({me}: RegexCorrectionMutation): JSX.Element {
-    if (!me || !me.regexExercise) {
+  function render({regexExercise}: RegexCorrectionMutation): JSX.Element {
+    if (!regexExercise) {
       return <div className="notification is-danger">{t('correctionError')}</div>;
     }
 
-    const {solutionSaved, result/* TODO:, resultSaved, proficienciesUpdated*/}: RegexCorrectionResultFragment = me.regexExercise.correct;
+    const {solutionSaved, result/* TODO:, resultSaved, proficienciesUpdated*/}: RegexCorrectionResultFragment = regexExercise.correct;
 
     return <>
 

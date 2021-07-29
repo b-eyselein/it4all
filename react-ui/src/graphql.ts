@@ -446,7 +446,14 @@ export type Mutation = {
   __typename?: 'Mutation';
   register?: Maybe<Scalars['String']>;
   login?: Maybe<LoggedInUserWithToken>;
-  me?: Maybe<UserMutations>;
+  ebnfExercise?: Maybe<EbnfExerciseMutations>;
+  flaskExercise?: Maybe<FlaskExerciseMutations>;
+  programmingExercise?: Maybe<ProgrammingExerciseMutations>;
+  regexExercise?: Maybe<RegexExerciseMutations>;
+  sqlExercise?: Maybe<SqlExerciseMutations>;
+  umlExercise?: Maybe<UmlExerciseMutations>;
+  webExercise?: Maybe<WebExerciseMutations>;
+  xmlExercise?: Maybe<XmlExerciseMutations>;
 };
 
 
@@ -457,6 +464,54 @@ export type MutationRegisterArgs = {
 
 export type MutationLoginArgs = {
   credentials: UserCredentials;
+};
+
+
+export type MutationEbnfExerciseArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+};
+
+
+export type MutationFlaskExerciseArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+};
+
+
+export type MutationProgrammingExerciseArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+};
+
+
+export type MutationRegexExerciseArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+};
+
+
+export type MutationSqlExerciseArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+};
+
+
+export type MutationUmlExerciseArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+};
+
+
+export type MutationWebExerciseArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
+};
+
+
+export type MutationXmlExerciseArgs = {
+  collId: Scalars['Int'];
+  exId: Scalars['Int'];
 };
 
 export type NewMatch = {
@@ -750,11 +805,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Delete = 'DELETE',
-  Create = 'CREATE',
   Update = 'UPDATE',
   Insert = 'INSERT',
-  Select = 'SELECT'
+  Select = 'SELECT',
+  Create = 'CREATE',
+  Delete = 'DELETE'
 }
 
 export type SqlKeyCellValueObject = {
@@ -1206,66 +1261,6 @@ export type UserCredentials = {
   password: Scalars['String'];
 };
 
-export type UserMutations = {
-  __typename?: 'UserMutations';
-  ebnfExercise?: Maybe<EbnfExerciseMutations>;
-  flaskExercise?: Maybe<FlaskExerciseMutations>;
-  programmingExercise?: Maybe<ProgrammingExerciseMutations>;
-  regexExercise?: Maybe<RegexExerciseMutations>;
-  sqlExercise?: Maybe<SqlExerciseMutations>;
-  umlExercise?: Maybe<UmlExerciseMutations>;
-  webExercise?: Maybe<WebExerciseMutations>;
-  xmlExercise?: Maybe<XmlExerciseMutations>;
-};
-
-
-export type UserMutationsEbnfExerciseArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type UserMutationsFlaskExerciseArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type UserMutationsProgrammingExerciseArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type UserMutationsRegexExerciseArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type UserMutationsSqlExerciseArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type UserMutationsUmlExerciseArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type UserMutationsWebExerciseArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
-
-export type UserMutationsXmlExerciseArgs = {
-  collId: Scalars['Int'];
-  exId: Scalars['Int'];
-};
-
 export type UserProficiency = {
   __typename?: 'UserProficiency';
   username: Scalars['String'];
@@ -1425,15 +1420,12 @@ export type FlaskCorrectionMutationVariables = Exact<{
 
 export type FlaskCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { me?: Maybe<(
-    { __typename?: 'UserMutations' }
-    & { flaskExercise?: Maybe<(
-      { __typename?: 'FlaskExerciseMutations' }
-      & { correct: (
-        { __typename?: 'FlaskCorrectionResult' }
-        & FlaskCorrectionResultFragment
-      ) }
-    )> }
+  & { flaskExercise?: Maybe<(
+    { __typename?: 'FlaskExerciseMutations' }
+    & { correct: (
+      { __typename?: 'FlaskCorrectionResult' }
+      & FlaskCorrectionResultFragment
+    ) }
   )> }
 );
 
@@ -1470,15 +1462,12 @@ export type ProgrammingCorrectionMutationVariables = Exact<{
 
 export type ProgrammingCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { me?: Maybe<(
-    { __typename?: 'UserMutations' }
-    & { programmingExercise?: Maybe<(
-      { __typename?: 'ProgrammingExerciseMutations' }
-      & { correct: (
-        { __typename?: 'ProgrammingCorrectionResult' }
-        & ProgrammingCorrectionResultFragment
-      ) }
-    )> }
+  & { programmingExercise?: Maybe<(
+    { __typename?: 'ProgrammingExerciseMutations' }
+    & { correct: (
+      { __typename?: 'ProgrammingCorrectionResult' }
+      & ProgrammingCorrectionResultFragment
+    ) }
   )> }
 );
 
@@ -1523,15 +1512,12 @@ export type RegexCorrectionMutationVariables = Exact<{
 
 export type RegexCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { me?: Maybe<(
-    { __typename?: 'UserMutations' }
-    & { regexExercise?: Maybe<(
-      { __typename?: 'RegexExerciseMutations' }
-      & { correct: (
-        { __typename?: 'RegexCorrectionResult' }
-        & RegexCorrectionResultFragment
-      ) }
-    )> }
+  & { regexExercise?: Maybe<(
+    { __typename?: 'RegexExerciseMutations' }
+    & { correct: (
+      { __typename?: 'RegexCorrectionResult' }
+      & RegexCorrectionResultFragment
+    ) }
   )> }
 );
 
@@ -1603,15 +1589,12 @@ export type SqlCorrectionMutationVariables = Exact<{
 
 export type SqlCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { me?: Maybe<(
-    { __typename?: 'UserMutations' }
-    & { sqlExercise?: Maybe<(
-      { __typename?: 'SqlExerciseMutations' }
-      & { correct: (
-        { __typename?: 'SqlCorrectionResult' }
-        & SqlCorrectionResultFragment
-      ) }
-    )> }
+  & { sqlExercise?: Maybe<(
+    { __typename?: 'SqlExerciseMutations' }
+    & { correct: (
+      { __typename?: 'SqlCorrectionResult' }
+      & SqlCorrectionResultFragment
+    ) }
   )> }
 );
 
@@ -1881,15 +1864,12 @@ export type WebCorrectionMutationVariables = Exact<{
 
 export type WebCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { me?: Maybe<(
-    { __typename?: 'UserMutations' }
-    & { webExercise?: Maybe<(
-      { __typename?: 'WebExerciseMutations' }
-      & { correct: (
-        { __typename?: 'WebCorrectionResult' }
-        & WebCorrectionResultFragment
-      ) }
-    )> }
+  & { webExercise?: Maybe<(
+    { __typename?: 'WebExerciseMutations' }
+    & { correct: (
+      { __typename?: 'WebCorrectionResult' }
+      & WebCorrectionResultFragment
+    ) }
   )> }
 );
 
@@ -1967,15 +1947,12 @@ export type XmlCorrectionMutationVariables = Exact<{
 
 export type XmlCorrectionMutation = (
   { __typename?: 'Mutation' }
-  & { me?: Maybe<(
-    { __typename?: 'UserMutations' }
-    & { xmlExercise?: Maybe<(
-      { __typename?: 'XmlExerciseMutations' }
-      & { correct: (
-        { __typename?: 'XmlCorrectionResult' }
-        & XmlCorrectionResultFragment
-      ) }
-    )> }
+  & { xmlExercise?: Maybe<(
+    { __typename?: 'XmlExerciseMutations' }
+    & { correct: (
+      { __typename?: 'XmlCorrectionResult' }
+      & XmlCorrectionResultFragment
+    ) }
   )> }
 );
 
@@ -3309,11 +3286,9 @@ export const LoggedInUserWithTokenFragmentDoc = gql`
     `;
 export const FlaskCorrectionDocument = gql`
     mutation FlaskCorrection($collId: Int!, $exId: Int!, $part: FlaskExercisePart!, $solution: FilesSolutionInput!) {
-  me {
-    flaskExercise(collId: $collId, exId: $exId) {
-      correct(part: $part, solution: $solution) {
-        ...FlaskCorrectionResult
-      }
+  flaskExercise(collId: $collId, exId: $exId) {
+    correct(part: $part, solution: $solution) {
+      ...FlaskCorrectionResult
     }
   }
 }
@@ -3349,11 +3324,9 @@ export type FlaskCorrectionMutationResult = Apollo.MutationResult<FlaskCorrectio
 export type FlaskCorrectionMutationOptions = Apollo.BaseMutationOptions<FlaskCorrectionMutation, FlaskCorrectionMutationVariables>;
 export const ProgrammingCorrectionDocument = gql`
     mutation ProgrammingCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $solution: FilesSolutionInput!) {
-  me {
-    programmingExercise(collId: $collId, exId: $exId) {
-      correct(part: $part, solution: $solution) {
-        ...ProgrammingCorrectionResult
-      }
+  programmingExercise(collId: $collId, exId: $exId) {
+    correct(part: $part, solution: $solution) {
+      ...ProgrammingCorrectionResult
     }
   }
 }
@@ -3389,11 +3362,9 @@ export type ProgrammingCorrectionMutationResult = Apollo.MutationResult<Programm
 export type ProgrammingCorrectionMutationOptions = Apollo.BaseMutationOptions<ProgrammingCorrectionMutation, ProgrammingCorrectionMutationVariables>;
 export const RegexCorrectionDocument = gql`
     mutation RegexCorrection($collectionId: Int!, $exerciseId: Int!, $part: RegexExPart!, $solution: String!) {
-  me {
-    regexExercise(collId: $collectionId, exId: $exerciseId) {
-      correct(part: $part, solution: $solution) {
-        ...RegexCorrectionResult
-      }
+  regexExercise(collId: $collectionId, exId: $exerciseId) {
+    correct(part: $part, solution: $solution) {
+      ...RegexCorrectionResult
     }
   }
 }
@@ -3429,11 +3400,9 @@ export type RegexCorrectionMutationResult = Apollo.MutationResult<RegexCorrectio
 export type RegexCorrectionMutationOptions = Apollo.BaseMutationOptions<RegexCorrectionMutation, RegexCorrectionMutationVariables>;
 export const SqlCorrectionDocument = gql`
     mutation SqlCorrection($collectionId: Int!, $exerciseId: Int!, $part: SqlExPart!, $solution: String!) {
-  me {
-    sqlExercise(collId: $collectionId, exId: $exerciseId) {
-      correct(part: $part, solution: $solution) {
-        ...SqlCorrectionResult
-      }
+  sqlExercise(collId: $collectionId, exId: $exerciseId) {
+    correct(part: $part, solution: $solution) {
+      ...SqlCorrectionResult
     }
   }
 }
@@ -3469,11 +3438,9 @@ export type SqlCorrectionMutationResult = Apollo.MutationResult<SqlCorrectionMut
 export type SqlCorrectionMutationOptions = Apollo.BaseMutationOptions<SqlCorrectionMutation, SqlCorrectionMutationVariables>;
 export const WebCorrectionDocument = gql`
     mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution: FilesSolutionInput!) {
-  me {
-    webExercise(collId: $collId, exId: $exId) {
-      correct(part: $part, solution: $solution) {
-        ...WebCorrectionResult
-      }
+  webExercise(collId: $collId, exId: $exId) {
+    correct(part: $part, solution: $solution) {
+      ...WebCorrectionResult
     }
   }
 }
@@ -3509,11 +3476,9 @@ export type WebCorrectionMutationResult = Apollo.MutationResult<WebCorrectionMut
 export type WebCorrectionMutationOptions = Apollo.BaseMutationOptions<WebCorrectionMutation, WebCorrectionMutationVariables>;
 export const XmlCorrectionDocument = gql`
     mutation XmlCorrection($collId: Int!, $exId: Int!, $part: XmlExPart!, $solution: XmlSolutionInput!) {
-  me {
-    xmlExercise(collId: $collId, exId: $exId) {
-      correct(part: $part, solution: $solution) {
-        ...XmlCorrectionResult
-      }
+  xmlExercise(collId: $collId, exId: $exId) {
+    correct(part: $part, solution: $solution) {
+      ...XmlCorrectionResult
     }
   }
 }

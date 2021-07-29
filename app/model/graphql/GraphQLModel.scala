@@ -54,7 +54,7 @@ trait GraphQLModel
         ListType(collectionType),
         resolve = context =>
           futureCollectionsForTool(context.value.id)
-            .map((collections) => collections.map((collection) => (context.value, collection)))
+            .map(collections => collections.map(collection => (context.value, collection)))
       ),
       Field(
         "collection",
@@ -62,7 +62,7 @@ trait GraphQLModel
         arguments = collIdArgument :: Nil,
         resolve = context =>
           futureCollectionById(context.value.id, context.arg(collIdArgument))
-            .map((collections) => collections.map((collection) => (context.value, collection)))
+            .map(collections => collections.map(collection => (context.value, collection)))
       ),
       // Special fields for exercises
       Field("exerciseCount", LongType, resolve = context => futureExerciseCountForTool(context.value.id)),

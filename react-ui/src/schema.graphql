@@ -357,7 +357,14 @@ interface MatchingResult {
 type Mutation {
   register(registerValues: RegisterValues!): String
   login(credentials: UserCredentials!): LoggedInUserWithToken
-  me: UserMutations
+  ebnfExercise(collId: Int!, exId: Int!): EbnfExerciseMutations
+  flaskExercise(collId: Int!, exId: Int!): FlaskExerciseMutations
+  programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
+  regexExercise(collId: Int!, exId: Int!): RegexExerciseMutations
+  sqlExercise(collId: Int!, exId: Int!): SqlExerciseMutations
+  umlExercise(collId: Int!, exId: Int!): UmlExerciseMutations
+  webExercise(collId: Int!, exId: Int!): WebExerciseMutations
+  xmlExercise(collId: Int!, exId: Int!): XmlExerciseMutations
 }
 
 interface NewMatch {
@@ -586,11 +593,11 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  DELETE
-  CREATE
   UPDATE
   INSERT
   SELECT
+  CREATE
+  DELETE
 }
 
 type SqlKeyCellValueObject {
@@ -991,17 +998,6 @@ type UnitTestTestConfig {
 input UserCredentials {
   username: String!
   password: String!
-}
-
-type UserMutations {
-  ebnfExercise(collId: Int!, exId: Int!): EbnfExerciseMutations
-  flaskExercise(collId: Int!, exId: Int!): FlaskExerciseMutations
-  programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
-  regexExercise(collId: Int!, exId: Int!): RegexExerciseMutations
-  sqlExercise(collId: Int!, exId: Int!): SqlExerciseMutations
-  umlExercise(collId: Int!, exId: Int!): UmlExerciseMutations
-  webExercise(collId: Int!, exId: Int!): WebExerciseMutations
-  xmlExercise(collId: Int!, exId: Int!): XmlExerciseMutations
 }
 
 type UserProficiency {

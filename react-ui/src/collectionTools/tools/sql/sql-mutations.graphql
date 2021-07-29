@@ -1,9 +1,7 @@
 mutation SqlCorrection($collectionId: Int!, $exerciseId: Int!, $part: SqlExPart!, $solution: String!) {
-  me {
-    sqlExercise(collId: $collectionId, exId: $exerciseId) {
-      correct(part: $part, solution: $solution) {
-        ...SqlCorrectionResult
-      }
+  sqlExercise(collId: $collectionId, exId: $exerciseId) {
+    correct(part: $part, solution: $solution) {
+      ...SqlCorrectionResult
     }
   }
 }

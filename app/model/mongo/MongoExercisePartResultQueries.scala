@@ -1,6 +1,6 @@
 package model.mongo
 
-import model.{Exercise, JsonProtocols}
+import model.JsonProtocols
 import model.result.BasicExercisePartResult
 import play.api.libs.json.OFormat
 import play.modules.reactivemongo.ReactiveMongoComponents
@@ -27,22 +27,23 @@ trait MongoExercisePartResultQueries {
     collectionId: Int,
     exerciseId: Int,
     partId: String
-  ): BSONDocument =
-    BSONDocument(
-      "username"     -> username,
-      "toolId"       -> toolId,
-      "collectionId" -> collectionId,
-      "exerciseId"   -> exerciseId,
-      "partId"       -> partId
-    )
+  ): BSONDocument = BSONDocument(
+    "username"     -> username,
+    "toolId"       -> toolId,
+    "collectionId" -> collectionId,
+    "exerciseId"   -> exerciseId,
+    "partId"       -> partId
+  )
 
   protected def futureExerciseResultById(
     username: String,
-    exercise: Exercise[_],
+    toolId: String,
+    collectionId: Int,
+    exerciseId: Int,
     partId: String
   ): Future[Option[BasicExercisePartResult]] = {
 
-    val key = basicExercisePartResultKey(username, exercise.toolId, exercise.collectionId, exercise.exerciseId, partId)
+    val key = basicExercisePartResultKey(username, toolId, collectionId, exerciseId, partId)
 
     for {
       exerciseResultsCollection <- futureExerciseResultsCollection

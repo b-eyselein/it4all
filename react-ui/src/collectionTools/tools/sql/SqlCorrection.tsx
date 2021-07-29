@@ -14,12 +14,12 @@ export function SqlCorrection({mutationResult}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
 
-  function render({me}: SqlCorrectionMutation): JSX.Element {
-    if (!me || !me.sqlExercise) {
+  function render({sqlExercise}: SqlCorrectionMutation): JSX.Element {
+    if (!sqlExercise) {
       return <div className="notification is-danger">{t('correctionError')}</div>;
     }
 
-    const {solutionSaved, result/* TODO: , resultSaved, proficienciesUpdated */} = me.sqlExercise.correct;
+    const {solutionSaved, result/* TODO: , resultSaved, proficienciesUpdated */} = sqlExercise.correct;
 
     const {
       columnComparison,
