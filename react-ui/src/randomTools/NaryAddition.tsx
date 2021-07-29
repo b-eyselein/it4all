@@ -78,7 +78,6 @@ export function NaryAddition(): JSX.Element {
     <div className="container">
       <h1 className="title is-3 has-text-centered">{t('naryAddition')}</h1>
 
-
       <div className="columns">
         <div className="column">
           <div className="field">
@@ -88,7 +87,7 @@ export function NaryAddition(): JSX.Element {
                 <button className="button" onClick={() => setMax(max / 2)} disabled={max === minimalMax}>/ 2</button>
               </div>
               <div className="control is-expanded">
-                <input className="input has-text-centered" type="number" id="max" value={max}/>
+                <input className="input has-text-centered" type="number" id="max" value={max} readOnly/>
               </div>
               <div className="control">
                 <button className="button" onClick={() => setMax(max * 2)} disabled={max === maximalMax}>* 2</button>
@@ -146,14 +145,12 @@ export function NaryAddition(): JSX.Element {
         </div>
       </div>
 
-      {state.checked &&
-      <div className={classNames('notification', 'has-text-centered', state.correct ? 'is-success' : 'is-danger')}>
+      {state.checked && <div className={classNames('notification', 'has-text-centered', state.correct ? 'is-success' : 'is-danger')}>
         {state.correct
           ? <span>&#10008; Die Lösung ist nicht korrekt.</span>
           : <span>&#10004; Die Lösung ist korrekt.</span>
         }
-      </div>
-      }
+      </div>}
 
       <RandomSolveButtons correct={checkSolution} nextExercise={nextExercise}/>
 
