@@ -1,6 +1,14 @@
 import React from 'react';
 import {ConcreteExerciseIProps} from '../../Exercise';
-import {ExerciseFileFragment, useXmlCorrectionMutation, XmlCorrectionMutation, XmlExerciseContentFragment, XmlExPart, XmlSolutionInput} from '../../../graphql';
+import {
+  ExerciseFileFragment,
+  FilesSolution,
+  useXmlCorrectionMutation,
+  XmlCorrectionMutation,
+  XmlExerciseContentFragment,
+  XmlExPart,
+  XmlSolutionInput
+} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {useTranslation} from 'react-i18next';
@@ -91,13 +99,19 @@ export function XmlExercise({exercise, content}: IProps): JSX.Element {
     );
   }
 
-  function renderSampleSolutions(): JSX.Element [] {
-    return content.xmlSampleSolutions.map((sample, index) => <pre key={index}>{isGrammarPart ? sample.grammar : sample.document}</pre>);
-  }
-
   // FIXME: sample solutions!
 
+  const sampleSolutions: FilesSolution[] = content.xmlSampleSolutions.map(({document, grammar}) => {
+    return {
+      files: [
+        isGrammarPart
+          ? {name: `${content.rootNode}.dtd`, content: grammar, fileType: 'dtd', editable: false}
+          : {name: `${content.rootNode}.xml`, content: document, fileType: 'xml', editable: false}
+      ]
+    };
+  });
+
   return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={exerciseDescription} initialFiles={[grammarFile, documentFile]}
-                        sampleSolutions={[] /*content.xmlSampleSolutions*/} correct={correct} isCorrecting={correctionMutationResult.loading}
+                        sampleSolutions={sampleSolutions} correct={correct} isCorrecting={correctionMutationResult.loading}
                         correctionTabRender={() => <WithQuery query={correctionMutationResult} render={renderCorrection}/>}/>;
 }
