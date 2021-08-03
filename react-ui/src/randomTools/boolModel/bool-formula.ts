@@ -23,10 +23,6 @@ function takeRandom<T>(from: T[]): T {
   return from[Math.floor(Math.random() * from.length)];
 }
 
-const varA: BooleanVariable = new BooleanVariable('a');
-const varB: BooleanVariable = new BooleanVariable('b');
-const varC: BooleanVariable = new BooleanVariable('c');
-
 
 function generateRandomOperator(left: BooleanNode, right: BooleanNode): BooleanNode {
   const leftNegated: boolean = randomInt(0, 3) === 2;
@@ -91,6 +87,11 @@ export class BooleanFormula {
   }
 
 }
+
+
+const varA: BooleanVariable = new BooleanVariable('a');
+const varB: BooleanVariable = new BooleanVariable('b');
+const varC: BooleanVariable = new BooleanVariable('c');
 
 export function generateBooleanFormula(left: BooleanVariable): BooleanFormula {
   const depth: number = randomInt(1, 3);

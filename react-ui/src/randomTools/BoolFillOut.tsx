@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {BooleanFormula, generateBooleanFormula} from './bool/_model/bool-formula';
-import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './bool/_model/bool-component-helper';
+import {BooleanFormula, generateBooleanFormula} from './boolModel/bool-formula';
+import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/bool-component-helper';
 import classNames from 'classnames';
 import {RandomSolveButtons} from './RandomToolBase';
-import {Assignment, BooleanNode, calculateAssignments} from './bool/_model/bool-node';
+import {Assignment, BooleanNode, calculateAssignments} from './boolModel/bool-node';
 import {useTranslation} from 'react-i18next';
 
 interface IState {

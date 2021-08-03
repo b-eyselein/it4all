@@ -3,7 +3,7 @@ import {RandomSolveButtons} from './RandomToolBase';
 import classNames from 'classnames';
 import {NaryNumberReadOnlyInputComponent} from './NaryNumberReadOnlyInput';
 import {allNumberingSystems, BINARY_SYSTEM, maximalMax, minimalMax, NaryReadOnlyNumberInput, NumberingSystem} from './nary';
-import {randomInt} from './bool/_model/bool-formula';
+import {randomInt} from './boolModel/bool-formula';
 import {useTranslation} from 'react-i18next';
 
 const firstSummandFieldId = 'firstSummand';

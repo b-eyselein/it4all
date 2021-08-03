@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import {BooleanFormula, generateBooleanFormula} from './bool/_model/bool-formula';
-import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './bool/_model/bool-component-helper';
+import {BooleanFormula, generateBooleanFormula} from './boolModel/bool-formula';
+import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/bool-component-helper';
 import {useTranslation} from 'react-i18next';
-import {Assignment, BooleanNode, calculateAssignments} from './bool/_model/bool-node';
+import {Assignment, BooleanNode, calculateAssignments} from './boolModel/bool-node';
 import classNames from 'classnames';
 import {RandomSolveButtons} from './RandomToolBase';
 import {BoolCreateInstructions} from './BoolCreateInstructions';
-import {parseBooleanFormulaFromLanguage} from './bool/_model/boolean-formula-parser';
+import {parseBooleanFormulaFromLanguage} from './boolModel/boolean-formula-parser';
 import {Result} from 'parsimmon';
 
 interface IState {
