@@ -40,7 +40,6 @@ export function BoolCreate(): JSX.Element {
     const parsed: Result<BooleanNode> = parseBooleanFormulaFromLanguage(state.solution);
 
     if (parsed.status) {
-
       const userSolutionFormula = parsed.value;
 
       setState(({assignments, ...rest}) => {

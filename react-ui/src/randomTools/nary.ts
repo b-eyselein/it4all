@@ -24,33 +24,3 @@ export const allNumberingSystems: NumberingSystem[] = [
   {radix: 8, name: 'Oktalsystem', allowedDigits: '01234567'},
   HEXADECIMAL_SYSTEM
 ];
-
-export interface NaryReadOnlyNumberInput {
-  decimalNumber: number;
-  numberingSystem: NumberingSystem;
-  fieldId: string;
-  labelContent: string;
-  maxValueForDigits: number;
-}
-
-export abstract class NaryComponentBase {
-
-  max: number;
-
-  protected constructor(defaultMax = 256) {
-    this.max = defaultMax;
-  }
-
-  abstract update(): void;
-
-  halveMax(): void {
-    this.max = Math.max(minimalMax, this.max / 2);
-    this.update();
-  }
-
-  doubleMax(): void {
-    this.max = Math.min(maximalMax, this.max * 2);
-    this.update();
-  }
-
-}
