@@ -4,7 +4,9 @@ import {boolRandomTool, naryRandomTool, RandomTool} from './randomTools';
 import {useTranslation} from 'react-i18next';
 import {BoolFillOut} from './BoolFillOut';
 import {NaryAddition} from './NaryAddition';
+import {NaryConversion} from './NaryConversion';
 import {BoolCreate} from './BoolCreate';
+import {NaryTwoConversion} from './NaryTwoConversion';
 
 interface RouteParams {
   toolId: string;
@@ -20,6 +22,8 @@ export function RandomToolBase(): JSX.Element {
     <Route path={`${url}/bool/create`} component={BoolCreate}/>
     <Route path={`${url}/nary`} exact render={() => <RandomToolOverview tool={naryRandomTool}/>}/>
     <Route path={`${url}/nary/addition`} exact component={NaryAddition}/>
+    <Route path={`${url}/nary/conversion`} exact component={NaryConversion}/>
+    <Route path={`${url}/nary/twoConversion`} component={NaryTwoConversion}/>
   </Switch>;
 }
 
