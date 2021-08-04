@@ -14,8 +14,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected type Q <: net.sf.jsqlparser.statement.Statement
 
-  private val queryAndStaticCompOrdering: Ordering[(Q, SqlQueriesStaticComparison)] = (x, y) =>
-    y._2.points.quarters - x._2.points.quarters
+  private val queryAndStaticCompOrdering: Ordering[(Q, SqlQueriesStaticComparison)] = (x, y) => y._2.points.quarters - x._2.points.quarters
 
   def correct(
     database: SqlExecutionDAO,

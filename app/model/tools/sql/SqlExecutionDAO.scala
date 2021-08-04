@@ -1,7 +1,5 @@
 package model.tools.sql
 
-import java.sql.Connection
-
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.insert.Insert
@@ -9,7 +7,9 @@ import net.sf.jsqlparser.statement.select.Select
 import net.sf.jsqlparser.statement.update.Update
 import play.api.Logger
 import slick.jdbc.JdbcBackend.Database
+import slick.util.AsyncExecutor
 
+import java.sql.Connection
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
@@ -34,16 +34,16 @@ abstract class SqlExecutionDAO(port: Int) {
       }
     }
 
-  protected def db(maybeSchemaName: Option[String]): Database =
-    Database.forURL(
-      url = maybeSchemaName match {
-        case None             => s"jdbc:mysql://localhost:$port?useSSL=false"
-        case Some(schemaName) => s"jdbc:mysql://localhost:$port/$schemaName?useSSL=false"
-      },
-      user = "it4all",
-      password = "sT8aV#k7",
-      driver = "com.mysql.cj.jdbc.Driver"
-    )
+  protected def db(maybeSchemaName: Option[String]): Database = Database.forURL(
+    url = maybeSchemaName match {
+      case None             => s"jdbc:mysql://localhost:$port?useSSL=false"
+      case Some(schemaName) => s"jdbc:mysql://localhost:$port/$schemaName?useSSL=false"
+    },
+    user = "it4all",
+    password = "sT8aV#k7",
+    driver = "com.mysql.cj.jdbc.Driver",
+    executor = AsyncExecutor("AsyncExecutor.default", 20, 20, 1000, maxConnections = 20)
+  )
 
   def executeQueries(
     schemaName: String,
