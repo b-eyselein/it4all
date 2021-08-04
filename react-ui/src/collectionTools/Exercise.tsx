@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {ExerciseIProps} from '../ToolBase';
 import {Redirect, useRouteMatch} from 'react-router-dom';
-import {ExerciseQuery, ExerciseSolveFieldsFragment, FilesSolutionInput, useExerciseQuery, XmlSolutionInput} from '../graphql';
+import {ExerciseQuery, ExerciseSolveFieldsFragment, FilesSolutionInput, UmlClassDiagramInput, useExerciseQuery, XmlSolutionInput} from '../graphql';
 import {WithQuery} from '../WithQuery';
 import {EbnfExercise} from './tools/ebnf/EbnfExercise';
 import {RegexExercise} from './tools/regex/RegexExercise';
@@ -78,7 +78,7 @@ export function Exercise<SolutionType>({toolId, collectionId, exerciseId}: Exerc
     } else if (content.__typename === 'SqlExerciseContent') {
       return <SqlExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution as string | undefined}/>;
     } else if (content.__typename === 'UmlExerciseContent') {
-      return <UmlExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution}/>;
+      return <UmlExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution as UmlClassDiagramInput | undefined}/>;
     } else if (content.__typename === 'WebExerciseContent') {
       return <WebExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution as FilesSolutionInput | undefined}/>;
     } else if (content.__typename === 'XmlExerciseContent') {

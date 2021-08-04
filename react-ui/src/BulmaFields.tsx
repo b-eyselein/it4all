@@ -7,6 +7,7 @@ interface CustomInputFieldProps extends FieldProps {
   required?: boolean;
 }
 
+// eslint-disable-next-line
 export function BulmaInputField({label, id, required, field, form, ...props}: CustomInputFieldProps): JSX.Element {
   return (
     <div className="field">
