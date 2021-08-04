@@ -14,9 +14,9 @@ import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import classNames from 'classnames';
 
-type IProps = ConcreteExerciseIProps<FlaskExerciseContentFragment>;
+type IProps = ConcreteExerciseIProps<FlaskExerciseContentFragment, FilesSolutionInput>;
 
-export function FlaskExercise({exercise, content}: IProps): JSX.Element {
+export function FlaskExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
   const [correctExercise, correctionMutationResult] = useFlaskCorrectionMutation();
 

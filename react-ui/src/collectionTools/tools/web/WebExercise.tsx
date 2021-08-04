@@ -15,9 +15,9 @@ import {useTranslation} from 'react-i18next';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import {HtmlTaskResultDisplay} from './HtmlTaskResultDisplay';
 
-type IProps = ConcreteExerciseIProps<WebExerciseContentFragment>;
+type IProps = ConcreteExerciseIProps<WebExerciseContentFragment, FilesSolutionInput>;
 
-export function WebExercise({exercise, content}: IProps): JSX.Element {
+export function WebExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [correctExercise, correctionMutationResult] = useWebCorrectionMutation();

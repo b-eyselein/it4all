@@ -16,9 +16,9 @@ import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import {XmlDocumentResultDisplay} from './XmlDocumentResultDisplay';
 import {XmlGrammarResultDisplay} from './XmlGrammarResultDisplay';
+import {database} from '../../DexieTable';
 
-type IProps = ConcreteExerciseIProps<XmlExerciseContentFragment>;
-
+type IProps = ConcreteExerciseIProps<XmlExerciseContentFragment, XmlSolutionInput>;
 
 export function getXmlGrammarContent(rootNode: string): string {
   return `<!ELEMENT ${rootNode} (EMPTY)>`;
@@ -33,7 +33,7 @@ export function getXmlDocumentContent(rootNode: string): string {
 }
 
 
-export function XmlExercise({exercise, content}: IProps): JSX.Element {
+export function XmlExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [correctExercise, correctionMutationResult] = useXmlCorrectionMutation();
@@ -48,14 +48,16 @@ export function XmlExercise({exercise, content}: IProps): JSX.Element {
 
   const grammarFile = {
     name: `${content.rootNode}.dtd`,
-    content: isGrammarPart ? getXmlGrammarContent(content.rootNode) : content.xmlSampleSolutions[0].grammar,
+    content: oldSolution
+      ? oldSolution.grammar
+      : (isGrammarPart ? getXmlGrammarContent(content.rootNode) : content.xmlSampleSolutions[0].grammar),
     fileType: 'dtd',
     editable: isGrammarPart,
   };
 
   const documentFile = {
     name: `${content.rootNode}.xml`,
-    content: getXmlDocumentContent(content.rootNode),
+    content: oldSolution?.document || getXmlDocumentContent(content.rootNode),
     fileType: 'xml',
     editable: !isGrammarPart,
   };
@@ -73,6 +75,8 @@ export function XmlExercise({exercise, content}: IProps): JSX.Element {
 
   function correct(files: ExerciseFileFragment[]): void {
     const solution: XmlSolutionInput = {grammar: files[0].content, document: files[1].content};
+
+    database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
 
     correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution, part}})
       .catch((err) => console.error(err));

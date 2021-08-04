@@ -3,10 +3,10 @@ import {ConcreteExerciseIProps} from '../../Exercise';
 import {ExerciseFileFragment, FilesSolutionInput, ProgExPart, ProgrammingExerciseContentFragment, useProgrammingCorrectionMutation} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';
 
-type IProps = ConcreteExerciseIProps<ProgrammingExerciseContentFragment>;
+type IProps = ConcreteExerciseIProps<ProgrammingExerciseContentFragment, FilesSolutionInput>;
 
 
-export function ProgrammingExercise({exercise, content}: IProps): JSX.Element {
+export function ProgrammingExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
   const [correctExercise, correctionMutationResult] = useProgrammingCorrectionMutation();
 

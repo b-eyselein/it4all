@@ -13,9 +13,9 @@ import {ConcreteExerciseIProps} from '../../Exercise';
 import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 
-type IProps = ConcreteExerciseIProps<SqlExerciseContentFragment>
+type IProps = ConcreteExerciseIProps<SqlExerciseContentFragment, string>;
 
-export function SqlExercise({exercise, content}: IProps): JSX.Element {
+export function SqlExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [solution, setSolution] = useState('');

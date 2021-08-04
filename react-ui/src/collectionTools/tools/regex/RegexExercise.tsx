@@ -9,9 +9,9 @@ import {ConcreteExerciseIProps} from '../../Exercise';
 import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 
-type IProps = ConcreteExerciseIProps<RegexExerciseContentFragment>;
+type IProps = ConcreteExerciseIProps<RegexExerciseContentFragment, string>;
 
-export function RegexExercise({exercise, content}: IProps): JSX.Element {
+export function RegexExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [showInfo, setShowInfo] = useState(false);
