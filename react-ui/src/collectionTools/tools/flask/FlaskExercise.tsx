@@ -21,6 +21,8 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
 
   const [correctExercise, correctionMutationResult] = useFlaskCorrectionMutation();
 
+  const part = FlaskExercisePart.FlaskSingleExPart;
+
   const exerciseDescription = (
     <>
       <div className="mb-3" dangerouslySetInnerHTML={{__html: exercise.text}}/>
@@ -47,7 +49,7 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
 
     database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
 
-    correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution, part: FlaskExercisePart.FlaskSingleExPart}})
+    correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution, part}})
       .catch((err) => console.error(err));
   }
 
