@@ -12,6 +12,7 @@ import {XmlExercise} from './tools/xml/XmlExercise';
 import {FlaskExercise} from './tools/flask/FlaskExercise';
 import {database} from './DexieTable';
 import {useTranslation} from 'react-i18next';
+import {UmlExercise} from './tools/uml/UmlExercise';
 
 export interface ConcreteExerciseIProps<T, S> {
   exercise: ExerciseSolveFieldsFragment;
@@ -23,6 +24,11 @@ export interface ConcreteExerciseIProps<T, S> {
 interface IState<S> {
   oldSolutionLoaded: boolean;
   oldSolution?: S;
+}
+
+// eslint-disable-next-line
+function neverRender(_x: never): JSX.Element {
+  return <div/>;
 }
 
 export function Exercise<SolutionType>({toolId, collectionId, exerciseId}: ExerciseIProps): JSX.Element {
@@ -38,6 +44,7 @@ export function Exercise<SolutionType>({toolId, collectionId, exerciseId}: Exerc
   }, []);
 
   function render({tool}: ExerciseQuery): JSX.Element {
+
     if (!tool) {
       return <Redirect to={''}/>;
     }
@@ -70,12 +77,14 @@ export function Exercise<SolutionType>({toolId, collectionId, exerciseId}: Exerc
       return <RegexExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution as string | undefined}/>;
     } else if (content.__typename === 'SqlExerciseContent') {
       return <SqlExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution as string | undefined}/>;
+    } else if (content.__typename === 'UmlExerciseContent') {
+      return <UmlExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution}/>;
     } else if (content.__typename === 'WebExerciseContent') {
       return <WebExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution as FilesSolutionInput | undefined}/>;
     } else if (content.__typename === 'XmlExerciseContent') {
       return <XmlExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution as XmlSolutionInput | undefined}/>;
     } else {
-      return <div>{JSON.stringify(content)}</div>;
+      return neverRender(content);
     }
   }
 

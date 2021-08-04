@@ -13,6 +13,7 @@ import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import classNames from 'classnames';
+import {database} from '../../DexieTable';
 
 type IProps = ConcreteExerciseIProps<FlaskExerciseContentFragment, FilesSolutionInput>;
 
@@ -20,23 +21,31 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
 
   const [correctExercise, correctionMutationResult] = useFlaskCorrectionMutation();
 
-  const exerciseDescription = <>
-    <div className="mb-3" dangerouslySetInnerHTML={{__html: exercise.text}}/>
+  const exerciseDescription = (
+    <>
+      <div className="mb-3" dangerouslySetInnerHTML={{__html: exercise.text}}/>
 
-    <p>Es werden folgende Testfälle ausgeführt:</p>
+      <p>Es werden folgende Testfälle ausgeführt:</p>
 
-    {content.testConfig.tests.map((singleTestConfig) =>
-      <div key={singleTestConfig.id}>
-        {singleTestConfig.id}. <code>{singleTestConfig.testName}</code>:
-        <span dangerouslySetInnerHTML={{__html: singleTestConfig.description}}/>
-      </div>
-    )}
-  </>;
+      {content.testConfig.tests.map((singleTestConfig) =>
+        <div key={singleTestConfig.id}>
+          {singleTestConfig.id}. <code>{singleTestConfig.testName}</code>:
+          <span dangerouslySetInnerHTML={{__html: singleTestConfig.description}}/>
+        </div>
+      )}
+    </>
+  );
+
+  const initialFiles = oldSolution
+    ? oldSolution.files
+    : content.files;
 
   function correct(files: ExerciseFileFragment[]): void {
     const solution: FilesSolutionInput = {
       files: files.map(({name, content, fileType, editable}) => ({name, content, fileType, editable}))
     };
+
+    database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
 
     correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution, part: FlaskExercisePart.FlaskSingleExPart}})
       .catch((err) => console.error(err));
@@ -48,8 +57,6 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
     }
 
     const {solutionSaved,/*proficienciesUpdated, resultSaved,*/ result} = flaskExercise.correct;
-
-    console.info(JSON.stringify(result, null, 2));
 
     return (
       <>
@@ -71,8 +78,8 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
     );
   }
 
-  return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={exerciseDescription} initialFiles={content.files}
+  return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={exerciseDescription} initialFiles={initialFiles}
                         sampleSolutions={content.flaskSampleSolutions} correct={correct}
                         correctionTabRender={() => <WithQuery query={correctionMutationResult} render={renderCorrection}/>}
-                        isCorrecting={false /*TODO!*/}/>;
+                        isCorrecting={correctionMutationResult.called && correctionMutationResult.loading}/>;
 }

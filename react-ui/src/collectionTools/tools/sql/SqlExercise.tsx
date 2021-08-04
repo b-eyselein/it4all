@@ -12,6 +12,7 @@ import {SqlExecutionResultDisplay} from './SqlExecutionResultDisplay';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
+import {database} from '../../DexieTable';
 
 type IProps = ConcreteExerciseIProps<SqlExerciseContentFragment, string>;
 
@@ -34,6 +35,8 @@ export function SqlExercise({exercise, content, partId, oldSolution}: IProps): J
   const part = content.sqlPart;
 
   function correct(): void {
+    database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
+
     correctExercise({variables: {collectionId: exercise.collectionId, exerciseId: exercise.exerciseId, part, solution}})
       .then(() => setActiveTabId('correction'))
       .catch((error) => console.error(error));
@@ -71,7 +74,8 @@ export function SqlExercise({exercise, content, partId, oldSolution}: IProps): J
 
           <h1 className="title is-4 has-text-centered">{t('query')}</h1>
 
-          <CodeMirror value={solution} height={'200px'} options={getDefaultCodeMirrorEditorOptions('sql')} onChange={(ed) => setSolution(ed.getValue())}/>
+          <CodeMirror value={oldSolution ? oldSolution : solution} height={'200px'} options={getDefaultCodeMirrorEditorOptions('sql')}
+                      onChange={(ed) => setSolution(ed.getValue())}/>
 
           <ExerciseControlButtons isCorrecting={correcting} correct={correct} endLink={`./../../${exercise.exerciseId}`}/>
         </div>

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {RegexExerciseContentFragment, useRegexCorrectionMutation} from '../../../graphql';
 import {RegexCheatSheet} from './RegexCheatSheet';
 import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
@@ -8,6 +8,7 @@ import {StringSampleSolution} from '../StringSampleSolution';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
+import {database} from '../../DexieTable';
 
 type IProps = ConcreteExerciseIProps<RegexExerciseContentFragment, string>;
 
@@ -15,7 +16,7 @@ export function RegexExercise({exercise, content, partId, oldSolution}: IProps):
 
   const {t} = useTranslation('common');
   const [showInfo, setShowInfo] = useState(false);
-  const solutionInput = useRef<HTMLInputElement>(null);
+  const [solution, setSolution] = useState(oldSolution ? oldSolution : '');
 
   const [correctExercise, correctionMutationResult] = useRegexCorrectionMutation();
 
@@ -28,11 +29,11 @@ export function RegexExercise({exercise, content, partId, oldSolution}: IProps):
   const part = content.regexPart;
 
   function correct(): void {
-    if (solutionInput.current) {
-      correctExercise({variables: {collectionId: exercise.collectionId, exerciseId: exercise.exerciseId, part, solution: solutionInput.current.value}})
-        .then(() => setActiveTabId('correction'))
-        .catch((error) => console.error(error));
-    }
+    database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
+
+    correctExercise({variables: {collectionId: exercise.collectionId, exerciseId: exercise.exerciseId, part, solution}})
+      .then(() => setActiveTabId('correction'))
+      .catch((error) => console.error(error));
   }
 
   const correctionTabRender = () => <RegexCorrection mutationResult={correctionMutationResult}/>;
@@ -61,17 +62,18 @@ export function RegexExercise({exercise, content, partId, oldSolution}: IProps):
 
           <div className="field has-addons">
             <div className="control">
-              <label className="button is-static" htmlFor="solution">{t('yourSolution')}:</label>
+              <button className="button is-static">{t('yourSolution')}:</button>
             </div>
             <div className="control is-expanded">
-              <input type="text" className="input" id="solution" ref={solutionInput} placeholder="Ihre Lösung" autoFocus autoComplete="off"/>
+              <input type="text" className="input" defaultValue={solution} onChange={(event) => setSolution(event.target.value)}
+                     placeholder={t('yourSolution')} autoFocus autoComplete="off"/>
             </div>
           </div>
 
           <ExerciseControlButtons isCorrecting={correcting} correct={correct} endLink={`./../../${exercise.exerciseId}`}>
             <div className="column">
               <button className="button is-info is-fullwidth" onClick={() => setShowInfo((value) => !value)}>
-                Hilfe {showInfo ? 'ausblenden' : 'anzeigen'}
+                {showInfo ? t('hideHelp') : t('hideHelp')}
               </button>
             </div>
           </ExerciseControlButtons>

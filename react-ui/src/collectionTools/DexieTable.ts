@@ -10,6 +10,7 @@ export interface DbSolution<T> {
 
 class DexieTable extends Dexie {
 
+  // eslint-disable-next-line
   private solutions: Table<DbSolution<any>, [string, number, number, string]>;
 
   constructor() {
