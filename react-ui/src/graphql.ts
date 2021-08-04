@@ -805,11 +805,11 @@ export type SqlExerciseMutationsCorrectArgs = {
 };
 
 export enum SqlExerciseType {
-  Update = 'UPDATE',
-  Insert = 'INSERT',
-  Select = 'SELECT',
+  Delete = 'DELETE',
   Create = 'CREATE',
-  Delete = 'DELETE'
+  Update = 'UPDATE',
+  Select = 'SELECT',
+  Insert = 'INSERT'
 }
 
 export type SqlKeyCellValueObject = {
@@ -1418,39 +1418,13 @@ export type FlaskCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type FlaskCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { flaskExercise?: Maybe<(
-    { __typename?: 'FlaskExerciseMutations' }
-    & { correct: (
-      { __typename?: 'FlaskCorrectionResult' }
-      & FlaskCorrectionResultFragment
-    ) }
-  )> }
-);
+export type FlaskCorrectionMutation = { __typename?: 'Mutation', flaskExercise?: Maybe<{ __typename?: 'FlaskExerciseMutations', correct: { __typename?: 'FlaskCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'FlaskResult', points: number, maxPoints: number, testResults: Array<{ __typename?: 'FlaskTestResult', testName: string, successful: boolean, stdout: Array<string>, stderr: Array<string> }> } } }> };
 
-export type FlaskCorrectionResultFragment = (
-  { __typename?: 'FlaskCorrectionResult' }
-  & Pick<FlaskCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
-  & { result: (
-    { __typename?: 'FlaskResult' }
-    & FlaskResultFragment
-  ) }
-);
+export type FlaskCorrectionResultFragment = { __typename?: 'FlaskCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'FlaskResult', points: number, maxPoints: number, testResults: Array<{ __typename?: 'FlaskTestResult', testName: string, successful: boolean, stdout: Array<string>, stderr: Array<string> }> } };
 
-export type FlaskResultFragment = (
-  { __typename?: 'FlaskResult' }
-  & Pick<FlaskResult, 'points' | 'maxPoints'>
-  & { testResults: Array<(
-    { __typename?: 'FlaskTestResult' }
-    & FlaskTestResultFragment
-  )> }
-);
+export type FlaskResultFragment = { __typename?: 'FlaskResult', points: number, maxPoints: number, testResults: Array<{ __typename?: 'FlaskTestResult', testName: string, successful: boolean, stdout: Array<string>, stderr: Array<string> }> };
 
-export type FlaskTestResultFragment = (
-  { __typename?: 'FlaskTestResult' }
-  & Pick<FlaskTestResult, 'testName' | 'successful' | 'stdout' | 'stderr'>
-);
+export type FlaskTestResultFragment = { __typename?: 'FlaskTestResult', testName: string, successful: boolean, stdout: Array<string>, stderr: Array<string> };
 
 export type ProgrammingCorrectionMutationVariables = Exact<{
   collId: Scalars['Int'];
@@ -1460,47 +1434,15 @@ export type ProgrammingCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type ProgrammingCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { programmingExercise?: Maybe<(
-    { __typename?: 'ProgrammingExerciseMutations' }
-    & { correct: (
-      { __typename?: 'ProgrammingCorrectionResult' }
-      & ProgrammingCorrectionResultFragment
-    ) }
-  )> }
-);
+export type ProgrammingCorrectionMutation = { __typename?: 'Mutation', programmingExercise?: Maybe<{ __typename?: 'ProgrammingExerciseMutations', correct: { __typename: 'ProgrammingCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'ProgrammingResult', points: number, maxPoints: number, implementationCorrectionResult?: Maybe<{ __typename?: 'ImplementationCorrectionResult', successful: boolean, stdout: Array<string>, stderr: Array<string> }>, unitTestResults: Array<{ __typename?: 'UnitTestCorrectionResult', testId: number, successful: boolean, shouldFail: boolean, description: string, stderr: Array<string> }> } } }> };
 
-export type ProgrammingCorrectionResultFragment = (
-  { __typename: 'ProgrammingCorrectionResult' }
-  & Pick<ProgrammingCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
-  & { result: (
-    { __typename?: 'ProgrammingResult' }
-    & ProgrammingResultFragment
-  ) }
-);
+export type ProgrammingCorrectionResultFragment = { __typename: 'ProgrammingCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'ProgrammingResult', points: number, maxPoints: number, implementationCorrectionResult?: Maybe<{ __typename?: 'ImplementationCorrectionResult', successful: boolean, stdout: Array<string>, stderr: Array<string> }>, unitTestResults: Array<{ __typename?: 'UnitTestCorrectionResult', testId: number, successful: boolean, shouldFail: boolean, description: string, stderr: Array<string> }> } };
 
-export type ProgrammingResultFragment = (
-  { __typename?: 'ProgrammingResult' }
-  & Pick<ProgrammingResult, 'points' | 'maxPoints'>
-  & { implementationCorrectionResult?: Maybe<(
-    { __typename?: 'ImplementationCorrectionResult' }
-    & ImplementationCorrectionResultFragment
-  )>, unitTestResults: Array<(
-    { __typename?: 'UnitTestCorrectionResult' }
-    & UnitTestCorrectionResultFragment
-  )> }
-);
+export type ProgrammingResultFragment = { __typename?: 'ProgrammingResult', points: number, maxPoints: number, implementationCorrectionResult?: Maybe<{ __typename?: 'ImplementationCorrectionResult', successful: boolean, stdout: Array<string>, stderr: Array<string> }>, unitTestResults: Array<{ __typename?: 'UnitTestCorrectionResult', testId: number, successful: boolean, shouldFail: boolean, description: string, stderr: Array<string> }> };
 
-export type ImplementationCorrectionResultFragment = (
-  { __typename?: 'ImplementationCorrectionResult' }
-  & Pick<ImplementationCorrectionResult, 'successful' | 'stdout' | 'stderr'>
-);
+export type ImplementationCorrectionResultFragment = { __typename?: 'ImplementationCorrectionResult', successful: boolean, stdout: Array<string>, stderr: Array<string> };
 
-export type UnitTestCorrectionResultFragment = (
-  { __typename?: 'UnitTestCorrectionResult' }
-  & Pick<UnitTestCorrectionResult, 'testId' | 'successful' | 'shouldFail' | 'description' | 'stderr'>
-);
+export type UnitTestCorrectionResultFragment = { __typename?: 'UnitTestCorrectionResult', testId: number, successful: boolean, shouldFail: boolean, description: string, stderr: Array<string> };
 
 export type RegexCorrectionMutationVariables = Exact<{
   collectionId: Scalars['Int'];
@@ -1510,74 +1452,21 @@ export type RegexCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type RegexCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { regexExercise?: Maybe<(
-    { __typename?: 'RegexExerciseMutations' }
-    & { correct: (
-      { __typename?: 'RegexCorrectionResult' }
-      & RegexCorrectionResultFragment
-    ) }
-  )> }
-);
+export type RegexCorrectionMutation = { __typename?: 'Mutation', regexExercise?: Maybe<{ __typename?: 'RegexExerciseMutations', correct: { __typename?: 'RegexCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename: 'RegexExtractionResult', points: number, maxPoints: number, extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> }> } }> } | { __typename: 'RegexMatchingResult', points: number, maxPoints: number, matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> } } }> };
 
-export type RegexCorrectionResultFragment = (
-  { __typename?: 'RegexCorrectionResult' }
-  & Pick<RegexCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
-  & { result: (
-    { __typename: 'RegexExtractionResult' }
-    & Pick<RegexExtractionResult, 'points' | 'maxPoints'>
-    & RegexExtractionResultFragment
-  ) | (
-    { __typename: 'RegexMatchingResult' }
-    & Pick<RegexMatchingResult, 'points' | 'maxPoints'>
-    & RegexMatchingResultFragment
-  ) }
-);
+export type RegexCorrectionResultFragment = { __typename?: 'RegexCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename: 'RegexExtractionResult', points: number, maxPoints: number, extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> }> } }> } | { __typename: 'RegexMatchingResult', points: number, maxPoints: number, matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> } };
 
-export type RegexMatchingSingleResultFragment = (
-  { __typename?: 'RegexMatchingSingleResult' }
-  & Pick<RegexMatchingSingleResult, 'resultType' | 'matchData'>
-);
+export type RegexMatchingSingleResultFragment = { __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string };
 
-export type RegexMatchingResultFragment = (
-  { __typename?: 'RegexMatchingResult' }
-  & { matchingResults: Array<(
-    { __typename?: 'RegexMatchingSingleResult' }
-    & RegexMatchingSingleResultFragment
-  )> }
-);
+export type RegexMatchingResultFragment = { __typename?: 'RegexMatchingResult', matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> };
 
-export type RegexExtractionMatchFragment = (
-  { __typename?: 'RegexMatchMatch' }
-  & Pick<RegexMatchMatch, 'matchType' | 'userArg' | 'sampleArg'>
-);
+export type RegexExtractionMatchFragment = { __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> };
 
-export type ExtractionMatchingResultFragment = (
-  { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
-  & Pick<RegexExtractedValuesComparisonMatchingResult, 'notMatchedForUser' | 'notMatchedForSample' | 'points' | 'maxPoints'>
-  & { allMatches: Array<(
-    { __typename?: 'RegexMatchMatch' }
-    & RegexExtractionMatchFragment
-  )> }
-);
+export type ExtractionMatchingResultFragment = { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> }> };
 
-export type RegexExtractionSingleResultFragment = (
-  { __typename?: 'RegexExtractionSingleResult' }
-  & Pick<RegexExtractionSingleResult, 'base'>
-  & { extractionMatchingResult: (
-    { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
-    & ExtractionMatchingResultFragment
-  ) }
-);
+export type RegexExtractionSingleResultFragment = { __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> }> } };
 
-export type RegexExtractionResultFragment = (
-  { __typename?: 'RegexExtractionResult' }
-  & { extractionResults: Array<(
-    { __typename?: 'RegexExtractionSingleResult' }
-    & RegexExtractionSingleResultFragment
-  )> }
-);
+export type RegexExtractionResultFragment = { __typename?: 'RegexExtractionResult', extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> }> } }> };
 
 export type SqlCorrectionMutationVariables = Exact<{
   collectionId: Scalars['Int'];
@@ -1587,270 +1476,69 @@ export type SqlCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type SqlCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { sqlExercise?: Maybe<(
-    { __typename?: 'SqlExerciseMutations' }
-    & { correct: (
-      { __typename?: 'SqlCorrectionResult' }
-      & SqlCorrectionResultFragment
-    ) }
-  )> }
-);
+export type SqlCorrectionMutation = { __typename?: 'Mutation', sqlExercise?: Maybe<{ __typename?: 'SqlExerciseMutations', correct: { __typename?: 'SqlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, limitComparison: { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }> } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }>, sampleResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> } } } }> };
 
-export type SqlCorrectionResultFragment = (
-  { __typename?: 'SqlCorrectionResult' }
-  & Pick<SqlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
-  & { result: (
-    { __typename?: 'SqlResult' }
-    & SqlResultFragment
-  ) }
-);
+export type SqlCorrectionResultFragment = { __typename?: 'SqlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, limitComparison: { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }> } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }>, sampleResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> } } };
 
-export type SelectAdditionalComparisonFragment = (
-  { __typename?: 'SelectAdditionalComparisons' }
-  & { groupByComparison: (
-    { __typename?: 'StringMatchingResult' }
-    & StringMatchingResultFragment
-  ), orderByComparison: (
-    { __typename?: 'StringMatchingResult' }
-    & StringMatchingResultFragment
-  ), limitComparison: (
-    { __typename?: 'SqlLimitComparisonMatchingResult' }
-    & SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment
-  ) }
-);
+export type SelectAdditionalComparisonFragment = { __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, limitComparison: { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> } };
 
-export type StaticComparisonFragment = (
-  { __typename?: 'SqlQueriesStaticComparison' }
-  & { columnComparison: (
-    { __typename?: 'SqlColumnComparisonMatchingResult' }
-    & SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment
-  ), tableComparison: (
-    { __typename?: 'StringMatchingResult' }
-    & StringMatchingResultFragment
-  ), joinExpressionComparison: (
-    { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-    & SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment
-  ), whereComparison: (
-    { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-    & SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment
-  ), additionalComparisons: (
-    { __typename?: 'AdditionalComparison' }
-    & { selectComparisons?: Maybe<(
-      { __typename?: 'SelectAdditionalComparisons' }
-      & SelectAdditionalComparisonFragment
-    )>, insertComparison?: Maybe<(
-      { __typename?: 'StringMatchingResult' }
-      & StringMatchingResultFragment
-    )> }
-  ) }
-);
+export type StaticComparisonFragment = { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, limitComparison: { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }> } };
 
-export type SqlResultFragment = (
-  { __typename?: 'SqlResult' }
-  & Pick<SqlResult, 'points' | 'maxPoints'>
-  & { staticComparison: (
-    { __typename?: 'SqlQueriesStaticComparison' }
-    & StaticComparisonFragment
-  ), executionResult: (
-    { __typename?: 'SqlExecutionResult' }
-    & SqlExecutionResultFragment
-  ) }
-);
+export type SqlResultFragment = { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, limitComparison: { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }> } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }>, sampleResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> } };
 
-export type SqlExecutionResultFragment = (
-  { __typename?: 'SqlExecutionResult' }
-  & { userResult?: Maybe<(
-    { __typename?: 'SqlQueryResult' }
-    & SqlQueryResultFragment
-  )>, sampleResult?: Maybe<(
-    { __typename?: 'SqlQueryResult' }
-    & SqlQueryResultFragment
-  )> }
-);
+export type SqlExecutionResultFragment = { __typename?: 'SqlExecutionResult', userResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }>, sampleResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> };
 
-export type SqlQueryResultFragment = (
-  { __typename?: 'SqlQueryResult' }
-  & Pick<SqlQueryResult, 'tableName' | 'columnNames'>
-  & { rows: Array<(
-    { __typename?: 'SqlRow' }
-    & SqlRowFragment
-  )> }
-);
+export type SqlQueryResultFragment = { __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> };
 
-export type SqlRowFragment = (
-  { __typename?: 'SqlRow' }
-  & { cells: Array<(
-    { __typename?: 'SqlKeyCellValueObject' }
-    & Pick<SqlKeyCellValueObject, 'key'>
-    & { value: (
-      { __typename?: 'SqlCell' }
-      & SqlCellFragment
-    ) }
-  )> }
-);
+export type SqlRowFragment = { __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> };
 
-export type SqlCellFragment = (
-  { __typename?: 'SqlCell' }
-  & Pick<SqlCell, 'colName' | 'content' | 'different'>
-);
+export type SqlCellFragment = { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean };
 
-export type StringMatchFragment = (
-  { __typename?: 'StringMatch' }
-  & Pick<StringMatch, 'matchType' | 'sampleArg' | 'userArg'>
-);
+export type StringMatchFragment = { __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string };
 
-export type StringMatchingResultFragment = (
-  { __typename?: 'StringMatchingResult' }
-  & Pick<StringMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUser' | 'notMatchedForSample'>
-  & { allMatches: Array<(
-    { __typename?: 'StringMatch' }
-    & StringMatchFragment
-  )> }
-);
+export type StringMatchingResultFragment = { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> };
 
-type NewMatch_ElementLineMatch_Fragment = (
-  { __typename?: 'ElementLineMatch' }
-  & Pick<ElementLineMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
+type NewMatch_ElementLineMatch_Fragment = { __typename?: 'ElementLineMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
 
-type NewMatch_RegexMatchMatch_Fragment = (
-  { __typename?: 'RegexMatchMatch' }
-  & Pick<RegexMatchMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
+type NewMatch_RegexMatchMatch_Fragment = { __typename?: 'RegexMatchMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
 
-type NewMatch_SqlBinaryExpressionMatch_Fragment = (
-  { __typename?: 'SqlBinaryExpressionMatch' }
-  & Pick<SqlBinaryExpressionMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
+type NewMatch_SqlBinaryExpressionMatch_Fragment = { __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
 
-type NewMatch_SqlColumnMatch_Fragment = (
-  { __typename?: 'SqlColumnMatch' }
-  & Pick<SqlColumnMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
+type NewMatch_SqlColumnMatch_Fragment = { __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
 
-type NewMatch_SqlLimitMatch_Fragment = (
-  { __typename?: 'SqlLimitMatch' }
-  & Pick<SqlLimitMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
+type NewMatch_SqlLimitMatch_Fragment = { __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
 
-type NewMatch_UmlAssociationMatch_Fragment = (
-  { __typename?: 'UmlAssociationMatch' }
-  & Pick<UmlAssociationMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
+type NewMatch_UmlAssociationMatch_Fragment = { __typename?: 'UmlAssociationMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
 
-type NewMatch_UmlAttributeMatch_Fragment = (
-  { __typename?: 'UmlAttributeMatch' }
-  & Pick<UmlAttributeMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
+type NewMatch_UmlAttributeMatch_Fragment = { __typename?: 'UmlAttributeMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
 
-type NewMatch_UmlClassMatch_Fragment = (
-  { __typename?: 'UmlClassMatch' }
-  & Pick<UmlClassMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
+type NewMatch_UmlClassMatch_Fragment = { __typename?: 'UmlClassMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
 
-type NewMatch_UmlImplementationMatch_Fragment = (
-  { __typename?: 'UmlImplementationMatch' }
-  & Pick<UmlImplementationMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
+type NewMatch_UmlImplementationMatch_Fragment = { __typename?: 'UmlImplementationMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
 
-type NewMatch_UmlMethodMatch_Fragment = (
-  { __typename?: 'UmlMethodMatch' }
-  & Pick<UmlMethodMatch, 'matchType' | 'sampleArgDescription' | 'userArgDescription'>
-);
+type NewMatch_UmlMethodMatch_Fragment = { __typename?: 'UmlMethodMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
 
 export type NewMatchFragment = NewMatch_ElementLineMatch_Fragment | NewMatch_RegexMatchMatch_Fragment | NewMatch_SqlBinaryExpressionMatch_Fragment | NewMatch_SqlColumnMatch_Fragment | NewMatch_SqlLimitMatch_Fragment | NewMatch_UmlAssociationMatch_Fragment | NewMatch_UmlAttributeMatch_Fragment | NewMatch_UmlClassMatch_Fragment | NewMatch_UmlImplementationMatch_Fragment | NewMatch_UmlMethodMatch_Fragment;
 
-type SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment = (
-  { __typename?: 'RegexExtractedValuesComparisonMatchingResult' }
-  & Pick<RegexExtractedValuesComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
-  & { allMatches: Array<(
-    { __typename?: 'RegexMatchMatch' }
-    & NewMatch_RegexMatchMatch_Fragment
-  )> }
-);
+type SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment = { __typename?: 'RegexExtractedValuesComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
 
-type SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlBinaryExpressionComparisonMatchingResult' }
-  & Pick<SqlBinaryExpressionComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
-  & { allMatches: Array<(
-    { __typename?: 'SqlBinaryExpressionMatch' }
-    & NewMatch_SqlBinaryExpressionMatch_Fragment
-  )> }
-);
+type SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment = { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
 
-type SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlColumnComparisonMatchingResult' }
-  & Pick<SqlColumnComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
-  & { allMatches: Array<(
-    { __typename?: 'SqlColumnMatch' }
-    & NewMatch_SqlColumnMatch_Fragment
-  )> }
-);
+type SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment = { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
 
-type SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment = (
-  { __typename?: 'SqlLimitComparisonMatchingResult' }
-  & Pick<SqlLimitComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
-  & { allMatches: Array<(
-    { __typename?: 'SqlLimitMatch' }
-    & NewMatch_SqlLimitMatch_Fragment
-  )> }
-);
+type SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment = { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
 
-type SqlMatchingResult_UmlAssociationMatchingResult_Fragment = (
-  { __typename?: 'UmlAssociationMatchingResult' }
-  & Pick<UmlAssociationMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
-  & { allMatches: Array<(
-    { __typename?: 'UmlAssociationMatch' }
-    & NewMatch_UmlAssociationMatch_Fragment
-  )> }
-);
+type SqlMatchingResult_UmlAssociationMatchingResult_Fragment = { __typename?: 'UmlAssociationMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'UmlAssociationMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
 
-type SqlMatchingResult_UmlAttributeMatchingResult_Fragment = (
-  { __typename?: 'UmlAttributeMatchingResult' }
-  & Pick<UmlAttributeMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
-  & { allMatches: Array<(
-    { __typename?: 'UmlAttributeMatch' }
-    & NewMatch_UmlAttributeMatch_Fragment
-  )> }
-);
+type SqlMatchingResult_UmlAttributeMatchingResult_Fragment = { __typename?: 'UmlAttributeMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'UmlAttributeMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
 
-type SqlMatchingResult_UmlClassMatchingResult_Fragment = (
-  { __typename?: 'UmlClassMatchingResult' }
-  & Pick<UmlClassMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
-  & { allMatches: Array<(
-    { __typename?: 'UmlClassMatch' }
-    & NewMatch_UmlClassMatch_Fragment
-  )> }
-);
+type SqlMatchingResult_UmlClassMatchingResult_Fragment = { __typename?: 'UmlClassMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'UmlClassMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
 
-type SqlMatchingResult_UmlImplementationMatchingResult_Fragment = (
-  { __typename?: 'UmlImplementationMatchingResult' }
-  & Pick<UmlImplementationMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
-  & { allMatches: Array<(
-    { __typename?: 'UmlImplementationMatch' }
-    & NewMatch_UmlImplementationMatch_Fragment
-  )> }
-);
+type SqlMatchingResult_UmlImplementationMatchingResult_Fragment = { __typename?: 'UmlImplementationMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'UmlImplementationMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
 
-type SqlMatchingResult_UmlMethodMatchingResult_Fragment = (
-  { __typename?: 'UmlMethodMatchingResult' }
-  & Pick<UmlMethodMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
-  & { allMatches: Array<(
-    { __typename?: 'UmlMethodMatch' }
-    & NewMatch_UmlMethodMatch_Fragment
-  )> }
-);
+type SqlMatchingResult_UmlMethodMatchingResult_Fragment = { __typename?: 'UmlMethodMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'UmlMethodMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
 
-type SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment = (
-  { __typename?: 'XmlElementLineComparisonMatchingResult' }
-  & Pick<XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints' | 'notMatchedForUserString' | 'notMatchedForSampleString'>
-  & { allMatches: Array<(
-    { __typename?: 'ElementLineMatch' }
-    & NewMatch_ElementLineMatch_Fragment
-  )> }
-);
+type SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment = { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
 
 export type SqlMatchingResultFragment = SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment | SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment | SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment | SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment | SqlMatchingResult_UmlAssociationMatchingResult_Fragment | SqlMatchingResult_UmlAttributeMatchingResult_Fragment | SqlMatchingResult_UmlClassMatchingResult_Fragment | SqlMatchingResult_UmlImplementationMatchingResult_Fragment | SqlMatchingResult_UmlMethodMatchingResult_Fragment | SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment;
 
@@ -1862,80 +1550,21 @@ export type WebCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type WebCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { webExercise?: Maybe<(
-    { __typename?: 'WebExerciseMutations' }
-    & { correct: (
-      { __typename?: 'WebCorrectionResult' }
-      & WebCorrectionResultFragment
-    ) }
-  )> }
-);
+export type WebCorrectionMutation = { __typename?: 'Mutation', webExercise?: Maybe<{ __typename?: 'WebExerciseMutations', correct: { __typename?: 'WebCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, isSuccessful: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename: 'JsAction' } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }> }> } } }> };
 
-export type WebCorrectionResultFragment = (
-  { __typename?: 'WebCorrectionResult' }
-  & Pick<WebCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
-  & { result: (
-    { __typename?: 'WebResult' }
-    & WebResultFragment
-  ) }
-);
+export type WebCorrectionResultFragment = { __typename?: 'WebCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, isSuccessful: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename: 'JsAction' } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }> }> } };
 
-export type WebResultFragment = (
-  { __typename?: 'WebResult' }
-  & Pick<WebResult, 'points' | 'maxPoints'>
-  & { gradedHtmlTaskResults: Array<(
-    { __typename?: 'GradedHtmlTaskResult' }
-    & GradedHtmlTaskResultFragment
-  )>, gradedJsTaskResults: Array<(
-    { __typename?: 'GradedJsTaskResult' }
-    & GradedJsTaskResultFragment
-  )> }
-);
+export type WebResultFragment = { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, isSuccessful: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename: 'JsAction' } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }> }> };
 
-export type GradedHtmlTaskResultFragment = (
-  { __typename?: 'GradedHtmlTaskResult' }
-  & Pick<GradedHtmlTaskResult, 'id' | 'success' | 'elementFound' | 'isSuccessful' | 'points' | 'maxPoints'>
-  & { textContentResult?: Maybe<(
-    { __typename?: 'GradedTextResult' }
-    & GradedTextContentResultFragment
-  )>, attributeResults: Array<(
-    { __typename?: 'GradedTextResult' }
-    & GradedTextContentResultFragment
-  )> }
-);
+export type GradedHtmlTaskResultFragment = { __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, isSuccessful: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> };
 
-export type GradedTextContentResultFragment = (
-  { __typename?: 'GradedTextResult' }
-  & Pick<GradedTextResult, 'keyName' | 'awaitedContent' | 'maybeFoundContent' | 'isSuccessful' | 'points' | 'maxPoints'>
-);
+export type GradedTextContentResultFragment = { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number };
 
-export type GradedJsTaskResultFragment = (
-  { __typename?: 'GradedJsTaskResult' }
-  & Pick<GradedJsTaskResult, 'id' | 'success' | 'points' | 'maxPoints'>
-  & { gradedPreResults: Array<(
-    { __typename?: 'GradedJsHtmlElementSpecResult' }
-    & GradedJsHtmlElementSpecResultFragment
-  )>, gradedJsActionResult: (
-    { __typename?: 'GradedJsActionResult' }
-    & GradedJsActionResultFragment
-  ), gradedPostResults: Array<(
-    { __typename?: 'GradedJsHtmlElementSpecResult' }
-    & GradedJsHtmlElementSpecResultFragment
-  )> }
-);
+export type GradedJsTaskResultFragment = { __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename: 'JsAction' } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }> };
 
-export type GradedJsHtmlElementSpecResultFragment = (
-  { __typename?: 'GradedJsHtmlElementSpecResult' }
-  & Pick<GradedJsHtmlElementSpecResult, 'id'>
-);
+export type GradedJsHtmlElementSpecResultFragment = { __typename?: 'GradedJsHtmlElementSpecResult', id: number };
 
-export type GradedJsActionResultFragment = (
-  { __typename?: 'GradedJsActionResult' }
-  & Pick<GradedJsActionResult, 'actionPerformed' | 'points' | 'maxPoints'>
-  & { jsAction: { __typename: 'JsAction' } }
-);
+export type GradedJsActionResultFragment = { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename: 'JsAction' } };
 
 export type XmlCorrectionMutationVariables = Exact<{
   collId: Scalars['Int'];
@@ -1945,208 +1574,59 @@ export type XmlCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type XmlCorrectionMutation = (
-  { __typename?: 'Mutation' }
-  & { xmlExercise?: Maybe<(
-    { __typename?: 'XmlExerciseMutations' }
-    & { correct: (
-      { __typename?: 'XmlCorrectionResult' }
-      & XmlCorrectionResultFragment
-    ) }
-  )> }
-);
+export type XmlCorrectionMutation = { __typename?: 'Mutation', xmlExercise?: Maybe<{ __typename?: 'XmlExerciseMutations', correct: { __typename?: 'XmlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'XmlResult', points: number, maxPoints: number, successType: SuccessType, grammarResult?: Maybe<{ __typename?: 'XmlGrammarResult', parseErrors: Array<{ __typename?: 'DTDParseException', msg: string, parsedLine: string }>, results: { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> } }>, documentResult?: Maybe<{ __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string }> }> } } }> };
 
-export type XmlCorrectionResultFragment = (
-  { __typename?: 'XmlCorrectionResult' }
-  & Pick<XmlCorrectionResult, 'solutionSaved' | 'resultSaved' | 'proficienciesUpdated'>
-  & { result: (
-    { __typename?: 'XmlResult' }
-    & XmlResultFragment
-  ) }
-);
+export type XmlCorrectionResultFragment = { __typename?: 'XmlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'XmlResult', points: number, maxPoints: number, successType: SuccessType, grammarResult?: Maybe<{ __typename?: 'XmlGrammarResult', parseErrors: Array<{ __typename?: 'DTDParseException', msg: string, parsedLine: string }>, results: { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> } }>, documentResult?: Maybe<{ __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string }> }> } };
 
-export type XmlResultFragment = (
-  { __typename?: 'XmlResult' }
-  & Pick<XmlResult, 'points' | 'maxPoints' | 'successType'>
-  & { grammarResult?: Maybe<(
-    { __typename?: 'XmlGrammarResult' }
-    & XmlGrammarResultFragment
-  )>, documentResult?: Maybe<(
-    { __typename?: 'XmlDocumentResult' }
-    & XmlDocumentResultFragment
-  )> }
-);
+export type XmlResultFragment = { __typename?: 'XmlResult', points: number, maxPoints: number, successType: SuccessType, grammarResult?: Maybe<{ __typename?: 'XmlGrammarResult', parseErrors: Array<{ __typename?: 'DTDParseException', msg: string, parsedLine: string }>, results: { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> } }>, documentResult?: Maybe<{ __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string }> }> };
 
-export type XmlGrammarResultFragment = (
-  { __typename?: 'XmlGrammarResult' }
-  & { parseErrors: Array<(
-    { __typename?: 'DTDParseException' }
-    & Pick<DtdParseException, 'msg' | 'parsedLine'>
-  )>, results: (
-    { __typename?: 'XmlElementLineComparisonMatchingResult' }
-    & Pick<XmlElementLineComparisonMatchingResult, 'points' | 'maxPoints'>
-    & XmlElementLineMatchingResultFragment
-  ) }
-);
+export type XmlGrammarResultFragment = { __typename?: 'XmlGrammarResult', parseErrors: Array<{ __typename?: 'DTDParseException', msg: string, parsedLine: string }>, results: { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> } };
 
-export type XmlElementLineMatchingResultFragment = (
-  { __typename?: 'XmlElementLineComparisonMatchingResult' }
-  & { allMatches: Array<(
-    { __typename?: 'ElementLineMatch' }
-    & XmlElementLineMatchFragment
-  )>, notMatchedForUser: Array<(
-    { __typename?: 'ElementLine' }
-    & ElementLineFragment
-  )>, notMatchedForSample: Array<(
-    { __typename?: 'ElementLine' }
-    & ElementLineFragment
-  )> }
-);
+export type XmlElementLineMatchingResultFragment = { __typename?: 'XmlElementLineComparisonMatchingResult', allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> };
 
-export type XmlElementLineMatchFragment = (
-  { __typename?: 'ElementLineMatch' }
-  & Pick<ElementLineMatch, 'matchType'>
-  & { userArg: (
-    { __typename?: 'ElementLine' }
-    & ElementLineFragment
-  ), sampleArg: (
-    { __typename?: 'ElementLine' }
-    & ElementLineFragment
-  ), analysisResult: (
-    { __typename?: 'ElementLineAnalysisResult' }
-    & XmlElementLineAnalysisResultFragment
-  ) }
-);
+export type XmlElementLineMatchFragment = { __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } };
 
-export type XmlElementLineAnalysisResultFragment = (
-  { __typename?: 'ElementLineAnalysisResult' }
-  & Pick<ElementLineAnalysisResult, 'attributesCorrect' | 'correctAttributes' | 'contentCorrect' | 'correctContent'>
-);
+export type XmlElementLineAnalysisResultFragment = { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string };
 
-export type ElementLineFragment = (
-  { __typename?: 'ElementLine' }
-  & Pick<ElementLine, 'elementName'>
-  & { elementDefinition: (
-    { __typename?: 'ElementDefinition' }
-    & Pick<ElementDefinition, 'elementName' | 'content'>
-  ), attributeLists: Array<(
-    { __typename?: 'AttributeList' }
-    & Pick<AttributeList, 'elementName' | 'attributeDefinitions'>
-  )> }
-);
+export type ElementLineFragment = { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> };
 
-export type XmlDocumentResultFragment = (
-  { __typename?: 'XmlDocumentResult' }
-  & { errors: Array<(
-    { __typename?: 'XmlError' }
-    & XmlErrorFragment
-  )> }
-);
+export type XmlDocumentResultFragment = { __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string }> };
 
-export type XmlErrorFragment = (
-  { __typename?: 'XmlError' }
-  & Pick<XmlError, 'success' | 'line' | 'errorType' | 'errorMessage'>
-);
+export type XmlErrorFragment = { __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string };
 
-export type CollectionToolFragment = (
-  { __typename?: 'CollectionTool' }
-  & Pick<CollectionTool, 'id' | 'name' | 'state' | 'collectionCount' | 'lessonCount' | 'exerciseCount'>
-);
+export type CollectionToolFragment = { __typename?: 'CollectionTool', id: string, name: string, state: ToolState, collectionCount: any, lessonCount: any, exerciseCount: any };
 
 export type ToolOverviewQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ToolOverviewQuery = (
-  { __typename?: 'Query' }
-  & { tools: Array<(
-    { __typename?: 'CollectionTool' }
-    & CollectionToolFragment
-  )> }
-);
+export type ToolOverviewQuery = { __typename?: 'Query', tools: Array<{ __typename?: 'CollectionTool', id: string, name: string, state: ToolState, collectionCount: any, lessonCount: any, exerciseCount: any }> };
 
 export type CollectionToolOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
 }>;
 
 
-export type CollectionToolOverviewQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Maybe<(
-    { __typename?: 'CollectionTool' }
-    & Pick<CollectionTool, 'name' | 'collectionCount' | 'exerciseCount' | 'lessonCount'>
-    & { proficiencies: Array<(
-      { __typename?: 'UserProficiency' }
-      & UserProficiencyFragment
-    )> }
-  )> }
-);
+export type CollectionToolOverviewQuery = { __typename?: 'Query', tool?: Maybe<{ __typename?: 'CollectionTool', name: string, collectionCount: any, exerciseCount: any, lessonCount: any, proficiencies: Array<{ __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }> }> };
 
-export type UserProficiencyFragment = (
-  { __typename?: 'UserProficiency' }
-  & Pick<UserProficiency, 'points' | 'pointsForNextLevel'>
-  & { topic: (
-    { __typename?: 'Topic' }
-    & TopicFragment
-  ), level: (
-    { __typename?: 'Level' }
-    & LevelFragment
-  ) }
-);
+export type UserProficiencyFragment = { __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } };
 
 export type AllExercisesOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
 }>;
 
 
-export type AllExercisesOverviewQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Maybe<(
-    { __typename?: 'CollectionTool' }
-    & { allExercises: Array<(
-      { __typename?: 'Exercise' }
-      & { topicsWithLevels: Array<(
-        { __typename?: 'TopicWithLevel' }
-        & TopicWithLevelFragment
-      )> }
-      & FieldsForLinkFragment
-    )> }
-  )> }
-);
+export type AllExercisesOverviewQuery = { __typename?: 'Query', tool?: Maybe<{ __typename?: 'CollectionTool', allExercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved?: Maybe<boolean> }> }> }> };
 
-export type CollectionValuesFragment = (
-  { __typename?: 'ExerciseCollection' }
-  & Pick<ExerciseCollection, 'collectionId' | 'title' | 'exerciseCount'>
-);
+export type CollectionValuesFragment = { __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: any };
 
 export type CollectionListQueryVariables = Exact<{
   toolId: Scalars['String'];
 }>;
 
 
-export type CollectionListQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Maybe<(
-    { __typename?: 'CollectionTool' }
-    & Pick<CollectionTool, 'name'>
-    & { collections: Array<(
-      { __typename?: 'ExerciseCollection' }
-      & CollectionValuesFragment
-    )> }
-  )> }
-);
+export type CollectionListQuery = { __typename?: 'Query', tool?: Maybe<{ __typename?: 'CollectionTool', name: string, collections: Array<{ __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: any }> }> };
 
-export type CollOverviewToolFragment = (
-  { __typename?: 'CollectionTool' }
-  & Pick<CollectionTool, 'name'>
-  & { collection?: Maybe<(
-    { __typename?: 'ExerciseCollection' }
-    & Pick<ExerciseCollection, 'title'>
-    & { exercises: Array<(
-      { __typename?: 'Exercise' }
-      & FieldsForLinkFragment
-    )> }
-  )> }
-);
+export type CollOverviewToolFragment = { __typename?: 'CollectionTool', name: string, collection?: Maybe<{ __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved?: Maybe<boolean> }> }> }> };
 
 export type CollectionOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
@@ -2154,27 +1634,11 @@ export type CollectionOverviewQueryVariables = Exact<{
 }>;
 
 
-export type CollectionOverviewQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Maybe<(
-    { __typename?: 'CollectionTool' }
-    & CollOverviewToolFragment
-  )> }
-);
+export type CollectionOverviewQuery = { __typename?: 'Query', tool?: Maybe<{ __typename?: 'CollectionTool', name: string, collection?: Maybe<{ __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved?: Maybe<boolean> }> }> }> }> };
 
-export type PartFragment = (
-  { __typename?: 'ExPart' }
-  & Pick<ExPart, 'id' | 'name' | 'isEntryPart' | 'solved'>
-);
+export type PartFragment = { __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved?: Maybe<boolean> };
 
-export type ExerciseOverviewFragment = (
-  { __typename?: 'Exercise' }
-  & Pick<Exercise, 'exerciseId' | 'title' | 'text'>
-  & { parts: Array<(
-    { __typename?: 'ExPart' }
-    & PartFragment
-  )> }
-);
+export type ExerciseOverviewFragment = { __typename?: 'Exercise', exerciseId: number, title: string, text: string, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved?: Maybe<boolean> }> };
 
 export type ExerciseOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
@@ -2183,52 +1647,9 @@ export type ExerciseOverviewQueryVariables = Exact<{
 }>;
 
 
-export type ExerciseOverviewQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Maybe<(
-    { __typename?: 'CollectionTool' }
-    & Pick<CollectionTool, 'id' | 'name'>
-    & { collection?: Maybe<(
-      { __typename?: 'ExerciseCollection' }
-      & Pick<ExerciseCollection, 'collectionId' | 'title'>
-      & { exercise?: Maybe<(
-        { __typename?: 'Exercise' }
-        & ExerciseOverviewFragment
-      )> }
-    )> }
-  )> }
-);
+export type ExerciseOverviewQuery = { __typename?: 'Query', tool?: Maybe<{ __typename?: 'CollectionTool', id: string, name: string, collection?: Maybe<{ __typename?: 'ExerciseCollection', collectionId: number, title: string, exercise?: Maybe<{ __typename?: 'Exercise', exerciseId: number, title: string, text: string, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved?: Maybe<boolean> }> }> }> }> };
 
-export type ExerciseSolveFieldsFragment = (
-  { __typename?: 'Exercise' }
-  & Pick<Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'text'>
-  & { content: (
-    { __typename: 'EbnfExerciseContent' }
-    & EbnfExerciseContentFragment
-  ) | (
-    { __typename: 'FlaskExerciseContent' }
-    & FlaskExerciseContentFragment
-  ) | (
-    { __typename: 'ProgrammingExerciseContent' }
-    & ProgrammingExerciseContentFragment
-    & ProgrammingExerciseContentFragment
-  ) | (
-    { __typename: 'RegexExerciseContent' }
-    & RegexExerciseContentFragment
-  ) | (
-    { __typename: 'SqlExerciseContent' }
-    & SqlExerciseContentFragment
-  ) | (
-    { __typename: 'UmlExerciseContent' }
-    & UmlExerciseContentFragment
-  ) | (
-    { __typename: 'WebExerciseContent' }
-    & WebExerciseContentFragment
-  ) | (
-    { __typename: 'XmlExerciseContent' }
-    & XmlExerciseContentFragment
-  ) }
-);
+export type ExerciseSolveFieldsFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, text: string, content: { __typename: 'EbnfExerciseContent', sampleSolutions: Array<string> } | { __typename: 'FlaskExerciseContent', testConfig: { __typename?: 'FlaskTestsConfig', tests: Array<{ __typename?: 'FlaskSingleTestConfig', id: number, testName: string, description: string }> }, files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }>, flaskSampleSolutions: Array<{ __typename: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }> } | { __typename: 'ProgrammingExerciseContent', programmingPart?: Maybe<ProgExPart>, unitTestPart: { __typename?: 'UnitTestPart', unitTestFiles: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }, implementationPart: { __typename?: 'ImplementationPart', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }, programmingSampleSolutions: Array<{ __typename: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }> } | { __typename: 'RegexExerciseContent', regexSampleSolutions: Array<string>, regexPart?: Maybe<RegexExPart> } | { __typename: 'SqlExerciseContent', hint?: Maybe<string>, sqlSampleSolutions: Array<string>, sqlPart?: Maybe<SqlExPart>, sqlDbContents: Array<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> } | { __typename: 'UmlExerciseContent', toIgnore: Array<string>, umlPart?: Maybe<UmlExPart>, mappings: Array<{ __typename?: 'KeyValueObject', key: string, value: string }>, umlSampleSolutions: Array<{ __typename?: 'UmlClassDiagram', classes: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename?: 'UmlAttribute', isAbstract: boolean, isDerived: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, memberType: string }>, methods: Array<{ __typename?: 'UmlMethod', isAbstract: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, parameters: string, memberType: string }> }>, associations: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: Maybe<string>, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, implementations: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> }> } | { __typename: 'WebExerciseContent', webPart?: Maybe<WebExPart>, files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }>, siteSpec: { __typename?: 'SiteSpec', fileName: string, jsTaskCount: number, htmlTasks: Array<{ __typename?: 'HtmlTask', text: string }> }, webSampleSolutions: Array<{ __typename: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }> } | { __typename: 'XmlExerciseContent', rootNode: string, grammarDescription: string, xmlPart?: Maybe<XmlExPart>, xmlSampleSolutions: Array<{ __typename: 'XmlSolution', document: string, grammar: string }> } };
 
 export type ExerciseQueryVariables = Exact<{
   toolId: Scalars['String'];
@@ -2238,230 +1659,53 @@ export type ExerciseQueryVariables = Exact<{
 }>;
 
 
-export type ExerciseQuery = (
-  { __typename?: 'Query' }
-  & { tool?: Maybe<(
-    { __typename?: 'CollectionTool' }
-    & { collection?: Maybe<(
-      { __typename?: 'ExerciseCollection' }
-      & { exercise?: Maybe<(
-        { __typename?: 'Exercise' }
-        & ExerciseSolveFieldsFragment
-      )> }
-    )> }
-  )> }
-);
+export type ExerciseQuery = { __typename?: 'Query', tool?: Maybe<{ __typename?: 'CollectionTool', collection?: Maybe<{ __typename?: 'ExerciseCollection', exercise?: Maybe<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, text: string, content: { __typename: 'EbnfExerciseContent', sampleSolutions: Array<string> } | { __typename: 'FlaskExerciseContent', testConfig: { __typename?: 'FlaskTestsConfig', tests: Array<{ __typename?: 'FlaskSingleTestConfig', id: number, testName: string, description: string }> }, files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }>, flaskSampleSolutions: Array<{ __typename: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }> } | { __typename: 'ProgrammingExerciseContent', programmingPart?: Maybe<ProgExPart>, unitTestPart: { __typename?: 'UnitTestPart', unitTestFiles: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }, implementationPart: { __typename?: 'ImplementationPart', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }, programmingSampleSolutions: Array<{ __typename: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }> } | { __typename: 'RegexExerciseContent', regexSampleSolutions: Array<string>, regexPart?: Maybe<RegexExPart> } | { __typename: 'SqlExerciseContent', hint?: Maybe<string>, sqlSampleSolutions: Array<string>, sqlPart?: Maybe<SqlExPart>, sqlDbContents: Array<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> } | { __typename: 'UmlExerciseContent', toIgnore: Array<string>, umlPart?: Maybe<UmlExPart>, mappings: Array<{ __typename?: 'KeyValueObject', key: string, value: string }>, umlSampleSolutions: Array<{ __typename?: 'UmlClassDiagram', classes: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename?: 'UmlAttribute', isAbstract: boolean, isDerived: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, memberType: string }>, methods: Array<{ __typename?: 'UmlMethod', isAbstract: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, parameters: string, memberType: string }> }>, associations: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: Maybe<string>, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, implementations: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> }> } | { __typename: 'WebExerciseContent', webPart?: Maybe<WebExPart>, files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }>, siteSpec: { __typename?: 'SiteSpec', fileName: string, jsTaskCount: number, htmlTasks: Array<{ __typename?: 'HtmlTask', text: string }> }, webSampleSolutions: Array<{ __typename: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }> } | { __typename: 'XmlExerciseContent', rootNode: string, grammarDescription: string, xmlPart?: Maybe<XmlExPart>, xmlSampleSolutions: Array<{ __typename: 'XmlSolution', document: string, grammar: string }> } }> }> }> };
 
-export type ExerciseFileFragment = (
-  { __typename?: 'ExerciseFile' }
-  & Pick<ExerciseFile, 'name' | 'fileType' | 'content' | 'editable'>
-);
+export type ExerciseFileFragment = { __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean };
 
-export type FilesSolutionFragment = (
-  { __typename: 'FilesSolution' }
-  & { files: Array<(
-    { __typename?: 'ExerciseFile' }
-    & ExerciseFileFragment
-  )> }
-);
+export type FilesSolutionFragment = { __typename: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> };
 
-export type LevelFragment = (
-  { __typename?: 'Level' }
-  & Pick<Level, 'title' | 'levelIndex'>
-);
+export type LevelFragment = { __typename?: 'Level', title: string, levelIndex: number };
 
-export type TopicFragment = (
-  { __typename?: 'Topic' }
-  & Pick<Topic, 'abbreviation' | 'title'>
-  & { maxLevel: (
-    { __typename?: 'Level' }
-    & LevelFragment
-  ) }
-);
+export type TopicFragment = { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } };
 
-export type TopicWithLevelFragment = (
-  { __typename?: 'TopicWithLevel' }
-  & { topic: (
-    { __typename?: 'Topic' }
-    & TopicFragment
-  ), level: (
-    { __typename?: 'Level' }
-    & LevelFragment
-  ) }
-);
+export type TopicWithLevelFragment = { __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } };
 
-export type FieldsPartFragment = (
-  { __typename?: 'ExPart' }
-  & Pick<ExPart, 'id' | 'name' | 'solved'>
-);
+export type FieldsPartFragment = { __typename?: 'ExPart', id: string, name: string, solved?: Maybe<boolean> };
 
-export type FieldsForLinkFragment = (
-  { __typename?: 'Exercise' }
-  & Pick<Exercise, 'exerciseId' | 'collectionId' | 'toolId' | 'title' | 'difficulty'>
-  & { topicsWithLevels: Array<(
-    { __typename?: 'TopicWithLevel' }
-    & TopicWithLevelFragment
-  )>, parts: Array<(
-    { __typename?: 'ExPart' }
-    & FieldsPartFragment
-  )> }
-);
+export type FieldsForLinkFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved?: Maybe<boolean> }> };
 
-export type EbnfExerciseContentFragment = (
-  { __typename?: 'EbnfExerciseContent' }
-  & Pick<EbnfExerciseContent, 'sampleSolutions'>
-);
+export type EbnfExerciseContentFragment = { __typename?: 'EbnfExerciseContent', sampleSolutions: Array<string> };
 
-export type FlaskExerciseContentFragment = (
-  { __typename: 'FlaskExerciseContent' }
-  & { testConfig: (
-    { __typename?: 'FlaskTestsConfig' }
-    & { tests: Array<(
-      { __typename?: 'FlaskSingleTestConfig' }
-      & Pick<FlaskSingleTestConfig, 'id' | 'testName' | 'description'>
-    )> }
-  ), files: Array<(
-    { __typename?: 'ExerciseFile' }
-    & ExerciseFileFragment
-  )>, flaskSampleSolutions: Array<(
-    { __typename?: 'FilesSolution' }
-    & FilesSolutionFragment
-  )> }
-);
+export type FlaskExerciseContentFragment = { __typename: 'FlaskExerciseContent', testConfig: { __typename?: 'FlaskTestsConfig', tests: Array<{ __typename?: 'FlaskSingleTestConfig', id: number, testName: string, description: string }> }, files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }>, flaskSampleSolutions: Array<{ __typename: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }> };
 
-export type UnitTestPartFragment = (
-  { __typename?: 'UnitTestPart' }
-  & { unitTestFiles: Array<(
-    { __typename?: 'ExerciseFile' }
-    & ExerciseFileFragment
-  )> }
-);
+export type UnitTestPartFragment = { __typename?: 'UnitTestPart', unitTestFiles: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> };
 
-export type ProgrammingExerciseContentFragment = (
-  { __typename?: 'ProgrammingExerciseContent' }
-  & { programmingPart: ProgrammingExerciseContent['part'] }
-  & { unitTestPart: (
-    { __typename?: 'UnitTestPart' }
-    & UnitTestPartFragment
-  ), implementationPart: (
-    { __typename?: 'ImplementationPart' }
-    & { files: Array<(
-      { __typename?: 'ExerciseFile' }
-      & ExerciseFileFragment
-    )> }
-  ), programmingSampleSolutions: Array<(
-    { __typename?: 'FilesSolution' }
-    & FilesSolutionFragment
-  )> }
-);
+export type ProgrammingExerciseContentFragment = { __typename?: 'ProgrammingExerciseContent', programmingPart?: Maybe<ProgExPart>, unitTestPart: { __typename?: 'UnitTestPart', unitTestFiles: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }, implementationPart: { __typename?: 'ImplementationPart', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }, programmingSampleSolutions: Array<{ __typename: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }> };
 
-export type RegexExerciseContentFragment = (
-  { __typename?: 'RegexExerciseContent' }
-  & { regexSampleSolutions: RegexExerciseContent['sampleSolutions'], regexPart: RegexExerciseContent['part'] }
-);
+export type RegexExerciseContentFragment = { __typename?: 'RegexExerciseContent', regexSampleSolutions: Array<string>, regexPart?: Maybe<RegexExPart> };
 
-export type SqlExerciseContentFragment = (
-  { __typename?: 'SqlExerciseContent' }
-  & Pick<SqlExerciseContent, 'hint'>
-  & { sqlSampleSolutions: SqlExerciseContent['sampleSolutions'], sqlPart: SqlExerciseContent['part'] }
-  & { sqlDbContents: Array<(
-    { __typename?: 'SqlQueryResult' }
-    & SqlQueryResultFragment
-  )> }
-);
+export type SqlExerciseContentFragment = { __typename?: 'SqlExerciseContent', hint?: Maybe<string>, sqlSampleSolutions: Array<string>, sqlPart?: Maybe<SqlExPart>, sqlDbContents: Array<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> };
 
-export type UmlExerciseContentFragment = (
-  { __typename?: 'UmlExerciseContent' }
-  & Pick<UmlExerciseContent, 'toIgnore'>
-  & { umlPart: UmlExerciseContent['part'] }
-  & { mappings: Array<(
-    { __typename?: 'KeyValueObject' }
-    & Pick<KeyValueObject, 'key' | 'value'>
-  )>, umlSampleSolutions: Array<(
-    { __typename?: 'UmlClassDiagram' }
-    & UmlClassDiagramFragment
-  )> }
-);
+export type UmlExerciseContentFragment = { __typename?: 'UmlExerciseContent', toIgnore: Array<string>, umlPart?: Maybe<UmlExPart>, mappings: Array<{ __typename?: 'KeyValueObject', key: string, value: string }>, umlSampleSolutions: Array<{ __typename?: 'UmlClassDiagram', classes: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename?: 'UmlAttribute', isAbstract: boolean, isDerived: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, memberType: string }>, methods: Array<{ __typename?: 'UmlMethod', isAbstract: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, parameters: string, memberType: string }> }>, associations: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: Maybe<string>, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, implementations: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> }> };
 
-export type UmlClassDiagramFragment = (
-  { __typename?: 'UmlClassDiagram' }
-  & { classes: Array<(
-    { __typename?: 'UmlClass' }
-    & UmlClassFragment
-  )>, associations: Array<(
-    { __typename?: 'UmlAssociation' }
-    & UmlAssociationFragment
-  )>, implementations: Array<(
-    { __typename?: 'UmlImplementation' }
-    & UmlImplementationFragment
-  )> }
-);
+export type UmlClassDiagramFragment = { __typename?: 'UmlClassDiagram', classes: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename?: 'UmlAttribute', isAbstract: boolean, isDerived: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, memberType: string }>, methods: Array<{ __typename?: 'UmlMethod', isAbstract: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, parameters: string, memberType: string }> }>, associations: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: Maybe<string>, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, implementations: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> };
 
-export type UmlClassFragment = (
-  { __typename?: 'UmlClass' }
-  & Pick<UmlClass, 'classType' | 'name'>
-  & { attributes: Array<(
-    { __typename?: 'UmlAttribute' }
-    & UmlAttributeFragment
-  )>, methods: Array<(
-    { __typename?: 'UmlMethod' }
-    & UmlMethodFragment
-  )> }
-);
+export type UmlClassFragment = { __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename?: 'UmlAttribute', isAbstract: boolean, isDerived: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, memberType: string }>, methods: Array<{ __typename?: 'UmlMethod', isAbstract: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, parameters: string, memberType: string }> };
 
-export type UmlAttributeFragment = (
-  { __typename?: 'UmlAttribute' }
-  & Pick<UmlAttribute, 'isAbstract' | 'isDerived' | 'isStatic' | 'visibility' | 'memberName' | 'memberType'>
-);
+export type UmlAttributeFragment = { __typename?: 'UmlAttribute', isAbstract: boolean, isDerived: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, memberType: string };
 
-export type UmlMethodFragment = (
-  { __typename?: 'UmlMethod' }
-  & Pick<UmlMethod, 'isAbstract' | 'isStatic' | 'visibility' | 'memberName' | 'parameters' | 'memberType'>
-);
+export type UmlMethodFragment = { __typename?: 'UmlMethod', isAbstract: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, parameters: string, memberType: string };
 
-export type UmlAssociationFragment = (
-  { __typename?: 'UmlAssociation' }
-  & Pick<UmlAssociation, 'assocType' | 'assocName' | 'firstEnd' | 'firstMult' | 'secondEnd' | 'secondMult'>
-);
+export type UmlAssociationFragment = { __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: Maybe<string>, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity };
 
-export type UmlImplementationFragment = (
-  { __typename?: 'UmlImplementation' }
-  & Pick<UmlImplementation, 'subClass' | 'superClass'>
-);
+export type UmlImplementationFragment = { __typename?: 'UmlImplementation', subClass: string, superClass: string };
 
-export type WebExerciseContentFragment = (
-  { __typename?: 'WebExerciseContent' }
-  & { webPart: WebExerciseContent['part'] }
-  & { files: Array<(
-    { __typename?: 'ExerciseFile' }
-    & ExerciseFileFragment
-  )>, siteSpec: (
-    { __typename?: 'SiteSpec' }
-    & Pick<SiteSpec, 'fileName' | 'jsTaskCount'>
-    & { htmlTasks: Array<(
-      { __typename?: 'HtmlTask' }
-      & Pick<HtmlTask, 'text'>
-    )> }
-  ), webSampleSolutions: Array<(
-    { __typename?: 'FilesSolution' }
-    & FilesSolutionFragment
-  )> }
-);
+export type WebExerciseContentFragment = { __typename?: 'WebExerciseContent', webPart?: Maybe<WebExPart>, files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }>, siteSpec: { __typename?: 'SiteSpec', fileName: string, jsTaskCount: number, htmlTasks: Array<{ __typename?: 'HtmlTask', text: string }> }, webSampleSolutions: Array<{ __typename: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, fileType: string, content: string, editable: boolean }> }> };
 
-export type XmlExerciseContentFragment = (
-  { __typename?: 'XmlExerciseContent' }
-  & Pick<XmlExerciseContent, 'rootNode' | 'grammarDescription'>
-  & { xmlPart: XmlExerciseContent['part'] }
-  & { xmlSampleSolutions: Array<(
-    { __typename?: 'XmlSolution' }
-    & XmlSolutionFragment
-  )> }
-);
+export type XmlExerciseContentFragment = { __typename?: 'XmlExerciseContent', rootNode: string, grammarDescription: string, xmlPart?: Maybe<XmlExPart>, xmlSampleSolutions: Array<{ __typename: 'XmlSolution', document: string, grammar: string }> };
 
-export type XmlSolutionFragment = (
-  { __typename: 'XmlSolution' }
-  & Pick<XmlSolution, 'document' | 'grammar'>
-);
+export type XmlSolutionFragment = { __typename: 'XmlSolution', document: string, grammar: string };
 
 export type RegisterMutationVariables = Exact<{
   username: Scalars['String'];
@@ -2470,19 +1714,9 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'register'>
-);
+export type RegisterMutation = { __typename?: 'Mutation', register?: Maybe<string> };
 
-export type LoggedInUserWithTokenFragment = (
-  { __typename?: 'LoggedInUserWithToken' }
-  & Pick<LoggedInUserWithToken, 'jwt'>
-  & { loggedInUser: (
-    { __typename?: 'LoggedInUser' }
-    & Pick<LoggedInUser, 'username' | 'isAdmin'>
-  ) }
-);
+export type LoggedInUserWithTokenFragment = { __typename?: 'LoggedInUserWithToken', jwt: string, loggedInUser: { __typename?: 'LoggedInUser', username: string, isAdmin: boolean } };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
@@ -2490,13 +1724,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = (
-  { __typename?: 'Mutation' }
-  & { login?: Maybe<(
-    { __typename?: 'LoggedInUserWithToken' }
-    & LoggedInUserWithTokenFragment
-  )> }
-);
+export type LoginMutation = { __typename?: 'Mutation', login?: Maybe<{ __typename?: 'LoggedInUserWithToken', jwt: string, loggedInUser: { __typename?: 'LoggedInUser', username: string, isAdmin: boolean } }> };
 
 export const FlaskTestResultFragmentDoc = gql`
     fragment FlaskTestResult on FlaskTestResult {
