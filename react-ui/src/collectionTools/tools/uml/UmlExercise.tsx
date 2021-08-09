@@ -1,9 +1,27 @@
 import React from 'react';
 import {ConcreteExerciseIProps} from '../../Exercise';
-import {UmlClassDiagramInput, UmlExerciseContentFragment} from '../../../graphql';
+import {UmlExerciseContentFragment, UmlExPart} from '../../../graphql';
+import {Redirect} from 'react-router-dom';
+import {UmlClassSelection} from './UmlClassSelection';
+import {UmlMemberAllocation} from './UmlMemberAllocation';
+import {UmlDbClassDiagram, UmlDiagramDrawing} from './UmlDiagramDrawing';
 
-type IProps = ConcreteExerciseIProps<UmlExerciseContentFragment, UmlClassDiagramInput>;
+type IProps = ConcreteExerciseIProps<UmlExerciseContentFragment, UmlDbClassDiagram>;
 
 export function UmlExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
-  return <div>TODO!</div>;
+
+  if (!content.umlPart) {
+    return <Redirect to={''}/>;
+  }
+
+  const part = content.umlPart;
+
+  if (part === UmlExPart.ClassSelection) {
+    return <UmlClassSelection exercise={exercise} content={content}/>;
+  } else if (part === UmlExPart.MemberAllocation) {
+    return <UmlMemberAllocation exercise={exercise} content={content}/>;
+  } else {
+    return <UmlDiagramDrawing exercise={exercise} content={content} withHelp={part === UmlExPart.DiagramDrawingHelp} partId={partId}
+                              oldSolution={oldSolution}/>;
+  }
 }

@@ -116,6 +116,7 @@ type Exercise {
 
 type ExerciseCollection {
   collectionId: Int!
+  toolId: String!
   title: String!
   authors: [String!]!
   exerciseCount: Long!
@@ -593,11 +594,11 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  DELETE
-  CREATE
+  INSERT
   UPDATE
   SELECT
-  INSERT
+  DELETE
+  CREATE
 }
 
 type SqlKeyCellValueObject {

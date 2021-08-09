@@ -19,9 +19,7 @@ export const USER_LOGOUT = 'USER_LOGOUT';
 
 type UserLogoutAction = Action<typeof USER_LOGOUT>;
 
-export function userLogoutAction(): UserLogoutAction {
-  return {type: USER_LOGOUT};
-}
+export const userLogoutAction: UserLogoutAction = {type: USER_LOGOUT};
 
 // Change language
 

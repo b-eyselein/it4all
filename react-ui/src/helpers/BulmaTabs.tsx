@@ -4,8 +4,8 @@ import classNames from 'classnames';
 export interface Tabs {
   [key: string]: {
     name: string;
-    render: () => JSX.Element;
-  }
+    render: JSX.Element | (() => JSX.Element);
+  };
 }
 
 interface IProps {
@@ -16,7 +16,7 @@ interface IProps {
 
 export function BulmaTabs({tabs, activeTabId, setActiveTabId}: IProps): JSX.Element {
 
-  // const [activeTabId, setActiveTabId] = useState<keyof Tabs>(Object.keys(tabs)[0]);
+  const activeTab = tabs[activeTabId].render;
 
   return (
     <>
@@ -29,7 +29,7 @@ export function BulmaTabs({tabs, activeTabId, setActiveTabId}: IProps): JSX.Elem
           )}
         </ul>
       </div>
-      {tabs[activeTabId].render()}
+      {typeof activeTab === 'function' ? activeTab : activeTab}
     </>
   );
 }

@@ -3,7 +3,8 @@ package model.graphql
 import model.mongo.MongoExercisePartResultQueries
 import model.tools.Helper.UntypedExercise
 import model.tools.ToolList
-import model.{ExPart, LoggedInUser}
+import model.{ExPart, LoggedInUser, TopicWithLevel}
+import sangria.macros.derive._
 import sangria.schema._
 
 import scala.concurrent.Future
@@ -47,25 +48,23 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
     types = ToolList.tools.map(_.graphQlModels.exerciseContentType)
   )
 
-  protected val exerciseType: ObjectType[GraphQLContext, UntypedExercise] = ObjectType(
-    "Exercise",
-    fields[GraphQLContext, UntypedExercise](
-      Field("exerciseId", IntType, resolve = _.value.exerciseId),
-      Field("collectionId", IntType, resolve = _.value.collectionId),
-      Field("toolId", StringType, resolve = _.value.toolId),
-      Field("title", StringType, resolve = _.value.title),
-      Field("authors", ListType(StringType), resolve = _.value.authors),
-      Field("text", StringType, resolve = _.value.text),
-      Field("topicsWithLevels", ListType(topicWithLevelType), resolve = _.value.topicsWithLevels),
-      Field("difficulty", IntType, resolve = _.value.difficulty),
-      Field("content", exerciseContentUnionType, resolve = _.value.content),
-      Field(
-        "parts",
-        ListType(exPartType),
-        resolve = context =>
-          context.value.content.parts.map { exPart => GraphQLExPart(context.value.toolId, context.value.collectionId, context.value.exerciseId, exPart) }
+  protected val exerciseType: ObjectType[GraphQLContext, UntypedExercise] = {
+    implicit val twlt: ObjectType[Unit, TopicWithLevel] = topicWithLevelType
+
+    val contentField: Field[GraphQLContext, UntypedExercise] = Field("content", exerciseContentUnionType, resolve = _.value.content)
+
+    deriveObjectType(
+      ReplaceField("content", contentField),
+      AddFields(
+        Field(
+          "parts",
+          ListType(exPartType),
+          resolve = context =>
+            context.value.content.parts
+              .map { exPart => GraphQLExPart(context.value.toolId, context.value.collectionId, context.value.exerciseId, exPart) }
+        )
       )
     )
-  )
+  }
 
 }

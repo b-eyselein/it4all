@@ -1,17 +1,22 @@
-import React from 'react';
+import React, {MouseEvent} from 'react';
 import classNames from 'classnames';
 import {Link} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
+
+export interface ChildLink {
+  to: string | ((event: MouseEvent<HTMLButtonElement>) => void);
+  text: string;
+  classNames: string;
+}
 
 interface IProps {
   isCorrecting: boolean;
   correct: () => void;
   endLink: string;
-  children?: JSX.Element;
+  childLinks?: ChildLink[];
 }
 
-
-export function ExerciseControlButtons({isCorrecting, correct, endLink, children}: IProps): JSX.Element {
+export function ExerciseControlButtons({isCorrecting, correct, endLink, childLinks}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
 
@@ -26,7 +31,11 @@ export function ExerciseControlButtons({isCorrecting, correct, endLink, children
         <Link to={endLink} className="button is-dark is-fullwidth">{t('endSolve')}</Link>
       </div>
 
-      {children && children}
+      {childLinks && childLinks.map(({text, to, classNames}) => <div className="column" key={text}>
+        {typeof to === 'function'
+          ? <button className={classNames} onClick={to}>{text}</button>
+          : <Link className={classNames} to={to}>{text}</Link>}
+      </div>)}
 
     </div>
   );

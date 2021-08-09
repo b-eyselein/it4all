@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import './SqlExercise.sass';
-import {SqlExecutionResultFragment, SqlExerciseContentFragment, useSqlCorrectionMutation} from '../../../graphql';
+import {SqlExecutionResultFragment, SqlExerciseContentFragment, SqlExPart, useSqlCorrectionMutation} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
 import CodeMirror from '@uiw/react-codemirror';
 import {getDefaultCodeMirrorEditorOptions} from '../codeMirrorOptions';
@@ -28,11 +28,7 @@ export function SqlExercise({exercise, content, partId, oldSolution}: IProps): J
     ? correctionMutationResult.data.sqlExercise?.correct.result.executionResult
     : undefined;
 
-  if (!content.sqlPart) {
-    throw new Error('TODO!');
-  }
-
-  const part = content.sqlPart;
+  const part = SqlExPart.SqlSingleExPart;
 
   function correct(): void {
     database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
@@ -42,24 +38,17 @@ export function SqlExercise({exercise, content, partId, oldSolution}: IProps): J
       .catch((error) => console.error(error));
   }
 
-  const databaseContentRender = () => <SqlTableContents tables={content.sqlDbContents}/>;
-  databaseContentRender.displayName = 'SqlDatabaseContentRender';
-
-  const correctionTabRender = () => <SqlCorrection mutationResult={correctionMutationResult}/>;
-  correctionTabRender.display = 'SqlCorrectionTabRender';
-
-  const sampleSolutionTabRender = () => <SampleSolutionTabContent>
-    {() => content.sqlSampleSolutions.map((sample) =>
-      <StringSampleSolution sample={sample} key={sample}/>
-    )}
-  </SampleSolutionTabContent>;
-  sampleSolutionTabRender.displayName = 'SqlSampleSolutionTabRender';
-
-
   const tabs: Tabs = {
-    databaseContent: {name: t('databaseContent'), render: databaseContentRender},
-    correction: {name: t('correction'), render: correctionTabRender},
-    sampleSolution: {name: t('sampleSolution_plural'), render: sampleSolutionTabRender}
+    databaseContent: {name: t('databaseContent'), render: <SqlTableContents tables={content.sqlDbContents}/>},
+    correction: {name: t('correction'), render: <SqlCorrection mutationResult={correctionMutationResult}/>},
+    sampleSolution: {
+      name: t('sampleSolution_plural'),
+      render: <SampleSolutionTabContent>
+        {() => content.sqlSampleSolutions.map((sample) =>
+          <StringSampleSolution sample={sample} key={sample}/>
+        )}
+      </SampleSolutionTabContent>
+    }
   };
 
   const [activeTabId, setActiveTabId] = useState<keyof Tabs>(Object.keys(tabs)[0]);

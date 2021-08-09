@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Dispatch} from 'react';
 import {Link, Route, Switch} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {Home} from './Home';
@@ -6,21 +6,21 @@ import {LoginForm} from './LoginForm';
 import {ToolBase} from './ToolBase';
 import {RandomToolBase} from './randomTools/RandomToolBase';
 import {currentUserSelector} from './store/store';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {changeLanguageAction, StoreAction, userLogoutAction} from './store/actions';
 
 export function App(): JSX.Element {
 
   const {t} = useTranslation('common');
   const currentUser = useSelector(currentUserSelector);
+  const dispatch = useDispatch<Dispatch<StoreAction>>();
 
   const langs = ['de', 'en'];
 
-  function logout(): void {
-    console.info('TODO: logout...');
-  }
-
   function changeLanguage(language: string): void {
-    console.error('TODO: change language to ' + language);
+    // console.error('TODO: change language to ' + language);
+    // TODO: check if working...
+    dispatch(changeLanguageAction(language));
   }
 
   return (
@@ -35,8 +35,7 @@ export function App(): JSX.Element {
             <div className="navbar-item has-dropdown is-hoverable">
               <div className="navbar-link">{t('language')}</div>
               <div className="navbar-dropdown">
-                {langs.map((lang) =>
-                  <div key={lang} className="navbar-item" onClick={() => changeLanguage(lang)}>{lang}</div>)}
+                {langs.map((lang) => <div key={lang} className="navbar-item" onClick={() => changeLanguage(lang)}>{lang}</div>)}
               </div>
             </div>
 
@@ -49,7 +48,7 @@ export function App(): JSX.Element {
 
             <div className="navbar-item">
               {currentUser
-                ? <button onClick={logout} className="button is-light">
+                ? <button onClick={() => dispatch(userLogoutAction)} className="button is-light">
                   {t('logout')}&nbsp;{currentUser.loggedInUser.username}
                 </button>
                 : <div className="buttons">
@@ -68,7 +67,6 @@ export function App(): JSX.Element {
         <Route path={'/tools/:toolId'} component={ToolBase}/>
         <Route path={'/randomTools'} component={RandomToolBase}/>
       </Switch>
-
     </>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {MatchType, NewMatchFragment, SqlMatchingResultFragment} from '../../../graphql';
+import {MatchType, SqlMatchingResultFragment} from '../../../graphql';
 import classNames from 'classnames';
 import {getCssClassForMatchType, getTextForMatchType} from './SqlStringMatchingResult';
 
@@ -11,11 +11,21 @@ interface IProps {
 
 export function SqlMatchingResult({matchName, matchSingularName, matchingResult}: IProps): JSX.Element {
 
-  const allMatches: NewMatchFragment[] = matchingResult.allMatches;
+  const {/*allMatches,*/ notMatchedForUserString, notMatchedForSampleString} = matchingResult;
 
-  const successful = allMatches.every((m: NewMatchFragment) => m.matchType === MatchType.SuccessfulMatch)
-    && matchingResult.notMatchedForUserString.length === 0
-    && matchingResult.notMatchedForSampleString.length === 0;
+  const allMatches: any[] = matchingResult.allMatches;
+
+  const successful = allMatches.every(({matchType}) => matchType === MatchType.SuccessfulMatch)
+    && notMatchedForUserString.length === 0 && notMatchedForSampleString.length === 0;
+
+  /*
+  const describeMatch = () => <div>TODO!</div>;
+
+  const describeNotMatchedItem = () => <div>TODO!</div>;
+
+  const x = <MatchingResultDisplay matchingResult={matchingResult} comparedItemPluralName={matchName} describeMatch={} describeNotMatchedItem={}/>;
+
+   */
 
   return (
     <>
@@ -26,22 +36,19 @@ export function SqlMatchingResult({matchName, matchSingularName, matchingResult}
 
       {!successful && <div className="content">
         <ul>
-          {allMatches.map((match, index) =>
-            <li className={getCssClassForMatchType(match.matchType)} key={index}>
-              Die Angabe {{matchSingularName}}
-              <code>{match.userArgDescription}</code> {getTextForMatchType(match.matchType)}.
+          {allMatches.map((match, index) => <li className={getCssClassForMatchType(match.matchType)} key={index}>
+              Die Angabe {{matchSingularName}} <code>{match.userArgDescription}</code> {getTextForMatchType(match.matchType)}.
             </li>
           )}
-          {matchingResult.notMatchedForUserString.map((notMatchedForUser, index) =>
-            <li className="has-text-danger" key={index}>
+
+          {notMatchedForUserString.map((notMatchedForUser, index) => <li className="has-text-danger" key={index}>
               Die Angabe {matchSingularName} <code>{notMatchedForUser}</code> ist falsch.
             </li>
           )}
-          {matchingResult.notMatchedForSampleString.map((notMatchedForSample, index) =>
-            <li className="has-text-danger" key={index}>
-              Die Angabe {matchSingularName} <code>{notMatchedForSample}</code> fehlt.
-            </li>
-          )}
+
+          {notMatchedForSampleString.map((notMatchedForSample, index) => <li className="has-text-danger" key={index}>
+            Die Angabe {matchSingularName} <code>{notMatchedForSample}</code> fehlt.
+          </li>)}
         </ul>
       </div>
       }

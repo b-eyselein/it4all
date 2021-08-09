@@ -1,8 +1,7 @@
 package model.graphql
 
+import model._
 import model.result.SuccessType
-import model.tools.ToolState
-import model.{KeyValueObject, _}
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -16,9 +15,7 @@ trait BasicGraphQLModels {
     deriveObjectType()
   }
 
-  protected val toolStateType: EnumType[ToolState] = deriveEnumType()
-
-  protected val levelType: ObjectType[Unit, Level] = ObjectType(
+  private val levelType: ObjectType[Unit, Level] = ObjectType(
     "Level",
     fields[Unit, Level](
       Field("title", StringType, resolve = _.value.entryName),

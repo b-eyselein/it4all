@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {RegexExerciseContentFragment, useRegexCorrectionMutation} from '../../../graphql';
+import {RegexExerciseContentFragment, RegexExPart, useRegexCorrectionMutation} from '../../../graphql';
 import {RegexCheatSheet} from './RegexCheatSheet';
 import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
 import {useTranslation} from 'react-i18next';
@@ -7,7 +7,7 @@ import {RegexCorrection} from './RegexCorrection';
 import {StringSampleSolution} from '../StringSampleSolution';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
-import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
+import {ChildLink, ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 import {database} from '../../DexieTable';
 
 type IProps = ConcreteExerciseIProps<RegexExerciseContentFragment, string>;
@@ -22,11 +22,7 @@ export function RegexExercise({exercise, content, partId, oldSolution}: IProps):
 
   const correcting = correctionMutationResult.called && correctionMutationResult.loading;
 
-  if (!content.regexPart) {
-    throw new Error('TODO');
-  }
-
-  const part = content.regexPart;
+  const part = RegexExPart.RegexSingleExPart;
 
   function correct(): void {
     database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
@@ -36,21 +32,25 @@ export function RegexExercise({exercise, content, partId, oldSolution}: IProps):
       .catch((error) => console.error(error));
   }
 
-  const correctionTabRender = () => <RegexCorrection mutationResult={correctionMutationResult}/>;
-  correctionTabRender.displayName = 'RegexCorrectionTabRender';
-
-  const sampleSolutionTabRender = () => <SampleSolutionTabContent>
-    {() => content.regexSampleSolutions.map((sample, index) =>
-      <StringSampleSolution sample={sample} key={index}/>
-    )}
-  </SampleSolutionTabContent>;
-  sampleSolutionTabRender.displayName = 'RegexSampleSolutionTabRender';
-
   const tabs: Tabs = {
-    correction: {name: t('correction'), render: correctionTabRender},
-    sampleSolution: {name: t('sampleSolution_plural'), render: sampleSolutionTabRender}
+    correction: {name: t('correction'), render: <RegexCorrection mutationResult={correctionMutationResult}/>},
+    sampleSolution: {
+      name: t('sampleSolution_plural'),
+      render: <SampleSolutionTabContent>
+        {() => content.regexSampleSolutions.map((sample, index) =>
+          <StringSampleSolution sample={sample} key={index}/>
+        )}
+      </SampleSolutionTabContent>
+    }
   };
+
   const [activeTabId, setActiveTabId] = useState<keyof Tabs>(Object.keys(tabs)[0]);
+
+  const showHideHelpButton: ChildLink = {
+    text: showInfo ? t('hideHelp') : t('showHelp'),
+    to: () => setShowInfo((value) => !value),
+    classNames: 'button is-info is-fullwidth'
+  };
 
   return (
     <div className="container is-fluid">
@@ -70,29 +70,7 @@ export function RegexExercise({exercise, content, partId, oldSolution}: IProps):
             </div>
           </div>
 
-          <ExerciseControlButtons isCorrecting={correcting} correct={correct} endLink={`./../../${exercise.exerciseId}`}>
-            <div className="column">
-              <button className="button is-info is-fullwidth" onClick={() => setShowInfo((value) => !value)}>
-                {showInfo ? t('hideHelp') : t('hideHelp')}
-              </button>
-            </div>
-          </ExerciseControlButtons>
-          {/*
-          <div className="columns">
-            <div className="column">
-              <button className="button is-link is-fullwidth" onClick={correct}>{t('checkSolution')}</button>
-            </div>
-            <div className="column">
-              <Link to={`./../../${exercise.exerciseId}`} className="button is-dark is-fullwidth">{t('endSolve')}</Link>
-            </div>
-          </div>
-          <div className="buttons">
-            <button className="button is-info is-fullwidth" onClick={() => setShowInfo((value) => !value)}>
-              Hilfe {showInfo ? 'ausblenden' : 'anzeigen'}
-            </button>
-
-        </div>
-            */}
+          <ExerciseControlButtons isCorrecting={correcting} correct={correct} endLink={`./../../${exercise.exerciseId}`} childLinks={[showHideHelpButton]}/>
 
           {showInfo && <RegexCheatSheet/>}
         </div>

@@ -13,7 +13,7 @@ import sangria.schema._
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-trait GraphQLMutations extends CollectionGraphQLModel with GraphQLArguments with MongoClientQueries with JwtHelpers {
+trait GraphQLMutations extends ExerciseGraphQLModels with GraphQLArguments with MongoClientQueries with JwtHelpers {
 
   private def register(registerValues: RegisterValues): Future[Option[String]] = if (registerValues.isInvalid) {
     Future.successful(None)

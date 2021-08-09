@@ -16,8 +16,11 @@ object UmlImplementationMatcher extends Matcher[UmlImplementation, UmlImplementa
 
   override protected def instantiateMatch(ua: UmlImplementation, sa: UmlImplementation): UmlImplementationMatch = {
 
-    val matchType = if (ua.subClass == sa.subClass && ua.superClass == sa.superClass) { MatchType.SUCCESSFUL_MATCH }
-    else { MatchType.PARTIAL_MATCH }
+    val matchType = if (ua.subClass == sa.subClass && ua.superClass == sa.superClass) {
+      MatchType.SUCCESSFUL_MATCH
+    } else {
+      MatchType.PARTIAL_MATCH
+    }
 
     UmlImplementationMatch(matchType, ua, sa)
   }

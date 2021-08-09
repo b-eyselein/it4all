@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {ExerciseIProps} from '../ToolBase';
 import {Redirect, useRouteMatch} from 'react-router-dom';
-import {ExerciseQuery, ExerciseSolveFieldsFragment, FilesSolutionInput, UmlClassDiagramInput, useExerciseQuery, XmlSolutionInput} from '../graphql';
+import {ExerciseQuery, ExerciseSolveFieldsFragment, FilesSolutionInput, useExerciseQuery, XmlSolutionInput} from '../graphql';
 import {WithQuery} from '../WithQuery';
 import {EbnfExercise} from './tools/ebnf/EbnfExercise';
 import {RegexExercise} from './tools/regex/RegexExercise';
@@ -13,6 +13,8 @@ import {FlaskExercise} from './tools/flask/FlaskExercise';
 import {database} from './DexieTable';
 import {useTranslation} from 'react-i18next';
 import {UmlExercise} from './tools/uml/UmlExercise';
+import {neverRender} from '../helpers';
+import {UmlDbClassDiagram} from './tools/uml/UmlDiagramDrawing';
 
 export interface ConcreteExerciseIProps<T, S> {
   exercise: ExerciseSolveFieldsFragment;
@@ -26,11 +28,6 @@ interface IState<S> {
   oldSolution?: S;
 }
 
-// eslint-disable-next-line
-function neverRender(_x: never): JSX.Element {
-  return <div/>;
-}
-
 export function Exercise<SolutionType>({toolId, collectionId, exerciseId}: ExerciseIProps): JSX.Element {
 
   const {t} = useTranslation('common');
@@ -41,7 +38,7 @@ export function Exercise<SolutionType>({toolId, collectionId, exerciseId}: Exerc
   useEffect(() => {
     database.getSolution<SolutionType>(toolId, collectionId, exerciseId, partId)
       .then((oldSolution) => setState({oldSolutionLoaded: true, oldSolution: oldSolution?.solution}));
-  }, []);
+  }, [partId]);
 
   function render({tool}: ExerciseQuery): JSX.Element {
 
@@ -78,7 +75,7 @@ export function Exercise<SolutionType>({toolId, collectionId, exerciseId}: Exerc
     } else if (content.__typename === 'SqlExerciseContent') {
       return <SqlExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution as string | undefined}/>;
     } else if (content.__typename === 'UmlExerciseContent') {
-      return <UmlExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution as UmlClassDiagramInput | undefined}/>;
+      return <UmlExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution as UmlDbClassDiagram | undefined}/>;
     } else if (content.__typename === 'WebExerciseContent') {
       return <WebExercise exercise={exercise} content={content} partId={partId} oldSolution={state.oldSolution as FilesSolutionInput | undefined}/>;
     } else if (content.__typename === 'XmlExerciseContent') {

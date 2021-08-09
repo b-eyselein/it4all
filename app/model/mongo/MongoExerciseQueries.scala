@@ -64,17 +64,16 @@ trait MongoExerciseQueries {
         } yield exercises
     }
 
-  protected def futureExerciseExists(toolId: String, collectionId: Int, exerciseId: Int): Future[Boolean] =
-    for {
-      exercisesCollection <- futureExercisesCollection
-      maybeExercise <-
-        exercisesCollection
-          .find(
-            BSONDocument("toolId" -> toolId, "collectionId" -> collectionId, "exerciseId" -> exerciseId),
-            Option.empty[BSONDocument]
-          )
-          .one[BSONDocument]
-    } yield maybeExercise.isDefined
+  protected def futureExerciseExists(toolId: String, collectionId: Int, exerciseId: Int): Future[Boolean] = for {
+    exercisesCollection <- futureExercisesCollection
+    maybeExercise <-
+      exercisesCollection
+        .find(
+          BSONDocument("toolId" -> toolId, "collectionId" -> collectionId, "exerciseId" -> exerciseId),
+          Option.empty[BSONDocument]
+        )
+        .one[BSONDocument]
+  } yield maybeExercise.isDefined
 
   protected def futureExerciseById(
     tool: Tool,

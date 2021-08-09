@@ -257,7 +257,6 @@ fragment ProgrammingExerciseContent on ProgrammingExerciseContent {
 
 fragment RegexExerciseContent on RegexExerciseContent {
   regexSampleSolutions: sampleSolutions
-  regexPart: part(partId: $partId)
 }
 
 # Sql
@@ -265,7 +264,6 @@ fragment RegexExerciseContent on RegexExerciseContent {
 fragment SqlExerciseContent on SqlExerciseContent {
   hint
   sqlSampleSolutions: sampleSolutions
-  sqlPart: part(partId: $partId)
   sqlDbContents {
     ...SqlQueryResult
   }

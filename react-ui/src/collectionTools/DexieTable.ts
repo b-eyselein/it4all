@@ -31,6 +31,10 @@ class DexieTable extends Dexie {
     return this.solutions.put({toolId, collectionId, exerciseId, partId, solution});
   }
 
+  deleteSolution(toolId: string, collectionId: number, exerciseId: number, partId: string): PromiseExtended<void> {
+    return this.solutions.delete([toolId, collectionId, exerciseId, partId]);
+  }
+
 }
 
 export const database = new DexieTable();

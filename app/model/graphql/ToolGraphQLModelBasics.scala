@@ -78,7 +78,7 @@ trait ToolGraphQLModelBasics[SolutionInputType, C <: ExerciseContent, PT <: ExPa
     ),
     ReplaceField(
       "notMatchedForSample",
-      Field("notMatchedForSample", ListType(tType), resolve = _.value.notMatchedForUser.map(t2to))
+      Field("notMatchedForSample", ListType(tType), resolve = _.value.notMatchedForSample.map(t2to))
     )
   )
 
