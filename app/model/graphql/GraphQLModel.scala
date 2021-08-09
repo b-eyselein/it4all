@@ -41,9 +41,14 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Le
     )
   )
 
-  private val ToolType: ObjectType[GraphQLContext, Tool] = deriveObjectType(
-    ObjectTypeName("CollectionTool"),
-    AddFields[GraphQLContext, Tool](
+  private val toolStateType: EnumType[ToolState] = deriveEnumType()
+
+  private val ToolType: ObjectType[GraphQLContext, Tool] = ObjectType(
+    "CollectionTool",
+    fields[GraphQLContext, Tool](
+      Field("id", StringType, resolve = _.value.id),
+      Field("name", StringType, resolve = _.value.name),
+      Field("toolState", toolStateType, resolve = _.value.toolState),
       // Lesson fields
       Field("lessonCount", LongType, resolve = context => futureLessonCountForTool(context.value.id)),
       Field("lessons", ListType(lessonType), resolve = context => futureLessonsForTool(context.value.id)),

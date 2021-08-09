@@ -1,8 +1,3 @@
-interface AbstractCorrectionResult {
-  points: Float!
-  maxPoints: Float!
-}
-
 type AdditionalComparison {
   selectComparisons: SelectAdditionalComparisons
   insertComparison: StringMatchingResult
@@ -14,16 +9,16 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  TruePositive
-  FalsePositive
   FalseNegative
+  FalsePositive
   TrueNegative
+  TruePositive
 }
 
 type CollectionTool {
-  id: ID!
+  id: String!
   name: String!
-  state: ToolState!
+  toolState: ToolState!
   lessonCount: Long!
   lessons: [Lesson!]!
   lesson(lessonId: Int!): Lesson
@@ -85,13 +80,11 @@ type ElementLineAnalysisResult {
   correctAttributes: String!
 }
 
-type ElementLineMatch implements NewMatch {
+type ElementLineMatch {
   matchType: MatchType!
   userArg: ElementLine!
   sampleArg: ElementLine!
   analysisResult: ElementLineAnalysisResult!
-  userArgDescription: String
-  sampleArgDescription: String
 }
 
 type ExPart {
@@ -342,17 +335,9 @@ The `Long` scalar type represents non-fractional signed whole numeric values. Lo
 scalar Long
 
 enum MatchType {
-  SUCCESSFUL_MATCH
   PARTIAL_MATCH
+  SUCCESSFUL_MATCH
   UNSUCCESSFUL_MATCH
-}
-
-interface MatchingResult {
-  points: Float!
-  maxPoints: Float!
-  allMatches: [NewMatch!]!
-  notMatchedForUserString: [String!]!
-  notMatchedForSampleString: [String!]!
 }
 
 type Mutation {
@@ -366,12 +351,6 @@ type Mutation {
   umlExercise(collId: Int!, exId: Int!): UmlExerciseMutations
   webExercise(collId: Int!, exId: Int!): WebExerciseMutations
   xmlExercise(collId: Int!, exId: Int!): XmlExerciseMutations
-}
-
-interface NewMatch {
-  matchType: MatchType!
-  userArgDescription: String
-  sampleArgDescription: String
 }
 
 enum ProgExPart {
@@ -429,8 +408,8 @@ type RegexCorrectionResult {
 }
 
 enum RegexCorrectionType {
-  MATCHING
   EXTRACTION
+  MATCHING
 }
 
 enum RegexExPart {
@@ -450,17 +429,15 @@ type RegexExerciseMutations {
   correct(part: RegexExPart!, solution: String!): RegexCorrectionResult!
 }
 
-type RegexExtractedValuesComparisonMatchingResult implements MatchingResult {
+type RegexExtractedValuesComparisonMatchingResult {
+  points: Float!
+  maxPoints: Float!
   allMatches: [RegexMatchMatch!]!
   notMatchedForUser: [String!]!
   notMatchedForSample: [String!]!
-  points: Float!
-  maxPoints: Float!
-  notMatchedForUserString: [String!]!
-  notMatchedForSampleString: [String!]!
 }
 
-type RegexExtractionResult implements RegexAbstractResult & AbstractCorrectionResult {
+type RegexExtractionResult implements RegexAbstractResult {
   extractionResults: [RegexExtractionSingleResult!]!
   points: Float!
   maxPoints: Float!
@@ -477,12 +454,10 @@ type RegexExtractionTestData {
   base: String!
 }
 
-type RegexMatchMatch implements NewMatch {
-  sampleArg: String
-  userArg: String
+type RegexMatchMatch {
   matchType: MatchType!
-  userArgDescription: String
-  sampleArgDescription: String
+  sampleArg: String!
+  userArg: String!
 }
 
 type RegexMatchTestData {
@@ -491,7 +466,7 @@ type RegexMatchTestData {
   isIncluded: Boolean!
 }
 
-type RegexMatchingResult implements RegexAbstractResult & AbstractCorrectionResult {
+type RegexMatchingResult implements RegexAbstractResult {
   matchingResults: [RegexMatchingSingleResult!]!
   points: Float!
   maxPoints: Float!
@@ -512,7 +487,7 @@ input RegisterValues {
 type SelectAdditionalComparisons {
   groupByComparison: StringMatchingResult!
   orderByComparison: StringMatchingResult!
-  limitComparison: SqlLimitComparisonMatchingResult!
+  limitComparison: StringMatchingResult!
 }
 
 type SiteSpec {
@@ -522,22 +497,18 @@ type SiteSpec {
   jsTaskCount: Int!
 }
 
-type SqlBinaryExpressionComparisonMatchingResult implements MatchingResult {
+type SqlBinaryExpressionComparisonMatchingResult {
+  points: Float!
+  maxPoints: Float!
   allMatches: [SqlBinaryExpressionMatch!]!
   notMatchedForUser: [String!]!
   notMatchedForSample: [String!]!
-  points: Float!
-  maxPoints: Float!
-  notMatchedForUserString: [String!]!
-  notMatchedForSampleString: [String!]!
 }
 
-type SqlBinaryExpressionMatch implements NewMatch {
-  sampleArg: String
-  userArg: String
+type SqlBinaryExpressionMatch {
   matchType: MatchType!
-  userArgDescription: String
-  sampleArgDescription: String
+  sampleArg: String!
+  userArg: String!
 }
 
 type SqlCell {
@@ -546,22 +517,18 @@ type SqlCell {
   different: Boolean!
 }
 
-type SqlColumnComparisonMatchingResult implements MatchingResult {
+type SqlColumnComparisonMatchingResult {
+  points: Float!
+  maxPoints: Float!
   allMatches: [SqlColumnMatch!]!
   notMatchedForUser: [String!]!
   notMatchedForSample: [String!]!
-  points: Float!
-  maxPoints: Float!
-  notMatchedForUserString: [String!]!
-  notMatchedForSampleString: [String!]!
 }
 
-type SqlColumnMatch implements NewMatch {
-  sampleArg: String
-  userArg: String
+type SqlColumnMatch {
   matchType: MatchType!
-  userArgDescription: String
-  sampleArgDescription: String
+  sampleArg: String!
+  userArg: String!
 }
 
 type SqlCorrectionResult {
@@ -595,33 +562,15 @@ type SqlExerciseMutations {
 
 enum SqlExerciseType {
   INSERT
-  UPDATE
   SELECT
-  DELETE
   CREATE
+  DELETE
+  UPDATE
 }
 
 type SqlKeyCellValueObject {
   key: String!
   value: SqlCell!
-}
-
-type SqlLimitComparisonMatchingResult implements MatchingResult {
-  allMatches: [SqlLimitMatch!]!
-  notMatchedForUser: [String!]!
-  notMatchedForSample: [String!]!
-  points: Float!
-  maxPoints: Float!
-  notMatchedForUserString: [String!]!
-  notMatchedForSampleString: [String!]!
-}
-
-type SqlLimitMatch implements NewMatch {
-  sampleArg: String
-  userArg: String
-  matchType: MatchType!
-  userArgDescription: String
-  sampleArgDescription: String
 }
 
 type SqlQueriesStaticComparison {
@@ -664,17 +613,17 @@ type StringMatchingResult {
 }
 
 enum SuccessType {
+  COMPLETE
   ERROR
   NONE
   PARTIALLY
-  COMPLETE
 }
 
 enum ToolState {
-  PRE_ALPHA
   ALPHA
   BETA
   LIVE
+  PRE_ALPHA
 }
 
 type Topic {
@@ -714,28 +663,24 @@ input UmlAssociationInput {
   secondMult: UmlMultiplicity!
 }
 
-type UmlAssociationMatch implements NewMatch {
+type UmlAssociationMatch {
   matchType: MatchType!
   userArg: UmlAssociation!
   sampleArg: UmlAssociation!
   analysisResult: UmlAssociationAnalysisResult!
-  userArgDescription: String
-  sampleArgDescription: String
 }
 
-type UmlAssociationMatchingResult implements MatchingResult {
+type UmlAssociationMatchingResult {
+  points: Float!
+  maxPoints: Float!
   allMatches: [UmlAssociationMatch!]!
   notMatchedForUser: [UmlAssociation!]!
   notMatchedForSample: [UmlAssociation!]!
-  points: Float!
-  maxPoints: Float!
-  notMatchedForUserString: [String!]!
-  notMatchedForSampleString: [String!]!
 }
 
 enum UmlAssociationType {
-  ASSOCIATION
   AGGREGATION
+  ASSOCIATION
   COMPOSITION
 }
 
@@ -770,23 +715,19 @@ input UmlAttributeInput {
   isAbstract: Boolean = false
 }
 
-type UmlAttributeMatch implements NewMatch {
+type UmlAttributeMatch {
   matchType: MatchType!
   userArg: UmlAttribute!
   sampleArg: UmlAttribute!
   maybeAnalysisResult: UmlAttributeAnalysisResult!
-  userArgDescription: String
-  sampleArgDescription: String
 }
 
-type UmlAttributeMatchingResult implements MatchingResult {
+type UmlAttributeMatchingResult {
+  points: Float!
+  maxPoints: Float!
   allMatches: [UmlAttributeMatch!]!
   notMatchedForUser: [UmlAttribute!]!
   notMatchedForSample: [UmlAttribute!]!
-  points: Float!
-  maxPoints: Float!
-  notMatchedForUserString: [String!]!
-  notMatchedForSampleString: [String!]!
 }
 
 type UmlClass {
@@ -815,14 +756,12 @@ input UmlClassInput {
   methods: [UmlMethodInput!] = []
 }
 
-type UmlClassMatch implements NewMatch {
+type UmlClassMatch {
   matchType: MatchType!
   userArg: UmlClass!
   sampleArg: UmlClass!
   compAM: Boolean!
   analysisResult: UmlClassMatchAnalysisResult!
-  userArgDescription: String
-  sampleArgDescription: String
 }
 
 type UmlClassMatchAnalysisResult {
@@ -832,14 +771,12 @@ type UmlClassMatchAnalysisResult {
   maybeMethodMatchingResult: UmlMethodMatchingResult
 }
 
-type UmlClassMatchingResult implements MatchingResult {
+type UmlClassMatchingResult {
+  points: Float!
+  maxPoints: Float!
   allMatches: [UmlClassMatch!]!
   notMatchedForUser: [UmlClass!]!
   notMatchedForSample: [UmlClass!]!
-  points: Float!
-  maxPoints: Float!
-  notMatchedForUserString: [String!]!
-  notMatchedForSampleString: [String!]!
 }
 
 enum UmlClassType {
@@ -883,22 +820,18 @@ input UmlImplementationInput {
   superClass: String!
 }
 
-type UmlImplementationMatch implements NewMatch {
+type UmlImplementationMatch {
   matchType: MatchType!
   userArg: UmlImplementation!
   sampleArg: UmlImplementation!
-  userArgDescription: String
-  sampleArgDescription: String
 }
 
-type UmlImplementationMatchingResult implements MatchingResult {
+type UmlImplementationMatchingResult {
+  points: Float!
+  maxPoints: Float!
   allMatches: [UmlImplementationMatch!]!
   notMatchedForUser: [UmlImplementation!]!
   notMatchedForSample: [UmlImplementation!]!
-  points: Float!
-  maxPoints: Float!
-  notMatchedForUserString: [String!]!
-  notMatchedForSampleString: [String!]!
 }
 
 type UmlMethod {
@@ -932,23 +865,19 @@ input UmlMethodInput {
   isAbstract: Boolean = false
 }
 
-type UmlMethodMatch implements NewMatch {
+type UmlMethodMatch {
   matchType: MatchType!
   userArg: UmlMethod!
   sampleArg: UmlMethod!
   maybeAnalysisResult: UmlMethodAnalysisResult!
-  userArgDescription: String
-  sampleArgDescription: String
 }
 
-type UmlMethodMatchingResult implements MatchingResult {
+type UmlMethodMatchingResult {
+  points: Float!
+  maxPoints: Float!
   allMatches: [UmlMethodMatch!]!
   notMatchedForUser: [UmlMethod!]!
   notMatchedForSample: [UmlMethod!]!
-  points: Float!
-  maxPoints: Float!
-  notMatchedForUserString: [String!]!
-  notMatchedForSampleString: [String!]!
 }
 
 enum UmlMultiplicity {
@@ -965,10 +894,10 @@ type UmlResult {
 }
 
 enum UmlVisibility {
-  PUBLIC
   PACKAGE
-  PROTECTED
   PRIVATE
+  PROTECTED
+  PUBLIC
 }
 
 type UnitTestCorrectionResult implements ProgrammingTestCorrectionResult {
@@ -1052,14 +981,12 @@ type XmlDocumentResult {
   errors: [XmlError!]!
 }
 
-type XmlElementLineComparisonMatchingResult implements MatchingResult {
+type XmlElementLineComparisonMatchingResult {
+  points: Float!
+  maxPoints: Float!
   allMatches: [ElementLineMatch!]!
   notMatchedForUser: [ElementLine!]!
   notMatchedForSample: [ElementLine!]!
-  points: Float!
-  maxPoints: Float!
-  notMatchedForUserString: [String!]!
-  notMatchedForSampleString: [String!]!
 }
 
 type XmlError {

@@ -25,7 +25,7 @@ fragment SelectAdditionalComparison on SelectAdditionalComparisons {
     ...StringMatchingResult
   }
   limitComparison {
-    ...SqlMatchingResult
+    ...StringMatchingResult
   }
 }
 
@@ -33,16 +33,16 @@ fragment SelectAdditionalComparison on SelectAdditionalComparisons {
 
 fragment StaticComparison on SqlQueriesStaticComparison {
   columnComparison {
-    ...SqlMatchingResult
+    ...SqlColumnComparisonMatchingResult
   }
   tableComparison {
     ...StringMatchingResult
   }
   joinExpressionComparison {
-    ...SqlMatchingResult
+    ...SqlBinaryExpressionComparisonMatchingResult
   }
   whereComparison {
-    ...SqlMatchingResult
+    ...SqlBinaryExpressionComparisonMatchingResult
   }
   additionalComparisons {
     selectComparisons {
@@ -101,8 +101,8 @@ fragment SqlCell on SqlCell {
 
 fragment StringMatch on StringMatch {
   matchType
-  sampleArg
   userArg
+  sampleArg
 }
 
 fragment StringMatchingResult on StringMatchingResult {
@@ -115,18 +115,34 @@ fragment StringMatchingResult on StringMatchingResult {
   notMatchedForSample
 }
 
-fragment NewMatch on NewMatch {
+fragment SqlColumnComparisonMatch on SqlColumnMatch {
   matchType
-  sampleArgDescription
-  userArgDescription
+  userArg
+  sampleArg
 }
 
-fragment SqlMatchingResult on MatchingResult  {
+fragment SqlColumnComparisonMatchingResult on SqlColumnComparisonMatchingResult {
   points
   maxPoints
   allMatches {
-    ...NewMatch
+    ...SqlColumnComparisonMatch
   }
-  notMatchedForUserString
-  notMatchedForSampleString
+  notMatchedForUser
+  notMatchedForSample
+}
+
+fragment SqlBinaryExpressionMatch on SqlBinaryExpressionMatch {
+  matchType
+  userArg
+  sampleArg
+}
+
+fragment SqlBinaryExpressionComparisonMatchingResult on SqlBinaryExpressionComparisonMatchingResult {
+  points
+  maxPoints
+  allMatches {
+    ...SqlBinaryExpressionMatch
+  }
+  notMatchedForUser
+  notMatchedForSample
 }

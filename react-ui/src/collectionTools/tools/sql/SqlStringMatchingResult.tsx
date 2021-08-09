@@ -8,10 +8,6 @@ interface IProps {
   matchingResult: StringMatchingResultFragment;
 }
 
-export function getCssClassForMatchType(matchType: MatchType): string {
-  return matchType === MatchType.SuccessfulMatch ? 'has-text-success' : 'has-text-danger';
-}
-
 export function getTextForMatchType(matchType: MatchType): string {
   return matchType === MatchType.SuccessfulMatch ? 'ist korrekt' : 'ist nicht komplett richtig.';
 }
@@ -22,7 +18,7 @@ export function SqlStringMatchingResult({matchName, matchSingularName, matchingR
     <span>Die Angabe {matchSingularName} <code>{userArg}</code> {getTextForMatchType(matchType)}.</span>;
 
   const describeNotMatchedItem = (s: string) => <span>Die Angabe {matchSingularName} <code>{s}</code></span>;
-  
+
   return <MatchingResultDisplay matchingResult={matchingResult} comparedItemPluralName={matchName}
                                 describeMatch={describeMatch} describeNotMatchedItem={describeNotMatchedItem}/>;
 

@@ -8,9 +8,7 @@ import model.result.SuccessType
 import sangria.macros.derive._
 import sangria.schema._
 
-object XmlGraphQLModels
-    extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlResult]
-    with GraphQLArguments {
+object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlResult] with GraphQLArguments {
 
   override val partEnumType: EnumType[XmlExPart] = EnumType(
     "XmlExPart",
@@ -81,9 +79,7 @@ object XmlGraphQLModels
     implicit val elt: ObjectType[Unit, ElementLine]                = elementLineType
     implicit val elar: ObjectType[Unit, ElementLineAnalysisResult] = deriveObjectType()
 
-    deriveObjectType(
-      Interfaces(newMatchInterface)
-    )
+    deriveObjectType()
   }
 
   private val xmlGrammarResultType: ObjectType[Unit, XmlGrammarResult] = {

@@ -1,7 +1,6 @@
 package model.tools.sql
 
 import model.matching.StringMatcher
-import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.schema.{Column, Table}
 import net.sf.jsqlparser.statement.Statement
@@ -76,17 +75,16 @@ object SelectCorrector extends QueryCorrector("SELECT") {
     case _               => None
   }
 
-  override def performAdditionalComparisons(userQuery: Select, sampleQuery: Select): AdditionalComparison =
-    AdditionalComparison(
-      Some(
-        SelectAdditionalComparisons(
-          StringMatcher.doMatch(groupByElements(userQuery), groupByElements(sampleQuery)),
-          StringMatcher.doMatch(orderByElements(userQuery), orderByElements(sampleQuery)),
-          LimitMatcher.doMatch(limitElement(userQuery).toSeq, limitElement(sampleQuery).toSeq)
-        )
-      ),
-      None
-    )
+  override def performAdditionalComparisons(userQuery: Select, sampleQuery: Select): AdditionalComparison = AdditionalComparison(
+    Some(
+      SelectAdditionalComparisons(
+        StringMatcher.doMatch(groupByElements(userQuery), groupByElements(sampleQuery)),
+        StringMatcher.doMatch(orderByElements(userQuery), orderByElements(sampleQuery)),
+        StringMatcher.doMatch(limitElement(userQuery).map(_.toString).toSeq, limitElement(sampleQuery).map(_.toString).toSeq)
+      )
+    ),
+    None
+  )
 
   private def orderByElements(userQ: Q): Seq[String] = userQ.getSelectBody match {
     case ps: PlainSelect =>

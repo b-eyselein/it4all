@@ -5,7 +5,6 @@ import model.matching.StringMatcher.StringMatchingResult
 import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.BinaryExpression
-import net.sf.jsqlparser.statement.select.Limit
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -27,13 +26,6 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
   private val sqlSelectAdditionalComparisons: ObjectType[Unit, SelectAdditionalComparisons] = {
     implicit val smrt: ObjectType[Unit, StringMatchingResult] = stringMatchingResultType
 
-    implicit val lct: ObjectType[Unit, LimitComparison] = matchingResultType(
-      "SqlLimitComparison",
-      buildStringMatchTypeType[Limit, LimitMatch]("SqlLimitMatch"),
-      StringType,
-      _.toString
-    )
-
     deriveObjectType()
   }
 
@@ -52,7 +44,7 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
       "SqlColumnComparison",
       buildStringMatchTypeType[ColumnWrapper, ColumnMatch]("SqlColumnMatch"),
       StringType,
-      _.toString
+      col => col.columnName + col.getAlias.map("as " + _)
     )
 
     implicit val jct: ObjectType[Unit, BinaryExpressionComparison] = matchingResultType(

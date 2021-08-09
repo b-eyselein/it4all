@@ -28,7 +28,7 @@ class SqlStatementException(cause: Throwable) extends Exception(cause) with User
 final case class SelectAdditionalComparisons(
   groupByComparison: StringMatchingResult,
   orderByComparison: StringMatchingResult,
-  limitComparison: LimitComparison
+  limitComparison: StringMatchingResult
 ) {
 
   def points: Points = groupByComparison.points + orderByComparison.points + limitComparison.points

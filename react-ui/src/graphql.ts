@@ -16,11 +16,6 @@ export type Scalars = {
   Long: any;
 };
 
-export type AbstractCorrectionResult = {
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-};
-
 export type AdditionalComparison = {
   __typename?: 'AdditionalComparison';
   selectComparisons?: Maybe<SelectAdditionalComparisons>;
@@ -34,17 +29,17 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  TruePositive = 'TruePositive',
-  FalsePositive = 'FalsePositive',
   FalseNegative = 'FalseNegative',
-  TrueNegative = 'TrueNegative'
+  FalsePositive = 'FalsePositive',
+  TrueNegative = 'TrueNegative',
+  TruePositive = 'TruePositive'
 }
 
 export type CollectionTool = {
   __typename?: 'CollectionTool';
-  id: Scalars['ID'];
+  id: Scalars['String'];
   name: Scalars['String'];
-  state: ToolState;
+  toolState: ToolState;
   lessonCount: Scalars['Long'];
   lessons: Array<Lesson>;
   lesson?: Maybe<Lesson>;
@@ -130,14 +125,12 @@ export type ElementLineAnalysisResult = {
   correctAttributes: Scalars['String'];
 };
 
-export type ElementLineMatch = NewMatch & {
+export type ElementLineMatch = {
   __typename?: 'ElementLineMatch';
   matchType: MatchType;
   userArg: ElementLine;
   sampleArg: ElementLine;
   analysisResult: ElementLineAnalysisResult;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type ExPart = {
@@ -430,18 +423,10 @@ export type LoggedInUserWithToken = {
 
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
-
-export type MatchingResult = {
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-  allMatches: Array<NewMatch>;
-  notMatchedForUserString: Array<Scalars['String']>;
-  notMatchedForSampleString: Array<Scalars['String']>;
-};
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -513,12 +498,6 @@ export type MutationWebExerciseArgs = {
 export type MutationXmlExerciseArgs = {
   collId: Scalars['Int'];
   exId: Scalars['Int'];
-};
-
-export type NewMatch = {
-  matchType: MatchType;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export enum ProgExPart {
@@ -598,8 +577,8 @@ export type RegexCorrectionResult = {
 };
 
 export enum RegexCorrectionType {
-  Matching = 'MATCHING',
-  Extraction = 'EXTRACTION'
+  Extraction = 'EXTRACTION',
+  Matching = 'MATCHING'
 }
 
 export enum RegexExPart {
@@ -632,18 +611,16 @@ export type RegexExerciseMutationsCorrectArgs = {
   solution: Scalars['String'];
 };
 
-export type RegexExtractedValuesComparisonMatchingResult = MatchingResult & {
+export type RegexExtractedValuesComparisonMatchingResult = {
   __typename?: 'RegexExtractedValuesComparisonMatchingResult';
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
   allMatches: Array<RegexMatchMatch>;
   notMatchedForUser: Array<Scalars['String']>;
   notMatchedForSample: Array<Scalars['String']>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-  notMatchedForUserString: Array<Scalars['String']>;
-  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
-export type RegexExtractionResult = RegexAbstractResult & AbstractCorrectionResult & {
+export type RegexExtractionResult = RegexAbstractResult & {
   __typename?: 'RegexExtractionResult';
   extractionResults: Array<RegexExtractionSingleResult>;
   points: Scalars['Float'];
@@ -663,13 +640,11 @@ export type RegexExtractionTestData = {
   base: Scalars['String'];
 };
 
-export type RegexMatchMatch = NewMatch & {
+export type RegexMatchMatch = {
   __typename?: 'RegexMatchMatch';
-  sampleArg?: Maybe<Scalars['String']>;
-  userArg?: Maybe<Scalars['String']>;
   matchType: MatchType;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
+  sampleArg: Scalars['String'];
+  userArg: Scalars['String'];
 };
 
 export type RegexMatchTestData = {
@@ -679,7 +654,7 @@ export type RegexMatchTestData = {
   isIncluded: Scalars['Boolean'];
 };
 
-export type RegexMatchingResult = RegexAbstractResult & AbstractCorrectionResult & {
+export type RegexMatchingResult = RegexAbstractResult & {
   __typename?: 'RegexMatchingResult';
   matchingResults: Array<RegexMatchingSingleResult>;
   points: Scalars['Float'];
@@ -703,7 +678,7 @@ export type SelectAdditionalComparisons = {
   __typename?: 'SelectAdditionalComparisons';
   groupByComparison: StringMatchingResult;
   orderByComparison: StringMatchingResult;
-  limitComparison: SqlLimitComparisonMatchingResult;
+  limitComparison: StringMatchingResult;
 };
 
 export type SiteSpec = {
@@ -714,24 +689,20 @@ export type SiteSpec = {
   jsTaskCount: Scalars['Int'];
 };
 
-export type SqlBinaryExpressionComparisonMatchingResult = MatchingResult & {
+export type SqlBinaryExpressionComparisonMatchingResult = {
   __typename?: 'SqlBinaryExpressionComparisonMatchingResult';
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
   allMatches: Array<SqlBinaryExpressionMatch>;
   notMatchedForUser: Array<Scalars['String']>;
   notMatchedForSample: Array<Scalars['String']>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-  notMatchedForUserString: Array<Scalars['String']>;
-  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
-export type SqlBinaryExpressionMatch = NewMatch & {
+export type SqlBinaryExpressionMatch = {
   __typename?: 'SqlBinaryExpressionMatch';
-  sampleArg?: Maybe<Scalars['String']>;
-  userArg?: Maybe<Scalars['String']>;
   matchType: MatchType;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
+  sampleArg: Scalars['String'];
+  userArg: Scalars['String'];
 };
 
 export type SqlCell = {
@@ -741,24 +712,20 @@ export type SqlCell = {
   different: Scalars['Boolean'];
 };
 
-export type SqlColumnComparisonMatchingResult = MatchingResult & {
+export type SqlColumnComparisonMatchingResult = {
   __typename?: 'SqlColumnComparisonMatchingResult';
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
   allMatches: Array<SqlColumnMatch>;
   notMatchedForUser: Array<Scalars['String']>;
   notMatchedForSample: Array<Scalars['String']>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-  notMatchedForUserString: Array<Scalars['String']>;
-  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
-export type SqlColumnMatch = NewMatch & {
+export type SqlColumnMatch = {
   __typename?: 'SqlColumnMatch';
-  sampleArg?: Maybe<Scalars['String']>;
-  userArg?: Maybe<Scalars['String']>;
   matchType: MatchType;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
+  sampleArg: Scalars['String'];
+  userArg: Scalars['String'];
 };
 
 export type SqlCorrectionResult = {
@@ -807,36 +774,16 @@ export type SqlExerciseMutationsCorrectArgs = {
 
 export enum SqlExerciseType {
   Insert = 'INSERT',
-  Update = 'UPDATE',
   Select = 'SELECT',
+  Create = 'CREATE',
   Delete = 'DELETE',
-  Create = 'CREATE'
+  Update = 'UPDATE'
 }
 
 export type SqlKeyCellValueObject = {
   __typename?: 'SqlKeyCellValueObject';
   key: Scalars['String'];
   value: SqlCell;
-};
-
-export type SqlLimitComparisonMatchingResult = MatchingResult & {
-  __typename?: 'SqlLimitComparisonMatchingResult';
-  allMatches: Array<SqlLimitMatch>;
-  notMatchedForUser: Array<Scalars['String']>;
-  notMatchedForSample: Array<Scalars['String']>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-  notMatchedForUserString: Array<Scalars['String']>;
-  notMatchedForSampleString: Array<Scalars['String']>;
-};
-
-export type SqlLimitMatch = NewMatch & {
-  __typename?: 'SqlLimitMatch';
-  sampleArg?: Maybe<Scalars['String']>;
-  userArg?: Maybe<Scalars['String']>;
-  matchType: MatchType;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type SqlQueriesStaticComparison = {
@@ -885,17 +832,17 @@ export type StringMatchingResult = {
 };
 
 export enum SuccessType {
+  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
-  Partially = 'PARTIALLY',
-  Complete = 'COMPLETE'
+  Partially = 'PARTIALLY'
 }
 
 export enum ToolState {
-  PreAlpha = 'PRE_ALPHA',
   Alpha = 'ALPHA',
   Beta = 'BETA',
-  Live = 'LIVE'
+  Live = 'LIVE',
+  PreAlpha = 'PRE_ALPHA'
 }
 
 export type Topic = {
@@ -939,30 +886,26 @@ export type UmlAssociationInput = {
   secondMult: UmlMultiplicity;
 };
 
-export type UmlAssociationMatch = NewMatch & {
+export type UmlAssociationMatch = {
   __typename?: 'UmlAssociationMatch';
   matchType: MatchType;
   userArg: UmlAssociation;
   sampleArg: UmlAssociation;
   analysisResult: UmlAssociationAnalysisResult;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
-export type UmlAssociationMatchingResult = MatchingResult & {
+export type UmlAssociationMatchingResult = {
   __typename?: 'UmlAssociationMatchingResult';
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
   allMatches: Array<UmlAssociationMatch>;
   notMatchedForUser: Array<UmlAssociation>;
   notMatchedForSample: Array<UmlAssociation>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-  notMatchedForUserString: Array<Scalars['String']>;
-  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export enum UmlAssociationType {
-  Association = 'ASSOCIATION',
   Aggregation = 'AGGREGATION',
+  Association = 'ASSOCIATION',
   Composition = 'COMPOSITION'
 }
 
@@ -999,25 +942,21 @@ export type UmlAttributeInput = {
   isAbstract?: Maybe<Scalars['Boolean']>;
 };
 
-export type UmlAttributeMatch = NewMatch & {
+export type UmlAttributeMatch = {
   __typename?: 'UmlAttributeMatch';
   matchType: MatchType;
   userArg: UmlAttribute;
   sampleArg: UmlAttribute;
   maybeAnalysisResult: UmlAttributeAnalysisResult;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
-export type UmlAttributeMatchingResult = MatchingResult & {
+export type UmlAttributeMatchingResult = {
   __typename?: 'UmlAttributeMatchingResult';
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
   allMatches: Array<UmlAttributeMatch>;
   notMatchedForUser: Array<UmlAttribute>;
   notMatchedForSample: Array<UmlAttribute>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-  notMatchedForUserString: Array<Scalars['String']>;
-  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type UmlClass = {
@@ -1048,15 +987,13 @@ export type UmlClassInput = {
   methods?: Maybe<Array<UmlMethodInput>>;
 };
 
-export type UmlClassMatch = NewMatch & {
+export type UmlClassMatch = {
   __typename?: 'UmlClassMatch';
   matchType: MatchType;
   userArg: UmlClass;
   sampleArg: UmlClass;
   compAM: Scalars['Boolean'];
   analysisResult: UmlClassMatchAnalysisResult;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
 export type UmlClassMatchAnalysisResult = {
@@ -1067,15 +1004,13 @@ export type UmlClassMatchAnalysisResult = {
   maybeMethodMatchingResult?: Maybe<UmlMethodMatchingResult>;
 };
 
-export type UmlClassMatchingResult = MatchingResult & {
+export type UmlClassMatchingResult = {
   __typename?: 'UmlClassMatchingResult';
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
   allMatches: Array<UmlClassMatch>;
   notMatchedForUser: Array<UmlClass>;
   notMatchedForSample: Array<UmlClass>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-  notMatchedForUserString: Array<Scalars['String']>;
-  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export enum UmlClassType {
@@ -1134,24 +1069,20 @@ export type UmlImplementationInput = {
   superClass: Scalars['String'];
 };
 
-export type UmlImplementationMatch = NewMatch & {
+export type UmlImplementationMatch = {
   __typename?: 'UmlImplementationMatch';
   matchType: MatchType;
   userArg: UmlImplementation;
   sampleArg: UmlImplementation;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
-export type UmlImplementationMatchingResult = MatchingResult & {
+export type UmlImplementationMatchingResult = {
   __typename?: 'UmlImplementationMatchingResult';
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
   allMatches: Array<UmlImplementationMatch>;
   notMatchedForUser: Array<UmlImplementation>;
   notMatchedForSample: Array<UmlImplementation>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-  notMatchedForUserString: Array<Scalars['String']>;
-  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type UmlMethod = {
@@ -1187,25 +1118,21 @@ export type UmlMethodInput = {
   isAbstract?: Maybe<Scalars['Boolean']>;
 };
 
-export type UmlMethodMatch = NewMatch & {
+export type UmlMethodMatch = {
   __typename?: 'UmlMethodMatch';
   matchType: MatchType;
   userArg: UmlMethod;
   sampleArg: UmlMethod;
   maybeAnalysisResult: UmlMethodAnalysisResult;
-  userArgDescription?: Maybe<Scalars['String']>;
-  sampleArgDescription?: Maybe<Scalars['String']>;
 };
 
-export type UmlMethodMatchingResult = MatchingResult & {
+export type UmlMethodMatchingResult = {
   __typename?: 'UmlMethodMatchingResult';
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
   allMatches: Array<UmlMethodMatch>;
   notMatchedForUser: Array<UmlMethod>;
   notMatchedForSample: Array<UmlMethod>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-  notMatchedForUserString: Array<Scalars['String']>;
-  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export enum UmlMultiplicity {
@@ -1223,10 +1150,10 @@ export type UmlResult = {
 };
 
 export enum UmlVisibility {
-  Public = 'PUBLIC',
   Package = 'PACKAGE',
+  Private = 'PRIVATE',
   Protected = 'PROTECTED',
-  Private = 'PRIVATE'
+  Public = 'PUBLIC'
 }
 
 export type UnitTestCorrectionResult = ProgrammingTestCorrectionResult & {
@@ -1331,15 +1258,13 @@ export type XmlDocumentResult = {
   errors: Array<XmlError>;
 };
 
-export type XmlElementLineComparisonMatchingResult = MatchingResult & {
+export type XmlElementLineComparisonMatchingResult = {
   __typename?: 'XmlElementLineComparisonMatchingResult';
+  points: Scalars['Float'];
+  maxPoints: Scalars['Float'];
   allMatches: Array<ElementLineMatch>;
   notMatchedForUser: Array<ElementLine>;
   notMatchedForSample: Array<ElementLine>;
-  points: Scalars['Float'];
-  maxPoints: Scalars['Float'];
-  notMatchedForUserString: Array<Scalars['String']>;
-  notMatchedForSampleString: Array<Scalars['String']>;
 };
 
 export type XmlError = {
@@ -1453,21 +1378,21 @@ export type RegexCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type RegexCorrectionMutation = { __typename?: 'Mutation', regexExercise?: Maybe<{ __typename?: 'RegexExerciseMutations', correct: { __typename?: 'RegexCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename: 'RegexExtractionResult', points: number, maxPoints: number, extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> }> } }> } | { __typename: 'RegexMatchingResult', points: number, maxPoints: number, matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> } } }> };
+export type RegexCorrectionMutation = { __typename?: 'Mutation', regexExercise?: Maybe<{ __typename?: 'RegexExerciseMutations', correct: { __typename?: 'RegexCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename: 'RegexExtractionResult', points: number, maxPoints: number, extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg: string, sampleArg: string }> } }> } | { __typename: 'RegexMatchingResult', points: number, maxPoints: number, matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> } } }> };
 
-export type RegexCorrectionResultFragment = { __typename?: 'RegexCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename: 'RegexExtractionResult', points: number, maxPoints: number, extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> }> } }> } | { __typename: 'RegexMatchingResult', points: number, maxPoints: number, matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> } };
+export type RegexCorrectionResultFragment = { __typename?: 'RegexCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename: 'RegexExtractionResult', points: number, maxPoints: number, extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg: string, sampleArg: string }> } }> } | { __typename: 'RegexMatchingResult', points: number, maxPoints: number, matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> } };
 
 export type RegexMatchingSingleResultFragment = { __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string };
 
 export type RegexMatchingResultFragment = { __typename?: 'RegexMatchingResult', matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> };
 
-export type RegexExtractionMatchFragment = { __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> };
+export type RegexExtractionMatchFragment = { __typename?: 'RegexMatchMatch', matchType: MatchType, userArg: string, sampleArg: string };
 
-export type ExtractionMatchingResultFragment = { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> }> };
+export type ExtractionMatchingResultFragment = { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg: string, sampleArg: string }> };
 
-export type RegexExtractionSingleResultFragment = { __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> }> } };
+export type RegexExtractionSingleResultFragment = { __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg: string, sampleArg: string }> } };
 
-export type RegexExtractionResultFragment = { __typename?: 'RegexExtractionResult', extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg?: Maybe<string>, sampleArg?: Maybe<string> }> } }> };
+export type RegexExtractionResultFragment = { __typename?: 'RegexExtractionResult', extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg: string, sampleArg: string }> } }> };
 
 export type SqlCorrectionMutationVariables = Exact<{
   collectionId: Scalars['Int'];
@@ -1477,15 +1402,15 @@ export type SqlCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type SqlCorrectionMutation = { __typename?: 'Mutation', sqlExercise?: Maybe<{ __typename?: 'SqlExerciseMutations', correct: { __typename?: 'SqlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, limitComparison: { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }> } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }>, sampleResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> } } } }> };
+export type SqlCorrectionMutation = { __typename?: 'Mutation', sqlExercise?: Maybe<{ __typename?: 'SqlExerciseMutations', correct: { __typename?: 'SqlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, limitComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }> } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }>, sampleResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> } } } }> };
 
-export type SqlCorrectionResultFragment = { __typename?: 'SqlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, limitComparison: { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }> } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }>, sampleResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> } } };
+export type SqlCorrectionResultFragment = { __typename?: 'SqlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, limitComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }> } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }>, sampleResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> } } };
 
-export type SelectAdditionalComparisonFragment = { __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, limitComparison: { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> } };
+export type SelectAdditionalComparisonFragment = { __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, limitComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } };
 
-export type StaticComparisonFragment = { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, limitComparison: { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }> } };
+export type StaticComparisonFragment = { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, limitComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }> } };
 
-export type SqlResultFragment = { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }, limitComparison: { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> }> } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }>, sampleResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> } };
+export type SqlResultFragment = { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: Maybe<{ __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, limitComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } }>, insertComparison?: Maybe<{ __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }> } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }>, sampleResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> } };
 
 export type SqlExecutionResultFragment = { __typename?: 'SqlExecutionResult', userResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }>, sampleResult?: Maybe<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean } }> }> }> };
 
@@ -1495,53 +1420,17 @@ export type SqlRowFragment = { __typename?: 'SqlRow', cells: Array<{ __typename?
 
 export type SqlCellFragment = { __typename?: 'SqlCell', colName: string, content?: Maybe<string>, different: boolean };
 
-export type StringMatchFragment = { __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string };
+export type StringMatchFragment = { __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string };
 
-export type StringMatchingResultFragment = { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, sampleArg: string, userArg: string }> };
+export type StringMatchingResultFragment = { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> };
 
-type NewMatch_ElementLineMatch_Fragment = { __typename?: 'ElementLineMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
+export type SqlColumnComparisonMatchFragment = { __typename?: 'SqlColumnMatch', matchType: MatchType, userArg: string, sampleArg: string };
 
-type NewMatch_RegexMatchMatch_Fragment = { __typename?: 'RegexMatchMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
+export type SqlColumnComparisonMatchingResultFragment = { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, userArg: string, sampleArg: string }> };
 
-type NewMatch_SqlBinaryExpressionMatch_Fragment = { __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
+export type SqlBinaryExpressionMatchFragment = { __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string };
 
-type NewMatch_SqlColumnMatch_Fragment = { __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
-
-type NewMatch_SqlLimitMatch_Fragment = { __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
-
-type NewMatch_UmlAssociationMatch_Fragment = { __typename?: 'UmlAssociationMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
-
-type NewMatch_UmlAttributeMatch_Fragment = { __typename?: 'UmlAttributeMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
-
-type NewMatch_UmlClassMatch_Fragment = { __typename?: 'UmlClassMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
-
-type NewMatch_UmlImplementationMatch_Fragment = { __typename?: 'UmlImplementationMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
-
-type NewMatch_UmlMethodMatch_Fragment = { __typename?: 'UmlMethodMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> };
-
-export type NewMatchFragment = NewMatch_ElementLineMatch_Fragment | NewMatch_RegexMatchMatch_Fragment | NewMatch_SqlBinaryExpressionMatch_Fragment | NewMatch_SqlColumnMatch_Fragment | NewMatch_SqlLimitMatch_Fragment | NewMatch_UmlAssociationMatch_Fragment | NewMatch_UmlAttributeMatch_Fragment | NewMatch_UmlClassMatch_Fragment | NewMatch_UmlImplementationMatch_Fragment | NewMatch_UmlMethodMatch_Fragment;
-
-type SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment = { __typename?: 'RegexExtractedValuesComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
-
-type SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment = { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
-
-type SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment = { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
-
-type SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment = { __typename?: 'SqlLimitComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'SqlLimitMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
-
-type SqlMatchingResult_UmlAssociationMatchingResult_Fragment = { __typename?: 'UmlAssociationMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'UmlAssociationMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
-
-type SqlMatchingResult_UmlAttributeMatchingResult_Fragment = { __typename?: 'UmlAttributeMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'UmlAttributeMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
-
-type SqlMatchingResult_UmlClassMatchingResult_Fragment = { __typename?: 'UmlClassMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'UmlClassMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
-
-type SqlMatchingResult_UmlImplementationMatchingResult_Fragment = { __typename?: 'UmlImplementationMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'UmlImplementationMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
-
-type SqlMatchingResult_UmlMethodMatchingResult_Fragment = { __typename?: 'UmlMethodMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'UmlMethodMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
-
-type SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment = { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUserString: Array<string>, notMatchedForSampleString: Array<string>, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, sampleArgDescription?: Maybe<string>, userArgDescription?: Maybe<string> }> };
-
-export type SqlMatchingResultFragment = SqlMatchingResult_RegexExtractedValuesComparisonMatchingResult_Fragment | SqlMatchingResult_SqlBinaryExpressionComparisonMatchingResult_Fragment | SqlMatchingResult_SqlColumnComparisonMatchingResult_Fragment | SqlMatchingResult_SqlLimitComparisonMatchingResult_Fragment | SqlMatchingResult_UmlAssociationMatchingResult_Fragment | SqlMatchingResult_UmlAttributeMatchingResult_Fragment | SqlMatchingResult_UmlClassMatchingResult_Fragment | SqlMatchingResult_UmlImplementationMatchingResult_Fragment | SqlMatchingResult_UmlMethodMatchingResult_Fragment | SqlMatchingResult_XmlElementLineComparisonMatchingResult_Fragment;
+export type SqlBinaryExpressionComparisonMatchingResultFragment = { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> };
 
 export type UmlCorrectionMutationVariables = Exact<{
   collId: Scalars['Int'];
@@ -1627,12 +1516,12 @@ export type XmlDocumentResultFragment = { __typename?: 'XmlDocumentResult', erro
 
 export type XmlErrorFragment = { __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string };
 
-export type CollectionToolFragment = { __typename?: 'CollectionTool', id: string, name: string, state: ToolState, collectionCount: any, lessonCount: any, exerciseCount: any };
+export type CollectionToolFragment = { __typename?: 'CollectionTool', id: string, name: string, toolState: ToolState, collectionCount: any, lessonCount: any, exerciseCount: any };
 
 export type ToolOverviewQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ToolOverviewQuery = { __typename?: 'Query', tools: Array<{ __typename?: 'CollectionTool', id: string, name: string, state: ToolState, collectionCount: any, lessonCount: any, exerciseCount: any }> };
+export type ToolOverviewQuery = { __typename?: 'Query', tools: Array<{ __typename?: 'CollectionTool', id: string, name: string, toolState: ToolState, collectionCount: any, lessonCount: any, exerciseCount: any }> };
 
 export type CollectionToolOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
@@ -1883,29 +1772,29 @@ export const RegexCorrectionResultFragmentDoc = gql`
 }
     ${RegexMatchingResultFragmentDoc}
 ${RegexExtractionResultFragmentDoc}`;
-export const NewMatchFragmentDoc = gql`
-    fragment NewMatch on NewMatch {
+export const SqlColumnComparisonMatchFragmentDoc = gql`
+    fragment SqlColumnComparisonMatch on SqlColumnMatch {
   matchType
-  sampleArgDescription
-  userArgDescription
+  userArg
+  sampleArg
 }
     `;
-export const SqlMatchingResultFragmentDoc = gql`
-    fragment SqlMatchingResult on MatchingResult {
+export const SqlColumnComparisonMatchingResultFragmentDoc = gql`
+    fragment SqlColumnComparisonMatchingResult on SqlColumnComparisonMatchingResult {
   points
   maxPoints
   allMatches {
-    ...NewMatch
+    ...SqlColumnComparisonMatch
   }
-  notMatchedForUserString
-  notMatchedForSampleString
+  notMatchedForUser
+  notMatchedForSample
 }
-    ${NewMatchFragmentDoc}`;
+    ${SqlColumnComparisonMatchFragmentDoc}`;
 export const StringMatchFragmentDoc = gql`
     fragment StringMatch on StringMatch {
   matchType
-  sampleArg
   userArg
+  sampleArg
 }
     `;
 export const StringMatchingResultFragmentDoc = gql`
@@ -1919,6 +1808,24 @@ export const StringMatchingResultFragmentDoc = gql`
   notMatchedForSample
 }
     ${StringMatchFragmentDoc}`;
+export const SqlBinaryExpressionMatchFragmentDoc = gql`
+    fragment SqlBinaryExpressionMatch on SqlBinaryExpressionMatch {
+  matchType
+  userArg
+  sampleArg
+}
+    `;
+export const SqlBinaryExpressionComparisonMatchingResultFragmentDoc = gql`
+    fragment SqlBinaryExpressionComparisonMatchingResult on SqlBinaryExpressionComparisonMatchingResult {
+  points
+  maxPoints
+  allMatches {
+    ...SqlBinaryExpressionMatch
+  }
+  notMatchedForUser
+  notMatchedForSample
+}
+    ${SqlBinaryExpressionMatchFragmentDoc}`;
 export const SelectAdditionalComparisonFragmentDoc = gql`
     fragment SelectAdditionalComparison on SelectAdditionalComparisons {
   groupByComparison {
@@ -1928,24 +1835,23 @@ export const SelectAdditionalComparisonFragmentDoc = gql`
     ...StringMatchingResult
   }
   limitComparison {
-    ...SqlMatchingResult
+    ...StringMatchingResult
   }
 }
-    ${StringMatchingResultFragmentDoc}
-${SqlMatchingResultFragmentDoc}`;
+    ${StringMatchingResultFragmentDoc}`;
 export const StaticComparisonFragmentDoc = gql`
     fragment StaticComparison on SqlQueriesStaticComparison {
   columnComparison {
-    ...SqlMatchingResult
+    ...SqlColumnComparisonMatchingResult
   }
   tableComparison {
     ...StringMatchingResult
   }
   joinExpressionComparison {
-    ...SqlMatchingResult
+    ...SqlBinaryExpressionComparisonMatchingResult
   }
   whereComparison {
-    ...SqlMatchingResult
+    ...SqlBinaryExpressionComparisonMatchingResult
   }
   additionalComparisons {
     selectComparisons {
@@ -1956,8 +1862,9 @@ export const StaticComparisonFragmentDoc = gql`
     }
   }
 }
-    ${SqlMatchingResultFragmentDoc}
+    ${SqlColumnComparisonMatchingResultFragmentDoc}
 ${StringMatchingResultFragmentDoc}
+${SqlBinaryExpressionComparisonMatchingResultFragmentDoc}
 ${SelectAdditionalComparisonFragmentDoc}`;
 export const SqlCellFragmentDoc = gql`
     fragment SqlCell on SqlCell {
@@ -2350,7 +2257,7 @@ export const CollectionToolFragmentDoc = gql`
     fragment CollectionTool on CollectionTool {
   id
   name
-  state
+  toolState
   collectionCount
   lessonCount
   exerciseCount

@@ -1,13 +1,56 @@
 import React from 'react';
-import {SqlCorrectionMutation, SqlCorrectionMutationResult} from '../../../graphql';
+import {
+  MatchType,
+  SelectAdditionalComparisonFragment,
+  SqlBinaryExpressionMatch,
+  SqlColumnMatch,
+  SqlCorrectionMutation,
+  SqlCorrectionMutationResult
+} from '../../../graphql';
+import {isEmpty, MatchingResultDisplay} from '../MatchingResultDisplay';
+import {SqlStringMatchingResult} from './SqlStringMatchingResult';
+import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {WithQuery} from '../../../WithQuery';
 import {useTranslation} from 'react-i18next';
-import {SolutionSaved} from '../../../helpers/SolutionSaved';
-import {SqlMatchingResult} from './SqlMatchingResult';
-import {SqlStringMatchingResult} from './SqlStringMatchingResult';
 
 interface IProps {
   mutationResult: SqlCorrectionMutationResult;
+}
+
+function ColumnComparisonMatchDisplay({m}: { m: SqlColumnMatch }): JSX.Element {
+
+  const {matchType, userArg, sampleArg} = m;
+
+  const isCorrect = matchType === MatchType.SuccessfulMatch;
+
+  return (
+    <>
+      <span>Die Angabe der Spalte <code>{userArg}</code> ist {isCorrect ? '' : 'nicht komplett'} korrekt.</span>
+      {!isCorrect && <span>&nbsp;Erwartet wurde <code>{sampleArg}</code></span>}
+    </>
+  );
+}
+
+function BinaryExpressionMatchDisplay({m}: { m: SqlBinaryExpressionMatch }): JSX.Element {
+  return <span>Die Angabe der Bedingung <code>{m.userArg}</code> ist korrekt.</span>;
+}
+
+function SelectAdditionalComparisonDisplay({addComp}: { addComp: SelectAdditionalComparisonFragment }): JSX.Element {
+
+  const {orderByComparison, groupByComparison, limitComparison} = addComp;
+
+  return (
+    <>
+      {!isEmpty(orderByComparison) &&
+      <SqlStringMatchingResult matchName="Order Bys" matchSingularName="des Order By-Statements" matchingResult={orderByComparison}/>}
+
+      {!isEmpty(groupByComparison) &&
+      <SqlStringMatchingResult matchName="Group Bys" matchSingularName="des Group By-Statements" matchingResult={groupByComparison}/>}
+
+      {!isEmpty(limitComparison) &&
+      <SqlStringMatchingResult matchName="Limits" matchSingularName="des Limit-Statements" matchingResult={limitComparison}/>}
+    </>
+  );
 }
 
 export function SqlCorrection({mutationResult}: IProps): JSX.Element {
@@ -35,34 +78,21 @@ export function SqlCorrection({mutationResult}: IProps): JSX.Element {
 
       {/*<PointsNotification points={result.points} maxPoints={result.maxPoints}/>*/}
 
-      <SqlMatchingResult matchName="Spalten" matchSingularName="der Spalte" matchingResult={columnComparison}/>
-
-      <br/>
+      <MatchingResultDisplay matchingResult={columnComparison} comparedItemPluralName="Spalten"
+                             describeMatch={(m) => <ColumnComparisonMatchDisplay m={m}/>}
+                             describeNotMatchedItem={(columnName) => <span>Die Angabe der Spalte <code>{columnName}</code></span>}/>
 
       <SqlStringMatchingResult matchName="Tabellen" matchSingularName="der Tabelle" matchingResult={tableComparison}/>
 
-      <br/>
+      <MatchingResultDisplay matchingResult={joinExpressionComparison} comparedItemPluralName={'Join-Bedingungen'}
+                             describeMatch={(m) => <BinaryExpressionMatchDisplay m={m}/>}
+                             describeNotMatchedItem={(condition) => <span>Die Angabe der Join-Bedingung <code>{condition}</code></span>}/>
 
-      <SqlMatchingResult matchName="Join-Bedingungen" matchSingularName="der Join-Bedingung" matchingResult={joinExpressionComparison}/>
+      <MatchingResultDisplay matchingResult={whereComparison} comparedItemPluralName={'Bedingungen'}
+                             describeMatch={(m) => <BinaryExpressionMatchDisplay m={m}/>}
+                             describeNotMatchedItem={(condition) => <span>Die Angabe der Bedingung <code>{condition}</code></span>}/>
 
-      <br/>
-
-      <SqlMatchingResult matchName="Bedingungen" matchSingularName="der Bedingung" matchingResult={whereComparison}/>
-
-      <br/>
-
-      {selectComparisons && <>
-
-        <SqlStringMatchingResult matchName="Order Bys" matchSingularName="des Order By-Statements" matchingResult={selectComparisons.orderByComparison}/>
-
-        <br/>
-
-        <SqlStringMatchingResult matchName="Group Bys" matchSingularName="des Group By-Statements" matchingResult={selectComparisons.groupByComparison}/>
-
-        <br/>
-
-        <SqlMatchingResult matchName="Limits" matchSingularName="des Limit-Statements" matchingResult={selectComparisons.limitComparison}/>
-      </>}
+      {selectComparisons && <SelectAdditionalComparisonDisplay addComp={selectComparisons}/>}
 
       {insertComparison && <SqlStringMatchingResult matchName="Inserts" matchSingularName="Insert" matchingResult={insertComparison}/>}
 

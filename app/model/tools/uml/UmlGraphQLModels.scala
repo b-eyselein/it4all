@@ -6,13 +6,11 @@ import model.matching.{MatchType, MatchingResult}
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
 import play.api.libs.json.OFormat
-import sangria.macros.derive.{ReplaceField, _}
+import sangria.macros.derive._
 import sangria.schema._
 import sangria.marshalling.playJson._
 
-object UmlGraphQLModels
-    extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlResult]
-    with GraphQLArguments {
+object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlResult] with GraphQLArguments {
 
   override val partEnumType: EnumType[UmlExPart] = EnumType(
     "UmlExPart",
@@ -137,9 +135,7 @@ object UmlGraphQLModels
     implicit val uat: ObjectType[Unit, UmlAttribute]                 = umlAttributeType
     implicit val uaart: ObjectType[Unit, UmlAttributeAnalysisResult] = umlAttributeAnalysisResultType
 
-    deriveObjectType(
-      Interfaces(newMatchInterface)
-    )
+    deriveObjectType()
   }
 
   private val umlMethodAnalysisResultType: ObjectType[Unit, UmlMethodAnalysisResult] = {
@@ -153,9 +149,7 @@ object UmlGraphQLModels
     implicit val umt: ObjectType[Unit, UmlMethod]                 = umlMethodType
     implicit val umart: ObjectType[Unit, UmlMethodAnalysisResult] = umlMethodAnalysisResultType
 
-    deriveObjectType(
-      Interfaces(newMatchInterface)
-    )
+    deriveObjectType()
   }
 
   private val umlClassMatchAnalysisResultType: ObjectType[Unit, UmlClassMatchAnalysisResult] = {
@@ -175,9 +169,7 @@ object UmlGraphQLModels
     implicit val uct: ObjectType[Unit, UmlClass]                       = umlClassType
     implicit val ucmart: ObjectType[Unit, UmlClassMatchAnalysisResult] = umlClassMatchAnalysisResultType
 
-    deriveObjectType(
-      Interfaces(newMatchInterface)
-    )
+    deriveObjectType()
   }
 
   private val umlAssociationAnalysisResultType: ObjectType[Unit, UmlAssociationAnalysisResult] = {
@@ -191,18 +183,14 @@ object UmlGraphQLModels
     implicit val uat: ObjectType[Unit, UmlAssociation]                 = umlAssociationType
     implicit val uaart: ObjectType[Unit, UmlAssociationAnalysisResult] = umlAssociationAnalysisResultType
 
-    deriveObjectType(
-      Interfaces(newMatchInterface)
-    )
+    deriveObjectType()
   }
 
   private val umlImplementationMatchType: ObjectType[Unit, UmlImplementationMatch] = {
     implicit val mt: EnumType[MatchType]                  = matchTypeType
     implicit val uit: ObjectType[Unit, UmlImplementation] = umlImplementationType
 
-    deriveObjectType(
-      Interfaces(newMatchInterface)
-    )
+    deriveObjectType()
   }
 
   override val resultType: OutputType[UmlResult] = {

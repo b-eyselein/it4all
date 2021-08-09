@@ -7,7 +7,6 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 
-import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
 
 abstract class QueryCorrector(val queryType: String) {
@@ -16,41 +15,40 @@ abstract class QueryCorrector(val queryType: String) {
 
   private val queryAndStaticCompOrdering: Ordering[(Q, SqlQueriesStaticComparison)] = (x, y) => y._2.points.quarters - x._2.points.quarters
 
-  def correct(
-    database: SqlExecutionDAO,
-    schemaName: String,
-    learnerSolution: String,
-    sampleSolutions: Seq[String]
-  )(implicit ec: ExecutionContext): Try[SqlResult] = parseStatement(learnerSolution).flatMap { userQ =>
-    checkStatement(userQ).flatMap { userQ =>
-      val userTables = getTables(userQ)
+  def correct(database: SqlExecutionDAO, schemaName: String, learnerSolution: String, sampleSolutions: Seq[String]): Try[SqlResult] = for {
+    parsedUserQ: Statement <- parseStatement(learnerSolution)
+    userQ: Q               <- checkStatement(parsedUserQ)
 
-      val maybeStaticComparison: Option[(Q, SqlQueriesStaticComparison)] = sampleSolutions
-        .flatMap { sample =>
-          parseStatement(sample).toOption
-            .flatMap(ps => checkStatement(ps).toOption)
-            .map { sampleQ =>
-              val staticComp = performStaticComparison(
-                userQ,
-                sampleQ,
-                userColumns = getColumnWrappers(userQ),
-                userTables,
-                userJoinExpressions = getJoinExpressions(userQ),
-                userExpressions = getExpressions(userQ),
-                userTableAliases = resolveAliases(userTables)
-              )
-              (sampleQ, staticComp)
-            }
+    userTables = getTables(userQ)
 
-        }
-        .minOption(queryAndStaticCompOrdering)
+    maybeStaticComparison = sampleSolutions
+      .flatMap { sample =>
+        val sampleQ: Try[Q] = for {
+          parsedSample <- parseStatement(sample)
+          sample       <- checkStatement(parsedSample)
+        } yield sample
 
-      maybeStaticComparison match {
-        case None                => Failure(new Exception("There has been an internal error!"))
-        case Some((sampleQ, sc)) => Success(SqlResult(sc, database.executeQueries(schemaName, userQ, sampleQ)))
+        sampleQ.map { sampleQ =>
+          val staticComp: SqlQueriesStaticComparison = performStaticComparison(
+            userQ,
+            sampleQ,
+            userColumns = getColumnWrappers(userQ),
+            userTables,
+            userJoinExpressions = getJoinExpressions(userQ),
+            userExpressions = getExpressions(userQ),
+            userTableAliases = resolveAliases(userTables)
+          )
+
+          (sampleQ, staticComp)
+        }.toOption
       }
+      .minOption(queryAndStaticCompOrdering)
+
+    result <- maybeStaticComparison match {
+      case None                => Failure(new Exception("There has been an internal error!"))
+      case Some((sampleQ, sc)) => Success(SqlResult(sc, database.executeQueries(schemaName, userQ, sampleQ)))
     }
-  }
+  } yield result
 
   private def performStaticComparison(
     userQ: Q,
@@ -76,17 +74,15 @@ abstract class QueryCorrector(val queryType: String) {
     )
   }
 
-  private def getExpressions(statement: Q): Seq[BinaryExpression] =
-    getWhere(statement) match {
-      case None             => Seq[BinaryExpression]()
-      case Some(expression) => new ExpressionExtractor(expression).extracted
-    }
+  private def getExpressions(statement: Q): Seq[BinaryExpression] = getWhere(statement) match {
+    case None             => Seq[BinaryExpression]()
+    case Some(expression) => new ExpressionExtractor(expression).extracted
+  }
 
-  private def resolveAliases(tables: Seq[Table]): Map[String, String] =
-    tables
-      .filter(q => Option(q.getAlias).isDefined)
-      .map(t => t.getAlias.getName -> t.getName)
-      .toMap
+  private def resolveAliases(tables: Seq[Table]): Map[String, String] = tables
+    .filter(q => Option(q.getAlias).isDefined)
+    .map(t => t.getAlias.getName -> t.getName)
+    .toMap
 
   protected def getColumnWrappers(query: Q): Seq[ColumnWrapper]
 
@@ -96,8 +92,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected def getWhere(query: Q): Option[Expression]
 
-  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): AdditionalComparison =
-    AdditionalComparison(None, None)
+  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): AdditionalComparison = AdditionalComparison(None, None)
 
   // Parsing
 

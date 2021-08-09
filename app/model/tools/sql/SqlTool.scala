@@ -8,7 +8,6 @@ import model.tools._
 import model.tools.sql.matcher._
 import model.{Exercise, LoggedInUser, Topic}
 import net.sf.jsqlparser.expression.BinaryExpression
-import net.sf.jsqlparser.statement.select.Limit
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
@@ -36,8 +35,6 @@ object SqlTool extends Tool("sql", "Sql") {
   type ColumnComparison           = MatchingResult[ColumnWrapper, ColumnMatch]
   type BinaryExpressionComparison = MatchingResult[BinaryExpression, BinaryExpressionMatch]
 
-  type LimitComparison = MatchingResult[Limit, LimitMatch]
-
   // Yaml, Html forms, Json
 
   override val jsonFormats: StringSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] =
@@ -57,9 +54,8 @@ object SqlTool extends Tool("sql", "Sql") {
     part: SqlExPart
   )(implicit executionContext: ExecutionContext): Future[Try[SqlResult]] = Future {
     correctorsAndDaos.get(exercise.content.exerciseType) match {
-      case None => Failure(new Exception("There has been an internal error"))
-      case Some((corrector, dao)) =>
-        corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions)
+      case None                   => Failure(new Exception("There has been an internal error"))
+      case Some((corrector, dao)) => corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions)
     }
   }
 

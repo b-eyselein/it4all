@@ -7,9 +7,7 @@ import sangria.schema._
 
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-object RegexGraphQLModels
-    extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart, RegexAbstractResult]
-    with GraphQLArguments {
+object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart, RegexAbstractResult] with GraphQLArguments {
 
   override val partEnumType: EnumType[RegexExPart] = EnumType(
     "RegexExPart",
@@ -70,8 +68,7 @@ object RegexGraphQLModels
     fields[Unit, RegexAbstractResult](
       Field("points", FloatType, resolve = _.value.points.asDouble),
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
-    ),
-    interfaces[Unit, RegexAbstractResult](abstractResultInterfaceType)
+    )
   ).withPossibleTypes(() => List(regexMatchingResultType, regexExtractionResultType))
 
   private val regexMatchingResultType: ObjectType[Unit, RegexMatchingResult] = {
