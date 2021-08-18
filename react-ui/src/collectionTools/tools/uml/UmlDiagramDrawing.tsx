@@ -107,17 +107,20 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, oldSolut
 
     paper.on('cell:pointerclick', (cellView) =>
       setState(({markedClass, selectedCreatableObject, ...rest}) => {
-        if (!(cellView.model instanceof MyJointClass)) {
+
+        const model = cellView.model;
+
+        if (!(model instanceof MyJointClass)) {
           return {...rest, markedClass: undefined, selectedCreatableObject};
         }
 
         if (!markedClass) {
           // Nothing set yet
           cellView.highlight();
-          return {...rest, markedClass: cellView.model, selectedCreatableObject};
+          return {...rest, markedClass: model, selectedCreatableObject};
         }
 
-        if (markedClass.getClassName() === cellView.model.getClassName()) {
+        if (markedClass.getClassName() === model.getClassName()) {
           // class was clicked again
           cellView.unhighlight();
           return {...rest, markedClass: undefined, selectedCreatableObject};
@@ -125,7 +128,7 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, oldSolut
 
         if (selectedCreatableObject) {
           if (selectedCreatableObject.key === CreatableClassDiagramObject.Association) {
-            addAssociationToGraph(graph, markedClass, UmlMultiplicity.Unbound, cellView.model as MyJointClass, UmlMultiplicity.Unbound);
+            addAssociationToGraph(graph, markedClass, UmlMultiplicity.Unbound, model as MyJointClass, UmlMultiplicity.Unbound);
           } else if (selectedCreatableObject.key === CreatableClassDiagramObject.Implementation) {
             addImplementationToGraph(graph, markedClass, cellView.model as MyJointClass);
           }
@@ -143,13 +146,15 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, oldSolut
     );
 
     paper.on('cell:contextmenu', (cellView) => setState((state) => {
-      if (cellView.model instanceof joint.shapes.uml.Association) {
-        return {...state, editedAssociation: cellView.model as joint.shapes.uml.Association};
+      const model = cellView.model;
+
+      if (model instanceof joint.shapes.uml.Association) {
+        return {...state, editedAssociation: model};
       }
 
-      if (cellView.model instanceof MyJointClass && !withHelp) {
+      if (model instanceof MyJointClass && !withHelp) {
         console.info(state.editedClass);
-        return {...state, editedClass: state.editedClass?.getClassName() === cellView.model.getClassName() ? undefined : cellView.model as MyJointClass};
+        return {...state, editedClass: state.editedClass?.getClassName() === model.getClassName() ? undefined : model};
       }
 
       return state;
@@ -223,7 +228,6 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, oldSolut
       render: <WithQuery query={correctionMutationResult} render={(data) => <UmlDiagramDrawingCorrectionTabContent corrResult={data}/>}/>
     }
   };
-
 
   return (
     <div className="container is-fluid">

@@ -33,8 +33,18 @@ export function UmlClassEdit({editedClass, cancelEdit}: IProps): JSX.Element {
     methods: editedClass.getMethods()
   };
 
-  function onSubmit(newClass: UmlClass): void {
-    console.info(JSON.stringify(newClass, null, 2));
+  function onSubmit({classType, name, attributes, methods}: UmlClass): void {
+    if (editedClass.getClassType() !== classType) {
+      editedClass.setClassType(classType);
+    }
+    if (editedClass.getClassName() !== name) {
+      editedClass.setClassName(name);
+    }
+
+    editedClass.setAttributes(attributes);
+    editedClass.setMethods(methods);
+
+    cancelEdit();
   }
 
   return (
@@ -138,10 +148,10 @@ export function UmlClassEdit({editedClass, cancelEdit}: IProps): JSX.Element {
 
             <div className="columns">
               <div className="column">
-                <button className="button is-fullwidth" onClick={cancelEdit}>Verwerfen</button>
+                <button type="button" className="button is-fullwidth" onClick={cancelEdit}>Verwerfen</button>
               </div>
               <div className="column">
-                <button className="button is-link is-fullwidth">Anwenden</button>
+                <button type="submit" className="button is-link is-fullwidth">Anwenden</button>
               </div>
             </div>
           </div>

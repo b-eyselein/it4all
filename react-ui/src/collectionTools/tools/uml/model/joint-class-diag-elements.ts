@@ -26,8 +26,8 @@ export class MyJointClass extends joint.shapes.basic.Generic {
   }
 
   initialize(attributes?: joint.dia.Element.Attributes, options?: ModelConstructorOptions<this> | undefined): void {
-    this.on('change:classType change:className change:attributes change:methods', () => {
-      console.log('Update...');
+    this.on('change:classType change:className change:attributes change:methods', (x) => {
+      // console.log('Update...');
       this.updateRectangles();
     });
 
@@ -47,13 +47,15 @@ export class MyJointClass extends joint.shapes.basic.Generic {
 
     let offsetY = 0;
 
-    rects.forEach((rect) => {
+    console.info(JSON.stringify(attrs, null, 2));
 
-      const rectHeight: number = calcRectHeight(rect.text);
+    rects.forEach(({type, text}) => {
 
-      attrs['.uml-class-' + rect.type + '-text'].text = rect.text.join('\n');
-      attrs['.uml-class-' + rect.type + '-rect'].height = rectHeight;
-      attrs['.uml-class-' + rect.type + '-rect'].transform = 'translate(0,' + offsetY + ')';
+      const rectHeight: number = calcRectHeight(text);
+
+      attrs[`.uml-class-${type}-text`].text = text.join('\n');
+      attrs['.uml-class-' + type + '-rect'].height = rectHeight;
+      attrs['.uml-class-' + type + '-rect'].transform = 'translate(0,' + offsetY + ')';
 
       offsetY += rectHeight;
     });
@@ -74,10 +76,7 @@ export class MyJointClass extends joint.shapes.basic.Generic {
         '.uml-class-attrs-rect': {},
         '.uml-class-methods-rect': {},
 
-        '.uml-class-name-text': {
-          ref: '.uml-class-name-rect', refY: .5, refX: .5,
-          textAnchor: 'middle', yAlignment: 'middle', fontWeight: 'bold',
-        },
+        '.uml-class-name-text': {ref: '.uml-class-name-rect', refY: .5, refX: .5, textAnchor: 'middle', yAlignment: 'middle', fontWeight: 'bold'},
         '.uml-class-attrs-text': {ref: '.uml-class-attrs-rect', refY: STD_PADDING, refX: STD_PADDING},
         '.uml-class-methods-text': {ref: '.uml-class-methods-rect', refY: STD_PADDING, refX: STD_PADDING}
       },
@@ -90,7 +89,7 @@ export class MyJointClass extends joint.shapes.basic.Generic {
   }
 
   getClassType(): UmlClassType {
-    return this.get('classType') || 'CLASS';
+    return this.get('classType') || UmlClassType.Class;
   }
 
   setClassType(classType: UmlClassType): void {
@@ -110,16 +109,15 @@ export class MyJointClass extends joint.shapes.basic.Generic {
   }
 
   getClassRectText(): string[] {
+    const classType = this.getClassType();
     const className = this.getClassName();
 
-    switch (this.getClassType()) {
-      case 'ABSTRACT':
-        return ['<<abstract>>', className];
-      case 'INTERFACE':
-        return ['<<interface>>', className];
-      case 'CLASS':
-      default:
-        return [className];
+    if (classType === UmlClassType.Abstract) {
+      return ['<<abstract>>', className];
+    } else if (classType === UmlClassType.Interface) {
+      return ['<<interface>>', className];
+    } else {
+      return [className];
     }
   }
 
