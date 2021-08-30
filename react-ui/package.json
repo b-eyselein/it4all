@@ -64,7 +64,7 @@
     "@types/backbone": "^1.4.11",
     "@types/classnames": "^2.2.11",
     "@types/codemirror": "^5.60.0",
-    "@types/jest": "^26.0.20",
+    "@types/jest": "^27.0.1",
     "@types/node": "^16.3.2",
     "@types/parsimmon": "^1.10.6",
     "@types/react": "^17.0.3",
