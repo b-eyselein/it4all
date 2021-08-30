@@ -115,7 +115,9 @@ export function XmlExercise({exercise, content, partId, oldSolution}: IProps): J
     };
   });
 
+  const correctionTabRender = <WithQuery query={correctionMutationResult} render={renderCorrection}/>;
+
   return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={exerciseDescription} initialFiles={[grammarFile, documentFile]}
                         sampleSolutions={sampleSolutions} correct={correct} isCorrecting={correctionMutationResult.loading}
-                        correctionTabRender={() => <WithQuery query={correctionMutationResult} render={renderCorrection}/>}/>;
+                        correctionTabRender={correctionTabRender}/>;
 }

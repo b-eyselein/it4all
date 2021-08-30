@@ -45,8 +45,7 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
       .catch((err) => console.error(err));
   }
 
-  function correctionTabRender({programmingExercise}: ProgrammingCorrectionMutation) {
-
+  function renderCorrection({programmingExercise}: ProgrammingCorrectionMutation) {
     if (!programmingExercise) {
       return <div className="notification is-danger has-text-centered">{t('errorWhileCorrecting')}</div>;
     }
@@ -68,8 +67,10 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
     );
   }
 
+  const correctionTabRender = <WithQuery query={correctionMutationResult} render={renderCorrection}/>;
+
   return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={<p dangerouslySetInnerHTML={{__html: exercise.text}}/>}
                         initialFiles={initialFiles} sampleSolutions={content.programmingSampleSolutions}
-                        correct={correct} correctionTabRender={() => <WithQuery query={correctionMutationResult} render={correctionTabRender}/>}
+                        correct={correct} correctionTabRender={correctionTabRender}
                         isCorrecting={correctionMutationResult.loading}/>;
 }

@@ -12,7 +12,7 @@ interface IProps {
   exerciseDescription: JSX.Element;
   initialFiles: ExerciseFileFragment[];
   sampleSolutions: FilesSolution[],
-  correctionTabRender: () => JSX.Element;
+  correctionTabRender: JSX.Element;
   correct: (files: ExerciseFileFragment[]) => void;
   isCorrecting: boolean;
 }
@@ -22,15 +22,9 @@ interface IState {
   activeFile: keyof Workspace;
 }
 
-export function FilesExercise({
-  exerciseId,
-  exerciseDescription,
-  initialFiles,
-  sampleSolutions,
-  correctionTabRender,
-  correct,
-  isCorrecting
-}: IProps): JSX.Element {
+export function FilesExercise(
+  {exerciseId, exerciseDescription, initialFiles, sampleSolutions, correctionTabRender, correct, isCorrecting}: IProps
+): JSX.Element {
 
   const {t} = useTranslation('common');
   const [state, setState] = useState<IState>({
@@ -50,21 +44,17 @@ export function FilesExercise({
     setActiveTabId('correction');
   }
 
-  function exerciseDescriptionTabRender() {
-    return <>
-      <div className="notification is-light-grey">{exerciseDescription}</div>
+  const exerciseDescriptionTabRender = <>
+    <div className="notification is-light-grey">{exerciseDescription}</div>
 
-      <ExerciseControlButtons isCorrecting={isCorrecting} correct={onCorrect} endLink={`./../../${exerciseId}`}/>
-    </>;
-  }
+    <ExerciseControlButtons isCorrecting={isCorrecting} correct={onCorrect} endLink={`./../../${exerciseId}`}/>
+  </>;
 
-  function sampleSolutionTabRender() {
-    return <SampleSolutionTabContent>
-      {() => sampleSolutions.map(({files}, index) => <div className="mb-3" key={index}>
-        {files.map((file) => <ExerciseFileCard exerciseFile={file} key={file.name}/>)}
-      </div>)}
-    </SampleSolutionTabContent>;
-  }
+  const sampleSolutionTabRender = <SampleSolutionTabContent>
+    {() => sampleSolutions.map(({files}, index) => <div className="mb-3" key={index}>
+      {files.map((file) => <ExerciseFileCard exerciseFile={file} key={file.name}/>)}
+    </div>)}
+  </SampleSolutionTabContent>;
 
   const tabs: Tabs = {
     exerciseText: {name: t('exerciseDescription'), render: exerciseDescriptionTabRender},

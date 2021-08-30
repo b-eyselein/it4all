@@ -58,7 +58,7 @@ export function getUmlExerciseTextParts(
 
   return splitText.map<UmlExClassSelectionTextPart>((text) =>
     isSelectable(exerciseContent.toIgnore, text)
-      ? {text, className: allBaseForms.find((name) => name === replaceWithMapping(mappings, text))!}
+      ? {text, className: allBaseForms.find((name) => name === replaceWithMapping(mappings, text)) || ''}
       : text
   );
 }

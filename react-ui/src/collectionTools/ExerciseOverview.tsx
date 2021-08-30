@@ -4,10 +4,13 @@ import {ExerciseIProps} from '../ToolBase';
 import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import {BreadCrumbPart, BreadCrumbs} from '../helpers/BreadCrumbs';
 import {WithQuery} from '../WithQuery';
+import {useSelector} from 'react-redux';
+import {currentUserSelector} from '../store/store';
 
 export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIProps): JSX.Element {
 
   const {url} = useRouteMatch();
+  const currentUser = useSelector(currentUserSelector);
 
   const exerciseOverviewQuery = useExerciseOverviewQuery({variables: {toolId, collectionId, exerciseId}});
 
@@ -25,7 +28,7 @@ export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIPr
 
     const exercise = collection.exercise;
 
-    if(!exercise) {
+    if (!exercise) {
       return <Redirect to={''}/>;
     }
 
@@ -52,7 +55,7 @@ export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIPr
         <div className="notification is-light-grey" dangerouslySetInnerHTML={{__html: exercise.text}}/>
 
         <div className="columns">
-          {entryParts.map((part) =>
+          {currentUser && entryParts.map((part) =>
             <div className="column" key={part.id}>
               <Link className=" button is-link is-fullwidth" to={`${url}/parts/${part.id}`}>{part.name}</Link>
             </div>

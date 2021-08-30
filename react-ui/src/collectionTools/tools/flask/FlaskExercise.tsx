@@ -80,8 +80,9 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
     );
   }
 
+  const correctionTabRender = <WithQuery query={correctionMutationResult} render={renderCorrection}/>;
+
   return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={exerciseDescription} initialFiles={initialFiles}
-                        sampleSolutions={content.flaskSampleSolutions} correct={correct}
-                        correctionTabRender={() => <WithQuery query={correctionMutationResult} render={renderCorrection}/>}
+                        sampleSolutions={content.flaskSampleSolutions} correct={correct} correctionTabRender={correctionTabRender}
                         isCorrecting={correctionMutationResult.called && correctionMutationResult.loading}/>;
 }

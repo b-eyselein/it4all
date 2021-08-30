@@ -26,7 +26,7 @@ export class MyJointClass extends joint.shapes.basic.Generic {
   }
 
   initialize(attributes?: joint.dia.Element.Attributes, options?: ModelConstructorOptions<this> | undefined): void {
-    this.on('change:classType change:className change:attributes change:methods', (x) => {
+    this.on('change:classType change:className change:attributes change:methods', () => {
       // console.log('Update...');
       this.updateRectangles();
     });
