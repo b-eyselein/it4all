@@ -36,8 +36,12 @@ export function ExerciseFilesEditor({files, activeFileName, setActiveFile, updat
           )}
         </ul>
       </div>
-      <CodeMirror value={activeFile.content} height={'700px'} options={getDefaultCodeMirrorEditorOptions(activeFile.fileType)}
-                  onChange={(ed) => updateActiveFileContent(ed.getValue())}/>
+
+      <CodeMirror
+        value={activeFile.content}
+        height={'700px'}
+        options={getDefaultCodeMirrorEditorOptions(activeFile.fileType)}
+        onChange={(ed) => updateActiveFileContent(ed.getValue())}/>
     </>
   );
 
