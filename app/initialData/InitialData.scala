@@ -2,7 +2,7 @@ package initialData
 
 import better.files.File
 import com.google.inject.AbstractModule
-import javax.inject.{Inject, Singleton}
+import initialData.InitialData.exerciseResourcesPath
 import model._
 import model.mongo.MongoClientQueries
 import model.tools.ToolList
@@ -10,7 +10,14 @@ import play.api.Logger
 import play.api.libs.json.{Json, OFormat}
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+
+abstract class InitialExercise(protected val toolId: String, protected val collectionId: Int, protected val exerciseId: Int) {
+
+  protected val exResPath: File = exerciseResourcesPath(toolId, collectionId, exerciseId)
+
+}
 
 trait InitialData[EC <: ExerciseContent] {
 
@@ -37,9 +44,7 @@ object InitialData {
 }
 
 @Singleton
-class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
-    extends ReactiveMongoComponents
-    with MongoClientQueries {
+class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi) extends ReactiveMongoComponents with MongoClientQueries {
 
   private val logger = Logger(classOf[StartUpService])
 

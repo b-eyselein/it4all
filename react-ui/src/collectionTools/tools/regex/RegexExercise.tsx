@@ -53,32 +53,26 @@ export function RegexExercise({exercise, content, partId, oldSolution}: IProps):
   };
 
   return (
-    <div className="container is-fluid">
+    <div className="container">
 
-      <div className="columns">
-        <div className="column is-two-fifths-desktop">
-          <h1 className="title is-3 has-text-centered">{t('exerciseText')}</h1>
-          <div className="notification is-light-grey">{exercise.text}</div>
+      <h1 className="title is-3 has-text-centered">{t('exerciseText')}</h1>
+      <div className="notification is-light-grey">{exercise.text}</div>
 
-          <div className="field has-addons">
-            <div className="control">
-              <button className="button is-static">{t('yourSolution')}:</button>
-            </div>
-            <div className="control is-expanded">
-              <input type="text" className="input" defaultValue={solution} onChange={(event) => setSolution(event.target.value)}
-                     placeholder={t('yourSolution')} autoFocus autoComplete="off"/>
-            </div>
-          </div>
-
-          <ExerciseControlButtons isCorrecting={correcting} correct={correct} endLink={`./../../${exercise.exerciseId}`} childLinks={[showHideHelpButton]}/>
-
-          {showInfo && <RegexCheatSheet/>}
+      <div className="field has-addons">
+        <div className="control">
+          <button className="button is-static">{t('yourSolution')}:</button>
         </div>
-
-        <div className="column">
-          <BulmaTabs tabs={tabs} activeTabId={activeTabId} setActiveTabId={setActiveTabId}/>
+        <div className="control is-expanded">
+          <input type="text" className="input" defaultValue={solution} onChange={(event) => setSolution(event.target.value)}
+                 placeholder={t('yourSolution')} autoFocus autoComplete="off"/>
         </div>
       </div>
+
+      <ExerciseControlButtons isCorrecting={correcting} correct={correct} endLink={`./../../${exercise.exerciseId}`} childLinks={[showHideHelpButton]}/>
+
+      {showInfo && <RegexCheatSheet/>}
+
+      <BulmaTabs tabs={tabs} activeTabId={activeTabId} setActiveTabId={setActiveTabId}/>
     </div>
   );
 }

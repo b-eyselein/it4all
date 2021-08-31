@@ -5,7 +5,7 @@ schema: "http://localhost:9000/api/graphql"
 documents: "src/**/*.graphql"
 
 generates:
-  src/schema.graphql:
+  ./schema.graphql:
     plugins:
       - "schema-ast"
 

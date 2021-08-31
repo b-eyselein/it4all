@@ -1,5 +1,5 @@
 import React from 'react';
-import {SqlQueryResultFragment} from '../../../graphql';
+import {SqlCell, SqlQueryResultFragment} from '../../../graphql';
 import classNames from 'classnames';
 
 interface IProps {
@@ -19,7 +19,8 @@ export function SqlQueryResultTable({queryResult}: IProps): JSX.Element {
         {queryResult.rows.map((row, index) =>
           <tr key={index}>
             {queryResult.columnNames
-              .map((colName) => row.cells.find(({key}) => key === colName)!.value)
+              .map((colName) => row.cells.find(({key}) => key === colName)?.value)
+              .filter<SqlCell>((cell): cell is SqlCell => !!cell)
               .map(({colName, content, different}) =>
                 <td key={colName} className={classNames({'is-light-danger': different})}>{content}</td>
               )}

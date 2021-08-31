@@ -9,10 +9,10 @@ type AttributeList {
 }
 
 enum BinaryClassificationResultType {
-  FalseNegative
-  FalsePositive
-  TrueNegative
   TruePositive
+  FalsePositive
+  FalseNegative
+  TrueNegative
 }
 
 type CollectionTool {
@@ -47,19 +47,30 @@ enum EbnfExPart {
 }
 
 type EbnfExerciseContent {
-  sampleSolutions: [String!]!
+  sampleSolutions: [EbnfGrammar!]!
 }
 
 type EbnfExerciseMutations {
   correct(part: EbnfExPart!, solution: EbnfGrammarInput!): EbnfCorrectionResult!
 }
 
+type EbnfGrammar {
+  startSymbol: String!
+  rules: String!
+}
+
 input EbnfGrammarInput {
   startSymbol: String!
+  rules: [EbnfRuleInput!]!
 }
 
 type EbnfResult {
   x: String!
+}
+
+input EbnfRuleInput {
+  variable: String!
+  rule: String!
 }
 
 type ElementDefinition {
@@ -335,8 +346,8 @@ The `Long` scalar type represents non-fractional signed whole numeric values. Lo
 scalar Long
 
 enum MatchType {
-  PARTIAL_MATCH
   SUCCESSFUL_MATCH
+  PARTIAL_MATCH
   UNSUCCESSFUL_MATCH
 }
 
@@ -408,8 +419,8 @@ type RegexCorrectionResult {
 }
 
 enum RegexCorrectionType {
-  EXTRACTION
   MATCHING
+  EXTRACTION
 }
 
 enum RegexExPart {
@@ -561,10 +572,10 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  INSERT
+  DELETE
   SELECT
   CREATE
-  DELETE
+  INSERT
   UPDATE
 }
 
@@ -613,10 +624,10 @@ type StringMatchingResult {
 }
 
 enum SuccessType {
-  COMPLETE
   ERROR
   NONE
   PARTIALLY
+  COMPLETE
 }
 
 enum ToolState {

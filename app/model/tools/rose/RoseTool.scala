@@ -11,7 +11,6 @@ import scala.util.Try
 
 object RoseTool extends Tool("rose", "Rose", ToolState.PRE_ALPHA) {
 
-  override type SolutionType      = String
   override type SolutionInputType = String
   override type ExContentType     = RoseExerciseContent
   override type PartType          = RoseExPart
@@ -23,8 +22,7 @@ object RoseTool extends Tool("rose", "Rose", ToolState.PRE_ALPHA) {
 
   override val jsonFormats: StringSolutionToolJsonProtocol[RoseExerciseContent, RoseExPart] = RoseToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExPart, RoseResult] =
-    RoseGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[String, RoseExerciseContent, RoseExPart, RoseResult] = RoseGraphQLModels
 
   // Correction
 

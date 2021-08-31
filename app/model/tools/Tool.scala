@@ -34,7 +34,6 @@ abstract class Tool(val id: String, val name: String, val toolState: ToolState =
 
   // Abstract types
 
-  type SolutionType
   type SolutionInputType
   type ExContentType <: ExerciseContent
   type PartType <: ExPart
@@ -42,7 +41,7 @@ abstract class Tool(val id: String, val name: String, val toolState: ToolState =
 
   // Json & GraphQL Formats
 
-  val jsonFormats: ToolJsonProtocol[SolutionType, SolutionInputType, ExContentType, PartType]
+  val jsonFormats: ToolJsonProtocol[SolutionInputType, ExContentType, PartType]
 
   val graphQlModels: ToolGraphQLModelBasics[SolutionInputType, ExContentType, PartType, ResType]
 

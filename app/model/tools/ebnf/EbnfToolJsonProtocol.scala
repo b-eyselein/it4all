@@ -1,18 +1,26 @@
 package model.tools.ebnf
 
 import model.tools.ToolJsonProtocol
-import model.tools.ebnf.EbnfTool.{SolutionInputType, SolutionType}
 import play.api.libs.json._
 
-object EbnfToolJsonProtocol
-    extends ToolJsonProtocol[SolutionType, SolutionInputType, EbnfExerciseContent, EbnfExercisePart] {
+object EbnfToolJsonProtocol extends ToolJsonProtocol[EbnfGrammar, EbnfExerciseContent, EbnfExercisePart] {
+
+  private val ebnfRuleFormat: OFormat[EbnfRule] = Json.format
+
+  private val ebnfGrammarFormat: OFormat[EbnfGrammar] = {
+    implicit val erf: OFormat[EbnfRule] = ebnfRuleFormat
+
+    Json.format
+  }
 
   override val partTypeFormat: Format[EbnfExercisePart] = EbnfExercisePart.jsonFormat
 
-  override val solutionFormat: Format[SolutionType] = Json.format
+  override val solutionInputFormat: Format[EbnfGrammar] = ebnfGrammarFormat
 
-  override val solutionInputFormat: Format[SolutionInputType] = Json.format
+  override protected val exerciseContentFormat: OFormat[EbnfExerciseContent] = {
+    implicit val egf: OFormat[EbnfGrammar] = ebnfGrammarFormat
 
-  override protected val exerciseContentFormat: OFormat[EbnfExerciseContent] = Json.format
+    Json.format
+  }
 
 }

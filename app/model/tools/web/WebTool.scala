@@ -16,7 +16,6 @@ import scala.util.Try
 
 object WebTool extends Tool("web", "Web") {
 
-  override type SolutionType      = FilesSolution
   override type SolutionInputType = FilesSolutionInput
   override type ExContentType     = WebExerciseContent
   override type PartType          = WebExPart
@@ -26,8 +25,7 @@ object WebTool extends Tool("web", "Web") {
 
   override val jsonFormats: FilesSolutionToolJsonProtocol[WebExerciseContent, WebExPart] = WebToolJsonProtocol
 
-  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebResult] =
-    WebGraphQLModels
+  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebResult] = WebGraphQLModels
 
   private val openOptions: OpenOptions = Seq(
     StandardOpenOption.TRUNCATE_EXISTING,

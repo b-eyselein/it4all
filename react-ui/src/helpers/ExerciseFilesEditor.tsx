@@ -25,6 +25,8 @@ export function ExerciseFilesEditor({files, activeFileName, setActiveFile, updat
 
   const activeFile: ExerciseFileFragment = files[activeFileName];
 
+  const mode = activeFile.fileType === 'htmlmixed' ? 'xml' : activeFile.fileType;
+
   return (
     <>
       <div className="tabs is-centered">
@@ -40,7 +42,7 @@ export function ExerciseFilesEditor({files, activeFileName, setActiveFile, updat
       <CodeMirror
         value={activeFile.content}
         height={'700px'}
-        options={getDefaultCodeMirrorEditorOptions(activeFile.fileType)}
+        options={getDefaultCodeMirrorEditorOptions(mode)}
         onChange={(ed) => updateActiveFileContent(ed.getValue())}/>
     </>
   );

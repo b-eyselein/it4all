@@ -209,7 +209,9 @@ fragment FieldsForLink on Exercise {
 # EBNF
 
 fragment EbnfExerciseContent on EbnfExerciseContent {
-  sampleSolutions
+  sampleSolutions {
+    startSymbol
+  }
 }
 
 # Flask

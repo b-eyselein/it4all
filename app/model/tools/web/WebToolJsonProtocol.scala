@@ -44,7 +44,7 @@ object WebToolJsonProtocol extends FilesSolutionToolJsonProtocol[WebExerciseCont
   override val exerciseContentFormat: OFormat[WebExerciseContent] = {
     implicit val eff: Format[ExerciseFile]    = exerciseFileFormat
     implicit val ssf: Format[SiteSpec]        = siteSpecFormat
-    implicit val sasof: Format[FilesSolution] = solutionFormat
+    implicit val sasof: Format[FilesSolution] = filesSolutionFormat
 
     Json.format
   }

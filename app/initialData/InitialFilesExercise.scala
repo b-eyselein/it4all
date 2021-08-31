@@ -1,7 +1,6 @@
 package initialData
 
 import better.files.File
-import initialData.InitialData.exerciseResourcesPath
 import model.{ExerciseFile, PathExerciseFile}
 
 final case class FileLoadConfig(
@@ -11,21 +10,11 @@ final case class FileLoadConfig(
   maybeOtherFileName: Option[String] = None
 )
 
-abstract class InitialFilesExercise(
-  protected val toolId: String,
-  protected val collectionId: Int,
-  protected val exerciseId: Int
-) {
+abstract class InitialFilesExercise(toolId: String, collectionId: Int, exerciseId: Int) extends InitialExercise(toolId, collectionId, exerciseId) {
 
-  protected val exResPath: File = exerciseResourcesPath(toolId, collectionId, exerciseId)
-
-  protected def loadFilesFromFolder(
-    directory: File,
-    fileLoadConfigs: Seq[FileLoadConfig]
-  ): Seq[ExerciseFile] = fileLoadConfigs.map { case FileLoadConfig(name, fileType, editable, maybeOtherFileName) =>
-    val fileName = maybeOtherFileName.getOrElse(name)
-
-    PathExerciseFile(fileName, fileType, directory, editable)
+  protected def loadFilesFromFolder(directory: File, fileLoadConfigs: Seq[FileLoadConfig]): Seq[ExerciseFile] = fileLoadConfigs.map {
+    case FileLoadConfig(name, fileType, editable, maybeOtherFileName) =>
+      PathExerciseFile(maybeOtherFileName.getOrElse(name), fileType, directory, editable)
   }
 
 }

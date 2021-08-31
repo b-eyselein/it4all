@@ -33,7 +33,7 @@ object ProgrammingToolJsonProtocol extends FilesSolutionToolJsonProtocol[Program
   val exerciseContentFormat: OFormat[ProgrammingExerciseContent] = {
     implicit val utf: Format[UnitTestPart]       = unitTestPartFormat
     implicit val ipf: Format[ImplementationPart] = implementationPartFormat
-    implicit val ssf: Format[FilesSolution]      = solutionFormat
+    implicit val ssf: Format[FilesSolution]      = filesSolutionFormat
 
     Json.format
   }

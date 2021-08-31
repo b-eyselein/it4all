@@ -11,7 +11,7 @@ services:
     image: mongo
     restart: always
     ports:
-      - 27017:27017
+      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: 1234
@@ -28,7 +28,7 @@ services:
     image: httpd:alpine
     restart: always
     ports:
-      - 9080:80
+      - "9080:80"
     volumes:
       - type: bind
         source: ./data/web/solutions/
@@ -38,7 +38,7 @@ services:
     image: mariadb
     restart: always
     ports:
-      - 3107:3306
+      - "3107:3306"
     volumes:
       - type: bind
         source: ./conf/inits/init_db_scripts/
@@ -53,7 +53,7 @@ services:
     image: mariadb
     restart: always
     ports:
-      - 3108:3306
+      - "3108:3306"
     volumes:
       - type: bind
         source: ./conf/inits/init_db_scripts/
@@ -68,7 +68,7 @@ services:
     image: mariadb
     restart: always
     ports:
-      - 3109:3306
+      - "3109:3306"
     volumes:
       - type: bind
         source: ./conf/inits/sql_create_setup.sql

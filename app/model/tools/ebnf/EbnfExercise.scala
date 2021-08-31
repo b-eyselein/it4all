@@ -13,15 +13,18 @@ object EbnfExercisePart extends ExParts[EbnfExercisePart] {
 }
 
 final case class EbnfExerciseContent(
-  sampleSolutions: Seq[String]
+  sampleSolutions: Seq[EbnfGrammar]
 ) extends ExerciseContent {
 
-  override protected type S = String
+  override protected type S = EbnfGrammar
 
   override def parts: Seq[ExPart] = Seq(EbnfExercisePart.GrammarCreation)
 
 }
 
+final case class EbnfRule(variable: String, rule: String)
+
 final case class EbnfGrammar(
-  startSymbol: String
+  startSymbol: String,
+  rules: Seq[EbnfRule]
 )

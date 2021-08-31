@@ -65,7 +65,7 @@ object WebColl1Ex1 extends WebInitialExercise(1, 1) {
   )
 
   private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath,
+    exResPath / "sol_1",
     Seq(
       FileLoadConfig("carList.html", htmlFileType)
     )

@@ -1,0 +1,12 @@
+mutation EbnfCorrection($collId: Int!, $exId: Int!, $solution: EbnfGrammarInput!) {
+  ebnfExercise(collId: $collId, exId: $exId) {
+    correct(solution: $solution, part: GrammarCreation) {
+      solutionSaved
+      proficienciesUpdated
+      resultSaved
+      result {
+        x
+      }
+    }
+  }
+}
