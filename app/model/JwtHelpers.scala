@@ -20,13 +20,14 @@ trait JwtHelpers {
 
   protected def writeJsonWebToken(user: LoggedInUserWithToken): JsValue = JsonProtocols.loggedInUserWithTokenFormat.writes(user)
 
-  protected def deserializeJwt(jwtString: String): Option[String] = JwtSession.deserialize(jwtString)(configuration, clock).claim.subject
+  protected def deserializeJwt(jwtString: String): JwtSession = JwtSession.deserialize(jwtString)(configuration, clock)
 
   protected def userFromRequestHeader(request: RequestHeader): Future[Option[LoggedInUser]] = {
     val maybeUsername = for {
       header <- request.headers.get("Authorization")
-      jwt    <- deserializeJwt(header)
-    } yield jwt
+      jwt = deserializeJwt(header)
+      username <- jwt.claim.subject
+    } yield username
 
     val loggedInUser = maybeUsername match {
       case None           => Future.successful(None)
