@@ -18,7 +18,7 @@ enum BinaryClassificationResultType {
 type CollectionTool {
   id: String!
   name: String!
-  toolState: ToolState!
+  isBeta: Boolean!
   lessonCount: Long!
   lessons: [Lesson!]!
   lesson(lessonId: Int!): Lesson
@@ -628,13 +628,6 @@ enum SuccessType {
   NONE
   PARTIALLY
   COMPLETE
-}
-
-enum ToolState {
-  ALPHA
-  BETA
-  LIVE
-  PRE_ALPHA
 }
 
 type Topic {

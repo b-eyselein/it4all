@@ -3,13 +3,13 @@ package model.tools.flask
 import initialData.InitialData
 import initialData.flask.FlaskInitialData
 import model.graphql.FilesSolutionToolGraphQLModelBasics
-import model.tools.{FilesSolutionToolJsonProtocol, Tool, ToolState}
+import model.tools.{FilesSolutionToolJsonProtocol, Tool}
 import model.{Exercise, FilesSolutionInput, LoggedInUser}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-object FlaskTool extends Tool("flask", "Flask", ToolState.ALPHA) {
+object FlaskTool extends Tool("flask", "Flask", true) {
 
   override type SolutionInputType = FilesSolutionInput
   override type ExContentType     = FlaskExerciseContent
@@ -27,7 +27,8 @@ object FlaskTool extends Tool("flask", "Flask", ToolState.ALPHA) {
     solution: FilesSolutionInput,
     exercise: Exercise[FlaskExerciseContent],
     part: FlaskExPart
-  )(implicit executionContext: ExecutionContext): Future[Try[FlaskResult]] = FlaskCorrector.correct(user.username, solution, exercise)
+  )(implicit executionContext: ExecutionContext): Future[Try[FlaskResult]] =
+    FlaskCorrector.correct(solution, exercise, solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId))
 
   override val initialData: InitialData[FlaskExerciseContent] = FlaskInitialData
 

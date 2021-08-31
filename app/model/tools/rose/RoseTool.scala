@@ -9,7 +9,7 @@ import model.{Exercise, LoggedInUser}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-object RoseTool extends Tool("rose", "Rose", ToolState.PRE_ALPHA) {
+object RoseTool extends Tool("rose", "Rose", true) {
 
   override type SolutionInputType = String
   override type ExContentType     = RoseExerciseContent

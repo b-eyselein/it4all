@@ -65,32 +65,27 @@ trait MongoClientQueries
 
   // Update user proficiencies
 
-  private def futureUserProficienciesCollection: Future[BSONCollection] =
-    reactiveMongoApi.database.map(_.collection("userProficiencies"))
+  private def futureUserProficienciesCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection("userProficiencies"))
 
   private implicit val userProficiencyFormat: OFormat[UserProficiency] = JsonProtocols.userProficiencyFormat
 
-  protected def userProficienciesForTool(username: String, toolId: String): Future[Seq[UserProficiency]] =
-    for {
-      userProficienciesCollection <- futureUserProficienciesCollection
-      userProfs <-
-        userProficienciesCollection
-          .find(BSONDocument("username" -> username, "topic.toolId" -> toolId), Option.empty[BSONDocument])
-          .cursor[UserProficiency]()
-          .collect[Seq](-1, Cursor.FailOnError())
-    } yield userProfs
+  protected def userProficienciesForTool(username: String, toolId: String): Future[Seq[UserProficiency]] = for {
+    userProficienciesCollection <- futureUserProficienciesCollection
+    userProfs <-
+      userProficienciesCollection
+        .find(BSONDocument("username" -> username, "topic.toolId" -> toolId), Option.empty[BSONDocument])
+        .cursor[UserProficiency]()
+        .collect[Seq](-1, Cursor.FailOnError())
+  } yield userProfs
 
-  protected def allTopicsWithLevelForTool(username: String, tool: Tool): Future[Seq[TopicWithLevel]] =
-    for {
-      dbUserProficiencies <- userProficienciesForTool(username, tool.id)
-      userProficiencies =
-        dbUserProficiencies
-          .map(up => (up.topic, TopicWithLevel(up.topic, up.getLevel)))
-          .toMap
-      allUserProficiencies =
-        tool.allTopics
-          .map { t => userProficiencies.getOrElse(t, TopicWithLevel(t, Level.Beginner)) }
-    } yield allUserProficiencies
+  protected def allTopicsWithLevelForTool(username: String, tool: Tool): Future[Seq[TopicWithLevel]] = for {
+    dbUserProficiencies <- userProficienciesForTool(username, tool.id)
+    userProficiencies = dbUserProficiencies
+      .map(up => (up.topic, TopicWithLevel(up.topic, up.getLevel)))
+      .toMap
+    allUserProficiencies = tool.allTopics
+      .map { t => userProficiencies.getOrElse(t, TopicWithLevel(t, Level.Beginner)) }
+  } yield allUserProficiencies
 
   protected def updateUserProficiency(
     username: String,

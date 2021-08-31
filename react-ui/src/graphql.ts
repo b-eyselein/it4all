@@ -39,7 +39,7 @@ export type CollectionTool = {
   __typename?: 'CollectionTool';
   id: Scalars['String'];
   name: Scalars['String'];
-  toolState: ToolState;
+  isBeta: Scalars['Boolean'];
   lessonCount: Scalars['Long'];
   lessons: Array<Lesson>;
   lesson?: Maybe<Lesson>;
@@ -850,13 +850,6 @@ export enum SuccessType {
   Complete = 'COMPLETE'
 }
 
-export enum ToolState {
-  Alpha = 'ALPHA',
-  Beta = 'BETA',
-  Live = 'LIVE',
-  PreAlpha = 'PRE_ALPHA'
-}
-
 export type Topic = {
   __typename?: 'Topic';
   abbreviation: Scalars['String'];
@@ -1537,12 +1530,12 @@ export type XmlDocumentResultFragment = { __typename?: 'XmlDocumentResult', erro
 
 export type XmlErrorFragment = { __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string };
 
-export type CollectionToolFragment = { __typename?: 'CollectionTool', id: string, name: string, toolState: ToolState, collectionCount: any, lessonCount: any, exerciseCount: any };
+export type CollectionToolFragment = { __typename?: 'CollectionTool', id: string, name: string, collectionCount: any, lessonCount: any, exerciseCount: any };
 
 export type ToolOverviewQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ToolOverviewQuery = { __typename?: 'Query', tools: Array<{ __typename?: 'CollectionTool', id: string, name: string, toolState: ToolState, collectionCount: any, lessonCount: any, exerciseCount: any }> };
+export type ToolOverviewQuery = { __typename?: 'Query', tools: Array<{ __typename?: 'CollectionTool', id: string, name: string, collectionCount: any, lessonCount: any, exerciseCount: any }> };
 
 export type CollectionToolOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
@@ -2278,7 +2271,6 @@ export const CollectionToolFragmentDoc = gql`
     fragment CollectionTool on CollectionTool {
   id
   name
-  toolState
   collectionCount
   lessonCount
   exerciseCount

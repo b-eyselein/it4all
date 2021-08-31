@@ -11,7 +11,7 @@ import model.{Exercise, LoggedInUser}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-object UmlTool extends Tool("uml", "Uml", ToolState.BETA) {
+object UmlTool extends Tool("uml", "Uml", true) {
 
   override type SolutionInputType = UmlClassDiagram
   override type ExContentType     = UmlExerciseContent

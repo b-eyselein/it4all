@@ -4,12 +4,12 @@ import initialData.InitialData
 import initialData.programming.ProgrammingInitialData
 import model._
 import model.graphql.FilesSolutionToolGraphQLModelBasics
-import model.tools.{FilesSolutionToolJsonProtocol, Tool, ToolState}
+import model.tools.{FilesSolutionToolJsonProtocol, Tool}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.BETA) {
+object ProgrammingTool extends Tool("programming", "Programmierung", true) {
 
   override type SolutionInputType = FilesSolutionInput
   override type ExContentType     = ProgrammingExerciseContent
