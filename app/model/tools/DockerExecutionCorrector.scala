@@ -21,18 +21,17 @@ trait DockerExecutionCorrector {
 
   protected val dockerImage: ScalaDockerImage
 
-  def readDockerExecutionResultFile[A](targetFile: File, jsonFormat: Reads[A]): Try[A] =
-    for {
-      fileContent <- Try(targetFile.contentAsString)
-      jsValue     <- Try(Json.parse(fileContent))
-      result <-
-        jsonFormat
-          .reads(jsValue)
-          .fold(
-            _ => Failure(new Exception("There has been an error reading a json result file!")),
-            result => Success(result)
-          )
-    } yield result
+  def readDockerExecutionResultFile[A](targetFile: File, jsonFormat: Reads[A]): Try[A] = for {
+    fileContent <- Try(targetFile.contentAsString)
+    jsValue     <- Try(Json.parse(fileContent))
+    result <-
+      jsonFormat
+        .reads(jsValue)
+        .fold(
+          _ => Failure(new Exception("There has been an error reading a json result file!")),
+          result => Success(result)
+        )
+  } yield result
 
   protected def runContainer[T, R](
     dockerBinds: Seq[DockerBind],
@@ -40,9 +39,7 @@ trait DockerExecutionCorrector {
     resultFile: File,
     maybeCmd: Option[Seq[String]] = None,
     deleteContainerAfterRun: Int => Boolean = _ => true
-  )(
-    convertResult: T => R
-  )(implicit ec: ExecutionContext): Future[Try[R]] = Future(DockerConnector.imageExists(dockerImage.name)).flatMap {
+  )(convertResult: T => R)(implicit ec: ExecutionContext): Future[Try[R]] = Future(DockerConnector.imageExists(dockerImage.name)).flatMap {
     case false => Future.successful(Failure(new Exception(s"The docker image does ${dockerImage.name} not exist!")))
     case true =>
       DockerConnector
