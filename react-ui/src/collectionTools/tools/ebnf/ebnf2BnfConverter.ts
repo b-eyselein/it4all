@@ -82,7 +82,7 @@ class Ebnf2BnfConverter extends GrammarConverter<IE, Grammar<IE>, OE, Grammar<OE
         return {
           newOutputElement: variable,
           newRules: [
-            {variable, right: alternative(EmptyWord, element.child)}
+            {variable, right: alternative<IE>(EmptyWord, element.child)}
           ],
           updatedReplacers: [...currentReplacers, [element, variable]],
           updatedVariables: [...currentVariables, variable]
@@ -100,14 +100,14 @@ class Ebnf2BnfConverter extends GrammarConverter<IE, Grammar<IE>, OE, Grammar<OE
           updatedReplacers
         } = this.convertElement(element.child, currentVariables, currentReplacers);
 
-        return {newOutputElement: alternative(EmptyWord, sequence(replacedChild, ruleVariable)), newRules, updatedVariables, updatedReplacers};
+        return {newOutputElement: alternative<OE>(EmptyWord, sequence(replacedChild, ruleVariable)), newRules, updatedVariables, updatedReplacers};
       } else {
         const variable = this.findNewVariables(currentVariables)!;
 
         return {
           newOutputElement: variable,
           newRules: [
-            {variable, right: alternative(EmptyWord, sequence(element.child, variable))}
+            {variable, right: alternative<IE>(EmptyWord, sequence(element.child, variable))}
           ],
           updatedReplacers: [...currentReplacers, [element, variable]],
           updatedVariables: [...currentVariables, variable]

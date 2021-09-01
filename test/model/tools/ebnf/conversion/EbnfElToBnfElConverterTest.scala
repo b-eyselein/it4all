@@ -7,6 +7,8 @@ import org.scalatest.matchers.should.Matchers
 
 class EbnfElToBnfElConverterTest extends AnyFlatSpec with Matchers with TestValues {
 
+  // FIXME: convert to ts!
+
   it should "convert Ebnf collection elements" in {
 
     val result1 = EbnfToBnfConverter.convertCollectionChildElements(Seq(s, t, u))

@@ -60,31 +60,41 @@ export function repetitionOne(child: ExtendedBackusNaurFormGrammarElement): Repe
 }
 
 
-export interface Alternative {
+export interface Alternative<ElType> {
   _type: 'Alternative';
-  children: ExtendedBackusNaurFormGrammarElement[];
+  children: ElType[];
 }
 
-export function alternative(...children: ExtendedBackusNaurFormGrammarElement[]): Alternative {
+export function alternative<ElType>(...children: ElType[]): Alternative<ElType> {
   return {_type: 'Alternative', children};
 }
 
 
-export interface Sequence {
+export interface Sequence<ElType> {
   _type: 'Sequence';
-  children: ExtendedBackusNaurFormGrammarElement[];
+  children: ElType[];
 }
 
-export function sequence(...children: ExtendedBackusNaurFormGrammarElement[]): Sequence {
+export function sequence<ElType>(...children: ElType[]): Sequence<ElType> {
   return {_type: 'Sequence', children};
 }
 
 
-export type BaseNormalizedFormGrammarElement = EmptyWordType | Variable | Terminal;
+export type BasicGrammarElement = EmptyWordType | Variable | Terminal;
 
-export type BackusNaurFormElement = BaseNormalizedFormGrammarElement | Alternative | Sequence;
+export type BaseNormalizedSequence = Sequence<BasicGrammarElement>;
 
-export type ExtendedBackusNaurFormGrammarElement = BackusNaurFormElement | Optional | RepetitionAny | RepetitionOne;
+export type BaseNormalizedFormGrammarElement = Alternative<BaseNormalizedSequence>;
+
+export type BackusNaurFormElement = BasicGrammarElement | Alternative<BackusNaurFormElement> | Sequence<BackusNaurFormElement>;
+
+export type ExtendedBackusNaurFormGrammarElement =
+  BasicGrammarElement
+  | Alternative<ExtendedBackusNaurFormGrammarElement>
+  | Sequence<ExtendedBackusNaurFormGrammarElement>
+  | Optional
+  | RepetitionAny
+  | RepetitionOne;
 
 // Helper functions
 
@@ -111,20 +121,26 @@ export function stringifyGrammarElement(ge: ExtendedBackusNaurFormGrammarElement
   }
 }
 
+export function getVariablesFromBasicGrammarElement(ge: BasicGrammarElement): Variable[] {
+  return ge._type === 'Variable' ? [ge] : [];
+}
+
 export function getVariablesFromBaseNormalizedFormGrammarElement(ge: BaseNormalizedFormGrammarElement): Variable[] {
-  return ge._type === 'Terminal' || ge._type === 'EmptyWord'
-    ? []
-    : [ge];
+  return ge.children.flatMap(({children}) => children.flatMap(getVariablesFromBasicGrammarElement));
 }
 
 export function getVariablesFromBackusNaurFormGrammarElement(ge: BackusNaurFormElement): Variable[] {
   return ge._type === 'Sequence' || ge._type === 'Alternative'
-    ? ge.children.flatMap((c) => getVariablesFromGrammarElement(c))
-    : getVariablesFromBaseNormalizedFormGrammarElement(ge);
+    ? ge.children.flatMap(getVariablesFromGrammarElement)
+    : getVariablesFromBasicGrammarElement(ge);
 }
 
 export function getVariablesFromGrammarElement(ge: ExtendedBackusNaurFormGrammarElement): Variable[] {
-  return ge._type === 'RepetitionOne' || ge._type === 'RepetitionAny' || ge._type === 'Optional'
-    ? getVariablesFromGrammarElement(ge.child)
-    : getVariablesFromBackusNaurFormGrammarElement(ge);
+  if (ge._type === 'RepetitionOne' || ge._type === 'RepetitionAny' || ge._type === 'Optional') {
+    return getVariablesFromGrammarElement(ge.child);
+  } else if (ge._type === 'Alternative' || ge._type === 'Sequence') {
+    return ge.children.flatMap(getVariablesFromGrammarElement);
+  } else {
+    return getVariablesFromBasicGrammarElement(ge);
+  }
 }

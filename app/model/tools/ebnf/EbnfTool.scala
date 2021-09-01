@@ -3,7 +3,6 @@ package model.tools.ebnf
 import initialData.InitialData
 import initialData.ebnf.EbnfInitialData
 import model.graphql.ToolGraphQLModelBasics
-import model.tools.ebnf.parsing.ExtendedEbnfParser
 import model.tools.{Tool, ToolJsonProtocol}
 import model.{Exercise, LoggedInUser}
 
@@ -28,17 +27,7 @@ object EbnfTool extends Tool("ebnf", "EBNF") {
     solution: EbnfGrammar,
     exercise: EbnfExercise,
     part: EbnfExercisePart
-  )(implicit executionContext: ExecutionContext): Future[Try[EbnfResult]] = Future.successful {
-
-    println(solution)
-
-    val startSymbol = solution.startSymbol
-    val rules       = solution.rules
-
-    val x = ExtendedEbnfParser.grammar
-
-    ???
-  }
+  )(implicit executionContext: ExecutionContext): Future[Try[EbnfResult]] = ???
 
   override val initialData: InitialData[EbnfExerciseContent] = EbnfInitialData
 
