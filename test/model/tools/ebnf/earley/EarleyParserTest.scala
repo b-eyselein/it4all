@@ -1,12 +1,12 @@
-package model.earley
+package model.tools.ebnf.earley
 
-import model.DefaultGrammars
+import model.tools.ebnf.DefaultGrammars
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class EarleyParserTest extends AnyFlatSpec with Matchers {
 
-  import model.DefaultGrammars._
+  import model.tools.ebnf.DefaultGrammars._
 
   val debug = false //true
 

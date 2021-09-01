@@ -9,9 +9,7 @@ sealed trait GrammarElement {
 
 }
 
-final case class EarleyProductionSequence(children: Seq[EarleyProductionSequenceContent])
-    extends GrammarElement
-    with CollectionElement {
+final case class EarleyProductionSequence(children: Seq[EarleyProductionSequenceContent]) extends GrammarElement with CollectionElement {
 
   override val operator: String = ", "
 
@@ -56,9 +54,7 @@ sealed trait BaseNormalizedFormTopLevelElement extends GrammarElement {
 
 }
 
-final case class BaseNormalizedFormSequence(children: Seq[BaseNormalizedFormElement])
-    extends BaseNormalizedFormTopLevelElement
-    with CollectionElement {
+final case class BaseNormalizedFormSequence(children: Seq[BaseNormalizedFormElement]) extends BaseNormalizedFormTopLevelElement with CollectionElement {
 
   def +(that: BaseNormalizedFormElement): BaseNormalizedFormSequence = BaseNormalizedFormSequence(children :+ that)
 
@@ -68,9 +64,7 @@ final case class BaseNormalizedFormSequence(children: Seq[BaseNormalizedFormElem
   override val operator: String = ", "
 }
 
-final case class BaseNormalizedFormAlternative(children: Seq[BaseNormalizedFormSequence])
-    extends BaseNormalizedFormTopLevelElement
-    with CollectionElement {
+final case class BaseNormalizedFormAlternative(children: Seq[BaseNormalizedFormSequence]) extends BaseNormalizedFormTopLevelElement with CollectionElement {
 
   override val operator: String = " | "
 
@@ -95,17 +89,13 @@ sealed trait BackusNaurFormElement extends GrammarElement {
 
 }
 
-final case class BnfSequence(children: Seq[BackusNaurFormElement])
-    extends BackusNaurFormElement
-    with CollectionElement {
+final case class BnfSequence(children: Seq[BackusNaurFormElement]) extends BackusNaurFormElement with CollectionElement {
 
   override val operator = ", "
 
 }
 
-final case class BnfAlternative(children: Seq[BackusNaurFormElement])
-    extends BackusNaurFormElement
-    with CollectionElement {
+final case class BnfAlternative(children: Seq[BackusNaurFormElement]) extends BackusNaurFormElement with CollectionElement {
 
   override val operator = " | "
 
@@ -133,16 +123,12 @@ sealed trait ExtendedBackusNaurFormElement extends GrammarElement {
 
 }
 
-final case class EbnfSequence(children: Seq[ExtendedBackusNaurFormElement])
-    extends ExtendedBackusNaurFormElement
-    with CollectionElement {
+final case class EbnfSequence(children: Seq[ExtendedBackusNaurFormElement]) extends ExtendedBackusNaurFormElement with CollectionElement {
   override val operator = " , "
 
 }
 
-final case class EbnfAlternative(children: Seq[ExtendedBackusNaurFormElement])
-    extends ExtendedBackusNaurFormElement
-    with CollectionElement {
+final case class EbnfAlternative(children: Seq[ExtendedBackusNaurFormElement]) extends ExtendedBackusNaurFormElement with CollectionElement {
 
   override val operator = " | "
 
@@ -163,25 +149,19 @@ sealed trait EbnfUnaryOperatorElement extends ExtendedBackusNaurFormElement {
 
 }
 
-final case class EbnfOptional(childElement: ExtendedBackusNaurFormElement)
-    extends ExtendedBackusNaurFormElement
-    with EbnfUnaryOperatorElement {
+final case class EbnfOptional(childElement: ExtendedBackusNaurFormElement) extends ExtendedBackusNaurFormElement with EbnfUnaryOperatorElement {
 
   override val operator: String = "?"
 
 }
 
-final case class EbnfRepetitionAny(childElement: ExtendedBackusNaurFormElement)
-    extends ExtendedBackusNaurFormElement
-    with EbnfUnaryOperatorElement {
+final case class EbnfRepetitionAny(childElement: ExtendedBackusNaurFormElement) extends ExtendedBackusNaurFormElement with EbnfUnaryOperatorElement {
 
   override val operator: String = "*"
 
 }
 
-final case class EbnfRepetitionOne(childElement: ExtendedBackusNaurFormElement)
-    extends ExtendedBackusNaurFormElement
-    with EbnfUnaryOperatorElement {
+final case class EbnfRepetitionOne(childElement: ExtendedBackusNaurFormElement) extends ExtendedBackusNaurFormElement with EbnfUnaryOperatorElement {
 
   override val operator: String = "+"
 

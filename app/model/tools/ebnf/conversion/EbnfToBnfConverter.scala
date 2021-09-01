@@ -19,78 +19,100 @@ object EbnfToBnfConverter extends GrammarConverter {
     @annotation.tailrec
     def go(
       ebnfElements: List[IE],
-      bnfElements: Seq[OE],
-      newRules: Seq[IR],
-      newOutputRules: Seq[OR],
       currentTerminals: Seq[Variable],
-      currentReplacers: Map[IE, Variable]
+      currentReplacers: Map[IE, Variable],
+      bnfElements: Seq[OE] = Seq.empty,
+      newRules: Seq[IR] = Seq.empty
     ): CollectionGrammarElementConvResult[IE, OE] = ebnfElements match {
       case Nil => CollectionGrammarElementConvResult(bnfElements, currentTerminals, currentReplacers, newRules)
       case head :: tail =>
-        val GrammarElemConvResult(
-          newBnfElement,
-          newNonTerminals,
-          newReplacers,
-          newlyCreatedRules
-        ) = convertElement(head, currentTerminals, currentReplacers)
+        val GrammarElemConvResult(newBnfElement, newNonTerminals, newReplacers, newlyCreatedRules) = convertElement(head, currentTerminals, currentReplacers)
 
-        go(
-          tail,
-          bnfElements :+ newBnfElement,
-          newRules ++ newlyCreatedRules,
-          newOutputRules,
-          newNonTerminals,
-          newReplacers
-        )
+        go(tail, newNonTerminals, newReplacers, bnfElements :+ newBnfElement, newRules ++ newlyCreatedRules)
     }
 
-    go(children.toList, Seq.empty, Seq.empty, Seq.empty, currentVariables, currentReplacers)
+    go(children.toList, currentVariables, currentReplacers)
   }
 
   def convertElement(
     ebnfEl: ExtendedBackusNaurFormElement,
     currentVariables: Seq[Variable] = Seq.empty,
-    currentReplacers: Map[ExtendedBackusNaurFormElement, Variable] = Map.empty
+    currentReplacers: Map[ExtendedBackusNaurFormElement, Variable] = Map.empty,
+    ruleVariable: Option[Variable] = None
   ): GrammarElemConvResult[IE, OE] = currentReplacers.get(ebnfEl) match {
     case Some(replacer) => GrammarElemConvResult(replacer, currentVariables, currentReplacers)
     case None =>
       ebnfEl match {
-        case EmptyWord    => GrammarElemConvResult(EmptyWord, currentVariables, currentReplacers)
-        case t: Terminal  => GrammarElemConvResult(t, currentVariables, currentReplacers)
-        case nt: Variable => GrammarElemConvResult(nt, currentVariables, currentReplacers)
+        case newElement: BackusNaurFormElement => GrammarElemConvResult(newElement, currentVariables, currentReplacers)
 
         case EbnfOptional(element) =>
-          // Replace X? with Y and new rule Y -> eps | X
-          val freshNonTerminal = findNewVariable(currentVariables)
+          ruleVariable match {
+            case Some(_) =>
+              val GrammarElemConvResult(newElement, newVariables, newReplacers, newRules) = convertElement(element)
 
-          GrammarElemConvResult(
-            freshNonTerminal,
-            newRules = Seq(freshNonTerminal -> (EmptyWord | element)),
-            newVariables = currentVariables :+ freshNonTerminal,
-            newReplacers = currentReplacers + (ebnfEl -> freshNonTerminal)
-          )
+              GrammarElemConvResult(
+                EmptyWord or newElement,
+                newRules = newRules,
+                newVariables = currentVariables ++ newVariables,
+                newReplacers = currentReplacers ++ newReplacers
+              )
+            case None =>
+              // Replace X? with Y and new rule Y -> eps | X
+              val freshNonTerminal = findNewVariable(currentVariables)
+
+              GrammarElemConvResult(
+                freshNonTerminal,
+                newRules = Seq(freshNonTerminal -> (EmptyWord | element)),
+                newVariables = currentVariables :+ freshNonTerminal,
+                newReplacers = currentReplacers + (ebnfEl -> freshNonTerminal)
+              )
+          }
 
         case EbnfRepetitionAny(element) =>
-          // Replace X* with Y and new rule Y -> eps | (X Y)
-          val nextVariable = findNewVariable(currentVariables)
+          ruleVariable match {
+            case Some(ruleVariable) =>
+              val GrammarElemConvResult(newElement, newVariables, newReplacers, newRules) = convertElement(element)
 
-          GrammarElemConvResult(
-            nextVariable,
-            newVariables = currentVariables :+ nextVariable,
-            newReplacers = currentReplacers + (ebnfEl -> nextVariable),
-            newRules = Seq(nextVariable -> (EmptyWord | (element ~ nextVariable)))
-          )
+              GrammarElemConvResult(
+                EmptyWord or (newElement and ruleVariable),
+                newRules = newRules,
+                newVariables = currentVariables ++ newVariables,
+                newReplacers = currentReplacers ++ newReplacers
+              )
+            case None =>
+              // Replace X* with Y and new rule Y -> eps | (X Y)
+              val nextVariable = findNewVariable(currentVariables)
+
+              GrammarElemConvResult(
+                nextVariable,
+                newVariables = currentVariables :+ nextVariable,
+                newReplacers = currentReplacers + (ebnfEl -> nextVariable),
+                newRules = Seq(nextVariable -> (EmptyWord | (element ~ nextVariable)))
+              )
+          }
 
         case EbnfRepetitionOne(childElement) =>
-          // Replace X+ with Y and new rule Y -> X X*
-          val freshNonTerminal = findNewVariable(currentVariables)
+          ruleVariable match {
+            case Some(ruleVariable) =>
+              val GrammarElemConvResult(newElement, newVariables, newReplacers, newRules) = convertElement(childElement)
 
-          GrammarElemConvResult(
-            freshNonTerminal,
-            newRules = Seq(freshNonTerminal -> (childElement ~ childElement.*)),
-            newVariables = currentVariables :+ freshNonTerminal,
-            newReplacers = currentReplacers + (ebnfEl -> freshNonTerminal)
-          )
+              GrammarElemConvResult(
+                newElement or (newElement and ruleVariable),
+                newRules = newRules,
+                newVariables = currentVariables ++ newVariables,
+                newReplacers = currentReplacers ++ newReplacers
+              )
+            case None =>
+              // Replace X+ with Y and new rule Y -> X X*
+              val freshNonTerminal = findNewVariable(currentVariables)
+
+              GrammarElemConvResult(
+                freshNonTerminal,
+                newRules = Seq(freshNonTerminal -> (childElement ~ childElement.*)),
+                newVariables = currentVariables :+ freshNonTerminal,
+                newReplacers = currentReplacers + (ebnfEl -> freshNonTerminal)
+              )
+          }
 
         case EbnfSequence(children) =>
           val CollectionGrammarElementConvResult(convertedChildren, newNonTerms, newReplacers, newRules) =
@@ -99,12 +121,8 @@ object EbnfToBnfConverter extends GrammarConverter {
           GrammarElemConvResult(BnfSequence(convertedChildren), newNonTerms, newReplacers, newRules)
 
         case EbnfAlternative(children) =>
-          val CollectionGrammarElementConvResult(
-            convertedChildren,
-            newNonTerms,
-            newReplacers,
-            newRules
-          ) = convertCollectionChildElements(children, currentVariables, currentReplacers)
+          val CollectionGrammarElementConvResult(convertedChildren, newNonTerms, newReplacers, newRules) =
+            convertCollectionChildElements(children, currentVariables, currentReplacers)
 
           GrammarElemConvResult(BnfAlternative(convertedChildren), newNonTerms, newReplacers, newRules)
       }

@@ -1,7 +1,7 @@
-package model.conversion
+package model.tools.ebnf.conversion
 
-import model.TestValues
-import model.grammar._
+import model.tools.ebnf.TestValues
+import model.tools.ebnf.grammar._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -9,18 +9,18 @@ class EbnfElToBnfElConverterTest extends AnyFlatSpec with Matchers with TestValu
 
   it should "convert Ebnf collection elements" in {
 
-    val result1 = EbnfToBnfConverter.convertCollectionChildElements(Seq(x, y, z))
+    val result1 = EbnfToBnfConverter.convertCollectionChildElements(Seq(s, t, u))
     val awaited1 = CollectionGrammarElementConvResult[ExtendedBackusNaurFormElement, BackusNaurFormElement](
-      newOutputElements = Seq(x, y, z)
+      newOutputElements = Seq(s, t, u)
     )
     result1 shouldBe awaited1
 
     val result2 = EbnfToBnfConverter.convertCollectionChildElements(
-      children = Seq(x, B),
+      children = Seq(s, B),
       currentVariables = Seq(B)
     )
     val awaited2 = CollectionGrammarElementConvResult[ExtendedBackusNaurFormElement, BackusNaurFormElement](
-      newOutputElements = Seq(x, B),
+      newOutputElements = Seq(s, B),
       newVariables = Seq(B)
     )
     result2 shouldBe awaited2
@@ -56,7 +56,7 @@ class EbnfElToBnfElConverterTest extends AnyFlatSpec with Matchers with TestValu
 
     EbnfToBnfConverter.convertElement(B) shouldBe GrammarElemConvResult(B)
 
-    EbnfToBnfConverter.convertElement(x) shouldBe GrammarElemConvResult(x)
+    EbnfToBnfConverter.convertElement(s) shouldBe GrammarElemConvResult(s)
 
     // replace A? with B and new rule B -> eps | A
     val resultOptional = EbnfToBnfConverter.convertElement(EbnfOptional(A), Seq(A))
@@ -116,11 +116,11 @@ class EbnfElToBnfElConverterTest extends AnyFlatSpec with Matchers with TestValu
 
     // Replace B* A B* with C A C and new rule C -> eps | (B C)
     val result3 = EbnfToBnfConverter.convertElement(
-      ebnfEl = B.* ~ x ~ B.*,
+      ebnfEl = B.* ~ s ~ B.*,
       currentVariables = Seq(A, B)
     )
     val awaited3 = GrammarElemConvResult[ExtendedBackusNaurFormElement, BackusNaurFormElement](
-      C and x and C,
+      C and s and C,
       newRules = Seq(C -> (EmptyWord | (B ~ C))),
       newVariables = Seq(A, B, C),
       newReplacers = Map(B.* -> C)

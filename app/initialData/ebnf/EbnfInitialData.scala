@@ -1,8 +1,8 @@
 package initialData.ebnf
 
 import initialData.{InitialData, InitialExercise}
-import model.tools.ebnf.EbnfExerciseContent
 import model.tools.ebnf.EbnfTool.EbnfExercise
+import model.tools.ebnf.{EbnfExerciseContent, EbnfGrammar, EbnfRule}
 import model.{Exercise, ExerciseCollection}
 
 abstract class RegexInitialExercise(collectionId: Int, exerciseId: Int) extends InitialExercise("ebnf", collectionId, exerciseId)
@@ -13,13 +13,21 @@ object RegexColl01Ex01 extends RegexInitialExercise(1, 1) {
     exerciseId,
     collectionId,
     toolId,
-    title = "TODO!",
+    title = "Binärpalindrome",
     Seq("bje40dc"),
-    text = "TODO: exercise text...",
+    text = "Erstellen Sie eine EBNF-Grammatik, die alle Binärzahlen erzeugt, die gleichzeitig auch Palindrome sein!",
     Seq.empty,
     difficulty = 1,
     EbnfExerciseContent(
-      sampleSolutions = Seq.empty
+      predefinedTerminals = Some(Seq("0", "1")),
+      sampleSolutions = Seq(
+        EbnfGrammar(
+          startSymbol = "S",
+          rules = Seq(
+            EbnfRule("S", "'1' S '1' | '0' S '0' | '1' '1' | '0' '0' | '1' | '0'")
+          )
+        )
+      )
     )
   )
 

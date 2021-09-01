@@ -13,6 +13,7 @@ object EbnfExercisePart extends ExParts[EbnfExercisePart] {
 }
 
 final case class EbnfExerciseContent(
+  predefinedTerminals: Option[Seq[String]],
   sampleSolutions: Seq[EbnfGrammar]
 ) extends ExerciseContent {
 

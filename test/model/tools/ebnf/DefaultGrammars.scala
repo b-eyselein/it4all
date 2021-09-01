@@ -1,6 +1,6 @@
-package model
+package model.tools.ebnf
 
-import model.grammar._
+import model.tools.ebnf.grammar._
 
 object DefaultGrammars extends TestValues {
 

@@ -1,7 +1,7 @@
 import {alt, createLanguage, optWhitespace, regexp, Result, sepBy, sepBy1, seq, string, TypedLanguage, whitespace} from 'parsimmon';
 import {
   alternative,
-  GrammarElement,
+  ExtendedBackusNaurFormGrammarElement,
   optional,
   repetitionAny,
   repetitionOne,
@@ -11,7 +11,7 @@ import {
   UnaryOperator,
   variable,
   Variable
-} from './ebnfGrammar';
+} from './ebnfElements';
 
 
 interface GrammarElementLanguage {
@@ -20,23 +20,23 @@ interface GrammarElementLanguage {
 
   singleElement: Terminal | Variable;
 
-  unaryChildElement: GrammarElement;
+  unaryChildElement: ExtendedBackusNaurFormGrammarElement;
 
   unaryOperator: UnaryOperator;
-  unaryElement: GrammarElement;
+  unaryElement: ExtendedBackusNaurFormGrammarElement;
 
-  alternativeChildElement: GrammarElement;
+  alternativeChildElement: ExtendedBackusNaurFormGrammarElement;
 
-  alternative: GrammarElement;
+  alternative: ExtendedBackusNaurFormGrammarElement;
 
-  sequence: GrammarElement;
+  sequence: ExtendedBackusNaurFormGrammarElement;
 
-  grammarElement: GrammarElement;
+  grammarElement: ExtendedBackusNaurFormGrammarElement;
 }
 
 export const ebnfGrammarLanguage: TypedLanguage<GrammarElementLanguage> = createLanguage<GrammarElementLanguage>({
-  terminal: () => regexp(/'(\w+)'/, 1).map(terminal),
-  variable: () => regexp(/[A-Z]+/).map(variable),
+  terminal: () => regexp(/'(\w+)'/, 1).map((s) => terminal(s)),
+  variable: () => regexp(/[A-Z]+/).map((s) => variable(s)),
   singleElement: (r) => alt(r.terminal, r.variable),
 
   unaryChildElement: (r) => alt(
@@ -65,10 +65,10 @@ export const ebnfGrammarLanguage: TypedLanguage<GrammarElementLanguage> = create
   ),
 
   alternative: (r) => sepBy1(r.alternativeChildElement, seq(optWhitespace, string('|'), optWhitespace))
-    .map((children) => children.length === 1 ? children[0] : alternative(children)),
+    .map(([first, ...rest]) => rest.length === 0 ? first : alternative(first, ...rest)),
 
   sequence: (r) => sepBy(r.alternative, whitespace)
-    .map((children) => children.length === 1 ? children[0] : sequence(children)),
+    .map(([first, ...rest]) => rest.length === 0 ? first : sequence(first, ...rest)),
 
   grammarElement: (r) => alt(
     r.sequence,
@@ -78,10 +78,10 @@ export const ebnfGrammarLanguage: TypedLanguage<GrammarElementLanguage> = create
   )
 });
 
-export function parseEbnfGrammarRight(value: string): Result<GrammarElement> {
+export function parseEbnfGrammarRight(value: string): Result<ExtendedBackusNaurFormGrammarElement> {
   return ebnfGrammarLanguage.grammarElement.parse(value.trim());
 }
 
-export function tryParseEbnfGrammarRight(input: string): GrammarElement {
+export function tryParseEbnfGrammarRight(input: string): ExtendedBackusNaurFormGrammarElement {
   return ebnfGrammarLanguage.grammarElement.tryParse(input.trim());
 }

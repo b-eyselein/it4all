@@ -72,7 +72,8 @@ object BaseNormalizationConverter extends GrammarConverter {
   override def convertElement(
     bnfElement: IE,
     currentVariables: Seq[Variable] = Seq.empty,
-    currentReplacers: Map[IE, Variable] = Map.empty
+    currentReplacers: Map[IE, Variable] = Map.empty,
+    ruleVariable: Option[Variable] = None
   ): GrammarElemConvResult[IE, OE] = currentReplacers.get(bnfElement) match {
     case Some(replacer: Variable) => GrammarElemConvResult(replacer, currentVariables, currentReplacers)
     case None =>

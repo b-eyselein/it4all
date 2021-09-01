@@ -47,6 +47,7 @@ enum EbnfExPart {
 }
 
 type EbnfExerciseContent {
+  predefinedTerminals: [String!]
   sampleSolutions: [EbnfGrammar!]!
 }
 

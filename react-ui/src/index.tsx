@@ -12,6 +12,7 @@ import {store} from './store/store';
 import common_de from './locales/de/common.json';
 import common_en from './locales/en/common.json';
 
+
 // noinspection JSIgnoredPromiseFromCall
 i18next
   .use(initReactI18next)

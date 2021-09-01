@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {MatchType} from '../../graphql';
 import classNames from 'classnames';
-import {HiChevronDown, HiChevronRight} from 'react-icons/all';
+import {HiChevronDown, HiChevronRight} from 'react-icons/hi';
 
 export interface GenericMatch<T> {
   matchType: MatchType;

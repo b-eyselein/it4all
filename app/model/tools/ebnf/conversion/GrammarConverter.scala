@@ -29,7 +29,8 @@ trait GrammarConverter {
   def convertElement(
     element: IE,
     currentVariable: Seq[Variable] = Seq.empty,
-    currentReplacers: Map[IE, Variable] = Map.empty
+    currentReplacers: Map[IE, Variable] = Map.empty,
+    ruleVariable: Option[Variable] = None
   ): GrammarElemConvResult[IE, OE]
 
   def convert(grammar: IG): OG = {
@@ -44,7 +45,7 @@ trait GrammarConverter {
       case Nil => createOutputGrammar(grammar.startSymbol, outputRules.toMap)
       case (left, right) :: tail =>
         val GrammarElemConvResult(newRight, newNonTerminals, newReplacers, newRules) =
-          convertElement(right, currentNonTerminals, currentReplacers)
+          convertElement(right, currentNonTerminals, currentReplacers, Some(left))
 
         go(
           tail ++ newRules,

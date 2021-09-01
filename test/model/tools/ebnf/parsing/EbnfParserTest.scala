@@ -1,8 +1,8 @@
-package model.parsing
+package model.tools.ebnf.parsing
 
-import model.TestValues
-import model.grammar._
-import model.parsing.ExtendedEbnfParser._
+import model.tools.ebnf.TestValues
+import model.tools.ebnf.grammar._
+import model.tools.ebnf.parsing.ExtendedEbnfParser._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

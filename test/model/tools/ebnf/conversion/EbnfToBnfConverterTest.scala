@@ -1,8 +1,8 @@
-package model.conversion
+package model.tools.ebnf.conversion
 
-import model.DefaultGrammars.{binaryPalindromesBnf, binaryPalindromesGrammarEbnf}
-import model.TestValues
-import model.grammar._
+import model.tools.ebnf.DefaultGrammars.{binaryPalindromesBnf, binaryPalindromesGrammarEbnf}
+import model.tools.ebnf.TestValues
+import model.tools.ebnf.grammar._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -24,22 +24,40 @@ class EbnfToBnfConverterTest extends AnyFlatSpec with Matchers with TestValues {
   }
 
   it should "convert Ebnf grammars" in {
-    val ebnfGrammar0 = ExtendedBackusNaurFormGrammar(A, Map.empty)
-    val bnfGrammar0  = BackusNaurFormGrammar(A, Map.empty)
+    val emptyEbnfGrammar = ExtendedBackusNaurFormGrammar(A, Map.empty)
+    val emptyBnfGrammar  = BackusNaurFormGrammar(A, Map.empty)
+    EbnfToBnfConverter.convert(emptyEbnfGrammar) shouldBe emptyBnfGrammar
+
+    val ebnfGrammar0 = ExtendedBackusNaurFormGrammar(
+      startSymbol = A,
+      Map(
+        A -> B.?,
+        B -> C.*,
+        C -> s.+
+      )
+    )
+    val bnfGrammar0 = BackusNaurFormGrammar(
+      startSymbol = A,
+      Map(
+        A -> (EmptyWord or B),
+        B -> (EmptyWord or (C and B)),
+        C -> (s or (s and C))
+      )
+    )
     EbnfToBnfConverter.convert(ebnfGrammar0) shouldBe bnfGrammar0
 
     val ebnfGrammar1 = ExtendedBackusNaurFormGrammar(
       A,
       Map(
-        A -> (B ~ x),
-        B -> y
+        A -> (B ~ s),
+        B -> t
       )
     )
     val bnfGrammar1 = BackusNaurFormGrammar(
       A,
       Map(
-        A -> (B and x),
-        B -> y
+        A -> (B and s),
+        B -> t
       )
     )
     EbnfToBnfConverter.convert(ebnfGrammar1) shouldBe bnfGrammar1
@@ -48,16 +66,16 @@ class EbnfToBnfConverterTest extends AnyFlatSpec with Matchers with TestValues {
       startSymbol = A,
       Map(
         A -> (B.* | (C.* ~ A) | (A ~ B.*)),
-        B -> (y ~ z),
-        C -> (z | x)
+        B -> (t ~ u),
+        C -> (u | s)
       )
     )
     val bnfGrammar2 = BackusNaurFormGrammar(
       startSymbol = A,
       Map(
         A -> (D or (E and A) or (A and D)),
-        B -> (y and z),
-        C -> (z or x),
+        B -> (t and u),
+        C -> (u or s),
         D -> (EmptyWord or (B and D)),
         E -> (EmptyWord or (C and E))
       )

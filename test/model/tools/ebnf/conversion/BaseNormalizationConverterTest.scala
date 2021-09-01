@@ -1,7 +1,7 @@
-package model.conversion
+package model.tools.ebnf.conversion
 
-import model.TestValues
-import model.grammar.{BackusNaurFormGrammar, BaseNormalizedFormGrammar, BaseNormalizedFormSequence, EmptyWord}
+import model.tools.ebnf.TestValues
+import model.tools.ebnf.grammar.{BackusNaurFormGrammar, BaseNormalizedFormGrammar, BaseNormalizedFormSequence, EmptyWord}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -17,7 +17,7 @@ class BaseNormalizationConverterTest extends AnyFlatSpec with Matchers with Test
       sSlash -> S,
       S      -> C,
       C      -> D,
-      D      -> (S or (x and S and y) or EmptyWord)
+      D      -> (S or (s and S and t) or EmptyWord)
     )
   )
 
@@ -27,7 +27,7 @@ class BaseNormalizationConverterTest extends AnyFlatSpec with Matchers with Test
       sSlash -> S,
       S      -> C,
       C      -> D,
-      D      -> alternatives(S, x + S + y, BaseNormalizedFormSequence(Seq(EmptyWord)))
+      D      -> alternatives(S, s + S + t, BaseNormalizedFormSequence(Seq(EmptyWord)))
     )
   )
 

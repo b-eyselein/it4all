@@ -1,6 +1,6 @@
-package model
+package model.tools.ebnf
 
-import model.grammar._
+import model.tools.ebnf.grammar._
 
 import scala.language.implicitConversions
 
@@ -14,9 +14,9 @@ trait TestValues {
 
   // Terminals
 
-  protected val x: Terminal = Terminal("x")
-  protected val y: Terminal = Terminal("y")
-  protected val z: Terminal = Terminal("z")
+  protected val s: Terminal = Terminal("s")
+  protected val t: Terminal = Terminal("t")
+  protected val u: Terminal = Terminal("u")
 
   protected val termNull: Terminal = Terminal("0")
   protected val termOne: Terminal  = Terminal("1")

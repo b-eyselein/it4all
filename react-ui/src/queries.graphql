@@ -157,7 +157,6 @@ fragment ExerciseFile on ExerciseFile {
 }
 
 fragment FilesSolution on FilesSolution {
-  __typename
   files {
     ...ExerciseFile
   }
@@ -208,6 +207,7 @@ fragment FieldsForLink on Exercise {
 # EBNF
 
 fragment EbnfExerciseContent on EbnfExerciseContent {
+  predefinedTerminals
   sampleSolutions {
     startSymbol
   }
@@ -215,7 +215,6 @@ fragment EbnfExerciseContent on EbnfExerciseContent {
 
 # Flask
 fragment FlaskExerciseContent on FlaskExerciseContent {
-  __typename
   testConfig {
     tests {
       id
@@ -393,7 +392,6 @@ fragment XmlExerciseContent on XmlExerciseContent {
 }
 
 fragment XmlSolution on XmlSolution {
-  __typename
   document
   grammar
 }

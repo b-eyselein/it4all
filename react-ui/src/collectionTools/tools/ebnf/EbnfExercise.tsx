@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {ConcreteExerciseIProps} from '../../Exercise';
-import {EbnfExerciseContentFragment, EbnfGrammarInput, EbnfRuleInput, useEbnfCorrectionMutation} from '../../../graphql';
+import {EbnfExerciseContentFragment, EbnfGrammarInput, EbnfRuleInput} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
 import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
 import {EbnfCorrection} from './EbnfCorrection';
@@ -8,13 +8,14 @@ import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 import {parseEbnfGrammarRight} from './ebnfParser';
 import {Result, Success} from 'parsimmon';
-import {getVariablesFromGrammarElement, GrammarElement} from './ebnfGrammar';
+import {ExtendedBackusNaurFormGrammarElement, getVariablesFromGrammarElement} from './ebnfElements';
 import classNames from 'classnames';
+import {correctEbnfExercise} from './ebnfCorrector';
 
 type IProps = ConcreteExerciseIProps<EbnfExerciseContentFragment, string>;
 
 interface FormEbnfRule extends EbnfRuleInput {
-  parsed?: Result<GrammarElement>;
+  parsed?: Result<ExtendedBackusNaurFormGrammarElement>;
 }
 
 interface FormEbnfGrammar extends EbnfGrammarInput {
@@ -25,11 +26,6 @@ interface IState {
   solution: FormEbnfGrammar;
   terminals: string[];
   variables: string[];
-}
-
-function stateFromSolution(solution: EbnfGrammarInput): IState {
-  //FIXME: implement!
-  return {solution, terminals: [], variables: ['S']};
 }
 
 const minimalGrammar: EbnfGrammarInput = {
@@ -43,11 +39,9 @@ export function EbnfExercise({exercise, content, /*partId, oldSolution*/}: IProp
 
   const {t} = useTranslation('common');
 
-  const isCorrecting = false;
+  const [isCorrecting, setIsCorrecting] = useState(false);
 
-  const [state, setState] = useState<IState>(stateFromSolution(minimalGrammar));
-
-  const [correctExercise, correctionMutationResult] = useEbnfCorrectionMutation();
+  const [state, setState] = useState<IState>({solution: minimalGrammar, variables: [minimalGrammar.startSymbol], terminals: content.predefinedTerminals || []});
 
   const tabs: Tabs = {
     correction: {name: t('correction'), render: <EbnfCorrection/>},
@@ -74,19 +68,22 @@ export function EbnfExercise({exercise, content, /*partId, oldSolution*/}: IProp
 
     console.info(JSON.stringify(solution, null, 2));
 
+    // FIXME: correct offline?
+
+    setIsCorrecting(true);
+
+    correctEbnfExercise(content, solution);
+
+    setIsCorrecting(false);
+
+    /*
     correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution}})
       .catch((error) => console.error(error));
+     */
   }
-
-  /*
-  if (correctionMutationResult.data) {
-    console.info(JSON.stringify(correctionMutationResult.data));
-  }
-
-   */
 
   function updateStartState(newStartState: string): void {
-    setState(({solution, terminals, variables}) => ({solution: {...solution, startSymbol: newStartState}, terminals, variables}));
+    setState(({solution, ...rest}) => ({solution: {...solution, startSymbol: newStartState}, ...rest}));
   }
 
   function updateRule(ruleIndex: number, newRule: string): void {
@@ -102,7 +99,7 @@ export function EbnfExercise({exercise, content, /*partId, oldSolution*/}: IProp
         new Set(
           newRules
             .map(({parsed}) => parsed)
-            .filter((result): result is Success<GrammarElement> => !!result && result.status)
+            .filter((result): result is Success<ExtendedBackusNaurFormGrammarElement> => !!result && result.status)
             .flatMap(({value}) => getVariablesFromGrammarElement(value))
             .map(({value}) => value)
         )
@@ -130,25 +127,31 @@ export function EbnfExercise({exercise, content, /*partId, oldSolution*/}: IProp
   return (
     <div className="container">
 
-      <h1 className="title is-3 has-text-centered">{t('exerciseText')}</h1>
+      <h1 className="title is-3 has-text-centered">{t('exercise')} &quot;{exercise.title}&quot;</h1>
 
       <div className="notification is-light-grey">{exercise.text}</div>
 
       <div className="field has-addons">
         <div className="control">
-          <button className="button is-static">T =</button>
+          <button className="button is-static">T = &#123;</button>
         </div>
         <div className="control is-expanded">
-          <input type="text" className="input" readOnly value={state.terminals.join(', ')}/>
+          <input type="text" className="input" value={state.terminals.map((t) => `'${t}'`).join(', ')} disabled={!!content.predefinedTerminals}/>
+        </div>
+        <div className="control">
+          <button className="button is-static">&#125;</button>
         </div>
       </div>
 
       <div className="field has-addons">
         <div className="control">
-          <button className="button is-static">V =</button>
+          <button className="button is-static">V = &#123;</button>
         </div>
         <div className="control is-expanded">
           <input type="text" className="input" readOnly value={state.variables.join(', ')}/>
+        </div>
+        <div className="control">
+          <button className="button is-static">&#125;</button>
         </div>
       </div>
 
