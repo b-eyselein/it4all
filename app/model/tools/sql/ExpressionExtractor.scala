@@ -24,8 +24,6 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   override def visit(addition: Addition): Unit = {}
 
-  override def visit(allComparisonExpression: AllComparisonExpression): Unit = {}
-
   override def visit(aexpr: AnalyticExpression): Unit = {}
 
   override def visit(andExpression: AndExpression): Unit = {
@@ -182,4 +180,13 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
   override def visit(aThis: ArrayConstructor): Unit = {}
 
   override def visit(aThis: TimezoneExpression): Unit = {}
+
+  override def visit(aThis: JsonAggregateFunction): Unit = {}
+
+  override def visit(aThis: JsonFunction): Unit = {}
+
+  override def visit(aThis: ConnectByRootOperator): Unit = {}
+
+  override def visit(aThis: OracleNamedFunctionParameter): Unit = {}
+
 }
