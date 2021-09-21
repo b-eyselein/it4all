@@ -11,7 +11,7 @@ interface CustomInputFieldProps extends FieldProps {
 export function BulmaInputField({label, id, required, field, form, ...props}: CustomInputFieldProps): JSX.Element {
   return (
     <div className="field">
-      <label htmlFor="id" className="label">{label}{required ? '*' : ''}:</label>
+      <label htmlFor={id} className="label">{label}{required ? '*' : ''}:</label>
       <div className="control">
         <Field {...props} {...field} id={id} className="input" placeholder={label}/>
       </div>
