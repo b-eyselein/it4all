@@ -1,10 +1,11 @@
 import React from 'react';
 import {UmlExerciseText} from './UmlExerciseText';
 import classNames from 'classnames';
-import {ExerciseSolveFieldsFragment, UmlExerciseContentFragment} from '../../../graphql';
+import {ExerciseSolveFieldsFragment, UmlExerciseContentFragment, UmlExPart} from '../../../graphql';
 import {SelectableClassDiagramObject} from './UmlDiagramDrawing';
 import {ChildLink, ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 import {useTranslation} from 'react-i18next';
+import {collectionsUrlFragment, exercisesUrlFragment, partsUrlFragment, toolsUrlFragment} from '../../../urls';
 
 interface IProps {
   exercise: ExerciseSolveFieldsFragment;
@@ -26,12 +27,15 @@ export function UmlDiagramDrawingExerciseTextTabContent(
   const isCorrecting = false;
   const corrected = false;
 
-  const goToNextPartLink: ChildLink = {
-    text: t('goToNextPart'),
-    classNames: classNames('button', 'is-fullwidth', corrected ? 'is-link' : 'is-dark'),
-    to: ''
-  };
-
+  // FIXME: memberAllocation?
+  const childLinks: ChildLink[] = content.umlPart === UmlExPart.DiagramDrawingHelp
+    ? [{
+      text: t('goToNextPart'),
+      classNames: classNames('button', 'is-fullwidth', corrected ? 'is-link' : 'is-dark'),
+      to: `/${toolsUrlFragment}/${exercise.toolId}/${collectionsUrlFragment}/${exercise.collectionId}/${exercisesUrlFragment}/${exercise.exerciseId}/${partsUrlFragment}/memberAllocation`
+    }]
+    : [];
+  
   return (
     <>
       <UmlExerciseText exercise={exercise} content={content} onClassClick={onClassClick}/>
@@ -47,7 +51,7 @@ export function UmlDiagramDrawingExerciseTextTabContent(
         )}
       </div>
 
-      <ExerciseControlButtons isCorrecting={isCorrecting} correct={correct} endLink={''} childLinks={[goToNextPartLink]}/>
+      <ExerciseControlButtons isCorrecting={isCorrecting} correct={correct} endLink={''} childLinks={childLinks}/>
     </>
   );
 }

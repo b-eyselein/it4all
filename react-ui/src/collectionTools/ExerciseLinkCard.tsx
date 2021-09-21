@@ -3,7 +3,7 @@ import {FilledPoints} from '../helpers/FilledPoints';
 import classNames from 'classnames';
 import {BulmaCard} from '../helpers/BulmaCard';
 import {FieldsForLinkFragment} from '../graphql';
-import {exercisesUrlFragment, toolsUrlFragment} from '../urls';
+import {collectionsUrlFragment, exercisesUrlFragment, toolsUrlFragment} from '../urls';
 import {useTranslation} from 'react-i18next';
 
 interface IProps {
@@ -26,7 +26,7 @@ export function ExerciseLinkCard({exercise}: IProps): JSX.Element {
 
   return (
     <BulmaCard title={cardTitle} footerItems={[{
-      link: `/${toolsUrlFragment}/${toolId}/${collectionId}/${exercisesUrlFragment}/${exerciseId}`,
+      link: `/${toolsUrlFragment}/${toolId}/${collectionsUrlFragment}/${collectionId}/${exercisesUrlFragment}/${exerciseId}`,
       title: t('toExercise')
     }]}>
       {() => <>
