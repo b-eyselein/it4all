@@ -3,7 +3,7 @@ package model.tools.uml
 import model.tools.ToolJsonProtocol
 import play.api.libs.json._
 
-object UmlToolJsonProtocol extends ToolJsonProtocol[UmlClassDiagram, UmlClassDiagram, UmlExerciseContent, UmlExPart] {
+object UmlToolJsonProtocol extends ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] {
 
   // class diagram format
 
@@ -36,13 +36,11 @@ object UmlToolJsonProtocol extends ToolJsonProtocol[UmlClassDiagram, UmlClassDia
 
   override val partTypeFormat: Format[UmlExPart] = UmlExPart.jsonFormat
 
-  override val solutionFormat: Format[UmlClassDiagram] = umlClassDiagramFormat
-
   override val solutionInputFormat: Format[UmlClassDiagram] = umlClassDiagramFormat
 
   override val exerciseContentFormat: OFormat[UmlExerciseContent] = {
     implicit val mf: Format[Map[String, String]] = keyValueObjectMapFormat
-    implicit val ssf: Format[UmlClassDiagram]    = solutionFormat
+    implicit val ssf: Format[UmlClassDiagram]    = umlClassDiagramFormat
 
     Json.format
   }

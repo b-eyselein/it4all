@@ -1,11 +1,11 @@
 type AdditionalComparison {
-  selectComparisons: SelectAdditionalComparisons
   insertComparison: StringMatchingResult
+  selectComparisons: SelectAdditionalComparisons
 }
 
 type AttributeList {
-  elementName: String!
   attributeDefinitions: [String!]!
+  elementName: String!
 }
 
 enum BinaryClassificationResultType {
@@ -16,17 +16,17 @@ enum BinaryClassificationResultType {
 }
 
 type CollectionTool {
-  id: String!
-  name: String!
-  toolState: ToolState!
-  lessonCount: Long!
-  lessons: [Lesson!]!
-  lesson(lessonId: Int!): Lesson
+  allExercises: [Exercise!]!
+  collection(collId: Int!): ExerciseCollection
   collectionCount: Long!
   collections: [ExerciseCollection!]!
-  collection(collId: Int!): ExerciseCollection
   exerciseCount: Long!
-  allExercises: [Exercise!]!
+  id: String!
+  isBeta: Boolean!
+  lesson(lessonId: Int!): Lesson
+  lessonCount: Long!
+  lessons: [Lesson!]!
+  name: String!
   proficiencies: [UserProficiency!]!
 }
 
@@ -36,10 +36,10 @@ type DTDParseException {
 }
 
 type EbnfCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: EbnfResult!
+  resultSaved: Boolean!
+  solutionSaved: Boolean!
 }
 
 enum EbnfExPart {
@@ -63,74 +63,74 @@ type EbnfResult {
 }
 
 type ElementDefinition {
-  elementName: String!
   content: String!
+  elementName: String!
 }
 
 type ElementLine {
-  elementName: String!
-  elementDefinition: ElementDefinition!
   attributeLists: [AttributeList!]!
+  elementDefinition: ElementDefinition!
+  elementName: String!
 }
 
 type ElementLineAnalysisResult {
-  contentCorrect: Boolean!
-  correctContent: String!
   attributesCorrect: Boolean!
+  contentCorrect: Boolean!
   correctAttributes: String!
+  correctContent: String!
 }
 
 type ElementLineMatch {
-  matchType: MatchType!
-  userArg: ElementLine!
-  sampleArg: ElementLine!
   analysisResult: ElementLineAnalysisResult!
+  matchType: MatchType!
+  sampleArg: ElementLine!
+  userArg: ElementLine!
 }
 
 type ExPart {
   id: String!
-  name: String!
   isEntryPart: Boolean!
+  name: String!
   solved: Boolean
 }
 
 type Exercise {
-  exerciseId: Int!
-  collectionId: Int!
-  toolId: String!
-  title: String!
   authors: [String!]!
-  text: String!
-  topicsWithLevels: [TopicWithLevel!]!
-  difficulty: Int!
+  collectionId: Int!
   content: ExerciseContentUnionType!
+  difficulty: Int!
+  exerciseId: Int!
   parts: [ExPart!]!
+  text: String!
+  title: String!
+  toolId: String!
+  topicsWithLevels: [TopicWithLevel!]!
 }
 
 type ExerciseCollection {
-  collectionId: Int!
-  toolId: String!
-  title: String!
   authors: [String!]!
+  collectionId: Int!
+  exercise(exId: Int!): Exercise
   exerciseCount: Long!
   exercises: [Exercise!]!
-  exercise(exId: Int!): Exercise
+  title: String!
+  toolId: String!
 }
 
 union ExerciseContentUnionType = EbnfExerciseContent | FlaskExerciseContent | ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
 
 type ExerciseFile {
-  name: String!
-  fileType: String!
-  editable: Boolean!
   content: String!
+  editable: Boolean!
+  fileType: String!
+  name: String!
 }
 
 input ExerciseFileInput {
-  name: String!
-  fileType: String!
   content: String!
   editable: Boolean!
+  fileType: String!
+  name: String!
 }
 
 type FilesSolution {
@@ -142,17 +142,17 @@ input FilesSolutionInput {
 }
 
 type FlaskCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: FlaskResult!
+  resultSaved: Boolean!
+  solutionSaved: Boolean!
 }
 
 type FlaskExerciseContent {
   files: [ExerciseFile!]!
-  testFiles: [ExerciseFile!]!
-  testConfig: FlaskTestsConfig!
   sampleSolutions: [FilesSolution!]!
+  testConfig: FlaskTestsConfig!
+  testFiles: [ExerciseFile!]!
 }
 
 type FlaskExerciseMutations {
@@ -164,79 +164,79 @@ enum FlaskExercisePart {
 }
 
 type FlaskResult {
-  testResults: [FlaskTestResult!]!
-  points: Float!
   maxPoints: Float!
+  points: Float!
+  testResults: [FlaskTestResult!]!
 }
 
 type FlaskSingleTestConfig {
-  id: Int!
+  dependencies: [String!]
   description: String!
+  id: Int!
   maxPoints: Int!
   testName: String!
-  dependencies: [String!]
 }
 
 type FlaskTestResult {
+  stderr: [String!]!
+  stdout: [String!]!
+  successful: Boolean!
   testId: Int!
   testName: String!
-  successful: Boolean!
-  stdout: [String!]!
-  stderr: [String!]!
 }
 
 type FlaskTestsConfig {
-  testFileName: String!
   testClassName: String!
+  testFileName: String!
   tests: [FlaskSingleTestConfig!]!
 }
 
 type GradedHtmlTaskResult {
-  id: Int!
-  success: SuccessType!
-  elementFound: Boolean!
-  textContentResult: GradedTextResult
   attributeResults: [GradedTextResult!]!
+  elementFound: Boolean!
+  id: Int!
   isSuccessful: Boolean!
-  points: Float!
   maxPoints: Float!
+  points: Float!
+  success: SuccessType!
+  textContentResult: GradedTextResult
 }
 
 type GradedJsActionResult {
   actionPerformed: Boolean!
   jsAction: JsAction!
-  points: Float!
   maxPoints: Float!
+  points: Float!
 }
 
 type GradedJsHtmlElementSpecResult {
-  id: Int!
-  success: SuccessType!
-  elementFound: Boolean!
-  textContentResult: GradedTextResult
   attributeResults: [GradedTextResult!]!
+  elementFound: Boolean!
+  id: Int!
   isSuccessful: Boolean!
-  points: Float!
   maxPoints: Float!
+  points: Float!
+  success: SuccessType!
+  textContentResult: GradedTextResult
 }
 
 type GradedJsTaskResult {
-  id: Int!
-  gradedPreResults: [GradedJsHtmlElementSpecResult!]!
-  gradedPostResults: [GradedJsHtmlElementSpecResult!]!
-  success: SuccessType!
-  points: Float!
-  maxPoints: Float!
   gradedJsActionResult: GradedJsActionResult!
+  gradedPostResults: [GradedJsHtmlElementSpecResult!]!
+  gradedPreResults: [GradedJsHtmlElementSpecResult!]!
+  id: Int!
+  maxPoints: Float!
+  points: Float!
+  success: SuccessType!
 }
 
 type GradedTextResult {
-  keyName: String!
   awaitedContent: String!
-  maybeFoundContent: String
   isSuccessful: Boolean!
-  points: Float!
+  keyName: String!
   maxPoints: Float!
+  maybeFoundContent: String
+  points: Float!
 }
 
 type HtmlTask {
@@ -244,10 +244,10 @@ type HtmlTask {
 }
 
 type ImplementationCorrectionResult implements ProgrammingTestCorrectionResult {
-  testSuccessful: Boolean!
-  stdout: [String!]!
   stderr: [String!]!
+  stdout: [String!]!
   successful: Boolean!
+  testSuccessful: Boolean!
 }
 
 type ImplementationPart {
@@ -256,9 +256,9 @@ type ImplementationPart {
 }
 
 type JsAction {
-  xpathQuery: String!
   actionType: JsActionType!
   keysToSend: String
+  xpathQuery: String!
 }
 
 enum JsActionType {
@@ -272,14 +272,14 @@ type KeyValueObject {
 }
 
 type Lesson {
-  lessonId: Int!
-  toolId: String!
-  title: String!
-  description: String!
-  video: String
+  content(lessonId: Int!): LessonContent
   contentCount: Long!
   contents: [LessonContent!]!
-  content(lessonId: Int!): LessonContent
+  description: String!
+  lessonId: Int!
+  title: String!
+  toolId: String!
+  video: String
 }
 
 interface LessonContent {
@@ -289,44 +289,44 @@ interface LessonContent {
 }
 
 type LessonMultipleChoiceQuestion {
+  answers: [LessonMultipleChoiceQuestionAnswer!]!
   id: Int!
   questionText: String!
-  answers: [LessonMultipleChoiceQuestionAnswer!]!
 }
 
 type LessonMultipleChoiceQuestionAnswer {
-  id: Int!
   answer: String!
+  id: Int!
   isCorrect: Boolean!
 }
 
 type LessonMultipleChoiceQuestionsContent implements LessonContent {
   contentId: Int!
   lessonId: Int!
-  toolId: String!
   questions: [LessonMultipleChoiceQuestion!]!
+  toolId: String!
 }
 
 type LessonTextContent implements LessonContent {
+  content: String!
   contentId: Int!
   lessonId: Int!
   toolId: String!
-  content: String!
 }
 
 type Level {
-  title: String!
   levelIndex: Int!
+  title: String!
 }
 
 type LoggedInUser {
-  username: String!
   isAdmin: Boolean!
+  username: String!
 }
 
 type LoggedInUserWithToken {
-  loggedInUser: LoggedInUser!
   jwt: String!
+  loggedInUser: LoggedInUser!
 }
 
 """
@@ -341,12 +341,12 @@ enum MatchType {
 }
 
 type Mutation {
-  register(registerValues: RegisterValues!): String
-  login(credentials: UserCredentials!): LoggedInUserWithToken
   ebnfExercise(collId: Int!, exId: Int!): EbnfExerciseMutations
   flaskExercise(collId: Int!, exId: Int!): FlaskExerciseMutations
+  login(credentials: UserCredentials!): LoggedInUserWithToken
   programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
   regexExercise(collId: Int!, exId: Int!): RegexExerciseMutations
+  register(registerValues: RegisterValues!): String
   sqlExercise(collId: Int!, exId: Int!): SqlExerciseMutations
   umlExercise(collId: Int!, exId: Int!): UmlExerciseMutations
   webExercise(collId: Int!, exId: Int!): WebExerciseMutations
@@ -354,24 +354,24 @@ type Mutation {
 }
 
 enum ProgExPart {
-  TestCreation
-  Implementation
   ActivityDiagram
+  Implementation
+  TestCreation
 }
 
 type ProgrammingCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: ProgrammingResult!
+  resultSaved: Boolean!
+  solutionSaved: Boolean!
 }
 
 type ProgrammingExerciseContent {
   filename: String!
-  unitTestPart: UnitTestPart!
   implementationPart: ImplementationPart!
-  sampleSolutions: [FilesSolution!]!
   part(partId: String!): ProgExPart
+  sampleSolutions: [FilesSolution!]!
+  unitTestPart: UnitTestPart!
 }
 
 type ProgrammingExerciseMutations {
@@ -379,11 +379,11 @@ type ProgrammingExerciseMutations {
 }
 
 type ProgrammingResult {
-  proficienciesUpdated: Boolean
   implementationCorrectionResult: ImplementationCorrectionResult
-  unitTestResults: [UnitTestCorrectionResult!]!
-  points: Float!
   maxPoints: Float!
+  points: Float!
+  proficienciesUpdated: Boolean
+  unitTestResults: [UnitTestCorrectionResult!]!
 }
 
 interface ProgrammingTestCorrectionResult {
@@ -391,20 +391,20 @@ interface ProgrammingTestCorrectionResult {
 }
 
 type Query {
-  tools: [CollectionTool!]!
   tool(toolId: String!): CollectionTool
+  tools: [CollectionTool!]!
 }
 
 interface RegexAbstractResult {
-  points: Float!
   maxPoints: Float!
+  points: Float!
 }
 
 type RegexCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: RegexAbstractResult!
+  resultSaved: Boolean!
+  solutionSaved: Boolean!
 }
 
 enum RegexCorrectionType {
@@ -417,12 +417,12 @@ enum RegexExPart {
 }
 
 type RegexExerciseContent {
-  maxPoints: Int!
   correctionType: RegexCorrectionType!
-  matchTestData: [RegexMatchTestData!]!
   extractionTestData: [RegexExtractionTestData!]!
-  sampleSolutions: [String!]!
+  matchTestData: [RegexMatchTestData!]!
+  maxPoints: Int!
   part(partId: String!): RegexExPart
+  sampleSolutions: [String!]!
 }
 
 type RegexExerciseMutations {
@@ -430,28 +430,28 @@ type RegexExerciseMutations {
 }
 
 type RegexExtractedValuesComparisonMatchingResult {
-  points: Float!
-  maxPoints: Float!
   allMatches: [RegexMatchMatch!]!
-  notMatchedForUser: [String!]!
+  maxPoints: Float!
   notMatchedForSample: [String!]!
+  notMatchedForUser: [String!]!
+  points: Float!
 }
 
 type RegexExtractionResult implements RegexAbstractResult {
   extractionResults: [RegexExtractionSingleResult!]!
-  points: Float!
   maxPoints: Float!
+  points: Float!
 }
 
 type RegexExtractionSingleResult {
   base: String!
-  extractionMatchingResult: RegexExtractedValuesComparisonMatchingResult!
   correct: Boolean!
+  extractionMatchingResult: RegexExtractedValuesComparisonMatchingResult!
 }
 
 type RegexExtractionTestData {
-  id: Int!
   base: String!
+  id: Int!
 }
 
 type RegexMatchMatch {
@@ -461,48 +461,48 @@ type RegexMatchMatch {
 }
 
 type RegexMatchTestData {
-  id: Int!
   data: String!
+  id: Int!
   isIncluded: Boolean!
 }
 
 type RegexMatchingResult implements RegexAbstractResult {
   matchingResults: [RegexMatchingSingleResult!]!
-  points: Float!
   maxPoints: Float!
+  points: Float!
 }
 
 type RegexMatchingSingleResult {
-  matchData: String!
   isIncluded: Boolean!
+  matchData: String!
   resultType: BinaryClassificationResultType!
 }
 
 input RegisterValues {
-  username: String!
   firstPassword: String!
   secondPassword: String!
+  username: String!
 }
 
 type SelectAdditionalComparisons {
   groupByComparison: StringMatchingResult!
-  orderByComparison: StringMatchingResult!
   limitComparison: StringMatchingResult!
+  orderByComparison: StringMatchingResult!
 }
 
 type SiteSpec {
   fileName: String!
-  htmlTasks: [HtmlTask!]!
   htmlTaskCount: Int!
+  htmlTasks: [HtmlTask!]!
   jsTaskCount: Int!
 }
 
 type SqlBinaryExpressionComparisonMatchingResult {
-  points: Float!
-  maxPoints: Float!
   allMatches: [SqlBinaryExpressionMatch!]!
-  notMatchedForUser: [String!]!
+  maxPoints: Float!
   notMatchedForSample: [String!]!
+  notMatchedForUser: [String!]!
+  points: Float!
 }
 
 type SqlBinaryExpressionMatch {
@@ -518,11 +518,11 @@ type SqlCell {
 }
 
 type SqlColumnComparisonMatchingResult {
-  points: Float!
-  maxPoints: Float!
   allMatches: [SqlColumnMatch!]!
-  notMatchedForUser: [String!]!
+  maxPoints: Float!
   notMatchedForSample: [String!]!
+  notMatchedForUser: [String!]!
+  points: Float!
 }
 
 type SqlColumnMatch {
@@ -532,10 +532,10 @@ type SqlColumnMatch {
 }
 
 type SqlCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: SqlResult!
+  resultSaved: Boolean!
+  solutionSaved: Boolean!
 }
 
 enum SqlExPart {
@@ -543,16 +543,16 @@ enum SqlExPart {
 }
 
 type SqlExecutionResult {
-  userResult: SqlQueryResult
   sampleResult: SqlQueryResult
+  userResult: SqlQueryResult
 }
 
 type SqlExerciseContent {
   exerciseType: SqlExerciseType!
-  schemaName: String!
-  sampleSolutions: [String!]!
   hint: String
   part(partId: String!): SqlExPart
+  sampleSolutions: [String!]!
+  schemaName: String!
   sqlDbContents: [SqlQueryResult!]!
 }
 
@@ -561,10 +561,10 @@ type SqlExerciseMutations {
 }
 
 enum SqlExerciseType {
-  INSERT
-  SELECT
   CREATE
   DELETE
+  INSERT
+  SELECT
   UPDATE
 }
 
@@ -574,11 +574,11 @@ type SqlKeyCellValueObject {
 }
 
 type SqlQueriesStaticComparison {
-  columnComparison: SqlColumnComparisonMatchingResult!
-  tableComparison: StringMatchingResult!
-  joinExpressionComparison: SqlBinaryExpressionComparisonMatchingResult!
-  whereComparison: SqlBinaryExpressionComparisonMatchingResult!
   additionalComparisons: AdditionalComparison!
+  columnComparison: SqlColumnComparisonMatchingResult!
+  joinExpressionComparison: SqlBinaryExpressionComparisonMatchingResult!
+  tableComparison: StringMatchingResult!
+  whereComparison: SqlBinaryExpressionComparisonMatchingResult!
 }
 
 type SqlQueryResult {
@@ -588,10 +588,10 @@ type SqlQueryResult {
 }
 
 type SqlResult {
-  staticComparison: SqlQueriesStaticComparison!
   executionResult: SqlExecutionResult!
-  points: Float!
   maxPoints: Float!
+  points: Float!
+  staticComparison: SqlQueriesStaticComparison!
 }
 
 type SqlRow {
@@ -600,16 +600,16 @@ type SqlRow {
 
 type StringMatch {
   matchType: MatchType!
-  userArg: String!
   sampleArg: String!
+  userArg: String!
 }
 
 type StringMatchingResult {
-  points: Float!
-  maxPoints: Float!
   allMatches: [StringMatch!]!
-  notMatchedForUser: [String!]!
+  maxPoints: Float!
   notMatchedForSample: [String!]!
+  notMatchedForUser: [String!]!
+  points: Float!
 }
 
 enum SuccessType {
@@ -619,28 +619,21 @@ enum SuccessType {
   PARTIALLY
 }
 
-enum ToolState {
-  ALPHA
-  BETA
-  LIVE
-  PRE_ALPHA
-}
-
 type Topic {
   abbreviation: String!
-  toolId: String!
-  title: String!
   maxLevel: Level!
+  title: String!
+  toolId: String!
 }
 
 type TopicWithLevel {
-  topic: Topic!
   level: Level!
+  topic: Topic!
 }
 
 type UmlAssociation {
-  assocType: UmlAssociationType!
   assocName: String
+  assocType: UmlAssociationType!
   firstEnd: String!
   firstMult: UmlMultiplicity!
   secondEnd: String!
@@ -648,15 +641,15 @@ type UmlAssociation {
 }
 
 type UmlAssociationAnalysisResult {
-  endsParallel: Boolean!
   assocTypeEqual: Boolean!
   correctAssocType: UmlAssociationType!
+  endsParallel: Boolean!
   multiplicitiesEqual: Boolean!
 }
 
 input UmlAssociationInput {
-  assocType: UmlAssociationType = ASSOCIATION
   assocName: String
+  assocType: UmlAssociationType = ASSOCIATION
   firstEnd: String!
   firstMult: UmlMultiplicity!
   secondEnd: String!
@@ -664,18 +657,18 @@ input UmlAssociationInput {
 }
 
 type UmlAssociationMatch {
-  matchType: MatchType!
-  userArg: UmlAssociation!
-  sampleArg: UmlAssociation!
   analysisResult: UmlAssociationAnalysisResult!
+  matchType: MatchType!
+  sampleArg: UmlAssociation!
+  userArg: UmlAssociation!
 }
 
 type UmlAssociationMatchingResult {
-  points: Float!
-  maxPoints: Float!
   allMatches: [UmlAssociationMatch!]!
-  notMatchedForUser: [UmlAssociation!]!
+  maxPoints: Float!
   notMatchedForSample: [UmlAssociation!]!
+  notMatchedForUser: [UmlAssociation!]!
+  points: Float!
 }
 
 enum UmlAssociationType {
@@ -685,83 +678,83 @@ enum UmlAssociationType {
 }
 
 type UmlAttribute {
-  visibility: UmlVisibility!
+  isAbstract: Boolean!
+  isDerived: Boolean!
+  isStatic: Boolean!
   memberName: String!
   memberType: String!
-  isStatic: Boolean!
-  isDerived: Boolean!
-  isAbstract: Boolean!
+  visibility: UmlVisibility!
 }
 
 type UmlAttributeAnalysisResult {
-  visibilityComparison: Boolean!
-  correctVisibility: UmlVisibility!
-  typeComparison: Boolean!
-  correctType: String!
-  staticCorrect: Boolean!
-  correctStatic: Boolean!
-  derivedCorrect: Boolean!
-  correctDerived: Boolean!
   abstractCorrect: Boolean!
   correctAbstract: Boolean!
+  correctDerived: Boolean!
+  correctStatic: Boolean!
+  correctType: String!
+  correctVisibility: UmlVisibility!
+  derivedCorrect: Boolean!
+  staticCorrect: Boolean!
+  typeComparison: Boolean!
+  visibilityComparison: Boolean!
 }
 
 input UmlAttributeInput {
-  visibility: UmlVisibility = PUBLIC
+  isAbstract: Boolean = false
+  isDerived: Boolean = false
+  isStatic: Boolean = false
   memberName: String!
   memberType: String!
-  isStatic: Boolean = false
-  isDerived: Boolean = false
-  isAbstract: Boolean = false
+  visibility: UmlVisibility = PUBLIC
 }
 
 type UmlAttributeMatch {
   matchType: MatchType!
-  userArg: UmlAttribute!
-  sampleArg: UmlAttribute!
   maybeAnalysisResult: UmlAttributeAnalysisResult!
+  sampleArg: UmlAttribute!
+  userArg: UmlAttribute!
 }
 
 type UmlAttributeMatchingResult {
-  points: Float!
-  maxPoints: Float!
   allMatches: [UmlAttributeMatch!]!
-  notMatchedForUser: [UmlAttribute!]!
+  maxPoints: Float!
   notMatchedForSample: [UmlAttribute!]!
+  notMatchedForUser: [UmlAttribute!]!
+  points: Float!
 }
 
 type UmlClass {
-  classType: UmlClassType!
-  name: String!
   attributes: [UmlAttribute!]!
+  classType: UmlClassType!
   methods: [UmlMethod!]!
+  name: String!
 }
 
 type UmlClassDiagram {
-  classes: [UmlClass!]!
   associations: [UmlAssociation!]!
+  classes: [UmlClass!]!
   implementations: [UmlImplementation!]!
 }
 
 input UmlClassDiagramInput {
-  classes: [UmlClassInput!]!
   associations: [UmlAssociationInput!]!
+  classes: [UmlClassInput!]!
   implementations: [UmlImplementationInput!]!
 }
 
 input UmlClassInput {
-  classType: UmlClassType = CLASS
-  name: String!
   attributes: [UmlAttributeInput!] = []
+  classType: UmlClassType = CLASS
   methods: [UmlMethodInput!] = []
+  name: String!
 }
 
 type UmlClassMatch {
-  matchType: MatchType!
-  userArg: UmlClass!
-  sampleArg: UmlClass!
-  compAM: Boolean!
   analysisResult: UmlClassMatchAnalysisResult!
+  compAM: Boolean!
+  matchType: MatchType!
+  sampleArg: UmlClass!
+  userArg: UmlClass!
 }
 
 type UmlClassMatchAnalysisResult {
@@ -772,11 +765,11 @@ type UmlClassMatchAnalysisResult {
 }
 
 type UmlClassMatchingResult {
-  points: Float!
-  maxPoints: Float!
   allMatches: [UmlClassMatch!]!
-  notMatchedForUser: [UmlClass!]!
+  maxPoints: Float!
   notMatchedForSample: [UmlClass!]!
+  notMatchedForUser: [UmlClass!]!
+  points: Float!
 }
 
 enum UmlClassType {
@@ -786,24 +779,24 @@ enum UmlClassType {
 }
 
 type UmlCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: UmlResult!
+  resultSaved: Boolean!
+  solutionSaved: Boolean!
 }
 
 enum UmlExPart {
   ClassSelection
-  DiagramDrawingHelp
   DiagramDrawing
+  DiagramDrawingHelp
   MemberAllocation
 }
 
 type UmlExerciseContent {
-  toIgnore: [String!]!
-  sampleSolutions: [UmlClassDiagram!]!
-  part(partId: String!): UmlExPart
   mappings: [KeyValueObject!]!
+  part(partId: String!): UmlExPart
+  sampleSolutions: [UmlClassDiagram!]!
+  toIgnore: [String!]!
 }
 
 type UmlExerciseMutations {
@@ -822,62 +815,62 @@ input UmlImplementationInput {
 
 type UmlImplementationMatch {
   matchType: MatchType!
-  userArg: UmlImplementation!
   sampleArg: UmlImplementation!
+  userArg: UmlImplementation!
 }
 
 type UmlImplementationMatchingResult {
-  points: Float!
-  maxPoints: Float!
   allMatches: [UmlImplementationMatch!]!
-  notMatchedForUser: [UmlImplementation!]!
+  maxPoints: Float!
   notMatchedForSample: [UmlImplementation!]!
+  notMatchedForUser: [UmlImplementation!]!
+  points: Float!
 }
 
 type UmlMethod {
-  visibility: UmlVisibility!
+  isAbstract: Boolean!
+  isStatic: Boolean!
   memberName: String!
   memberType: String!
   parameters: String!
-  isStatic: Boolean!
-  isAbstract: Boolean!
+  visibility: UmlVisibility!
 }
 
 type UmlMethodAnalysisResult {
-  visibilityComparison: Boolean!
-  correctVisibility: UmlVisibility!
-  typeComparison: Boolean!
-  correctType: String!
-  parameterComparison: Boolean!
-  correctParameters: String!
-  staticCorrect: Boolean!
-  correctStatic: Boolean!
   abstractCorrect: Boolean!
   correctAbstract: Boolean!
+  correctParameters: String!
+  correctStatic: Boolean!
+  correctType: String!
+  correctVisibility: UmlVisibility!
+  parameterComparison: Boolean!
+  staticCorrect: Boolean!
+  typeComparison: Boolean!
+  visibilityComparison: Boolean!
 }
 
 input UmlMethodInput {
-  visibility: UmlVisibility = PUBLIC
+  isAbstract: Boolean = false
+  isStatic: Boolean = false
   memberName: String!
   memberType: String!
   parameters: String!
-  isStatic: Boolean = false
-  isAbstract: Boolean = false
+  visibility: UmlVisibility = PUBLIC
 }
 
 type UmlMethodMatch {
   matchType: MatchType!
-  userArg: UmlMethod!
-  sampleArg: UmlMethod!
   maybeAnalysisResult: UmlMethodAnalysisResult!
+  sampleArg: UmlMethod!
+  userArg: UmlMethod!
 }
 
 type UmlMethodMatchingResult {
-  points: Float!
-  maxPoints: Float!
   allMatches: [UmlMethodMatch!]!
-  notMatchedForUser: [UmlMethod!]!
+  maxPoints: Float!
   notMatchedForSample: [UmlMethod!]!
+  notMatchedForUser: [UmlMethod!]!
+  points: Float!
 }
 
 enum UmlMultiplicity {
@@ -886,11 +879,11 @@ enum UmlMultiplicity {
 }
 
 type UmlResult {
-  classResult: UmlClassMatchingResult
   assocResult: UmlAssociationMatchingResult
+  classResult: UmlClassMatchingResult
   implResult: UmlImplementationMatchingResult
-  points: Float!
   maxPoints: Float!
+  points: Float!
 }
 
 enum UmlVisibility {
@@ -901,48 +894,48 @@ enum UmlVisibility {
 }
 
 type UnitTestCorrectionResult implements ProgrammingTestCorrectionResult {
-  testId: Int!
   description: String!
   shouldFail: Boolean!
-  testSuccessful: Boolean!
-  stdout: [String!]!
   stderr: [String!]!
+  stdout: [String!]!
   successful: Boolean!
+  testId: Int!
+  testSuccessful: Boolean!
 }
 
 type UnitTestPart {
-  unitTestsDescription: String!
+  folderName: String!
+  testFileName: String!
   unitTestFiles: [ExerciseFile!]!
   unitTestTestConfigs: [UnitTestTestConfig!]!
-  testFileName: String!
-  folderName: String!
+  unitTestsDescription: String!
 }
 
 type UnitTestTestConfig {
-  id: Int!
   description: String!
   file: ExerciseFile!
+  id: Int!
   shouldFail: Boolean!
 }
 
 input UserCredentials {
-  username: String!
   password: String!
+  username: String!
 }
 
 type UserProficiency {
-  username: String!
-  topic: Topic!
+  level: Level!
   points: Int!
   pointsForNextLevel: Int!
-  level: Level!
+  topic: Topic!
+  username: String!
 }
 
 type WebCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: WebResult!
+  resultSaved: Boolean!
+  solutionSaved: Boolean!
 }
 
 enum WebExPart {
@@ -951,12 +944,12 @@ enum WebExPart {
 }
 
 type WebExerciseContent {
-  siteSpec: SiteSpec!
   files: [ExerciseFile!]!
-  sampleSolutions: [FilesSolution!]!
   htmlText: String
   jsText: String
   part(partId: String!): WebExPart
+  sampleSolutions: [FilesSolution!]!
+  siteSpec: SiteSpec!
 }
 
 type WebExerciseMutations {
@@ -966,15 +959,15 @@ type WebExerciseMutations {
 type WebResult {
   gradedHtmlTaskResults: [GradedHtmlTaskResult!]!
   gradedJsTaskResults: [GradedJsTaskResult!]!
-  points: Float!
   maxPoints: Float!
+  points: Float!
 }
 
 type XmlCorrectionResult {
-  solutionSaved: Boolean!
-  resultSaved: Boolean!
   proficienciesUpdated: Boolean
   result: XmlResult!
+  resultSaved: Boolean!
+  solutionSaved: Boolean!
 }
 
 type XmlDocumentResult {
@@ -982,16 +975,16 @@ type XmlDocumentResult {
 }
 
 type XmlElementLineComparisonMatchingResult {
-  points: Float!
-  maxPoints: Float!
   allMatches: [ElementLineMatch!]!
-  notMatchedForUser: [ElementLine!]!
+  maxPoints: Float!
   notMatchedForSample: [ElementLine!]!
+  notMatchedForUser: [ElementLine!]!
+  points: Float!
 }
 
 type XmlError {
-  errorType: XmlErrorType!
   errorMessage: String!
+  errorType: XmlErrorType!
   line: Int!
   success: SuccessType!
 }
@@ -1003,15 +996,15 @@ enum XmlErrorType {
 }
 
 enum XmlExPart {
-  GrammarCreationXmlPart
   DocumentCreationXmlPart
+  GrammarCreationXmlPart
 }
 
 type XmlExerciseContent {
   grammarDescription: String!
+  part(partId: String!): XmlExPart
   rootNode: String!
   sampleSolutions: [XmlSolution!]!
-  part(partId: String!): XmlExPart
 }
 
 type XmlExerciseMutations {
@@ -1024,11 +1017,11 @@ type XmlGrammarResult {
 }
 
 type XmlResult {
-  successType: SuccessType!
   documentResult: XmlDocumentResult
   grammarResult: XmlGrammarResult
-  points: Float!
   maxPoints: Float!
+  points: Float!
+  successType: SuccessType!
 }
 
 type XmlSolution {

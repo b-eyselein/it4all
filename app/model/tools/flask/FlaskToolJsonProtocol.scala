@@ -19,7 +19,7 @@ object FlaskToolJsonProtocol extends FilesSolutionToolJsonProtocol[FlaskExercise
   override protected val exerciseContentFormat: OFormat[FlaskExerciseContent] = {
     implicit val eff: Format[ExerciseFile]      = exerciseFileFormat
     implicit val ftcf: Format[FlaskTestsConfig] = flaskTestsConfigFormat
-    implicit val fsf: Format[FilesSolution]     = solutionFormat
+    implicit val fsf: Format[FilesSolution]     = filesSolutionFormat
 
     Json.format
   }

@@ -1,9 +1,10 @@
 package model.tools.flask
 
+import better.files.File
 import model.core._
 import model.points._
 import model.tools.DockerExecutionCorrector
-import model.tools.flask.FlaskTool.{FlaskExercise, solutionDirForExercise}
+import model.tools.flask.FlaskTool.FlaskExercise
 import model.tools.flask.FlaskToolJsonProtocol.{flaskCorrectionResultReads, flaskTestsConfigFormat}
 import model.{ContentExerciseFile, IFilesSolution}
 import play.api.libs.json.{Json, Reads}
@@ -18,12 +19,10 @@ object FlaskCorrector extends DockerExecutionCorrector {
   override protected val dockerImage: ScalaDockerImage = flaskCorrectionDockerImage
 
   def correct(
-    username: String,
     solution: IFilesSolution,
-    exercise: FlaskExercise
+    exercise: FlaskExercise,
+    solTargetDir: File
   )(implicit executionContext: ExecutionContext): Future[Try[FlaskResult]] = {
-
-    val solTargetDir = solutionDirForExercise(username, exercise.collectionId, exercise.exerciseId)
 
     // Write solution files
     val appUnderTestTargetDir = solTargetDir / "app"

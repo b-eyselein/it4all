@@ -13,7 +13,6 @@ import scala.util.matching.Regex.{Match => RegexMatch}
 
 object RegexTool extends Tool("regex", "Reguläre Ausdrücke") {
 
-  override type SolutionType      = String
   override type SolutionInputType = String
   override type ExContentType     = RegexExerciseContent
   override type PartType          = RegexExPart
@@ -25,11 +24,9 @@ object RegexTool extends Tool("regex", "Reguläre Ausdrücke") {
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: StringSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] =
-    RegexToolJsonProtocol
+  override val jsonFormats: StringSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] = RegexToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart, RegexAbstractResult] =
-    RegexGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart, RegexAbstractResult] = RegexGraphQLModels
 
   // Correction
 

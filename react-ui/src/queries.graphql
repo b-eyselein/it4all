@@ -3,7 +3,6 @@
 fragment CollectionTool on CollectionTool {
   id
   name
-  toolState
   collectionCount
   lessonCount
   exerciseCount

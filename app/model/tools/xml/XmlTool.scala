@@ -13,7 +13,6 @@ import scala.util.Try
 
 object XmlTool extends Tool("xml", "Xml") {
 
-  override type SolutionType      = XmlSolution
   override type SolutionInputType = XmlSolution
   override type ExContentType     = XmlExerciseContent
   override type PartType          = XmlExPart
@@ -25,11 +24,9 @@ object XmlTool extends Tool("xml", "Xml") {
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: ToolJsonProtocol[XmlSolution, XmlSolution, XmlExerciseContent, XmlExPart] =
-    XmlToolJsonProtocol
+  override val jsonFormats: ToolJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] = XmlToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlResult] =
-    XmlGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlResult] = XmlGraphQLModels
 
   // Correction
 

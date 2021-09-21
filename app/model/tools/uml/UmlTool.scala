@@ -11,9 +11,8 @@ import model.{Exercise, LoggedInUser}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-object UmlTool extends Tool("uml", "Uml", ToolState.BETA) {
+object UmlTool extends Tool("uml", "Uml", true) {
 
-  override type SolutionType      = UmlClassDiagram
   override type SolutionInputType = UmlClassDiagram
   override type ExContentType     = UmlExerciseContent
   override type PartType          = UmlExPart
@@ -29,7 +28,7 @@ object UmlTool extends Tool("uml", "Uml", ToolState.BETA) {
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: ToolJsonProtocol[UmlClassDiagram, UmlClassDiagram, UmlExerciseContent, UmlExPart] = UmlToolJsonProtocol
+  override val jsonFormats: ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] = UmlToolJsonProtocol
 
   override val graphQlModels: ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlResult] = UmlGraphQLModels
 

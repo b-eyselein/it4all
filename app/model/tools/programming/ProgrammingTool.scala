@@ -3,15 +3,14 @@ package model.tools.programming
 import initialData.InitialData
 import initialData.programming.ProgrammingInitialData
 import model._
-import model.graphql.ToolGraphQLModelBasics
-import model.tools.{Tool, ToolJsonProtocol, ToolState}
+import model.graphql.FilesSolutionToolGraphQLModelBasics
+import model.tools.{FilesSolutionToolJsonProtocol, Tool}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.BETA) {
+object ProgrammingTool extends Tool("programming", "Programmierung", true) {
 
-  override type SolutionType      = FilesSolution
   override type SolutionInputType = FilesSolutionInput
   override type ExContentType     = ProgrammingExerciseContent
   override type PartType          = ProgExPart
@@ -21,13 +20,9 @@ object ProgrammingTool extends Tool("programming", "Programmierung", ToolState.B
 
   // Yaml, Html Forms, Json
 
-  override val jsonFormats
-    : ToolJsonProtocol[FilesSolution, FilesSolutionInput, ProgrammingExerciseContent, ProgExPart] =
-    ProgrammingToolJsonProtocol
+  override val jsonFormats: FilesSolutionToolJsonProtocol[ProgrammingExerciseContent, ProgExPart] = ProgrammingToolJsonProtocol
 
-  override val graphQlModels
-    : ToolGraphQLModelBasics[FilesSolutionInput, ProgrammingExerciseContent, ProgExPart, ProgrammingResult] =
-    ProgrammingGraphQLModels
+  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[ProgrammingExerciseContent, ProgExPart, ProgrammingResult] = ProgrammingGraphQLModels
 
   override val allTopics: Seq[Topic] = ProgrammingTopics.values
 

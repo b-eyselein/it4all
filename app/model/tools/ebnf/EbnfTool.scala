@@ -11,7 +11,6 @@ import scala.util.Try
 
 object EbnfTool extends Tool("ebnf", "EBNF") {
 
-  override type SolutionType      = EbnfGrammar
   override type SolutionInputType = EbnfGrammar
   override type ExContentType     = EbnfExerciseContent
   override type PartType          = EbnfExercisePart
@@ -19,11 +18,9 @@ object EbnfTool extends Tool("ebnf", "EBNF") {
 
   type EbnfExercise = Exercise[EbnfExerciseContent]
 
-  override val jsonFormats: ToolJsonProtocol[EbnfGrammar, EbnfGrammar, EbnfExerciseContent, EbnfExercisePart] =
-    EbnfToolJsonProtocol
+  override val jsonFormats: ToolJsonProtocol[EbnfGrammar, EbnfExerciseContent, EbnfExercisePart] = EbnfToolJsonProtocol
 
-  override val graphQlModels
-    : ToolGraphQLModelBasics[EbnfGrammar, EbnfExerciseContent, EbnfExercisePart, EbnfResult] = EbnfGraphQLModels
+  override val graphQlModels: ToolGraphQLModelBasics[EbnfGrammar, EbnfExerciseContent, EbnfExercisePart, EbnfResult] = EbnfGraphQLModels
 
   override def correctAbstract(
     user: LoggedInUser,

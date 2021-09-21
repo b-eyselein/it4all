@@ -4,7 +4,7 @@ import better.files.File
 import model._
 import play.api.libs.json._
 
-trait ToolJsonProtocol[SolutionFormat, SolutionInputFormat, C <: ExerciseContent, P <: ExPart] {
+trait ToolJsonProtocol[SolutionInputFormat, C <: ExerciseContent, P <: ExPart] {
 
   protected val keyValueObjectMapFormat: Format[Map[String, String]] = {
 
@@ -17,8 +17,6 @@ trait ToolJsonProtocol[SolutionFormat, SolutionInputFormat, C <: ExerciseContent
   }
 
   val partTypeFormat: Format[P]
-
-  val solutionFormat: Format[SolutionFormat]
 
   val solutionInputFormat: Format[SolutionInputFormat]
 
@@ -40,19 +38,15 @@ trait ToolJsonProtocol[SolutionFormat, SolutionInputFormat, C <: ExerciseContent
 
 }
 
-abstract class StringSolutionToolJsonProtocol[C <: ExerciseContent, PartType <: ExPart]
-    extends ToolJsonProtocol[String, String, C, PartType] {
+abstract class StringSolutionToolJsonProtocol[C <: ExerciseContent, PartType <: ExPart] extends ToolJsonProtocol[String, C, PartType] {
 
   private val stringFormat = Format(Reads.StringReads, Writes.StringWrites)
-
-  override val solutionFormat: Format[String] = stringFormat
 
   override val solutionInputFormat: Format[String] = stringFormat
 
 }
 
-abstract class FilesSolutionToolJsonProtocol[C <: ExerciseContent, PartType <: ExPart]
-    extends ToolJsonProtocol[FilesSolution, FilesSolutionInput, C, PartType] {
+abstract class FilesSolutionToolJsonProtocol[C <: ExerciseContent, PartType <: ExPart] extends ToolJsonProtocol[FilesSolutionInput, C, PartType] {
 
   protected val pathExerciseFileFormat: OFormat[PathExerciseFile] = {
 
@@ -76,7 +70,7 @@ abstract class FilesSolutionToolJsonProtocol[C <: ExerciseContent, PartType <: E
     Json.format
   }
 
-  override val solutionFormat: Format[FilesSolution] = {
+  protected val filesSolutionFormat: Format[FilesSolution] = {
     implicit val eff: Format[ExerciseFile] = exerciseFileFormat
 
     Json.format
