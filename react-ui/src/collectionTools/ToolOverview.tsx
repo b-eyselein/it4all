@@ -19,7 +19,7 @@ export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
       return <Redirect to={'/'}/>;
     }
 
-    const {name, collectionCount, exerciseCount, lessonCount, proficiencies} = tool;
+    const {name, collectionCount, exerciseCount, /*lessonCount,*/ proficiencies} = tool;
 
     const breadCrumbs: BreadCrumbPart[] = [
       {routerLinkPart: homeUrl, title: 'Tools'},
@@ -36,7 +36,8 @@ export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
 
         <div className="columns">
           <div className="column">
-            <BulmaCard title={t('collection_plural')} footerItems={[{link: `/${toolsUrlFragment}/${toolId}/${collectionsUrlFragment}`, title: t('toCollections')}]}>
+            <BulmaCard title={t('collection_plural')}
+                       footerItems={[{link: `/${toolsUrlFragment}/${toolId}/${collectionsUrlFragment}`, title: t('toCollections')}]}>
               {() => <>
                 {collectionCount} {t('collection_plural')} {t('with')} {exerciseCount} {t('exercise_plural')}
               </>}
