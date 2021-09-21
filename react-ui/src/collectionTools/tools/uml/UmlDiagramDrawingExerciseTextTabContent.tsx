@@ -35,7 +35,7 @@ export function UmlDiagramDrawingExerciseTextTabContent(
       to: `/${toolsUrlFragment}/${exercise.toolId}/${collectionsUrlFragment}/${exercise.collectionId}/${exercisesUrlFragment}/${exercise.exerciseId}/${partsUrlFragment}/memberAllocation`
     }]
     : [];
-  
+
   return (
     <>
       <UmlExerciseText exercise={exercise} content={content} onClassClick={onClassClick}/>

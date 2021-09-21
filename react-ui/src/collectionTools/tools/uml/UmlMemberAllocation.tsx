@@ -1,8 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {ExerciseSolveFieldsFragment, UmlAttribute, UmlClassDiagram, UmlExerciseContentFragment, UmlMethod, UmlVisibility} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
-import {Link} from 'react-router-dom';
 import classNames from 'classnames';
+import {checkNever} from '../../../helpers';
+import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
+import {collectionsUrlFragment, toolsUrlFragment} from '../../../urls';
+import update from 'immutability-helper';
 
 interface IProps {
   exercise: ExerciseSolveFieldsFragment;
@@ -22,18 +25,17 @@ export function distinctObjectArray<T, K>(ts: T[], key: (t: T) => K): T[] {
   return Array.from(helperMap.values());
 }
 
-
 function printVisibility(v: UmlVisibility): string {
-  if (v === 'PUBLIC') {
+  if (v === UmlVisibility.Public) {
     return '+';
-  } else if (v === 'PACKAGE') {
+  } else if (v === UmlVisibility.Package) {
     return '~';
-  } else if (v === 'PROTECTED') {
+  } else if (v === UmlVisibility.Protected) {
     return '#';
-  } else if (v === 'PRIVATE') {
+  } else if (v === UmlVisibility.Private) {
     return '-';
   } else {
-    return '';
+    return checkNever(v, '');
   }
 }
 
@@ -57,48 +59,32 @@ interface MemberAllocClass {
   methods: MemberAllocMember[];
 }
 
+interface IState {
+  corrected: boolean;
+  data: MemberAllocClass [];
+}
 
 export function UmlMemberAllocation({exercise, content}: IProps): JSX.Element {
-
-  const {t} = useTranslation('common');
-
-  const corrected = false;
 
 
   const sample: UmlClassDiagram = content.umlSampleSolutions[0];
 
-  const allAttributes: UmlAttribute[] = distinctObjectArray(
-    sample.classes.flatMap((clazz) => clazz.attributes), (a) => a.memberName
+  const allAttributes: UmlAttribute[] = distinctObjectArray(sample.classes.flatMap((clazz) => clazz.attributes), (a) => a.memberName);
+
+  const allMethods: UmlMethod[] = distinctObjectArray(sample.classes.flatMap((clazz) => clazz.methods), (m) => m.memberName);
+
+  const data: MemberAllocClass[] = sample.classes.map(({name, attributes, methods}) => ({
+      name,
+      attributes: allAttributes.map((attr) => ({display: printAttribute(attr), correct: attributes.includes(attr), selected: false})),
+      methods: allMethods.map((met) => ({display: printMethod(met), correct: methods.includes(met), selected: false}))
+    })
   );
 
-  const allMethods: UmlMethod[] = distinctObjectArray(
-    sample.classes.flatMap((clazz) => clazz.methods), (m) => m.memberName
-  );
-
-
-  const data: MemberAllocClass[] = sample.classes.map((clazz) => {
-    return {
-      name: clazz.name,
-      attributes: allAttributes.map((attr) => {
-        return {
-          display: printAttribute(attr),
-          correct: clazz.attributes.includes(attr),
-          selected: false
-        };
-      }),
-      methods: allMethods.map((met) => {
-        return {
-          display: printMethod(met),
-          correct: clazz.methods.includes(met),
-          selected: false
-        };
-      })
-    };
-  });
-
+  const {t} = useTranslation('common');
+  const [state, setState] = useState<IState>({corrected: false, data});
 
   function memberColor(m: MemberAllocMember): string {
-    if (corrected) {
+    if (state.corrected) {
       return (m.correct === m.selected) ? 'has-text-dark-success' : 'has-text-danger';
     } else {
       return '';
@@ -106,51 +92,51 @@ export function UmlMemberAllocation({exercise, content}: IProps): JSX.Element {
   }
 
   function correct(): void {
-    console.error('TODO: correct!');
+    setState((state) => ({...state, corrected: true}));
   }
 
+  function selectAttribute(clazzIndex: number, index: number, targetState: boolean): void {
+    setState((state) => update(state, {data: {[clazzIndex]: {attributes: {[index]: {selected: {$set: targetState}}}}}}));
+  }
+
+  function selectMethod(clazzIndex: number, index: number, targetState: boolean): void {
+    setState((state) => update(state, {data: {[clazzIndex]: {methods: {[index]: {selected: {$set: targetState}}}}}}));
+  }
 
   return (
-
     <div className="container is-fluid">
       <div className="columns">
         <div className="column is-one-quarter-desktop">
           <h2 className="subtitle is-4 has-text-centered">{t('exerciseText')}</h2>
 
-          <div className="notification is-light-grey">
-            {exercise.text}
-          </div>
+          <div className="notification is-light-grey">{exercise.text}</div>
 
-          <div className="columns">
-            <div className="column">
-              <button className="button is-link is-fullwidth" onClick={correct} disabled={corrected}>Korrektur</button>
-            </div>
-            <div className="column">
-              <Link className="button is-dark is-fullwidth" to={'/'}>Bearbeiten beenden</Link>
-            </div>
-          </div>
-
+          <ExerciseControlButtons isCorrecting={false} correct={correct}
+                                  endLink={`/${toolsUrlFragment}/${exercise.toolId}/${collectionsUrlFragment}/${exercise.collectionId}`}/>
         </div>
+
         <div className="column">
 
           <div className="columns is-multiline">
-            {data.map((clazz) =>
-              <div className="column is-one-third-desktop" key={clazz.name}>
-
+            {state.data.map(({name, attributes, methods}, clazzIndex) => <div className="column is-one-third-desktop" key={name}>
                 <div className="card">
                   <header className="card-header">
-                    <p className="card-header-title">{clazz.name}</p>
+                    <p className="card-header-title">{name}</p>
                   </header>
 
                   <div className="card-content">
-                    {clazz.attributes.map((a, index) => <p key={index}>
-                      <label className={classNames('checkbox', memberColor(a))}><input type="checkbox"/> {a.display}</label>
+                    {attributes.map((a, index) => <p key={index}>
+                      <label className={classNames('checkbox', memberColor(a))}>
+                        <input type="checkbox" onChange={(event) => selectAttribute(clazzIndex, index, event.target.checked)}/> {a.display}
+                      </label>
                     </p>)}
 
                     <hr/>
 
-                    {clazz.methods.map((m, index) => <p key={index}>
-                      <label className={classNames('checkbox', memberColor(m))}><input type="checkbox"/> {m.display}</label>
+                    {methods.map((m, index) => <p key={index}>
+                      <label className={classNames('checkbox', memberColor(m))}>
+                        <input type="checkbox" onChange={(event) => selectMethod(clazzIndex, index, event.target.checked)}/> {m.display}
+                      </label>
                     </p>)}
                   </div>
                 </div>
