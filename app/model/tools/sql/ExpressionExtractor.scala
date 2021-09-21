@@ -188,5 +188,4 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
   override def visit(aThis: ConnectByRootOperator): Unit = {}
 
   override def visit(aThis: OracleNamedFunctionParameter): Unit = {}
-
 }
