@@ -29,10 +29,10 @@ export type AttributeList = {
 };
 
 export enum BinaryClassificationResultType {
-  TruePositive = 'TruePositive',
-  FalsePositive = 'FalsePositive',
   FalseNegative = 'FalseNegative',
-  TrueNegative = 'TrueNegative'
+  FalsePositive = 'FalsePositive',
+  TrueNegative = 'TrueNegative',
+  TruePositive = 'TruePositive'
 }
 
 export type CollectionTool = {
@@ -98,13 +98,13 @@ export type EbnfExerciseMutationsCorrectArgs = {
 
 export type EbnfGrammar = {
   __typename?: 'EbnfGrammar';
-  startSymbol: Scalars['String'];
   rules: Scalars['String'];
+  startSymbol: Scalars['String'];
 };
 
 export type EbnfGrammarInput = {
-  startSymbol: Scalars['String'];
   rules: Array<EbnfRuleInput>;
+  startSymbol: Scalars['String'];
 };
 
 export type EbnfResult = {
@@ -113,8 +113,8 @@ export type EbnfResult = {
 };
 
 export type EbnfRuleInput = {
-  variable: Scalars['String'];
   rule: Scalars['String'];
+  variable: Scalars['String'];
 };
 
 export type ElementDefinition = {
@@ -435,8 +435,8 @@ export type LoggedInUserWithToken = {
 };
 
 export enum MatchType {
-  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   PartialMatch = 'PARTIAL_MATCH',
+  SuccessfulMatch = 'SUCCESSFUL_MATCH',
   UnsuccessfulMatch = 'UNSUCCESSFUL_MATCH'
 }
 
@@ -589,8 +589,8 @@ export type RegexCorrectionResult = {
 };
 
 export enum RegexCorrectionType {
-  Matching = 'MATCHING',
-  Extraction = 'EXTRACTION'
+  Extraction = 'EXTRACTION',
+  Matching = 'MATCHING'
 }
 
 export enum RegexExPart {
@@ -844,6 +844,7 @@ export type StringMatchingResult = {
 };
 
 export enum SuccessType {
+  Complete = 'COMPLETE',
   Error = 'ERROR',
   None = 'NONE',
   Partially = 'PARTIALLY'

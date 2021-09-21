@@ -3,6 +3,7 @@ import {ConcreteExerciseIProps} from '../../Exercise';
 import {
   ExerciseFileFragment,
   FilesSolutionInput,
+  SuccessType,
   useWebCorrectionMutation,
   WebCorrectionMutation,
   WebExerciseContentFragment,
@@ -79,8 +80,8 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
 
           {result.gradedJsTaskResults.length > 0 && <ul>
             {result.gradedJsTaskResults.map((jsResult, index) =>
-              <li key={index} className={jsResult.success === 'COMPLETE' ? 'has-text-success' : 'has-text-danger'}>
-                ({jsResult.points} / {jsResult.maxPoints}) Test {jsResult.id} ist {jsResult.success === 'COMPLETE' ? '' : 'nicht'} korrekt:
+              <li key={index} className={jsResult.success === SuccessType.Complete ? 'has-text-success' : 'has-text-danger'}>
+                ({jsResult.points} / {jsResult.maxPoints}) Test {jsResult.id} ist {jsResult.success === SuccessType.Complete ? '' : 'nicht'} korrekt:
 
                 {JSON.stringify(jsResult)}
               </li>
