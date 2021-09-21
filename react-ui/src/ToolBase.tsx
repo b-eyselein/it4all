@@ -5,6 +5,8 @@ import {CollectionOverview} from './collectionTools/CollectionOverview';
 import {ToolOverview} from './collectionTools/ToolOverview';
 import {ExerciseOverview} from './collectionTools/ExerciseOverview';
 import {Exercise} from './collectionTools/Exercise';
+import {AllExercisesOverview} from './collectionTools/AllExercisesOverview';
+import {allExercisesUrlFragment, exercisesUrlFragment, collectionsUrlFragment} from './urls';
 
 interface ToolRouteProps {
   toolId: string;
@@ -20,8 +22,9 @@ export function ToolBase(): JSX.Element {
 
   return <Switch>
     <Route path={url} exact render={() => <ToolOverview toolId={toolId}/>}/>
-    <Route path={`${url}/collections`} exact render={() => <CollectionList toolId={toolId}/>}/>
-    <Route path={`${url}/collections/:collectionId`} render={() => <CollectionBase toolId={toolId}/>}/>
+    <Route path={`${url}/${collectionsUrlFragment}`} exact render={() => <CollectionList toolId={toolId}/>}/>
+    <Route path={`${url}/${collectionsUrlFragment}/:collectionId`} render={() => <CollectionBase toolId={toolId}/>}/>
+    <Route path={`${url}/${allExercisesUrlFragment}`} render={() => <AllExercisesOverview toolId={toolId}/>}/>
   </Switch>;
 }
 
@@ -36,7 +39,7 @@ function CollectionBase({toolId}: ToolBaseParams): JSX.Element {
 
   return <Switch>
     <Route path={url} exact render={() => <CollectionOverview toolId={toolId} collectionId={collectionId}/>}/>
-    <Route path={`${url}/exercises/:exerciseId`} render={() => <ExerciseBase toolId={toolId} collectionId={collectionId}/>}/>
+    <Route path={`${url}/${exercisesUrlFragment}/:exerciseId`} render={() => <ExerciseBase toolId={toolId} collectionId={collectionId}/>}/>
   </Switch>;
 }
 

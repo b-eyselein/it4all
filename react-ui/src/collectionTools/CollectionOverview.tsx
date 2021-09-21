@@ -6,8 +6,7 @@ import {BreadCrumbPart, BreadCrumbs} from '../helpers/BreadCrumbs';
 import {Redirect} from 'react-router-dom';
 import {WithQuery} from '../WithQuery';
 import classNames from 'classnames';
-import {FilledPoints} from '../helpers/FilledPoints';
-import {BulmaCard} from '../helpers/BulmaCard';
+import {ExerciseLinkCard} from './ExerciseLinkCard';
 
 const SLICE_COUNT = 12;
 
@@ -72,32 +71,7 @@ export function CollectionOverview({toolId, collectionId}: CollectionBaseParams)
         ? <div className="columns is-multiline">
           {getExercisesPaginated().map((exercise) =>
             <div className="column is-one-third-desktop is-half" key={exercise.exerciseId}>
-              <BulmaCard
-                title={<>
-                  {exercise.exerciseId}. {exercise.title}
-                  &nbsp;
-                  <div className="tag" title="Schwierigkeit">
-                    <FilledPoints filledPoints={exercise.difficulty} maxPoints={5}/>
-                  </div>
-                </>} footerItems={[{link: `./${collectionId}/exercises/${exercise.exerciseId}`, title: t('toExercise')}]}>
-                {() => <>
-
-                  <div className="tags">
-                    {exercise.parts.map(({id, name, solved}) =>
-                      <div key={id} className={classNames('tag', {'is-success': solved})}>{name}</div>
-                    )}
-                  </div>
-                  {exercise.topicsWithLevels.length > 0
-                    ? <div className="tags">
-                      {exercise.topicsWithLevels.map(({topic, level}) =>
-                        <div className="tag" title={topic.title} key={topic.abbreviation}>
-                          {topic.abbreviation}&nbsp; - &nbsp;
-                          <FilledPoints filledPoints={level.levelIndex} maxPoints={topic.maxLevel.levelIndex}/>
-                        </div>)}
-                    </div>
-                    : <div className="tag is-warning">Keine Tags vorhanden</div>}
-                </>}
-              </BulmaCard>
+              <ExerciseLinkCard exercise={exercise}/>
             </div>
           )}
         </div>

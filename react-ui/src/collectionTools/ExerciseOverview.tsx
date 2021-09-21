@@ -57,7 +57,7 @@ export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIPr
         <div className="columns">
           {currentUser && entryParts.map((part) =>
             <div className="column" key={part.id}>
-              <Link className=" button is-link is-fullwidth" to={`${url}/parts/${part.id}`}>{part.name}</Link>
+              <Link className="button is-link is-fullwidth" to={`${url}/parts/${part.id}`}>{part.name}</Link>
             </div>
           )}
         </div>

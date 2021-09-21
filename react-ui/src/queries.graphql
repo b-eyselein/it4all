@@ -41,6 +41,7 @@ fragment UserProficiency on UserProficiency {
 # /tools/:toolId/allExercises
 query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
+    name
     allExercises {
       topicsWithLevels {
         ...TopicWithLevel

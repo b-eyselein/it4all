@@ -7,6 +7,7 @@ import {WithQuery} from '../WithQuery';
 import {ToolBaseParams} from '../ToolBase';
 import {BulmaCard} from '../helpers/BulmaCard';
 import {useTranslation} from 'react-i18next';
+import {allExercisesUrlFragment, collectionsUrlFragment, homeUrl, toolsUrlFragment} from '../urls';
 
 export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
 
@@ -21,8 +22,8 @@ export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
     const {name, collectionCount, exerciseCount, lessonCount, proficiencies} = tool;
 
     const breadCrumbs: BreadCrumbPart[] = [
-      {routerLinkPart: '/', title: 'Tools'},
-      {routerLinkPart: `tools/${toolId}`, title: name}
+      {routerLinkPart: homeUrl, title: 'Tools'},
+      {routerLinkPart: `${toolsUrlFragment}/${toolId}`, title: name}
     ];
 
     return (
@@ -35,7 +36,7 @@ export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
 
         <div className="columns">
           <div className="column">
-            <BulmaCard title={t('collection_plural')} footerItems={[{link: `./${toolId}/collections`, title: t('toCollections')}]}>
+            <BulmaCard title={t('collection_plural')} footerItems={[{link: `/${toolsUrlFragment}/${toolId}/${collectionsUrlFragment}`, title: t('toCollections')}]}>
               {() => <>
                 {collectionCount} {t('collection_plural')} {t('with')} {exerciseCount} {t('exercise_plural')}
               </>}
@@ -43,16 +44,16 @@ export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
           </div>
 
           <div className="column">
-            <BulmaCard title={'allExercises'} footerItems={[{link: `./${toolId}/allExercises`, title: t('toAllExercises')}]}>
+            <BulmaCard title={'allExercises'} footerItems={[{link: `/${toolsUrlFragment}/${toolId}/${allExercisesUrlFragment}`, title: t('toAllExercises')}]}>
               {() => <span>{exerciseCount} {t('exercise_plural')}</span>}
             </BulmaCard>
           </div>
 
-          {lessonCount > 0 && <div className="column">
+          {/*TODO: lessonCount > 0 && <div className="column">
             <BulmaCard title={t('lesson_plural')} footerItems={[{link: `./${toolId}/lessons`, title: t('toLessons')}]}>
               {() => <>{lessonCount} {t('lesson_plural')}</>}
             </BulmaCard>
-          </div>}
+          </div>*/}
         </div>
 
         <div className="my-3">

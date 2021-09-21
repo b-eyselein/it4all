@@ -1551,7 +1551,7 @@ export type AllExercisesOverviewQueryVariables = Exact<{
 }>;
 
 
-export type AllExercisesOverviewQuery = { __typename?: 'Query', tool?: Maybe<{ __typename?: 'CollectionTool', allExercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved?: Maybe<boolean> }> }> }> };
+export type AllExercisesOverviewQuery = { __typename?: 'Query', tool?: Maybe<{ __typename?: 'CollectionTool', name: string, allExercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved?: Maybe<boolean> }> }> }> };
 
 export type CollectionValuesFragment = { __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: any };
 
@@ -2973,6 +2973,7 @@ export type CollectionToolOverviewQueryResult = Apollo.QueryResult<CollectionToo
 export const AllExercisesOverviewDocument = gql`
     query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
+    name
     allExercises {
       topicsWithLevels {
         ...TopicWithLevel
