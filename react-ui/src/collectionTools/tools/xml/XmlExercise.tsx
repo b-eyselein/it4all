@@ -38,11 +38,7 @@ export function XmlExercise({exercise, content, partId, oldSolution}: IProps): J
   const {t} = useTranslation('common');
   const [correctExercise, correctionMutationResult] = useXmlCorrectionMutation();
 
-  if (!content.xmlPart) {
-    throw new Error('TODO!');
-  }
-
-  const part = content.xmlPart;
+  const part = partId === 'grammar' ? XmlExPart.GrammarCreationXmlPart : XmlExPart.DocumentCreationXmlPart;
 
   const isGrammarPart = part === XmlExPart.GrammarCreationXmlPart;
 
