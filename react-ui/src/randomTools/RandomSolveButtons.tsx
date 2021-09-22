@@ -1,6 +1,7 @@
 import {Link} from 'react-router-dom';
 import {randomToolsUrlFragment} from '../urls';
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 
 interface RandomSolveButtonsIProps {
   toolId: string;
@@ -9,17 +10,19 @@ interface RandomSolveButtonsIProps {
 }
 
 export function RandomSolveButtons({toolId, correct, nextExercise}: RandomSolveButtonsIProps): JSX.Element {
+
+  const {t} = useTranslation('common');
+
   return (
     <div className="columns">
       <div className="column is-one-third-desktop">
-        <button className="button is-link is-fullwidth" onClick={correct}>Lösung testen</button>
+        <button className="button is-link is-fullwidth" onClick={correct}>{t('correctSolution')}</button>
       </div>
       <div className="column is-one-third-desktop">
-        <button className="button is-primary is-fullwidth" onClick={nextExercise}>Nächste Aufgabe</button>
+        <button className="button is-primary is-fullwidth" onClick={nextExercise}>{t('nextExercise')}</button>
       </div>
       <div className="column is-one-third-desktop">
-        {/* FIXME: link target is not correct! */}
-        <Link className="button is-dark is-fullwidth" to={`/${randomToolsUrlFragment}/${toolId}`}>Bearbeiten beenden</Link>
+        <Link className="button is-dark is-fullwidth" to={`/${randomToolsUrlFragment}/${toolId}`}>{t('endSolve')}</Link>
       </div>
     </div>
   );

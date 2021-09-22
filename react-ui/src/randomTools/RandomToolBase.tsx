@@ -19,8 +19,8 @@ export function RandomToolBase(): JSX.Element {
       <Route path={`${url}/bool/fillOut`} component={BoolFillOut}/>
       <Route path={`${url}/bool/create`} component={BoolCreate}/>
       <Route path={`${url}/nary`} exact render={() => <RandomToolOverview tool={naryRandomTool}/>}/>
-      <Route path={`${url}/nary/addition`} exact component={NaryAddition}/>
-      <Route path={`${url}/nary/conversion`} exact component={NaryConversion}/>
+      <Route path={`${url}/nary/addition`} component={NaryAddition}/>
+      <Route path={`${url}/nary/conversion`} component={NaryConversion}/>
       <Route path={`${url}/nary/twoConversion`} component={NaryTwoConversion}/>
     </Switch>
   );
