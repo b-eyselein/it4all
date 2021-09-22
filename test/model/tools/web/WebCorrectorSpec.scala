@@ -1,7 +1,7 @@
 package model.tools.web
 
 import better.files.File
-import model.tools.web.sitespec.{HtmlElementSpec, JsAction, JsActionType, HtmlElementSpec, JsTask, SiteSpec}
+import model.tools.web.sitespec.{WebElementSpec, JsAction, JsActionType, WebElementSpec, JsTask, SiteSpec}
 import fi.iki.elonen.{NanoHTTPD, SimpleWebServer}
 import org.scalatest.{BeforeAndAfterAll, Suites}
 import org.scalatest.matchers.should.Matchers
@@ -37,7 +37,7 @@ class WebCorrectorSpec(port: Int) extends AnyFlatSpec with Matchers with WebCorr
 
   private val indexSiteSpec: SiteSpec = SiteSpec(
     "simpleTest/index.html",
-    htmlTasks = Seq[HtmlElementSpec](
+    htmlTasks = Seq[WebElementSpec](
       HtmlElementSpec(1, "testText", "//h1", "h1"),
       HtmlElementSpec(2, "testText", "//p[@id='firstPar']", "p", awaitedTextContent = Some("Auf dieser Seite ist ein Par.")),
       HtmlElementSpec(
@@ -57,7 +57,7 @@ class WebCorrectorSpec(port: Int) extends AnyFlatSpec with Matchers with WebCorr
 
     SiteSpec(
       "carList/carList.html",
-      htmlTasks = Seq[HtmlElementSpec](
+      htmlTasks = Seq[WebElementSpec](
         HtmlElementSpec(
           1,
           "_",
@@ -78,7 +78,7 @@ class WebCorrectorSpec(port: Int) extends AnyFlatSpec with Matchers with WebCorr
 
   private val clickCounterSiteSpec = SiteSpec(
     "clickCounter/clickCounter.html",
-    htmlTasks = Seq[HtmlElementSpec](
+    htmlTasks = Seq[WebElementSpec](
       HtmlElementSpec(1, "_", "/html/body//button", "button", Some("Klick mich!"), Map("onclick" -> "increment()")),
       HtmlElementSpec(2, "_", "/html/body//span[@id='theSpan']", "span", Some("0")),
       HtmlElementSpec(3, "_", "/html/head//script", "script", None, Map("src" -> "clickCounter.js"))

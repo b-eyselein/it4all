@@ -15,25 +15,31 @@ object WebColl2Ex1 extends WebInitialExercise(2, 1) {
       id = 1,
       text = """Erstellen Sie einen Button mit dem Text 'Klick mich!'.
                |Beim Klick die Funktion 'increment()' aufgerufen werden.""".stripMargin.replace("\n", " "),
-      xpathQuery = "/html/body//button",
-      awaitedTagName = "button",
-      attributes = Map("onclick" -> "increment()"),
-      awaitedTextContent = Some("Klick mich!")
+      elementSpec = WebElementSpec(
+        xpathQuery = "/html/body//button",
+        awaitedTagName = "button",
+        attributes = Map("onclick" -> "increment()"),
+        awaitedTextContent = Some("Klick mich!")
+      )
     ),
     HtmlTask(
       id = 2,
       text = """Erstellen Sie einen Span mit der ID 'theSpan', in dem die Anzahl der Klicks angezeigt werden.
                |Zu Anfang soll dieser eine 0 anzeigen.""".stripMargin.replace("\n", " "),
-      xpathQuery = """/html/body//span[@id='theSpan']""",
-      awaitedTagName = "span",
-      awaitedTextContent = Some("0")
+      elementSpec = WebElementSpec(
+        xpathQuery = """/html/body//span[@id='theSpan']""",
+        awaitedTagName = "span",
+        awaitedTextContent = Some("0")
+      )
     ),
     HtmlTask(
       id = 3,
       text = """Binden Sie die Javascript - Datei 'clickCounter.js' ein.""",
-      xpathQuery = "/html/head//script",
-      awaitedTagName = "script",
-      attributes = Map("src" -> "clickCounter.js")
+      elementSpec = WebElementSpec(
+        xpathQuery = "/html/head//script",
+        awaitedTagName = "script",
+        attributes = Map("src" -> "clickCounter.js")
+      )
     )
   )
 
@@ -42,8 +48,7 @@ object WebColl2Ex1 extends WebInitialExercise(2, 1) {
       id = i,
       text = s"Test $i",
       preConditions = Seq(
-        JsHtmlElementSpec(
-          id = 1,
+        WebElementSpec(
           xpathQuery = """/html/body//span[@id='theSpan']""",
           awaitedTagName = "span",
           awaitedTextContent = Some(s"${i - 1}")
@@ -55,8 +60,7 @@ object WebColl2Ex1 extends WebInitialExercise(2, 1) {
         keysToSend = None
       ),
       postConditions = Seq(
-        JsHtmlElementSpec(
-          id = 1,
+        WebElementSpec(
           xpathQuery = """/html/body//span[@id='theSpan']""",
           awaitedTagName = "span",
           awaitedTextContent = Some(s"$i")

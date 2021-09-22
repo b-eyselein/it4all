@@ -19,7 +19,7 @@ fragment WebResult on WebResult {
   points
   maxPoints
   gradedHtmlTaskResults {
-    ...GradedElementSpecResult
+    ...GradedHtmlTaskResult
   }
   gradedJsTaskResults {
     ...GradedJsTaskResult
@@ -27,7 +27,6 @@ fragment WebResult on WebResult {
 }
 
 fragment GradedElementSpecResult on GradedElementSpecResult {
-  id
   success
   elementFound
   points
@@ -47,6 +46,13 @@ fragment GradedTextContentResult on GradedTextResult {
   isSuccessful
   points
   maxPoints
+}
+
+fragment GradedHtmlTaskResult on GradedHtmlTaskResult {
+  id
+  elementSpecResult {
+    ...GradedElementSpecResult
+  }
 }
 
 fragment GradedJsTaskResult on GradedJsTaskResult {

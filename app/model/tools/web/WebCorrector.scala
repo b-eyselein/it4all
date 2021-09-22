@@ -15,16 +15,14 @@ object WebCorrector {
 
   // HtmlElementSpec
 
-  private def evaluateHtmlElementSpec[ES <: HtmlElementSpec](
-    elementSpec: ES,
+  private def evaluateHtmlElementSpec(
+    elementSpec: WebElementSpec,
     searchContext: SearchContext
-  ): ElementSpecResult[ES] = findElementsByXPath(searchContext, elementSpec.xpathQuery) match {
+  ): ElementSpecResult = findElementsByXPath(searchContext, elementSpec.xpathQuery) match {
     case Nil => NoElementFoundElementSpecResult(elementSpec)
 
     case foundElement :: Nil =>
-      val attrResults = elementSpec.attributes.toSeq.map { case (key, value) =>
-        evaluateAttribute(key, value, foundElement)
-      }
+      val attrResults = elementSpec.attributes.toSeq.map { case (key, value) => evaluateAttribute(key, value, foundElement) }
 
       val textResult = elementSpec.awaitedTextContent.map(evaluateTextContent(_, foundElement))
 
@@ -65,7 +63,7 @@ object WebCorrector {
   // Tasks
 
   def evaluateHtmlTask(htmlTask: HtmlTask, searchContext: SearchContext): HtmlTaskResult =
-    HtmlTaskResult(htmlTask, evaluateHtmlElementSpec(htmlTask, searchContext))
+    HtmlTaskResult(htmlTask, evaluateHtmlElementSpec(htmlTask.elementSpec, searchContext))
 
   def evaluateJsTask(jsTask: JsTask, searchContext: SearchContext): JsTaskResult = {
 

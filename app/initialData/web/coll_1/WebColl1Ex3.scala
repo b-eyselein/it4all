@@ -5,7 +5,7 @@ import initialData.InitialData._
 import initialData.web.WebInitialExercise
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
-import model.tools.web.sitespec.{HtmlTask, SiteSpec}
+import model.tools.web.sitespec.{HtmlTask, SiteSpec, WebElementSpec}
 import model.{Exercise, FilesSolution}
 
 object WebColl1Ex3 extends WebInitialExercise(1, 3) {
@@ -14,35 +14,40 @@ object WebColl1Ex3 extends WebInitialExercise(1, 3) {
     HtmlTask(
       id = 1,
       text = """Erstellen Sie eine passende h1 - Überschrift, die 'Ford Mustang' enthält.""",
-      xpathQuery = "/html/body//h1",
-      awaitedTagName = "h1",
-      awaitedTextContent = Some("Ford Mustang")
+      elementSpec = WebElementSpec(
+        xpathQuery = "/html/body//h1",
+        awaitedTagName = "h1",
+        awaitedTextContent = Some("Ford Mustang")
+      )
     ),
     HtmlTask(
       id = 2,
       text = """Erstellen Sie den Link auf der Seite, der auf Wikipedia verweist.
                |Geben Sie als Ziel die URL 'https=//de.wikipedia.org/wiki/Ford_Mustang' an.""".stripMargin
         .replace("\n", " "),
-      xpathQuery = "/html/body//a",
-      awaitedTagName = "a",
-      attributes = Map("href" -> "https=//de.wikipedia.org/wiki/Ford_Mustang")
+      elementSpec = WebElementSpec(
+        xpathQuery = "/html/body//a",
+        awaitedTagName = "a",
+        attributes = Map("href" -> "https=//de.wikipedia.org/wiki/Ford_Mustang")
+      )
     ),
     HtmlTask(
       id = 3,
-      text =
-        """Erstellen Sie im Link das Bild des Ford Mustang.
-          |Geben Sie als Quelle des Bildes die URL
-          |'https=//upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative
-          |Beschreibung 'Ford Mustang' an.
-          |Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu skalieren.""".stripMargin
-          .replace("\n", " "),
-      xpathQuery = "/html/body//a//img",
-      awaitedTagName = "img",
-      attributes = Map(
-        "src"    -> "https=//upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg",
-        "alt"    -> "Ford Mustang",
-        "width"  -> "250",
-        "height" -> "188"
+      text = """Erstellen Sie im Link das Bild des Ford Mustang.
+               |Geben Sie als Quelle des Bildes die URL
+               |'https=//upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg' und als alternative
+               |Beschreibung 'Ford Mustang' an.
+               |Geben Sie außerdem eine Breite von 250 und eine Höhe von 188 an, um das Bild zu skalieren.""".stripMargin
+        .replace("\n", " "),
+      elementSpec = WebElementSpec(
+        xpathQuery = "/html/body//a//img",
+        awaitedTagName = "img",
+        attributes = Map(
+          "src"    -> "https=//upload.wikimedia.org/wikipedia/commons/2/2d/1964_12_Ford_Mustang.jpg",
+          "alt"    -> "Ford Mustang",
+          "width"  -> "250",
+          "height" -> "188"
+        )
       )
     ),
     HtmlTask(
@@ -51,9 +56,11 @@ object WebColl1Ex3 extends WebInitialExercise(1, 3) {
                |Die entsprechende Datei ist unter der URL 'mustangStyle.css' zu finden.
                |Setzen Sie auch den entsprechenden Wert für das Attribut 'rel'.""".stripMargin
         .replace("\n", " "),
-      xpathQuery = "/html/head//link",
-      awaitedTagName = "link",
-      attributes = Map("rel" -> "stylesheet", "href" -> "mustangStyle.css")
+      elementSpec = WebElementSpec(
+        xpathQuery = "/html/head//link",
+        awaitedTagName = "link",
+        attributes = Map("rel" -> "stylesheet", "href" -> "mustangStyle.css")
+      )
     )
   )
 

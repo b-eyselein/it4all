@@ -1,6 +1,6 @@
 package model.tools.web.result
 
-import model.tools.web.sitespec.{HtmlTask, JsHtmlElementSpec, JsTask}
+import model.tools.web.sitespec.{HtmlTask, JsTask}
 
 sealed trait WebTaskResult
 
@@ -8,16 +8,16 @@ sealed trait WebTaskResult
 
 final case class HtmlTaskResult(
   htmlTask: HtmlTask,
-  elementSpecResult: ElementSpecResult[HtmlTask]
+  elementSpecResult: ElementSpecResult
 ) extends WebTaskResult
 
 // Javascript Results
 
 final case class JsTaskResult(
   jsTask: JsTask,
-  preResults: Seq[ElementSpecResult[JsHtmlElementSpec]],
+  preResults: Seq[ElementSpecResult],
   actionResult: JsActionResult,
-  postResults: Seq[ElementSpecResult[JsHtmlElementSpec]]
+  postResults: Seq[ElementSpecResult]
 ) extends WebTaskResult
 
 // Complete Site Spec

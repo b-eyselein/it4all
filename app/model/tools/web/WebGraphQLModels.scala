@@ -75,44 +75,25 @@ object WebGraphQLModels extends FilesSolutionToolGraphQLModelBasics[WebExerciseC
     )
   }
 
-  private val gradedElementSpecResultInterfaceType: InterfaceType[Unit, GradedElementSpecResult] = InterfaceType(
-    "GradedElementSpecResult",
-    fields[Unit, GradedElementSpecResult](
-      Field("id", IntType, resolve = _.value.id),
-      Field("success", successTypeType, resolve = _.value.success),
-      Field("elementFound", BooleanType, resolve = _.value.elementFound),
-      Field("points", FloatType, resolve = _.value.points.asDouble),
-      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble),
-      Field("textContentResult", OptionType(gradedTextResultType), resolve = _.value.textContentResult),
-      Field("attributeResults", ListType(gradedTextResultType), resolve = _.value.attributeResults)
-    )
-  )
-
-  private val gradedHtmlTaskResultType: ObjectType[Unit, GradedHtmlTaskResult] = {
+  private val gradedElementSpecResultType: ObjectType[Unit, GradedElementSpecResult] = {
     implicit val stt: EnumType[SuccessType]               = successTypeType
     implicit val gtrt: ObjectType[Unit, GradedTextResult] = gradedTextResultType
 
     deriveObjectType(
-      Interfaces(gradedElementSpecResultInterfaceType),
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
       ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
     )
   }
 
-  private val gradedJsHtmlElementSpecResultType: ObjectType[Unit, GradedJsHtmlElementSpecResult] = {
-    implicit val stt: EnumType[SuccessType]               = successTypeType
-    implicit val gtrt: ObjectType[Unit, GradedTextResult] = gradedTextResultType
+  private val gradedHtmlTaskResultType: ObjectType[Unit, GradedHtmlTaskResult] = {
+    implicit val gesrt: ObjectType[Unit, GradedElementSpecResult] = gradedElementSpecResultType
 
-    deriveObjectType(
-      Interfaces(gradedElementSpecResultInterfaceType),
-      ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
-      ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
-    )
+    deriveObjectType()
   }
 
   private val gradedJsTaskResultType: ObjectType[Unit, GradedJsTaskResult] = {
-    implicit val stt: EnumType[SuccessType]                               = successTypeType
-    implicit val gjtesrt: ObjectType[Unit, GradedJsHtmlElementSpecResult] = gradedJsHtmlElementSpecResultType
+    implicit val stt: EnumType[SuccessType]                       = successTypeType
+    implicit val gesrt: ObjectType[Unit, GradedElementSpecResult] = gradedElementSpecResultType
 
     deriveObjectType(
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),

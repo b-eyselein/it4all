@@ -1,6 +1,6 @@
 package model.tools.web.result
 
-import model.tools.web.sitespec.{HtmlElementSpec, JsAction}
+import model.tools.web.sitespec.{JsAction, WebElementSpec}
 import org.openqa.selenium.WebElement
 
 // Text content and attributes
@@ -26,23 +26,22 @@ final case class AttributeResult(
 
 // Single element
 
-sealed trait ElementSpecResult[ES <: HtmlElementSpec] {
+sealed trait ElementSpecResult {
 
-  val elementSpec: ES
+  val elementSpec: WebElementSpec
 
 }
 
-final case class NoElementFoundElementSpecResult[ES <: HtmlElementSpec](elementSpec: ES) extends ElementSpecResult[ES]
+final case class NoElementFoundElementSpecResult(elementSpec: WebElementSpec) extends ElementSpecResult
 
-final case class TooManyElementsFoundElementSpecResult[ES <: HtmlElementSpec](elementSpec: ES, count: Int)
-    extends ElementSpecResult[ES]
+final case class TooManyElementsFoundElementSpecResult(elementSpec: WebElementSpec, count: Int) extends ElementSpecResult
 
-final case class ElementFoundElementSpecResult[ES <: HtmlElementSpec](
-  elementSpec: ES,
+final case class ElementFoundElementSpecResult(
+  elementSpec: WebElementSpec,
   foundElement: WebElement,
   textContentResult: Option[TextContentResult],
   attributeResults: Seq[AttributeResult]
-) extends ElementSpecResult[ES]
+) extends ElementSpecResult
 
 // Js Action
 

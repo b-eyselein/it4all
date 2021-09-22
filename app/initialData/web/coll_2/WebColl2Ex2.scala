@@ -22,34 +22,40 @@ object WebColl2Ex2 extends WebInitialExercise(2, 2) {
     HtmlTask(
       id = 1,
       text = """Erstellen Sie ein Texteingabefeld mit der ID 'name'.""",
-      xpathQuery = """/html/body//input[@id='name']""",
-      awaitedTagName = "input",
-      attributes = Map("type" -> "text")
+      elementSpec = WebElementSpec(
+        xpathQuery = """/html/body//input[@id='name']""",
+        awaitedTagName = "input",
+        attributes = Map("type" -> "text")
+      )
     ),
     HtmlTask(
       id = 2,
-      text =
-        """Erstellen Sie ein Passworteingabefeld mit der ID 'password'.
-          |Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.""".stripMargin
-          .replace("\n", " "),
-      xpathQuery = """/html/body//input[@id='pa= "javascript"ssword']""",
-      awaitedTagName = "input",
-      attributes = Map("type" -> "password", "onchange" -> "passwordStrength()")
+      text = """Erstellen Sie ein Passworteingabefeld mit der ID 'password'.
+               |Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.""".stripMargin
+        .replace("\n", " "),
+      elementSpec = WebElementSpec(
+        xpathQuery = """/html/body//input[@id='pa= "javascript"ssword']""",
+        awaitedTagName = "input",
+        attributes = Map("type" -> "password", "onchange" -> "passwordStrength()")
+      )
     ),
     HtmlTask(
       id = 3,
-      text =
-        """Erstellen Sie einen Span mit der ID 'errors', der später anzeigen soll, wenn das Passwort zu schwach ist.
-          |Zu Anfang soll dieser leer sein.""".stripMargin.replace("\n", " "),
-      xpathQuery = """/html/body//span[@id='errors']""",
-      awaitedTagName = "span"
+      text = """Erstellen Sie einen Span mit der ID 'errors', der später anzeigen soll, wenn das Passwort zu schwach ist.
+               |Zu Anfang soll dieser leer sein.""".stripMargin.replace("\n", " "),
+      elementSpec = WebElementSpec(
+        xpathQuery = """/html/body//span[@id='errors']""",
+        awaitedTagName = "span"
+      )
     ),
     HtmlTask(
       id = 4,
       text = """Binden Sie die Javascript-Datei "pwChecker.js" ein.""",
-      xpathQuery = """/html/head//script""",
-      awaitedTagName = "script",
-      attributes = Map("src" -> "pwChecker.js")
+      elementSpec = WebElementSpec(
+        xpathQuery = """/html/head//script""",
+        awaitedTagName = "script",
+        attributes = Map("src" -> "pwChecker.js")
+      )
     )
   )
 
@@ -64,8 +70,7 @@ object WebColl2Ex2 extends WebInitialExercise(2, 2) {
         keysToSend = Some("123")
       ),
       postConditions = Seq(
-        JsHtmlElementSpec(
-          id = 1,
+        WebElementSpec(
           xpathQuery = """/html/body//span[@id='errors']""",
           awaitedTagName = "span",
           awaitedTextContent = Some("Zu kurz")
@@ -82,8 +87,7 @@ object WebColl2Ex2 extends WebInitialExercise(2, 2) {
         keysToSend = Some("meinpasswort")
       ),
       postConditions = Seq(
-        JsHtmlElementSpec(
-          id = 1,
+        WebElementSpec(
           xpathQuery = """/html/body//span[@id='errors']""",
           awaitedTagName = "span",
           awaitedTextContent = Some("Zu einfach")
@@ -100,8 +104,7 @@ object WebColl2Ex2 extends WebInitialExercise(2, 2) {
         keysToSend = Some("GanzGanzSicherUndGeheim")
       ),
       postConditions = Seq(
-        JsHtmlElementSpec(
-          id = 1,
+        WebElementSpec(
           xpathQuery = """/html/body//span[@id='errors']""",
           awaitedTagName = "span",
           awaitedTextContent = Some("")

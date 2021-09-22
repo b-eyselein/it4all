@@ -16,23 +16,29 @@ object WebColl2Ex3 extends WebInitialExercise(2, 3) {
       text = """Erstellen Sie ein Zahlen-Eingabefeld mit der ID 'number'.
                |Bei Änderung des Feldes (onchange) soll die Funktion 'fakultaet()' aufgerufen werden.""".stripMargin
         .replace("\n", " "),
-      xpathQuery = """/html/body//input[@id='number']""",
-      awaitedTagName = "input",
-      attributes = Map("type" -> "number", "onchange" -> "fakultaet()")
+      elementSpec = WebElementSpec(
+        xpathQuery = """/html/body//input[@id='number']""",
+        awaitedTagName = "input",
+        attributes = Map("type" -> "number", "onchange" -> "fakultaet()")
+      )
     ),
     HtmlTask(
       id = 2,
       text = """Erstellen Sie einen Span mit der ID 'result', in dem das Ergebnis der Berechnung stehen soll.
                |Zu Anfang soll dieser leer sein.""".stripMargin.replace("\n", " "),
-      xpathQuery = """/html/body//span[@id='result']""",
-      awaitedTagName = "span"
+      elementSpec = WebElementSpec(
+        xpathQuery = """/html/body//span[@id='result']""",
+        awaitedTagName = "span"
+      )
     ),
     HtmlTask(
       id = 3,
       text = """Binden Sie die Javascript-Datei 'factorial.js' ein.""",
-      xpathQuery = "/html/head//script",
-      awaitedTagName = "script",
-      attributes = Map("src" -> "factorial.js")
+      elementSpec = WebElementSpec(
+        xpathQuery = "/html/head//script",
+        awaitedTagName = "script",
+        attributes = Map("src" -> "factorial.js")
+      )
     )
   )
 
@@ -47,8 +53,7 @@ object WebColl2Ex3 extends WebInitialExercise(2, 3) {
         keysToSend = Some("1")
       ),
       postConditions = Seq(
-        JsHtmlElementSpec(
-          id = 1,
+        WebElementSpec(
           xpathQuery = """/html/body//span[@id='result']""",
           awaitedTagName = "span",
           awaitedTextContent = Some("1")
@@ -65,8 +70,7 @@ object WebColl2Ex3 extends WebInitialExercise(2, 3) {
         keysToSend = Some("3")
       ),
       postConditions = Seq(
-        JsHtmlElementSpec(
-          id = 1,
+        WebElementSpec(
           xpathQuery = """/html/body//span[@id='result']""",
           awaitedTagName = "span",
           awaitedTextContent = Some("6")
@@ -83,8 +87,7 @@ object WebColl2Ex3 extends WebInitialExercise(2, 3) {
         keysToSend = Some("6")
       ),
       postConditions = Seq(
-        JsHtmlElementSpec(
-          id = 1,
+        WebElementSpec(
           xpathQuery = """/html/body//span[@id='result']""",
           awaitedTagName = "span",
           awaitedTextContent = Some("720")
@@ -101,8 +104,7 @@ object WebColl2Ex3 extends WebInitialExercise(2, 3) {
         keysToSend = Some("10")
       ),
       postConditions = Seq(
-        JsHtmlElementSpec(
-          id = 1,
+        WebElementSpec(
           xpathQuery = """/html/body//span[@id='result']""",
           awaitedTagName = "span",
           awaitedTextContent = Some("3628800")

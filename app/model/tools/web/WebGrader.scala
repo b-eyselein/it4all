@@ -3,7 +3,7 @@ package model.tools.web
 import model.points._
 import model.result.SuccessType
 import model.tools.web.result._
-import model.tools.web.sitespec.HtmlElementSpec
+import model.tools.web.sitespec.WebElementSpec
 
 object WebGrader {
 
@@ -28,7 +28,7 @@ object WebGrader {
     GradedTextResult(keyName, tcr.awaitedContent, tcr.maybeFoundContent, success, points, maxPoints = singlePoint)
   }
 
-  private def calculateMaxPointsForElementSpec[ES <: HtmlElementSpec](elementSpec: ES): Points = {
+  private def calculateMaxPointsForElementSpec[ES <: WebElementSpec](elementSpec: ES): Points = {
     val pointsForTextContentResult: Points = elementSpec.awaitedTextContent match {
       case None    => zeroPoints
       case Some(_) => pointForCorrectTextResult
@@ -39,18 +39,8 @@ object WebGrader {
     pointsForElement + pointsForTextContentResult + pointsForAttributes
   }
 
-  private def gradeElementSpecResult[GESR <: GradedElementSpecResult](
-    elementSpecResult: ElementSpecResult[_ <: HtmlElementSpec],
-    applyGradedResult: (
-      SuccessType,
-      Boolean,
-      Option[GradedTextResult],
-      Seq[GradedTextResult],
-      Boolean,
-      Points,
-      Points
-    ) => GESR
-  ): GESR = {
+  private def gradeElementSpecResult(elementSpecResult: ElementSpecResult): GradedElementSpecResult = {
+
     val maxPoints = calculateMaxPointsForElementSpec(elementSpecResult.elementSpec)
 
     elementSpecResult match {
@@ -73,19 +63,16 @@ object WebGrader {
           }
         } else SuccessType.PARTIALLY
 
-        val isSuccessful = successType == SuccessType.COMPLETE
-
-        applyGradedResult(
+        GradedElementSpecResult(
           successType,
-          true,
+          elementFound = true,
           maybeGradedTextContentResult,
           gradedAttributeResults,
-          isSuccessful,
           points,
           maxPoints
         )
 
-      case _ => applyGradedResult(SuccessType.NONE, false, None, Seq[GradedTextResult](), false, zeroPoints, maxPoints)
+      case _ => GradedElementSpecResult(SuccessType.NONE, elementFound = false, None, Seq[GradedTextResult](), zeroPoints, maxPoints)
     }
   }
 
@@ -100,26 +87,21 @@ object WebGrader {
     GradedJsActionResult(success, result.jsAction, points, maxPointsForAction)
   }
 
-  def gradeHtmlTaskResult(htr: HtmlTaskResult): GradedHtmlTaskResult =
-    gradeElementSpecResult(
-      htr.elementSpecResult,
-      GradedHtmlTaskResult(htr.elementSpecResult.elementSpec.id, _, _, _, _, _, _, _)
-    )
+  def gradeHtmlTaskResult(htr: HtmlTaskResult): GradedHtmlTaskResult = GradedHtmlTaskResult(
+    htr.htmlTask.id,
+    gradeElementSpecResult(htr.elementSpecResult)
+  )
 
   def gradeJsTaskResult(jtr: JsTaskResult): GradedJsTaskResult = {
 
-    val gradedPreResults = jtr.preResults.map { esr =>
-      gradeElementSpecResult(esr, GradedJsHtmlElementSpecResult(esr.elementSpec.id, _, _, _, _, _, _, _))
-    }
-    val preResultsSuccessful = gradedPreResults.nonEmpty && gradedPreResults.forall(_.isSuccessful)
+    val gradedPreResults     = jtr.preResults.map { gradeElementSpecResult }
+    val preResultsSuccessful = gradedPreResults.nonEmpty && gradedPreResults.forall(_.success == SuccessType.COMPLETE)
 
     val gradedActionResult = gradeActionResult(jtr.actionResult)
     val actionSuccessful   = gradedActionResult.actionPerformed
 
-    val gradedPostResults = jtr.postResults.map { esr =>
-      gradeElementSpecResult(esr, GradedJsHtmlElementSpecResult(esr.elementSpec.id, _, _, _, _, _, _, _))
-    }
-    val postResultsSuccessful = gradedPostResults.nonEmpty && gradedPostResults.forall(_.isSuccessful)
+    val gradedPostResults     = jtr.postResults.map { gradeElementSpecResult }
+    val postResultsSuccessful = gradedPostResults.nonEmpty && gradedPostResults.forall(_.success == SuccessType.COMPLETE)
 
     val points: Points = addUp(gradedPreResults.map(_.points)) + gradedActionResult.points + addUp(
       gradedPostResults.map(_.points)
@@ -130,8 +112,10 @@ object WebGrader {
     )
 
     val success: SuccessType =
-      if (preResultsSuccessful && actionSuccessful && postResultsSuccessful) SuccessType.COMPLETE
-      else SuccessType.PARTIALLY
+      if (preResultsSuccessful && actionSuccessful && postResultsSuccessful)
+        SuccessType.COMPLETE
+      else
+        SuccessType.PARTIALLY
 
     GradedJsTaskResult(
       jtr.jsTask.id,

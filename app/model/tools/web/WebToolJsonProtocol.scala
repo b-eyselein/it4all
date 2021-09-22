@@ -15,21 +15,21 @@ object WebToolJsonProtocol extends FilesSolutionToolJsonProtocol[WebExerciseCont
     Json.format
   }
 
-  private val jsHtmlElementSpecFormat: Format[JsHtmlElementSpec] = {
+  private val webElementSpecFormat: Format[WebElementSpec] = {
     implicit val af: Format[Map[String, String]] = keyValueObjectMapFormat
 
     Json.format
   }
 
   private val jsTaskFormat: Format[JsTask] = {
-    implicit val hesf: Format[JsHtmlElementSpec] = jsHtmlElementSpecFormat
-    implicit val jsf: Format[JsAction]           = jsActionFormat
+    implicit val wesf: Format[WebElementSpec] = webElementSpecFormat
+    implicit val jsf: Format[JsAction]        = jsActionFormat
 
     Json.format
   }
 
   private val htmlTaskFormat: Format[HtmlTask] = {
-    implicit val af: Format[Map[String, String]] = keyValueObjectMapFormat
+    implicit val wesf: Format[WebElementSpec] = webElementSpecFormat
 
     Json.format
   }

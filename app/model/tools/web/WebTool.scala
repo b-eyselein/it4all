@@ -56,8 +56,8 @@ object WebTool extends Tool("web", "Web") {
       WebResult(
         gradedHtmlTaskResults,
         Seq.empty,
-        points = addUp(gradedHtmlTaskResults.map(_.points)),
-        maxPoints = addUp(gradedHtmlTaskResults.map(_.maxPoints))
+        points = addUp(gradedHtmlTaskResults.map(_.elementSpecResult.points)),
+        maxPoints = addUp(gradedHtmlTaskResults.map(_.elementSpecResult.maxPoints))
       )
 
     case WebExPart.JsPart =>

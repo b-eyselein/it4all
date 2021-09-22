@@ -1,6 +1,6 @@
 import React from 'react';
 import {GradedJsTaskResultFragment, JsActionType, SuccessType} from '../../../graphql';
-import {ElementSpecResultDisplay} from './HtmlTaskResultDisplay';
+import {ElementSpecResultDisplay} from './ElementSpecResultDisplay';
 import {useTranslation} from 'react-i18next';
 
 interface IProps {
@@ -11,15 +11,15 @@ export function JsTaskResultDisplay({jsResult}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
 
-  const {gradedJsActionResult, gradedPostResults, gradedPreResults, id, points, maxPoints, success} = jsResult;
+  const {id, success, points, maxPoints, gradedPostResults, gradedJsActionResult, gradedPreResults} = jsResult;
 
   if (success === SuccessType.Complete) {
     return <span className="has-text-success">Test {id} war erfolgreich.</span>;
   }
 
-  const {actionPerformed, jsAction, points: pa, maxPoints: mpa} = gradedJsActionResult;
+  const {actionPerformed, jsAction} = gradedJsActionResult;
 
-  const {actionType, keysToSend, xpathQuery} = jsAction;
+  const {actionType, keysToSend} = jsAction;
 
   const actionDescription = actionType === JsActionType.Click
     ? <span>Klicke auf Element mit XPath Query <code>${jsAction.xpathQuery}</code></span>
@@ -28,13 +28,13 @@ export function JsTaskResultDisplay({jsResult}: IProps): JSX.Element {
 
   return (
     <>
-      <span className="has-text-danger">Test {id} war nicht erfolgreich</span>
+      <span className="has-text-danger">({points} / {maxPoints}) Test {id} war nicht erfolgreich</span>
 
       <ul>
         <li>
           {t('preConditions')}
 
-          {gradedPreResults.map((r) => <ElementSpecResultDisplay key={r.id} htmlResult={r}/>)}
+          {gradedPreResults.map((r, index) => <ElementSpecResultDisplay key={index} elementSpecResult={r}/>)}
         </li>
 
         <li className={actionPerformed ? 'has-text-success' : 'has-text-danger'}>{actionDescription}</li>
@@ -42,7 +42,7 @@ export function JsTaskResultDisplay({jsResult}: IProps): JSX.Element {
         <li>
           {t('postConditions')}
 
-          {gradedPostResults.map((r) => <ElementSpecResultDisplay key={r.id} htmlResult={r}/>)}
+          {gradedPostResults.map((r, index) => <ElementSpecResultDisplay key={index} elementSpecResult={r}/>)}
         </li>
       </ul>
     </>

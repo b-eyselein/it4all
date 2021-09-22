@@ -2,24 +2,20 @@ package model.tools.web.sitespec
 
 import enumeratum.{EnumEntry, PlayEnum}
 
-sealed trait HtmlElementSpec {
-  val id: Int
-  val xpathQuery: String
-  val awaitedTagName: String
-  val awaitedTextContent: Option[String]
-  val attributes: Map[String, String]
-}
-
 // HtmlTask
 
-final case class HtmlTask(
-  id: Int,
-  text: String,
+final case class WebElementSpec(
   xpathQuery: String,
   awaitedTagName: String,
   awaitedTextContent: Option[String] = None,
   attributes: Map[String, String] = Map.empty
-) extends HtmlElementSpec
+)
+
+final case class HtmlTask(
+  id: Int,
+  text: String,
+  elementSpec: WebElementSpec
+)
 
 // JsTask
 
@@ -37,20 +33,12 @@ object JsActionType extends PlayEnum[JsActionType] {
 
 final case class JsAction(xpathQuery: String, actionType: JsActionType, keysToSend: Option[String])
 
-final case class JsHtmlElementSpec(
-  id: Int,
-  xpathQuery: String,
-  awaitedTagName: String,
-  awaitedTextContent: Option[String] = None,
-  attributes: Map[String, String] = Map.empty
-) extends HtmlElementSpec
-
 final case class JsTask(
   id: Int,
   text: String,
-  preConditions: Seq[JsHtmlElementSpec],
+  preConditions: Seq[WebElementSpec],
   action: JsAction,
-  postConditions: Seq[JsHtmlElementSpec]
+  postConditions: Seq[WebElementSpec]
 )
 
 // SiteSpec

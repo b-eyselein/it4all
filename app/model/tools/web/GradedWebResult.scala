@@ -2,7 +2,7 @@ package model.tools.web
 
 import model.points._
 import model.result.{AbstractCorrectionResult, SuccessType}
-import model.tools.web.sitespec.{JsAction, JsActionType}
+import model.tools.web.sitespec.JsAction
 
 final case class WebResult(
   gradedHtmlTaskResults: Seq[GradedHtmlTaskResult],
@@ -13,15 +13,13 @@ final case class WebResult(
 
   override def isCompletelyCorrect: Boolean = {
 
-    val htmlTasksOk = gradedHtmlTaskResults.forall(_.isSuccessful)
+    val htmlTasksOk = gradedHtmlTaskResults.forall(_.elementSpecResult.success == SuccessType.COMPLETE)
     val jsTasksOk   = gradedJsTaskResults.forall(_.success == SuccessType.COMPLETE)
 
     htmlTasksOk && jsTasksOk
   }
 
 }
-
-sealed trait GradedWebTaskResult
 
 final case class GradedTextResult(
   keyName: String,
@@ -32,61 +30,32 @@ final case class GradedTextResult(
   maxPoints: Points
 )
 
-sealed trait GradedElementSpecResult {
-  val id: Int
-  val success: SuccessType
-  val elementFound: Boolean
-  val textContentResult: Option[GradedTextResult]
-  val attributeResults: Seq[GradedTextResult]
-  val isSuccessful: Boolean
-  val points: Points
-  val maxPoints: Points
-}
+final case class GradedElementSpecResult(
+  success: SuccessType,
+  elementFound: Boolean,
+  textContentResult: Option[GradedTextResult],
+  attributeResults: Seq[GradedTextResult],
+  points: Points,
+  maxPoints: Points
+)
 
 // Html & CSS Results
 
 final case class GradedHtmlTaskResult(
   id: Int,
-  success: SuccessType,
-  elementFound: Boolean,
-  textContentResult: Option[GradedTextResult],
-  attributeResults: Seq[GradedTextResult],
-  isSuccessful: Boolean,
-  points: Points,
-  maxPoints: Points
-) extends GradedWebTaskResult
-    with GradedElementSpecResult
+  elementSpecResult: GradedElementSpecResult
+)
 
 // Javascript Results
 
-final case class GradedJsActionResult(actionPerformed: Boolean, jsAction: JsAction, points: Points, maxPoints: Points) {
-
-  def actionDescription: String =
-    jsAction.actionType match {
-      case JsActionType.Click => s"Klicke auf Element mit XPath Query <code>${jsAction.xpathQuery}</code>"
-      case JsActionType.FillOut =>
-        s"Sende Keys '${jsAction.keysToSend.getOrElse("")}' an Element mit XPath Query ${jsAction.xpathQuery}"
-    }
-
-}
-
-final case class GradedJsHtmlElementSpecResult(
-  id: Int,
-  success: SuccessType,
-  elementFound: Boolean,
-  textContentResult: Option[GradedTextResult],
-  attributeResults: Seq[GradedTextResult],
-  isSuccessful: Boolean,
-  points: Points,
-  maxPoints: Points
-) extends GradedElementSpecResult
+final case class GradedJsActionResult(actionPerformed: Boolean, jsAction: JsAction, points: Points, maxPoints: Points)
 
 final case class GradedJsTaskResult(
   id: Int,
-  gradedPreResults: Seq[GradedJsHtmlElementSpecResult],
+  gradedPreResults: Seq[GradedElementSpecResult],
   gradedJsActionResult: GradedJsActionResult,
-  gradedPostResults: Seq[GradedJsHtmlElementSpecResult],
+  gradedPostResults: Seq[GradedElementSpecResult],
   success: SuccessType,
   points: Points,
   maxPoints: Points
-) extends GradedWebTaskResult
+)
