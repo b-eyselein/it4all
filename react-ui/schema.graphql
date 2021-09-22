@@ -203,7 +203,17 @@ type FlaskTestsConfig {
   tests: [FlaskSingleTestConfig!]!
 }
 
-type GradedHtmlTaskResult {
+interface GradedElementSpecResult {
+  attributeResults: [GradedTextResult!]!
+  elementFound: Boolean!
+  id: Int!
+  maxPoints: Float!
+  points: Float!
+  success: SuccessType!
+  textContentResult: GradedTextResult
+}
+
+type GradedHtmlTaskResult implements GradedElementSpecResult {
   attributeResults: [GradedTextResult!]!
   elementFound: Boolean!
   id: Int!
@@ -221,7 +231,7 @@ type GradedJsActionResult {
   points: Float!
 }
 
-type GradedJsHtmlElementSpecResult {
+type GradedJsHtmlElementSpecResult implements GradedElementSpecResult {
   attributeResults: [GradedTextResult!]!
   elementFound: Boolean!
   id: Int!

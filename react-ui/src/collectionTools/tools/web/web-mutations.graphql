@@ -19,26 +19,25 @@ fragment WebResult on WebResult {
   points
   maxPoints
   gradedHtmlTaskResults {
-    ...GradedHtmlTaskResult
+    ...GradedElementSpecResult
   }
   gradedJsTaskResults {
     ...GradedJsTaskResult
   }
 }
 
-fragment GradedHtmlTaskResult on GradedHtmlTaskResult {
+fragment GradedElementSpecResult on GradedElementSpecResult {
   id
   success
   elementFound
+  points
+  maxPoints
   textContentResult {
     ...GradedTextContentResult
   }
   attributeResults {
     ...GradedTextContentResult
   }
-  isSuccessful
-  points
-  maxPoints
 }
 
 fragment GradedTextContentResult on GradedTextResult {
@@ -53,26 +52,24 @@ fragment GradedTextContentResult on GradedTextResult {
 fragment GradedJsTaskResult on GradedJsTaskResult {
   id
   gradedPreResults {
-    ...GradedJsHtmlElementSpecResult
+    ...GradedElementSpecResult
   }
   gradedJsActionResult {
     ...GradedJsActionResult
   }
   gradedPostResults {
-    ...GradedJsHtmlElementSpecResult
+    ...GradedElementSpecResult
   }
   success
   points
   maxPoints
 }
 
-fragment GradedJsHtmlElementSpecResult on GradedJsHtmlElementSpecResult {
-  id
-}
-
 fragment GradedJsActionResult on GradedJsActionResult {
   jsAction {
-    __typename
+    actionType
+    keysToSend
+    xpathQuery
   }
   actionPerformed
   points

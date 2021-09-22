@@ -273,7 +273,17 @@ export type FlaskTestsConfig = {
   tests: Array<FlaskSingleTestConfig>;
 };
 
-export type GradedHtmlTaskResult = {
+export type GradedElementSpecResult = {
+  attributeResults: Array<GradedTextResult>;
+  elementFound: Scalars['Boolean'];
+  id: Scalars['Int'];
+  maxPoints: Scalars['Float'];
+  points: Scalars['Float'];
+  success: SuccessType;
+  textContentResult?: Maybe<GradedTextResult>;
+};
+
+export type GradedHtmlTaskResult = GradedElementSpecResult & {
   __typename?: 'GradedHtmlTaskResult';
   attributeResults: Array<GradedTextResult>;
   elementFound: Scalars['Boolean'];
@@ -293,7 +303,7 @@ export type GradedJsActionResult = {
   points: Scalars['Float'];
 };
 
-export type GradedJsHtmlElementSpecResult = {
+export type GradedJsHtmlElementSpecResult = GradedElementSpecResult & {
   __typename?: 'GradedJsHtmlElementSpecResult';
   attributeResults: Array<GradedTextResult>;
   elementFound: Scalars['Boolean'];
@@ -1486,21 +1496,23 @@ export type WebCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type WebCorrectionMutation = { __typename?: 'Mutation', webExercise?: Maybe<{ __typename?: 'WebExerciseMutations', correct: { __typename?: 'WebCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, isSuccessful: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename: 'JsAction' } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }> }> } } }> };
+export type WebCorrectionMutation = { __typename?: 'Mutation', webExercise?: Maybe<{ __typename?: 'WebExerciseMutations', correct: { __typename?: 'WebCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename?: 'JsAction', actionType: JsActionType, keysToSend?: Maybe<string>, xpathQuery: string } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }> }> } } }> };
 
-export type WebCorrectionResultFragment = { __typename?: 'WebCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, isSuccessful: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename: 'JsAction' } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }> }> } };
+export type WebCorrectionResultFragment = { __typename?: 'WebCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: Maybe<boolean>, result: { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename?: 'JsAction', actionType: JsActionType, keysToSend?: Maybe<string>, xpathQuery: string } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }> }> } };
 
-export type WebResultFragment = { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, isSuccessful: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename: 'JsAction' } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }> }> };
+export type WebResultFragment = { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename?: 'JsAction', actionType: JsActionType, keysToSend?: Maybe<string>, xpathQuery: string } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }> }> };
 
-export type GradedHtmlTaskResultFragment = { __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, isSuccessful: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> };
+type GradedElementSpecResult_GradedHtmlTaskResult_Fragment = { __typename?: 'GradedHtmlTaskResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> };
+
+type GradedElementSpecResult_GradedJsHtmlElementSpecResult_Fragment = { __typename?: 'GradedJsHtmlElementSpecResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> };
+
+export type GradedElementSpecResultFragment = GradedElementSpecResult_GradedHtmlTaskResult_Fragment | GradedElementSpecResult_GradedJsHtmlElementSpecResult_Fragment;
 
 export type GradedTextContentResultFragment = { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number };
 
-export type GradedJsTaskResultFragment = { __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename: 'JsAction' } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number }> };
+export type GradedJsTaskResultFragment = { __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename?: 'JsAction', actionType: JsActionType, keysToSend?: Maybe<string>, xpathQuery: string } }, gradedPostResults: Array<{ __typename?: 'GradedJsHtmlElementSpecResult', id: number, success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: Maybe<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }>, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: Maybe<string>, isSuccessful: boolean, points: number, maxPoints: number }> }> };
 
-export type GradedJsHtmlElementSpecResultFragment = { __typename?: 'GradedJsHtmlElementSpecResult', id: number };
-
-export type GradedJsActionResultFragment = { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename: 'JsAction' } };
+export type GradedJsActionResultFragment = { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename?: 'JsAction', actionType: JsActionType, keysToSend?: Maybe<string>, xpathQuery: string } };
 
 export type XmlCorrectionMutationVariables = Exact<{
   collId: Scalars['Int'];
@@ -2093,31 +2105,27 @@ export const GradedTextContentResultFragmentDoc = gql`
   maxPoints
 }
     `;
-export const GradedHtmlTaskResultFragmentDoc = gql`
-    fragment GradedHtmlTaskResult on GradedHtmlTaskResult {
+export const GradedElementSpecResultFragmentDoc = gql`
+    fragment GradedElementSpecResult on GradedElementSpecResult {
   id
   success
   elementFound
+  points
+  maxPoints
   textContentResult {
     ...GradedTextContentResult
   }
   attributeResults {
     ...GradedTextContentResult
   }
-  isSuccessful
-  points
-  maxPoints
 }
     ${GradedTextContentResultFragmentDoc}`;
-export const GradedJsHtmlElementSpecResultFragmentDoc = gql`
-    fragment GradedJsHtmlElementSpecResult on GradedJsHtmlElementSpecResult {
-  id
-}
-    `;
 export const GradedJsActionResultFragmentDoc = gql`
     fragment GradedJsActionResult on GradedJsActionResult {
   jsAction {
-    __typename
+    actionType
+    keysToSend
+    xpathQuery
   }
   actionPerformed
   points
@@ -2128,32 +2136,32 @@ export const GradedJsTaskResultFragmentDoc = gql`
     fragment GradedJsTaskResult on GradedJsTaskResult {
   id
   gradedPreResults {
-    ...GradedJsHtmlElementSpecResult
+    ...GradedElementSpecResult
   }
   gradedJsActionResult {
     ...GradedJsActionResult
   }
   gradedPostResults {
-    ...GradedJsHtmlElementSpecResult
+    ...GradedElementSpecResult
   }
   success
   points
   maxPoints
 }
-    ${GradedJsHtmlElementSpecResultFragmentDoc}
+    ${GradedElementSpecResultFragmentDoc}
 ${GradedJsActionResultFragmentDoc}`;
 export const WebResultFragmentDoc = gql`
     fragment WebResult on WebResult {
   points
   maxPoints
   gradedHtmlTaskResults {
-    ...GradedHtmlTaskResult
+    ...GradedElementSpecResult
   }
   gradedJsTaskResults {
     ...GradedJsTaskResult
   }
 }
-    ${GradedHtmlTaskResultFragmentDoc}
+    ${GradedElementSpecResultFragmentDoc}
 ${GradedJsTaskResultFragmentDoc}`;
 export const WebCorrectionResultFragmentDoc = gql`
     fragment WebCorrectionResult on WebCorrectionResult {

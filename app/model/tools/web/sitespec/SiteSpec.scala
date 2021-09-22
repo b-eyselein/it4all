@@ -10,11 +10,6 @@ sealed trait HtmlElementSpec {
   val attributes: Map[String, String]
 }
 
-sealed trait WebTask {
-  val id: Int
-  val text: String
-}
-
 // HtmlTask
 
 final case class HtmlTask(
@@ -24,8 +19,7 @@ final case class HtmlTask(
   awaitedTagName: String,
   awaitedTextContent: Option[String] = None,
   attributes: Map[String, String] = Map.empty
-) extends WebTask
-    with HtmlElementSpec
+) extends HtmlElementSpec
 
 // JsTask
 
@@ -57,7 +51,7 @@ final case class JsTask(
   preConditions: Seq[JsHtmlElementSpec],
   action: JsAction,
   postConditions: Seq[JsHtmlElementSpec]
-) extends WebTask
+)
 
 // SiteSpec
 

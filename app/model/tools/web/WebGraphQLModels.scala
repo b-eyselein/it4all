@@ -7,9 +7,7 @@ import model.{ExerciseFile, FilesSolution}
 import sangria.macros.derive._
 import sangria.schema._
 
-object WebGraphQLModels
-    extends FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebResult]
-    with GraphQLArguments {
+object WebGraphQLModels extends FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebResult] with GraphQLArguments {
 
   override val partEnumType: EnumType[WebExPart] = EnumType(
     "WebExPart",
@@ -68,9 +66,8 @@ object WebGraphQLModels
     ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
   )
 
-  private val gradedHtmlTaskResultType: ObjectType[Unit, GradedHtmlTaskResult] = {
-    implicit val stt: EnumType[SuccessType]               = successTypeType
-    implicit val gtrt: ObjectType[Unit, GradedTextResult] = gradedTextResultType
+  implicit val gradedJsActionResultType: ObjectType[Unit, GradedJsActionResult] = {
+    implicit val jat: ObjectType[Unit, JsAction] = jsActionType
 
     deriveObjectType(
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
@@ -78,10 +75,25 @@ object WebGraphQLModels
     )
   }
 
-  implicit val gradedJsActionResultType: ObjectType[Unit, GradedJsActionResult] = {
-    implicit val jat: ObjectType[Unit, JsAction] = jsActionType
+  private val gradedElementSpecResultInterfaceType: InterfaceType[Unit, GradedElementSpecResult] = InterfaceType(
+    "GradedElementSpecResult",
+    fields[Unit, GradedElementSpecResult](
+      Field("id", IntType, resolve = _.value.id),
+      Field("success", successTypeType, resolve = _.value.success),
+      Field("elementFound", BooleanType, resolve = _.value.elementFound),
+      Field("points", FloatType, resolve = _.value.points.asDouble),
+      Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble),
+      Field("textContentResult", OptionType(gradedTextResultType), resolve = _.value.textContentResult),
+      Field("attributeResults", ListType(gradedTextResultType), resolve = _.value.attributeResults)
+    )
+  )
+
+  private val gradedHtmlTaskResultType: ObjectType[Unit, GradedHtmlTaskResult] = {
+    implicit val stt: EnumType[SuccessType]               = successTypeType
+    implicit val gtrt: ObjectType[Unit, GradedTextResult] = gradedTextResultType
 
     deriveObjectType(
+      Interfaces(gradedElementSpecResultInterfaceType),
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
       ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
     )
@@ -92,6 +104,7 @@ object WebGraphQLModels
     implicit val gtrt: ObjectType[Unit, GradedTextResult] = gradedTextResultType
 
     deriveObjectType(
+      Interfaces(gradedElementSpecResultInterfaceType),
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
       ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
     )
