@@ -27,7 +27,7 @@ export class MyJointClass extends joint.shapes.basic.Generic {
 
   initialize(attributes?: joint.dia.Element.Attributes, options?: ModelConstructorOptions<this> | undefined): void {
     this.on('change:classType change:className change:attributes change:methods', () => {
-      // console.log('Update...');
+      console.warn('Update...');
       this.updateRectangles();
     });
 
@@ -37,8 +37,6 @@ export class MyJointClass extends joint.shapes.basic.Generic {
   }
 
   updateRectangles(): void {
-    const attrs = this.get('attrs');
-
     const rects = [
       {type: 'name', text: this.getClassRectText()},
       {type: 'attrs', text: this.getAttributesAsStrings()},
@@ -47,15 +45,13 @@ export class MyJointClass extends joint.shapes.basic.Generic {
 
     let offsetY = 0;
 
-    console.info(JSON.stringify(attrs, null, 2));
-
     rects.forEach(({type, text}) => {
 
       const rectHeight: number = calcRectHeight(text);
 
-      attrs[`.uml-class-${type}-text`].text = text.join('\n');
-      attrs['.uml-class-' + type + '-rect'].height = rectHeight;
-      attrs['.uml-class-' + type + '-rect'].transform = 'translate(0,' + offsetY + ')';
+      this.attr(`.uml-class-${type}-text/text`, text.join('\n'));
+      this.attr(`.uml-class-${type}-rect/height`, rectHeight);
+      this.attr(`.uml-class-${type}-rect/transform`, 'translate(0,' + offsetY + ')');
 
       offsetY += rectHeight;
     });
@@ -105,7 +101,7 @@ export class MyJointClass extends joint.shapes.basic.Generic {
   }
 
   setClassName(className: string): void {
-    this.set('className', className);
+    this.prop('className', className);
   }
 
   getClassRectText(): string[] {

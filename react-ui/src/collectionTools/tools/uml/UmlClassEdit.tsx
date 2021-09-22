@@ -37,6 +37,7 @@ export function UmlClassEdit({editedClass, cancelEdit}: IProps): JSX.Element {
     if (editedClass.getClassType() !== classType) {
       editedClass.setClassType(classType);
     }
+
     if (editedClass.getClassName() !== name) {
       editedClass.setClassName(name);
     }

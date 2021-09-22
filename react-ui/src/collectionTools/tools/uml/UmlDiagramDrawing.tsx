@@ -19,6 +19,7 @@ import {database} from '../../DexieTable';
 import {UmlDiagramDrawingCorrectionTabContent} from './UmlDiagramDrawingCorrectionTabContent';
 import {WithQuery} from '../../../WithQuery';
 import {UmlClassEdit} from './UmlClassEdit';
+import {UmlAssocEdit} from './UmlAssocEdit';
 
 enum CreatableClassDiagramObject {Class, Association, Implementation}
 
@@ -149,12 +150,15 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, oldSolut
       const model = cellView.model;
 
       if (model instanceof joint.shapes.uml.Association) {
-        return {...state, editedAssociation: model};
+        const editedAssociation = state.editedAssociation && state.editedAssociation.id === model.id ? undefined : model;
+
+        return {...state, editedAssociation};
       }
 
       if (model instanceof MyJointClass && !withHelp) {
-        console.info(state.editedClass);
-        return {...state, editedClass: state.editedClass?.getClassName() === model.getClassName() ? undefined : model};
+        const editedClass = state.editedClass && state.editedClass.id === model.id ? undefined : model;
+
+        return {...state, editedClass};
       }
 
       return state;
@@ -251,22 +255,10 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, oldSolut
 
           <BulmaTabs tabs={tabs} activeTabId={activeTab} setActiveTabId={setActiveTab}/>
 
-          {state.editedClass && <>
-            <hr/>
+          {state.editedClass && <UmlClassEdit editedClass={state.editedClass} cancelEdit={() => setState((state) => ({...state, editedClass: undefined}))}/>}
 
-            <UmlClassEdit editedClass={state.editedClass} cancelEdit={() => setState((state) => ({...state, editedClass: undefined}))}/>
-
-            {/*< it4all - uml - className - edit [editedClass] = 'editedClass'(cancel) = 'editedClass = undefined' > < /it4all-uml-className-edit>*/}
-          </>}
-
-          {/*
-  <ng-container *ngIf = 'editedAssociation' >
-  < hr >
-
-  < it4all - uml - assoc - edit [editedAssociation] = 'editedAssociation'
-  (cancel) = 'editedAssociation = undefined' > < /it4all-uml-assoc-edit>;;;;
-</ng-container>
-*/}
+          {state.editedAssociation &&
+          <UmlAssocEdit editedAssociation={state.editedAssociation} cancelEdit={() => setState((state) => ({...state, editedAssociation: undefined}))}/>}
 
         </div>
       </div>
