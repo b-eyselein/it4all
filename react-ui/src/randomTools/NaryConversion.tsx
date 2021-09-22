@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {BINARY_SYSTEM, HEXADECIMAL_SYSTEM, NaryIState, NumberingSystem} from './nary';
 import {NaryNumberReadOnlyInputComponent, NaryReadOnlyNumberInput} from './NaryNumberReadOnlyInput';
-import {RandomSolveButtons} from './RandomToolBase';
+import {RandomSolveButtons} from './RandomSolveButtons';
 import {randomInt} from './boolModel/bool-formula';
 import {useTranslation} from 'react-i18next';
 import {NaryLimits} from './NaryLimits';
@@ -70,7 +70,7 @@ export function NaryConversion(): JSX.Element {
                        radix={state.targetSystem.radix} update={(newValue) => setState((state) => ({...state, solutionString: newValue}))}/>
 
       <div className="my-3">
-        <RandomSolveButtons correct={correct}
+        <RandomSolveButtons toolId={'nary'} correct={correct}
                             nextExercise={() => setState(({max, startSystem, targetSystem}) => generateExercise(max, startSystem, targetSystem))}/>
       </div>
 

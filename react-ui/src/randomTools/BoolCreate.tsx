@@ -4,7 +4,7 @@ import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from
 import {useTranslation} from 'react-i18next';
 import {Assignment, BooleanNode, calculateAssignments} from './boolModel/bool-node';
 import classNames from 'classnames';
-import {RandomSolveButtons} from './RandomToolBase';
+import {RandomSolveButtons} from './RandomSolveButtons';
 import {BoolCreateInstructions} from './BoolCreateInstructions';
 import {parseBooleanFormulaFromLanguage} from './boolModel/boolean-formula-parser';
 import {Result} from 'parsimmon';
@@ -100,9 +100,7 @@ export function BoolCreate(): JSX.Element {
         </div>
       </div>
 
-
-      <RandomSolveButtons correct={correct} nextExercise={() => setState(initState())}/>
-
+      <RandomSolveButtons toolId={'bool'} correct={correct} nextExercise={() => setState(initState())}/>
 
       <div className="columns my-3">
         <div className="column is-half-desktop">

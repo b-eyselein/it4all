@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {RandomSolveButtons} from './RandomToolBase';
+import {RandomSolveButtons} from './RandomSolveButtons';
 import {NaryNumberReadOnlyInputComponent, NaryReadOnlyNumberInput} from './NaryNumberReadOnlyInput';
 import {BINARY_SYSTEM, NaryIState, NumberingSystem} from './nary';
 import {randomInt} from './boolModel/bool-formula';
@@ -77,7 +77,7 @@ export function NaryAddition(): JSX.Element {
       <NaryNumberInput labelContent={t('solution')} initialValue={state.solutionString} checked={state.checked} correct={state.correct}
                        radix={state.numberingSystem.radix} update={(newValue) => setState((state) => ({...state, solutionString: newValue}))}/>
 
-      <RandomSolveButtons correct={checkSolution} nextExercise={nextExercise}/>
+      <RandomSolveButtons toolId={'nary'} correct={checkSolution} nextExercise={nextExercise}/>
 
     </div>
   );

@@ -57,23 +57,3 @@ function RandomToolOverview({tool: {id: toolId, name, parts}}: IProps): JSX.Elem
 
   </div>;
 }
-
-interface RandomSolveButtonsIProps {
-  correct: () => void;
-  nextExercise: () => void;
-}
-
-export function RandomSolveButtons({correct, nextExercise}: RandomSolveButtonsIProps): JSX.Element {
-  return <div className="columns">
-    <div className="column is-one-third-desktop">
-      <button className="button is-link is-fullwidth" onClick={correct}>Lösung testen</button>
-    </div>
-    <div className="column is-one-third-desktop">
-      <button className="button is-primary is-fullwidth" onClick={nextExercise}>Nächste Aufgabe</button>
-    </div>
-    <div className="column is-one-third-desktop">
-      {/* FIXME: link target is not correct! */}
-      <Link className="button is-dark is-fullwidth" to="..">Bearbeiten beenden</Link>
-    </div>
-  </div>;
-}

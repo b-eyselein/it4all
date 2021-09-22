@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {BooleanFormula, generateBooleanFormula} from './boolModel/bool-formula';
 import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/bool-component-helper';
 import classNames from 'classnames';
-import {RandomSolveButtons} from './RandomToolBase';
+import {RandomSolveButtons} from './RandomSolveButtons';
 import {Assignment, BooleanNode, calculateAssignments} from './boolModel/bool-node';
 import {useTranslation} from 'react-i18next';
 
@@ -116,7 +116,7 @@ export function BoolFillOut(): JSX.Element {
           : <span>&#10008; Ihre Lösung ist nicht (komplett) korrekt.</span>}
       </div>}
 
-      <RandomSolveButtons correct={correct} nextExercise={() => setState(initState())}/>
+      <RandomSolveButtons toolId={'bool'} correct={correct} nextExercise={() => setState(initState())}/>
     </div>
   );
 }
