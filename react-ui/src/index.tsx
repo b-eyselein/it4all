@@ -39,7 +39,7 @@ const apolloAuthMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-const apolloUrl = (process.env.NODE_ENV === 'development' ? 'http://localhost:9000' : '') + '/api/graphql';
+const apolloUrl = (process.env.NODE_ENV === 'development' ? 'http://localhost:9000' : '') + '/graphql';
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),

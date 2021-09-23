@@ -1,6 +1,6 @@
 overwrite: true
 
-schema: "http://localhost:9000/api/graphql"
+schema: "http://localhost:9000/graphql"
 
 documents: "src/**/*.graphql"
 

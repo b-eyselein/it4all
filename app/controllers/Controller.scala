@@ -37,19 +37,15 @@ class Controller @Inject() (
 
   private val apiPrefix = configuration.get[String]("apiPrefix")
 
-  def index: Action[AnyContent] = Action { implicit request =>
-    Redirect(routes.Controller.langIndex("de"))
-  }
+  def index: Action[AnyContent] = assets.at("index.html")
 
-  def langIndex(lang: String = "de"): Action[AnyContent] = assets.at(s"$lang/index.html")
-
-  def graphiql: Action[AnyContent] = Action { implicit request => Ok(views.html.graphiql()) }
-
-  def assetOrDefault(lang: String, resource: String): Action[AnyContent] = if (resource.startsWith(apiPrefix)) {
+  def assetOrDefault(resource: String): Action[AnyContent] = if (resource.startsWith(apiPrefix)) {
     Action.async(r => errorHandler.onClientError(r, NOT_FOUND, "Not found"))
   } else {
-    if (resource.contains(".")) assets.at(s"$lang/$resource") else langIndex(lang)
+    if (resource.contains(".")) assets.at(resource) else index
   }
+
+  def graphiql: Action[AnyContent] = Action { implicit request => Ok(views.html.graphiql()) }
 
   private implicit val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
 
