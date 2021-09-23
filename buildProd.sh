@@ -1,4 +1,7 @@
+# preparation
 mkdir -p public
+
+rm -rf public/*
 
 # client production build
 cd react-ui || exit
