@@ -48,6 +48,7 @@ export function NaryConversion(): JSX.Element {
 
   return (
     <div className="container">
+      <h1 className="title is-3 has-text-centered">{t('naryConversion')}</h1>
 
       <NaryLimits max={state.max} update={(newValue) => setState((state) => generateExercise(newValue, state.startSystem, state.targetSystem))}/>
 

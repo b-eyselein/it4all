@@ -48,8 +48,6 @@ export function NaryTwoConversion(): JSX.Element {
       .replace(/\s+/, '')
       .replace(/[01]/g, (x) => x === '0' ? '1' : '0'), 2);
 
-    console.info(state.solutionString);
-
     const positiveSolution = parseInt(state.solutionString.replace(/\s+/, ''), 2);
 
     const awaitedBinaryAbsolute = toConvert.toString(2);
@@ -65,6 +63,7 @@ export function NaryTwoConversion(): JSX.Element {
 
   return (
     <div className="container">
+      <h1 className="title is-3 has-text-centered">{t('naryTwoConversion')}</h1>
 
       <NaryLimits max={state.max} update={(newValue) => setState(generateExercise(newValue))}/>
 
@@ -102,7 +101,8 @@ export function NaryTwoConversion(): JSX.Element {
 
       <br/>
 
-      <RandomSolveButtons toolId={'nary'} correct={correct} nextExercise={() => setState(({max, withIntermediateSteps}) => generateExercise(max, withIntermediateSteps))}/>
+      <RandomSolveButtons toolId={'nary'} correct={correct}
+                          nextExercise={() => setState(({max, withIntermediateSteps}) => generateExercise(max, withIntermediateSteps))}/>
 
     </div>
   );
