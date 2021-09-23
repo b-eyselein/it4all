@@ -2,69 +2,56 @@
 
 it4all is a web correction framework for
 
-- Web Programming (Html, CSS, JavaScript)
+- Python
+- Web Programming (Html, CSS, JavaScript, Flask)
 - XML
 - SQL
-- Different Programming Languages (Python3, Java, ...)
 - Uml Class Diagrams and Activity Diagrams
 - Nary Numbers, Boolean Algebra
 - Regular Expressions
 
 [![pipeline status](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/badges/master/pipeline.svg)](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/-/commits/master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2941021ee993484db0cab405aa03b209)](https://www.codacy.com/app/it4all/it4all?utm_source=gitlab2.informatik.uni-wuerzburg.de&amp;utm_medium=referral&amp;utm_content=bje40dc/it4all&amp;utm_campaign=Badge_Grade)
 
 ## Development
 
 ### Prerequisites
+
 To develop `it4all`, you need to have installed the following programs (names of packages in Ubuntu in brackets):
 
 1. Git (`git`)
 2. (Open-)JDK 11 (`default-jdk` or `openjdk-11-jdk`)
-3. NodeJS (`nodejs` for compiling Typescript)
-4. NPM (`npm`)
-5. Docker (`docker.io`) (Do not forget to add yourself to group "docker" on Linux with
-   `sudo usermod -aG docker $(whoami)` and log yourself out and in again)
+3. NodeJS with NPM (`nodejs`, `npm`)
+5. Docker (`docker.io`) (Do not forget to add yourself to group "docker" on Linux with `sudo usermod -aG docker $(whoami)` and log yourself out and in again)
 6. Docker-compose (`docker-compose`)
-7. MariaDB-Server (`mariadb-server`)
-8. sbt (https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html)
+8. [sbt](https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html)
 
 ```bash
-sudo apt install git openjdk-11-jdk nodejs npm docker.io docker-compose mariadb-server
+sudo apt install git openjdk-11-jdk nodejs npm docker.io docker-compose
 ```
-
-### MariaDB-Server
-
-`it4all` expects a `MariaDB`-Server running on port 3306 with users given in `conf/application.conf`
 
 ### First start
 
-* Clone the repository on the [GitLab](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git) of the institute of computer science of the university of Wuerzburg and change folders:
+```bash
+# Clone the repository on the [GitLab](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git) of the institute of computer science of the university of Wuerzburg
+git clone https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git
 
-  `$ git clone --recurse-submodules https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all.git`
+cd it4all
 
-  `$ cd it4all`
+# Create a folder for solutions needed by docker
+mkdir -p data/web/solutions
 
-* Set up all containers with docker-compose:
+# Set up all containers with docker-compose
+docker-compose up -d
 
-  `$ docker-compose up -d`
-
-* Change ownership of all folders in `data/` (it gets created with ownership `root:root` by docker-compose):
-
-  `$ sudo chown -R $(whoami):$(whoami) data/`
-
-* Start the server with
-
-  `$ sbt run`
-
-If you forgot to clone the submodules, you can do it with
-
-`$ git submodule update --recursive`
+# Start the server with
+sbt run
+```
 
 ### Following starts
 
 Since the containers are all built and started, you can just restart the server with
 
-`$ sbt run`
+`sbt run`
 
 ### Common Commands for the sbt/Play Framework - Console
 
@@ -87,7 +74,6 @@ Install `Scala Tools` Plugin for IntelliJ Idea and import the `build.sbt`-file
 ### Prerequisites
 
 * JRE (`default-jre`)
-* MariaDB Server (`mariadb-server`)
 * Docker with docker-compose (`docker.io`, `docker-compose`)
 
 ### Running
@@ -95,13 +81,13 @@ Install `Scala Tools` Plugin for IntelliJ Idea and import the `build.sbt`-file
 * Create docker containers:
 
   `docker-compose up -d`
-  
+
 * Create solution dir or reset ownership (recursively) on `data/web`
 
 * Perform first start with db init
-  
+
   `bin/it4all -Dplay.http.secret.key="<random string>" -Dplay.evolutions.db.default.autoApply=true`
-  
+
 * Subsequent starts without db update:
 
   `bin/it4all -Dplay.http.secret.key="<random string>"`
