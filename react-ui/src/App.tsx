@@ -4,7 +4,7 @@ import {useTranslation} from 'react-i18next';
 import {Home} from './Home';
 import {LoginForm} from './LoginForm';
 import {ToolBase} from './ToolBase';
-import {RandomToolBase} from './randomTools/RandomToolBase';
+import {RandomToolsBase} from './randomTools/RandomToolBase';
 import {currentUserSelector} from './store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {changeLanguageAction, StoreAction, userLogoutAction} from './store/actions';
@@ -66,7 +66,7 @@ export function App(): JSX.Element {
         <Route path={homeUrl} exact component={Home}/>
         <Route path={'/loginForm'} component={LoginForm}/>
         <Route path={'/tools/:toolId'} component={ToolBase}/>
-        <Route path={'/randomTools'} component={RandomToolBase}/>
+        <Route path={'/randomTools'} component={RandomToolsBase}/>
       </Switch>
     </>
   );

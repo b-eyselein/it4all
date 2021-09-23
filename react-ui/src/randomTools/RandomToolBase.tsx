@@ -1,31 +1,36 @@
 import React from 'react';
 import {Link, Route, Switch, useRouteMatch} from 'react-router-dom';
-import {boolRandomTool, naryRandomTool, RandomTool} from './randomTools';
+import {RandomTool, randomTools} from './randomTools';
 import {useTranslation} from 'react-i18next';
-import {BoolFillOut} from './BoolFillOut';
-import {NaryAddition} from './NaryAddition';
-import {NaryConversion} from './NaryConversion';
-import {BoolCreate} from './BoolCreate';
-import {NaryTwoConversion} from './NaryTwoConversion';
 import {randomToolsUrlFragment} from '../urls';
 
-export function RandomToolBase(): JSX.Element {
+export function RandomToolsBase(): JSX.Element {
 
-  const {url} = useRouteMatch<{ toolId: string }>();
+  const {url} = useRouteMatch();
 
   return (
     <Switch>
-      <Route path={`${url}/bool`} exact render={() => <RandomToolOverview tool={boolRandomTool}/>}/>
-      <Route path={`${url}/bool/fillOut`} component={BoolFillOut}/>
-      <Route path={`${url}/bool/create`} component={BoolCreate}/>
-      <Route path={`${url}/nary`} exact render={() => <RandomToolOverview tool={naryRandomTool}/>}/>
-      <Route path={`${url}/nary/addition`} component={NaryAddition}/>
-      <Route path={`${url}/nary/conversion`} component={NaryConversion}/>
-      <Route path={`${url}/nary/twoConversion`} component={NaryTwoConversion}/>
+      {randomTools.map((tool) =>
+        <Route key={tool.id} path={`${url}/${tool.id}`} render={() => <RandomToolBase tool={tool}/>}/>
+      )}
     </Switch>
   );
 }
 
+function RandomToolBase({tool}: { tool: RandomTool }): JSX.Element {
+
+  const {url} = useRouteMatch();
+
+  return (
+    <Switch>
+      <Route path={`${url}/`} exact render={() => <RandomToolOverview tool={tool}/>}/>
+      {tool.parts.map(({id, component}) =>
+        <Route key={id} path={`${url}/${id}`} component={component}/>
+      )}
+    </Switch>
+  );
+
+}
 
 interface IProps {
   tool: RandomTool;

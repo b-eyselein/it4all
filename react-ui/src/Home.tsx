@@ -4,16 +4,16 @@ import {ToolOverviewQuery, useToolOverviewQuery} from './graphql';
 import {WithQuery} from './WithQuery';
 import {BulmaCard, FooterItem} from './helpers/BulmaCard';
 import {randomTools} from './randomTools/randomTools';
+import {randomToolsUrlFragment} from './urls';
 
 export function Home(): JSX.Element {
 
   const {t} = useTranslation('common');
   const query = useToolOverviewQuery();
 
-  function randomToolsRoutes(id: string, hasLessons?: boolean): FooterItem[] {
+  function randomToolsRoutes(id: string): FooterItem[] {
     return [
-      ...hasLessons ? [{link: `/lessons/${id}`, title: t('toLections')}] : [],
-      {link: `/randomTools/${id}`, title: t('toTool')}
+      {link: `/${randomToolsUrlFragment}/${id}`, title: t('toTool')}
     ];
   }
 
@@ -40,9 +40,9 @@ export function Home(): JSX.Element {
       </h1>
 
       <div className="columns is-multiline">
-        {randomTools.map(({id, name, hasLessons}) =>
+        {randomTools.map(({id, name}) =>
           <div className="column is-one-quarter-desktop is-half-tablet" key={id}>
-            <BulmaCard title={name} footerItems={randomToolsRoutes(id, hasLessons)}>
+            <BulmaCard title={name} footerItems={randomToolsRoutes(id)}>
               {() => <><p>&nbsp;</p><p>&nbsp;</p></>}
             </BulmaCard>
           </div>
