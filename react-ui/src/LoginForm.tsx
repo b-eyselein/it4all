@@ -9,6 +9,7 @@ import {Redirect} from 'react-router-dom';
 import {BulmaInputField} from './BulmaFields';
 import classNames from 'classnames';
 import * as yup from 'yup';
+import {homeUrl} from './urls';
 
 interface IState {
   loginInvalid?: boolean;
@@ -32,7 +33,7 @@ export function LoginForm(): JSX.Element {
   const currentUser = useSelector(currentUserSelector);
 
   if (currentUser) {
-    return <Redirect to={'/'}/>;
+    return <Redirect to={homeUrl}/>;
   }
 
   function handleSubmit(variables: LoginMutationVariables): void {

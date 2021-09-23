@@ -77,8 +77,6 @@ class Controller @Inject() (
 
   // Json Web Token session
 
-  private val jwtHashesToClaim: MutableMap[UUID, (JwtSession, LoggedInUser)] = MutableMap.empty
-
   private def getOrCreateUser(username: String): Future[LoggedInUser] = futureUserByUsername(username)
     .flatMap {
       case Some(u) => Future(u)
@@ -99,7 +97,7 @@ class Controller @Inject() (
 
           jwtHashesToClaim.put(uuid, (createJwtSession(user.username), user))
 
-          Redirect(s"/de/lti/${uuid.toString}").withNewSession
+          Redirect(s"/lti/${uuid.toString}").withNewSession
         }
     }
   }

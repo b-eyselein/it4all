@@ -8,7 +8,8 @@ import {RandomToolsBase} from './randomTools/RandomToolBase';
 import {currentUserSelector} from './store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {changeLanguageAction, StoreAction, userLogoutAction} from './store/actions';
-import {homeUrl} from './urls';
+import {homeUrl, randomToolsUrlFragment, toolsUrlFragment} from './urls';
+import {ClaimLti} from './ClaimLti';
 
 export function App(): JSX.Element {
 
@@ -65,8 +66,9 @@ export function App(): JSX.Element {
       <Switch>
         <Route path={homeUrl} exact component={Home}/>
         <Route path={'/loginForm'} component={LoginForm}/>
-        <Route path={'/tools/:toolId'} component={ToolBase}/>
-        <Route path={'/randomTools'} component={RandomToolsBase}/>
+        <Route path={`/${toolsUrlFragment}/:toolId`} component={ToolBase}/>
+        <Route path={`/${randomToolsUrlFragment}`} component={RandomToolsBase}/>
+        <Route path={'/lti/:ltiUuid'} component={ClaimLti}/>
       </Switch>
     </>
   );

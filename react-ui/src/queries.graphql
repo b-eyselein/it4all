@@ -418,3 +418,11 @@ mutation Login($username: String!, $password: String!) {
     ...LoggedInUserWithToken
   }
 }
+
+# /lti/:ltiUuid
+
+mutation ClaimLtiWebToken($ltiUuid: String!) {
+  claimLtiWebToken(ltiUuid: $ltiUuid) {
+    ...LoggedInUserWithToken
+  }
+}

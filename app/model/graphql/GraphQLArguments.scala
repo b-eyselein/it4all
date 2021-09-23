@@ -18,6 +18,8 @@ trait GraphQLArguments {
 
   protected val partIdArgument: Argument[String] = Argument("partId", StringType)
 
+  protected val ltiUuidArgument: Argument[String] = Argument("ltiUuid", StringType)
+
   protected val userCredentialsArgument: Argument[UserCredentials] = {
     implicit val ucf: OFormat[UserCredentials]                     = JsonProtocols.userCredentialsFormat
     val userCredentialsInputType: InputObjectType[UserCredentials] = deriveInputObjectType()

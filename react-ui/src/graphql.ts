@@ -434,6 +434,7 @@ export enum MatchType {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  claimLtiWebToken?: Maybe<LoggedInUserWithToken>;
   ebnfExercise?: Maybe<EbnfExerciseMutations>;
   flaskExercise?: Maybe<FlaskExerciseMutations>;
   login?: Maybe<LoggedInUserWithToken>;
@@ -444,6 +445,11 @@ export type Mutation = {
   umlExercise?: Maybe<UmlExerciseMutations>;
   webExercise?: Maybe<WebExerciseMutations>;
   xmlExercise?: Maybe<XmlExerciseMutations>;
+};
+
+
+export type MutationClaimLtiWebTokenArgs = {
+  ltiUuid: Scalars['String'];
 };
 
 
@@ -1649,6 +1655,13 @@ export type LoginMutationVariables = Exact<{
 
 
 export type LoginMutation = { __typename?: 'Mutation', login?: Maybe<{ __typename?: 'LoggedInUserWithToken', jwt: string, loggedInUser: { __typename?: 'LoggedInUser', username: string, isAdmin: boolean } }> };
+
+export type ClaimLtiWebTokenMutationVariables = Exact<{
+  ltiUuid: Scalars['String'];
+}>;
+
+
+export type ClaimLtiWebTokenMutation = { __typename?: 'Mutation', claimLtiWebToken?: Maybe<{ __typename?: 'LoggedInUserWithToken', jwt: string, loggedInUser: { __typename?: 'LoggedInUser', username: string, isAdmin: boolean } }> };
 
 export const FlaskTestResultFragmentDoc = gql`
     fragment FlaskTestResult on FlaskTestResult {
@@ -3237,3 +3250,36 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const ClaimLtiWebTokenDocument = gql`
+    mutation ClaimLtiWebToken($ltiUuid: String!) {
+  claimLtiWebToken(ltiUuid: $ltiUuid) {
+    ...LoggedInUserWithToken
+  }
+}
+    ${LoggedInUserWithTokenFragmentDoc}`;
+export type ClaimLtiWebTokenMutationFn = Apollo.MutationFunction<ClaimLtiWebTokenMutation, ClaimLtiWebTokenMutationVariables>;
+
+/**
+ * __useClaimLtiWebTokenMutation__
+ *
+ * To run a mutation, you first call `useClaimLtiWebTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useClaimLtiWebTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [claimLtiWebTokenMutation, { data, loading, error }] = useClaimLtiWebTokenMutation({
+ *   variables: {
+ *      ltiUuid: // value for 'ltiUuid'
+ *   },
+ * });
+ */
+export function useClaimLtiWebTokenMutation(baseOptions?: Apollo.MutationHookOptions<ClaimLtiWebTokenMutation, ClaimLtiWebTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ClaimLtiWebTokenMutation, ClaimLtiWebTokenMutationVariables>(ClaimLtiWebTokenDocument, options);
+      }
+export type ClaimLtiWebTokenMutationHookResult = ReturnType<typeof useClaimLtiWebTokenMutation>;
+export type ClaimLtiWebTokenMutationResult = Apollo.MutationResult<ClaimLtiWebTokenMutation>;
+export type ClaimLtiWebTokenMutationOptions = Apollo.BaseMutationOptions<ClaimLtiWebTokenMutation, ClaimLtiWebTokenMutationVariables>;

@@ -5,15 +5,20 @@ import model._
 import model.mongo.MongoClientQueries
 import model.result.{BasicExercisePartResult, CorrectionResult}
 import model.tools.ToolList
+import pdi.jwt.JwtSession
 import play.api.libs.json._
 import sangria.macros.derive._
 import sangria.marshalling.playJson._
 import sangria.schema._
 
+import java.util.UUID
+import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 trait GraphQLMutations extends ExerciseGraphQLModels with GraphQLArguments with MongoClientQueries with JwtHelpers {
+
+  protected val jwtHashesToClaim: MutableMap[UUID, (JwtSession, LoggedInUser)] = MutableMap.empty
 
   private def register(registerValues: RegisterValues): Future[Option[String]] = if (registerValues.isInvalid) {
     Future.successful(None)
@@ -153,6 +158,15 @@ trait GraphQLMutations extends ExerciseGraphQLModels with GraphQLArguments with 
         OptionType(loggedInUserWithTokenType),
         arguments = userCredentialsArgument :: Nil,
         resolve = context => authenticate(context.arg(userCredentialsArgument))
+      ),
+      Field(
+        "claimLtiWebToken",
+        OptionType(loggedInUserWithTokenType),
+        arguments = ltiUuidArgument :: Nil,
+        resolve = context =>
+          jwtHashesToClaim.remove(UUID.fromString(context.arg(ltiUuidArgument))).map { case (jwtSession, user) =>
+            LoggedInUserWithToken(user, jwtSession.serialize)
+          }
       )
     ) ++ exerciseCorrectionFields
   )
