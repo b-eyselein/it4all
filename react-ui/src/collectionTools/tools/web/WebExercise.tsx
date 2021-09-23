@@ -45,7 +45,7 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
     ? oldSolution.files
     : content.files;
 
-  function correct(files: ExerciseFileFragment[]): void {
+  function correct(files: ExerciseFileFragment[], onCorrect: () => void): void {
     const solution: FilesSolutionInput = {
       files: files.map(({name, content, fileType, editable}) => ({name, content, fileType, editable}))
     };
@@ -53,6 +53,7 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
     database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
 
     correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution, part}})
+      .then(onCorrect)
       .catch((err) => console.error(err));
   }
 

@@ -13,7 +13,7 @@ interface IProps {
   initialFiles: ExerciseFileFragment[];
   sampleSolutions: FilesSolution[],
   correctionTabRender: JSX.Element;
-  correct: (files: ExerciseFileFragment[]) => void;
+  correct: (files: ExerciseFileFragment[], onCorrected: () => void) => void;
   isCorrecting: boolean;
 }
 
@@ -40,8 +40,7 @@ export function FilesExercise(
   }
 
   function onCorrect(): void {
-    correct(Object.values(state.workspace));
-    setActiveTabId('correction');
+    correct(Object.values(state.workspace), () => setActiveTabId('correction'));
   }
 
   const exerciseDescriptionTabRender = <>

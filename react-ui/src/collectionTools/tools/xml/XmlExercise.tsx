@@ -69,12 +69,13 @@ export function XmlExercise({exercise, content, partId, oldSolution}: IProps): J
     </>
     : <span>{exercise.text}</span>;
 
-  function correct(files: ExerciseFileFragment[]): void {
+  function correct(files: ExerciseFileFragment[], onCorrect: () => void): void {
     const solution: XmlSolutionInput = {grammar: files[0].content, document: files[1].content};
 
     database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
 
     correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution, part}})
+      .then(onCorrect)
       .catch((err) => console.error(err));
   }
 

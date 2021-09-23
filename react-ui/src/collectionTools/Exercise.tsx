@@ -15,6 +15,7 @@ import {useTranslation} from 'react-i18next';
 import {UmlExercise} from './tools/uml/UmlExercise';
 import {neverRender} from '../helpers';
 import {UmlDbClassDiagram} from './tools/uml/UmlDiagramDrawing';
+import {collectionsUrlFragment, homeUrl, toolsUrlFragment} from '../urls';
 
 export interface ConcreteExerciseIProps<T, S> {
   exercise: ExerciseSolveFieldsFragment;
@@ -41,21 +42,16 @@ export function Exercise<SolutionType>({toolId, collectionId, exerciseId}: Exerc
   }, [partId]);
 
   function render({tool}: ExerciseQuery): JSX.Element {
-
     if (!tool) {
-      return <Redirect to={''}/>;
+      return <Redirect to={homeUrl}/>;
+    } else if (!tool.collection) {
+      return <Redirect to={`/${toolsUrlFragment}/${toolId}`}/>;
     }
 
-    const collection = tool.collection;
-
-    if (!collection) {
-      return <Redirect to={''}/>;
-    }
-
-    const exercise = collection.exercise;
+    const exercise = tool.collection.exercise;
 
     if (!exercise) {
-      return <Redirect to={''}/>;
+      return <Redirect to={`/${toolsUrlFragment}/${toolId}/${collectionsUrlFragment}/${collectionId}`}/>;
     }
 
     const content = exercise.content;
