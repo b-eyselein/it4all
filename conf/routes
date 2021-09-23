@@ -3,7 +3,6 @@ GET         /                               controllers.Controller.index
 
 # LTI
 POST        /lti                            controllers.Controller.ltiHoneypot
-GET         /claimWebToken/:uuidStr         controllers.Controller.claimJsonWebToken(uuidStr: String)
 
 # GraphQL
 GET         /graphiql                       controllers.Controller.graphiql

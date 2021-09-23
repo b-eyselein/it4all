@@ -4,7 +4,6 @@ import com.github.t3hnar.bcrypt._
 import model._
 import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
 import model.lti.BasicLtiLaunchRequest
-import pdi.jwt.JwtSession
 import play.api.http.HttpErrorHandler
 import play.api.libs.json._
 import play.api.mvc._
@@ -16,7 +15,6 @@ import sangria.parser.QueryParser
 
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
-import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
@@ -99,16 +97,6 @@ class Controller @Inject() (
 
           Redirect(s"/lti/${uuid.toString}").withNewSession
         }
-    }
-  }
-
-  def claimJsonWebToken(uuidStr: String): Action[AnyContent] = Action { implicit request =>
-    jwtHashesToClaim.remove(UUID.fromString(uuidStr)) match {
-      case None => NotFound("")
-      case Some((jwtSession, user)) =>
-        val loggedInUserWithToken = LoggedInUserWithToken(user, jwtSession.serialize)
-
-        Ok(writeJsonWebToken(loggedInUserWithToken))
     }
   }
 
