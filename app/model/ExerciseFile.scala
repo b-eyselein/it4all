@@ -33,10 +33,11 @@ final case class PathExerciseFile(
   name: String,
   fileType: String,
   directory: File,
-  editable: Boolean
+  editable: Boolean,
+  private val realFilename: Option[String] = None
 ) extends ExerciseFile {
 
-  def file: File = directory / name
+  def file: File = directory / realFilename.getOrElse(name)
 
   override def content: String = file.contentAsString
 

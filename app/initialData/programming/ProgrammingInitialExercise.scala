@@ -26,7 +26,7 @@ abstract class ProgrammingInitialExercise(collectionId: Int, exerciseId: Int, pr
   protected def unitTestFiles: Seq[ExerciseFile] = loadFilesFromFolder(
     exResPath,
     Seq(
-      FileLoadConfig(implFileName, fileType, maybeOtherFileName = Some(implDeclFileName)),
+      FileLoadConfig(implFileName, fileType, realFilename = Some(implDeclFileName)),
       FileLoadConfig(testFileName, fileType, editable = true, Some(testDeclFileName))
     )
   )

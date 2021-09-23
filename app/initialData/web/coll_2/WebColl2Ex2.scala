@@ -13,8 +13,8 @@ object WebColl2Ex2 extends WebInitialExercise(2, 2) {
   private val sampleSolutionFiles = loadFilesFromFolder(
     exResPath / "sol_1",
     Seq(
-      FileLoadConfig("pwChecker.html", htmlFileType, maybeOtherFileName = Some("branchesStrings.html")),
-      FileLoadConfig("pwChecker.js", jsFileType, maybeOtherFileName = Some("branchesStrings.js"))
+      FileLoadConfig("pwChecker.html", htmlFileType, realFilename = Some("branchesStrings.html")),
+      FileLoadConfig("pwChecker.js", jsFileType, realFilename = Some("branchesStrings.js"))
     )
   )
 

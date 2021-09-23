@@ -14,7 +14,7 @@ object ProgrammingColl8Ex1 extends ProgrammingInitialExercise(8, 1, "table") {
     unitTestFiles = loadFilesFromFolder(
       exResPath,
       Seq(
-        FileLoadConfig("table.py", fileType, maybeOtherFileName = Some("table_declaration.py")),
+        FileLoadConfig("table.py", fileType, realFilename = Some("table_declaration.py")),
         FileLoadConfig("raum.csv", fileType),
         FileLoadConfig("test_table.py", fileType, editable = true, Some("test_table_declaration.py"))
       )
