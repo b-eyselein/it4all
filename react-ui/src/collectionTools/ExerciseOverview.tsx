@@ -6,9 +6,11 @@ import {BreadCrumbPart, BreadCrumbs} from '../helpers/BreadCrumbs';
 import {WithQuery} from '../WithQuery';
 import {useSelector} from 'react-redux';
 import {currentUserSelector} from '../store/store';
+import {useTranslation} from 'react-i18next';
 
 export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIProps): JSX.Element {
 
+  const {t} = useTranslation('common');
   const {url} = useRouteMatch();
   const currentUser = useSelector(currentUserSelector);
 
@@ -34,6 +36,9 @@ export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIPr
 
     const entryParts: PartFragment[] = exercise.parts.filter((p) => p.isEntryPart);
 
+    console.info(JSON.stringify(exercise.parts));
+    console.info(JSON.stringify(entryParts));
+
     const breadCrumbs: BreadCrumbPart[] = [
       {routerLinkPart: '/', title: 'Tools'},
       {routerLinkPart: `tools/${toolId}`, title: tool.name},
@@ -54,13 +59,15 @@ export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIPr
 
         <div className="notification is-light-grey" dangerouslySetInnerHTML={{__html: exercise.text}}/>
 
-        <div className="columns">
-          {currentUser && entryParts.map((part) =>
-            <div className="column" key={part.id}>
-              <Link className="button is-link is-fullwidth" to={`${url}/parts/${part.id}`}>{part.name}</Link>
-            </div>
-          )}
-        </div>
+        {currentUser
+          ? <div className="columns">
+            {entryParts.map((part) =>
+              <div className="column" key={part.id}>
+                <Link className="button is-link is-fullwidth" to={`${url}/parts/${part.id}`}>{part.name}</Link>
+              </div>)}
+          </div>
+          : <div className="notification is-primary has-text-centered">{t('pleaseLogin')}</div>
+        }
 
       </div>
     );
