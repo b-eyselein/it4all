@@ -36,9 +36,6 @@ export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIPr
 
     const entryParts: PartFragment[] = exercise.parts.filter((p) => p.isEntryPart);
 
-    console.info(JSON.stringify(exercise.parts));
-    console.info(JSON.stringify(entryParts));
-
     const breadCrumbs: BreadCrumbPart[] = [
       {routerLinkPart: '/', title: 'Tools'},
       {routerLinkPart: `tools/${toolId}`, title: tool.name},
