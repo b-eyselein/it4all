@@ -39,7 +39,7 @@ export function Exercise<SolutionType>({toolId, collectionId, exerciseId}: Exerc
   useEffect(() => {
     database.getSolution<SolutionType>(toolId, collectionId, exerciseId, partId)
       .then((oldSolution) => setState({oldSolutionLoaded: true, oldSolution: oldSolution?.solution}))
-      .catch((error) => setState({oldSolutionLoaded: true}));
+      .catch((/*error*/) => setState({oldSolutionLoaded: true}));
   }, [partId]);
 
   function render({tool}: ExerciseQuery): JSX.Element {
