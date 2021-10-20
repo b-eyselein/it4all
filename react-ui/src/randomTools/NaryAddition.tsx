@@ -75,7 +75,7 @@ export function NaryAddition(): JSX.Element {
       <hr/>
 
       <NaryNumberInput labelContent={t('solution')} initialValue={state.solutionString} checked={state.checked} correct={state.correct}
-                       radix={state.numberingSystem.radix} update={(newValue) => setState((state) => ({...state, solutionString: newValue}))}/>
+                       radix={state.numberingSystem.radix} update={(newValue) => setState((state) => ({...state, solutionString: newValue}))} rtl={true}/>
 
       <RandomSolveButtons toolId={'nary'} correct={checkSolution} nextExercise={nextExercise}/>
 
