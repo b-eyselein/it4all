@@ -52,7 +52,5 @@ export function NaryNumberReadOnlyInputComponent({labelContent, naryNumberInput}
         </div>
       </div>
     </div>
-
   );
-
 }

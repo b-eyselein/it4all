@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import {NaryNumberReadOnlyInputComponent, NaryReadOnlyNumberInput} from './NaryNumberReadOnlyInput';
-import {DECIMAL_SYSTEM, NaryIState} from './nary';
+import {NaryIState} from './nary';
 import {RandomSolveButtons} from './RandomSolveButtons';
 import {useTranslation} from 'react-i18next';
 import {randomInt} from './boolModel/bool-formula';
@@ -8,7 +7,7 @@ import {NaryLimits} from './NaryLimits';
 import {NaryNumberInput} from './NaryNumberInput';
 
 interface IState extends NaryIState {
-  toConvertInput: NaryReadOnlyNumberInput;
+  toConvert: number;
   withIntermediateSteps: boolean;
   binaryAbsoluteString: string;
   binaryAbsoluteCorrect: boolean;
@@ -19,9 +18,7 @@ interface IState extends NaryIState {
 function generateExercise(max = 128, withIntermediateSteps = false): IState {
   return {
     max,
-    toConvertInput: {
-      decimalNumber: randomInt(1, max), maxValueForDigits: max, numberingSystem: DECIMAL_SYSTEM
-    },
+    toConvert: randomInt(1, max),
     checked: false,
     withIntermediateSteps,
     binaryAbsoluteString: '',
@@ -40,7 +37,7 @@ export function NaryTwoConversion(): JSX.Element {
   const [state, setState] = useState<IState>(generateExercise);
 
   function correct(): void {
-    const toConvert = state.toConvertInput.decimalNumber;
+    const toConvert = state.toConvert;
 
     const binaryAbsoluteCorrect = toConvert === parseInt(state.binaryAbsoluteString.replace(/\s+/, ''), 2);
 
@@ -80,11 +77,9 @@ export function NaryTwoConversion(): JSX.Element {
 
       <hr/>
 
-      <NaryNumberReadOnlyInputComponent labelContent={t('startNumber')} naryNumberInput={state.toConvertInput}/>
+      <h2 className="subtitle is-4 has-text-centered">Bilden Sie das Zweierkomplement der Zahl -{state.toConvert}<sub>10</sub>!</h2>
 
-      <br/>
-
-      <NaryNumberInput labelContent={`Binärdarstellung von ${state.toConvertInput.decimalNumber}`} initialValue={state.binaryAbsoluteString}
+      <NaryNumberInput labelContent={`Binärdarstellung von ${state.toConvert}`} initialValue={state.binaryAbsoluteString}
                        checked={state.checked && state.withIntermediateSteps} correct={state.withIntermediateSteps} radix={2}
                        update={(newValue) => setState((state) => ({...state, binaryAbsoluteString: newValue}))} disabled={!state.withIntermediateSteps}/>
 
