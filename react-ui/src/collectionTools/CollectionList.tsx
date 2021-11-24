@@ -1,4 +1,3 @@
-import React from 'react';
 import {ToolBaseParams} from '../ToolBase';
 import {useCollectionListQuery} from '../graphql';
 import {WithQuery} from '../WithQuery';
@@ -30,7 +29,7 @@ export function CollectionList({toolId}: ToolBaseParams): JSX.Element {
             <div className="columns is-multiline">
               {collections.map(({collectionId, title, exerciseCount}) =>
                 <div className="column is-one-quarter" key={collectionId}>
-                  <BulmaCard title={`${collectionId}. ${title}`} footerItems={[{link: `./collections/${collectionId}`, title: t('toCollection')}]}>
+                  <BulmaCard title={`${collectionId}. ${title}`} footerItems={[{link: `./${collectionId}`, title: t('toCollection')}]}>
                     <span>{exerciseCount} {t('exercise_plural')}</span>
                   </BulmaCard>
                 </div>

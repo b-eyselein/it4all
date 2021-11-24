@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {RegexExerciseContentFragment, RegexExPart, useRegexCorrectionMutation} from '../../../graphql';
 import {RegexCheatSheet} from './RegexCheatSheet';
 import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';

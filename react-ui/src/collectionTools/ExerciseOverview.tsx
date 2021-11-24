@@ -1,4 +1,3 @@
-import React from 'react';
 import {useExerciseOverviewQuery} from '../graphql';
 import {ExerciseIProps} from '../ToolBase';
 import {Link} from 'react-router-dom';

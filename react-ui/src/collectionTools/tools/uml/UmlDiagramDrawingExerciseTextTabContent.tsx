@@ -1,4 +1,3 @@
-import React from 'react';
 import {UmlExerciseText} from './UmlExerciseText';
 import classNames from 'classnames';
 import {ExerciseSolveFieldsFragment, UmlExerciseContentFragment, UmlExPart} from '../../../graphql';

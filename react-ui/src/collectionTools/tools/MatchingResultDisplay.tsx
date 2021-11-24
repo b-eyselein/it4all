@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {MatchType} from '../../graphql';
 import classNames from 'classnames';
 import {HiChevronDown, HiChevronRight} from 'react-icons/hi';

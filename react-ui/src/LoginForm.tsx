@@ -1,6 +1,6 @@
 import {Field, Form, Formik} from 'formik';
 import {useTranslation} from 'react-i18next';
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {LoginMutationVariables, useLoginMutation} from './graphql';
 import {useDispatch, useSelector} from 'react-redux';
 import {userLoginAction} from './store/actions';

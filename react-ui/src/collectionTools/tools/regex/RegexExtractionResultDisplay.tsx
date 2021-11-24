@@ -1,4 +1,3 @@
-import React from 'react';
 import {MatchType, RegexExtractionMatchFragment, RegexExtractionResultFragment, RegexExtractionSingleResultFragment} from '../../../graphql';
 import classNames from 'classnames';
 

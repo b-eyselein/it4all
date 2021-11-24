@@ -1,4 +1,3 @@
-import React from 'react';
 import {ExerciseFileFragment} from '../../graphql';
 
 interface IProps {

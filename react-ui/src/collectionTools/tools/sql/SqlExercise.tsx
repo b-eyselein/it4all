@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import './SqlExercise.sass';
 import {SqlExecutionResultFragment, SqlExerciseContentFragment, SqlExPart, useSqlCorrectionMutation} from '../../../graphql';
 import {useTranslation} from 'react-i18next';

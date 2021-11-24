@@ -1,5 +1,4 @@
 import {GradedElementSpecResult, GradedTextContentResultFragment} from '../../../graphql';
-import React from 'react';
 
 interface IProps {
   elementSpecResult: GradedElementSpecResult;

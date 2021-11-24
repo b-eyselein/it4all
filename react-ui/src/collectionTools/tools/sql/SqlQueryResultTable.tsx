@@ -1,4 +1,3 @@
-import React from 'react';
 import {SqlCell, SqlQueryResultFragment} from '../../../graphql';
 import classNames from 'classnames';
 

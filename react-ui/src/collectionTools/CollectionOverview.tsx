@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {CollectionBaseParams} from '../ToolBase';
 import {useTranslation} from 'react-i18next';
 import {FieldsForLinkFragment, useCollectionOverviewQuery} from '../graphql';

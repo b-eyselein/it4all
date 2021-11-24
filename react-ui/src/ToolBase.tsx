@@ -1,5 +1,4 @@
-import React from 'react';
-import {Navigate, Route, Routes, useParams} from 'react-router-dom';
+import {Navigate, Outlet, Route, Routes, useParams} from 'react-router-dom';
 import {CollectionList} from './collectionTools/CollectionList';
 import {CollectionOverview} from './collectionTools/CollectionOverview';
 import {ToolOverview} from './collectionTools/ToolOverview';
@@ -20,12 +19,15 @@ export function ToolBase(): JSX.Element {
     return <Navigate to={homeUrl}/>;
   }
 
+
   return (
     <Routes>
-      <Route path={'/'} element={<ToolOverview toolId={toolId}/>}/>
-      <Route path={`/${collectionsUrlFragment}`} element={<CollectionList toolId={toolId}/>}/>
-      <Route path={`/${collectionsUrlFragment}/:collectionId`} element={<CollectionBase toolId={toolId}/>}/>
-      <Route path={`/${allExercisesUrlFragment}`} element={<AllExercisesOverview toolId={toolId}/>}/>
+      <Route path={''} element={<ToolOverview toolId={toolId}/>}/>
+      <Route path={collectionsUrlFragment} element={<Outlet/>}>
+        <Route path={''} element={<CollectionList toolId={toolId}/>}/>
+        <Route path={':collectionId/*'} element={<CollectionBase toolId={toolId}/>}/>
+      </Route>
+      <Route path={`${allExercisesUrlFragment}`} element={<AllExercisesOverview toolId={toolId}/>}/>
     </Routes>
   );
 }
@@ -44,10 +46,13 @@ function CollectionBase({toolId}: ToolBaseParams): JSX.Element {
 
   const collectionId = parseInt(params.collectionId);
 
+
   return (
     <Routes>
-      <Route path={'/'} element={<CollectionOverview toolId={toolId} collectionId={collectionId}/>}/>
-      <Route path={`/${exercisesUrlFragment}/:exerciseId`} element={<ExerciseBase toolId={toolId} collectionId={collectionId}/>}/>
+      <Route path={''} element={<CollectionOverview toolId={toolId} collectionId={collectionId}/>}/>
+      <Route path={exercisesUrlFragment}>
+        <Route path={':exerciseId/*'} element={<ExerciseBase toolId={toolId} collectionId={collectionId}/>}/>
+      </Route>
     </Routes>
   );
 }

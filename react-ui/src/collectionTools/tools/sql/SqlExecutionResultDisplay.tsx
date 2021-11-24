@@ -1,4 +1,3 @@
-import React from 'react';
 import {SqlExecutionResultFragment} from '../../../graphql';
 import {SqlQueryResultTable} from './SqlQueryResultTable';
 import {useTranslation} from 'react-i18next';

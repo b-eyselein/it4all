@@ -1,4 +1,3 @@
-import React from 'react';
 import {FilledPoints} from '../helpers/FilledPoints';
 import classNames from 'classnames';
 import {BulmaCard} from '../helpers/BulmaCard';

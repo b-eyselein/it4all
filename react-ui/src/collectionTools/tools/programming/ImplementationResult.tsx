@@ -1,4 +1,3 @@
-import React from 'react';
 import {ImplementationCorrectionResultFragment} from '../../../graphql';
 import classNames from 'classnames';
 

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {SqlQueryResultFragment} from '../../../graphql';
 import classNames from 'classnames';
 import {SqlQueryResultTable} from './SqlQueryResultTable';

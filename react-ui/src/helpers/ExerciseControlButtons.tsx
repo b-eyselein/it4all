@@ -1,4 +1,4 @@
-import React, {MouseEvent} from 'react';
+import { MouseEvent } from 'react';
 import classNames from 'classnames';
 import {Link} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';

@@ -1,4 +1,3 @@
-import React from 'react';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {ExerciseFileFragment, FilesSolutionInput, ProgExPart, ProgrammingExerciseContentFragment, useProgrammingCorrectionMutation} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';

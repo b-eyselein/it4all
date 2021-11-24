@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function RegexCheatSheet(): JSX.Element {
   return (
     <table className="table is-bordered is-fullwidth">

@@ -1,4 +1,3 @@
-import React from 'react';
 import {BoolFillOut} from './BoolFillOut';
 import {BoolCreate} from './BoolCreate';
 import {NaryAddition} from './NaryAddition';

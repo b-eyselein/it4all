@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {ExerciseSolveFieldsFragment, UmlAttribute, UmlClassDiagram, UmlExerciseContentFragment, UmlMethod, UmlVisibility} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
 import classNames from 'classnames';

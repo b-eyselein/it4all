@@ -1,4 +1,3 @@
-import React from 'react';
 import {useCollectionToolOverviewQuery} from '../graphql';
 import {BreadCrumbs} from '../helpers/BreadCrumbs';
 import {ProficiencyCard} from '../helpers/ProficiencyCard';

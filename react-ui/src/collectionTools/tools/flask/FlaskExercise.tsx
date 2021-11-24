@@ -1,4 +1,3 @@
-import React from 'react';
 import {ExerciseFileFragment, FilesSolutionInput, FlaskExerciseContentFragment, FlaskExercisePart, useFlaskCorrectionMutation} from '../../../graphql';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {FilesExercise} from '../FilesExercise';

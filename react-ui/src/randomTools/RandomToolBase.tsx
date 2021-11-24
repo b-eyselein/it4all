@@ -1,4 +1,3 @@
-import React from 'react';
 import {Link, Route, Routes} from 'react-router-dom';
 import {RandomTool, randomTools} from './randomTools';
 import {useTranslation} from 'react-i18next';
@@ -6,13 +5,15 @@ import {randomToolsUrlFragment} from '../urls';
 
 export function RandomToolsBase(): JSX.Element {
 
+  console.info('X');
+
   return (
     <Routes>
       {randomTools.map((tool) =>
-        <Route key={tool.id} path={`/${tool.id}`}>
-          <Route path={'/'} element={<RandomToolOverview tool={tool}/>}/>
+        <Route path={`${tool.id}`} key={tool.id}>
+          <Route path={''} element={<RandomToolOverview tool={tool}/>}/>
           {tool.parts.map(({id, component}) =>
-            <Route key={id} path={`/${id}`} element={component()}/>
+            <Route key={id} path={`${id}`} element={component()}/>
           )}
         </Route>
       )}
@@ -24,7 +25,7 @@ interface IProps {
   tool: RandomTool;
 }
 
-function RandomToolOverview({tool: {id: toolId, name, parts}}: IProps): JSX.Element {
+export function RandomToolOverview({tool: {id: toolId, name, parts}}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
 

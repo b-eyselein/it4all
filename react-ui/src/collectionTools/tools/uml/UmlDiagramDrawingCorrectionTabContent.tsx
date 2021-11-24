@@ -1,4 +1,3 @@
-import React from 'react';
 import {MatchType, UmlCorrectionMutation, UmlImplementationMatchFragment} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';

@@ -1,4 +1,3 @@
-import React from 'react';
 import {MatchType, SelectAdditionalComparisonFragment, SqlBinaryExpressionMatch, SqlColumnMatch, SqlCorrectionMutationResult} from '../../../graphql';
 import {isEmpty, MatchingResultDisplay} from '../MatchingResultDisplay';
 import {SqlStringMatchingResult} from './SqlStringMatchingResult';

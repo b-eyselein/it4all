@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {AllExercisesOverviewExerciseFragment, useAllExercisesOverviewQuery} from '../graphql';
 import {WithQuery} from '../WithQuery';
 import {useTranslation} from 'react-i18next';

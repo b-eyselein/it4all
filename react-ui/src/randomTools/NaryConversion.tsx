@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {BINARY_SYSTEM, HEXADECIMAL_SYSTEM, NaryIState, NumberingSystem} from './nary';
 import {NaryNumberReadOnlyInputComponent, NaryReadOnlyNumberInput} from './NaryNumberReadOnlyInput';
 import {RandomSolveButtons} from './RandomSolveButtons';

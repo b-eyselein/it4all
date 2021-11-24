@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function checkNever<T>(x: never, value: T): T {
   return value;
 }

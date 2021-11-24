@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {EbnfExerciseContentFragment, EbnfGrammarInput, EbnfRuleInput} from '../../../graphql';
 import {useTranslation} from 'react-i18next';

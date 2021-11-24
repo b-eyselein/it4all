@@ -1,4 +1,3 @@
-import React from 'react';
 import {ErrorMessage, Field, FieldProps} from 'formik';
 
 interface CustomInputFieldProps extends FieldProps {

@@ -1,4 +1,3 @@
-import React from 'react';
 import {MyJointClass} from './model/joint-class-diag-elements';
 import {UmlAttribute, UmlClass, UmlClassType, UmlMethod, UmlVisibility} from '../../../graphql';
 import {Field, FieldArray, Form, Formik} from 'formik';

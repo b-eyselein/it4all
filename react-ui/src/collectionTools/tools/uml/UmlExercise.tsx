@@ -1,4 +1,3 @@
-import React from 'react';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {UmlExerciseContentFragment, UmlExPart} from '../../../graphql';
 import {Navigate} from 'react-router-dom';

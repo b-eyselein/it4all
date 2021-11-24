@@ -1,4 +1,3 @@
-import React from 'react';
 import {XmlDocumentResultFragment} from '../../../graphql';
 
 interface IProps {

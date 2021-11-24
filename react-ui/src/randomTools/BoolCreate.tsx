@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {BooleanFormula, generateBooleanFormula} from './boolModel/bool-formula';
 import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/bool-component-helper';
 import {useTranslation} from 'react-i18next';

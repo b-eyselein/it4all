@@ -1,4 +1,3 @@
-import React from 'react';
 import {BinaryClassificationResultType, RegexMatchingResultFragment, RegexMatchingSingleResultFragment} from '../../../graphql';
 import classNames from 'classnames';
 

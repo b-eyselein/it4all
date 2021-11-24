@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import * as joint from 'jointjs';
 import {MyJointClass} from './model/joint-class-diag-elements';
 

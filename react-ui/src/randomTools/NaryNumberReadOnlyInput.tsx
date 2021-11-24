@@ -1,4 +1,3 @@
-import React from 'react';
 import {NumberingSystem} from './nary';
 
 export interface NaryReadOnlyNumberInput {

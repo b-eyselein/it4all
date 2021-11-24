@@ -1,4 +1,3 @@
-import React from 'react';
 import {MatchType, UmlAssociationMatchFragment, UmlMultiplicity} from '../../../graphql';
 
 

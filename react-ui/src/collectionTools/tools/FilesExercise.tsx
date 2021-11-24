@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {ExerciseFilesEditor, Workspace, workspace} from '../../helpers/ExerciseFilesEditor';
 import {ExerciseControlButtons} from '../../helpers/ExerciseControlButtons';
 import {SampleSolutionTabContent} from '../SampleSolutionTabContent';

@@ -1,6 +1,5 @@
 import {Link} from 'react-router-dom';
 import {randomToolsUrlFragment} from '../urls';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 
 interface RandomSolveButtonsIProps {

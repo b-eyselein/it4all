@@ -1,4 +1,3 @@
-import React from 'react';
 import {MatchType, XmlElementLineMatchFragment, XmlElementLineMatchingResultFragment} from '../../../graphql';
 
 

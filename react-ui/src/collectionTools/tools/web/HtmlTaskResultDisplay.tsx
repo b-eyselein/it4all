@@ -1,4 +1,3 @@
-import React from 'react';
 import {GradedHtmlTaskResult, SuccessType} from '../../../graphql';
 import {ElementSpecResultDisplay} from './ElementSpecResultDisplay';
 

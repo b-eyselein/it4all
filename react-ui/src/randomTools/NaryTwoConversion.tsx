@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import {NaryIState} from './nary';
 import {RandomSolveButtons} from './RandomSolveButtons';
 import {useTranslation} from 'react-i18next';

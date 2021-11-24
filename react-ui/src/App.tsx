@@ -1,15 +1,16 @@
-import React, {Dispatch} from 'react';
+import {Dispatch} from 'react';
 import {Link, Route, Routes} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {Home} from './Home';
 import {LoginForm} from './LoginForm';
 import {ToolBase} from './ToolBase';
-import {RandomToolsBase} from './randomTools/RandomToolBase';
+import {RandomToolOverview, RandomToolsBase} from './randomTools/RandomToolBase';
 import {currentUserSelector} from './store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {changeLanguageAction, StoreAction, userLogoutAction} from './store/actions';
 import {homeUrl, randomToolsUrlFragment, toolsUrlFragment} from './urls';
 import {ClaimLti} from './ClaimLti';
+import {randomTools} from './randomTools/randomTools';
 
 export function App(): JSX.Element {
 
@@ -65,9 +66,13 @@ export function App(): JSX.Element {
 
       <Routes>
         <Route path={homeUrl} element={<Home/>}/>
+
         <Route path={'/loginForm'} element={<LoginForm/>}/>
-        <Route path={`/${toolsUrlFragment}/:toolId`} element={<ToolBase/>}/>
-        <Route path={`/${randomToolsUrlFragment}`} element={<RandomToolsBase/>}/>
+
+        <Route path={`/${toolsUrlFragment}/:toolId/*`} element={<ToolBase/>}/>
+
+        <Route path={`/${randomToolsUrlFragment}/*`} element={<RandomToolsBase/>}/>
+
         <Route path={'/lti/:ltiUuid'} element={<ClaimLti/>}/>
       </Routes>
     </>

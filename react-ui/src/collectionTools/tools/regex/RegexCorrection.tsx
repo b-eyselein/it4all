@@ -1,4 +1,3 @@
-import React from 'react';
 import {RegexCorrectionMutationResult} from '../../../graphql';
 import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';

@@ -1,4 +1,3 @@
-import React from 'react';
 import {UnitTestCorrectionResultFragment} from '../../../graphql';
 
 interface IProps {

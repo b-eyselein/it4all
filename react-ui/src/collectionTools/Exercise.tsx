@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import {ExerciseIProps} from '../ToolBase';
 import {useParams} from 'react-router-dom';
 import {ExerciseSolveFieldsFragment, FilesSolutionInput, useExerciseQuery, XmlSolutionInput} from '../graphql';

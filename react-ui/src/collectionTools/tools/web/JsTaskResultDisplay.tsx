@@ -1,4 +1,3 @@
-import React from 'react';
 import {GradedJsTaskResultFragment, JsActionType, SuccessType} from '../../../graphql';
 import {ElementSpecResultDisplay} from './ElementSpecResultDisplay';
 import {useTranslation} from 'react-i18next';

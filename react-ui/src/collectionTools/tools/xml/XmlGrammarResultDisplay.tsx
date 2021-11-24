@@ -1,4 +1,3 @@
-import React from 'react';
 import {XmlGrammarResultFragment} from '../../../graphql';
 import {XmlElementLineMatcingResulthDisplay} from './XmlElementLineMatcingResulthDisplay';
 

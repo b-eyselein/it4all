@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import { useEffect } from 'react';
 import {Navigate, useParams} from 'react-router-dom';
 import {userLoginAction} from './store/actions';
 import {useClaimLtiWebTokenMutation} from './graphql';
