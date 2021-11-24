@@ -4,7 +4,7 @@ organization := "is.informatik.uni-wuerzburg.de"
 
 version := "0.9.1"
 
-scalaVersion := "2.13.6"
+scalaVersion := "2.13.7"
 
 scalacOptions ++= CompilerOptions.allOptions
 
@@ -50,11 +50,11 @@ libraryDependencies ++= Seq(
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
 
   // GraphQL
-  "org.sangria-graphql" %% "sangria"           % "2.1.3", // Apache 2.0
+  "org.sangria-graphql" %% "sangria"           % "2.1.6", // Apache 2.0
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.2", // Apache 2.0
 
   // Sql
-  "mysql"                 % "mysql-connector-java" % "8.0.26", // GPL 2.0
+  "mysql"                 % "mysql-connector-java" % "8.0.27", // GPL 2.0
   "com.typesafe.play"    %% "play-slick"           % "5.0.0", // Apache 2.0
   "com.github.jsqlparser" % "jsqlparser"           % "4.2", // Apache 2.0
 
