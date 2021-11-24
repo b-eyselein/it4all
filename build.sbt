@@ -15,8 +15,8 @@ JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(
-    Universal / packageName := s"${name.value}",
-    Compile / doc / sources := Seq.empty,
+    Universal / packageName                := s"${name.value}",
+    Compile / doc / sources                := Seq.empty,
     Compile / packageDoc / publishArtifact := false
   )
 
@@ -27,6 +27,8 @@ resolvers ++= Seq(
   ("Artifactory" at s"$artifactoryUrl/libs-release").withAllowInsecureProtocol(true),
   ("Snapshot Artifactory" at s"$artifactoryUrl/libs-snapshot/").withAllowInsecureProtocol(true)
 )
+
+dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.11.4"
 
 libraryDependencies ++= Seq(
   guice,
@@ -55,13 +57,13 @@ libraryDependencies ++= Seq(
 
   // Sql
   "mysql"                 % "mysql-connector-java" % "8.0.27", // GPL 2.0
-  "com.typesafe.play"    %% "play-slick"           % "5.0.0", // Apache 2.0
-  "com.github.jsqlparser" % "jsqlparser"           % "4.2", // Apache 2.0
+  "com.typesafe.play"    %% "play-slick"           % "5.0.0",  // Apache 2.0
+  "com.github.jsqlparser" % "jsqlparser"           % "4.2",    // Apache 2.0
 
   // DTD Parser,
   "de.uniwue" %% "it4all_dtd_parser" % "0.5.0",
   // Web correction
   "org.nanohttpd"           % "nanohttpd-webserver" % "2.3.1" % Test,
-  "org.seleniumhq.selenium" % "selenium-java"       % "3.141.59",
-  "org.seleniumhq.selenium" % "htmlunit-driver"     % "2.53.0"
+  "org.seleniumhq.selenium" % "selenium-java"       % "4.1.0",
+  "org.seleniumhq.selenium" % "htmlunit-driver"     % "3.55.0"
 )
