@@ -4,13 +4,12 @@ import {useTranslation} from 'react-i18next';
 import {Home} from './Home';
 import {LoginForm} from './LoginForm';
 import {ToolBase} from './ToolBase';
-import {RandomToolOverview, RandomToolsBase} from './randomTools/RandomToolBase';
+import {RandomToolsBase} from './randomTools/RandomToolBase';
 import {currentUserSelector} from './store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {changeLanguageAction, StoreAction, userLogoutAction} from './store/actions';
 import {homeUrl, randomToolsUrlFragment, toolsUrlFragment} from './urls';
 import {ClaimLti} from './ClaimLti';
-import {randomTools} from './randomTools/randomTools';
 
 export function App(): JSX.Element {
 

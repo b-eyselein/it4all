@@ -3,9 +3,7 @@ import {ExerciseFileFragment, FilesSolutionInput, ProgExPart, ProgrammingExercis
 import {FilesExercise} from '../FilesExercise';
 import {database} from '../../DexieTable';
 import {WithQuery} from '../../../WithQuery';
-import {useTranslation} from 'react-i18next';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
-import {PointsNotification} from '../../../helpers/PointsNotification';
 import {UnitTestResult} from './UnitTestResult';
 import {ImplementationResult} from './ImplementationResult';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
@@ -14,7 +12,6 @@ type IProps = ConcreteExerciseIProps<ProgrammingExerciseContentFragment, FilesSo
 
 export function ProgrammingExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
-  const {t} = useTranslation('common');
   const [correctExercise, correctionMutationResult] = useProgrammingCorrectionMutation();
 
   if (!content.programmingPart) {
@@ -45,7 +42,7 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
         {({correct: {solutionSaved, /*proficienciesUpdated, resultSaved,*/ result}}) => <>
           <SolutionSaved solutionSaved={solutionSaved}/>
 
-          <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
+          {/*<PointsNotification points={result.points} maxPoints={result.maxPoints}/>*/}
 
           {result.unitTestResults.length > 0 && <ul>
             {result.unitTestResults.map((unitTestResult, index) => <UnitTestResult key={index} result={unitTestResult}/>)}

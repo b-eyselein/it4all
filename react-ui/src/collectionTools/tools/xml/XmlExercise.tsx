@@ -2,7 +2,6 @@ import {ConcreteExerciseIProps} from '../../Exercise';
 import {ExerciseFileFragment, FilesSolution, useXmlCorrectionMutation, XmlExerciseContentFragment, XmlExPart, XmlSolutionInput} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
-import {useTranslation} from 'react-i18next';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import {XmlDocumentResultDisplay} from './XmlDocumentResultDisplay';
@@ -27,7 +26,6 @@ export function getXmlDocumentContent(rootNode: string): string {
 
 export function XmlExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
-  const {t} = useTranslation('common');
   const [correctExercise, correctionMutationResult] = useXmlCorrectionMutation();
 
   const part = partId === 'grammar' ? XmlExPart.GrammarCreationXmlPart : XmlExPart.DocumentCreationXmlPart;

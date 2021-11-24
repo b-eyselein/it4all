@@ -1,5 +1,4 @@
 import {useExerciseOverviewQuery} from '../graphql';
-import {ExerciseIProps} from '../ToolBase';
 import {Link} from 'react-router-dom';
 import {BreadCrumbs} from '../helpers/BreadCrumbs';
 import {WithQuery} from '../WithQuery';
@@ -8,7 +7,13 @@ import {currentUserSelector} from '../store/store';
 import {useTranslation} from 'react-i18next';
 import {WithNullableNavigate} from '../WithNullableNavigate';
 
-export function ExerciseOverview({toolId, collectionId, exerciseId}: ExerciseIProps): JSX.Element {
+interface IProps {
+ toolId: string;
+ collectionId: number;
+ exerciseId:number;
+}
+
+export function ExerciseOverview({toolId, collectionId, exerciseId}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const currentUser = useSelector(currentUserSelector);

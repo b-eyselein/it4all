@@ -3,7 +3,6 @@ import {ExerciseFileFragment, FilesSolutionInput, useWebCorrectionMutation, WebE
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
-import {useTranslation} from 'react-i18next';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import {HtmlTaskResultDisplay} from './HtmlTaskResultDisplay';
 import {JsTaskResultDisplay} from './JsTaskResultDisplay';
@@ -14,7 +13,6 @@ type IProps = ConcreteExerciseIProps<WebExerciseContentFragment, FilesSolutionIn
 
 export function WebExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
-  const {t} = useTranslation('common');
   const [correctExercise, correctionMutationResult] = useWebCorrectionMutation();
 
   if (!content.webPart) {

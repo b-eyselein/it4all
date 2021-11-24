@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
-import {ExerciseIProps} from '../ToolBase';
-import {useParams} from 'react-router-dom';
+import {useEffect, useState} from 'react';
 import {ExerciseSolveFieldsFragment, FilesSolutionInput, useExerciseQuery, XmlSolutionInput} from '../graphql';
 import {WithQuery} from '../WithQuery';
 import {EbnfExercise} from './tools/ebnf/EbnfExercise';
@@ -29,11 +27,18 @@ interface IState<S> {
   oldSolution?: S;
 }
 
-export function Exercise<SolutionType>({toolId, collectionId, exerciseId}: ExerciseIProps): JSX.Element {
+interface IProps {
+  toolId: string;
+  collectionId: number;
+  exerciseId: number;
+  partId: string;
+}
+
+export function Exercise<SolutionType>({toolId, collectionId, exerciseId, partId}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
-  const partId = useParams<'partId'>().partId!;
   const [state, setState] = useState<IState<SolutionType>>({oldSolutionLoaded: false});
+
   const exerciseQuery = useExerciseQuery({variables: {toolId, collectionId, exerciseId, partId}});
 
   useEffect(() => {
