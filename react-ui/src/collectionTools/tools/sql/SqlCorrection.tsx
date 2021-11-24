@@ -1,25 +1,16 @@
 import React from 'react';
-import {
-  MatchType,
-  SelectAdditionalComparisonFragment,
-  SqlBinaryExpressionMatch,
-  SqlColumnMatch,
-  SqlCorrectionMutation,
-  SqlCorrectionMutationResult
-} from '../../../graphql';
+import {MatchType, SelectAdditionalComparisonFragment, SqlBinaryExpressionMatch, SqlColumnMatch, SqlCorrectionMutationResult} from '../../../graphql';
 import {isEmpty, MatchingResultDisplay} from '../MatchingResultDisplay';
 import {SqlStringMatchingResult} from './SqlStringMatchingResult';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {WithQuery} from '../../../WithQuery';
-import {useTranslation} from 'react-i18next';
+import {WithNullableNavigate} from '../../../WithNullableNavigate';
 
 interface IProps {
   mutationResult: SqlCorrectionMutationResult;
 }
 
-function ColumnComparisonMatchDisplay({m}: { m: SqlColumnMatch }): JSX.Element {
-
-  const {matchType, userArg, sampleArg} = m;
+function ColumnComparisonMatchDisplay({m: {matchType, userArg, sampleArg}}: { m: SqlColumnMatch }): JSX.Element {
 
   const isCorrect = matchType === MatchType.SuccessfulMatch;
 
@@ -55,52 +46,51 @@ function SelectAdditionalComparisonDisplay({addComp}: { addComp: SelectAdditiona
 
 export function SqlCorrection({mutationResult}: IProps): JSX.Element {
 
-  const {t} = useTranslation('common');
+  // notCalledMessage={<></>}
 
-  function render({sqlExercise}: SqlCorrectionMutation): JSX.Element {
-    if (!sqlExercise) {
-      return <div className="notification is-danger">{t('correctionError')}</div>;
-    }
+  return (
+    <WithQuery query={mutationResult}>
+      {({sqlExercise}) => <WithNullableNavigate t={sqlExercise}>
+        {({
+            correct: {
+              solutionSaved,
+              result: {
+                staticComparison: {
+                  columnComparison,
+                  tableComparison,
+                  joinExpressionComparison,
+                  whereComparison,
+                  additionalComparisons: {selectComparisons, insertComparison}
+                }
+              }
+              /* TODO: , resultSaved, proficienciesUpdated */
+            }
+          }) => <>
 
-    const {solutionSaved, result/* TODO: , resultSaved, proficienciesUpdated */} = sqlExercise.correct;
+          <SolutionSaved solutionSaved={solutionSaved}/>
 
-    const {
-      columnComparison,
-      tableComparison,
-      joinExpressionComparison,
-      whereComparison,
-      additionalComparisons: {selectComparisons, insertComparison}
-    } = result.staticComparison;
+          {/*<PointsNotification points={result.points} maxPoints={result.maxPoints}/>*/}
 
-    return <>
+          <MatchingResultDisplay matchingResult={columnComparison} comparedItemPluralName="Spalten"
+                                 describeMatch={(m) => <ColumnComparisonMatchDisplay m={m}/>}
+                                 describeNotMatchedItem={(columnName) => <span>Die Angabe der Spalte <code>{columnName}</code></span>}/>
 
-      <SolutionSaved solutionSaved={solutionSaved}/>
+          <SqlStringMatchingResult matchName="Tabellen" matchSingularName="der Tabelle" matchingResult={tableComparison}/>
 
-      {/*<PointsNotification points={result.points} maxPoints={result.maxPoints}/>*/}
+          <MatchingResultDisplay matchingResult={joinExpressionComparison} comparedItemPluralName={'Join-Bedingungen'}
+                                 describeMatch={(m) => <BinaryExpressionMatchDisplay m={m}/>}
+                                 describeNotMatchedItem={(condition) => <span>Die Angabe der Join-Bedingung <code>{condition}</code></span>}/>
 
-      <MatchingResultDisplay matchingResult={columnComparison} comparedItemPluralName="Spalten"
-                             describeMatch={(m) => <ColumnComparisonMatchDisplay m={m}/>}
-                             describeNotMatchedItem={(columnName) => <span>Die Angabe der Spalte <code>{columnName}</code></span>}/>
+          <MatchingResultDisplay matchingResult={whereComparison} comparedItemPluralName={'Bedingungen'}
+                                 describeMatch={(m) => <BinaryExpressionMatchDisplay m={m}/>}
+                                 describeNotMatchedItem={(condition) => <span>Die Angabe der Bedingung <code>{condition}</code></span>}/>
 
-      <SqlStringMatchingResult matchName="Tabellen" matchSingularName="der Tabelle" matchingResult={tableComparison}/>
+          {selectComparisons && <SelectAdditionalComparisonDisplay addComp={selectComparisons}/>}
 
-      <MatchingResultDisplay matchingResult={joinExpressionComparison} comparedItemPluralName={'Join-Bedingungen'}
-                             describeMatch={(m) => <BinaryExpressionMatchDisplay m={m}/>}
-                             describeNotMatchedItem={(condition) => <span>Die Angabe der Join-Bedingung <code>{condition}</code></span>}/>
+          {insertComparison && <SqlStringMatchingResult matchName="Inserts" matchSingularName="Insert" matchingResult={insertComparison}/>}
 
-      <MatchingResultDisplay matchingResult={whereComparison} comparedItemPluralName={'Bedingungen'}
-                             describeMatch={(m) => <BinaryExpressionMatchDisplay m={m}/>}
-                             describeNotMatchedItem={(condition) => <span>Die Angabe der Bedingung <code>{condition}</code></span>}/>
-
-      {selectComparisons && <SelectAdditionalComparisonDisplay addComp={selectComparisons}/>}
-
-      {insertComparison && <SqlStringMatchingResult matchName="Inserts" matchSingularName="Insert" matchingResult={insertComparison}/>}
-
-    </>;
-
-  }
-
-  return mutationResult.called
-    ? <WithQuery query={mutationResult} render={render}/>
-    : <></>;
+        </>}
+      </WithNullableNavigate>}
+    </WithQuery>
+  );
 }

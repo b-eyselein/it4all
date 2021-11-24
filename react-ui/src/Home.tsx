@@ -1,6 +1,6 @@
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {ToolOverviewQuery, useToolOverviewQuery} from './graphql';
+import {useToolOverviewQuery} from './graphql';
 import {WithQuery} from './WithQuery';
 import {BulmaCard, FooterItem} from './helpers/BulmaCard';
 import {randomTools} from './randomTools/randomTools';
@@ -17,22 +17,6 @@ export function Home(): JSX.Element {
     ];
   }
 
-  function render({tools: collectionTools}: ToolOverviewQuery): JSX.Element {
-    return <>
-      {collectionTools.map(({id, name, /*state,*/ collectionCount, lessonCount, exerciseCount}) =>
-        <div className="column is-one-quarter-desktop is-half-tablet" key={id}>
-          {/* TODO: use state!*/}
-          <BulmaCard title={name} footerItems={[{link: `/tools/${id}`, title: t('toTool')}]}>
-            {() => <>
-              <p>{collectionCount} Sammlungen mit {exerciseCount} Aufgaben</p>
-              <p>{lessonCount === 0 ? 'Keine' : lessonCount} Lektionen</p>
-            </>}
-          </BulmaCard>
-        </div>
-      )}
-    </>;
-  }
-
   return (
     <div className="container">
       <h1 className="title is-3 has-text-centered">
@@ -43,12 +27,26 @@ export function Home(): JSX.Element {
         {randomTools.map(({id, name}) =>
           <div className="column is-one-quarter-desktop is-half-tablet" key={id}>
             <BulmaCard title={name} footerItems={randomToolsRoutes(id)}>
-              {() => <><p>&nbsp;</p><p>&nbsp;</p></>}
+              <><p>&nbsp;</p><p>&nbsp;</p></>
             </BulmaCard>
           </div>
         )}
 
-        <WithQuery query={query} render={render}/>
+        <WithQuery query={query}>
+          {({tools: collectionTools}) => <>
+            {collectionTools.map(({id, name, /*state,*/ collectionCount, lessonCount, exerciseCount}) =>
+              <div className="column is-one-quarter-desktop is-half-tablet" key={id}>
+                {/* TODO: use state!*/}
+                <BulmaCard title={name} footerItems={[{link: `/tools/${id}`, title: t('toTool')}]}>
+                  <>
+                    <p>{collectionCount} Sammlungen mit {exerciseCount} Aufgaben</p>
+                    <p>{lessonCount === 0 ? 'Keine' : lessonCount} Lektionen</p>
+                  </>
+                </BulmaCard>
+              </div>
+            )}
+          </>}
+        </WithQuery>
       </div>
     </div>
   );

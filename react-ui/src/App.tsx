@@ -1,5 +1,5 @@
 import React, {Dispatch} from 'react';
-import {Link, Route, Switch} from 'react-router-dom';
+import {Link, Route, Routes} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {Home} from './Home';
 import {LoginForm} from './LoginForm';
@@ -63,13 +63,13 @@ export function App(): JSX.Element {
         </div>
       </nav>
 
-      <Switch>
-        <Route path={homeUrl} exact component={Home}/>
-        <Route path={'/loginForm'} component={LoginForm}/>
-        <Route path={`/${toolsUrlFragment}/:toolId`} component={ToolBase}/>
-        <Route path={`/${randomToolsUrlFragment}`} component={RandomToolsBase}/>
-        <Route path={'/lti/:ltiUuid'} component={ClaimLti}/>
-      </Switch>
+      <Routes>
+        <Route path={homeUrl} element={<Home/>}/>
+        <Route path={'/loginForm'} element={<LoginForm/>}/>
+        <Route path={`/${toolsUrlFragment}/:toolId`} element={<ToolBase/>}/>
+        <Route path={`/${randomToolsUrlFragment}`} element={<RandomToolsBase/>}/>
+        <Route path={'/lti/:ltiUuid'} element={<ClaimLti/>}/>
+      </Routes>
     </>
   );
 }

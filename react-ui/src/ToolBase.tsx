@@ -1,16 +1,12 @@
 import React from 'react';
-import {Route, Switch, useRouteMatch} from 'react-router-dom';
+import {Navigate, Route, Routes, useParams} from 'react-router-dom';
 import {CollectionList} from './collectionTools/CollectionList';
 import {CollectionOverview} from './collectionTools/CollectionOverview';
 import {ToolOverview} from './collectionTools/ToolOverview';
 import {ExerciseOverview} from './collectionTools/ExerciseOverview';
 import {Exercise} from './collectionTools/Exercise';
 import {AllExercisesOverview} from './collectionTools/AllExercisesOverview';
-import {allExercisesUrlFragment, exercisesUrlFragment, collectionsUrlFragment} from './urls';
-
-interface ToolRouteProps {
-  toolId: string;
-}
+import {allExercisesUrlFragment, collectionsUrlFragment, exercisesUrlFragment, homeUrl} from './urls';
 
 export interface ToolBaseParams {
   toolId: string;
@@ -18,14 +14,20 @@ export interface ToolBaseParams {
 
 export function ToolBase(): JSX.Element {
 
-  const {url, params: {toolId}} = useRouteMatch<ToolRouteProps>();
+  const {toolId} = useParams<'toolId'>();
 
-  return <Switch>
-    <Route path={url} exact render={() => <ToolOverview toolId={toolId}/>}/>
-    <Route path={`${url}/${collectionsUrlFragment}`} exact render={() => <CollectionList toolId={toolId}/>}/>
-    <Route path={`${url}/${collectionsUrlFragment}/:collectionId`} render={() => <CollectionBase toolId={toolId}/>}/>
-    <Route path={`${url}/${allExercisesUrlFragment}`} render={() => <AllExercisesOverview toolId={toolId}/>}/>
-  </Switch>;
+  if (!toolId) {
+    return <Navigate to={homeUrl}/>;
+  }
+
+  return (
+    <Routes>
+      <Route path={'/'} element={<ToolOverview toolId={toolId}/>}/>
+      <Route path={`/${collectionsUrlFragment}`} element={<CollectionList toolId={toolId}/>}/>
+      <Route path={`/${collectionsUrlFragment}/:collectionId`} element={<CollectionBase toolId={toolId}/>}/>
+      <Route path={`/${allExercisesUrlFragment}`} element={<AllExercisesOverview toolId={toolId}/>}/>
+    </Routes>
+  );
 }
 
 export interface CollectionBaseParams extends ToolBaseParams {
@@ -34,13 +36,20 @@ export interface CollectionBaseParams extends ToolBaseParams {
 
 function CollectionBase({toolId}: ToolBaseParams): JSX.Element {
 
-  const {url, params} = useRouteMatch<{ collectionId: string; }>();
+  const params = useParams<'collectionId'>();
+
+  if (!params.collectionId) {
+    return <Navigate to={homeUrl}/>;
+  }
+
   const collectionId = parseInt(params.collectionId);
 
-  return <Switch>
-    <Route path={url} exact render={() => <CollectionOverview toolId={toolId} collectionId={collectionId}/>}/>
-    <Route path={`${url}/${exercisesUrlFragment}/:exerciseId`} render={() => <ExerciseBase toolId={toolId} collectionId={collectionId}/>}/>
-  </Switch>;
+  return (
+    <Routes>
+      <Route path={'/'} element={<CollectionOverview toolId={toolId} collectionId={collectionId}/>}/>
+      <Route path={`/${exercisesUrlFragment}/:exerciseId`} element={<ExerciseBase toolId={toolId} collectionId={collectionId}/>}/>
+    </Routes>
+  );
 }
 
 
@@ -50,11 +59,18 @@ export interface ExerciseIProps extends CollectionBaseParams {
 
 function ExerciseBase({toolId, collectionId}: CollectionBaseParams): JSX.Element {
 
-  const {url, params} = useRouteMatch<{ exerciseId: string }>();
+  const params = useParams<'exerciseId'>();
+
+  if (!params.exerciseId) {
+    return <Navigate to={homeUrl}/>;
+  }
+
   const exerciseId = parseInt(params.exerciseId);
 
-  return <Switch>
-    <Route path={url} exact render={() => <ExerciseOverview exerciseId={exerciseId} collectionId={collectionId} toolId={toolId}/>}/>
-    <Route path={`${url}/parts/:partId`} render={() => <Exercise toolId={toolId} collectionId={collectionId} exerciseId={exerciseId}/>}/>
-  </Switch>;
+  return (
+    <Routes>
+      <Route path={'/'} element={<ExerciseOverview exerciseId={exerciseId} collectionId={collectionId} toolId={toolId}/>}/>
+      <Route path={'/parts/:partId'} element={<Exercise toolId={toolId} collectionId={collectionId} exerciseId={exerciseId}/>}/>
+    </Routes>
+  );
 }

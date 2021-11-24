@@ -5,7 +5,7 @@ import {LoginMutationVariables, useLoginMutation} from './graphql';
 import {useDispatch, useSelector} from 'react-redux';
 import {userLoginAction} from './store/actions';
 import {currentUserSelector} from './store/store';
-import {Redirect} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {BulmaInputField} from './BulmaFields';
 import classNames from 'classnames';
 import * as yup from 'yup';
@@ -33,7 +33,7 @@ export function LoginForm(): JSX.Element {
   const currentUser = useSelector(currentUserSelector);
 
   if (currentUser) {
-    return <Redirect to={homeUrl}/>;
+    return <Navigate to={homeUrl}/>;
   }
 
   function handleSubmit(variables: LoginMutationVariables): void {

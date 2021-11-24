@@ -8,7 +8,7 @@ export interface FooterItem {
 
 interface IProps {
   title: string | JSX.Element;
-  children: () => JSX.Element;
+  children: JSX.Element;
   footerItems?: FooterItem[];
 }
 
@@ -19,7 +19,7 @@ export function BulmaCard({title, children, footerItems}: IProps): JSX.Element {
         <div className="card-header-title">{title}</div>
       </header>
       <div className="card-content">
-        {children()}
+        {children}
       </div>
       {footerItems && <footer className="card-footer">
         {footerItems.map(({link, title}) => <Link key={link} className="card-footer-item" to={link}>{title}</Link>)}

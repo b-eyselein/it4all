@@ -1,7 +1,7 @@
 import React from 'react';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {UmlExerciseContentFragment, UmlExPart} from '../../../graphql';
-import {Redirect} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {UmlClassSelection} from './UmlClassSelection';
 import {UmlMemberAllocation} from './UmlMemberAllocation';
 import {UmlDbClassDiagram, UmlDiagramDrawing} from './UmlDiagramDrawing';
@@ -11,7 +11,7 @@ type IProps = ConcreteExerciseIProps<UmlExerciseContentFragment, UmlDbClassDiagr
 export function UmlExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
   if (!content.umlPart) {
-    return <Redirect to={''}/>;
+    return <Navigate to={''}/>;
   }
 
   const part = content.umlPart;

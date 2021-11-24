@@ -1,13 +1,6 @@
 import React from 'react';
 import {ConcreteExerciseIProps} from '../../Exercise';
-import {
-  ExerciseFileFragment,
-  FilesSolutionInput,
-  ProgExPart,
-  ProgrammingCorrectionMutation,
-  ProgrammingExerciseContentFragment,
-  useProgrammingCorrectionMutation
-} from '../../../graphql';
+import {ExerciseFileFragment, FilesSolutionInput, ProgExPart, ProgrammingExerciseContentFragment, useProgrammingCorrectionMutation} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';
 import {database} from '../../DexieTable';
 import {WithQuery} from '../../../WithQuery';
@@ -16,6 +9,7 @@ import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import {UnitTestResult} from './UnitTestResult';
 import {ImplementationResult} from './ImplementationResult';
+import {WithNullableNavigate} from '../../../WithNullableNavigate';
 
 type IProps = ConcreteExerciseIProps<ProgrammingExerciseContentFragment, FilesSolutionInput>;
 
@@ -46,29 +40,23 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
       .catch((err) => console.error(err));
   }
 
-  function renderCorrection({programmingExercise}: ProgrammingCorrectionMutation) {
-    if (!programmingExercise) {
-      return <div className="notification is-danger has-text-centered">{t('errorWhileCorrecting')}</div>;
-    }
+  const correctionTabRender = (
+    <WithQuery query={correctionMutationResult}>
+      {({programmingExercise}) => <WithNullableNavigate t={programmingExercise}>
+        {({correct: {solutionSaved, /*proficienciesUpdated, resultSaved,*/ result}}) => <>
+          <SolutionSaved solutionSaved={solutionSaved}/>
 
-    const {solutionSaved, /*proficienciesUpdated, resultSaved,*/ result} = programmingExercise.correct;
+          <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 
-    return (
-      <>
-        <SolutionSaved solutionSaved={solutionSaved}/>
+          {result.unitTestResults.length > 0 && <ul>
+            {result.unitTestResults.map((unitTestResult, index) => <UnitTestResult key={index} result={unitTestResult}/>)}
+          </ul>}
 
-        <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
-
-        {result.unitTestResults.length > 0 && <ul>
-          {result.unitTestResults.map((unitTestResult, index) => <UnitTestResult key={index} result={unitTestResult}/>)}
-        </ul>}
-
-        {result.implementationCorrectionResult && <ImplementationResult result={result.implementationCorrectionResult}/>}
-      </>
-    );
-  }
-
-  const correctionTabRender = <WithQuery query={correctionMutationResult} render={renderCorrection}/>;
+          {result.implementationCorrectionResult && <ImplementationResult result={result.implementationCorrectionResult}/>}
+        </>}
+      </WithNullableNavigate>}
+    </WithQuery>
+  );
 
   return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={<p dangerouslySetInnerHTML={{__html: exercise.text}}/>}
                         initialFiles={initialFiles} sampleSolutions={content.programmingSampleSolutions}

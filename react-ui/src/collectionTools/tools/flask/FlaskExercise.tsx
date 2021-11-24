@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  ExerciseFileFragment,
-  FilesSolutionInput,
-  FlaskCorrectionMutation,
-  FlaskExerciseContentFragment,
-  FlaskExercisePart,
-  useFlaskCorrectionMutation
-} from '../../../graphql';
+import {ExerciseFileFragment, FilesSolutionInput, FlaskExerciseContentFragment, FlaskExercisePart, useFlaskCorrectionMutation} from '../../../graphql';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
@@ -14,6 +7,7 @@ import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import classNames from 'classnames';
 import {database} from '../../DexieTable';
+import {WithNullableNavigate} from '../../../WithNullableNavigate';
 
 type IProps = ConcreteExerciseIProps<FlaskExerciseContentFragment, FilesSolutionInput>;
 
@@ -54,34 +48,28 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
       .catch((err) => console.error(err));
   }
 
-  function renderCorrection({flaskExercise}: FlaskCorrectionMutation): JSX.Element {
-    if (!flaskExercise) {
-      throw new Error('TODO!');
-    }
+  const correctionTabRender = (
+    <WithQuery query={correctionMutationResult}>
+      {({flaskExercise}) => <WithNullableNavigate t={flaskExercise}>
+        {({correct: {solutionSaved,/*proficienciesUpdated, resultSaved,*/ result}}) => <>
+          <SolutionSaved solutionSaved={solutionSaved}/>
 
-    const {solutionSaved,/*proficienciesUpdated, resultSaved,*/ result} = flaskExercise.correct;
+          <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 
-    return (
-      <>
-        <SolutionSaved solutionSaved={solutionSaved}/>
-
-        <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
-
-        {result.testResults.map((testResult, index) =>
-          <div className="my-3" key={index}>
-            <div className={classNames('message', testResult.successful ? 'is-success' : 'is-danger')}>
-              <header className="message-header">{testResult.testName}</header>
-              <div className="message-body">
-                <pre>{testResult.stderr.join('\n')}</pre>
+          {result.testResults.map((testResult, index) =>
+            <div className="my-3" key={index}>
+              <div className={classNames('message', testResult.successful ? 'is-success' : 'is-danger')}>
+                <header className="message-header">{testResult.testName}</header>
+                <div className="message-body">
+                  <pre>{testResult.stderr.join('\n')}</pre>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </>
-    );
-  }
-
-  const correctionTabRender = <WithQuery query={correctionMutationResult} render={renderCorrection}/>;
+          )}
+        </>}
+      </WithNullableNavigate>}
+    </WithQuery>
+  );
 
   return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={exerciseDescription} initialFiles={initialFiles}
                         sampleSolutions={content.flaskSampleSolutions} correct={correct} correctionTabRender={correctionTabRender}

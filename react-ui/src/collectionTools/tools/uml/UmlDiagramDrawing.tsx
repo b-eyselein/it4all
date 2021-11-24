@@ -229,7 +229,9 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, oldSolut
     },
     correction: {
       name: t('correction'),
-      render: <WithQuery query={correctionMutationResult} render={(data) => <UmlDiagramDrawingCorrectionTabContent corrResult={data}/>}/>
+      render: <WithQuery query={correctionMutationResult}>
+        {(data) => <UmlDiagramDrawingCorrectionTabContent corrResult={data}/>}
+      </WithQuery>
     }
   };
 

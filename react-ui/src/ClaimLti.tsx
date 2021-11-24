@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Redirect, useRouteMatch} from 'react-router-dom';
+import {Navigate, useParams} from 'react-router-dom';
 import {userLoginAction} from './store/actions';
 import {useClaimLtiWebTokenMutation} from './graphql';
 import {useDispatch, useSelector} from 'react-redux';
@@ -9,11 +9,15 @@ import {useTranslation} from 'react-i18next';
 
 export function ClaimLti(): JSX.Element {
 
-  const {ltiUuid} = useRouteMatch<{ ltiUuid: string }>().params;
+  const {ltiUuid} = useParams<'ltiUuid'>();
   const dispatch = useDispatch();
   const [claimLtiWebToken, {error}] = useClaimLtiWebTokenMutation();
   const {t} = useTranslation('common');
   const currentUser = useSelector(currentUserSelector);
+
+  if (!ltiUuid) {
+    return <Navigate to={homeUrl}/>;
+  }
 
   useEffect(() => {
     claimLtiWebToken({variables: {ltiUuid}})
@@ -28,9 +32,8 @@ export function ClaimLti(): JSX.Element {
   }, []);
 
   if (currentUser) {
-    return <Redirect to={homeUrl}/>;
+    return <Navigate to={homeUrl}/>;
   }
-
 
   return (
     <div className="container">

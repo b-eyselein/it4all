@@ -1,13 +1,6 @@
 import React from 'react';
 import {ConcreteExerciseIProps} from '../../Exercise';
-import {
-  ExerciseFileFragment,
-  FilesSolutionInput,
-  useWebCorrectionMutation,
-  WebCorrectionMutation,
-  WebExerciseContentFragment,
-  WebExPart
-} from '../../../graphql';
+import {ExerciseFileFragment, FilesSolutionInput, useWebCorrectionMutation, WebExerciseContentFragment, WebExPart} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
@@ -16,6 +9,7 @@ import {PointsNotification} from '../../../helpers/PointsNotification';
 import {HtmlTaskResultDisplay} from './HtmlTaskResultDisplay';
 import {JsTaskResultDisplay} from './JsTaskResultDisplay';
 import {database} from '../../DexieTable';
+import {WithNullableNavigate} from '../../../WithNullableNavigate';
 
 type IProps = ConcreteExerciseIProps<WebExerciseContentFragment, FilesSolutionInput>;
 
@@ -57,43 +51,37 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
       .catch((err) => console.error(err));
   }
 
-  function renderCorrection({webExercise}: WebCorrectionMutation): JSX.Element {
-    if (!webExercise) {
-      return <div className="notification is-danger has-text-centered">{t('errorWhileCorrection...')}</div>;
-    }
+  const correctionTabRender = (
+    <WithQuery query={correctionMutationResult}>
+      {({webExercise}) => <WithNullableNavigate t={webExercise}>
+        {({correct: {solutionSaved,/*proficienciesUpdated,resultSaved,*/result}}) => <>
+          <SolutionSaved solutionSaved={solutionSaved}/>
 
-    const {solutionSaved,/*proficienciesUpdated,resultSaved,*/result} = webExercise.correct;
+          <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 
-    return (
-      <>
-        <SolutionSaved solutionSaved={solutionSaved}/>
+          <div className="content my-3">
+            {result.gradedHtmlTaskResults.length > 0 && <ul>
+              {result.gradedHtmlTaskResults.map((htmlTaskResult, index) =>
+                <li key={index}>
+                  <HtmlTaskResultDisplay htmlResult={htmlTaskResult}/>
+                </li>
+              )}
+            </ul>}
 
-        <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
+            {result.gradedJsTaskResults.length > 0 && <ul>
+              {result.gradedJsTaskResults.map((jsResult, index) =>
+                <li key={index}>
+                  <JsTaskResultDisplay jsResult={jsResult}/>
+                </li>
+              )}
+            </ul>
+            }
+          </div>
 
-        <div className="content my-3">
-          {result.gradedHtmlTaskResults.length > 0 && <ul>
-            {result.gradedHtmlTaskResults.map((htmlTaskResult, index) =>
-              <li key={index}>
-                <HtmlTaskResultDisplay htmlResult={htmlTaskResult}/>
-              </li>
-            )}
-          </ul>}
-
-          {result.gradedJsTaskResults.length > 0 && <ul>
-            {result.gradedJsTaskResults.map((jsResult, index) =>
-              <li key={index}>
-                <JsTaskResultDisplay jsResult={jsResult}/>
-              </li>
-            )}
-          </ul>
-          }
-        </div>
-
-      </>
-    );
-  }
-
-  const correctionTabRender = <WithQuery query={correctionMutationResult} render={renderCorrection}/>;
+        </>}
+      </WithNullableNavigate>}
+    </WithQuery>
+  );
 
   return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={exerciseDescription} initialFiles={initialFiles}
                         sampleSolutions={content.webSampleSolutions} isCorrecting={correctionMutationResult.loading}

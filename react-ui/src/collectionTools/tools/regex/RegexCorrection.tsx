@@ -1,11 +1,11 @@
 import React from 'react';
-import {RegexCorrectionMutation, RegexCorrectionMutationResult, RegexCorrectionResultFragment} from '../../../graphql';
+import {RegexCorrectionMutationResult} from '../../../graphql';
 import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import {RegexExtractionResultDisplay} from './RegexExtractionResultDisplay';
 import {RegexMatchingResultDisplay} from './RegexMatchingResultDisplay';
-import {useTranslation} from 'react-i18next';
+import {WithNullableNavigate} from '../../../WithNullableNavigate';
 
 interface IProps {
   mutationResult: RegexCorrectionMutationResult;
@@ -13,29 +13,23 @@ interface IProps {
 
 export function RegexCorrection({mutationResult}: IProps): JSX.Element {
 
-  const {t} = useTranslation('common');
+  // notCalledMessage={<></>}
 
-  function render({regexExercise}: RegexCorrectionMutation): JSX.Element {
-    if (!regexExercise) {
-      return <div className="notification is-danger">{t('correctionError')}</div>;
-    }
+  return (
+    <WithQuery query={mutationResult}>
+      {({regexExercise}) => <WithNullableNavigate t={regexExercise}>
+        {({correct: {solutionSaved, result/* TODO:, resultSaved, proficienciesUpdated*/}}) => <>
 
-    const {solutionSaved, result/* TODO:, resultSaved, proficienciesUpdated*/}: RegexCorrectionResultFragment = regexExercise.correct;
+          <SolutionSaved solutionSaved={solutionSaved}/>
 
-    return <>
+          <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 
-      <SolutionSaved solutionSaved={solutionSaved}/>
+          {result.__typename === 'RegexExtractionResult'
+            ? <RegexExtractionResultDisplay result={result}/>
+            : <RegexMatchingResultDisplay result={result}/>}
 
-      <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
-
-      {result.__typename === 'RegexExtractionResult'
-        ? <RegexExtractionResultDisplay result={result}/>
-        : <RegexMatchingResultDisplay result={result}/>}
-
-    </>;
-  }
-
-  return mutationResult.called
-    ? <WithQuery query={mutationResult} render={render}/>
-    : <></>;
+        </>}
+      </WithNullableNavigate>}
+    </WithQuery>
+  );
 }

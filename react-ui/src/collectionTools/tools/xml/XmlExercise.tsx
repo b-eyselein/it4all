@@ -1,14 +1,6 @@
 import React from 'react';
 import {ConcreteExerciseIProps} from '../../Exercise';
-import {
-  ExerciseFileFragment,
-  FilesSolution,
-  useXmlCorrectionMutation,
-  XmlCorrectionMutation,
-  XmlExerciseContentFragment,
-  XmlExPart,
-  XmlSolutionInput
-} from '../../../graphql';
+import {ExerciseFileFragment, FilesSolution, useXmlCorrectionMutation, XmlExerciseContentFragment, XmlExPart, XmlSolutionInput} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {useTranslation} from 'react-i18next';
@@ -17,6 +9,7 @@ import {PointsNotification} from '../../../helpers/PointsNotification';
 import {XmlDocumentResultDisplay} from './XmlDocumentResultDisplay';
 import {XmlGrammarResultDisplay} from './XmlGrammarResultDisplay';
 import {database} from '../../DexieTable';
+import {WithNullableNavigate} from '../../../WithNullableNavigate';
 
 type IProps = ConcreteExerciseIProps<XmlExerciseContentFragment, XmlSolutionInput>;
 
@@ -79,27 +72,6 @@ export function XmlExercise({exercise, content, partId, oldSolution}: IProps): J
       .catch((err) => console.error(err));
   }
 
-  function renderCorrection({xmlExercise}: XmlCorrectionMutation): JSX.Element {
-    if (!xmlExercise) {
-      return <div className="notification is-danger has-text-centered">{t('error while correction...')}</div>;
-    }
-
-    const {solutionSaved, /*proficienciesUpdated, resultSaved,*/ result} = xmlExercise.correct;
-
-    return (
-      <>
-        <SolutionSaved solutionSaved={solutionSaved}/>
-
-        {isGrammarPart && <PointsNotification points={result.points} maxPoints={result.maxPoints}/>}
-
-        {result.documentResult && <XmlDocumentResultDisplay result={result.documentResult}/>}
-
-        {result.grammarResult && <XmlGrammarResultDisplay result={result.grammarResult}/>}
-
-      </>
-    );
-  }
-
   // FIXME: sample solutions!
 
   const sampleSolutions: FilesSolution[] = content.xmlSampleSolutions.map(({document, grammar}) => {
@@ -112,7 +84,22 @@ export function XmlExercise({exercise, content, partId, oldSolution}: IProps): J
     };
   });
 
-  const correctionTabRender = <WithQuery query={correctionMutationResult} render={renderCorrection}/>;
+  const correctionTabRender = (
+    <WithQuery query={correctionMutationResult}>
+      {({xmlExercise}) => <WithNullableNavigate t={xmlExercise}>
+        {({correct: {solutionSaved, /*proficienciesUpdated, resultSaved,*/ result}}) => <>
+          <SolutionSaved solutionSaved={solutionSaved}/>
+
+          {isGrammarPart && <PointsNotification points={result.points} maxPoints={result.maxPoints}/>}
+
+          {result.documentResult && <XmlDocumentResultDisplay result={result.documentResult}/>}
+
+          {result.grammarResult && <XmlGrammarResultDisplay result={result.grammarResult}/>}
+
+        </>}
+      </WithNullableNavigate>}
+    </WithQuery>
+  );
 
   return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={exerciseDescription} initialFiles={[grammarFile, documentFile]}
                         sampleSolutions={sampleSolutions} correct={correct} isCorrecting={correctionMutationResult.loading}

@@ -29,7 +29,7 @@ export function ExerciseLinkCard({exercise}: IProps): JSX.Element {
       link: `/${toolsUrlFragment}/${toolId}/${collectionsUrlFragment}/${collectionId}/${exercisesUrlFragment}/${exerciseId}`,
       title: t('toExercise')
     }]}>
-      {() => <>
+      <>
 
         <div className="tags">
           {parts.map(({id, name, solved}) =>
@@ -45,7 +45,7 @@ export function ExerciseLinkCard({exercise}: IProps): JSX.Element {
               </div>)}
           </div>
           : <div className="tag is-warning">Keine Tags vorhanden</div>}
-      </>}
+      </>
     </BulmaCard>
   );
 }
