@@ -4,12 +4,18 @@ import {useTranslation} from 'react-i18next';
 import {Home} from './Home';
 import {LoginForm} from './LoginForm';
 import {ToolBase} from './ToolBase';
-import {RandomToolsBase} from './randomTools/RandomToolBase';
 import {currentUserSelector} from './store/store';
 import {useDispatch, useSelector} from 'react-redux';
 import {changeLanguageAction, StoreAction, userLogoutAction} from './store/actions';
 import {homeUrl, randomToolsUrlFragment, toolsUrlFragment} from './urls';
 import {ClaimLti} from './ClaimLti';
+import {BoolFillOut} from './randomTools/BoolFillOut';
+import {BoolCreate} from './randomTools/BoolCreate';
+import {NaryAddition} from './randomTools/NaryAddition';
+import {NaryConversion} from './randomTools/NaryConversion';
+import {NaryTwoConversion} from './randomTools/NaryTwoConversion';
+import {RandomToolOverview} from './randomTools/RandomToolOverview';
+import {boolRandomTool, naryRandomTool} from './randomTools/randomTools';
 
 export function App(): JSX.Element {
 
@@ -70,7 +76,19 @@ export function App(): JSX.Element {
 
         <Route path={`/${toolsUrlFragment}/:toolId/*`} element={<ToolBase/>}/>
 
-        <Route path={`/${randomToolsUrlFragment}/*`} element={<RandomToolsBase/>}/>
+        <Route path={`/${randomToolsUrlFragment}/*`}>
+          <Route path={'bool'}>
+            <Route index element={<RandomToolOverview tool={boolRandomTool}/>}/>
+            <Route path={'fillOut'} element={<BoolFillOut/>}/>
+            <Route path={'create'} element={<BoolCreate/>}/>
+          </Route>
+          <Route path={'nary'}>
+            <Route index element={<RandomToolOverview tool={naryRandomTool}/>}/>
+            <Route path={'addition'} element={<NaryAddition/>}/>
+            <Route path={'conversion'} element={<NaryConversion/>}/>
+            <Route path={'twoConversion'} element={<NaryTwoConversion/>}/>
+          </Route>
+        </Route>
 
         <Route path={'/lti/:ltiUuid'} element={<ClaimLti/>}/>
       </Routes>

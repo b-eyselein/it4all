@@ -94,8 +94,7 @@ export function BoolCreate(): JSX.Element {
           <label htmlFor="solution" className="button is-static">{sampleVariable.variable} = </label>
         </div>
         <div className="control is-expanded">
-          {/*[(ngModel)]="solution"*/}
-          <input type="text" defaultValue={state.solution} onChange={(event) => setState((state) => ({...state, solution: event.target.value}))}
+          <input type="text" value={state.solution} onChange={(event) => setState((state) => ({...state, solution: event.target.value}))}
                  className="input" id="solution" autoComplete="off" placeholder="Boolesche Formel" autoFocus/>
         </div>
       </div>
