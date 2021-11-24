@@ -46,7 +46,7 @@ export function FilesExercise(
   const exerciseDescriptionTabRender = <>
     <div className="notification is-light-grey">{exerciseDescription}</div>
 
-    <ExerciseControlButtons isCorrecting={isCorrecting} correct={onCorrect} endLink={`./../../${exerciseId}`}/>
+    <ExerciseControlButtons isCorrecting={isCorrecting} correct={onCorrect} endLink={'./../..'}/>
   </>;
 
   const sampleSolutionTabRender = <SampleSolutionTabContent>
