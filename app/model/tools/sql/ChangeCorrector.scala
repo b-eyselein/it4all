@@ -23,12 +23,11 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
 
   override type Q = Insert
 
-  private def expressionLists(query: Q): Seq[ExpressionList] =
-    query.getItemsList match {
-      case mel: MultiExpressionList => mel.getExpressionLists.asScala.toSeq
-      case el: ExpressionList       => Seq(el)
-      case _: SubSelect             => ???
-    }
+  private def expressionLists(query: Q): Seq[ExpressionList] = query.getItemsList match {
+    case mel: MultiExpressionList => mel.getExpressionLists.asScala.toSeq
+    case el: ExpressionList       => Seq(el)
+    case _: SubSelect             => ???
+  }
 
   override protected def performAdditionalComparisons(userQuery: Insert, sampleQuery: Insert): AdditionalComparison = {
 

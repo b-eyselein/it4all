@@ -4,7 +4,7 @@ import enumeratum.{EnumEntry, PlayEnum}
 
 sealed abstract class Level(val level: Int) extends EnumEntry {
 
-  def pointsForExerciseCompletion: Int = Math.pow(2, level - 1).toInt
+  def pointsForExerciseCompletion: Int = Math.pow(2.toDouble, level.toDouble - 1).toInt
 
   def pointsNeededForLevelCompletion: Int = 10 * level
 

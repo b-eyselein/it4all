@@ -99,7 +99,7 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   private def groupByElements(query: Q): Seq[String] = query.getSelectBody match {
     case ps: PlainSelect =>
       Option(ps.getGroupBy)
-        .map(_.getGroupByExpressions.asScala)
+        .map(_.getGroupByExpressionList.getExpressions.asScala)
         .getOrElse(Seq.empty)
         .flatMap {
           case c: Column => Some(c.getColumnName)

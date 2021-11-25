@@ -1,7 +1,6 @@
 package model.tools.web
 
 import model.tools.web.result._
-import model.tools.web.sitespec.WebElementSpec
 import org.scalatest.Assertion
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -18,9 +17,7 @@ trait WebCorrectorBasics {
 
   // HtmlElementSpec
 
-  private def evaluateHtmlElementSpecResult[ES <: WebElementSpec](
-    elementSpecResult: ElementSpecResult[ES]
-  ): Assertion = elementSpecResult match {
+  private def evaluateHtmlElementSpecResult(elementSpecResult: ElementSpecResult): Assertion = elementSpecResult match {
     case NoElementFoundElementSpecResult(_)              => fail("Could not find an element!")
     case TooManyElementsFoundElementSpecResult(_, count) => fail(s"Found too many elements ($count)!")
 

@@ -23,7 +23,7 @@ trait MongoClientQueries
 
   protected implicit val ec: ExecutionContext
 
-  private implicit val topicFormat: OFormat[Topic] = JsonProtocols.topicFormat
+  // private implicit val topicFormat: OFormat[Topic] = JsonProtocols.topicFormat
 
   // Solution queries
 
@@ -108,11 +108,10 @@ trait MongoClientQueries
     for {
       userProficienciesCollection <- futureUserProficienciesCollection
 
-      oldUserProficiency: UserProficiency <-
-        userProficienciesCollection
-          .find(filter, Option.empty[BSONDocument])
-          .one[UserProficiency]
-          .map(_.getOrElse(UserProficiency(username, topicWithLevel.topic)))
+      oldUserProficiency: UserProficiency <- userProficienciesCollection
+        .find(filter, Option.empty[BSONDocument])
+        .one[UserProficiency]
+        .map(_.getOrElse(UserProficiency(username, topicWithLevel.topic)))
 
       newUserProficiency: UserProficiency = oldUserProficiency.copy(
         pointsForExercises = oldUserProficiency.pointsForExercises + levelForExerciseToAdd
