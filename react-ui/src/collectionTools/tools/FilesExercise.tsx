@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {ExerciseFilesEditor, Workspace, workspace} from '../../helpers/ExerciseFilesEditor';
 import {ExerciseControlButtons} from '../../helpers/ExerciseControlButtons';
 import {SampleSolutionTabContent} from '../SampleSolutionTabContent';
@@ -6,9 +6,9 @@ import {BulmaTabs, Tabs} from '../../helpers/BulmaTabs';
 import {ExerciseFileFragment, FilesSolution} from '../../graphql';
 import {useTranslation} from 'react-i18next';
 import {ExerciseFileCard} from './ExerciseFileCard';
+import update from 'immutability-helper';
 
 interface IProps {
-  exerciseId: number;
   exerciseDescription: JSX.Element;
   initialFiles: ExerciseFileFragment[];
   sampleSolutions: FilesSolution[],
@@ -22,9 +22,7 @@ interface IState {
   activeFile: keyof Workspace;
 }
 
-export function FilesExercise(
-  {exerciseId, exerciseDescription, initialFiles, sampleSolutions, correctionTabRender, correct, isCorrecting}: IProps
-): JSX.Element {
+export function FilesExercise({exerciseDescription, initialFiles, sampleSolutions, correctionTabRender, correct, isCorrecting}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [state, setState] = useState<IState>({
@@ -33,10 +31,9 @@ export function FilesExercise(
   });
 
   function updateActiveFileContent(content: string): void {
-    setState(({workspace, activeFile}) => {
-      workspace[activeFile].content = content;
-      return {workspace, activeFile};
-    });
+    setState((state) => update(state, {
+      workspace: {[state.activeFile]: {content: {$set: content}}}
+    }));
   }
 
   function onCorrect(): void {

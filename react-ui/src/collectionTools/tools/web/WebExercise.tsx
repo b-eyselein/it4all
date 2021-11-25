@@ -80,7 +80,7 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
     </WithQuery>
   );
 
-  return <FilesExercise exerciseId={exercise.exerciseId} exerciseDescription={exerciseDescription} initialFiles={initialFiles}
+  return <FilesExercise exerciseDescription={exerciseDescription} initialFiles={initialFiles}
                         sampleSolutions={content.webSampleSolutions} isCorrecting={correctionMutationResult.loading}
                         correctionTabRender={correctionTabRender} correct={correct}/>;
 }
