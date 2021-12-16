@@ -12,6 +12,8 @@ export function JsTaskResultDisplay({jsResult}: IProps): JSX.Element {
 
   const {id, success, points, maxPoints, gradedPostResults, gradedJsActionResult, gradedPreResults} = jsResult;
 
+  console.info(success);
+
   if (success === SuccessType.Complete) {
     return <span className="has-text-success">Test {id} war erfolgreich.</span>;
   }
@@ -22,7 +24,7 @@ export function JsTaskResultDisplay({jsResult}: IProps): JSX.Element {
 
   const actionDescription = actionType === JsActionType.Click
     ? <span>Klicke auf Element mit XPath Query <code>${jsAction.xpathQuery}</code></span>
-    : <span>Sende Keys &amp;${keysToSend || ''}&amp; an Element mit XPath Query ${jsAction.xpathQuery}</span>;
+    : <span>Sende Keys &quot;${keysToSend || ''}&quot; an Element mit XPath Query &quot;{jsAction.xpathQuery}&quot;</span>;
 
 
   return (

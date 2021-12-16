@@ -57,7 +57,7 @@ export function ExerciseFilesEditor({files, activeFileName, setActiveFile, updat
   const activeFile: ExerciseFileFragment = files[activeFileName];
 
   const fileExtension = getFileExtension(activeFile.name);
- 
+
   const newExtension = fileExtension
     ? getExtensionForFileExtension(fileExtension)
     : undefined;

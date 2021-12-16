@@ -34,7 +34,7 @@ object WebColl2Ex2 extends WebInitialExercise(2, 2) {
                |Bei Änderung des Passwortfeldes (onchange) soll die Funktion 'passwordStrength()' aufgerufen werden.""".stripMargin
         .replace("\n", " "),
       elementSpec = WebElementSpec(
-        xpathQuery = """/html/body//input[@id='pa= "javascript"ssword']""",
+        xpathQuery = """/html/body//input[@id='password']""",
         awaitedTagName = "input",
         attributes = Map("type" -> "password", "onchange" -> "passwordStrength()")
       )

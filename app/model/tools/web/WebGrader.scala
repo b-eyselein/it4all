@@ -95,13 +95,13 @@ object WebGrader {
   def gradeJsTaskResult(jtr: JsTaskResult): GradedJsTaskResult = {
 
     val gradedPreResults     = jtr.preResults.map { gradeElementSpecResult }
-    val preResultsSuccessful = gradedPreResults.nonEmpty && gradedPreResults.forall(_.success == SuccessType.COMPLETE)
+    val preResultsSuccessful = gradedPreResults.isEmpty || gradedPreResults.forall(_.success == SuccessType.COMPLETE)
 
     val gradedActionResult = gradeActionResult(jtr.actionResult)
     val actionSuccessful   = gradedActionResult.actionPerformed
 
     val gradedPostResults     = jtr.postResults.map { gradeElementSpecResult }
-    val postResultsSuccessful = gradedPostResults.nonEmpty && gradedPostResults.forall(_.success == SuccessType.COMPLETE)
+    val postResultsSuccessful = gradedPostResults.isEmpty || gradedPostResults.forall(_.success == SuccessType.COMPLETE)
 
     val points: Points = addUp(gradedPreResults.map(_.points)) + gradedActionResult.points + addUp(
       gradedPostResults.map(_.points)
