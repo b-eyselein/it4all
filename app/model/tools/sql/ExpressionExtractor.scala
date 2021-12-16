@@ -5,7 +5,7 @@ import net.sf.jsqlparser.expression.operators.arithmetic._
 import net.sf.jsqlparser.expression.operators.conditional.{AndExpression, OrExpression, XorExpression}
 import net.sf.jsqlparser.expression.operators.relational._
 import net.sf.jsqlparser.schema.Column
-import net.sf.jsqlparser.statement.select.SubSelect
+import net.sf.jsqlparser.statement.select.{AllColumns, AllTableColumns, SubSelect}
 
 import scala.collection.mutable.ListBuffer
 
@@ -188,4 +188,13 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
   override def visit(aThis: ConnectByRootOperator): Unit = {}
 
   override def visit(aThis: OracleNamedFunctionParameter): Unit = {}
+
+  override def visit(cast: TryCastExpression): Unit = {}
+
+  override def visit(allColumns: AllColumns): Unit = {}
+
+  override def visit(allTableColumns: AllTableColumns): Unit = {}
+
+  override def visit(allValue: AllValue): Unit = {}
+
 }
