@@ -1,6 +1,6 @@
 import {ExerciseFileFragment, FilesSolutionInput, FlaskExerciseContentFragment, FlaskExercisePart, useFlaskCorrectionMutation} from '../../../graphql';
 import {ConcreteExerciseIProps} from '../../Exercise';
-import {FilesExercise} from '../FilesExercise';
+import {FilesExercise, updateFileContents} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
@@ -32,7 +32,7 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
   );
 
   const initialFiles = oldSolution
-    ? oldSolution.files
+    ? updateFileContents(oldSolution.files, content.files)
     : content.files;
 
   function correct(files: ExerciseFileFragment[], onCorrect: () => void): void {
