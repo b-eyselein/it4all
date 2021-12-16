@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import './SqlExercise.sass';
 import {SqlExecutionResultFragment, SqlExerciseContentFragment, SqlExPart, useSqlCorrectionMutation} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
-import CodeMirror from '@uiw/react-codemirror';
-import {getDefaultCodeMirrorEditorOptions} from '../codeMirrorOptions';
+import CodeMirror, {Compartment} from '@uiw/react-codemirror';
 import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
 import {SqlTableContents} from './SqlTableContents';
 import {SqlCorrection} from './SqlCorrection';
@@ -13,6 +12,7 @@ import {ConcreteExerciseIProps} from '../../Exercise';
 import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 import {database} from '../../DexieTable';
+import {sql} from '@codemirror/lang-sql';
 
 type IProps = ConcreteExerciseIProps<SqlExerciseContentFragment, string>;
 
@@ -63,8 +63,8 @@ export function SqlExercise({exercise, content, partId, oldSolution}: IProps): J
 
           <h1 className="title is-4 has-text-centered">{t('query')}</h1>
 
-          <CodeMirror value={oldSolution ? oldSolution : solution} height={'200px'} options={getDefaultCodeMirrorEditorOptions('sql')}
-                      onChange={(ed) => setSolution(ed.getValue())}/>
+          {/* options={getDefaultCodeMirrorEditorOptions('sql')} */}
+          <CodeMirror value={oldSolution ? oldSolution : solution} height={'200px'} onChange={(ed) => setSolution(ed)} extensions={[(new Compartment).of(sql())]}/>
 
           <ExerciseControlButtons isCorrecting={correcting} correct={correct} endLink={`./../../${exercise.exerciseId}`}/>
         </div>

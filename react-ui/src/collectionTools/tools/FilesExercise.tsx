@@ -22,7 +22,7 @@ interface IState {
   activeFile: keyof Workspace;
 }
 
-export function FilesExercise({exerciseDescription, initialFiles, sampleSolutions, correctionTabRender, correct, isCorrecting}: IProps): JSX.Element {
+export function FilesExercise({exerciseDescription, initialFiles, sampleSolutions, correctionTabRender, correct, isCorrecting,}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [state, setState] = useState<IState>({

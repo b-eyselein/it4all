@@ -54,8 +54,13 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
     </WithQuery>
   );
 
-  return <FilesExercise exerciseDescription={<p dangerouslySetInnerHTML={{__html: exercise.text}}/>}
-                        initialFiles={initialFiles} sampleSolutions={content.programmingSampleSolutions}
-                        correct={correct} correctionTabRender={correctionTabRender}
-                        isCorrecting={correctionMutationResult.loading}/>;
+  return (
+    <FilesExercise
+      exerciseDescription={<p dangerouslySetInnerHTML={{__html: exercise.text}}/>}
+      initialFiles={initialFiles}
+      sampleSolutions={content.programmingSampleSolutions}
+      correct={correct}
+      correctionTabRender={correctionTabRender}
+      isCorrecting={correctionMutationResult.loading}/>
+  );
 }

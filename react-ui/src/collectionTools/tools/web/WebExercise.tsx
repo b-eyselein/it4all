@@ -23,7 +23,7 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
 
   const exerciseDescription = (
     <div className="content">
-      <p>{exercise.text}</p>
+      <p dangerouslySetInnerHTML={{__html: exercise.text}}/>
 
       {part === WebExPart.HtmlPart
         ? <ol>{content.siteSpec.htmlTasks.map((task, index) => <li key={index}>{task.text}</li>)}</ol>
@@ -80,7 +80,13 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
     </WithQuery>
   );
 
-  return <FilesExercise exerciseDescription={exerciseDescription} initialFiles={initialFiles}
-                        sampleSolutions={content.webSampleSolutions} isCorrecting={correctionMutationResult.loading}
-                        correctionTabRender={correctionTabRender} correct={correct}/>;
+  return (
+    <FilesExercise
+      exerciseDescription={exerciseDescription}
+      initialFiles={initialFiles}
+      sampleSolutions={content.webSampleSolutions}
+      isCorrecting={correctionMutationResult.loading}
+      correctionTabRender={correctionTabRender}
+      correct={correct}/>
+  );
 }

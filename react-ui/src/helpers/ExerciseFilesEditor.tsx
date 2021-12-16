@@ -1,7 +1,12 @@
 import classNames from 'classnames';
 import {ExerciseFileFragment} from '../graphql';
-import CodeMirror from '@uiw/react-codemirror';
-import {getDefaultCodeMirrorEditorOptions} from '../collectionTools/tools/codeMirrorOptions';
+import CodeMirror, {Extension} from '@uiw/react-codemirror';
+import {python} from '@codemirror/lang-python';
+import {css} from '@codemirror/lang-css';
+import {html} from '@codemirror/lang-html';
+import {xml} from '@codemirror/lang-xml';
+import {sql} from '@codemirror/lang-sql';
+import {javascript} from '@codemirror/lang-javascript';
 
 interface IProps {
   files: Workspace;
@@ -20,11 +25,44 @@ export function workspace(files: ExerciseFileFragment[]): Workspace {
   );
 }
 
+function getFileExtension(filename: string): string | undefined {
+  const fileNameLastPointIndex = filename.lastIndexOf('.');
+
+  if (fileNameLastPointIndex !== -1) {
+    return filename.substring(fileNameLastPointIndex + 1);
+  }
+}
+
+function getExtensionForFileExtension(fileExtension: string): Extension | undefined {
+  switch (fileExtension) {
+    case 'py':
+      return python();
+    case 'css':
+      return css();
+    case 'html':
+      return html();
+    case 'xml':
+      return xml();
+    case 'sql':
+      return sql();
+    case 'js':
+      return javascript();
+    default:
+      return undefined;
+  }
+}
+
 export function ExerciseFilesEditor({files, activeFileName, setActiveFile, updateActiveFileContent}: IProps): JSX.Element {
 
   const activeFile: ExerciseFileFragment = files[activeFileName];
 
-  const mode = activeFile.fileType === 'htmlmixed' ? 'xml' : activeFile.fileType;
+  const fileExtension = getFileExtension(activeFile.name);
+ 
+  const newExtension = fileExtension
+    ? getExtensionForFileExtension(fileExtension)
+    : undefined;
+
+  const extensions = newExtension ? [newExtension] : [];
 
   return (
     <>
@@ -38,11 +76,8 @@ export function ExerciseFilesEditor({files, activeFileName, setActiveFile, updat
         </ul>
       </div>
 
-      <CodeMirror
-        value={activeFile.content}
-        height={'700px'}
-        options={getDefaultCodeMirrorEditorOptions(mode)}
-        onChange={(ed) => updateActiveFileContent(ed.getValue())}/>
+      {/* options={getDefaultCodeMirrorEditorOptions(mode)} */}
+      <CodeMirror value={activeFile.content} height={'700px'} onChange={(ed) => updateActiveFileContent(ed)} extensions={extensions}/>
     </>
   );
 

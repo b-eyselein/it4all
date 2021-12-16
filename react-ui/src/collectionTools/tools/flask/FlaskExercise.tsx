@@ -70,7 +70,13 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
     </WithQuery>
   );
 
-  return <FilesExercise exerciseDescription={exerciseDescription} initialFiles={initialFiles}
-                        sampleSolutions={content.flaskSampleSolutions} correct={correct} correctionTabRender={correctionTabRender}
-                        isCorrecting={correctionMutationResult.called && correctionMutationResult.loading}/>;
+  return (
+    <FilesExercise
+      exerciseDescription={exerciseDescription}
+      initialFiles={initialFiles}
+      sampleSolutions={content.flaskSampleSolutions}
+      correct={correct}
+      correctionTabRender={correctionTabRender}
+      isCorrecting={correctionMutationResult.called && correctionMutationResult.loading}/>
+  );
 }

@@ -98,7 +98,13 @@ export function XmlExercise({exercise, content, partId, oldSolution}: IProps): J
     </WithQuery>
   );
 
-  return <FilesExercise exerciseDescription={exerciseDescription} initialFiles={[grammarFile, documentFile]}
-                        sampleSolutions={sampleSolutions} correct={correct} isCorrecting={correctionMutationResult.loading}
-                        correctionTabRender={correctionTabRender}/>;
+  return (
+    <FilesExercise
+      exerciseDescription={exerciseDescription}
+      initialFiles={[grammarFile, documentFile]}
+      sampleSolutions={sampleSolutions}
+      correct={correct}
+      isCorrecting={correctionMutationResult.loading}
+      correctionTabRender={correctionTabRender}/>
+  );
 }
