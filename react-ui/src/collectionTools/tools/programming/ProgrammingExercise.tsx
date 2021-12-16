@@ -1,6 +1,6 @@
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {ExerciseFileFragment, FilesSolutionInput, ProgExPart, ProgrammingExerciseContentFragment, useProgrammingCorrectionMutation} from '../../../graphql';
-import {FilesExercise} from '../FilesExercise';
+import {FilesExercise, updateFileContents} from '../FilesExercise';
 import {database} from '../../DexieTable';
 import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
@@ -20,9 +20,13 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
 
   const part = content.programmingPart;
 
+  const defaultSolution = part === ProgExPart.TestCreation
+    ? content.unitTestPart.unitTestFiles
+    : content.implementationPart.files;
+
   const initialFiles = oldSolution
-    ? oldSolution.files
-    : (part === ProgExPart.TestCreation ? content.unitTestPart.unitTestFiles : content.implementationPart.files);
+    ? updateFileContents(oldSolution.files, defaultSolution)
+    : defaultSolution;
 
   function correct(files: ExerciseFileFragment[], onCorrect: () => void): void {
     const solution: FilesSolutionInput = {

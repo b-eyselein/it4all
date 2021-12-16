@@ -3,7 +3,7 @@ import {ExerciseFilesEditor, Workspace, workspace} from '../../helpers/ExerciseF
 import {ExerciseControlButtons} from '../../helpers/ExerciseControlButtons';
 import {SampleSolutionTabContent} from '../SampleSolutionTabContent';
 import {BulmaTabs, Tabs} from '../../helpers/BulmaTabs';
-import {ExerciseFileFragment, FilesSolution} from '../../graphql';
+import {ExerciseFileFragment, ExerciseFileInput, FilesSolution} from '../../graphql';
 import {useTranslation} from 'react-i18next';
 import {ExerciseFileCard} from './ExerciseFileCard';
 import update from 'immutability-helper';
@@ -20,6 +20,17 @@ interface IProps {
 interface IState {
   workspace: Workspace;
   activeFile: keyof Workspace;
+}
+
+export function updateFileContents(oldSolution: ExerciseFileInput[], defaultSolution: ExerciseFileInput[]): ExerciseFileInput[] {
+  return defaultSolution.map((defaultSolutionFile) => {
+
+    const oldSolutionFile = oldSolution.find(({name}) => defaultSolutionFile.name === name);
+
+    return oldSolutionFile
+      ? {...defaultSolutionFile, content: oldSolutionFile.content}
+      : defaultSolutionFile;
+  });
 }
 
 export function FilesExercise({exerciseDescription, initialFiles, sampleSolutions, correctionTabRender, correct, isCorrecting,}: IProps): JSX.Element {

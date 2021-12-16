@@ -1,6 +1,6 @@
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {ExerciseFileFragment, FilesSolutionInput, useWebCorrectionMutation, WebExerciseContentFragment, WebExPart} from '../../../graphql';
-import {FilesExercise} from '../FilesExercise';
+import {FilesExercise, updateFileContents} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
@@ -10,6 +10,7 @@ import {database} from '../../DexieTable';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
 
 type IProps = ConcreteExerciseIProps<WebExerciseContentFragment, FilesSolutionInput>;
+
 
 export function WebExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
@@ -33,7 +34,7 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
   );
 
   const initialFiles = oldSolution
-    ? oldSolution.files
+    ? updateFileContents(oldSolution.files, content.files)
     : content.files;
 
   function correct(files: ExerciseFileFragment[], onCorrect: () => void): void {
