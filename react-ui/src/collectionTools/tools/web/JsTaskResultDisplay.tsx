@@ -12,8 +12,6 @@ export function JsTaskResultDisplay({jsResult}: IProps): JSX.Element {
 
   const {id, success, points, maxPoints, gradedPostResults, gradedJsActionResult, gradedPreResults} = jsResult;
 
-  console.info(success);
-
   if (success === SuccessType.Complete) {
     return <span className="has-text-success">Test {id} war erfolgreich.</span>;
   }
