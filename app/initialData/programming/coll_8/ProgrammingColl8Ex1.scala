@@ -14,9 +14,9 @@ object ProgrammingColl8Ex1 extends ProgrammingInitialExercise(8, 1, "table") {
     unitTestFiles = loadFilesFromFolder(
       exResPath,
       Seq(
-        FileLoadConfig("table.py", fileType, realFilename = Some("table_declaration.py")),
-        FileLoadConfig("raum.csv", fileType),
-        FileLoadConfig("test_table.py", fileType, editable = true, Some("test_table_declaration.py"))
+        FileLoadConfig("table.py", realFilename = Some("table_declaration.py")),
+        FileLoadConfig("raum.csv"),
+        FileLoadConfig("test_table.py", editable = true, Some("test_table_declaration.py"))
       )
     ),
     unitTestTestConfigs = Seq(
@@ -42,9 +42,9 @@ object ProgrammingColl8Ex1 extends ProgrammingInitialExercise(8, 1, "table") {
     files = loadFilesFromFolder(
       exResPath,
       Seq(
-        FileLoadConfig(testFileName, fileType),
-        FileLoadConfig(implFileName, fileType, editable = true, Some(implDeclFileName)),
-        FileLoadConfig("raum.csv", fileType)
+        FileLoadConfig(testFileName),
+        FileLoadConfig(implFileName, editable = true, Some(implDeclFileName)),
+        FileLoadConfig("raum.csv")
       )
     ),
     implFileName = implFileName

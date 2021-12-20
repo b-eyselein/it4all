@@ -4,9 +4,7 @@ import better.files._
 
 sealed trait ExerciseFile {
   val name: String
-  val fileType: String
   val editable: Boolean
-
   def content: String
 
   def writeOrCopyToDirectory(directory: File): File
@@ -14,7 +12,6 @@ sealed trait ExerciseFile {
 
 final case class ContentExerciseFile(
   name: String,
-  fileType: String,
   content: String,
   editable: Boolean
 ) extends ExerciseFile {
@@ -31,7 +28,6 @@ final case class ContentExerciseFile(
 
 final case class PathExerciseFile(
   name: String,
-  fileType: String,
   directory: File,
   editable: Boolean,
   private val realFilename: Option[String] = None

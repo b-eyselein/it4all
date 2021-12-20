@@ -140,7 +140,7 @@ object WebColl1Ex2 extends WebInitialExercise(1, 2) {
   private val sampleSolutionFiles = loadFilesFromFolder(
     exResPath / "sol_1",
     Seq(
-      FileLoadConfig("production.html", htmlFileType)
+      FileLoadConfig("production.html")
     )
   )
 
@@ -157,8 +157,8 @@ object WebColl1Ex2 extends WebInitialExercise(1, 2) {
       files = loadFilesFromFolder(
         exResPath,
         Seq(
-          FileLoadConfig("production.html", htmlFileType, editable = true),
-          FileLoadConfig("productionStyle.css", cssFileType)
+          FileLoadConfig("production.html", editable = true),
+          FileLoadConfig("productionStyle.css")
         )
       ),
       sampleSolutions = Seq(FilesSolution(sampleSolutionFiles))

@@ -1,5 +1,5 @@
 import {ConcreteExerciseIProps} from '../../Exercise';
-import {ExerciseFileFragment, FilesSolutionInput, useWebCorrectionMutation, WebExerciseContentFragment, WebExPart} from '../../../graphql';
+import {FilesSolutionInput, useWebCorrectionMutation, WebExerciseContentFragment, WebExPart} from '../../../graphql';
 import {FilesExercise, updateFileContents} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
@@ -8,6 +8,7 @@ import {HtmlTaskResultDisplay} from './HtmlTaskResultDisplay';
 import {JsTaskResultDisplay} from './JsTaskResultDisplay';
 import {database} from '../../DexieTable';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
+import {IExerciseFile} from '../../exerciseFile';
 
 type IProps = ConcreteExerciseIProps<WebExerciseContentFragment, FilesSolutionInput>;
 
@@ -33,9 +34,9 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
     ? updateFileContents(oldSolution.files, content.files)
     : content.files;
 
-  function correct(files: ExerciseFileFragment[], onCorrect: () => void): void {
+  function correct(files: IExerciseFile[], onCorrect: () => void): void {
     const solution: FilesSolutionInput = {
-      files: files.map(({name, content, fileType, editable}) => ({name, content, fileType, editable}))
+      files: files.map(({name, content, /*fileType,*/ editable}) => ({name, content, /*fileType,*/ editable}))
     };
 
     database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
@@ -80,7 +81,8 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
   return (
     <FilesExercise
       exerciseDescription={exerciseDescription}
-      initialFiles={initialFiles}
+      defaultFiles={content.files}
+      oldSolution={oldSolution}
       sampleSolutions={content.webSampleSolutions}
       isCorrecting={correctionMutationResult.loading}
       correctionTabRender={correctionTabRender}

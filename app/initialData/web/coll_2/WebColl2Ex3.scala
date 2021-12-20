@@ -116,8 +116,8 @@ object WebColl2Ex3 extends WebInitialExercise(2, 3) {
   private val sampleSolutionFiles = loadFilesFromFolder(
     exResPath / "sol_1",
     Seq(
-      FileLoadConfig("factorial.html", htmlFileType),
-      FileLoadConfig("factorial.js", jsFileType)
+      FileLoadConfig("factorial.html"),
+      FileLoadConfig("factorial.js")
     )
   )
 
@@ -134,8 +134,8 @@ object WebColl2Ex3 extends WebInitialExercise(2, 3) {
       files = loadFilesFromFolder(
         exResPath,
         Seq(
-          FileLoadConfig("factorial.html", htmlFileType, editable = true),
-          FileLoadConfig("factorial.js", jsFileType, editable = true)
+          FileLoadConfig("factorial.html", editable = true),
+          FileLoadConfig("factorial.js", editable = true)
         )
       ),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),

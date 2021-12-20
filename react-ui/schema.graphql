@@ -131,14 +131,12 @@ union ExerciseContentUnionType = EbnfExerciseContent | FlaskExerciseContent | Pr
 type ExerciseFile {
   content: String!
   editable: Boolean!
-  fileType: String!
   name: String!
 }
 
 input ExerciseFileInput {
   content: String!
   editable: Boolean!
-  fileType: String!
   name: String!
 }
 

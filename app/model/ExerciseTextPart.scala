@@ -5,7 +5,19 @@ final case class ExerciseText(
   parts: Seq[ExerciseTextParagraph]
 )
 
-final case class ExerciseTextParagraph(
-)
+// Paragraph
 
-sealed trait ExerciseTextPart
+sealed trait ExerciseTextParagraph
+
+final case class ExerciseTextTextParagraph(
+  textParts: Seq[ExerciseTextPart]
+) extends ExerciseTextParagraph
+
+final case class ExerciseTextListParagraph(
+) extends ExerciseTextParagraph
+
+// Text parts
+
+final case class ExerciseTextPart(
+  text: String
+)

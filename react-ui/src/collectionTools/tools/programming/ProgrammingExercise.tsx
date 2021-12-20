@@ -1,12 +1,13 @@
 import {ConcreteExerciseIProps} from '../../Exercise';
-import {ExerciseFileFragment, FilesSolutionInput, ProgExPart, ProgrammingExerciseContentFragment, useProgrammingCorrectionMutation} from '../../../graphql';
-import {FilesExercise, updateFileContents} from '../FilesExercise';
+import {FilesSolutionInput, ProgExPart, ProgrammingExerciseContentFragment, useProgrammingCorrectionMutation} from '../../../graphql';
+import {FilesExercise} from '../FilesExercise';
 import {database} from '../../DexieTable';
 import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {UnitTestResult} from './UnitTestResult';
 import {ImplementationResult} from './ImplementationResult';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
+import {IExerciseFile} from '../../exerciseFile';
 
 type IProps = ConcreteExerciseIProps<ProgrammingExerciseContentFragment, FilesSolutionInput>;
 
@@ -22,13 +23,9 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
     ? content.unitTestPart.unitTestFiles
     : content.implementationPart.files;
 
-  const initialFiles = oldSolution
-    ? updateFileContents(oldSolution.files, defaultSolution)
-    : defaultSolution;
-
-  function correct(files: ExerciseFileFragment[], onCorrect: () => void): void {
+  function correct(files: IExerciseFile[], onCorrect: () => void): void {
     const solution: FilesSolutionInput = {
-      files: files.map(({name, content, fileType, editable}) => ({name, content, fileType, editable}))
+      files: files.map(({name, content, /*fileType,*/ editable}) => ({name, content, /*fileType,*/ editable}))
     };
 
     database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
@@ -59,7 +56,8 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
   return (
     <FilesExercise
       exerciseDescription={<p dangerouslySetInnerHTML={{__html: exercise.text}}/>}
-      initialFiles={initialFiles}
+      defaultFiles={defaultSolution}
+      oldSolution={oldSolution}
       sampleSolutions={content.programmingSampleSolutions}
       correct={correct}
       correctionTabRender={correctionTabRender}

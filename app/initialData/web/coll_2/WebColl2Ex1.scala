@@ -72,8 +72,8 @@ object WebColl2Ex1 extends WebInitialExercise(2, 1) {
   private val sampleSolutionFiles = loadFilesFromFolder(
     exResPath / "sol_1",
     Seq(
-      FileLoadConfig("clickCounter.html", htmlFileType),
-      FileLoadConfig("clickCounter.js", jsFileType)
+      FileLoadConfig("clickCounter.html"),
+      FileLoadConfig("clickCounter.js")
     )
   )
 
@@ -90,8 +90,8 @@ object WebColl2Ex1 extends WebInitialExercise(2, 1) {
       loadFilesFromFolder(
         exResPath,
         Seq(
-          FileLoadConfig("clickCounter.html", htmlFileType, editable = true),
-          FileLoadConfig("clickCounter.js", jsFileType, editable = true)
+          FileLoadConfig("clickCounter.html", editable = true),
+          FileLoadConfig("clickCounter.js", editable = true)
         )
       ),
       Seq(FilesSolution(sampleSolutionFiles)),

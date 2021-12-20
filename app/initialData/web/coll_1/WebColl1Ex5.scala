@@ -12,7 +12,7 @@ object WebColl1Ex5 extends WebInitialExercise(1, 5) {
 
   private val sampleSolutionFiles = loadFilesFromFolder(
     exResPath / "sol_1",
-    Seq(FileLoadConfig("audio.html", htmlFileType))
+    Seq(FileLoadConfig("audio.html"))
   )
 
   private val html_tasks: Seq[HtmlTask] = Seq(
@@ -66,7 +66,7 @@ object WebColl1Ex5 extends WebInitialExercise(1, 5) {
       SiteSpec("audio.html", html_tasks, jsTasks = Seq.empty),
       files = loadFilesFromFolder(
         exResPath,
-        Seq(FileLoadConfig("audio.html", htmlFileType, editable = true))
+        Seq(FileLoadConfig("audio.html", editable = true))
       ),
       Seq(FilesSolution(sampleSolutionFiles))
     )

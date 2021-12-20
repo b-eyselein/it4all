@@ -37,7 +37,7 @@ object FlaskCorrector extends DockerExecutionCorrector {
     // Write test config
     val testConfigExerciseFile = ContentExerciseFile(
       testConfigFileName,
-      fileType = "json",
+      // fileType = "json",
       content = Json.stringify(
         flaskTestsConfigFormat.writes(exercise.content.testConfig)
       ),

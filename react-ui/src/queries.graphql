@@ -155,7 +155,7 @@ query Exercise($toolId: String!, $collectionId: Int!, $exerciseId: Int!) {
 
 fragment ExerciseFile on ExerciseFile {
   name
-  fileType
+  # fileType
   content
   editable
 }

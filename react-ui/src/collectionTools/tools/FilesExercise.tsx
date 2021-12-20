@@ -3,17 +3,19 @@ import {ExerciseFilesEditor, Workspace, workspace} from '../../helpers/ExerciseF
 import {ExerciseControlButtons} from '../../helpers/ExerciseControlButtons';
 import {SampleSolutionTabContent} from '../SampleSolutionTabContent';
 import {BulmaTabs, Tabs} from '../../helpers/BulmaTabs';
-import {ExerciseFileFragment, ExerciseFileInput, FilesSolution} from '../../graphql';
+import {FilesSolution} from '../../graphql';
 import {useTranslation} from 'react-i18next';
 import {ExerciseFileCard} from './ExerciseFileCard';
 import update from 'immutability-helper';
+import {IExerciseFile, IFilesSolution} from '../exerciseFile';
 
 interface IProps {
   exerciseDescription: JSX.Element;
-  initialFiles: ExerciseFileFragment[];
+  defaultFiles: IExerciseFile[];
+  oldSolution: IFilesSolution | undefined;
   sampleSolutions: FilesSolution[],
   correctionTabRender: JSX.Element;
-  correct: (files: ExerciseFileFragment[], onCorrected: () => void) => void;
+  correct: (files: IExerciseFile[], onCorrected: () => void) => void;
   isCorrecting: boolean;
 }
 
@@ -22,7 +24,7 @@ interface IState {
   activeFile: keyof Workspace;
 }
 
-export function updateFileContents(oldSolution: ExerciseFileInput[], defaultSolution: ExerciseFileInput[]): ExerciseFileInput[] {
+export function updateFileContents(oldSolution: IExerciseFile[], defaultSolution: IExerciseFile[]): IExerciseFile[] {
   return defaultSolution.map((defaultSolutionFile) => {
 
     const oldSolutionFile = oldSolution.find(({name}) => defaultSolutionFile.name === name);
@@ -33,7 +35,19 @@ export function updateFileContents(oldSolution: ExerciseFileInput[], defaultSolu
   });
 }
 
-export function FilesExercise({exerciseDescription, initialFiles, sampleSolutions, correctionTabRender, correct, isCorrecting,}: IProps): JSX.Element {
+export function FilesExercise({
+  exerciseDescription,
+  defaultFiles,
+  oldSolution,
+  sampleSolutions,
+  correctionTabRender,
+  correct,
+  isCorrecting
+}: IProps): JSX.Element {
+
+  const initialFiles = oldSolution
+    ? updateFileContents(oldSolution.files, defaultFiles)
+    : defaultFiles;
 
   const {t} = useTranslation('common');
   const [state, setState] = useState<IState>({
@@ -50,6 +64,7 @@ export function FilesExercise({exerciseDescription, initialFiles, sampleSolution
   function onCorrect(): void {
     correct(Object.values(state.workspace), () => setActiveTabId('correction'));
   }
+
 
   const exerciseDescriptionTabRender = <>
     <div className="notification is-light-grey">{exerciseDescription}</div>

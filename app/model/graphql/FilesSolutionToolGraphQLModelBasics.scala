@@ -26,7 +26,6 @@ trait FilesSolutionToolGraphQLModelBasics[C <: ExerciseContent, PT <: ExPart, Re
     "ExerciseFile",
     fields[Unit, ExerciseFile](
       Field("name", StringType, resolve = _.value.name),
-      Field("fileType", StringType, resolve = _.value.fileType),
       Field("editable", BooleanType, resolve = _.value.editable),
       Field("content", StringType, resolve = _.value.content)
     )

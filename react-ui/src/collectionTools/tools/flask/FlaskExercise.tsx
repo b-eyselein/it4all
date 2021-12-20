@@ -1,12 +1,13 @@
-import {ExerciseFileFragment, FilesSolutionInput, FlaskExerciseContentFragment, FlaskExercisePart, useFlaskCorrectionMutation} from '../../../graphql';
+import {FilesSolutionInput, FlaskExerciseContentFragment, FlaskExercisePart, useFlaskCorrectionMutation} from '../../../graphql';
 import {ConcreteExerciseIProps} from '../../Exercise';
-import {FilesExercise, updateFileContents} from '../FilesExercise';
+import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import classNames from 'classnames';
 import {database} from '../../DexieTable';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
+import {IExerciseFile} from '../../exerciseFile';
 
 type IProps = ConcreteExerciseIProps<FlaskExerciseContentFragment, FilesSolutionInput>;
 
@@ -31,13 +32,9 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
     </>
   );
 
-  const initialFiles = oldSolution
-    ? updateFileContents(oldSolution.files, content.files)
-    : content.files;
-
-  function correct(files: ExerciseFileFragment[], onCorrect: () => void): void {
+  function correct(files: IExerciseFile[], onCorrect: () => void): void {
     const solution: FilesSolutionInput = {
-      files: files.map(({name, content, fileType, editable}) => ({name, content, fileType, editable}))
+      files: files.map(({name, content, editable}) => ({name, content, editable}))
     };
 
     database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
@@ -73,7 +70,8 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
   return (
     <FilesExercise
       exerciseDescription={exerciseDescription}
-      initialFiles={initialFiles}
+      defaultFiles={content.files}
+      oldSolution={oldSolution}
       sampleSolutions={content.flaskSampleSolutions}
       correct={correct}
       correctionTabRender={correctionTabRender}

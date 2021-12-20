@@ -101,7 +101,8 @@ export function XmlExercise({exercise, content, partId, oldSolution}: IProps): J
   return (
     <FilesExercise
       exerciseDescription={exerciseDescription}
-      initialFiles={[grammarFile, documentFile]}
+      defaultFiles={[grammarFile, documentFile]}
+      oldSolution={undefined}
       sampleSolutions={sampleSolutions}
       correct={correct}
       isCorrecting={correctionMutationResult.loading}

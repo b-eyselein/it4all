@@ -13,16 +13,7 @@ import model.ExerciseCollection
 import model.tools.web.WebExerciseContent
 import model.tools.web.WebTool.WebExercise
 
-
-abstract class WebInitialExercise(collectionId: Int, exerciseId: Int)
-  extends InitialFilesExercise("web", collectionId, exerciseId) {
-
-  protected val htmlFileType = "htmlmixed"
-  protected val cssFileType  = "css"
-  protected val jsFileType   = "javascript"
-
-}
-
+abstract class WebInitialExercise(collectionId: Int, exerciseId: Int) extends InitialFilesExercise("web", collectionId, exerciseId) {}
 
 object WebInitialData extends InitialData[WebExerciseContent] {
 
