@@ -5,7 +5,7 @@ import model._
 
 sealed abstract class SqlExPart(val partName: String, val id: String) extends ExPart
 
-object SqlExPart extends ExParts[SqlExPart] {
+object SqlExPart extends PlayEnum[SqlExPart] {
 
   val values: IndexedSeq[SqlExPart] = findValues
 

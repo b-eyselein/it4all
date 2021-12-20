@@ -1,10 +1,11 @@
 package model.tools.ebnf
 
-import model.{ExPart, ExParts, ExerciseContent}
+import enumeratum.PlayEnum
+import model.{ExPart, ExerciseContent}
 
 sealed abstract class EbnfExercisePart(val partName: String, val id: String) extends ExPart
 
-object EbnfExercisePart extends ExParts[EbnfExercisePart] {
+object EbnfExercisePart extends PlayEnum[EbnfExercisePart] {
 
   val values: IndexedSeq[EbnfExercisePart] = findValues
 

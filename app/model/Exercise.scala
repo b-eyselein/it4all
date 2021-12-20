@@ -1,6 +1,6 @@
 package model
 
-import enumeratum.{EnumEntry, PlayEnum}
+import enumeratum.EnumEntry
 
 final case class ExerciseCollection(
   collectionId: Int,
@@ -18,8 +18,6 @@ trait ExPart extends EnumEntry {
   def isEntryPart: Boolean = true
 
 }
-
-trait ExParts[EP <: ExPart] extends PlayEnum[EP]
 
 trait ExerciseContent {
 

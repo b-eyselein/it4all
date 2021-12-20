@@ -1,11 +1,11 @@
 package model.tools.regex
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.{ExPart, ExParts, ExerciseContent}
+import model.{ExPart, ExerciseContent}
 
 sealed abstract class RegexExPart(val partName: String, val id: String) extends ExPart
 
-object RegexExPart extends ExParts[RegexExPart] {
+object RegexExPart extends PlayEnum[RegexExPart] {
 
   val values: IndexedSeq[RegexExPart] = findValues
 

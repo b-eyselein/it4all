@@ -1,10 +1,11 @@
 package model.tools.xml
 
-import model.{ExPart, ExParts, ExerciseContent}
+import enumeratum.PlayEnum
+import model.{ExPart, ExerciseContent}
 
 sealed abstract class XmlExPart(val partName: String, val id: String) extends ExPart
 
-object XmlExPart extends ExParts[XmlExPart] {
+object XmlExPart extends PlayEnum[XmlExPart] {
 
   val values: IndexedSeq[XmlExPart] = findValues
 

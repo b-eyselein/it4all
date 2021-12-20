@@ -1,11 +1,12 @@
 package model.tools.web
 
+import enumeratum.PlayEnum
 import model._
 import model.tools.web.sitespec.SiteSpec
 
 sealed abstract class WebExPart(val partName: String, val id: String) extends ExPart
 
-object WebExPart extends ExParts[WebExPart] {
+object WebExPart extends PlayEnum[WebExPart] {
 
   val values: IndexedSeq[WebExPart] = findValues
 

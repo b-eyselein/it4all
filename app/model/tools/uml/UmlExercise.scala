@@ -1,6 +1,7 @@
 package model.tools.uml
 
-import model.{ExPart, ExParts, ExerciseContent}
+import enumeratum.PlayEnum
+import model.{ExPart, ExerciseContent}
 
 sealed abstract class UmlExPart(
   val partName: String,
@@ -8,7 +9,7 @@ sealed abstract class UmlExPart(
   override val isEntryPart: Boolean = true
 ) extends ExPart
 
-object UmlExPart extends ExParts[UmlExPart] {
+object UmlExPart extends PlayEnum[UmlExPart] {
 
   val values: IndexedSeq[UmlExPart] = findValues
 
