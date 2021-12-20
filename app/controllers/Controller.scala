@@ -1,6 +1,5 @@
 package controllers
 
-import com.github.t3hnar.bcrypt._
 import model._
 import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
 import model.lti.BasicLtiLaunchRequest
@@ -96,26 +95,6 @@ class Controller @Inject() (
           jwtHashesToClaim.put(uuid, (createJwtSession(user.username), user))
 
           Redirect(s"/lti/${uuid.toString}").withNewSession
-        }
-    }
-  }
-
-  private implicit val userCredentialsFormat: OFormat[UserCredentials] = JsonProtocols.userCredentialsFormat
-
-  def apiAuthenticate: Action[UserCredentials] = Action.async(parse.json[UserCredentials]) { implicit request =>
-    futureUserByUsername(request.body.username).map {
-      case None => BadRequest("Invalid username!")
-      case Some(User(username, pwHash, _)) =>
-        pwHash match {
-          case None => BadRequest("No password found!")
-          case Some(pwHash) =>
-            if (request.body.password.isBcryptedBounded(pwHash)) {
-              val loggedInUser = LoggedInUser(username)
-
-              Ok(writeJsonWebToken(LoggedInUserWithToken(loggedInUser, createJwtSession(username).serialize)))
-            } else {
-              BadRequest("Password invalid!")
-            }
         }
     }
   }

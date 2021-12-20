@@ -40,20 +40,18 @@ final case class UserProficiency(
 
   lazy val getPoints: Int = pointsForExercises.toSeq.map { _.level.pointsForExerciseCompletion }.sum
 
-  def pointsForNextLevel: Int =
-    getPoints match {
-      case e if e >= 60 => Int.MaxValue
-      case a if a >= 30 => 60
-      case i if i >= 10 => 30
-      case _            => 10
-    }
+  def pointsForNextLevel: Int = getPoints match {
+    case e if e >= 60 => Int.MaxValue
+    case a if a >= 30 => 60
+    case i if i >= 10 => 30
+    case _            => 10
+  }
 
-  def getLevel: Level =
-    getPoints match {
-      case e if e >= 60 => Level.Expert
-      case a if a >= 30 => Level.Advanced
-      case i if i > 10  => Level.Intermediate
-      case _            => Level.Beginner
-    }
+  def getLevel: Level = getPoints match {
+    case e if e >= 60 => Level.Expert
+    case a if a >= 30 => Level.Advanced
+    case i if i > 10  => Level.Intermediate
+    case _            => Level.Beginner
+  }
 
 }

@@ -31,8 +31,6 @@ object InitialData {
 
   private val baseResourcesPath = File.currentWorkingDirectory / "conf" / "resources"
 
-  def lessonResourcesPath(toolId: String, lessonId: Int): File = baseResourcesPath / toolId / s"lesson_$lessonId"
-
   def exerciseResourcesPath(toolId: String, collectionId: Int, exerciseId: Int): File = baseResourcesPath / toolId / s"coll_$collectionId" / s"ex_$exerciseId"
 
   def loadTextFromFile(file: File): String = file.contentAsString

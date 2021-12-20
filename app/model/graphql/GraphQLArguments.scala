@@ -1,7 +1,7 @@
 package model.graphql
 
-import model.{JsonProtocols, RegisterValues, UserCredentials}
-import play.api.libs.json.OFormat
+import model.{RegisterValues, UserCredentials}
+import play.api.libs.json.{Json, OFormat}
 import sangria.macros.derive.deriveInputObjectType
 import sangria.marshalling.playJson._
 import sangria.schema.{Argument, InputObjectType, IntType, StringType}
@@ -18,18 +18,26 @@ trait GraphQLArguments {
 
   protected val ltiUuidArgument: Argument[String] = Argument("ltiUuid", StringType)
 
+  // Login
+
+  private val userCredentialsFormat: OFormat[UserCredentials] = Json.format
+
   protected val userCredentialsArgument: Argument[UserCredentials] = {
-    implicit val ucf: OFormat[UserCredentials]                     = JsonProtocols.userCredentialsFormat
+    implicit val ucf: OFormat[UserCredentials]                     = userCredentialsFormat
     val userCredentialsInputType: InputObjectType[UserCredentials] = deriveInputObjectType()
 
     Argument("credentials", userCredentialsInputType)
   }
 
+  // Registration
+
+  private val registerValuesFormat: OFormat[RegisterValues] = Json.format
+
   protected val registerValuesArgument: Argument[RegisterValues] = {
-    implicit val rvf: OFormat[RegisterValues]                    = JsonProtocols.registerValuesFormat
+    implicit val rvf: OFormat[RegisterValues]                    = registerValuesFormat
     val registerValuesInputType: InputObjectType[RegisterValues] = deriveInputObjectType()
 
-    Argument("registerValues", registerValuesInputType)
+    Argument[RegisterValues]("registerValues", registerValuesInputType)
   }
 
 }

@@ -1,7 +1,7 @@
 package model.mongo
 
 import model.{ExerciseCollection, JsonProtocols}
-import play.api.libs.json.OFormat
+import play.api.libs.json.{Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.Cursor
 import reactivemongo.api.bson.BSONDocument
@@ -15,7 +15,7 @@ trait MongoCollectionQueries {
 
   protected implicit val ec: ExecutionContext
 
-  private implicit val exerciseCollectionFormat: OFormat[ExerciseCollection] = JsonProtocols.exerciseCollectionFormat
+  private implicit val exerciseCollectionFormat: OFormat[ExerciseCollection] = Json.format
 
   private def futureCollectionsCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection("exerciseCollections"))

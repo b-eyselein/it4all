@@ -1,24 +1,30 @@
 package model
 
-import model.graphql.GraphQLMutations
+import model.mongo.MongoUserQueries
 import pdi.jwt.{JwtClaim, JwtSession}
 import play.api.Configuration
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json, OFormat}
 import play.api.mvc.RequestHeader
 
 import java.time.Clock
 import scala.concurrent.Future
 
 trait JwtHelpers {
-  self: GraphQLMutations =>
+  self: MongoUserQueries =>
 
-  private implicit val clock: Clock = Clock.systemDefaultZone()
+  private val clock: Clock = Clock.systemDefaultZone()
 
-  protected implicit val configuration: Configuration
+  protected val configuration: Configuration
 
-  protected def createJwtSession(username: String): JwtSession = JwtSession(JwtClaim(subject = Some(username)))
+  private val loggedInUserWithTokenFormat: OFormat[LoggedInUserWithToken] = {
+    implicit val liuf: OFormat[LoggedInUser] = Json.format
 
-  protected def writeJsonWebToken(user: LoggedInUserWithToken): JsValue = JsonProtocols.loggedInUserWithTokenFormat.writes(user)
+    Json.format
+  }
+
+  protected def createJwtSession(username: String): JwtSession = JwtSession(JwtClaim(subject = Some(username)))(configuration, clock)
+
+  protected def writeJsonWebToken(user: LoggedInUserWithToken): JsValue = loggedInUserWithTokenFormat.writes(user)
 
   protected def deserializeJwt(jwtString: String): JwtSession = JwtSession.deserialize(jwtString)(configuration, clock)
 
@@ -35,8 +41,8 @@ trait JwtHelpers {
     }
 
     loggedInUser.map {
-      case None                             => None
-      case Some(User(username, _, isAdmin)) => Some(LoggedInUser(username, isAdmin))
+      case None                       => None
+      case Some(User(username, _, _)) => Some(LoggedInUser(username))
     }
   }
 

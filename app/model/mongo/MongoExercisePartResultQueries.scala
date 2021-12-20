@@ -1,8 +1,8 @@
 package model.mongo
 
-import model.JsonProtocols
+import model.points.Points
 import model.result.BasicExercisePartResult
-import play.api.libs.json.OFormat
+import play.api.libs.json.{Format, Json, OFormat}
 import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.bson.BSONDocument
 import reactivemongo.api.bson.collection.BSONCollection
@@ -18,8 +18,11 @@ trait MongoExercisePartResultQueries {
   private def futureExerciseResultsCollection: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection("exerciseResults"))
 
-  private implicit val basicExerciseResultFormat: OFormat[BasicExercisePartResult] =
-    JsonProtocols.basicExerciseResultFormat
+  private implicit val basicExerciseResultFormat: OFormat[BasicExercisePartResult] = {
+    implicit val pf: Format[Points] = Json.format
+
+    Json.format
+  }
 
   private def basicExercisePartResultKey(
     username: String,
