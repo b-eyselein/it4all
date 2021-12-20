@@ -1,23 +1,50 @@
 package model
 
-final case class ExerciseText(
-  heading: Option[String],
-  parts: Seq[ExerciseTextParagraph]
-)
-
 // Paragraph
 
 sealed trait ExerciseTextParagraph
 
 final case class ExerciseTextTextParagraph(
-  textParts: Seq[ExerciseTextPart]
+  textParts: Seq[TextPart]
 ) extends ExerciseTextParagraph
 
+object ExerciseTextTextParagraph {
+
+  def withParts(parts: TextPart*): ExerciseTextTextParagraph = ExerciseTextTextParagraph(parts)
+
+}
+
 final case class ExerciseTextListParagraph(
+  numbered: Boolean = false,
+  points: Seq[BulletListPoint]
 ) extends ExerciseTextParagraph
+
+object ExerciseTextListParagraph {
+
+  def apply(points: BulletListPoint*): ExerciseTextListParagraph = new ExerciseTextListParagraph(points = points)
+
+}
 
 // Text parts
 
-final case class ExerciseTextPart(
+sealed trait TextPart
+
+final case class StringTextPart(
   text: String
+) extends TextPart
+
+final case class HighlightedTextPart(
+  text: String
+) extends TextPart
+
+// Bullet list
+
+final case class BulletListPoint(
+  textParts: Seq[TextPart]
 )
+
+object BulletListPoint {
+
+  def withParts(parts: TextPart*): BulletListPoint = new BulletListPoint(parts)
+
+}

@@ -1,9 +1,9 @@
 package model.graphql
 
+import model._
 import model.mongo.MongoExercisePartResultQueries
 import model.tools.Helper.UntypedExercise
 import model.tools.ToolList
-import model.{ExPart, LoggedInUser, TopicWithLevel}
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -18,6 +18,38 @@ final case class GraphQLExPart(
 
 trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
   self: MongoExercisePartResultQueries =>
+
+  private val stringTextPartType: ObjectType[Unit, StringTextPart] = deriveObjectType()
+
+  private val highlightedTextPartType: ObjectType[Unit, HighlightedTextPart] = deriveObjectType()
+
+  private val textPartType: UnionType[Unit] = UnionType(
+    "TextPart",
+    types = List(stringTextPartType, highlightedTextPartType)
+  )
+
+  private val exerciseTextTextParagraphType: ObjectType[Unit, ExerciseTextTextParagraph] = {
+    implicit val x: UnionType[Unit] = textPartType
+
+    deriveObjectType(
+      ReplaceField("textParts", Field("textParts", ListType(textPartType), resolve = _.value.textParts))
+    )
+  }
+
+  private val bulletListPointsType: ObjectType[Unit, BulletListPoint] = deriveObjectType(
+    ReplaceField("textParts", Field("textParts", ListType(textPartType), resolve = _.value.textParts))
+  )
+
+  private val exerciseTextListParagraphType: ObjectType[Unit, ExerciseTextListParagraph] = {
+    implicit val x: ObjectType[Unit, BulletListPoint] = bulletListPointsType
+
+    deriveObjectType()
+  }
+
+  private val exerciseTextParagraphType: UnionType[Unit] = UnionType(
+    "ExerciseTextParagraphType",
+    types = List(exerciseTextTextParagraphType, exerciseTextListParagraphType)
+  )
 
   private val exPartType: ObjectType[GraphQLContext, GraphQLExPart] = ObjectType(
     "ExPart",
@@ -49,12 +81,16 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
   )
 
   protected val exerciseType: ObjectType[GraphQLContext, UntypedExercise] = {
-    implicit val twlt: ObjectType[Unit, TopicWithLevel] = topicWithLevelType
+    implicit val x0: ObjectType[Unit, TopicWithLevel] = topicWithLevelType
+    // implicit val x1: ObjectType[Unit, ExerciseTextParagraph] = exerciseTextParagraphType
 
     val contentField: Field[GraphQLContext, UntypedExercise] = Field("content", exerciseContentUnionType, resolve = _.value.content)
 
+    val newExerciseTextField: Field[GraphQLContext, UntypedExercise] = Field("newExerciseText", exerciseTextParagraphType, resolve = _.value.newExerciseText)
+
     deriveObjectType(
       ReplaceField("content", contentField),
+      ReplaceField("newExerciseText", newExerciseTextField),
       AddFields(
         Field(
           "parts",

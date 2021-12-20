@@ -2,10 +2,14 @@ package initialData.flask
 
 import initialData.InitialData.loadTextFromFile
 import initialData.{FileLoadConfig, InitialExercise}
-import model.FilesSolution
+import model._
 import model.tools.flask.{FlaskExerciseContent, FlaskSingleTestConfig, FlaskTestsConfig}
 
+import scala.language.implicitConversions
+
 object FlaskColl01Ex01 extends FlaskInitialExerciseContainer(1, 1) {
+
+  private implicit def string2StringTextPart(str: String): StringTextPart = StringTextPart(str)
 
   private val testsConfig = FlaskTestsConfig(
     testFileName = "test_login",
@@ -58,11 +62,33 @@ object FlaskColl01Ex01 extends FlaskInitialExerciseContainer(1, 1) {
     )
   )
 
+  val exerciseText = Seq(
+    ExerciseTextTextParagraph.withParts(
+      "In dieser Aufgabe soll die Loginfunktionalität für eine Webseite implementiert werden.",
+      "Dazu soll den Nutzern außerdem die Möglichkeit der Registrierung geboten werden.",
+      "Um den Login über verschiedene Requests hinweg verfügbar zu machen, soll der Nutzername in der Session gespeichert werden."
+    ),
+    ExerciseTextTextParagraph.withParts(
+      "Es sollen drei Templates erstellt werden, die alle drei das gegebene Basis-Template",
+      HighlightedTextPart("base.html"),
+      "erweitern und den Inhalt im Block",
+      HighlightedTextPart("content"),
+      "rendern:"
+    ),
+    ExerciseTextListParagraph(
+      BulletListPoint.withParts(
+        HighlightedTextPart("index.html:"),
+        "Dieses Template soll nur eine h1-Überschrift mit dem Textinhalt Startseite anzeigen."
+      )
+    )
+  )
+
   val flaskColl01Ex01: FlaskInitialData.InitialEx = InitialExercise(
     title = "Testaufgabe Login",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 1,
+    newExerciseText = exerciseText,
     content = FlaskExerciseContent(
       files = loadFilesFromFolder(
         declarationPath,

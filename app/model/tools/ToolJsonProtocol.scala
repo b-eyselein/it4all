@@ -29,9 +29,42 @@ trait ToolJsonProtocol[SolutionInputFormat, C <: ExerciseContent, P <: ExPart] {
 
   protected val exerciseContentFormat: OFormat[C]
 
+  private val textPartFormat: OFormat[TextPart] = {
+    implicit val x0: OFormat[StringTextPart]      = Json.format
+    implicit val x1: OFormat[HighlightedTextPart] = Json.format
+
+    Json.format
+  }
+
+  private val exerciseTextTextParagraphFormat: OFormat[ExerciseTextTextParagraph] = {
+    implicit val x: OFormat[TextPart] = textPartFormat
+
+    Json.format
+  }
+
+  private val bulletListPointFormat: OFormat[BulletListPoint] = {
+    implicit val x: OFormat[TextPart] = textPartFormat
+
+    Json.format
+  }
+
+  private val exerciseTextListParagraphFormat: OFormat[ExerciseTextListParagraph] = {
+    implicit val x: OFormat[BulletListPoint] = bulletListPointFormat
+
+    Json.format
+  }
+
+  private val exerciseTextParagraphFormat: OFormat[ExerciseTextParagraph] = {
+    implicit val x0: OFormat[ExerciseTextTextParagraph] = exerciseTextTextParagraphFormat
+    implicit val x1: OFormat[ExerciseTextListParagraph] = exerciseTextListParagraphFormat
+
+    Json.format
+  }
+
   final lazy val exerciseFormat: OFormat[Exercise[C]] = {
-    implicit val twlf: OFormat[TopicWithLevel] = JsonProtocols.topicWithLevelFormat
-    implicit val fc: OFormat[C]                = exerciseContentFormat
+    implicit val x0: OFormat[TopicWithLevel]        = JsonProtocols.topicWithLevelFormat
+    implicit val x1: OFormat[C]                     = exerciseContentFormat
+    implicit val x2: OFormat[ExerciseTextParagraph] = exerciseTextParagraphFormat
 
     Json.format
   }
