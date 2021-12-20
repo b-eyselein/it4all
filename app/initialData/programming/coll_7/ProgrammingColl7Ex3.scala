@@ -1,12 +1,12 @@
 package initialData.programming.coll_7
 
 import initialData.InitialData._
-import initialData.programming.ProgrammingInitialExercise
+import initialData.InitialExercise
+import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl7Ex3 extends ProgrammingInitialExercise(7, 3, "vector2d") {
+object ProgrammingColl7Ex3 extends ProgrammingInitialExerciseContainer(7, 3, "vector2d") {
 
   private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description!
@@ -68,10 +68,7 @@ object ProgrammingColl7Ex3 extends ProgrammingInitialExercise(7, 3, "vector2d") 
     folderName = exerciseBaseName
   )
 
-  val programmingColl7Ex3: ProgrammingExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val programmingColl7Ex3 = InitialExercise(
     title = "Vektor2D",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

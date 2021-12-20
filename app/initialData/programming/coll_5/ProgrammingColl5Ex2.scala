@@ -1,12 +1,12 @@
 package initialData.programming.coll_5
 
 import initialData.InitialData._
-import initialData.programming.ProgrammingInitialExercise
+import initialData.InitialExercise
+import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl5Ex2 extends ProgrammingInitialExercise(5, 2, "dicts") {
+object ProgrammingColl5Ex2 extends ProgrammingInitialExerciseContainer(5, 2, "dicts") {
 
   private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description!
@@ -46,10 +46,7 @@ object ProgrammingColl5Ex2 extends ProgrammingInitialExercise(5, 2, "dicts") {
     folderName = exerciseBaseName
   )
 
-  val programmingColl5Ex2: ProgrammingExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val programmingColl5Ex2 = InitialExercise(
     title = "Dictionaries",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

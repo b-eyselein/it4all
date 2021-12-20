@@ -8,27 +8,33 @@ import initialData.web.coll_1.WebColl1Ex5.webColl1Ex5
 import initialData.web.coll_2.WebColl2Ex1.webColl2Ex1
 import initialData.web.coll_2.WebColl2Ex2.webColl2Ex2
 import initialData.web.coll_2.WebColl2Ex3.webColl2Ex3
-import initialData.{InitialCollection, InitialData, InitialFilesExercise}
+import initialData.{InitialCollection, InitialData, InitialFilesExerciseContainer}
 import model.tools.web.WebExerciseContent
 
-abstract class WebInitialExercise(collectionId: Int, exerciseId: Int) extends InitialFilesExercise("web", collectionId, exerciseId) {}
+abstract class WebInitialExerciseContainer(collectionId: Int, exerciseId: Int) extends InitialFilesExerciseContainer("web", collectionId, exerciseId) {}
 
 object WebInitialData extends InitialData[WebExerciseContent] {
 
-  private val toolId = "web"
-
-  override val initialData: Seq[InitialCollection[WebExerciseContent]] = Seq(
-    InitialCollection(
-      collectionId = 1,
+  override val initialData = Map(
+    1 -> InitialCollection(
       title = "Html Elemente",
       authors = Seq("bje40dc"),
-      exercises = Seq(webColl1Ex1, webColl1Ex2, webColl1Ex3, webColl1Ex4, webColl1Ex5)
+      initialExercises = Map(
+        1 -> webColl1Ex1,
+        2 -> webColl1Ex2,
+        3 -> webColl1Ex3,
+        4 -> webColl1Ex4,
+        5 -> webColl1Ex5
+      )
     ),
-    InitialCollection(
-      collectionId = 2,
+    2 -> InitialCollection(
       title = "Js Basics",
       authors = Seq("bje40dc"),
-      exercises = Seq(webColl2Ex1, webColl2Ex2, webColl2Ex3)
+      initialExercises = Map(
+        1 -> webColl2Ex1,
+        2 -> webColl2Ex2,
+        3 -> webColl2Ex3
+      )
     )
   )
 

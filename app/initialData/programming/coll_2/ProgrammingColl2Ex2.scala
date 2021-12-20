@@ -1,12 +1,13 @@
 package initialData.programming.coll_2
 
 import initialData.InitialData._
-import initialData.programming.ProgrammingInitialExercise
+import initialData.InitialExercise
+import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex2 extends ProgrammingInitialExercise(2, 2, "floating_point_exponential") {
+object ProgrammingColl2Ex2 extends ProgrammingInitialExerciseContainer(2, 2, "floating_point_exponential") {
 
   private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description!
@@ -26,10 +27,7 @@ object ProgrammingColl2Ex2 extends ProgrammingInitialExercise(2, 2, "floating_po
     folderName = exerciseBaseName
   )
 
-  val programmingColl2Ex2: ProgrammingExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val programmingColl2Ex2 = InitialExercise(
     title = "Fließkommazahl in Exponentialschreibweise",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

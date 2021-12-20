@@ -1,12 +1,12 @@
 package initialData.programming.coll_1
 
 import initialData.InitialData._
-import initialData.programming.ProgrammingInitialExercise
+import initialData.InitialExercise
+import initialData.programming.{ProgrammingInitialData, ProgrammingInitialExerciseContainer}
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl1Ex3 extends ProgrammingInitialExercise(1, 3, "babylonian_root") {
+object ProgrammingColl1Ex3 extends ProgrammingInitialExerciseContainer(1, 3, "babylonian_root") {
 
   private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description
@@ -33,10 +33,7 @@ object ProgrammingColl1Ex3 extends ProgrammingInitialExercise(1, 3, "babylonian_
     folderName = exerciseBaseName
   )
 
-  val programmingColl1Ex3: ProgrammingExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val programmingColl1Ex3: ProgrammingInitialData.InitialEx = InitialExercise(
     title = "Babylonisches Wurzelziehen",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

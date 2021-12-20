@@ -1,12 +1,12 @@
 package initialData.programming.coll_4
 
 import initialData.InitialData._
-import initialData.programming.ProgrammingInitialExercise
+import initialData.InitialExercise
+import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl4Ex4 extends ProgrammingInitialExercise(4, 4, "slicing") {
+object ProgrammingColl4Ex4 extends ProgrammingInitialExerciseContainer(4, 4, "slicing") {
 
   private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description!
@@ -43,10 +43,7 @@ object ProgrammingColl4Ex4 extends ProgrammingInitialExercise(4, 4, "slicing") {
     folderName = exerciseBaseName
   )
 
-  val programmingColl4Ex4: ProgrammingExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val programmingColl4Ex4 = InitialExercise(
     title = "Slicing",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

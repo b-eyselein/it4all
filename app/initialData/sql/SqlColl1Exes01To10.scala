@@ -1,17 +1,14 @@
 package initialData.sql
 
-import model.tools.sql.SqlTool.SqlExercise
+import initialData.InitialExercise
 import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
-import model.{Exercise, Level, TopicWithLevel}
+import model.{Level, TopicWithLevel}
 
 object SqlColl1Exes01To10 {
 
   private val schemaName = "employee"
 
-  private val sql_coll_1_ex_1: SqlExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 1,
-    toolId = "sql",
+  val sql_coll_1_ex_1: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Anzahl der Angestellten",
     authors = Seq("bje40dc"),
     text = """Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'.""",
@@ -32,10 +29,7 @@ object SqlColl1Exes01To10 {
     )
   )
 
-  private val sql_coll_1_ex_2: SqlExercise = Exercise(
-    exerciseId = 2,
-    collectionId = 1,
-    toolId = "sql",
+  val sql_coll_1_ex_2: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Angestelltennummer",
     authors = Seq("bje40dc"),
     text = """Welche Angestelltennummer (id) hat Max Becker?""",
@@ -51,10 +45,7 @@ object SqlColl1Exes01To10 {
     )
   )
 
-  private val sql_coll_1_ex_3: SqlExercise = Exercise(
-    exerciseId = 3,
-    collectionId = 1,
-    toolId = "sql",
+  val sql_coll_1_ex_3: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Emailadresse",
     authors = Seq("bje40dc"),
     text = "Welche Emailadresse hat Max Becker für die Arbeit?",
@@ -79,10 +70,7 @@ object SqlColl1Exes01To10 {
     )
   )
 
-  private val sql_coll_1_ex_4: SqlExercise = Exercise(
-    exerciseId = 4,
-    collectionId = 1,
-    toolId = "sql",
+  val sql_coll_1_ex_4: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Nutzernamen",
     authors = Seq("bje40dc"),
     text = "Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!",
@@ -101,10 +89,7 @@ object SqlColl1Exes01To10 {
     )
   )
 
-  private val sql_coll_1_ex_5: SqlExercise = Exercise(
-    exerciseId = 5,
-    collectionId = 1,
-    toolId = "sql",
+  val sql_coll_1_ex_5: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Anzahl der Untergebenen",
     authors = Seq("bje40dc"),
     text = """Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die OID des Chefs und die Anzahl aus!""",
@@ -124,10 +109,7 @@ object SqlColl1Exes01To10 {
     )
   )
 
-  private val sql_coll_1_ex_6: SqlExercise = Exercise(
-    exerciseId = 6,
-    collectionId = 1,
-    toolId = "sql",
+  val sql_coll_1_ex_6: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = """Tabelle 'employee' erstellen""",
     authors = Seq("bje40dc"),
     text = "Erstellen Sie das CREATE TABLE-Skript für die Tabelle employee!",
@@ -151,10 +133,7 @@ object SqlColl1Exes01To10 {
     )
   )
 
-  private val sql_coll_1_ex_7: SqlExercise = Exercise(
-    exerciseId = 7,
-    collectionId = 1,
-    toolId = "sql",
+  val sql_coll_1_ex_7: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Versetzung",
     authors = Seq("bje40dc"),
     text = """Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3.
@@ -175,10 +154,7 @@ object SqlColl1Exes01To10 {
     )
   )
 
-  private val sql_coll_1_ex_8: SqlExercise = Exercise(
-    exerciseId = 8,
-    collectionId = 1,
-    toolId = "sql",
+  val sql_coll_1_ex_8: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Kündigung",
     authors = Seq("bje40dc"),
     text = """Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle.""",
@@ -196,15 +172,11 @@ object SqlColl1Exes01To10 {
     )
   )
 
-  private val sql_coll_1_ex_9: SqlExercise = Exercise(
-    exerciseId = 9,
-    collectionId = 1,
-    toolId = "sql",
+  val sql_coll_1_ex_9: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Neue Kollegin",
     authors = Seq("bje40dc"),
-    text =
-      """Es gibt eine neue Angestellte mit Namen Tina Sattler.
-        |Diese arbeitet für die Person mit der OID 2 und soll als OID 9 und als Nutzernamen 'tina_sattler' bekommen.""".stripMargin,
+    text = """Es gibt eine neue Angestellte mit Namen Tina Sattler.
+             |Diese arbeitet für die Person mit der OID 2 und soll als OID 9 und als Nutzernamen 'tina_sattler' bekommen.""".stripMargin,
     difficulty = 1,
     topicsWithLevels = Seq(
       TopicWithLevel(SqlTopics.Insert, Level.Beginner)
@@ -218,18 +190,6 @@ object SqlColl1Exes01To10 {
           |VALUES (9, 'Tina', 'Sattler', 'tina_sattler', 2);""".stripMargin
       )
     )
-  )
-
-  val sqlColl01Exes01To10: Seq[SqlExercise] = Seq(
-    sql_coll_1_ex_1,
-    sql_coll_1_ex_2,
-    sql_coll_1_ex_3,
-    sql_coll_1_ex_4,
-    sql_coll_1_ex_5,
-    sql_coll_1_ex_6,
-    sql_coll_1_ex_7,
-    sql_coll_1_ex_8,
-    sql_coll_1_ex_9
   )
 
 }

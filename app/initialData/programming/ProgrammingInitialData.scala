@@ -34,54 +34,84 @@ import model.tools.programming.ProgrammingExerciseContent
 
 object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
 
-  override val initialData = Seq(
-    InitialCollection(
-      collectionId = 1,
+  override val initialData = Map(
+    1 -> InitialCollection(
       title = "Zahlen",
       authors = Seq("bje40dc"),
-      exercises = Seq(programmingColl1Ex1, programmingColl1Ex2, programmingColl1Ex3, programmingColl1Ex4)
-    ),
-    InitialCollection(
-      collectionId = 2,
-      title = "Strings",
-      authors = Seq("bje40dc"),
-      exercises = Seq(
-        programmingColl2Ex1,
-        programmingColl2Ex2,
-        programmingColl2Ex3,
-        programmingColl2Ex4,
-        programmingColl2Ex5,
-        programmingColl2Ex6,
-        programmingColl2Ex7,
-        programmingColl2Ex8
+      initialExercises = Map(
+        1 -> programmingColl1Ex1,
+        2 -> programmingColl1Ex2,
+        3 -> programmingColl1Ex3,
+        4 -> programmingColl1Ex4
       )
     ),
-    InitialCollection(
-      collectionId = 3,
+    2 -> InitialCollection(
+      title = "Strings",
+      authors = Seq("bje40dc"),
+      initialExercises = Map(
+        1 -> programmingColl2Ex1,
+        2 -> programmingColl2Ex2,
+        3 -> programmingColl2Ex3,
+        4 -> programmingColl2Ex4,
+        5 -> programmingColl2Ex5,
+        6 -> programmingColl2Ex6,
+        7 -> programmingColl2Ex7,
+        8 -> programmingColl2Ex8
+      )
+    ),
+    3 -> InitialCollection(
       title = "Bedingungen",
       authors = Seq("bje40dc"),
-      exercises = Seq(programmingColl3Ex1, programmingColl3Ex2, programmingColl3Ex3)
+      initialExercises = Map(
+        1 -> programmingColl3Ex1,
+        2 -> programmingColl3Ex2,
+        3 -> programmingColl3Ex3
+      )
     ),
-    InitialCollection(
-      collectionId = 4,
+    4 -> InitialCollection(
       title = "Listen",
       authors = Seq("bje40dc"),
-      exercises = Seq(programmingColl4Ex1, programmingColl4Ex2, programmingColl4Ex3, programmingColl4Ex4)
+      initialExercises = Map(
+        1 -> programmingColl4Ex1,
+        2 -> programmingColl4Ex2,
+        3 -> programmingColl4Ex3,
+        4 -> programmingColl4Ex4
+      )
     ),
-    InitialCollection(
-      collectionId = 5,
+    5 -> InitialCollection(
       title = "Tupel und Dicts",
       authors = Seq("bje40dc"),
-      exercises = Seq(programmingColl5Ex1, programmingColl5Ex2, programmingColl5Ex3, programmingColl5Ex4)
+      initialExercises = Map(
+        1 -> programmingColl5Ex1,
+        2 -> programmingColl5Ex2,
+        3 -> programmingColl5Ex3,
+        4 -> programmingColl5Ex4
+      )
     ),
-    InitialCollection(collectionId = 6, title = "Funktionen", authors = Seq("bje40dc"), exercises = Seq(programmingColl6Ex1, programmingColl6Ex2)),
-    InitialCollection(
-      collectionId = 7,
+    6 -> InitialCollection(
+      title = "Funktionen",
+      authors = Seq("bje40dc"),
+      initialExercises = Map(
+        1 -> programmingColl6Ex1,
+        2 -> programmingColl6Ex2
+      )
+    ),
+    7 -> InitialCollection(
       title = "Klassen",
       authors = Seq("bje40dc"),
-      exercises = Seq(programmingColl7Ex1, programmingColl7Ex2, programmingColl7Ex3)
+      initialExercises = Map(
+        1 -> programmingColl7Ex1,
+        2 -> programmingColl7Ex2,
+        3 -> programmingColl7Ex3
+      )
     ),
-    InitialCollection(collectionId = 8, title = "Unit Testing", authors = Seq("bje40dc"), exercises = Seq(programmingColl8Ex1))
+    8 -> InitialCollection(
+      title = "Unit Testing",
+      authors = Seq("bje40dc"),
+      initialExercises = Map(
+        1 -> programmingColl8Ex1
+      )
+    )
   )
 
 }

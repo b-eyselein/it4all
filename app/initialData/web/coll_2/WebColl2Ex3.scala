@@ -1,14 +1,13 @@
 package initialData.web.coll_2
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
-import initialData.web.WebInitialExercise
+import initialData.web.WebInitialExerciseContainer
+import initialData.{FileLoadConfig, InitialExercise}
+import model.FilesSolution
 import model.tools.web.WebExerciseContent
-import model.tools.web.WebTool.WebExercise
 import model.tools.web.sitespec._
-import model.{Exercise, FilesSolution}
 
-object WebColl2Ex3 extends WebInitialExercise(2, 3) {
+object WebColl2Ex3 extends WebInitialExerciseContainer(2, 3) {
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -113,18 +112,7 @@ object WebColl2Ex3 extends WebInitialExercise(2, 3) {
     )
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath / "sol_1",
-    Seq(
-      FileLoadConfig("factorial.html"),
-      FileLoadConfig("factorial.js")
-    )
-  )
-
-  val webColl2Ex3: WebExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val webColl2Ex3: InitialExercise[WebExerciseContent] = InitialExercise(
     title = "Schleifen",
     authors = Seq("alg81dm"),
     text = loadTextFromFile(exResPath / "text.html"),
@@ -145,7 +133,17 @@ object WebColl2Ex3 extends WebInitialExercise(2, 3) {
           |Inhalt (textContent) des Elements mit der ID 'result' auf das Ergebnis setzen.""".stripMargin
           .replace("\n", " ")
       ),
-      sampleSolutions = Seq(FilesSolution(sampleSolutionFiles))
+      sampleSolutions = Seq(
+        FilesSolution(
+          loadFilesFromFolder(
+            exResPath / "sol_1",
+            Seq(
+              FileLoadConfig("factorial.html"),
+              FileLoadConfig("factorial.js")
+            )
+          )
+        )
+      )
     )
   )
 

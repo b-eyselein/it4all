@@ -1,19 +1,13 @@
 package initialData.web.coll_1
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
-import initialData.web.WebInitialExercise
+import initialData.web.WebInitialExerciseContainer
+import initialData.{FileLoadConfig, InitialExercise}
+import model.FilesSolution
 import model.tools.web.WebExerciseContent
-import model.tools.web.WebTool.WebExercise
 import model.tools.web.sitespec.{HtmlTask, SiteSpec, WebElementSpec}
-import model.{Exercise, FilesSolution}
 
-object WebColl1Ex5 extends WebInitialExercise(1, 5) {
-
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath / "sol_1",
-    Seq(FileLoadConfig("audio.html"))
-  )
+object WebColl1Ex5 extends WebInitialExerciseContainer(1, 5) {
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -54,10 +48,7 @@ object WebColl1Ex5 extends WebInitialExercise(1, 5) {
     )
   )
 
-  val webColl1Ex5: WebExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val webColl1Ex5: InitialExercise[WebExerciseContent] = InitialExercise(
     title = "Audio in HTML 5",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
@@ -68,7 +59,14 @@ object WebColl1Ex5 extends WebInitialExercise(1, 5) {
         exResPath,
         Seq(FileLoadConfig("audio.html", editable = true))
       ),
-      Seq(FilesSolution(sampleSolutionFiles))
+      sampleSolutions = Seq(
+        FilesSolution(
+          loadFilesFromFolder(
+            exResPath / "sol_1",
+            Seq(FileLoadConfig("audio.html"))
+          )
+        )
+      )
     )
   )
 }

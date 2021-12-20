@@ -1,14 +1,13 @@
 package initialData.web.coll_1
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
-import initialData.web.WebInitialExercise
+import initialData.web.WebInitialExerciseContainer
+import initialData.{FileLoadConfig, InitialExercise}
+import model.FilesSolution
 import model.tools.web.WebExerciseContent
-import model.tools.web.WebTool.WebExercise
 import model.tools.web.sitespec.{HtmlTask, SiteSpec, WebElementSpec}
-import model.{Exercise, FilesSolution}
 
-object WebColl1Ex4 extends WebInitialExercise(1, 4) {
+object WebColl1Ex4 extends WebInitialExerciseContainer(1, 4) {
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -85,15 +84,7 @@ object WebColl1Ex4 extends WebInitialExercise(1, 4) {
     )
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath / "sol_1",
-    Seq(FileLoadConfig("login.html"))
-  )
-
-  val webColl1Ex4: WebExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val webColl1Ex4 = InitialExercise(
     title = "Login-Formular",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
@@ -107,7 +98,14 @@ object WebColl1Ex4 extends WebInitialExercise(1, 4) {
           FileLoadConfig("loginStyle.css")
         )
       ),
-      Seq(FilesSolution(sampleSolutionFiles))
+      sampleSolutions = Seq(
+        FilesSolution(
+          loadFilesFromFolder(
+            exResPath / "sol_1",
+            Seq(FileLoadConfig("login.html"))
+          )
+        )
+      )
     )
   )
 

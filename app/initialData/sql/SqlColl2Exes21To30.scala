@@ -1,17 +1,14 @@
 package initialData.sql
 
-import model.tools.sql.SqlTool.SqlExercise
+import initialData.InitialExercise
 import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
-import model.{Exercise, Level, TopicWithLevel}
+import model.{Level, TopicWithLevel}
 
 object SqlColl2Exes21To30 {
 
   private val schemaName = "amazon"
 
-  private val sql_coll_2_ex_21: SqlExercise = Exercise(
-    exerciseId = 21,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_21: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Sterne in der Wüste 1",
     authors = Seq("bje40dc"),
     text = """Wie oft wurde das Buch 'Die Stadt in der Wüste' bewertet? Nennen Sie die Spalte 'Anzahl'.""",
@@ -32,10 +29,7 @@ object SqlColl2Exes21To30 {
     )
   )
 
-  private val sql_coll_2_ex_22: SqlExercise = Exercise(
-    exerciseId = 22,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_22: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Sterne in der Wüste 2",
     authors = Seq("bje40dc"),
     text = """Welche Durchschnittsbewertung bekam das Buch 'Die Stadt in der Wüste'?
@@ -57,10 +51,7 @@ object SqlColl2Exes21To30 {
     )
   )
 
-  private val sql_coll_2_ex_23: SqlExercise = Exercise(
-    exerciseId = 23,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_23: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Harry Potters",
     authors = Seq("bje40dc"),
     text = """Wie hoch ist der Gesamtbestand an Harry Potter-Büchern? Nennen Sie die Spalte 'Gesamtbestand'.""",
@@ -80,15 +71,11 @@ object SqlColl2Exes21To30 {
     )
   )
 
-  private val sql_coll_2_ex_24: SqlExercise = Exercise(
-    exerciseId = 24,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_24: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Fan oder nicht?",
     authors = Seq("bje40dc"),
-    text =
-      """Geben Sie jeweils die schlechteste und beste Bewertung des Buches 'Harry Potter und der Halbblutprinz' aus.
-        |Nennen Sie die Spalten jeweils 'Schlechteste' und 'Beste'.""".stripMargin.replace("\n", " "),
+    text = """Geben Sie jeweils die schlechteste und beste Bewertung des Buches 'Harry Potter und der Halbblutprinz' aus.
+             |Nennen Sie die Spalten jeweils 'Schlechteste' und 'Beste'.""".stripMargin.replace("\n", " "),
     difficulty = 1,
     topicsWithLevels = Seq(
       TopicWithLevel(SqlTopics.Aggregate, Level.Intermediate),
@@ -106,10 +93,7 @@ object SqlColl2Exes21To30 {
     )
   )
 
-  private val sql_coll_2_ex_25: SqlExercise = Exercise(
-    exerciseId = 25,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_25: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Durchschnittlicher Bestand",
     authors = Seq("bje40dc"),
     text = """Wie hoch ist der durchschnittliche Bestand aller Bücher? Nennen Sie die Spalte 'Durchschnitt'.""",
@@ -128,14 +112,10 @@ object SqlColl2Exes21To30 {
     )
   )
 
-  private val sql_coll_2_ex_26: SqlExercise = Exercise(
-    exerciseId = 26,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_26: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Wunsch des Phönix",
     authors = Seq("bje40dc"),
-    text =
-      """Wie lauten die Nachnamen der Kunden die sich das Buch 'Harry Potter und der Orden des Phönix' wünschen?""",
+    text = """Wie lauten die Nachnamen der Kunden die sich das Buch 'Harry Potter und der Orden des Phönix' wünschen?""",
     difficulty = 1,
     topicsWithLevels = Seq(
       TopicWithLevel(SqlTopics.Join, Level.Intermediate)
@@ -153,10 +133,7 @@ object SqlColl2Exes21To30 {
     )
   )
 
-  private val sql_coll_2_ex_27: SqlExercise = Exercise(
-    exerciseId = 27,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_27: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Orwellianisch",
     authors = Seq("bje40dc"),
     text = """Suchen Sie die Titel aller Bücher, deren Autor George Orwell ist.
@@ -179,10 +156,7 @@ object SqlColl2Exes21To30 {
     )
   )
 
-  private val sql_coll_2_ex_28: SqlExercise = Exercise(
-    exerciseId = 28,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_28: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Teuer, teuer und teuer",
     authors = Seq("bje40dc"),
     text = """Zeigen sie Titel und Autor-ID der drei teuersten Bücher an.
@@ -204,16 +178,12 @@ object SqlColl2Exes21To30 {
     )
   )
 
-  private val sql_coll_2_ex_29: SqlExercise = Exercise(
-    exerciseId = 29,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_29: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Wer will Harry?",
     authors = Seq("bje40dc"),
-    text =
-      """Wählen Sie alle Bestellungen aus, die das Buch 'Harry Potter und der Halbblutprinz' enthalten.
-        |Geben Sie für diese Bestellungen jeweils das Datum und die Anzahl der bestellten Exemplare des Buches aus.""".stripMargin
-        .replace("\n", " "),
+    text = """Wählen Sie alle Bestellungen aus, die das Buch 'Harry Potter und der Halbblutprinz' enthalten.
+             |Geben Sie für diese Bestellungen jeweils das Datum und die Anzahl der bestellten Exemplare des Buches aus.""".stripMargin
+      .replace("\n", " "),
     difficulty = 2,
     topicsWithLevels = Seq(
       TopicWithLevel(SqlTopics.Join, Level.Intermediate)
@@ -231,10 +201,7 @@ object SqlColl2Exes21To30 {
     )
   )
 
-  private val sql_coll_2_ex_30: SqlExercise = Exercise(
-    exerciseId = 30,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_30: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Emails mit G",
     authors = Seq("bje40dc"),
     text = """Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de ' oder mit 'gmail.com' enden.""",
@@ -248,19 +215,6 @@ object SqlColl2Exes21To30 {
           |    WHERE email LIKE '%gmx.de' OR email LIKE '%gmail.com';""".stripMargin
       )
     )
-  )
-
-  val sqlColl2Exes21To30 = Seq(
-    sql_coll_2_ex_21,
-    sql_coll_2_ex_22,
-    sql_coll_2_ex_23,
-    sql_coll_2_ex_24,
-    sql_coll_2_ex_25,
-    sql_coll_2_ex_26,
-    sql_coll_2_ex_27,
-    sql_coll_2_ex_28,
-    sql_coll_2_ex_29,
-    sql_coll_2_ex_30
   )
 
 }

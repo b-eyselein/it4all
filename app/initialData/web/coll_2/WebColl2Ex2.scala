@@ -1,22 +1,13 @@
 package initialData.web.coll_2
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
-import initialData.web.WebInitialExercise
+import initialData.web.WebInitialExerciseContainer
+import initialData.{FileLoadConfig, InitialExercise}
+import model.FilesSolution
 import model.tools.web.WebExerciseContent
-import model.tools.web.WebTool.WebExercise
 import model.tools.web.sitespec._
-import model.{Exercise, FilesSolution}
 
-object WebColl2Ex2 extends WebInitialExercise(2, 2) {
-
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath / "sol_1",
-    Seq(
-      FileLoadConfig("pwChecker.html", realFilename = Some("branchesStrings.html")),
-      FileLoadConfig("pwChecker.js", realFilename = Some("branchesStrings.js"))
-    )
-  )
+object WebColl2Ex2 extends WebInitialExerciseContainer(2, 2) {
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -113,10 +104,7 @@ object WebColl2Ex2 extends WebInitialExercise(2, 2) {
     )
   )
 
-  val webColl2Ex2: WebExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val webColl2Ex2: InitialExercise[WebExerciseContent] = InitialExercise(
     title = "Verzweigungen und Strings",
     authors = Seq("alg81dm"),
     text = loadTextFromFile(exResPath / "text.html"),
@@ -130,7 +118,17 @@ object WebColl2Ex2 extends WebInitialExercise(2, 2) {
           FileLoadConfig("pwChecker.js", editable = true, Some("branchesStrings.js"))
         )
       ),
-      Seq(FilesSolution(sampleSolutionFiles)),
+      sampleSolutions = Seq(
+        FilesSolution(
+          loadFilesFromFolder(
+            exResPath / "sol_1",
+            Seq(
+              FileLoadConfig("pwChecker.html", realFilename = Some("branchesStrings.html")),
+              FileLoadConfig("pwChecker.js", realFilename = Some("branchesStrings.js"))
+            )
+          )
+        )
+      ),
       htmlText = Some("Erstellen Sie zunächst den Rumpf der Seite in HTML."),
       jsText = Some(
         """Implementieren Sie nun die Funktion <code>passwordStrength()</code>, die bei Änderung des Felds aufgerufen

@@ -1,10 +1,9 @@
 package initialData.uml.coll_1
 
-import model.Exercise
-import model.tools.uml.UmlTool.UmlExercise
+import initialData.InitialExercise
 import model.tools.uml._
 
-object UmlColl1Ex1 {
+object UmlColl1Ex1  {
 
   private val sample: UmlClassDiagram = UmlClassDiagram(
     classes = Seq(
@@ -50,23 +49,19 @@ object UmlColl1Ex1 {
     )
   )
 
-  val umlColl1Ex1: UmlExercise = Exercise(
-    exerciseId = 1,
-    collectionId = 1,
-    toolId = "uml",
+  val umlColl1Ex1: InitialExercise[UmlExerciseContent] = InitialExercise(
     title = "Tutorial Konto",
     authors = Seq("bje40dc"),
-    text =
-      """Eine Bank verwaltet die Konten ihrer Kunden.
-        |Jedes Konto wird durch die Kontonummer identifiziert und speichert das momentane Saldo sowie die
-        |Vertragsdauer (in Jahren).
-        |Diese Konten können entweder ein Girokonto, ein Sparkonto oder ein Kreditkonto sein.
-        |Für jeden Typ von Konto gilt ein anderer Zinssatz: Für ein Girokonto gibt es keine Zinsen, für ein Sparkonto
-        |1 Prozent und für ein Kreditkonto 3 Prozent.
-        |Die Kunden der Bank werden durch ihre Kundennummer identifiziert.
-        |Es soll außerdem jeweils der komplette Name gespeichert werden.
-        |Jeder Kunde kann mehrere Konten besitzen und hat die Möglichkeit, sich das Gesamtsaldo aller Konten anzeigen
-        |zu lassen und Geld auf ein Konto einzuzahlen.""".stripMargin.replace("\n", " "),
+    text = """Eine Bank verwaltet die Konten ihrer Kunden.
+             |Jedes Konto wird durch die Kontonummer identifiziert und speichert das momentane Saldo sowie die
+             |Vertragsdauer (in Jahren).
+             |Diese Konten können entweder ein Girokonto, ein Sparkonto oder ein Kreditkonto sein.
+             |Für jeden Typ von Konto gilt ein anderer Zinssatz: Für ein Girokonto gibt es keine Zinsen, für ein Sparkonto
+             |1 Prozent und für ein Kreditkonto 3 Prozent.
+             |Die Kunden der Bank werden durch ihre Kundennummer identifiziert.
+             |Es soll außerdem jeweils der komplette Name gespeichert werden.
+             |Jeder Kunde kann mehrere Konten besitzen und hat die Möglichkeit, sich das Gesamtsaldo aller Konten anzeigen
+             |zu lassen und Geld auf ein Konto einzuzahlen.""".stripMargin.replace("\n", " "),
     difficulty = 1,
     content = UmlExerciseContent(
       mappings = Map(

@@ -1,12 +1,12 @@
 package initialData.programming.coll_7
 
 import initialData.InitialData._
-import initialData.programming.ProgrammingInitialExercise
+import initialData.InitialExercise
+import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl7Ex1 extends ProgrammingInitialExercise(7, 1, "circle") {
+object ProgrammingColl7Ex1 extends ProgrammingInitialExerciseContainer(7, 1, "circle") {
 
   private val unitTestPart = UnitTestPart(
     unitTestsDescription = loadTextFromFile(exResPath / "unit_tests_description.html"),
@@ -35,10 +35,7 @@ object ProgrammingColl7Ex1 extends ProgrammingInitialExercise(7, 1, "circle") {
     folderName = exerciseBaseName
   )
 
-  val programmingColl7Ex1: ProgrammingExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val programmingColl7Ex1 = InitialExercise(
     title = "Kreise",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

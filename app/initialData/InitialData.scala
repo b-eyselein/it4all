@@ -13,22 +13,36 @@ import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-abstract class InitialExercise(protected val toolId: String, protected val collectionId: Int, protected val exerciseId: Int) {
+abstract class InitialExerciseContainer(
+  protected val toolId: String,
+  protected val collectionId: Int,
+  protected val exerciseId: Int
+) {
 
   protected val exResPath: File = exerciseResourcesPath(toolId, collectionId, exerciseId)
 
 }
 
-final case class InitialCollection[EC <: ExerciseContent](
-  collectionId: Int,
+case class InitialExercise[EC <: ExerciseContent](
   title: String,
   authors: Seq[String],
-  exercises: Seq[Exercise[EC]]
+  text: String,
+  topicsWithLevels: Seq[TopicWithLevel] = Seq.empty,
+  difficulty: Int,
+  content: EC
+)
+
+final case class InitialCollection[EC <: ExerciseContent](
+  title: String,
+  authors: Seq[String],
+  initialExercises: Map[Int, InitialExercise[EC]] = Map.empty
 )
 
 trait InitialData[EC <: ExerciseContent] {
 
-  val initialData: Seq[InitialCollection[EC]] = Seq.empty
+  type InitialEx = InitialExercise[EC]
+
+  val initialData: Map[Int, InitialCollection[EC]]
 
 }
 
@@ -84,10 +98,14 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
 
   ToolList.tools.foreach { tool =>
     // Insert all collections and exercises
-    tool.initialData.initialData.foreach { case InitialCollection(collectionId, title, authors, exercises) =>
+    tool.initialData.initialData.foreach { case (collectionId, InitialCollection(title, authors, initialExercises)) =>
       insertInitialCollection(ExerciseCollection(collectionId, tool.id, title, authors))
 
-      exercises.foreach(ex => insertInitialExercise(ex, tool.jsonFormats.exerciseFormat))
+      initialExercises.foreach { case (exerciseId, InitialExercise(title, authors, text, topicsWithLevels, difficulty, content)) =>
+        val exercise = Exercise(exerciseId, collectionId, tool.id, title, authors, text, topicsWithLevels, difficulty, content)
+
+        insertInitialExercise(exercise, tool.jsonFormats.exerciseFormat)
+      }
     }
   }
 

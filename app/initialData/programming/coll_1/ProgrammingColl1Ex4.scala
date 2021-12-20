@@ -1,12 +1,12 @@
 package initialData.programming.coll_1
 
 import initialData.InitialData._
-import initialData.programming.ProgrammingInitialExercise
+import initialData.InitialExercise
+import initialData.programming.{ProgrammingInitialData, ProgrammingInitialExerciseContainer}
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl1Ex4 extends ProgrammingInitialExercise(1, 4, "fibonacci") {
+object ProgrammingColl1Ex4 extends ProgrammingInitialExerciseContainer(1, 4, "fibonacci") {
 
   private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description
@@ -24,10 +24,7 @@ object ProgrammingColl1Ex4 extends ProgrammingInitialExercise(1, 4, "fibonacci")
     folderName = exerciseBaseName
   )
 
-  val programmingColl1Ex4: ProgrammingExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val programmingColl1Ex4: ProgrammingInitialData.InitialEx = InitialExercise(
     title = "Fibonacci",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

@@ -1,14 +1,13 @@
 package initialData.web.coll_1
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
-import initialData.web.WebInitialExercise
+import initialData.web.WebInitialExerciseContainer
+import initialData.{FileLoadConfig, InitialExercise}
+import model.FilesSolution
 import model.tools.web.WebExerciseContent
-import model.tools.web.WebTool.WebExercise
 import model.tools.web.sitespec.{HtmlTask, SiteSpec, WebElementSpec}
-import model.{Exercise, FilesSolution}
 
-object WebColl1Ex3 extends WebInitialExercise(1, 3) {
+object WebColl1Ex3 extends WebInitialExerciseContainer(1, 3) {
 
   private val html_tasks = Seq(
     HtmlTask(
@@ -64,17 +63,7 @@ object WebColl1Ex3 extends WebInitialExercise(1, 3) {
     )
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath / "sol_1",
-    Seq(
-      FileLoadConfig("mustang.html")
-    )
-  )
-
-  val webColl1Ex3: WebExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId = "web",
+  val webColl1Ex3: InitialExercise[WebExerciseContent] = InitialExercise(
     title = "Hyperlinks und Bilder in HTML",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
@@ -88,7 +77,16 @@ object WebColl1Ex3 extends WebInitialExercise(1, 3) {
           FileLoadConfig("mustangStyle.css")
         )
       ),
-      Seq(FilesSolution(sampleSolutionFiles))
+      sampleSolutions = Seq(
+        FilesSolution(
+          loadFilesFromFolder(
+            exResPath / "sol_1",
+            Seq(
+              FileLoadConfig("mustang.html")
+            )
+          )
+        )
+      )
     )
   )
 

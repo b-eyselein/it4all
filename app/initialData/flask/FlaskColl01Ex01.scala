@@ -1,41 +1,11 @@
 package initialData.flask
 
-import initialData.FileLoadConfig
 import initialData.InitialData.loadTextFromFile
-import model.tools.flask.FlaskTool.FlaskExercise
+import initialData.{FileLoadConfig, InitialExercise}
+import model.FilesSolution
 import model.tools.flask.{FlaskExerciseContent, FlaskSingleTestConfig, FlaskTestsConfig}
-import model.{Exercise, ExerciseFile, FilesSolution}
 
-object FlaskColl01Ex01 extends FlaskInitialExercise(1, 1) {
-
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    solPath,
-    Seq(
-      FileLoadConfig("server.py"),
-      FileLoadConfig("templates/base.html"),
-      FileLoadConfig("templates/index.html"),
-      FileLoadConfig("templates/login.html"),
-      FileLoadConfig("templates/register.html")
-    )
-  )
-
-  private val testFiles = loadFilesFromFolder(
-    exResPath,
-    Seq(
-      FileLoadConfig("test_login.py")
-    )
-  )
-
-  private val files: Seq[ExerciseFile] = loadFilesFromFolder(
-    declarationPath,
-    Seq(
-      FileLoadConfig("server.py", editable = true),
-      FileLoadConfig("templates/base.html", editable = true),
-      FileLoadConfig("templates/index.html", editable = true),
-      FileLoadConfig("templates/login.html", editable = true),
-      FileLoadConfig("templates/register.html", editable = true)
-    )
-  )
+object FlaskColl01Ex01 extends FlaskInitialExerciseContainer(1, 1) {
 
   private val testsConfig = FlaskTestsConfig(
     testFileName = "test_login",
@@ -88,17 +58,44 @@ object FlaskColl01Ex01 extends FlaskInitialExercise(1, 1) {
     )
   )
 
-  private val sampleSolutions = Seq(FilesSolution(sampleSolutionFiles))
-
-  val flaskColl01Ex01: FlaskExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val flaskColl01Ex01: FlaskInitialData.InitialEx = InitialExercise(
     title = "Testaufgabe Login",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 1,
-    content = FlaskExerciseContent(files, testFiles, testsConfig, sampleSolutions)
+    content = FlaskExerciseContent(
+      files = loadFilesFromFolder(
+        declarationPath,
+        Seq(
+          FileLoadConfig("server.py", editable = true),
+          FileLoadConfig("templates/base.html", editable = true),
+          FileLoadConfig("templates/index.html", editable = true),
+          FileLoadConfig("templates/login.html", editable = true),
+          FileLoadConfig("templates/register.html", editable = true)
+        )
+      ),
+      testFiles = loadFilesFromFolder(
+        exResPath,
+        Seq(
+          FileLoadConfig("test_login.py")
+        )
+      ),
+      testsConfig,
+      sampleSolutions = Seq(
+        FilesSolution(
+          loadFilesFromFolder(
+            solPath,
+            Seq(
+              FileLoadConfig("server.py"),
+              FileLoadConfig("templates/base.html"),
+              FileLoadConfig("templates/index.html"),
+              FileLoadConfig("templates/login.html"),
+              FileLoadConfig("templates/register.html")
+            )
+          )
+        )
+      )
+    )
   )
 
 }

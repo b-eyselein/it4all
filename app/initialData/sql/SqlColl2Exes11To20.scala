@@ -1,17 +1,14 @@
 package initialData.sql
 
-import model.tools.sql.SqlTool.SqlExercise
+import initialData.InitialExercise
 import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
-import model.{Exercise, Level, TopicWithLevel}
+import model.{Level, TopicWithLevel}
 
 object SqlColl2Exes11To20 {
 
   private val schemaName = "amazon"
 
-  private val sql_coll_2_ex_11: SqlExercise = Exercise(
-    exerciseId = 11,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_11: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = """Wer schrieb was?""",
     authors = Seq("bje40dc"),
     text = """Ordnen Sie allen Büchern ihre jeweiligen Autoren zu.
@@ -31,10 +28,7 @@ object SqlColl2Exes11To20 {
     )
   )
 
-  private val sql_coll_2_ex_12: SqlExercise = Exercise(
-    exerciseId = 12,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_12: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Bücher von Carlsen",
     authors = Seq("bje40dc"),
     text = """Bestimmen Sie Titel und Preis aller Bücher die im Verlag 'Carlsen' erschienen sind.""",
@@ -54,10 +48,7 @@ object SqlColl2Exes11To20 {
     )
   )
 
-  private val sql_coll_2_ex_13: SqlExercise = Exercise(
-    exerciseId = 13,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_13: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Harry Potters Leben",
     authors = Seq("bje40dc"),
     text = """Bestimmen Sie Titel und ISBN sämtlicher Bücher der Autorin 'Rowling' (ohne Anführungszeichen).""",
@@ -76,14 +67,10 @@ object SqlColl2Exes11To20 {
     )
   )
 
-  private val sql_coll_2_ex_14: SqlExercise = Exercise(
-    exerciseId = 14,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_14: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Wilhards Wertungen",
     authors = Seq("bje40dc"),
-    text =
-      """Zeigen Sie die Werte aller Ratings an, die der Kunde mit der Email 'wilhard_1041@web.de' abgegeben hat.""",
+    text = """Zeigen Sie die Werte aller Ratings an, die der Kunde mit der Email 'wilhard_1041@web.de' abgegeben hat.""",
     difficulty = 2,
     topicsWithLevels = Seq(
       TopicWithLevel(SqlTopics.Join, Level.Beginner)
@@ -99,10 +86,7 @@ object SqlColl2Exes11To20 {
     )
   )
 
-  private val sql_coll_2_ex_15: SqlExercise = Exercise(
-    exerciseId = 15,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_15: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = """Wer hat hier so viel bestellt?""",
     authors = Seq("bje40dc"),
     text = """Wie lauten die Nachnamen der Kunden, die mindestens 3 Bestellung aufgegeben haben?""",
@@ -122,10 +106,7 @@ object SqlColl2Exes11To20 {
     )
   )
 
-  private val sql_coll_2_ex_16: SqlExercise = Exercise(
-    exerciseId = 16,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_16: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "GMX-Kunden",
     authors = Seq("bje40dc"),
     text = """Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de' enden.""",
@@ -142,10 +123,7 @@ object SqlColl2Exes11To20 {
     )
   )
 
-  private val sql_coll_2_ex_17: SqlExercise = Exercise(
-    exerciseId = 17,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_17: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Billige Bücher",
     authors = Seq("bje40dc"),
     text = """Geben Sie die Titel aller Bücher aus die weniger als 10,00 € kosten.""",
@@ -160,10 +138,7 @@ object SqlColl2Exes11To20 {
     )
   )
 
-  private val sql_coll_2_ex_18: SqlExercise = Exercise(
-    exerciseId = 18,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_18: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Was wird gewünscht?",
     authors = Seq("bje40dc"),
     text = """Geben die die IDs aller Bücher aus, die von Kunden gewünscht werden.
@@ -179,10 +154,7 @@ object SqlColl2Exes11To20 {
     )
   )
 
-  private val sql_coll_2_ex_19: SqlExercise = Exercise(
-    exerciseId = 19,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_19: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Jahrgang 81",
     authors = Seq("bje40dc"),
     text = """Wählen Sie die Vor- und Nachnamen der Kunden aus, die im Jahr 1981 Geburtstag haben.""",
@@ -202,10 +174,7 @@ object SqlColl2Exes11To20 {
     )
   )
 
-  private val sql_coll_2_ex_20: SqlExercise = Exercise(
-    exerciseId = 20,
-    collectionId = 2,
-    toolId = "sql",
+  val sql_coll_2_ex_20: InitialExercise[SqlExerciseContent] = InitialExercise(
     title = "Geringer Bestand oder Preis",
     authors = Seq("bje40dc"),
     text = """Geben Sie die Titel aller Bücher aus, die einen Bestand von weniger als 20.000 Exemplaren
@@ -223,19 +192,6 @@ object SqlColl2Exes11To20 {
           |    WHERE stock < 20000 OR price < 14;""".stripMargin
       )
     )
-  )
-
-  val sqlColl2Exes11To20 = Seq(
-    sql_coll_2_ex_11,
-    sql_coll_2_ex_12,
-    sql_coll_2_ex_13,
-    sql_coll_2_ex_14,
-    sql_coll_2_ex_15,
-    sql_coll_2_ex_16,
-    sql_coll_2_ex_17,
-    sql_coll_2_ex_18,
-    sql_coll_2_ex_19,
-    sql_coll_2_ex_20
   )
 
 }

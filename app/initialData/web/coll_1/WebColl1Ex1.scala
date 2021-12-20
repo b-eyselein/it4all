@@ -1,14 +1,13 @@
 package initialData.web.coll_1
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
-import initialData.web.WebInitialExercise
+import initialData.web.WebInitialExerciseContainer
+import initialData.{FileLoadConfig, InitialExercise}
+import model.FilesSolution
 import model.tools.web.WebExerciseContent
-import model.tools.web.WebTool.WebExercise
 import model.tools.web.sitespec.{HtmlTask, SiteSpec, WebElementSpec}
-import model.{Exercise, FilesSolution}
 
-object WebColl1Ex1 extends WebInitialExercise(1, 1) {
+object WebColl1Ex1 extends WebInitialExerciseContainer(1, 1) {
 
   private val html_tasks: Seq[HtmlTask] = Seq(
     HtmlTask(
@@ -78,17 +77,7 @@ object WebColl1Ex1 extends WebInitialExercise(1, 1) {
     )
   )
 
-  private val sampleSolutionFiles = loadFilesFromFolder(
-    exResPath / "sol_1",
-    Seq(
-      FileLoadConfig("carList.html")
-    )
-  )
-
-  val webColl1Ex1: WebExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val webColl1Ex1: InitialExercise[WebExerciseContent] = InitialExercise(
     title = "Listen in Html",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
@@ -102,7 +91,16 @@ object WebColl1Ex1 extends WebInitialExercise(1, 1) {
           FileLoadConfig("carListStyle.css")
         )
       ),
-      sampleSolutions = Seq(FilesSolution(sampleSolutionFiles))
+      sampleSolutions = Seq(
+        FilesSolution(
+          loadFilesFromFolder(
+            exResPath / "sol_1",
+            Seq(
+              FileLoadConfig("carList.html")
+            )
+          )
+        )
+      )
     )
   )
 

@@ -2,22 +2,17 @@ package initialData.xml
 
 import better.files.File
 import initialData.InitialData._
-import initialData.{InitialCollection, InitialData}
-import model.Exercise
-import model.tools.xml.XmlTool.XmlExercise
+import initialData.{InitialCollection, InitialData, InitialExercise}
 import model.tools.xml.{XmlExerciseContent, XmlSolution}
 
 object XmlInitialData extends InitialData[XmlExerciseContent] {
 
   private val toolId = "xml"
 
-  private val xmlColl1Ex1: XmlExercise = {
+  private val xmlColl1Ex1 = {
     val exResPath: File = exerciseResourcesPath(toolId, 1, 1)
 
-    Exercise(
-      exerciseId = 1,
-      collectionId = 1,
-      toolId,
+    InitialExercise(
       title = "Party",
       authors = Seq("bje40dc"),
       text = "Erstellen Sie zu dieser DTD ein passendes Xml-Dokument",
@@ -35,13 +30,10 @@ object XmlInitialData extends InitialData[XmlExerciseContent] {
     )
   }
 
-  private val xmlColl1Ex2: XmlExercise = {
+  private val xmlColl1Ex2 = {
     val exResPath: File = exerciseResourcesPath(toolId, 1, 2)
 
-    Exercise(
-      exerciseId = 2,
-      collectionId = 1,
-      toolId,
+    InitialExercise(
       title = "Vorlesung",
       authors = Seq("bje40dc"),
       text = "Erstellen Sie zu dieser DTD ein passendes Xml-Dokument.",
@@ -63,13 +55,10 @@ object XmlInitialData extends InitialData[XmlExerciseContent] {
     )
   }
 
-  private val xmlColl1Ex3: XmlExercise = {
+  private val xmlColl1Ex3 = {
     val exResPath = exerciseResourcesPath(toolId, 1, 3)
 
-    Exercise(
-      exerciseId = 3,
-      collectionId = 1,
-      toolId,
+    InitialExercise(
       title = "Krankenhaus",
       authors = Seq("bje40dc"),
       text = "Erstellen Sie zu dieser DTD ein passendes Xml-Dokument.",
@@ -87,13 +76,10 @@ object XmlInitialData extends InitialData[XmlExerciseContent] {
     )
   }
 
-  private val xmlColl1Ex4: XmlExercise = {
+  private val xmlColl1Ex4 = {
     val exResPath = exerciseResourcesPath(toolId, 1, 4)
 
-    Exercise(
-      exerciseId = 4,
-      collectionId = 1,
-      toolId,
+    InitialExercise(
       title = "Frühstück",
       authors = Seq("bje40dc"),
       text = "Erstellen Sie für dieses Xml-Dokument eine passende DTD.",
@@ -111,13 +97,10 @@ object XmlInitialData extends InitialData[XmlExerciseContent] {
     )
   }
 
-  private val xmlColl1Ex5: XmlExercise = {
+  private val xmlColl1Ex5 = {
     val exResPath = exerciseResourcesPath(toolId, 1, 5)
 
-    Exercise(
-      exerciseId = 5,
-      collectionId = 1,
-      toolId = "xml",
+    InitialExercise(
       title = "Bibliothek",
       authors = Seq("bje40dc"),
       text = "Erstellen Sie für dieses Xml-Dokument eine passende DTD.",
@@ -140,12 +123,17 @@ object XmlInitialData extends InitialData[XmlExerciseContent] {
 
   }
 
-  override val initialData: Seq[InitialCollection[XmlExerciseContent]] = Seq(
-    InitialCollection(
-      collectionId = 1,
+  override val initialData = Map(
+    1 -> InitialCollection(
       title = "Xml Basics",
       authors = Seq("bje40dc"),
-      exercises = Seq(xmlColl1Ex1, xmlColl1Ex2, xmlColl1Ex3, xmlColl1Ex4, xmlColl1Ex5)
+      initialExercises = Map(
+        1 -> xmlColl1Ex1,
+        2 -> xmlColl1Ex2,
+        3 -> xmlColl1Ex3,
+        4 -> xmlColl1Ex4,
+        5 -> xmlColl1Ex5
+      )
     )
   )
 

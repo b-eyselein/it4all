@@ -1,12 +1,12 @@
 package initialData.programming.coll_4
 
 import initialData.InitialData._
-import initialData.programming.ProgrammingInitialExercise
+import initialData.InitialExercise
+import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl4Ex3 extends ProgrammingInitialExercise(4, 3, "general") {
+object ProgrammingColl4Ex3 extends ProgrammingInitialExerciseContainer(4, 3, "general") {
 
   // TODO: split in multiple, smaller exercises!
 
@@ -79,10 +79,7 @@ object ProgrammingColl4Ex3 extends ProgrammingInitialExercise(4, 3, "general") {
     folderName = exerciseBaseName
   )
 
-  val programmingColl4Ex3: ProgrammingExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val programmingColl4Ex3 = InitialExercise(
     title = "Allgemeine Aufgaben",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

@@ -1,12 +1,12 @@
 package initialData.programming.coll_1
 
 import initialData.InitialData._
-import initialData.programming.ProgrammingInitialExercise
+import initialData.InitialExercise
+import initialData.programming.{ProgrammingInitialData, ProgrammingInitialExerciseContainer}
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl1Ex2 extends ProgrammingInitialExercise(1, 2, "factorial") {
+object ProgrammingColl1Ex2 extends ProgrammingInitialExerciseContainer(1, 2, "factorial") {
 
   private val unitTestPart = UnitTestPart(
     unitTestsDescription = """Schreiben Sie Unittests für die Funktion <code>factorial(n= int) -> int</code>.
@@ -31,10 +31,7 @@ object ProgrammingColl1Ex2 extends ProgrammingInitialExercise(1, 2, "factorial")
     folderName = exerciseBaseName
   )
 
-  val programmingColl1Ex2: ProgrammingExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val programmingColl1Ex2: ProgrammingInitialData.InitialEx = InitialExercise(
     title = "Fakultät",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

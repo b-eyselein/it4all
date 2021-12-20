@@ -1,12 +1,12 @@
 package initialData.programming
 
 import better.files.File
-import initialData.{FileLoadConfig, InitialFilesExercise}
+import initialData.{FileLoadConfig, InitialFilesExerciseContainer}
 import model.tools.programming.{ImplementationPart, UnitTestTestConfig}
 import model.{ExerciseFile, PathExerciseFile}
 
-abstract class ProgrammingInitialExercise(collectionId: Int, exerciseId: Int, protected val exerciseBaseName: String)
-    extends InitialFilesExercise("programming", collectionId, exerciseId) {
+abstract class ProgrammingInitialExerciseContainer(collectionId: Int, exerciseId: Int, protected val exerciseBaseName: String)
+    extends InitialFilesExerciseContainer("programming", collectionId, exerciseId) {
 
   protected val implFileName     = s"$exerciseBaseName.py"
   protected val implDeclFileName = s"${exerciseBaseName}_declaration.py"

@@ -1,7 +1,6 @@
 package initialData.uml.coll_1
 
-import model.Exercise
-import model.tools.uml.UmlTool.UmlExercise
+import initialData.InitialExercise
 import model.tools.uml._
 
 object umlColl1Ex2 {
@@ -107,10 +106,7 @@ object umlColl1Ex2 {
     )
   )
 
-  val umlColl1Ex2: UmlExercise = Exercise(
-    exerciseId = 2,
-    collectionId = 1,
-    toolId = "uml",
+  val umlColl1Ex2: InitialExercise[UmlExerciseContent] = InitialExercise(
     title = "Krankenhaus",
     authors = Seq("bje40dc"),
     text = """Ein Krankenhaus hat einen Namen und besteht aus Stationen mit einer eindeutigen Nummer.

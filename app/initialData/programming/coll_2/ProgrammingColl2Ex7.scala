@@ -1,12 +1,12 @@
 package initialData.programming.coll_2
 
 import initialData.InitialData._
-import initialData.programming.ProgrammingInitialExercise
+import initialData.InitialExercise
+import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl2Ex7 extends ProgrammingInitialExercise(2, 7, "a1z26") {
+object ProgrammingColl2Ex7 extends ProgrammingInitialExerciseContainer(2, 7, "a1z26") {
 
   private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description!
@@ -36,10 +36,7 @@ object ProgrammingColl2Ex7 extends ProgrammingInitialExercise(2, 7, "a1z26") {
     folderName = exerciseBaseName
   )
 
-  val programmingColl2Ex7: ProgrammingExercise = Exercise(
-    exerciseId = 7,
-    collectionId = 2,
-    toolId,
+  val programmingColl2Ex7 = InitialExercise(
     title = "A1Z26-Verschlüsselung",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

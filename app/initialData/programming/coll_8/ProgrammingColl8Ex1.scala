@@ -1,13 +1,12 @@
 package initialData.programming.coll_8
 
-import initialData.FileLoadConfig
 import initialData.InitialData._
-import initialData.programming.ProgrammingInitialExercise
+import initialData.programming.ProgrammingInitialExerciseContainer
+import initialData.{FileLoadConfig, InitialExercise}
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl8Ex1 extends ProgrammingInitialExercise(8, 1, "table") {
+object ProgrammingColl8Ex1 extends ProgrammingInitialExerciseContainer(8, 1, "table") {
 
   private val unitTestPart = UnitTestPart(
     unitTestsDescription = loadTextFromFile(exResPath / "unit_test_description.html"),
@@ -50,10 +49,7 @@ object ProgrammingColl8Ex1 extends ProgrammingInitialExercise(8, 1, "table") {
     implFileName = implFileName
   )
 
-  val programmingColl8Ex1: ProgrammingExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val programmingColl8Ex1 = InitialExercise(
     title = "PySQL",
     authors = Seq("amh12ry"),
     text = loadTextFromFile(exResPath / "text.html"),

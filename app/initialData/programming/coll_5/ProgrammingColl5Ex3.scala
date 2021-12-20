@@ -1,12 +1,12 @@
 package initialData.programming.coll_5
 
 import initialData.InitialData.loadTextFromFile
-import initialData.programming.ProgrammingInitialExercise
+import initialData.InitialExercise
+import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
-object ProgrammingColl5Ex3 extends ProgrammingInitialExercise(5, 3, "tuples_and_dicts") {
+object ProgrammingColl5Ex3 extends ProgrammingInitialExerciseContainer(5, 3, "tuples_and_dicts") {
 
   private val unitTestPart = UnitTestPart(
     // FIXME: unit tests description!
@@ -43,10 +43,7 @@ object ProgrammingColl5Ex3 extends ProgrammingInitialExercise(5, 3, "tuples_and_
     folderName = exerciseBaseName
   )
 
-  val programmingColl5Ex3: ProgrammingExercise = Exercise(
-    exerciseId,
-    collectionId,
-    toolId,
+  val programmingColl5Ex3 = InitialExercise(
     title = "Tupel und Dictionaries",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
