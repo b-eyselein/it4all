@@ -17,13 +17,9 @@ trait MongoClientQueries
     with MongoUserQueries
     with MongoCollectionQueries
     with MongoExerciseQueries
-    with MongoExercisePartResultQueries
-    with MongoLessonQueries
-    with MongoLessonContentQueries {
+    with MongoExercisePartResultQueries {
 
   protected implicit val ec: ExecutionContext
-
-  // private implicit val topicFormat: OFormat[Topic] = JsonProtocols.topicFormat
 
   // Solution queries
 

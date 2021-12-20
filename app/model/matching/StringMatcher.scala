@@ -6,7 +6,6 @@ object StringMatcher extends Matcher[String, StringMatch] {
 
   type StringMatchingResult = MatchingResult[String, StringMatch]
 
-  override protected def instantiateMatch(ua: String, sa: String): StringMatch =
-    StringMatch(MatchType.SUCCESSFUL_MATCH, ua, sa)
+  override protected def instantiateMatch(ua: String, sa: String): StringMatch = StringMatch(MatchType.SUCCESSFUL_MATCH, ua, sa)
 
 }

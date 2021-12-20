@@ -18,19 +18,17 @@ trait MongoUserQueries {
 
   private def futureUsersCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection("users"))
 
-  protected def futureUserByUsername(username: String): Future[Option[User]] =
-    for {
-      usersCollection <- futureUsersCollection
-      maybeUser <-
-        usersCollection
-          .find(BSONDocument("username" -> username), Option.empty[BSONDocument])
-          .one[User]
-    } yield maybeUser
+  protected def futureUserByUsername(username: String): Future[Option[User]] = for {
+    usersCollection <- futureUsersCollection
+    maybeUser <-
+      usersCollection
+        .find(BSONDocument("username" -> username), Option.empty[BSONDocument])
+        .one[User]
+  } yield maybeUser
 
-  protected def futureInsertUser(user: User): Future[Boolean] =
-    for {
-      usersCollection <- futureUsersCollection
-      insertResult    <- usersCollection.insert(true).one(user)
-    } yield insertResult.n == 1
+  protected def futureInsertUser(user: User): Future[Boolean] = for {
+    usersCollection <- futureUsersCollection
+    insertResult    <- usersCollection.insert(true).one(user)
+  } yield insertResult.n == 1
 
 }
