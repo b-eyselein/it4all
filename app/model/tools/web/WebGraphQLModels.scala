@@ -47,16 +47,7 @@ object WebGraphQLModels extends FilesSolutionToolGraphQLModelBasics[WebExerciseC
     implicit val eft: ObjectType[Unit, ExerciseFile]   = exerciseFileType
     implicit val sst: ObjectType[Unit, FilesSolution]  = solutionOutputType
 
-    deriveObjectType(
-      AddFields(
-        Field(
-          "part",
-          OptionType(partEnumType),
-          arguments = partIdArgument :: Nil,
-          resolve = context => WebExPart.values.find(_.id == context.arg(partIdArgument))
-        )
-      )
-    )
+    deriveObjectType()
   }
 
   // Result types

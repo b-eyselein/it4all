@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import * as joint from 'jointjs';
 import {
   ExerciseSolveFieldsFragment,
   UmlClassDiagramInput,
   UmlClassInput,
   UmlExerciseContentFragment,
+  UmlExPart,
   UmlMultiplicity,
   useUmlCorrectionMutation
 } from '../../../graphql';
@@ -42,6 +43,7 @@ interface IProps {
   content: UmlExerciseContentFragment;
   withHelp: boolean;
   partId: string;
+  part: UmlExPart;
   oldSolution: UmlDbClassDiagram | undefined;
 }
 
@@ -52,7 +54,7 @@ interface IState {
   selectedCreatableObject?: SelectableClassDiagramObject;
 }
 
-export function UmlDiagramDrawing({exercise, content, withHelp, partId, oldSolution}: IProps): JSX.Element {
+export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, oldSolution}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const canvas = useRef<HTMLDivElement>(null);
@@ -62,11 +64,6 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, oldSolut
 
   const [correctExercise, correctionMutationResult] = useUmlCorrectionMutation();
 
-  if (!content.umlPart) {
-    throw new Error('no part found?');
-  }
-
-  const part = content.umlPart;
 
   // vars get recreated after every rerender!
   const graph: joint.dia.Graph = useMemo(() => new joint.dia.Graph(), []);
@@ -221,11 +218,17 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, oldSolut
   const tabs: Tabs = {
     exerciseText: {
       name: t('exerciseText'),
-      render: <UmlDiagramDrawingExerciseTextTabContent exercise={exercise} content={content} correct={() => correct()}
-                                                       creatableClassDiagramObjects={creatableClassDiagramObjects}
-                                                       onClassClick={(name) => console.warn(name)} toggle={toggle}
-                                                       selectedCreatableObject={state.selectedCreatableObject}
-                                                       isCorrecting={correctionMutationResult.called && correctionMutationResult.loading}/>
+      render: (
+        <UmlDiagramDrawingExerciseTextTabContent
+          exercise={exercise}
+          content={content}
+          correct={() => correct()}
+          creatableClassDiagramObjects={creatableClassDiagramObjects}
+          onClassClick={(name) => console.warn(name)} toggle={toggle}
+          selectedCreatableObject={state.selectedCreatableObject}
+          isCorrecting={correctionMutationResult.called && correctionMutationResult.loading}
+          part={part}/>
+      )
     },
     correction: {
       name: t('correction'),

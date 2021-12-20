@@ -39,8 +39,8 @@ libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-play" % "5.0.0", // Apache 2.0
 
   // Mongo database
-  "org.reactivemongo" %% "play2-reactivemongo"            % "1.0.8-play28", // Apache 2.0
-  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.0.8-play29", // Apache 2.0
+  "org.reactivemongo" %% "play2-reactivemongo"            % "1.0.10-play28", // Apache 2.0
+  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.0.10-play29", // Apache 2.0
 
   // Other helpers
   "com.beachape"         %% "enumeratum-play"      % "1.7.0", // MIT
@@ -63,7 +63,7 @@ libraryDependencies ++= Seq(
   // DTD Parser,
   "de.uniwue" %% "it4all_dtd_parser" % "0.5.0",
   // Web correction
-  "org.nanohttpd"           % "nanohttpd-webserver" % "2.3.1" % Test,
-  "org.seleniumhq.selenium" % "selenium-java"       % "4.1.0",
-  "org.seleniumhq.selenium" % "htmlunit-driver"     % "3.56.0"
+  "org.nanohttpd"           % "nanohttpd-webserver" % "2.3.1" % Test, // BSD 3-clause
+  "org.seleniumhq.selenium" % "selenium-java"       % "4.1.1", // Apache 2.0
+  "org.seleniumhq.selenium" % "htmlunit-driver"     % "3.56.0" // Apache 2.0
 )

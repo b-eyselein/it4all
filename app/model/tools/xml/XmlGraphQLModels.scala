@@ -20,16 +20,7 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseC
   override val exerciseContentType: ObjectType[Unit, XmlExerciseContent] = {
     implicit val sst: ObjectType[Unit, XmlSolution] = xmlSolutionType
 
-    deriveObjectType(
-      AddFields(
-        Field(
-          "part",
-          OptionType(partEnumType),
-          arguments = partIdArgument :: Nil,
-          resolve = context => XmlExPart.values.find(_.id == context.arg(partIdArgument))
-        )
-      )
-    )
+    deriveObjectType()
   }
 
   // Solution types

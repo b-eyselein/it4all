@@ -15,11 +15,19 @@ interface IProps {
   toggle: (x: SelectableClassDiagramObject) => void;
   selectedCreatableObject: SelectableClassDiagramObject | undefined;
   isCorrecting: boolean;
+  part: UmlExPart;
 }
 
-export function UmlDiagramDrawingExerciseTextTabContent(
-  {exercise, content, creatableClassDiagramObjects, correct, onClassClick, toggle, selectedCreatableObject}: IProps
-): JSX.Element {
+export function UmlDiagramDrawingExerciseTextTabContent({
+  exercise,
+  content,
+  creatableClassDiagramObjects,
+  correct,
+  onClassClick,
+  toggle,
+  selectedCreatableObject,
+  part
+}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
 
@@ -27,7 +35,7 @@ export function UmlDiagramDrawingExerciseTextTabContent(
   const corrected = false;
 
   // FIXME: memberAllocation?
-  const childLinks: ChildLink[] = content.umlPart === UmlExPart.DiagramDrawingHelp
+  const childLinks: ChildLink[] = part === UmlExPart.DiagramDrawingHelp
     ? [{
       text: t('goToNextPart'),
       classNames: classNames('button', 'is-fullwidth', corrected ? 'is-link' : 'is-dark'),

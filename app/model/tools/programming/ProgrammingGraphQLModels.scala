@@ -5,9 +5,7 @@ import model.{ExerciseFile, FilesSolution}
 import sangria.macros.derive._
 import sangria.schema._
 
-object ProgrammingGraphQLModels
-    extends FilesSolutionToolGraphQLModelBasics[ProgrammingExerciseContent, ProgExPart, ProgrammingResult]
-    with GraphQLArguments {
+object ProgrammingGraphQLModels extends FilesSolutionToolGraphQLModelBasics[ProgrammingExerciseContent, ProgExPart, ProgrammingResult] with GraphQLArguments {
 
   override val partEnumType: EnumType[ProgExPart] = EnumType(
     "ProgExPart",
@@ -38,16 +36,7 @@ object ProgrammingGraphQLModels
     implicit val ipt: ObjectType[Unit, ImplementationPart] = implementationPartType
     implicit val sst: ObjectType[Unit, FilesSolution]      = solutionOutputType
 
-    deriveObjectType(
-      AddFields(
-        Field(
-          "part",
-          OptionType(partEnumType),
-          arguments = partIdArgument :: Nil,
-          resolve = context => ProgExPart.values.find(_.id == context.arg(partIdArgument))
-        )
-      )
-    )
+    deriveObjectType()
   }
 
   private val programmingTestCorrectionResultInterfaceType: InterfaceType[Unit, ProgrammingTestCorrectionResult] =

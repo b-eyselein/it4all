@@ -14,11 +14,9 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
 
   const [correctExercise, correctionMutationResult] = useProgrammingCorrectionMutation();
 
-  if (!content.programmingPart) {
-    throw new Error('TODO!');
-  }
-
-  const part = content.programmingPart;
+  const part = partId === 'testCreation'
+    ? ProgExPart.TestCreation
+    : ProgExPart.Implementation;
 
   const defaultSolution = part === ProgExPart.TestCreation
     ? content.unitTestPart.unitTestFiles

@@ -143,7 +143,7 @@ fragment ExerciseSolveFields on Exercise {
   }
 }
 
-query Exercise($toolId: String!, $collectionId: Int!, $exerciseId: Int!, $partId: String!) {
+query Exercise($toolId: String!, $collectionId: Int!, $exerciseId: Int!) {
   tool(toolId: $toolId) {
     collection(collId: $collectionId) {
       exercise(exId: $exerciseId) {
@@ -181,7 +181,7 @@ fragment Topic on Topic {
   }
 }
 
-fragment TopicWithLevel on TopicWithLevel{
+fragment TopicWithLevel on TopicWithLevel {
   topic {
     ...Topic
   }
@@ -256,7 +256,6 @@ fragment ProgrammingExerciseContent on ProgrammingExerciseContent {
   programmingSampleSolutions: sampleSolutions {
     ...FilesSolution
   }
-  programmingPart: part(partId: $partId)
 }
 
 # Regex
@@ -309,7 +308,6 @@ fragment UmlExerciseContent on UmlExerciseContent {
   umlSampleSolutions: sampleSolutions {
     ...UmlClassDiagram
   }
-  umlPart: part(partId: $partId)
 }
 
 fragment UmlClassDiagram on UmlClassDiagram {
@@ -383,7 +381,6 @@ fragment WebExerciseContent on WebExerciseContent {
   webSampleSolutions: sampleSolutions {
     ...FilesSolution
   }
-  webPart: part(partId: $partId)
 }
 
 # Xml
@@ -394,7 +391,6 @@ fragment XmlExerciseContent on XmlExerciseContent {
   xmlSampleSolutions: sampleSolutions {
     ...XmlSolution
   }
-  xmlPart: part(partId: $partId)
 }
 
 fragment XmlSolution on XmlSolution {

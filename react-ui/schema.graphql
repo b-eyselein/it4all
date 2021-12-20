@@ -359,7 +359,6 @@ type Mutation {
 }
 
 enum ProgExPart {
-  ActivityDiagram
   Implementation
   TestCreation
 }
@@ -374,7 +373,6 @@ type ProgrammingCorrectionResult {
 type ProgrammingExerciseContent {
   filename: String!
   implementationPart: ImplementationPart!
-  part(partId: String!): ProgExPart
   sampleSolutions: [FilesSolution!]!
   unitTestPart: UnitTestPart!
 }
@@ -426,7 +424,6 @@ type RegexExerciseContent {
   extractionTestData: [RegexExtractionTestData!]!
   matchTestData: [RegexMatchTestData!]!
   maxPoints: Int!
-  part(partId: String!): RegexExPart
   sampleSolutions: [String!]!
 }
 
@@ -555,7 +552,6 @@ type SqlExecutionResult {
 type SqlExerciseContent {
   exerciseType: SqlExerciseType!
   hint: String
-  part(partId: String!): SqlExPart
   sampleSolutions: [String!]!
   schemaName: String!
   sqlDbContents: [SqlQueryResult!]!
@@ -799,7 +795,6 @@ enum UmlExPart {
 
 type UmlExerciseContent {
   mappings: [KeyValueObject!]!
-  part(partId: String!): UmlExPart
   sampleSolutions: [UmlClassDiagram!]!
   toIgnore: [String!]!
 }
@@ -952,7 +947,6 @@ type WebExerciseContent {
   files: [ExerciseFile!]!
   htmlText: String
   jsText: String
-  part(partId: String!): WebExPart
   sampleSolutions: [FilesSolution!]!
   siteSpec: SiteSpec!
 }
@@ -1007,7 +1001,6 @@ enum XmlExPart {
 
 type XmlExerciseContent {
   grammarDescription: String!
-  part(partId: String!): XmlExPart
   rootNode: String!
   sampleSolutions: [XmlSolution!]!
 }

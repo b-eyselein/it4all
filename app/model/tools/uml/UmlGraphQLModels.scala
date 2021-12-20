@@ -91,14 +91,6 @@ object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerc
     implicit val sst: ObjectType[Unit, UmlClassDiagram] = umlClassDiagramType
 
     deriveObjectType(
-      AddFields(
-        Field(
-          "part",
-          OptionType(partEnumType),
-          arguments = partIdArgument :: Nil,
-          resolve = context => UmlExPart.values.find(_.id == context.arg(partIdArgument))
-        )
-      ),
       ReplaceField(
         "mappings",
         Field(

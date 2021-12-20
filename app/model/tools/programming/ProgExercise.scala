@@ -9,7 +9,7 @@ final case class ProgrammingExerciseContent(
   override val sampleSolutions: Seq[FilesSolution]
 ) extends FileExerciseContent {
 
-  override def parts: Seq[ProgExPart] = Seq(ProgExPart.TestCreation, ProgExPart.Implementation) // ProgExPart.values
+  override def parts: Seq[ProgExPart] = ProgExPart.values
 
 }
 

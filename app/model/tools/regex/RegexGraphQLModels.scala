@@ -27,16 +27,7 @@ object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseCo
     implicit val rmtdt: ObjectType[Unit, RegexMatchTestData]      = deriveObjectType()
     implicit val retdt: ObjectType[Unit, RegexExtractionTestData] = deriveObjectType()
 
-    deriveObjectType(
-      AddFields(
-        Field(
-          "part",
-          OptionType(partEnumType),
-          arguments = partIdArgument :: Nil,
-          resolve = context => RegexExPart.values.find(_.id == context.arg(partIdArgument))
-        )
-      )
-    )
+    deriveObjectType()
   }
 
   // Solution types

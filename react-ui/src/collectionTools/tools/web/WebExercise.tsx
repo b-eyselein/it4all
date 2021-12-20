@@ -16,11 +16,7 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
 
   const [correctExercise, correctionMutationResult] = useWebCorrectionMutation();
 
-  if (!content.webPart) {
-    throw new Error('TODO');
-  }
-
-  const part = content.webPart;
+  const part = partId === 'html' ? WebExPart.HtmlPart : WebExPart.JsPart;
 
   const exerciseDescription = (
     <div className="content">

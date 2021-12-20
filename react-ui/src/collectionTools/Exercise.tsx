@@ -39,7 +39,7 @@ export function Exercise<SolutionType>({toolId, collectionId, exerciseId, partId
   const {t} = useTranslation('common');
   const [state, setState] = useState<IState<SolutionType>>({oldSolutionLoaded: false});
 
-  const exerciseQuery = useExerciseQuery({variables: {toolId, collectionId, exerciseId, partId}});
+  const exerciseQuery = useExerciseQuery({variables: {toolId, collectionId, exerciseId}});
 
   useEffect(() => {
     database.getSolution<SolutionType>(toolId, collectionId, exerciseId, partId)

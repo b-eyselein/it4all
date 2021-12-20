@@ -14,9 +14,6 @@ object ProgExPart extends ExParts[ProgExPart] {
 
   case object Implementation extends ProgExPart(partName = "Implementierung", id = "implementation")
 
-  @deprecated
-  case object ActivityDiagram extends ProgExPart(partName = "Als Aktivitätsdiagramm", id = "activity")
-
 }
 
 // Topics

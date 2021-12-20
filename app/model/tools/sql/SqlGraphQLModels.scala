@@ -109,15 +109,7 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
     implicit val seTypeT: EnumType[SqlExerciseType] = sqlExerciseTypeType
 
     deriveObjectType(
-      AddFields(
-        Field(
-          "part",
-          OptionType(partEnumType),
-          arguments = partIdArgument :: Nil,
-          resolve = context => SqlExPart.values.find(_.id == context.arg(partIdArgument))
-        ),
-        dbContentQueryField
-      )
+      AddFields(dbContentQueryField)
     )
   }
 
