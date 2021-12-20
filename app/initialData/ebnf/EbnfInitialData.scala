@@ -1,9 +1,9 @@
 package initialData.ebnf
 
-import initialData.{InitialData, InitialExercise}
+import initialData.{InitialCollection, InitialData, InitialExercise}
+import model.Exercise
 import model.tools.ebnf.EbnfTool.EbnfExercise
 import model.tools.ebnf.{EbnfExerciseContent, EbnfGrammar, EbnfRule}
-import model.{Exercise, ExerciseCollection}
 
 abstract class RegexInitialExercise(collectionId: Int, exerciseId: Int) extends InitialExercise("ebnf", collectionId, exerciseId)
 
@@ -35,10 +35,8 @@ object RegexColl01Ex01 extends RegexInitialExercise(1, 1) {
 
 object EbnfInitialData extends InitialData[EbnfExerciseContent] {
 
-  override protected val toolId: String = "ebnf"
-
-  override val exerciseData: Seq[(ExerciseCollection, Seq[Exercise[EbnfExerciseContent]])] = Seq(
-    (ExerciseCollection(1, toolId, "EBNF - Grundlagen", Seq("bje40dc")), Seq(RegexColl01Ex01.ebnfColl1Ex1))
+  override val initialData = Seq(
+    InitialCollection(collectionId = 1, "EBNF - Grundlagen", Seq("bje40dc"), exercises = Seq(RegexColl01Ex01.ebnfColl1Ex1))
   )
 
 }

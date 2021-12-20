@@ -19,11 +19,16 @@ abstract class InitialExercise(protected val toolId: String, protected val colle
 
 }
 
+final case class InitialCollection[EC <: ExerciseContent](
+  collectionId: Int,
+  title: String,
+  authors: Seq[String],
+  exercises: Seq[Exercise[EC]]
+)
+
 trait InitialData[EC <: ExerciseContent] {
 
-  protected val toolId: String
-
-  val exerciseData: Seq[(ExerciseCollection, Seq[Exercise[EC]])]
+  val initialData: Seq[InitialCollection[EC]] = Seq.empty
 
 }
 
@@ -79,10 +84,10 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
 
   ToolList.tools.foreach { tool =>
     // Insert all collections and exercises
-    tool.initialData.exerciseData.foreach { case (coll, exes) =>
-      insertInitialCollection(coll)
+    tool.initialData.initialData.foreach { case InitialCollection(collectionId, title, authors, exercises) =>
+      insertInitialCollection(ExerciseCollection(collectionId, tool.id, title, authors))
 
-      exes.foreach(ex => insertInitialExercise(ex, tool.jsonFormats.exerciseFormat))
+      exercises.foreach(ex => insertInitialExercise(ex, tool.jsonFormats.exerciseFormat))
     }
   }
 

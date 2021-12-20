@@ -1,15 +1,15 @@
 package initialData.xml
 
 import better.files.File
-import initialData.InitialData
 import initialData.InitialData._
+import initialData.{InitialCollection, InitialData}
+import model.Exercise
 import model.tools.xml.XmlTool.XmlExercise
 import model.tools.xml.{XmlExerciseContent, XmlSolution}
-import model.{Exercise, ExerciseCollection}
 
 object XmlInitialData extends InitialData[XmlExerciseContent] {
 
-  override protected val toolId = "xml"
+  private val toolId = "xml"
 
   private val xmlColl1Ex1: XmlExercise = {
     val exResPath: File = exerciseResourcesPath(toolId, 1, 1)
@@ -140,12 +140,13 @@ object XmlInitialData extends InitialData[XmlExerciseContent] {
 
   }
 
-  private val xmlColl01 = ExerciseCollection(1, toolId, title = "Xml Basics", authors = Seq("bje40dc"))
-
-  private val xmlColl01Exes = Seq(xmlColl1Ex1, xmlColl1Ex2, xmlColl1Ex3, xmlColl1Ex4, xmlColl1Ex5)
-
-  override val exerciseData: Seq[(ExerciseCollection, Seq[XmlExercise])] = Seq(
-    (xmlColl01, xmlColl01Exes)
+  override val initialData: Seq[InitialCollection[XmlExerciseContent]] = Seq(
+    InitialCollection(
+      collectionId = 1,
+      title = "Xml Basics",
+      authors = Seq("bje40dc"),
+      exercises = Seq(xmlColl1Ex1, xmlColl1Ex2, xmlColl1Ex3, xmlColl1Ex4, xmlColl1Ex5)
+    )
   )
 
 }
