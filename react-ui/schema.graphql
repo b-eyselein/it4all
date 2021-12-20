@@ -23,9 +23,6 @@ type CollectionTool {
   exerciseCount: Long!
   id: String!
   isBeta: Boolean!
-  lesson(lessonId: Int!): Lesson
-  lessonCount: Long!
-  lessons: [Lesson!]!
   name: String!
   proficiencies: [UserProficiency!]!
 }
@@ -273,49 +270,6 @@ enum JsActionType {
 type KeyValueObject {
   key: String!
   value: String!
-}
-
-type Lesson {
-  content(lessonId: Int!): LessonContent
-  contentCount: Long!
-  contents: [LessonContent!]!
-  description: String!
-  lessonId: Int!
-  title: String!
-  toolId: String!
-  video: String
-}
-
-interface LessonContent {
-  contentId: Int!
-  lessonId: Int!
-  toolId: String!
-}
-
-type LessonMultipleChoiceQuestion {
-  answers: [LessonMultipleChoiceQuestionAnswer!]!
-  id: Int!
-  questionText: String!
-}
-
-type LessonMultipleChoiceQuestionAnswer {
-  answer: String!
-  id: Int!
-  isCorrect: Boolean!
-}
-
-type LessonMultipleChoiceQuestionsContent implements LessonContent {
-  contentId: Int!
-  lessonId: Int!
-  questions: [LessonMultipleChoiceQuestion!]!
-  toolId: String!
-}
-
-type LessonTextContent implements LessonContent {
-  content: String!
-  contentId: Int!
-  lessonId: Int!
-  toolId: String!
 }
 
 type Level {

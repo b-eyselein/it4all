@@ -4,7 +4,6 @@ fragment CollectionTool on CollectionTool {
   id
   name
   collectionCount
-  lessonCount
   exerciseCount
 }
 
@@ -20,7 +19,6 @@ query CollectionToolOverview($toolId: String!) {
     name
     collectionCount
     exerciseCount
-    lessonCount
     proficiencies {
       ...UserProficiency
     }

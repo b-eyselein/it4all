@@ -13,12 +13,11 @@ import scala.util.Try
 
 final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = false) {
 
-  def toBind: Bind =
-    Bind
-      .from(fromPath.path.toAbsolutePath.toString)
-      .to(toPath.path.toAbsolutePath.toString)
-      .readOnly(isReadOnly)
-      .build()
+  def toBind: Bind = Bind
+    .from(fromPath.path.toAbsolutePath.toString)
+    .to(toPath.path.toAbsolutePath.toString)
+    .readOnly(isReadOnly)
+    .build()
 
   def explain = s"${fromPath.name} --> ${toPath.name}"
 

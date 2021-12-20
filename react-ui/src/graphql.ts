@@ -45,9 +45,6 @@ export type CollectionTool = {
   exerciseCount: Scalars['Long'];
   id: Scalars['String'];
   isBeta: Scalars['Boolean'];
-  lesson?: Maybe<Lesson>;
-  lessonCount: Scalars['Long'];
-  lessons: Array<Lesson>;
   name: Scalars['String'];
   proficiencies: Array<UserProficiency>;
 };
@@ -55,11 +52,6 @@ export type CollectionTool = {
 
 export type CollectionToolCollectionArgs = {
   collId: Scalars['Int'];
-};
-
-
-export type CollectionToolLessonArgs = {
-  lessonId: Scalars['Int'];
 };
 
 export type DtdParseException = {
@@ -354,59 +346,6 @@ export type KeyValueObject = {
   __typename?: 'KeyValueObject';
   key: Scalars['String'];
   value: Scalars['String'];
-};
-
-export type Lesson = {
-  __typename?: 'Lesson';
-  content?: Maybe<LessonContent>;
-  contentCount: Scalars['Long'];
-  contents: Array<LessonContent>;
-  description: Scalars['String'];
-  lessonId: Scalars['Int'];
-  title: Scalars['String'];
-  toolId: Scalars['String'];
-  video?: Maybe<Scalars['String']>;
-};
-
-
-export type LessonContentArgs = {
-  lessonId: Scalars['Int'];
-};
-
-export type LessonContent = {
-  contentId: Scalars['Int'];
-  lessonId: Scalars['Int'];
-  toolId: Scalars['String'];
-};
-
-export type LessonMultipleChoiceQuestion = {
-  __typename?: 'LessonMultipleChoiceQuestion';
-  answers: Array<LessonMultipleChoiceQuestionAnswer>;
-  id: Scalars['Int'];
-  questionText: Scalars['String'];
-};
-
-export type LessonMultipleChoiceQuestionAnswer = {
-  __typename?: 'LessonMultipleChoiceQuestionAnswer';
-  answer: Scalars['String'];
-  id: Scalars['Int'];
-  isCorrect: Scalars['Boolean'];
-};
-
-export type LessonMultipleChoiceQuestionsContent = LessonContent & {
-  __typename?: 'LessonMultipleChoiceQuestionsContent';
-  contentId: Scalars['Int'];
-  lessonId: Scalars['Int'];
-  questions: Array<LessonMultipleChoiceQuestion>;
-  toolId: Scalars['String'];
-};
-
-export type LessonTextContent = LessonContent & {
-  __typename?: 'LessonTextContent';
-  content: Scalars['String'];
-  contentId: Scalars['Int'];
-  lessonId: Scalars['Int'];
-  toolId: Scalars['String'];
 };
 
 export type Level = {
@@ -1492,19 +1431,19 @@ export type XmlDocumentResultFragment = { __typename?: 'XmlDocumentResult', erro
 
 export type XmlErrorFragment = { __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string };
 
-export type CollectionToolFragment = { __typename?: 'CollectionTool', id: string, name: string, collectionCount: any, lessonCount: any, exerciseCount: any };
+export type CollectionToolFragment = { __typename?: 'CollectionTool', id: string, name: string, collectionCount: any, exerciseCount: any };
 
 export type ToolOverviewQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ToolOverviewQuery = { __typename?: 'Query', tools: Array<{ __typename?: 'CollectionTool', id: string, name: string, collectionCount: any, lessonCount: any, exerciseCount: any }> };
+export type ToolOverviewQuery = { __typename?: 'Query', tools: Array<{ __typename?: 'CollectionTool', id: string, name: string, collectionCount: any, exerciseCount: any }> };
 
 export type CollectionToolOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
 }>;
 
 
-export type CollectionToolOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, collectionCount: any, exerciseCount: any, lessonCount: any, proficiencies: Array<{ __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }> } | null | undefined };
+export type CollectionToolOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, collectionCount: any, exerciseCount: any, proficiencies: Array<{ __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }> } | null | undefined };
 
 export type UserProficiencyFragment = { __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } };
 
@@ -2245,7 +2184,6 @@ export const CollectionToolFragmentDoc = gql`
   id
   name
   collectionCount
-  lessonCount
   exerciseCount
 }
     `;
@@ -2913,7 +2851,6 @@ export const CollectionToolOverviewDocument = gql`
     name
     collectionCount
     exerciseCount
-    lessonCount
     proficiencies {
       ...UserProficiency
     }

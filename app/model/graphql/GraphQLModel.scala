@@ -20,11 +20,11 @@ final case class GraphQLContext(
   loggedInUser: Option[LoggedInUser]
 )
 
-trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with LessonGraphQLModel with GraphQLMutations with MongoClientQueries {
+trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with GraphQLMutations with MongoClientQueries {
 
   // Types
 
-  private val collectionType = deriveObjectType[GraphQLContext, ExerciseCollection](
+  private val collectionType: ObjectType[GraphQLContext, ExerciseCollection] = deriveObjectType(
     AddFields[GraphQLContext, ExerciseCollection](
       Field("exerciseCount", LongType, resolve = context => futureExerciseCountForCollection(context.value.toolId, context.value.collectionId)),
       Field("exercises", ListType(exerciseType), resolve = context => futureExercisesForCollection(context.value.toolId, context.value.collectionId)),
@@ -47,15 +47,6 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Le
       Field("id", StringType, resolve = _.value.id),
       Field("name", StringType, resolve = _.value.name),
       Field("isBeta", BooleanType, resolve = _.value.isBeta),
-      // Lesson fields
-      Field("lessonCount", LongType, resolve = context => futureLessonCountForTool(context.value.id)),
-      Field("lessons", ListType(lessonType), resolve = context => futureLessonsForTool(context.value.id)),
-      Field(
-        "lesson",
-        OptionType(lessonType),
-        arguments = lessonIdArgument :: Nil,
-        resolve = context => futureLessonById(context.value.id, context.arg(lessonIdArgument))
-      ),
       // Collection fields
       Field("collectionCount", LongType, resolve = context => futureCollectionCountForTool(context.value.id)),
       Field("collections", ListType(collectionType), resolve = context => futureCollectionsForTool(context.value.id)),
