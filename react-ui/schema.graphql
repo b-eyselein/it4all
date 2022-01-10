@@ -15,6 +15,10 @@ enum BinaryClassificationResultType {
   TruePositive
 }
 
+type BulletListPoint {
+  textParts: [TextPart!]!
+}
+
 type CollectionTool {
   allExercises: [Exercise!]!
   collection(collId: Int!): ExerciseCollection
@@ -109,6 +113,7 @@ type Exercise {
   content: ExerciseContentUnionType!
   difficulty: Int!
   exerciseId: Int!
+  newExerciseText: [ExerciseTextParagraph!]!
   parts: [ExPart!]!
   text: String!
   title: String!
@@ -138,6 +143,17 @@ input ExerciseFileInput {
   content: String!
   editable: Boolean!
   name: String!
+}
+
+type ExerciseTextListParagraph {
+  numbered: Boolean!
+  points: [BulletListPoint!]!
+}
+
+union ExerciseTextParagraph = ExerciseTextListParagraph | ExerciseTextTextParagraph
+
+type ExerciseTextTextParagraph {
+  textParts: [TextPart!]!
 }
 
 type FilesSolution {
@@ -236,6 +252,10 @@ type GradedTextResult {
   maxPoints: Float!
   maybeFoundContent: String
   points: Float!
+}
+
+type HighlightedTextPart {
+  text: String!
 }
 
 type HtmlTask {
@@ -565,12 +585,18 @@ type StringMatchingResult {
   points: Float!
 }
 
+type StringTextPart {
+  text: String!
+}
+
 enum SuccessType {
   COMPLETE
   ERROR
   NONE
   PARTIALLY
 }
+
+union TextPart = HighlightedTextPart | StringTextPart
 
 type Topic {
   abbreviation: String!

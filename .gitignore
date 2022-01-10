@@ -7,8 +7,6 @@ RUNNING_PID
 .cache-main
 .cache-tests
 
-helper_scripts/__pycache__/
-
 project/project
 project/target
 
@@ -16,13 +14,6 @@ public/
 
 data/
 
-.idea/*
+.idea/
 
 .bsp/
-
-# Client folder
-ui/coverage
-ui/dist
-ui/node_modules
-ui/out-tsc
-

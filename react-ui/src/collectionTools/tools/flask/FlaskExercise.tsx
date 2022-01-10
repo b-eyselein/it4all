@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import {database} from '../../DexieTable';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
 import {IExerciseFile} from '../../exerciseFile';
+import {FlaskExerciseDescription} from './FlaskExerciseDescription';
 
 type IProps = ConcreteExerciseIProps<FlaskExerciseContentFragment, FilesSolutionInput>;
 
@@ -17,20 +18,7 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
 
   const part = FlaskExercisePart.FlaskSingleExPart;
 
-  const exerciseDescription = (
-    <>
-      <div className="mb-3" dangerouslySetInnerHTML={{__html: exercise.text}}/>
-
-      <p>Es werden folgende Testfälle ausgeführt:</p>
-
-      {content.testConfig.tests.map((singleTestConfig) =>
-        <div key={singleTestConfig.id}>
-          {singleTestConfig.id}. <code>{singleTestConfig.testName}</code>:
-          <span dangerouslySetInnerHTML={{__html: singleTestConfig.description}}/>
-        </div>
-      )}
-    </>
-  );
+  const exerciseDescription = <FlaskExerciseDescription exercise={exercise} content={content}/>;
 
   function correct(files: IExerciseFile[], onCorrect: () => void): void {
     const solution: FilesSolutionInput = {

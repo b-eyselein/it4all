@@ -6,8 +6,6 @@ version := "0.9.1"
 
 scalaVersion := "2.13.7"
 
-scalacOptions ++= CompilerOptions.allOptions
-
 updateOptions := updateOptions.value.withCachedResolution(true)
 
 JsEngineKeys.engineType := JsEngineKeys.EngineType.Node
@@ -39,8 +37,8 @@ libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-play" % "5.0.0", // Apache 2.0
 
   // Mongo database
-  "org.reactivemongo" %% "play2-reactivemongo"            % "1.0.10-play28", // Apache 2.0
-  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.0.10-play29", // Apache 2.0
+  "org.reactivemongo" %% "play2-reactivemongo"            % "1.1.0-play28-RC2", // Apache 2.0
+  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.1.0-play29-RC2", // Apache 2.0
 
   // Other helpers
   "com.beachape"         %% "enumeratum-play"      % "1.7.0", // MIT

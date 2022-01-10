@@ -28,16 +28,32 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
     types = List(stringTextPartType, highlightedTextPartType)
   )
 
-  private val exerciseTextTextParagraphType: ObjectType[Unit, ExerciseTextTextParagraph] = {
-    implicit val x: UnionType[Unit] = textPartType
-
-    deriveObjectType(
-      ReplaceField("textParts", Field("textParts", ListType(textPartType), resolve = _.value.textParts))
+  private val exerciseTextTextParagraphType: ObjectType[Unit, ExerciseTextTextParagraph] = deriveObjectType(
+    ReplaceField(
+      "textParts",
+      Field(
+        "textParts",
+        ListType(textPartType),
+        resolve = context => {
+          println("resolving text textParts")
+          context.value.textParts
+        }
+      )
     )
-  }
+  )
 
   private val bulletListPointsType: ObjectType[Unit, BulletListPoint] = deriveObjectType(
-    ReplaceField("textParts", Field("textParts", ListType(textPartType), resolve = _.value.textParts))
+    ReplaceField(
+      "textParts",
+      Field(
+        "textParts",
+        ListType(textPartType),
+        resolve = context => {
+          println("resolving bullet list textParts")
+          context.value.textParts
+        }
+      )
+    )
   )
 
   private val exerciseTextListParagraphType: ObjectType[Unit, ExerciseTextListParagraph] = {
@@ -47,7 +63,7 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
   }
 
   private val exerciseTextParagraphType: UnionType[Unit] = UnionType(
-    "ExerciseTextParagraphType",
+    "ExerciseTextParagraph",
     types = List(exerciseTextTextParagraphType, exerciseTextListParagraphType)
   )
 
@@ -82,11 +98,19 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
 
   protected val exerciseType: ObjectType[GraphQLContext, UntypedExercise] = {
     implicit val x0: ObjectType[Unit, TopicWithLevel] = topicWithLevelType
-    // implicit val x1: ObjectType[Unit, ExerciseTextParagraph] = exerciseTextParagraphType
 
     val contentField: Field[GraphQLContext, UntypedExercise] = Field("content", exerciseContentUnionType, resolve = _.value.content)
 
-    val newExerciseTextField: Field[GraphQLContext, UntypedExercise] = Field("newExerciseText", exerciseTextParagraphType, resolve = _.value.newExerciseText)
+    val newExerciseTextField: Field[GraphQLContext, UntypedExercise] = Field(
+      "newExerciseText",
+      ListType(exerciseTextParagraphType),
+      resolve = context => {
+        // FIXME: remove println!
+        context.value.newExerciseText.foreach((x) => println("\t" + x))
+        println("---------------------------------------")
+        context.value.newExerciseText
+      }
+    )
 
     deriveObjectType(
       ReplaceField("content", contentField),
