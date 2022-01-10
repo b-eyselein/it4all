@@ -1,6 +1,6 @@
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {FilesSolutionInput, useWebCorrectionMutation, WebExerciseContentFragment, WebExPart} from '../../../graphql';
-import {FilesExercise, updateFileContents} from '../FilesExercise';
+import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
@@ -29,10 +29,6 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
       }
     </div>
   );
-
-  const initialFiles = oldSolution
-    ? updateFileContents(oldSolution.files, content.files)
-    : content.files;
 
   function correct(files: IExerciseFile[], onCorrect: () => void): void {
     const solution: FilesSolutionInput = {

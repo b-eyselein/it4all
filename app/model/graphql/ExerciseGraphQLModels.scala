@@ -19,54 +19,6 @@ final case class GraphQLExPart(
 trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
   self: MongoExercisePartResultQueries =>
 
-  private val stringTextPartType: ObjectType[Unit, StringTextPart] = deriveObjectType()
-
-  private val highlightedTextPartType: ObjectType[Unit, HighlightedTextPart] = deriveObjectType()
-
-  private val textPartType: UnionType[Unit] = UnionType(
-    "TextPart",
-    types = List(stringTextPartType, highlightedTextPartType)
-  )
-
-  private val exerciseTextTextParagraphType: ObjectType[Unit, ExerciseTextTextParagraph] = deriveObjectType(
-    ReplaceField(
-      "textParts",
-      Field(
-        "textParts",
-        ListType(textPartType),
-        resolve = context => {
-          println("resolving text textParts")
-          context.value.textParts
-        }
-      )
-    )
-  )
-
-  private val bulletListPointsType: ObjectType[Unit, BulletListPoint] = deriveObjectType(
-    ReplaceField(
-      "textParts",
-      Field(
-        "textParts",
-        ListType(textPartType),
-        resolve = context => {
-          println("resolving bullet list textParts")
-          context.value.textParts
-        }
-      )
-    )
-  )
-
-  private val exerciseTextListParagraphType: ObjectType[Unit, ExerciseTextListParagraph] = {
-    implicit val x: ObjectType[Unit, BulletListPoint] = bulletListPointsType
-
-    deriveObjectType()
-  }
-
-  private val exerciseTextParagraphType: UnionType[Unit] = UnionType(
-    "ExerciseTextParagraph",
-    types = List(exerciseTextTextParagraphType, exerciseTextListParagraphType)
-  )
-
   private val exPartType: ObjectType[GraphQLContext, GraphQLExPart] = ObjectType(
     "ExPart",
     fields[GraphQLContext, GraphQLExPart](
@@ -101,20 +53,8 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
 
     val contentField: Field[GraphQLContext, UntypedExercise] = Field("content", exerciseContentUnionType, resolve = _.value.content)
 
-    val newExerciseTextField: Field[GraphQLContext, UntypedExercise] = Field(
-      "newExerciseText",
-      ListType(exerciseTextParagraphType),
-      resolve = context => {
-        // FIXME: remove println!
-        context.value.newExerciseText.foreach((x) => println("\t" + x))
-        println("---------------------------------------")
-        context.value.newExerciseText
-      }
-    )
-
     deriveObjectType(
       ReplaceField("content", contentField),
-      ReplaceField("newExerciseText", newExerciseTextField),
       AddFields(
         Field(
           "parts",

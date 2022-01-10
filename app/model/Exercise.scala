@@ -44,8 +44,7 @@ final case class Exercise[C <: ExerciseContent](
   text: String,
   topicsWithLevels: Seq[TopicWithLevel] = Seq.empty,
   difficulty: Int,
-  content: C,
-  newExerciseText: Seq[ExerciseTextParagraph] = Seq.empty
+  content: C
 )
 
 final case class UserSolution[SolType, PartType <: ExPart](

@@ -29,8 +29,7 @@ case class InitialExercise[EC <: ExerciseContent](
   text: String,
   topicsWithLevels: Seq[TopicWithLevel] = Seq.empty,
   difficulty: Int,
-  content: EC,
-  newExerciseText: Seq[ExerciseTextParagraph] = Seq.empty
+  content: EC
 )
 
 final case class InitialCollection[EC <: ExerciseContent](
@@ -102,8 +101,8 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
     tool.initialData.initialData.foreach { case (collectionId, InitialCollection(title, authors, initialExercises)) =>
       insertInitialCollection(ExerciseCollection(collectionId, tool.id, title, authors))
 
-      initialExercises.foreach { case (exerciseId, InitialExercise(title, authors, text, topicsWithLevels, difficulty, content, newExerciseText)) =>
-        val exercise = Exercise(exerciseId, collectionId, tool.id, title, authors, text, topicsWithLevels, difficulty, content, newExerciseText)
+      initialExercises.foreach { case (exerciseId, InitialExercise(title, authors, text, topicsWithLevels, difficulty, content)) =>
+        val exercise = Exercise(exerciseId, collectionId, tool.id, title, authors, text, topicsWithLevels, difficulty, content)
 
         insertInitialExercise(exercise, tool.jsonFormats.exerciseFormat)
       }

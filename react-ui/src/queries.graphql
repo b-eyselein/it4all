@@ -127,9 +127,6 @@ fragment ExerciseSolveFields on Exercise {
   toolId
   title
   text
-  newExerciseText {
-    ...ExerciseTextParagraph
-  }
   content {
     __typename
     ...EbnfExerciseContent
@@ -155,37 +152,6 @@ query Exercise($toolId: String!, $collectionId: Int!, $exerciseId: Int!) {
 }
 
 # Fragments
-
-fragment ExerciseTextListParagraph on ExerciseTextListParagraph {
-  numbered
-  points {
-    textParts {
-      ...TextPart
-    }
-  }
-}
-
-fragment ExerciseTextTextParagraph on ExerciseTextTextParagraph {
-  textParts {
-    ...TextPart
-  }
-}
-
-fragment ExerciseTextParagraph on ExerciseTextParagraph {
-  __typename
-  ...ExerciseTextListParagraph
-  ...ExerciseTextTextParagraph
-}
-
-fragment TextPart on TextPart {
-  __typename
-  ...on HighlightedTextPart {
-    text
-  }
-  ...on StringTextPart{
-    text
-  }
-}
 
 fragment ExerciseFile on ExerciseFile {
   name
