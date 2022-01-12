@@ -48,7 +48,7 @@ final case class AttributeList(elementName: String, attributeDefinitions: Seq[At
 
     case _ :: _ =>
       s"""<!ATTLIST $elementName
-         |${attributeDefinitions map ((" " * 4) + _.asString) mkString "\n"}
+         |${attributeDefinitions sortBy (_.attributeName) map ((" " * 4) + _.asString) mkString "\n"}
          |>""".stripMargin
   }
 
