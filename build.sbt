@@ -15,8 +15,7 @@ lazy val dtd_parser = (project in file("./dtd_parser"))
   .settings(commonSettings: _*)
   .settings(
     name    := "dtd_parser",
-    version := "0.1.0-SNAPSHOT",
-    libraryDependencies ++= Seq()
+    version := "0.1.0-SNAPSHOT"
   )
 
 lazy val root = (project in file("."))
