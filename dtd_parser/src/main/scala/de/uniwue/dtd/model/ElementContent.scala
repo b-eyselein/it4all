@@ -66,7 +66,7 @@ sealed trait MultiElementContent extends ElementContent {
 }
 
 final case class SequenceContent(children: Seq[ElementContent]) extends MultiElementContent {
-  override val joinChar: String = DocTypeDefParser.SequenceSplitCharacter
+  override val joinChar: String = ","
 }
 
 final case class AlternativeContent(children: Seq[ElementContent]) extends MultiElementContent {

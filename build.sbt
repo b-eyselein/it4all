@@ -12,7 +12,7 @@ val commonSettings = Seq(
 )
 
 lazy val dtd_parser = (project in file("./dtd_parser"))
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .settings(
     name    := "dtd_parser",
     version := "0.1.0-SNAPSHOT"

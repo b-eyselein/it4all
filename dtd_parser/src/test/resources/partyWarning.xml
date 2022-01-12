@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<!DOCTYPE party SYSTEM "/home/bjorn/workspace/it4all/test/resources/xml/party.dtd">
+<party datum="31.12.01">
+    <gast name="Albert Angsthase">
+        <getraenk>Wein</getraenk>
+        <getraenk>Bier</getraenk>
+        <zustand ledig="true" nuechtern="false"/>
+    </gast>
+    <gast name="Martina Mutig">
+        <zustand ledig="true" nuechtern="true"/>
+        <getraenk>Apfelsaft</getraenk>
+    </gast>
+    <gast name="Zacharias Zottelig"></gast>
+</party>

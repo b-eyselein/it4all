@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE party [
+<!ELEMENT party (gast)*>
+<!ATTLIST party datum CDATA #REQUIRED>
+<!ELEMENT gast (getraenk*, zustand?)>
+<!ATTLIST gast name CDATA #REQUIRED>
+<!ELEMENT getraenk (#PCDATA)>
+<!ELEMENT zustand EMPTY>
+<!ATTLIST zustand ledig CDATA #IMPLIED nuechtern CDATA #IMPLIED>
+]>
+<party datum="31.12.01">
+	<gast name="Albert Angsthase">
+		<getraenk>Wein</getraenk>
+		<getraenk>Bier</getraenk>
+		<zustand ledig="true" nuechtern="false" />
+	</gast>
+	<gast>
+		<getraenk>Apfelsaft</getraenk>
+		<zustand ledig="true" nuechtern="true" />
+
+	</gast>
+	<gast name="Zacharias Zottelig"></gast>
+</party>

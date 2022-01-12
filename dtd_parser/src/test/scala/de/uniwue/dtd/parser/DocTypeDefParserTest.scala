@@ -1,25 +1,21 @@
 package de.uniwue.dtd.parser
 
-import java.nio.file.Paths
-
-import better.files.File._
+import better.files.File
 import de.uniwue.dtd.model._
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import scala.util.{Failure, Success}
 
-class DocTypeDefParserTest extends FlatSpec with Matchers {
+class DocTypeDefParserTest extends AnyFlatSpec with Matchers {
 
   private def testParseError[T](parseSpec: DocTypeDefParser.Parser[T], toParse: String): Unit = {
     assert(DocTypeDefParser.parse(parseSpec, toParse).isInstanceOf[DocTypeDefParser.NoSuccess])
   }
 
-  private def testParse[T](parseSpec: DocTypeDefParser.Parser[T], toParse: String, awaited: T): Unit = {
-    val parsed: DocTypeDefParser.ParseResult[T] = DocTypeDefParser.parse(parseSpec, toParse)
-    parsed match {
-      case DocTypeDefParser.Success(res, _)   => assert(res == awaited)
-      case DocTypeDefParser.NoSuccess(msg, _) => fail("Parsing failed with msg: " + msg)
-    }
+  private def testParse[T](parseSpec: DocTypeDefParser.Parser[T], toParse: String, awaited: T): Unit = DocTypeDefParser.parse(parseSpec, toParse) match {
+    case DocTypeDefParser.Success(res, _)   => assert(res == awaited)
+    case DocTypeDefParser.NoSuccess(msg, _) => fail("Parsing failed with msg: " + msg)
   }
 
   val testData: Seq[String] = Seq("MyDef", "My Default TestData", "This is my def testdata")
@@ -42,7 +38,6 @@ class DocTypeDefParserTest extends FlatSpec with Matchers {
     testParse(DocTypeDefParser.impliedSpec, "#IMPLIED", ImpliedSpecification)
     testParseError(DocTypeDefParser.impliedSpec, "#REQUIRED")
   }
-
 
   it should "parse a required spec for an attribute" in {
     testParse(DocTypeDefParser.requiredSpec, "#REQUIRED", RequiredSpecification)
@@ -74,6 +69,7 @@ class DocTypeDefParserTest extends FlatSpec with Matchers {
     testParse(DocTypeDefParser.cDataAttrType, "CDATA", CDataAttributeType)
     testParseError(DocTypeDefParser.cDataAttrType, "ID")
   }
+
   it should "parse an enum type for an attribute" in {
     testParse(DocTypeDefParser.enumAttrType, "(test1 | test2 | test3)", EnumAttributeType(Seq[String]("test1", "test2", "test3")))
     testParseError(DocTypeDefParser.enumAttrType, "ID")
@@ -87,18 +83,14 @@ class DocTypeDefParserTest extends FlatSpec with Matchers {
   }
 
   it should "parse a dtd" in {
-    val file = Paths.get("src", "test", "resources", "note.dtd")
-    if (file.toFile.exists()) {
-      val content = file.contentAsString
+    val file = File.currentWorkingDirectory / "dtd_parser" / "src" / "test" / "resources" / "note.dtd"
 
-      DocTypeDefParser.tryParseDTD(content) match {
-        case Failure(error)   => fail(error.toString)
-        case Success(grammar) => assert(grammar.asString == content)
-      }
-    } else {
-      fail("A file does not exist!")
+    val content = file.contentAsString
+
+    DocTypeDefParser.tryParseDTD(content) match {
+      case Failure(error)   => fail(error.toString)
+      case Success(grammar) => assert(grammar.asString == content)
     }
   }
-
 
 }

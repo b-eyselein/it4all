@@ -19,13 +19,15 @@ final case class DocTypeDef(lines: Seq[DocTypeDefLine]) {
     go(lines, Seq[ElementDefinition](), Seq[AttributeList]())
   }
 
-  def asString: String = lines map (_.asString) mkString "\n"
+  def asString: String = lines.map(_.asString).mkString("\n")
 
-  def asElementLines: Seq[ElementLine] = lines.groupBy(_.elementName) map { case (elementName, allLines) =>
-    // FIXME: elementDefinition is missing!
-    val (es, as) = splitLines(allLines toList)
-    ElementLine(elementName, es.head, as)
-  } toSeq
+  def asElementLines: Seq[ElementLine] = lines
+    .groupBy(_.elementName)
+    .map { case (elementName, allLines) =>
+      // FIXME: elementDefinition is missing!
+      val (es, as) = splitLines(allLines toList)
+      ElementLine(elementName, es.head, as)
+    } toSeq
 
 }
 
