@@ -1,4 +1,5 @@
-In dieser XML-Datei soll eine Party [party] beschrieben werden. Diese hat ein Datum [datum] und eine Liste von
-Gästen [gast] (mindestens ein Gast war anwesend). Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname]
-und die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast hat mindestens ein Getränk getrunken.
-Außerdem soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist.
+In dieser XML-Datei soll eine Party [party] beschrieben werden. Diese hat ein Datum [datum, Attribut] und eine Liste von
+Gästen [gast] (mindestens ein Gast war anwesend). Für jeden Gast sollen der Vor- [vorname] und Nachname [nachname] und
+die Getränke [getraenk], die er getrunken hat, notiert werden. Jeder Gast hat mindestens ein Getränk getrunken. Außerdem
+soll für jeden Gast gespeichert werden, ob er nüchtern [nuechtern] und ob er ledig [ledig] ist, hier sollen jeweils nur
+"true" und "false" erlaubt sein.
