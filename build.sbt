@@ -4,8 +4,10 @@ val commonSettings = Seq(
   scalaVersion := "2.13.8",
   organization := "de.uniwue.is",
   libraryDependencies ++= Seq(
-    "com.beachape" %% "enumeratum-play"      % enumeratumVersion, // MIT
-    "com.beachape" %% "enumeratum-play-json" % enumeratumVersion  // MIT
+    "org.scalatestplus.play" %% "scalatestplus-play"   % "5.1.0" % Test, // Apache 2.0
+    "com.github.pathikrit"   %% "better-files"         % "3.9.1", // MIT
+    "com.beachape"           %% "enumeratum-play"      % enumeratumVersion, // MIT
+    "com.beachape"           %% "enumeratum-play-json" % enumeratumVersion // MIT
   )
 )
 
@@ -34,8 +36,6 @@ dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.11
 
 libraryDependencies ++= Seq(
   guice,
-  ws,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test, // Apache 2.0
 
   // JWT
   "com.pauldijou" %% "jwt-play" % "5.0.0", // Apache 2.0
@@ -46,8 +46,7 @@ libraryDependencies ++= Seq(
 
   // Other helpers
 
-  "com.github.t3hnar"    %% "scala-bcrypt" % "4.3.0", // Apache 2.0
-  "com.github.pathikrit" %% "better-files" % "3.9.1", // MIT
+  "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0", // Apache 2.0
 
   // Docker
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
