@@ -7,11 +7,9 @@ import scala.util.matching.Regex
 import scala.util.parsing.combinator.JavaTokenParsers
 import scala.util.{Try, Failure => TryFailure, Success => TrySuccess}
 
-
 final case class DTDParseException(msg: String, parsedLine: String) extends Exception(msg)
 
 final case class DTDParseResult(dtd: DocTypeDef, parseErrors: Seq[DTDParseException])
-
 
 object DocTypeDefParser extends JavaTokenParsers {
 
@@ -34,10 +32,11 @@ object DocTypeDefParser extends JavaTokenParsers {
   // FIXME: parse comments in dtd with <!-- ... -->
 
   private[dtd] def elementDefinition: Parser[ElementDefinition] = "<!ELEMENT" ~ anyName ~ "(" ~ sequenceContent ~ ")" ~ opt(unaryOperator) ~ ">" ^^ {
-    case _ ~ elemName ~ _ ~ content ~ _ ~ repOper ~ _ => repOper match {
-      case Some(operator) => ElementDefinition(elemName, instUnaryContent(operator, content))
-      case None           => ElementDefinition(elemName, content)
-    }
+    case _ ~ elemName ~ _ ~ content ~ _ ~ repOper ~ _ =>
+      repOper match {
+        case Some(operator) => ElementDefinition(elemName, instUnaryContent(operator, content))
+        case None           => ElementDefinition(elemName, content)
+      }
   }
 
   private[dtd] val anyName: Parser[String] = """\w+""".r
@@ -82,8 +81,8 @@ object DocTypeDefParser extends JavaTokenParsers {
 
   // Attributes
 
-  private[dtd] def attList: Parser[AttributeList] = "<!ATTLIST" ~ anyName ~ rep1(attributeDefinition) ^^ {
-    case _ ~ elemName ~ attributeDefs => AttributeList(elemName, attributeDefs)
+  private[dtd] def attList: Parser[AttributeList] = "<!ATTLIST" ~ anyName ~ rep1(attributeDefinition) ^^ { case _ ~ elemName ~ attributeDefs =>
+    AttributeList(elemName, attributeDefs)
   }
 
   private[dtd] def attributeDefinition: Parser[AttributeDefinition] = anyName ~ attributeType ~ opt(attrSpec) ^^ {
@@ -100,8 +99,8 @@ object DocTypeDefParser extends JavaTokenParsers {
 
   private[dtd] def cDataAttrType: Parser[AttributeType] = "CDATA" ^^ { _ => CDataAttributeType }
 
-  private[dtd] def enumAttrType: Parser[AttributeType] = "(" ~ anyName ~ rep1("|" ~ anyName) ~ ")" ^^ {
-    case _ ~ value ~ otherValues ~ _ => EnumAttributeType(value :: otherValues.map(_._2))
+  private[dtd] def enumAttrType: Parser[AttributeType] = "(" ~ anyName ~ rep1("|" ~ anyName) ~ ")" ^^ { case _ ~ value ~ otherValues ~ _ =>
+    EnumAttributeType(value :: otherValues.map(_._2))
   }
 
   // Parsers for attribute specifications
@@ -112,8 +111,8 @@ object DocTypeDefParser extends JavaTokenParsers {
 
   private[dtd] def impliedSpec: Parser[AttributeSpecification] = "#IMPLIED" ^^ { _ => ImpliedSpecification }
 
-  private[dtd] def fixedValueSpec: Parser[AttributeSpecification] = "#FIXED" ~ "\".*\"".r ^^ {
-    case _ ~ value => FixedValueSpecification(value.replaceAll("\"", ""))
+  private[dtd] def fixedValueSpec: Parser[AttributeSpecification] = "#FIXED" ~ "\".*\"".r ^^ { case _ ~ value =>
+    FixedValueSpecification(value.replaceAll("\"", ""))
   }
 
   private[dtd] def defaultValueSpec: Parser[AttributeSpecification] = "\".*\"".r ^^ (value => DefaultValueSpecification(value.replaceAll("\"", "")))
@@ -143,7 +142,7 @@ object DocTypeDefParser extends JavaTokenParsers {
     val (parseSuccesses, parseFails) = splitTries(parseLinesTries)
 
     parseFails match {
-      case Nil    => TrySuccess(DocTypeDef(parseSuccesses))
+      case Nil => TrySuccess(DocTypeDef(parseSuccesses))
       case errors =>
         TryFailure[DocTypeDef](errors.headOption.getOrElse(???).exception)
     }
@@ -153,16 +152,17 @@ object DocTypeDefParser extends JavaTokenParsers {
 
     @annotation.tailrec
     def go(toParse: List[String], successes: Seq[DocTypeDefLine], failures: Seq[DTDParseException]): DTDParseResult = toParse match {
-      case Nil          => DTDParseResult(DocTypeDef(successes), failures)
-      case head :: tail => parseDtdLine(head) match {
-        case TrySuccess(line)              => go(tail, successes :+ line, failures)
-        case f: TryFailure[DocTypeDefLine] =>
-          val dpe = f.exception match {
-            case dpe: DTDParseException => dpe
-            case e: Throwable           => DTDParseException(e.getMessage, "TODO!")
-          }
-          go(tail, successes, failures :+ dpe)
-      }
+      case Nil => DTDParseResult(DocTypeDef(successes), failures)
+      case head :: tail =>
+        parseDtdLine(head) match {
+          case TrySuccess(line) => go(tail, successes :+ line, failures)
+          case f: TryFailure[DocTypeDefLine] =>
+            val dpe = f.exception match {
+              case dpe: DTDParseException => dpe
+              case e: Throwable           => DTDParseException(e.getMessage, "TODO!")
+            }
+            go(tail, successes, failures :+ dpe)
+        }
 
     }
 
@@ -172,11 +172,12 @@ object DocTypeDefParser extends JavaTokenParsers {
   private def splitTries[A](tries: Seq[Try[A]]): (Seq[A], Seq[TryFailure[A]]) = {
     @annotation.tailrec
     def go(ts: List[Try[A]], successes: Seq[A], failures: Seq[TryFailure[A]]): (Seq[A], Seq[TryFailure[A]]) = ts match {
-      case Nil          => (successes, failures)
-      case head :: tail => head match {
-        case TrySuccess(a)    => go(tail, successes :+ a, failures)
-        case f: TryFailure[A] => go(tail, successes, failures :+ f)
-      }
+      case Nil => (successes, failures)
+      case head :: tail =>
+        head match {
+          case TrySuccess(a)    => go(tail, successes :+ a, failures)
+          case f: TryFailure[A] => go(tail, successes, failures :+ f)
+        }
 
     }
 
