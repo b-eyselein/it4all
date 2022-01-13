@@ -16,20 +16,18 @@ class DockerPullModule extends AbstractModule {
 
   private val imagesToPull: Seq[ScalaDockerImage] = Seq(
     FlaskCorrector.flaskCorrectionDockerImage,
-    ProgrammingCorrector.programmingCorrectionDockerImage,
+    ProgrammingCorrector.programmingCorrectionDockerImage
   )
 
-  override def configure(): Unit = {
-    imagesToPull
-      .filterNot(DockerConnector.imageExists)
-      .foreach(image => {
-        logger.warn(s"Pulling docker image $image")
+  override def configure(): Unit = imagesToPull
+    .filterNot(DockerConnector.imageExists)
+    .foreach { image =>
+      logger.warn(s"Pulling docker image $image")
 
-        DockerConnector.pullImage(image).map {
-          case Success(_)     => logger.warn(s"Image $image was pulled successfully.")
-          case Failure(error) => logger.error(s"Image $image could not be pulled!", error)
-        }
-      })
-  }
+      DockerConnector.pullImage(image).onComplete {
+        case Success(())    => logger.warn(s"Image $image was pulled successfully.")
+        case Failure(error) => logger.error(s"Image $image could not be pulled!", error)
+      }
+    }
 
 }

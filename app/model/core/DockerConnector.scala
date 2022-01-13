@@ -5,11 +5,9 @@ import com.spotify.docker.client.DockerClient.LogsParam
 import com.spotify.docker.client.messages.HostConfig.Bind
 import com.spotify.docker.client.messages.{ContainerConfig, ContainerCreation, ContainerExit, HostConfig}
 import com.spotify.docker.client.{DefaultDockerClient, DockerClient}
-import play.api.Logger
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters._
-import scala.util.Try
 
 final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = false) {
 
@@ -18,8 +16,6 @@ final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = 
     .to(toPath.path.toAbsolutePath.toString)
     .readOnly(isReadOnly)
     .build()
-
-  def explain = s"${fromPath.name} --> ${toPath.name}"
 
 }
 
@@ -33,27 +29,18 @@ final case class RunContainerResult(statusCode: Int, logs: String)
 
 object DockerConnector {
 
-  private val logger: Logger = Logger(DockerConnector.getClass)
-
   private val dockerClient: DockerClient = DefaultDockerClient.fromEnv().build()
 
-  val DefaultWorkingDir: File = File("/data")
+  def imageExists(scalaDockerImage: ScalaDockerImage)(implicit ec: ExecutionContext): Boolean = imageExists(scalaDockerImage.name)
 
-  def imageExists(scalaDockerImage: ScalaDockerImage)(implicit ec: ExecutionContext): Boolean =
-    imageExists(scalaDockerImage.name)
-
-  def imageExists(imageName: String)(implicit ec: ExecutionContext): Boolean = dockerClient
+  def imageExists(imageName: String): Boolean = dockerClient
     .listImages()
     .asScala
     .map(_.repoTags)
     .filter(_ != null)
     .exists(_.contains(imageName))
 
-  def pullImage(scalaDockerImage: ScalaDockerImage)(implicit ec: ExecutionContext): Future[Try[Unit]] =
-    Future(Try(dockerClient.pull(scalaDockerImage.name)))
-
-  def pullImage(imageName: String)(implicit ec: ExecutionContext): Future[Try[Unit]] =
-    Future(Try(dockerClient.pull(imageName)))
+  def pullImage(scalaDockerImage: ScalaDockerImage)(implicit ec: ExecutionContext): Future[Unit] = Future { dockerClient.pull(scalaDockerImage.name) }
 
   private def createContainer(
     imageName: String,
@@ -61,9 +48,12 @@ object DockerConnector {
     maybeEntryPoint: Option[Seq[String]] /*= None*/,
     maybeCmd: Option[Seq[String]] /*= None*/,
     binds: Seq[DockerBind] /*= Seq.empty*/
-  ): Try[ContainerCreation] = Try {
+  )(implicit ec: ExecutionContext): Future[ContainerCreation] = Future {
 
-    val hostConfig = HostConfig.builder().binds(binds.map(_.toBind.toString).asJava).build()
+    val hostConfig = HostConfig
+      .builder()
+      .binds(binds.map(_.toBind.toString).asJava)
+      .build()
 
     val containerConfig: ContainerConfig = ContainerConfig
       .builder()
@@ -77,11 +67,17 @@ object DockerConnector {
     dockerClient.createContainer(containerConfig)
   }
 
-  private def startContainer(container: String): Try[Unit] = Try(dockerClient.startContainer(container))
+  private def startContainer(container: String)(implicit ec: ExecutionContext): Future[Unit] = Future { dockerClient.startContainer(container) }
 
-  private def waitForContainer(container: String): Try[ContainerExit] = Try(dockerClient.waitContainer(container))
+  private def waitForContainer(container: String)(implicit ec: ExecutionContext): Future[ContainerExit] = Future { dockerClient.waitContainer(container) }
 
-  private def deleteContainer(container: String): Try[Unit] = Try(dockerClient.removeContainer(container))
+  private def deleteContainer(container: String)(implicit ec: ExecutionContext): Future[Unit] = Future { dockerClient.removeContainer(container) }
+
+  private def getContainerLogs(container: String)(implicit ec: ExecutionContext): Future[String] = Future {
+    dockerClient
+      .logs(container, LogsParam.stdout(), LogsParam.stderr())
+      .readFully()
+  }
 
   def runContainer(
     imageName: String,
@@ -90,32 +86,26 @@ object DockerConnector {
     maybeCmd: Option[Seq[String]] = None,
     maybeDockerBinds: Seq[DockerBind] = Seq.empty,
     deleteContainerAfterRun: Int => Boolean = _ => true
-  )(implicit ec: ExecutionContext): Future[Try[RunContainerResult]] = Future {
+  )(implicit ec: ExecutionContext): Future[RunContainerResult] = for {
+    containerCreation <- createContainer(imageName, maybeWorkingDir, maybeEntryPoint, maybeCmd, maybeDockerBinds)
 
-    createContainer(imageName, maybeWorkingDir, maybeEntryPoint, maybeCmd, maybeDockerBinds).flatMap { containerCreation: ContainerCreation =>
-      val containerId = containerCreation.id
+    containerId = containerCreation.id
 
-      startContainer(containerId).flatMap { _ =>
-        waitForContainer(containerId).map { containerExit =>
-          val statusCode = containerExit.statusCode.toInt
+    () <- startContainer(containerId)
 
-          val result: RunContainerResult =
-            RunContainerResult(statusCode, getContainerLogs(containerId))
+    containerExit <- waitForContainer(containerId)
 
-          if (deleteContainerAfterRun(statusCode)) {
-            // Do not delete failed containers for now
-            val containerDeleted = deleteContainer(containerId)
-            if (containerDeleted.isFailure) logger.error("Could not delete container!")
-          }
+    statusCode = containerExit.statusCode.toInt
 
-          result
-        }
+    logs <- getContainerLogs(containerId)
+
+    () <-
+      if (deleteContainerAfterRun(statusCode)) {
+        deleteContainer(containerId)
+      } else {
+        Future.successful(())
       }
-    }
-  }
 
-  private def getContainerLogs(containerId: String): String = dockerClient
-    .logs(containerId, LogsParam.stdout(), LogsParam.stderr())
-    .readFully()
+  } yield RunContainerResult(statusCode, logs)
 
 }

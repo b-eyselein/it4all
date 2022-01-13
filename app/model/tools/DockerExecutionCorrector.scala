@@ -17,20 +17,20 @@ trait DockerExecutionCorrector {
   protected val resultFileName     = "result.json"
   protected val testConfigFileName = "testConfig.json"
 
-  protected val baseBindPath: File = DockerConnector.DefaultWorkingDir
+  protected val baseBindPath: File = File("/data")
 
   protected val dockerImage: ScalaDockerImage
 
   def readDockerExecutionResultFile[A](targetFile: File, jsonFormat: Reads[A]): Try[A] = for {
-    fileContent <- Try(targetFile.contentAsString)
-    jsValue     <- Try(Json.parse(fileContent))
-    result <-
-      jsonFormat
-        .reads(jsValue)
-        .fold(
-          _ => Failure(new Exception("There has been an error reading a json result file!")),
-          result => Success(result)
-        )
+    fileContent <- Try { targetFile.contentAsString }
+    jsValue     <- Try { Json.parse(fileContent) }
+
+    readJson = jsonFormat.reads(jsValue)
+
+    result <- readJson.fold(
+      _ => Failure(new Exception("There has been an error reading a json result file!")),
+      result => Success(result)
+    )
   } yield result
 
   protected def runContainer[T, R](
@@ -39,24 +39,25 @@ trait DockerExecutionCorrector {
     resultFile: File,
     maybeCmd: Option[Seq[String]] = None,
     deleteContainerAfterRun: Int => Boolean = _ => true
-  )(convertResult: T => R)(implicit ec: ExecutionContext): Future[Try[R]] = Future(DockerConnector.imageExists(dockerImage.name)).flatMap {
-    case false => Future.successful(Failure(new Exception(s"The docker image does ${dockerImage.name} not exist!")))
-    case true =>
-      DockerConnector
-        .runContainer(
-          dockerImage.name,
-          maybeDockerBinds = dockerBinds,
-          maybeCmd = maybeCmd,
-          deleteContainerAfterRun = deleteContainerAfterRun
-        )
-        .map {
-          case Failure(exception) => Failure(exception)
-          case Success(RunContainerResult(statusCode, logs)) =>
-            statusCode match {
-              case 0 => readDockerExecutionResultFile(resultFile, jsFormat).map(convertResult)
-              case _ => Failure(DockerCorrectionExecutionError(logs))
-            }
-        }
+  )(convertResult: T => R)(implicit ec: ExecutionContext): Future[Try[R]] = for {
+    imageExists <- Future { DockerConnector.imageExists(dockerImage.name) }
+
+    () <-
+      if (imageExists) {
+        Future.successful(())
+      } else {
+        Future.failed(new Exception(s"The docker image does ${dockerImage.name} not exist!"))
+      }
+
+    RunContainerResult(statusCode, logs) <- DockerConnector.runContainer(
+      dockerImage.name,
+      maybeDockerBinds = dockerBinds,
+      maybeCmd = maybeCmd,
+      deleteContainerAfterRun = deleteContainerAfterRun
+    )
+  } yield statusCode match {
+    case 0 => readDockerExecutionResultFile(resultFile, jsFormat).map(convertResult)
+    case _ => Failure(DockerCorrectionExecutionError(logs))
   }
 
 }
