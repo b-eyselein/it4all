@@ -60,9 +60,9 @@ sealed trait MultiElementContent extends ElementContent {
 
   val joinChar: String
 
-  override def asString(needsParentheses: Boolean): String = if (needsParentheses) "(" + childrenAsStrings(false) + ")" else childrenAsStrings(false)
+  override def asString(needsParentheses: Boolean): String = if (needsParentheses) "(" + childrenAsStrings + ")" else childrenAsStrings
 
-  private def childrenAsStrings(needParentheses: Boolean): String = children map (_.asString(needParentheses)) mkString joinChar
+  private def childrenAsStrings: String = children.map(_.asString(false)).mkString(joinChar)
 }
 
 final case class SequenceContent(children: Seq[ElementContent]) extends MultiElementContent {

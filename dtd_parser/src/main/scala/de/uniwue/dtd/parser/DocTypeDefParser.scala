@@ -131,9 +131,9 @@ object DocTypeDefParser extends JavaTokenParsers {
 
     val (parseSuccesses, parseFails) = splitTries(allLines.toList)
 
-    parseFails match {
-      case Nil    => TrySuccess(DocTypeDef(parseSuccesses))
-      case errors => TryFailure[DocTypeDef](errors.headOption.getOrElse(???).exception)
+    parseFails.toList match {
+      case Nil       => TrySuccess(DocTypeDef(parseSuccesses))
+      case head :: _ => TryFailure[DocTypeDef](head.exception)
     }
   }
 
