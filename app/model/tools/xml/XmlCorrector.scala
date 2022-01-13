@@ -90,36 +90,34 @@ object XmlCorrector {
   })
 
   // TODO: check all grammars, use best?
-  def correctGrammar(solution: XmlSolution, sampleSolutions: Seq[XmlSolution]): Try[XmlResult] =
-    findNearestGrammarSample(solution.grammar, sampleSolutions) match {
-      case None => Failure(new Exception("Could not find a sample grammar!"))
-      case Some(sampleSolution) =>
-        DocTypeDefParser
-          .tryParseDTD(sampleSolution.grammar)
-          .map { sampleGrammar =>
-            val dtdParseResult = DocTypeDefParser.parseDTD(solution.grammar)
+  def correctGrammar(solution: XmlSolution, sampleSolutions: Seq[XmlSolution]): Try[XmlResult] = for {
+    sampleSolution <- findNearestGrammarSample(solution.grammar, sampleSolutions)
+      .map(Success(_))
+      .getOrElse(Failure(new Exception("Could not find a sample grammar!")))
 
-            val matchingResult: ElementLineComparison =
-              DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines)
+    sampleGrammar <- DocTypeDefParser.tryParseDTD(sampleSolution.grammar)
+  } yield {
+    val dtdParseResult = DocTypeDefParser.parseDTD(solution.grammar)
 
-            val points = addUp(matchingResult.allMatches.map(_.points))
+    val matchingResult: ElementLineComparison = DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines)
 
-            val maxPoints = addUp(matchingResult.allMatches.map(_.maxPoints))
+    val points = addUp(matchingResult.allMatches.map(_.points))
 
-            val successType: SuccessType = points.quarters.toDouble / maxPoints.quarters match {
-              case it if 0 <= it && it <= 0.5 => SuccessType.NONE
-              case it if 0.5 < it && it < 1   => SuccessType.PARTIALLY
-              case 1                          => SuccessType.COMPLETE
-              case _                          => SuccessType.ERROR
-            }
+    val maxPoints = addUp(matchingResult.allMatches.map(_.maxPoints))
 
-            XmlResult(
-              successType,
-              points,
-              maxPoints,
-              grammarResult = Some(XmlGrammarResult(dtdParseResult.parseErrors, matchingResult))
-            )
-          }
+    val successType: SuccessType = points.quarters.toDouble / maxPoints.quarters match {
+      case it if 0 <= it && it <= 0.5 => SuccessType.NONE
+      case it if 0.5 < it && it < 1   => SuccessType.PARTIALLY
+      case 1                          => SuccessType.COMPLETE
+      case _                          => SuccessType.ERROR
     }
+
+    XmlResult(
+      successType,
+      points,
+      maxPoints,
+      grammarResult = Some(XmlGrammarResult(dtdParseResult.parseErrors, matchingResult))
+    )
+  }
 
 }
