@@ -1,10 +1,13 @@
+# exit on error
+set -e
+
 # preparation
 mkdir -p public
 
 rm -rf public/*
 
 # client production build
-cd react-ui || exit
+cd react-ui
 
 npm i
 
@@ -12,7 +15,7 @@ npm run build
 
 cp -r build/* ../public
 
-cd .. || exit
+cd ..
 
-# TODO: server production build...
+# server production build
 sbt packageZipTarball
