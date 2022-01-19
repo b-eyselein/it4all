@@ -61,6 +61,9 @@ object SqlColl1Exes01To10 {
           |    FROM employee JOIN emailaddress ON employee.id = emailaddress.employee_id
           |    WHERE firstname = 'Max' AND lastname = 'Becker';""".stripMargin,
         """SELECT emailaddress
+          |    FROM employee JOIN emailaddress ON employee.id = employee_id
+          |    WHERE firstname = 'Max' AND lastname = 'Becker';""".stripMargin,
+        """SELECT emailaddress
           |    FROM employee, emailaddress
           |    WHERE employee.id = emailaddress.employee_id AND firstname = 'Max' AND lastname = 'Becker';""".stripMargin,
         """SELECT emailaddress
