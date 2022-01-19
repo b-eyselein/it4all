@@ -150,8 +150,7 @@ object SqlColl2Exes21To30 {
     title = "Orwellianisch",
     authors = Seq("bje40dc"),
     text = """Suchen Sie die Titel aller Bücher, deren Autor George Orwell ist.
-             |Ordnen Sie die Titel nach Erscheinungsjahr abwärts.""".stripMargin
-      .replace("\n", " "),
+             |Ordnen Sie die Titel nach Erscheinungsjahr abwärts.""".stripMargin.replace("\n", " "),
     difficulty = 3,
     topicsWithLevels = Seq(
       TopicWithLevel(SqlTopics.OrderBy, Level.Beginner),
@@ -199,8 +198,7 @@ object SqlColl2Exes21To30 {
     title = "Wer will Harry?",
     authors = Seq("bje40dc"),
     text = """Wählen Sie alle Bestellungen aus, die das Buch 'Harry Potter und der Halbblutprinz' enthalten.
-             |Geben Sie für diese Bestellungen jeweils das Datum und die Anzahl der bestellten Exemplare des Buches aus.""".stripMargin,
-      .replace("\n", " "),
+             |Geben Sie für diese Bestellungen jeweils das Datum und die Anzahl der bestellten Exemplare des Buches aus.""".stripMargin.replace("\n", " "),
     difficulty = 2,
     topicsWithLevels = Seq(
       TopicWithLevel(SqlTopics.Join, Level.Intermediate)
