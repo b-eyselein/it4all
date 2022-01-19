@@ -23,7 +23,9 @@ object SqlColl2Exes11To20 {
       schemaName = schemaName,
       sampleSolutions = Seq(
         """SELECT title, family_name
-          |    FROM authors JOIN books ON authors.id = books.author_id;""".stripMargin
+          |    FROM authors JOIN books ON authors.id = books.author_id;""".stripMargin,
+        """SELECT title, family_name
+          |    FROM authors JOIN books ON authors.id = author_id;""".stripMargin,
       )
     )
   )
@@ -41,8 +43,11 @@ object SqlColl2Exes11To20 {
       schemaName = schemaName,
       sampleSolutions = Seq(
         """SELECT title, price
+          |    FROM books JOIN publishers ON books.publisher_id = publishers.id
+          |    WHERE name = 'Carlsen';""".stripMargin,
+        """SELECT title, price
           |    FROM books JOIN publishers ON publisher_id = publishers.id
-          |    WHERE name = 'Carlsen';""".stripMargin
+          |    WHERE name = 'Carlsen';""".stripMargin,
       ),
       hint = Some("""Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.""")
     )
@@ -62,7 +67,10 @@ object SqlColl2Exes11To20 {
       sampleSolutions = Seq(
         """SELECT title, isbn
           |    FROM books JOIN authors on books.author_id = authors.id
-          |    WHERE family_name = 'Rowling'""".stripMargin
+          |    WHERE family_name = 'Rowling'""".stripMargin,
+        """SELECT title, isbn
+          |    FROM books JOIN authors on author_id = authors.id
+          |    WHERE family_name = 'Rowling'""".stripMargin,
       )
     )
   )
@@ -81,7 +89,10 @@ object SqlColl2Exes11To20 {
       sampleSolutions = Seq(
         """SELECT rating
           |    FROM ratings JOIN customers ON ratings.customer_id = customers.id
-          |    WHERE email = 'wilhard_1041@web.de';""".stripMargin
+          |    WHERE email = 'wilhard_1041@web.de';""".stripMargin,
+        """SELECT rating
+          |    FROM ratings JOIN customers ON customer_id = customers.id
+          |    WHERE email = 'wilhard_1041@web.de';""".stripMargin,
       )
     )
   )
@@ -100,7 +111,10 @@ object SqlColl2Exes11To20 {
       sampleSolutions = Seq(
         """SELECT DISTINCT family_name
           |    FROM orders JOIN customers ON orders.customer_id = customers.id
-          |    WHERE orders.id >= 3;""".stripMargin
+          |    WHERE orders.id >= 3;""".stripMargin,
+        """SELECT DISTINCT family_name
+          |    FROM orders JOIN customers ON customer_id = customers.id
+          |    WHERE orders.id >= 3;""".stripMargin,
       ),
       hint = Some("""Diese Bestellungen haben eine ID von mindestens 3.""")
     )
@@ -117,7 +131,7 @@ object SqlColl2Exes11To20 {
       sampleSolutions = Seq(
         """SELECT email
           |    FROM customers
-          |    WHERE email LIKE '%gmx.de';""".stripMargin
+          |    WHERE email LIKE '%gmx.de';""".stripMargin,
       ),
       hint = Some("""Verwenden Sie für die Eingrenzung der Mailadresse den 'LIKE'-Operator.""")
     )
@@ -133,7 +147,7 @@ object SqlColl2Exes11To20 {
       schemaName = schemaName,
       sampleSolutions = Seq(
         """SELECT title
-          |    FROM books WHERE price < 10.00;""".stripMargin
+          |    FROM books WHERE price < 10.00;""".stripMargin,
       )
     )
   )
@@ -149,7 +163,7 @@ object SqlColl2Exes11To20 {
       schemaName = schemaName,
       sampleSolutions = Seq(
         """SELECT DISTINCT book_id
-          |    FROM wishlists;""".stripMargin
+          |    FROM wishlists;""".stripMargin,
       )
     )
   )
@@ -168,7 +182,7 @@ object SqlColl2Exes11To20 {
           |    WHERE birthday < '1982-01-01' AND birthday > '1980-12-31';""".stripMargin,
         """SELECT first_name, family_name
           |    FROM customers
-          |    WHERE birthday LIKE '1981-%';""".stripMargin
+          |    WHERE birthday LIKE '1981-%';""".stripMargin,
       ),
       hint = Some("""Verwenden Sie den 'LIKE'-Operator zu Vergleich des Jahres.""")
     )
@@ -189,7 +203,7 @@ object SqlColl2Exes11To20 {
           |    WHERE stock < 20000 OR price < 14.00;""".stripMargin,
         """SELECT title
           |    FROM books
-          |    WHERE stock < 20000 OR price < 14;""".stripMargin
+          |    WHERE stock < 20000 OR price < 14;""".stripMargin,
       )
     )
   )

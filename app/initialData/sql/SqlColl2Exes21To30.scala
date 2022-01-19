@@ -24,7 +24,10 @@ object SqlColl2Exes21To30 {
       sampleSolutions = Seq(
         """SELECT COUNT(*) AS Anzahl
           |    FROM ratings JOIN books ON books.id = ratings.book_id
-          |    WHERE title = 'Die Stadt in der Wüste';""".stripMargin
+          |    WHERE title = 'Die Stadt in der Wüste';""".stripMargin,
+        """SELECT COUNT(*) AS Anzahl
+          |    FROM ratings JOIN books ON books.id = book_id
+          |    WHERE title = 'Die Stadt in der Wüste';""".stripMargin,
       )
     )
   )
@@ -46,7 +49,10 @@ object SqlColl2Exes21To30 {
       sampleSolutions = Seq(
         """SELECT AVG(rating) AS Durchschnitt
           |    FROM ratings JOIN books ON books.id = ratings.book_id
-          |    WHERE title = 'Die Stadt in der Wüste';""".stripMargin
+          |    WHERE title = 'Die Stadt in der Wüste';""".stripMargin,
+        """SELECT AVG(rating) AS Durchschnitt
+          |    FROM ratings JOIN books ON books.id = book_id
+          |    WHERE title = 'Die Stadt in der Wüste';""".stripMargin,
       )
     )
   )
@@ -66,7 +72,7 @@ object SqlColl2Exes21To30 {
       sampleSolutions = Seq(
         """SELECT SUM(stock) AS Gesamtbestand
           |    FROM books
-          |    WHERE title like 'Harry Potter%';""".stripMargin
+          |    WHERE title like 'Harry Potter%';""".stripMargin,
       )
     )
   )
@@ -88,7 +94,10 @@ object SqlColl2Exes21To30 {
       sampleSolutions = Seq(
         """SELECT min(rating) AS Schlechteste, max(rating) AS Beste
           |    FROM books JOIN ratings ON books.id = ratings.book_id
-          |    WHERE title = 'Harry Potter und der Halbblutprinz';""".stripMargin
+          |    WHERE title = 'Harry Potter und der Halbblutprinz';""".stripMargin,
+        """SELECT min(rating) AS Schlechteste, max(rating) AS Beste
+          |    FROM books JOIN ratings ON books.id = book_id
+          |    WHERE title = 'Harry Potter und der Halbblutprinz';""".stripMargin,
       )
     )
   )
@@ -100,14 +109,13 @@ object SqlColl2Exes21To30 {
     difficulty = 1,
     topicsWithLevels = Seq(
       TopicWithLevel(SqlTopics.Aggregate, Level.Beginner),
-      TopicWithLevel(SqlTopics.Join, Level.Beginner)
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
       sampleSolutions = Seq(
         """SELECT AVG(stock) AS Durchschnitt
-          |    FROM books;""".stripMargin
+          |    FROM books;""".stripMargin,
       )
     )
   )
@@ -128,7 +136,12 @@ object SqlColl2Exes21To30 {
           |    FROM customers
           |        JOIN wishlists ON wishlists.customer_id = customers.id
           |        JOIN books on wishlists.book_id = books.id
-          |    WHERE title = 'Harry Potter und der Orden des Phönix';""".stripMargin
+          |    WHERE title = 'Harry Potter und der Orden des Phönix';""".stripMargin,
+        """SELECT family_name
+          |    FROM customers
+          |        JOIN wishlists ON customer_id = customers.id
+          |        JOIN books on book_id = books.id
+          |    WHERE title = 'Harry Potter und der Orden des Phönix';""".stripMargin,
       )
     )
   )
@@ -149,9 +162,13 @@ object SqlColl2Exes21To30 {
       schemaName = schemaName,
       sampleSolutions = Seq(
         """SELECT title
-          |    FROM books JOIN authors on books.author_id = authors.id
+          |    FROM books JOIN authors ON books.author_id = authors.id
           |    WHERE first_name = 'George' AND family_name = 'Orwell'
-          |    ORDER BY year DESC;""".stripMargin
+          |    ORDER BY year DESC;""".stripMargin,
+        """SELECT title
+          |    FROM books JOIN authors ON author_id = authors.id
+          |    WHERE first_name = 'George' AND family_name = 'Orwell'
+          |    ORDER BY year DESC;""".stripMargin,
       )
     )
   )
@@ -173,7 +190,7 @@ object SqlColl2Exes21To30 {
         """SELECT title, author_id
           |    FROM books
           |    ORDER BY price DESC
-          |    LIMIT 3;""".stripMargin
+          |    LIMIT 3;""".stripMargin,
       )
     )
   )
@@ -182,7 +199,7 @@ object SqlColl2Exes21To30 {
     title = "Wer will Harry?",
     authors = Seq("bje40dc"),
     text = """Wählen Sie alle Bestellungen aus, die das Buch 'Harry Potter und der Halbblutprinz' enthalten.
-             |Geben Sie für diese Bestellungen jeweils das Datum und die Anzahl der bestellten Exemplare des Buches aus.""".stripMargin
+             |Geben Sie für diese Bestellungen jeweils das Datum und die Anzahl der bestellten Exemplare des Buches aus.""".stripMargin,
       .replace("\n", " "),
     difficulty = 2,
     topicsWithLevels = Seq(
@@ -194,9 +211,14 @@ object SqlColl2Exes21To30 {
       sampleSolutions = Seq(
         """SELECT date, amount
           |    FROM orders
+          |        JOIN order_positions ON orders.id = order_positions.order_id
+          |        JOIN books ON books.id = order_positions.book_id
+          |    WHERE title = 'Harry Potter und der Halbblutprinz';""".stripMargin,
+        """SELECT date, amount
+          |    FROM orders
           |        JOIN order_positions ON orders.id = order_id
           |        JOIN books ON books.id = book_id
-          |    WHERE title = 'Harry Potter und der Halbblutprinz';""".stripMargin
+          |    WHERE title = 'Harry Potter und der Halbblutprinz';""".stripMargin,
       )
     )
   )
@@ -212,7 +234,7 @@ object SqlColl2Exes21To30 {
       sampleSolutions = Seq(
         """SELECT email
           |    FROM customers
-          |    WHERE email LIKE '%gmx.de' OR email LIKE '%gmail.com';""".stripMargin
+          |    WHERE email LIKE '%gmx.de' OR email LIKE '%gmail.com';""".stripMargin,
       )
     )
   )
