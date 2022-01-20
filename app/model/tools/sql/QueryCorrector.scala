@@ -11,7 +11,7 @@ import scala.util.{Failure, Success, Try}
 
 abstract class QueryCorrector(val queryType: String) {
 
-  protected type Q <: net.sf.jsqlparser.statement.Statement
+  protected type Q <: Statement
 
   private val queryAndStaticCompOrdering: Ordering[(Q, SqlQueriesStaticComparison)] = (x, y) => y._2.points.quarters - x._2.points.quarters
 
@@ -75,12 +75,12 @@ abstract class QueryCorrector(val queryType: String) {
   }
 
   private def getExpressions(statement: Q): Seq[BinaryExpression] = getWhere(statement) match {
-    case None             => Seq[BinaryExpression]()
     case Some(expression) => new ExpressionExtractor(expression).extracted
+    case None             => Seq.empty
   }
 
   private def resolveAliases(tables: Seq[Table]): Map[String, String] = tables
-    .filter(q => Option(q.getAlias).isDefined)
+    .filter(q => q.getAlias != null)
     .map(t => t.getAlias.getName -> t.getName)
     .toMap
 

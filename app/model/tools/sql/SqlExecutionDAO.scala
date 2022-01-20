@@ -75,14 +75,13 @@ abstract class SqlExecutionDAO(port: Int) {
       }
     }.flatten.map(_.toSeq).getOrElse(Seq[String]())
 
-  def tableContents(schemaName: String): Seq[SqlQueryResult] =
-    using(db(Some(schemaName)).source.createConnection()) { connection =>
-      allTableNames(connection).map { tableName =>
-        val selectStatement = connection.prepareStatement(SELECT_ALL_DUMMY + tableName)
-        val resultSet       = selectStatement.executeQuery()
-        SqlQueryResult.fromResultSet(resultSet, tableName)
-      }
-    }.getOrElse(Seq.empty)
+  def tableContents(schemaName: String): Seq[SqlQueryResult] = using(db(Some(schemaName)).source.createConnection()) { connection =>
+    allTableNames(connection).map { tableName =>
+      val selectStatement = connection.prepareStatement(SELECT_ALL_DUMMY + tableName)
+      val resultSet       = selectStatement.executeQuery()
+      SqlQueryResult.fromResultSet(resultSet, tableName)
+    }
+  }.getOrElse(Seq.empty)
 
 }
 

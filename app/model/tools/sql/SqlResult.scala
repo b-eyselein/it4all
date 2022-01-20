@@ -14,11 +14,9 @@ class SqlStatementException(cause: Throwable) extends Exception(cause) with User
   override def getMessage: String = {
 
     @annotation.tailrec
-    def go(cause: Throwable): String = {
-      if (Option(cause.getMessage).isDefined) cause.getMessage
-      else if (Option(cause.getCause).isEmpty) ""
-      else go(cause.getCause)
-    }
+    def go(cause: Throwable): String = if (Option(cause.getMessage).isDefined) cause.getMessage
+    else if (Option(cause.getCause).isEmpty) ""
+    else go(cause.getCause)
 
     go(cause)
   }
