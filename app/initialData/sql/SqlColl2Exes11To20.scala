@@ -148,6 +148,8 @@ object SqlColl2Exes11To20 {
       sampleSolutions = Seq(
         """SELECT title
           |    FROM books WHERE price < 10.00;""".stripMargin,
+        """SELECT title
+          |    FROM books WHERE price < 10;""".stripMargin,
       )
     )
   )
