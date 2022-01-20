@@ -55,7 +55,7 @@ libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.2", // Apache 2.0
 
   // Sql
-  "mysql"                 % "mysql-connector-java" % "8.0.27", // GPL 2.0
+  "mysql"                 % "mysql-connector-java" % "8.0.28", // GPL 2.0
   "com.typesafe.play"    %% "play-slick"           % "5.0.0",  // Apache 2.0
   "com.github.jsqlparser" % "jsqlparser"           % "4.3",    // Apache 2.0
 
