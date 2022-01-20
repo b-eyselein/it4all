@@ -40,17 +40,15 @@ trait Matcher[T, M <: Match[T]] {
         // FIXME: points!
         // val allMatches = matches ++ secondColl.map(instantiateOnlySampleMatch)
 
-        val points: Points    = (-1).points // addUp(allMatches.map(_.points))
+        val points: Points    = addUp(matches.map(_.points))
         val maxPoints: Points = (-1).points // addUp(allMatches.map(_.maxPoints))
 
         MatchingResult(matches, notMatchedInFirst, secondColl, points, maxPoints)
 
       case firstHead :: firstTail =>
-        val (foundMatch, notMatchedInSecond) = findMatchInSecondCollection(firstHead, secondColl)
-
-        foundMatch match {
-          case Left(t)  => go(firstTail, notMatchedInSecond, matches, notMatchedInFirst :+ t)
-          case Right(m) => go(firstTail, notMatchedInSecond, matches :+ m, notMatchedInFirst)
+        findMatchInSecondCollection(firstHead, secondColl) match {
+          case (Left(t), notMatchedInSecond)  => go(firstTail, notMatchedInSecond, matches, notMatchedInFirst :+ t)
+          case (Right(m), notMatchedInSecond) => go(firstTail, notMatchedInSecond, matches :+ m, notMatchedInFirst)
         }
     }
 
