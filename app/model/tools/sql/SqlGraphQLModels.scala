@@ -44,7 +44,7 @@ object SqlGraphQLModels extends ToolGraphQLModelBasics[String, SqlExerciseConten
       "SqlColumnComparison",
       buildStringMatchTypeType[ColumnWrapper, ColumnMatch]("SqlColumnMatch"),
       StringType,
-      col => col.columnName + col.getAlias.map("as " + _)
+      col => col.columnName + col.alias.map("as " + _)
     )
 
     implicit val jct: ObjectType[Unit, BinaryExpressionComparison] = matchingResultType(

@@ -51,7 +51,7 @@ object SqlColl2Exes41To50 {
           |    WHERE stock < 40000;""".stripMargin,
         """SELECT title, publishers.name, stock
           |    FROM books JOIN publishers ON publisher_id = publishers.id
-          |    WHERE stock < 40000;""".stripMargin,
+          |    WHERE stock < 40000;""".stripMargin
       ),
       hint = Some("""Die Zuordnung von Verlag-Id zu Verlag-Name befindet sich in der Tabelle 'publishers'.""")
     )

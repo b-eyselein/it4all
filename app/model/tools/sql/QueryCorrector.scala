@@ -25,6 +25,8 @@ abstract class QueryCorrector(val queryType: String) {
 
   private val logger = Logger(classOf[QueryCorrector])
 
+  protected val sqlExecutionDAO: SqlExecutionDAO[Q]
+
   private val queryAndStaticCompOrdering: Ordering[(Q, SqlQueriesStaticComparison)] = (x, y) => y._2.points.quarters - x._2.points.quarters
 
   private def extractQuery(query: Q): ExtractedQuery[Q] = {
@@ -38,10 +40,9 @@ abstract class QueryCorrector(val queryType: String) {
       getJoinExpressions(query),
       getExpressions(query)
     )
-
   }
 
-  def correct(database: SqlExecutionDAO, schemaName: String, learnerSolution: String, sampleSolutions: Seq[String]): Try[SqlResult] = for {
+  def correct(schemaName: String, learnerSolution: String, sampleSolutions: Seq[String]): Try[SqlResult] = for {
     parsedUserQ <- parseStatement(learnerSolution)
     userQ       <- checkStatement(parsedUserQ)
 
@@ -65,7 +66,7 @@ abstract class QueryCorrector(val queryType: String) {
 
     result <- staticComparisons.minOption(queryAndStaticCompOrdering) match {
       case None                => Failure(new Exception("Could not compare to a valid sample solution!"))
-      case Some((sampleQ, sc)) => Success(SqlResult(sc, database.executeQueries(schemaName, userQ, sampleQ)))
+      case Some((sampleQ, sc)) => Success(SqlResult(sc, sqlExecutionDAO.executeQueries(schemaName, userQ, sampleQ)))
     }
   } yield result
 
@@ -108,7 +109,7 @@ abstract class QueryCorrector(val queryType: String) {
 
   // Parsing
 
-  private def parseStatement(str: String): Try[Statement] = Try { CCJSqlParserUtil.parse(str) }.recoverWith { e => Failure(new SqlStatementException(e)) }
+  private def parseStatement(str: String): Try[Statement] = Try { CCJSqlParserUtil.parse(str) }
 
   protected def checkStatement(statement: Statement): Try[Q] // FIXME: Failure!?!
 

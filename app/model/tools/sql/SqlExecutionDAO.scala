@@ -1,38 +1,13 @@
 package model.tools.sql
 
 import net.sf.jsqlparser.statement.Statement
-import net.sf.jsqlparser.statement.delete.Delete
-import net.sf.jsqlparser.statement.insert.Insert
-import net.sf.jsqlparser.statement.select.Select
-import net.sf.jsqlparser.statement.update.Update
-import play.api.Logger
 import slick.jdbc.JdbcBackend.Database
 import slick.util.AsyncExecutor
 
-import java.sql.Connection
 import scala.collection.mutable.ListBuffer
-import scala.util.{Failure, Success, Try}
+import scala.util.{Try, Using}
 
-abstract class SqlExecutionDAO(port: Int) {
-
-  private val SHOW_TABLES_DUMMY = "SHOW TABLES;"
-
-  private val SELECT_ALL_DUMMY = "SELECT * FROM "
-
-  private val logger = Logger(classOf[SqlExecutionDAO])
-
-  protected def using[A <: AutoCloseable, B](resource: A)(f: A => B): Try[B] =
-    try {
-      Success(f(resource))
-    } catch {
-      case e: Exception => Failure(e)
-    } finally {
-      try {
-        if (resource != null) resource.close()
-      } catch {
-        case e: Exception => logger.error("There has been an error: ", e)
-      }
-    }
+abstract class SqlExecutionDAO[Q <: Statement](port: Int) {
 
   protected def db(maybeSchemaName: Option[String]): Database = Database.forURL(
     url = maybeSchemaName match {
@@ -45,11 +20,7 @@ abstract class SqlExecutionDAO(port: Int) {
     executor = AsyncExecutor("AsyncExecutor.default", 20, 20, 1000, maxConnections = 20)
   )
 
-  def executeQueries(
-    schemaName: String,
-    userStatement: Statement,
-    sampleStatement: Statement
-  ): SqlExecutionResult = {
+  def executeQueries(schemaName: String, userStatement: Q, sampleStatement: Q): SqlExecutionResult = {
     val sampleExecutionResult = executeQuery(schemaName, sampleStatement).toOption
 
     val userExecutionResult: Option[SqlQueryResult] = executeQuery(schemaName, userStatement).map { userResult =>
@@ -62,75 +33,24 @@ abstract class SqlExecutionDAO(port: Int) {
     SqlExecutionResult(userExecutionResult, sampleExecutionResult)
   }
 
-  protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult]
+  protected def executeQuery(schemaName: String, query: Q): Try[SqlQueryResult]
 
-  private def allTableNames(connection: Connection): Seq[String] =
-    using(connection.prepareStatement(SHOW_TABLES_DUMMY)) { tablesQuery =>
-      using(tablesQuery.executeQuery()) { resultSet =>
-        val tableNames: ListBuffer[String] = ListBuffer.empty
+  def tableContents(schemaName: String): Seq[SqlQueryResult] = Using
+    .Manager { use =>
+      val connection  = use { db(Some(schemaName)).source.createConnection() }
+      val tablesQuery = use { connection.prepareStatement("SHOW TABLES;") }
+      val resultSet   = use { tablesQuery.executeQuery() }
 
-        while (resultSet.next) tableNames += resultSet.getString(1)
+      val tableNames: ListBuffer[String] = ListBuffer.empty
 
-        tableNames
-      }
-    }.flatten.map(_.toSeq).getOrElse(Seq[String]())
+      while (resultSet.next) tableNames += resultSet.getString(1)
 
-  def tableContents(schemaName: String): Seq[SqlQueryResult] = using(db(Some(schemaName)).source.createConnection()) { connection =>
-    allTableNames(connection).map { tableName =>
-      val selectStatement = connection.prepareStatement(SELECT_ALL_DUMMY + tableName)
-      val resultSet       = selectStatement.executeQuery()
-      SqlQueryResult.fromResultSet(resultSet, tableName)
+      tableNames.map { tableName =>
+        val resultSet = use { connection.prepareStatement(s"SELECT * FROM $tableName;").executeQuery() }
+
+        SqlQueryResult.fromResultSet(resultSet, tableName)
+      }.toSeq
     }
-  }.getOrElse(Seq.empty)
-
-}
-
-object SelectDAO extends SqlExecutionDAO(3107) {
-
-  override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] =
-    query match {
-      case sel: Select =>
-        using(db(Some(schemaName)).source.createConnection()) { connection =>
-          using(connection.prepareStatement(sel.toString)) { statement =>
-            SqlQueryResult.fromResultSet(statement.executeQuery())
-          }
-        }.flatten
-      case _ => Failure(null)
-    }
-}
-
-object ChangeDAO extends SqlExecutionDAO(3108) {
-
-  override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] =
-    query match {
-      case change @ (_: Update | _: Insert | _: Delete) =>
-        using(db(Some(schemaName)).source.createConnection()) { connection =>
-          connection.setAutoCommit(false)
-          using(connection.prepareStatement(change.toString)) { statement =>
-            statement.executeUpdate()
-          } flatMap { _ =>
-            val validationQuery = "SELECT * FROM " + (change match {
-              case upd: Update => upd.getTable
-              case ins: Insert => ins.getTable
-              case del: Delete => del.getTable
-            }).getName
-
-            val res = using(connection.prepareStatement(validationQuery)) { statement =>
-              SqlQueryResult.fromResultSet(statement.executeQuery())
-            }
-
-            connection.rollback()
-
-            res
-          }
-        }.flatten
-      case _ => Failure(null)
-    }
-
-}
-
-object CreateDAO extends SqlExecutionDAO(3109) {
-
-  override protected def executeQuery(schemaName: String, query: Statement): Try[SqlQueryResult] = Try(???)
+    .getOrElse(Seq.empty)
 
 }

@@ -10,17 +10,9 @@ import model.{Exercise, LoggedInUser, Topic}
 import net.sf.jsqlparser.expression.BinaryExpression
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Try}
+import scala.util.Try
 
 object SqlTool extends Tool("sql", "Sql") {
-
-  private val correctorsAndDaos: Map[SqlExerciseType, (QueryCorrector, SqlExecutionDAO)] = Map(
-    SqlExerciseType.SELECT -> ((SelectCorrector, SelectDAO)),
-    SqlExerciseType.CREATE -> ((CreateCorrector, CreateDAO)),
-    SqlExerciseType.UPDATE -> ((UpdateCorrector, ChangeDAO)),
-    SqlExerciseType.INSERT -> ((InsertCorrector, ChangeDAO)),
-    SqlExerciseType.DELETE -> ((DeleteCorrector, ChangeDAO))
-  )
 
   // Abstract types
 
@@ -50,10 +42,20 @@ object SqlTool extends Tool("sql", "Sql") {
     exercise: SqlExercise,
     part: SqlExPart
   )(implicit executionContext: ExecutionContext): Future[Try[SqlResult]] = Future {
-    correctorsAndDaos.get(exercise.content.exerciseType) match {
-      case None                   => Failure(new Exception("There has been an internal error"))
-      case Some((corrector, dao)) => corrector.correct(dao, exercise.content.schemaName, solution, exercise.content.sampleSolutions)
+
+    val corrector = exercise.content.exerciseType match {
+      case SqlExerciseType.SELECT => SelectCorrector
+      case SqlExerciseType.CREATE => CreateCorrector
+      case SqlExerciseType.UPDATE => UpdateCorrector
+      case SqlExerciseType.INSERT => InsertCorrector
+      case SqlExerciseType.DELETE => DeleteCorrector
     }
+
+    val x = corrector.correct(exercise.content.schemaName, solution, exercise.content.sampleSolutions)
+
+    println(x)
+
+    x
   }
 
   override val initialData: InitialData[SqlExerciseContent] = SqlInitialData

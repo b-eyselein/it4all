@@ -2,19 +2,13 @@ package model.tools.sql
 
 import model.matching.MatchType
 import net.sf.jsqlparser.expression.Alias
-import net.sf.jsqlparser.schema.Column
-import net.sf.jsqlparser.statement.create.table.ColumnDefinition
 import net.sf.jsqlparser.statement.select.{AllColumns, AllTableColumns, SelectExpressionItem, SelectItem}
 
-abstract sealed class ColumnWrapper {
-
-  def columnName: String
-
-  def getAlias: Option[String]
+abstract sealed class ColumnWrapper(val columnName: String, val alias: Option[String], val stringified: String) {
 
   def canMatch(that: ColumnWrapper): Boolean = (this, that) match {
     case (arg1: SelectColumnWrapper, arg2: SelectColumnWrapper) => arg1 canMatchOther arg2
-    case (arg1: ChangeColumnWrapper, arg2: ChangeColumnWrapper) => arg1.columnName == arg2.columnName
+    case (arg1: UpdateColumnWrapper, arg2: UpdateColumnWrapper) => arg1.columnName == arg2.columnName
     case (arg1: CreateColumnWrapper, arg2: CreateColumnWrapper) => arg1.columnName == arg2.columnName
     case _                                                      => false
   }
@@ -22,56 +16,35 @@ abstract sealed class ColumnWrapper {
   def doMatch(that: ColumnWrapper): MatchType = (this, that) match {
     case (arg1: SelectColumnWrapper, arg2: SelectColumnWrapper) => arg1 matchOther arg2
     case (arg1: CreateColumnWrapper, arg2: CreateColumnWrapper) => arg1 matchOther arg2
-    case (_: ChangeColumnWrapper, _: ChangeColumnWrapper)       => MatchType.SUCCESSFUL_MATCH
+    case (_: UpdateColumnWrapper, _: UpdateColumnWrapper)       => MatchType.SUCCESSFUL_MATCH
     case _                                                      => MatchType.UNSUCCESSFUL_MATCH
   }
 
-}
-
-final case class ChangeColumnWrapper(
-  columnName: String,
-  private val col: Column
-) extends ColumnWrapper {
-
-  override def getAlias: Option[String] = None
-
-  override def toString: String = col.toString
+  override def toString: String = stringified
 
 }
 
-final case class CreateColumnWrapper(
+final class UpdateColumnWrapper(columnName: String, stringified: String) extends ColumnWrapper(columnName, None, stringified)
+
+final class CreateColumnWrapper(
   columnName: String,
-  private val col: ColumnDefinition
-) extends ColumnWrapper {
+  val dataType: String,
+  stringified: String
+) extends ColumnWrapper(columnName, None, stringified) {
 
-  override def getAlias: Option[String] = None
-
-  override def toString: String = col.toString
-
-  def getRest: String = col.getColDataType.getDataType.toUpperCase
-
-  def matchOther(that: CreateColumnWrapper): MatchType = {
-    val userColType   = this.col.getColDataType.getDataType.toUpperCase
-    val sampleColType = that.col.getColDataType.getDataType.toUpperCase
-
-    if (userColType.equalsIgnoreCase(sampleColType)) {
-      MatchType.SUCCESSFUL_MATCH
-    } else {
-      MatchType.UNSUCCESSFUL_MATCH
-    }
+  def matchOther(that: CreateColumnWrapper): MatchType = if (this.dataType.toUpperCase == that.dataType.toUpperCase) {
+    MatchType.SUCCESSFUL_MATCH
+  } else {
+    MatchType.UNSUCCESSFUL_MATCH
   }
 
 }
 
-final case class SelectColumnWrapper(
+final class SelectColumnWrapper(
   columnName: String,
+  alias: Option[String],
   private val col: SelectItem
-) extends ColumnWrapper {
-
-  override def getAlias: Option[String] = col match {
-    case sei: SelectExpressionItem => Option(sei.getAlias).map(_.getName)
-    case _                         => None
-  }
+) extends ColumnWrapper(columnName, alias, col.toString) {
 
   private def compareAliases(maybeAlias1: Option[Alias], maybeAlias2: Option[Alias]): Boolean = (maybeAlias1, maybeAlias2) match {
     case (Some(alias1), Some(alias2)) => alias1.getName == alias2.getName
@@ -99,7 +72,5 @@ final case class SelectColumnWrapper(
 
     case _ => MatchType.UNSUCCESSFUL_MATCH
   }
-
-  override def toString: String = col.toString
 
 }

@@ -7,11 +7,27 @@ import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select._
 
 import scala.jdk.CollectionConverters._
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success, Try, Using}
+
+object SelectDAO extends SqlExecutionDAO[Select](3107) {
+
+  override protected def executeQuery(schemaName: String, query: Select): Try[SqlQueryResult] = query match {
+    case sel: Select =>
+      Using.Manager { use =>
+        val connection = use { db(Some(schemaName)).source.createConnection() }
+        val statement  = use { connection.prepareStatement(sel.toString) }
+
+        SqlQueryResult.fromResultSet(statement.executeQuery())
+      }
+    case _ => Failure(new Exception("Query had the wrong type!"))
+  }
+}
 
 object SelectCorrector extends QueryCorrector("SELECT") {
 
   override type Q = Select
+
+  override protected val sqlExecutionDAO: SqlExecutionDAO[Select] = SelectDAO
 
   def getColumns(select: Q): Seq[SelectItem] = select.getSelectBody match {
     case ps: PlainSelect => ps.getSelectItems.asScala.toSeq
@@ -19,14 +35,18 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   }
 
   private def columnWrappersFromPlainSelect(ps: PlainSelect): Seq[ColumnWrapper] = ps.getSelectItems.asScala.toSeq.map { column =>
-    SelectColumnWrapper(
-      columnName = column match {
-        case _: AllColumns             => "*"
-        case at: AllTableColumns       => at.toString
-        case set: SelectExpressionItem => set.getExpression.toString
-      },
-      col = column
-    )
+    val columnName = column match {
+      case _: AllColumns             => "*"
+      case at: AllTableColumns       => at.toString
+      case set: SelectExpressionItem => set.getExpression.toString
+    }
+
+    val alias = column match {
+      case sei: SelectExpressionItem => Option(sei.getAlias).map(_.getName)
+      case _                         => None
+    }
+
+    new SelectColumnWrapper(columnName, alias, col = column)
   }
 
   override protected def getColumnWrappers(query: Q): Seq[ColumnWrapper] = query.getSelectBody match {
@@ -110,8 +130,8 @@ object SelectCorrector extends QueryCorrector("SELECT") {
   }
 
   override protected def checkStatement(statement: Statement): Try[Select] = statement match {
-    case q: Select        => Success(q)
-    case other: Statement => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
+    case q: Select => Success(q)
+    case other     => Failure(WrongStatementTypeException(queryType, gotten = other.getClass.getSimpleName))
   }
 
 }
