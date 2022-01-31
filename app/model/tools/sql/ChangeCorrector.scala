@@ -32,11 +32,10 @@ object InsertCorrector extends ChangeCorrector("INSERT") {
   override protected def performAdditionalComparisons(userQuery: Insert, sampleQuery: Insert): AdditionalComparison = {
 
     // FIXME: correct inserted values!
-    val insertedValuesComparison: MatchingResult[String, StringMatch] = StringMatcher
-      .doMatch(
-        expressionLists(userQuery).map(_.toString),
-        expressionLists(sampleQuery).map(_.toString)
-      )
+    val insertedValuesComparison: MatchingResult[String, StringMatch] = StringMatcher.doMatch(
+      expressionLists(userQuery).map(_.toString),
+      expressionLists(sampleQuery).map(_.toString)
+    )
 
     AdditionalComparison(None, Some(insertedValuesComparison))
   }

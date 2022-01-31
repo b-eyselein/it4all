@@ -61,6 +61,6 @@ libraryDependencies ++= Seq(
 
   // Web correction
   "org.nanohttpd"           % "nanohttpd-webserver" % "2.3.1" % Test, // BSD 3-clause
-  "org.seleniumhq.selenium" % "selenium-java"       % "4.1.1", // Apache 2.0
-  "org.seleniumhq.selenium" % "htmlunit-driver"     % "3.56.0" // Apache 2.0
+  "org.seleniumhq.selenium" % "selenium-java"       % "4.1.2", // Apache 2.0
+  "org.seleniumhq.selenium" % "htmlunit-driver"     % "3.57.0" // Apache 2.0
 )
