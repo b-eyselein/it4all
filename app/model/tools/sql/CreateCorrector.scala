@@ -20,9 +20,13 @@ object CreateCorrector extends QueryCorrector("CREATE TABLE") {
 
   override protected val sqlExecutionDAO: SqlExecutionDAO[CreateTable] = CreateDAO
 
-  override protected def getColumnWrappers(query: Q): Seq[CreateColumnWrapper] = query.getColumnDefinitions.asScala.toSeq.map { column =>
-    new CreateColumnWrapper(column.getColumnName, column.getColDataType.getDataType, column.toString)
-  }
+  override protected def getColumnWrappers(query: Q): Seq[CreateColumnWrapper] = Option(query.getColumnDefinitions)
+    .getOrElse(java.util.List.of())
+    .asScala
+    .toSeq
+    .map { column =>
+      new CreateColumnWrapper(column.getColumnName, column.getColDataType.getDataType, column.toString)
+    }
 
   override protected def getTables(query: Q): Seq[Table] = Seq(query.getTable)
 

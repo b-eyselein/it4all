@@ -125,13 +125,13 @@ object SqlColl1Exes01To10 {
       schemaName,
       sampleSolutions = Seq(
         """CREATE TABLE employee (
-              |    id INT PRIMARY KEY,
-              |    firstname VARCHAR(50),
-              |    lastname VARCHAR(50),
-              |    username VARCHAR(20),
-              |    chef_id INT,
-              |    FOREIGN KEY (chef_id) REFERENCES employee(id)
-              |);"""
+          |    id INT PRIMARY KEY,
+          |    firstname VARCHAR(50),
+          |    lastname VARCHAR(50),
+          |    username VARCHAR(20),
+          |    chef_id INT,
+          |    FOREIGN KEY (chef_id) REFERENCES employee(id)
+          |);""".stripMargin
       )
     )
   )

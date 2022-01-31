@@ -1,6 +1,7 @@
 package model.tools.sql
 
 import model.matching.StringMatcher
+import model.tools.CorrectionException
 import model.tools.sql.matcher._
 import net.sf.jsqlparser.expression.{BinaryExpression, Expression}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
@@ -43,6 +44,13 @@ abstract class QueryCorrector(val queryType: String) {
   }
 
   def correct(schemaName: String, learnerSolution: String, sampleSolutions: Seq[String]): Try[SqlResult] = for {
+    _ <-
+      if (learnerSolution.trim.isEmpty) {
+        Failure(new CorrectionException("Learner solution is empty!"))
+      } else {
+        Success(())
+      }
+
     parsedUserQ <- parseStatement(learnerSolution)
     userQ       <- checkStatement(parsedUserQ)
 
@@ -65,7 +73,7 @@ abstract class QueryCorrector(val queryType: String) {
       }
 
     result <- staticComparisons.minOption(queryAndStaticCompOrdering) match {
-      case None                => Failure(new Exception("Could not compare to a valid sample solution!"))
+      case None                => Failure(new CorrectionException("Could not compare to a valid sample solution!"))
       case Some((sampleQ, sc)) => Success(SqlResult(sc, sqlExecutionDAO.executeQueries(schemaName, userQ, sampleQ)))
     }
   } yield result
