@@ -1,4 +1,3 @@
-import {Dispatch} from 'react';
 import {Link, Route, Routes} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {Home} from './Home';
@@ -6,7 +5,7 @@ import {LoginForm} from './LoginForm';
 import {ToolBase} from './ToolBase';
 import {currentUserSelector} from './store/store';
 import {useDispatch, useSelector} from 'react-redux';
-import {changeLanguageAction, StoreAction, userLogoutAction} from './store/actions';
+import {changeLanguageAction, userLogoutAction} from './store/actions';
 import {homeUrl, randomToolsUrlFragment, toolsUrlFragment} from './urls';
 import {ClaimLti} from './ClaimLti';
 import {BoolFillOut} from './randomTools/BoolFillOut';
@@ -21,7 +20,7 @@ export function App(): JSX.Element {
 
   const {t} = useTranslation('common');
   const currentUser = useSelector(currentUserSelector);
-  const dispatch = useDispatch<Dispatch<StoreAction>>();
+  const dispatch = useDispatch();
 
   const langs = ['de', 'en'];
 
