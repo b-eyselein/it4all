@@ -2,7 +2,7 @@ import {useState} from 'react';
 import './SqlExercise.sass';
 import {SqlExecutionResultFragment, SqlExerciseContentFragment, SqlExPart, useSqlCorrectionMutation} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
-import CodeMirror, {Compartment} from '@uiw/react-codemirror';
+import CodeMirror from '@uiw/react-codemirror';
 import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
 import {SqlTableContents} from './SqlTableContents';
 import {SqlCorrection} from './SqlCorrection';
@@ -64,7 +64,7 @@ export function SqlExercise({exercise, content, partId, oldSolution}: IProps): J
           <h1 className="title is-4 has-text-centered">{t('query')}</h1>
 
           {/* options={getDefaultCodeMirrorEditorOptions('sql')} */}
-          <CodeMirror value={oldSolution ? oldSolution : solution} height={'200px'} onChange={(ed) => setSolution(ed)} extensions={[(new Compartment).of(sql())]}/>
+          <CodeMirror value={oldSolution ? oldSolution : solution} height={'200px'} onChange={(ed) => setSolution(ed)} extensions={[sql()]}/>
 
           <ExerciseControlButtons isCorrecting={correcting} correct={correct} endLink={`./../../${exercise.exerciseId}`}/>
         </div>

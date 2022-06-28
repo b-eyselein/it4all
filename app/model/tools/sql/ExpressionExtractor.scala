@@ -24,7 +24,7 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
 
   override def visit(addition: Addition): Unit = {}
 
-  override def visit(aexpr: AnalyticExpression): Unit = {}
+  override def visit(analyticExpression: AnalyticExpression): Unit = {}
 
   override def visit(andExpression: AndExpression): Unit = {
     andExpression.getLeftExpression accept this
@@ -196,5 +196,9 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
   override def visit(allTableColumns: AllTableColumns): Unit = {}
 
   override def visit(allValue: AllValue): Unit = {}
+
+  override def visit(isDistinctExpression: IsDistinctExpression): Unit = {}
+
+  override def visit(geometryDistance: GeometryDistance): Unit = {}
 
 }

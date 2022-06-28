@@ -42,11 +42,9 @@ class Controller @Inject() (
     if (resource.contains(".")) assets.at(resource) else index
   }
 
-  def graphiql: Action[AnyContent] = Action { implicit request => Ok(views.html.graphiql()) }
+  def graphiql: Action[AnyContent] = Action { _ => Ok(views.html.graphiql()) }
 
-  private implicit val graphQLRequestFormat: Format[GraphQLRequest] = Json.format
-
-  def graphql: Action[GraphQLRequest] = Action.async(parse.json[GraphQLRequest]) { implicit request =>
+  def graphql: Action[GraphQLRequest] = Action.async(parse.json(GraphQLRequest.jsonFormat)) { request =>
     userFromRequestHeader(request).flatMap { maybeUser =>
       QueryParser.parse(request.body.query) match {
         case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))

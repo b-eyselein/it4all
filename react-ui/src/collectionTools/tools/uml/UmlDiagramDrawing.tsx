@@ -139,7 +139,7 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
         // New class selected, nothing to create
         markedClass.findView(paper).unhighlight();
         cellView.highlight();
-        return {...rest, markedClass: cellView.model, selectedCreatableObject};
+        return {...rest, markedClass: cellView.model as MyJointClass, selectedCreatableObject};
       })
     );
 

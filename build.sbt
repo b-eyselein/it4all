@@ -40,8 +40,8 @@ libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-play" % "5.0.0", // Apache 2.0
 
   // Mongo database
-  "org.reactivemongo" %% "play2-reactivemongo"            % "1.1.0-play28-RC3", // Apache 2.0
-  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.1.0-play29-RC3", // Apache 2.0
+  "org.reactivemongo" %% "play2-reactivemongo"            % "1.1.0-play28-RC4", // Apache 2.0
+  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.1.0-play29-RC4", // Apache 2.0
 
   // Other helpers
 
@@ -55,12 +55,12 @@ libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.2", // Apache 2.0
 
   // Sql
-  "mysql"                 % "mysql-connector-java" % "8.0.28", // GPL 2.0
-  "com.typesafe.play"    %% "play-slick"           % "5.0.0",  // Apache 2.0
-  "com.github.jsqlparser" % "jsqlparser"           % "4.3",    // Apache 2.0
+  "mysql"                 % "mysql-connector-java" % "8.0.29", // GPL 2.0
+  "com.typesafe.play"    %% "play-slick"           % "5.0.2",  // Apache 2.0
+  "com.github.jsqlparser" % "jsqlparser"           % "4.4",    // Apache 2.0
 
   // Web correction
   "org.nanohttpd"           % "nanohttpd-webserver" % "2.3.1" % Test, // BSD 3-clause
-  "org.seleniumhq.selenium" % "selenium-java"       % "4.1.2", // Apache 2.0
-  "org.seleniumhq.selenium" % "htmlunit-driver"     % "3.59.0" // Apache 2.0
+  "org.seleniumhq.selenium" % "selenium-java"       % "4.2.2", // Apache 2.0
+  "org.seleniumhq.selenium" % "htmlunit-driver"     % "3.62.0" // Apache 2.0
 )

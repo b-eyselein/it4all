@@ -16,6 +16,12 @@ final case class GraphQLRequest(
   variables: Option[JsObject]
 )
 
+object GraphQLRequest {
+
+  val jsonFormat: OFormat[GraphQLRequest] = Json.format
+
+}
+
 final case class GraphQLContext(
   loggedInUser: Option[LoggedInUser]
 )

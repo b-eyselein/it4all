@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import {ExerciseFileFragment} from '../graphql';
-import CodeMirror, {Extension} from '@uiw/react-codemirror';
+import CodeMirror from '@uiw/react-codemirror';
 import {python} from '@codemirror/lang-python';
 import {css} from '@codemirror/lang-css';
 import {html} from '@codemirror/lang-html';
@@ -33,7 +33,7 @@ function getFileExtension(filename: string): string | undefined {
   }
 }
 
-function getExtensionForFileExtension(fileExtension: string): Extension | undefined {
+function getExtensionForFileExtension(fileExtension: string): any | undefined {
   switch (fileExtension) {
     case 'py':
       return python();
