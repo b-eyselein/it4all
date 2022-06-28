@@ -2,7 +2,7 @@
 GET         /                               controllers.Controller.index
 
 # LTI
-POST        /lti                            controllers.Controller.ltiHoneypot
+POST        /lti                            controllers.Controller.ltiLogin
 
 # GraphQL
 GET         /graphiql                       controllers.Controller.graphiql

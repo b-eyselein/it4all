@@ -4,10 +4,10 @@ import model._
 import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
 import model.lti.BasicLtiLaunchRequest
 import model.mongo.MongoClientQueries
+import play.api.Configuration
 import play.api.http.HttpErrorHandler
 import play.api.libs.json._
 import play.api.mvc._
-import play.api.{Configuration, Logger}
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
 import sangria.marshalling.playJson._
 import sangria.parser.QueryParser
@@ -29,17 +29,9 @@ class Controller @Inject() (
     extends AbstractController(cc)
     with GraphQLModel {
 
-  private val logger = Logger(classOf[Controller])
-
-  private val apiPrefix = configuration.get[String]("apiPrefix")
-
   def index: Action[AnyContent] = assets.at("index.html")
 
-  def assetOrDefault(resource: String): Action[AnyContent] = if (resource.startsWith(apiPrefix)) {
-    Action.async(r => errorHandler.onClientError(r, NOT_FOUND, "Not found"))
-  } else {
-    if (resource.contains(".")) assets.at(resource) else index
-  }
+  def assetOrDefault(resource: String): Action[AnyContent] = if (resource.contains(".")) assets.at(resource) else index
 
   def graphiql: Action[AnyContent] = Action { _ => Ok(views.html.graphiql()) }
 
@@ -59,12 +51,8 @@ class Controller @Inject() (
               )
               .map(Ok(_))
               .recover {
-                case error: QueryAnalysisError =>
-                  logger.error("There has been a query error", error)
-                  BadRequest(error.resolveError)
-                case error: ErrorWithResolver =>
-                  logger.error("There has been a query resolve error", error)
-                  InternalServerError(error.resolveError)
+                case error: QueryAnalysisError => BadRequest(error.resolveError)
+                case error: ErrorWithResolver  => InternalServerError(error.resolveError)
               }
         }
     }
@@ -72,29 +60,25 @@ class Controller @Inject() (
 
   // Json Web Token session
 
-  private def getOrCreateUser(username: String): Future[LoggedInUser] = mongoQueries
-    .futureUserByUsername(username)
-    .flatMap {
+  private def getOrCreateUser(username: String): Future[LoggedInUser] = for {
+    maybeUser <- mongoQueries.futureUserByUsername(username)
+    user <- maybeUser match {
       case Some(u) => Future(u)
       case None =>
         val newUser = User(username)
         mongoQueries.futureInsertUser(newUser).map { _ => newUser }
     }
-    .map { user => LoggedInUser(user.username) }
+  } yield LoggedInUser(user.username)
 
-  def ltiHoneypot: Action[AnyContent] = Action.async { request =>
-    request.body.asFormUrlEncoded match {
-      case None => Future(BadRequest("TODO!"))
-      case Some(data) =>
-        val basicLtiRequest = BasicLtiLaunchRequest.fromRequest(data)
+  def ltiLogin: Action[BasicLtiLaunchRequest] = Action.async(parse.form(BasicLtiLaunchRequest.form)) { request =>
+    for {
+      loggedInUser <- getOrCreateUser(request.body.username)
+    } yield {
+      val uuid = UUID.randomUUID().toString
 
-        getOrCreateUser(basicLtiRequest.ltiExt.username) map { loggedInUser =>
-          val uuid = UUID.randomUUID().toString
+      jwtHashesToClaim.put(uuid, LoggedInUserWithToken(loggedInUser, createJwtSession(loggedInUser.username)))
 
-          jwtHashesToClaim.put(uuid, LoggedInUserWithToken(loggedInUser, createJwtSession(loggedInUser.username)))
-
-          Redirect(s"/lti/$uuid").withNewSession
-        }
+      Redirect(s"/lti/$uuid").withNewSession
     }
   }
 
