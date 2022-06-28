@@ -7,6 +7,7 @@ import {html} from '@codemirror/lang-html';
 import {xml} from '@codemirror/lang-xml';
 import {sql} from '@codemirror/lang-sql';
 import {javascript} from '@codemirror/lang-javascript';
+import {LanguageSupport} from '@codemirror/language';
 
 interface IProps {
   files: Workspace;
@@ -33,7 +34,7 @@ function getFileExtension(filename: string): string | undefined {
   }
 }
 
-function getExtensionForFileExtension(fileExtension: string): any | undefined {
+function getExtensionForFileExtension(fileExtension: string): LanguageSupport | undefined {
   switch (fileExtension) {
     case 'py':
       return python();

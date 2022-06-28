@@ -6,7 +6,7 @@ import initialData.xml.XmlInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.matching.MatchingResult
 import model.tools._
-import model.{Exercise, LoggedInUser}
+import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -31,7 +31,7 @@ object XmlTool extends Tool("xml", "Xml") {
   // Correction
 
   override def correctAbstract(
-    user: LoggedInUser,
+    user: User,
     solution: XmlSolution,
     exercise: XmlExercise,
     part: XmlExPart

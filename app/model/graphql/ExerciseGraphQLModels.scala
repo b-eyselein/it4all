@@ -1,13 +1,12 @@
 package model.graphql
 
 import model._
-import model.mongo.MongoExercisePartResultQueries
 import model.tools.Helper.UntypedExercise
 import model.tools.ToolList
 import sangria.macros.derive._
 import sangria.schema._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 final case class GraphQLExPart(
   toolId: String,
@@ -17,7 +16,8 @@ final case class GraphQLExPart(
 )
 
 trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
-  self: MongoExercisePartResultQueries =>
+
+  protected implicit val ec: ExecutionContext
 
   private val exPartType: ObjectType[GraphQLContext, GraphQLExPart] = ObjectType(
     "ExPart",
@@ -27,16 +27,18 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
       Field("isEntryPart", BooleanType, resolve = _.value.part.isEntryPart),
       Field(
         "solved",
-        OptionType(BooleanType),
+        BooleanType,
         resolve = context => {
           context.ctx.loggedInUser match {
-            case None => Future.successful(None)
-            case Some(LoggedInUser(username, _)) =>
-              futureExerciseResultById(username, context.value.toolId, context.value.collectionId, context.value.exerciseId, context.value.part.id)
-                .map {
-                  case None                          => Some(false)
-                  case Some(basicExercisePartResult) => Some(basicExercisePartResult.isCorrect)
-                }
+            case None => Future.successful(false)
+            case Some(user) =>
+              context.ctx.mongoQueries.futureUserHasCorrectExerciseResult(
+                user.username,
+                context.value.toolId,
+                context.value.collectionId,
+                context.value.exerciseId,
+                context.value.part.id
+              )
           }
         }
       )

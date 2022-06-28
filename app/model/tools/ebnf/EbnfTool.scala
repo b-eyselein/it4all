@@ -4,7 +4,7 @@ import initialData.InitialData
 import initialData.ebnf.EbnfInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.tools.{Tool, ToolJsonProtocol}
-import model.{Exercise, LoggedInUser}
+import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -23,7 +23,7 @@ object EbnfTool extends Tool("ebnf", "EBNF") {
   override val graphQlModels: ToolGraphQLModelBasics[EbnfGrammar, EbnfExerciseContent, EbnfExercisePart, EbnfResult] = EbnfGraphQLModels
 
   override def correctAbstract(
-    user: LoggedInUser,
+    user: User,
     solution: EbnfGrammar,
     exercise: EbnfExercise,
     part: EbnfExercisePart

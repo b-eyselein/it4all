@@ -3,20 +3,15 @@ package model.mongo
 import model.points.Points
 import model.result.BasicExercisePartResult
 import play.api.libs.json.{Format, Json, OFormat}
-import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.bson.BSONDocument
 import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.play.json.compat.json2bson._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-trait MongoExercisePartResultQueries {
-  self: ReactiveMongoComponents =>
+trait MongoExercisePartResultQueries extends MongoRepo {
 
-  protected implicit val ec: ExecutionContext
-
-  private def futureExerciseResultsCollection: Future[BSONCollection] =
-    reactiveMongoApi.database.map(_.collection("exerciseResults"))
+  private def futureExerciseResultsCollection: Future[BSONCollection] = futureCollection("exerciseResults")
 
   private implicit val basicExerciseResultFormat: OFormat[BasicExercisePartResult] = {
     implicit val pf: Format[Points] = Json.format
@@ -38,7 +33,7 @@ trait MongoExercisePartResultQueries {
     "partId"       -> partId
   )
 
-  protected def futureExerciseResultById(
+  def futureExerciseResultById(
     username: String,
     toolId: String,
     collectionId: Int,
@@ -50,14 +45,22 @@ trait MongoExercisePartResultQueries {
 
     for {
       exerciseResultsCollection <- futureExerciseResultsCollection
-      maybeExerciseResult <-
-        exerciseResultsCollection
-          .find(key, Option.empty[BSONDocument])
-          .one[BasicExercisePartResult]
+      maybeExerciseResult       <- exerciseResultsCollection.find(key).one[BasicExercisePartResult]
     } yield maybeExerciseResult
   }
 
-  protected def futureUpsertExerciseResult(exerciseResult: BasicExercisePartResult): Future[Boolean] = {
+  def futureUserHasCorrectExerciseResult(
+    username: String,
+    toolId: String,
+    collectionId: Int,
+    exerciseId: Int,
+    partId: String
+  ): Future[Boolean] = futureExerciseResultById(username, toolId, collectionId, exerciseId, partId).map {
+    case None         => false
+    case Some(result) => result.isCorrect
+  }
+
+  def futureUpsertExerciseResult(exerciseResult: BasicExercisePartResult): Future[Boolean] = {
     val key = basicExercisePartResultKey(
       exerciseResult.username,
       exerciseResult.toolId,
@@ -68,7 +71,7 @@ trait MongoExercisePartResultQueries {
 
     for {
       exerciseResultsCollection <- futureExerciseResultsCollection
-      insertResult              <- exerciseResultsCollection.update(true).one(key, exerciseResult, upsert = true)
+      insertResult              <- exerciseResultsCollection.update.one(key, exerciseResult, upsert = true)
     } yield insertResult.writeErrors.isEmpty
   }
 

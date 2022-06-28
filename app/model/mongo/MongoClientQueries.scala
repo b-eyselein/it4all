@@ -4,29 +4,26 @@ import model._
 import model.tools.Helper.UntypedExercise
 import model.tools.Tool
 import play.api.libs.json.{Format, OFormat}
-import play.modules.reactivemongo.ReactiveMongoComponents
-import reactivemongo.api.Cursor
+import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.bson.BSONDocument
 import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.play.json.compat.json2bson._
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MongoClientQueries
+class MongoClientQueries @Inject() (override val reactiveMongoApi: ReactiveMongoApi)(override protected implicit val ec: ExecutionContext)
     extends ReactiveMongoComponents
     with MongoUserQueries
     with MongoCollectionQueries
     with MongoExerciseQueries
     with MongoExercisePartResultQueries {
 
-  protected implicit val ec: ExecutionContext
-
   // Solution queries
 
-  private def futureUserSolutionsCollection: Future[BSONCollection] =
-    reactiveMongoApi.database.map(_.collection("userSolutions"))
+  private def futureUserSolutionsCollection: Future[BSONCollection] = futureCollection("userSolutions")
 
-  protected def nextUserSolutionId[P](exercise: UntypedExercise, part: P)(implicit pf: Format[P]): Future[Int] = {
+  def nextUserSolutionId[P](exercise: UntypedExercise, part: P)(implicit pf: Format[P]): Future[Int] = {
     val exFilter = BSONDocument(
       "toolId"       -> exercise.toolId,
       "collectionId" -> exercise.collectionId,
@@ -47,7 +44,7 @@ trait MongoClientQueries
     }
   }
 
-  protected def insertSolution[S, P <: ExPart](
+  def insertSolution[S, P <: ExPart](
     solution: UserSolution[S, P],
     solutionFormat: OFormat[UserSolution[S, P]]
   ): Future[Boolean] = {
@@ -65,13 +62,9 @@ trait MongoClientQueries
 
   private implicit val userProficiencyFormat: OFormat[UserProficiency] = JsonProtocols.userProficiencyFormat
 
-  protected def userProficienciesForTool(username: String, toolId: String): Future[Seq[UserProficiency]] = for {
+  def userProficienciesForTool(username: String, toolId: String): Future[Seq[UserProficiency]] = for {
     userProficienciesCollection <- futureUserProficienciesCollection
-    userProfs <-
-      userProficienciesCollection
-        .find(BSONDocument("username" -> username, "topic.toolId" -> toolId), Option.empty[BSONDocument])
-        .cursor[UserProficiency]()
-        .collect[Seq](-1, Cursor.FailOnError())
+    userProfs <- userProficienciesCollection.find(BSONDocument("username" -> username, "topic.toolId" -> toolId)).cursor[UserProficiency]().collect[Seq]()
   } yield userProfs
 
   protected def allTopicsWithLevelForTool(username: String, tool: Tool): Future[Seq[TopicWithLevel]] = for {
@@ -83,7 +76,7 @@ trait MongoClientQueries
       .map { t => userProficiencies.getOrElse(t, TopicWithLevel(t, Level.Beginner)) }
   } yield allUserProficiencies
 
-  protected def updateUserProficiency(
+  def updateUserProficiency(
     username: String,
     exercise: UntypedExercise,
     topicWithLevel: TopicWithLevel

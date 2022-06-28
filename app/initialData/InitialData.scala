@@ -8,7 +8,6 @@ import model.mongo.MongoClientQueries
 import model.tools.ToolList
 import play.api.Logger
 import play.api.libs.json.OFormat
-import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,19 +56,19 @@ object InitialData {
 }
 
 @Singleton
-class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi) extends ReactiveMongoComponents with MongoClientQueries {
+class StartUpService @Inject() (mongoQueries: MongoClientQueries)(implicit ec: ExecutionContext) {
 
   private val logger = Logger(classOf[StartUpService])
 
-  override protected implicit val ec: ExecutionContext = ExecutionContext.global
-
-  private def insertInitialCollection(coll: ExerciseCollection): Future[Unit] = futureCollectionById(coll.toolId, coll.collectionId)
+  private def insertInitialCollection(coll: ExerciseCollection): Future[Unit] = mongoQueries
+    .futureCollectionById(coll.toolId, coll.collectionId)
     .flatMap {
       case Some(_) => Future.successful(())
       case None =>
         val key = s"(${coll.toolId}, ${coll.collectionId})"
 
-        futureInsertCollection(coll)
+        mongoQueries
+          .futureInsertCollection(coll)
           .map {
             case false => logger.error(s"Could not insert collection $key!")
             case true  => logger.debug(s"Inserted collection $key.")
@@ -80,13 +79,15 @@ class StartUpService @Inject() (override val reactiveMongoApi: ReactiveMongoApi)
     }
 
   private def insertInitialExercise[EC <: ExerciseContent](ex: Exercise[EC], exFormat: OFormat[Exercise[EC]]): Future[Unit] =
-    futureExerciseExists(ex.toolId, ex.collectionId, ex.exerciseId)
+    mongoQueries
+      .futureExerciseExists(ex.toolId, ex.collectionId, ex.exerciseId)
       .flatMap {
         case true => Future.successful(())
         case false =>
           val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"
 
-          futureInsertExercise(ex, exFormat)
+          mongoQueries
+            .futureInsertExercise(ex, exFormat)
             .map {
               case false => logger.error(s"Exercise $key could not be inserted!")
               case true  => logger.debug(s"Inserted exercise $key.")

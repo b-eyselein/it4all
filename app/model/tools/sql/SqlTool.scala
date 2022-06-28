@@ -6,7 +6,7 @@ import model.graphql.ToolGraphQLModelBasics
 import model.matching.MatchingResult
 import model.tools._
 import model.tools.sql.matcher._
-import model.{Exercise, LoggedInUser, Topic}
+import model.{Exercise, Topic, User}
 import net.sf.jsqlparser.expression.BinaryExpression
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +37,7 @@ object SqlTool extends Tool("sql", "Sql") {
   // Correction
 
   override def correctAbstract(
-    user: LoggedInUser,
+    user: User,
     solution: String,
     exercise: SqlExercise,
     part: SqlExPart
@@ -51,11 +51,7 @@ object SqlTool extends Tool("sql", "Sql") {
       case SqlExerciseType.DELETE => DeleteCorrector
     }
 
-    val x = corrector.correct(exercise.content.schemaName, solution, exercise.content.sampleSolutions)
-
-    println(x)
-
-    x
+    corrector.correct(exercise.content.schemaName, solution, exercise.content.sampleSolutions)
   }
 
   override val initialData: InitialData[SqlExerciseContent] = SqlInitialData

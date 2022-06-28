@@ -4,7 +4,7 @@ import initialData.InitialData
 import initialData.flask.FlaskInitialData
 import model.graphql.FilesSolutionToolGraphQLModelBasics
 import model.tools.{FilesSolutionToolJsonProtocol, Tool}
-import model.{Exercise, FilesSolutionInput, LoggedInUser}
+import model.{Exercise, FilesSolutionInput, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -23,7 +23,7 @@ object FlaskTool extends Tool("flask", "Flask", true) {
   override val graphQlModels: FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskExPart, FlaskResult] = FlaskToolGraphQLModels
 
   override def correctAbstract(
-    user: LoggedInUser,
+    user: User,
     solution: FilesSolutionInput,
     exercise: Exercise[FlaskExerciseContent],
     part: FlaskExPart

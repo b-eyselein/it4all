@@ -6,7 +6,7 @@ import model.graphql.ToolGraphQLModelBasics
 import model.matching.MatchingResult
 import model.tools._
 import model.tools.uml.matcher._
-import model.{Exercise, LoggedInUser}
+import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -35,7 +35,7 @@ object UmlTool extends Tool("uml", "Uml", true) {
   // Correction
 
   override def correctAbstract(
-    user: LoggedInUser,
+    user: User,
     solution: UmlClassDiagram,
     exercise: UmlExercise,
     part: UmlExPart

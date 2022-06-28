@@ -3,11 +3,11 @@ package controllers
 import model._
 import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
 import model.lti.BasicLtiLaunchRequest
+import model.mongo.MongoClientQueries
 import play.api.http.HttpErrorHandler
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.{Configuration, Logger}
-import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
 import sangria.marshalling.playJson._
 import sangria.parser.QueryParser
@@ -22,13 +22,12 @@ class Controller @Inject() (
   assets: Assets,
   cc: ControllerComponents,
   errorHandler: HttpErrorHandler,
-  override protected val configuration: Configuration,
-  override val reactiveMongoApi: ReactiveMongoApi
+  configuration: Configuration,
+  jwtAction: JwtAction,
+  mongoQueries: MongoClientQueries
 )(override protected implicit val ec: ExecutionContext)
     extends AbstractController(cc)
-    with GraphQLModel
-    with MongoController
-    with ReactiveMongoComponents {
+    with GraphQLModel {
 
   private val logger = Logger(classOf[Controller])
 
@@ -44,40 +43,42 @@ class Controller @Inject() (
 
   def graphiql: Action[AnyContent] = Action { _ => Ok(views.html.graphiql()) }
 
-  def graphql: Action[GraphQLRequest] = Action.async(parse.json(GraphQLRequest.jsonFormat)) { request =>
-    userFromRequestHeader(request).flatMap { maybeUser =>
-      QueryParser.parse(request.body.query) match {
-        case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
-        case Success(queryAst) =>
-          Executor
-            .execute(
-              schema,
-              queryAst,
-              userContext = GraphQLContext(maybeUser),
-              operationName = request.body.operationName,
-              variables = request.body.variables.getOrElse(Json.obj())
-            )
-            .map(Ok(_))
-            .recover {
-              case error: QueryAnalysisError =>
-                logger.error("There has been a query error", error)
-                BadRequest(error.resolveError)
-              case error: ErrorWithResolver =>
-                logger.error("There has been a query resolve error", error)
-                InternalServerError(error.resolveError)
-            }
-      }
+  def graphql: Action[GraphQLRequest] = jwtAction.async(parse.json(GraphQLRequest.jsonFormat)) { case JwtRequest(maybeUser, request) =>
+    request.body match {
+      case GraphQLRequest(query, operationName, variables) =>
+        QueryParser.parse(query) match {
+          case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
+          case Success(queryAst) =>
+            Executor
+              .execute(
+                schema,
+                queryAst,
+                userContext = GraphQLContext(maybeUser, mongoQueries),
+                operationName = operationName,
+                variables = variables.getOrElse(Json.obj())
+              )
+              .map(Ok(_))
+              .recover {
+                case error: QueryAnalysisError =>
+                  logger.error("There has been a query error", error)
+                  BadRequest(error.resolveError)
+                case error: ErrorWithResolver =>
+                  logger.error("There has been a query resolve error", error)
+                  InternalServerError(error.resolveError)
+              }
+        }
     }
   }
 
   // Json Web Token session
 
-  private def getOrCreateUser(username: String): Future[LoggedInUser] = futureUserByUsername(username)
+  private def getOrCreateUser(username: String): Future[LoggedInUser] = mongoQueries
+    .futureUserByUsername(username)
     .flatMap {
       case Some(u) => Future(u)
       case None =>
         val newUser = User(username)
-        futureInsertUser(newUser).map { _ => newUser }
+        mongoQueries.futureInsertUser(newUser).map { _ => newUser }
     }
     .map { user => LoggedInUser(user.username) }
 
@@ -87,12 +88,12 @@ class Controller @Inject() (
       case Some(data) =>
         val basicLtiRequest = BasicLtiLaunchRequest.fromRequest(data)
 
-        getOrCreateUser(basicLtiRequest.ltiExt.username) map { user =>
-          val uuid = UUID.randomUUID()
+        getOrCreateUser(basicLtiRequest.ltiExt.username) map { loggedInUser =>
+          val uuid = UUID.randomUUID().toString
 
-          jwtHashesToClaim.put(uuid, (createJwtSession(user.username), user))
+          jwtHashesToClaim.put(uuid, LoggedInUserWithToken(loggedInUser, createJwtSession(loggedInUser.username)))
 
-          Redirect(s"/lti/${uuid.toString}").withNewSession
+          Redirect(s"/lti/$uuid").withNewSession
         }
     }
   }

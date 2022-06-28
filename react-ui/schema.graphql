@@ -100,7 +100,7 @@ type ExPart {
   id: String!
   isEntryPart: Boolean!
   name: String!
-  solved: Boolean
+  solved: Boolean!
 }
 
 type Exercise {

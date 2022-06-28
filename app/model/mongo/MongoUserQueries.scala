@@ -2,31 +2,24 @@ package model.mongo
 
 import model.User
 import play.api.libs.json.{Json, OFormat}
-import play.modules.reactivemongo.ReactiveMongoComponents
 import reactivemongo.api.bson.BSONDocument
 import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.play.json.compat.json2bson._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-trait MongoUserQueries {
-  self: ReactiveMongoComponents =>
-
-  protected implicit val ec: ExecutionContext
+trait MongoUserQueries extends MongoRepo {
 
   private implicit val userFormat: OFormat[User] = Json.format
 
-  private def futureUsersCollection: Future[BSONCollection] = reactiveMongoApi.database.map(_.collection("users"))
+  private def futureUsersCollection: Future[BSONCollection] = futureCollection("users")
 
-  protected def futureUserByUsername(username: String): Future[Option[User]] = for {
+  def futureUserByUsername(username: String): Future[Option[User]] = for {
     usersCollection <- futureUsersCollection
-    maybeUser <-
-      usersCollection
-        .find(BSONDocument("username" -> username), Option.empty[BSONDocument])
-        .one[User]
+    maybeUser       <- usersCollection.find(BSONDocument("username" -> username)).one[User]
   } yield maybeUser
 
-  protected def futureInsertUser(user: User): Future[Boolean] = for {
+  def futureInsertUser(user: User): Future[Boolean] = for {
     usersCollection <- futureUsersCollection
     insertResult    <- usersCollection.insert(true).one(user)
   } yield insertResult.n == 1

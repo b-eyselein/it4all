@@ -32,7 +32,7 @@ abstract class Tool(val id: String, val name: String, val isBeta: Boolean = fals
     File.currentWorkingDirectory / "data" / id / "solutions" / username / s"$collId" / s"$exId"
 
   def correctAbstract(
-    user: LoggedInUser,
+    user: User,
     solution: SolutionInputType,
     exercise: Exercise[ExContentType],
     part: PartType

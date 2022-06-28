@@ -19,7 +19,7 @@ class DockerPullModule extends AbstractModule {
     ProgrammingCorrector.programmingCorrectionDockerImage
   )
 
-  override def configure(): Unit = imagesToPull
+  private def pullDockerImages(): Unit = imagesToPull
     .filterNot(DockerConnector.imageExists)
     .foreach { image =>
       logger.warn(s"Pulling docker image $image")
@@ -29,5 +29,7 @@ class DockerPullModule extends AbstractModule {
         case Failure(error) => logger.error(s"Image $image could not be pulled!", error)
       }
     }
+
+  override def configure(): Unit = pullDockerImages()
 
 }

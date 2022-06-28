@@ -5,7 +5,7 @@ import initialData.regex.RegexInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.matching.MatchingResult
 import model.tools._
-import model.{Exercise, LoggedInUser}
+import model.{Exercise, LoggedInUser, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -31,7 +31,7 @@ object RegexTool extends Tool("regex", "Reguläre Ausdrücke") {
   // Correction
 
   override def correctAbstract(
-    user: LoggedInUser,
+    user: User,
     solution: String,
     exercise: RegexExercise,
     part: RegexExPart

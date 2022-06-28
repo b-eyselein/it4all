@@ -29,7 +29,7 @@ object ProgrammingTool extends Tool("programming", "Programmierung", true) {
   // Correction
 
   override def correctAbstract(
-    user: LoggedInUser,
+    user: User,
     solution: FilesSolutionInput,
     exercise: ProgrammingExercise,
     part: ProgExPart

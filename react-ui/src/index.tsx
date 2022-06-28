@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import {StrictMode} from 'react';
 import ReactDOM from 'react-dom';
 import './index.sass';
 import {App} from './App';
@@ -29,9 +29,16 @@ i18next
   });
 
 const apolloAuthMiddleware = new ApolloLink((operation, forward) => {
+
+  const currentUser = store.getState().currentUser;
+
+  const Authorization = currentUser
+    ? `Bearer ${currentUser.jwt}`
+    : undefined;
+
   operation.setContext({
     headers: {
-      authorization: store.getState().currentUser?.jwt || null,
+      Authorization,
       Language: 'de' //chosenLanguageCodeSelector(store.getState()),
     }
   });

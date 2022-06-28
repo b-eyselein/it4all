@@ -74,7 +74,7 @@ object WebTool extends Tool("web", "Web") {
   }
 
   override def correctAbstract(
-    user: LoggedInUser,
+    user: User,
     solution: FilesSolutionInput,
     exercise: WebExercise,
     part: WebExPart
