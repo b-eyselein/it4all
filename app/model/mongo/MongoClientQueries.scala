@@ -3,7 +3,7 @@ package model.mongo
 import model._
 import model.tools.Helper.UntypedExercise
 import model.tools.Tool
-import play.api.libs.json.{Format, OFormat}
+import play.api.libs.json.OFormat
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.bson.BSONDocument
 import reactivemongo.api.bson.collection.BSONCollection
@@ -25,46 +25,10 @@ trait MongoRepo extends ReactiveMongoComponents {
 class MongoClientQueries @Inject() (override val reactiveMongoApi: ReactiveMongoApi)(override protected implicit val ec: ExecutionContext)
     extends ReactiveMongoComponents
     with MongoUserRepo
-    with MongoCollectionQueries
+    with MongoCollectionRepo
     with MongoExerciseQueries
+    with MongoUserSolutionRepo
     with MongoExercisePartResultQueries {
-
-  // Solution queries
-
-  private def futureUserSolutionsCollection: Future[BSONCollection] = futureCollection("userSolutions")
-
-  def nextUserSolutionId[P](exercise: UntypedExercise, part: P)(implicit pf: Format[P]): Future[Int] = {
-    val exFilter = BSONDocument(
-      "toolId"       -> exercise.toolId,
-      "collectionId" -> exercise.collectionId,
-      "exerciseId"   -> exercise.exerciseId,
-      "part"         -> part
-    )
-
-    for {
-      userSolutionsCollection <- futureUserSolutionsCollection
-      maybeMaxKeyDocument <-
-        userSolutionsCollection
-          .find(exFilter, Some(BSONDocument("solutionId" -> 1, "_id" -> 0)))
-          .sort(BSONDocument("solutionId" -> -1))
-          .one[BSONDocument]
-    } yield maybeMaxKeyDocument match {
-      case None        => 1
-      case Some(jsObj) => jsObj.getAsOpt[Int]("solutionId").map(_ + 1).getOrElse(1)
-    }
-  }
-
-  def insertSolution[S, P <: ExPart](
-    solution: UserSolution[S, P],
-    solutionFormat: OFormat[UserSolution[S, P]]
-  ): Future[Boolean] = {
-    implicit val sf: OFormat[UserSolution[S, P]] = solutionFormat
-
-    for {
-      userSolutionsCollection <- futureUserSolutionsCollection
-      insertResult            <- userSolutionsCollection.insert(true).one(solution)
-    } yield insertResult.writeErrors.isEmpty
-  }
 
   // Update user proficiencies
 

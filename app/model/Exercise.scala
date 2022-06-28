@@ -2,13 +2,6 @@ package model
 
 import enumeratum.EnumEntry
 
-final case class ExerciseCollection(
-  collectionId: Int,
-  toolId: String,
-  title: String,
-  authors: Seq[String]
-)
-
 trait ExPart extends EnumEntry {
 
   val id: String
@@ -45,14 +38,4 @@ final case class Exercise[C <: ExerciseContent](
   topicsWithLevels: Seq[TopicWithLevel] = Seq.empty,
   difficulty: Int,
   content: C
-)
-
-final case class UserSolution[SolType, PartType <: ExPart](
-  solutionId: Int,
-  exerciseId: Int,
-  collectionId: Int,
-  toolId: String,
-  username: String,
-  solution: SolType,
-  part: PartType
 )

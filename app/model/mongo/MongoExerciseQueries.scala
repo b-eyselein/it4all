@@ -4,7 +4,6 @@ import model.tools.Helper.UntypedExercise
 import model.tools.{Tool, ToolList}
 import model.{Exercise, ExerciseContent}
 import play.api.libs.json.{Format, OFormat}
-import reactivemongo.api.Cursor
 import reactivemongo.api.bson.BSONDocument
 import reactivemongo.api.bson.collection.BSONCollection
 import reactivemongo.play.json.compat.json2bson._
@@ -41,12 +40,11 @@ trait MongoExerciseQueries extends MongoRepo {
 
       for {
         exercisesCollection <- futureExercisesCollection
-        exercises <-
-          exercisesCollection
-            .find(BSONDocument("toolId" -> tool.id, "collectionId" -> collectionId), Option.empty[BSONDocument])
-            .sort(BSONDocument("exerciseId" -> 1))
-            .cursor[Exercise[tool.ExContentType]]()
-            .collect[Seq](-1, Cursor.FailOnError())
+        exercises <- exercisesCollection
+          .find(BSONDocument("toolId" -> tool.id, "collectionId" -> collectionId))
+          .sort(BSONDocument("exerciseId" -> 1))
+          .cursor[Exercise[tool.ExContentType]]()
+          .collect[Seq]()
       } yield exercises
   }
 

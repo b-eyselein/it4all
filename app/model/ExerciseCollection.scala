@@ -1,6 +1,6 @@
-package model.mongo
+package model
 
-import model.ExerciseCollection
+import model.mongo.MongoRepo
 import play.api.libs.json.{Json, OFormat}
 import reactivemongo.api.bson.BSONDocument
 import reactivemongo.api.bson.collection.BSONCollection
@@ -8,7 +8,14 @@ import reactivemongo.play.json.compat.json2bson._
 
 import scala.concurrent.Future
 
-trait MongoCollectionQueries extends MongoRepo {
+final case class ExerciseCollection(
+  collectionId: Int,
+  toolId: String,
+  title: String,
+  authors: Seq[String]
+)
+
+trait MongoCollectionRepo extends MongoRepo {
 
   private implicit val exerciseCollectionFormat: OFormat[ExerciseCollection] = Json.format
 
@@ -21,12 +28,11 @@ trait MongoCollectionQueries extends MongoRepo {
 
   def futureCollectionsForTool(toolId: String): Future[Seq[ExerciseCollection]] = for {
     collectionsCollection <- futureCollectionsCollection
-    collections <-
-      collectionsCollection
-        .find(BSONDocument("toolId" -> toolId))
-        .sort(BSONDocument("collectionId" -> 1))
-        .cursor[ExerciseCollection]()
-        .collect[Seq]()
+    collections <- collectionsCollection
+      .find(BSONDocument("toolId" -> toolId))
+      .sort(BSONDocument("collectionId" -> 1))
+      .cursor[ExerciseCollection]()
+      .collect[Seq]()
   } yield collections
 
   def futureCollectionById(toolId: String, collectionId: Int): Future[Option[ExerciseCollection]] = for {

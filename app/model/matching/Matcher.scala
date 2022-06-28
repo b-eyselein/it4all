@@ -41,7 +41,7 @@ trait Matcher[T, M <: Match[T]] {
         // val allMatches = matches ++ secondColl.map(instantiateOnlySampleMatch)
 
         val points: Points    = addUp(matches.map(_.points))
-        val maxPoints: Points = (-1). points // addUp(matches.map(_.maxPoints)) + addUp(secondColl.map(maxPointsForPotentialMatch))
+        val maxPoints: Points = (-1).points // addUp(matches.map(_.maxPoints)) + addUp(secondColl.map(maxPointsForPotentialMatch))
 
         MatchingResult(matches, notMatchedInFirst, secondColl, points, maxPoints)
 
