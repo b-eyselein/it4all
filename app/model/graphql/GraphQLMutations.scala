@@ -16,7 +16,9 @@ import scala.util.{Failure, Success}
 
 trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
 
-  protected val jwtHashesToClaim: MutableMap[String, LoggedInUserWithToken] = MutableMap.empty
+  protected val jwtHashesToClaim: MutableMap[String, LoginResult] = MutableMap.empty
+
+  private val loginResultType: ObjectType[Unit, LoginResult] = deriveObjectType()
 
   private def register(mongoQueries: MongoClientQueries, registerValues: RegisterValues): Future[Option[String]] = if (registerValues.isInvalid) {
     Future.successful(None)
@@ -36,7 +38,7 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
     } yield newUser
   }
 
-  private def authenticate(mongoQueries: MongoClientQueries, credentials: UserCredentials): Future[Option[LoggedInUserWithToken]] =
+  private def authenticate(mongoQueries: MongoClientQueries, credentials: UserCredentials): Future[Option[LoginResult]] =
     mongoQueries.futureUserByUsername(credentials.username).map { maybeUser =>
       for {
         user: User      <- maybeUser
@@ -44,10 +46,10 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
         pwOkay: Boolean <- credentials.password.isBcryptedSafeBounded(pwHash).toOption
         maybeUser <-
           if (pwOkay) {
-            val loggedInUser = LoggedInUser(user.username, user.isAdmin)
-
-            Some(LoggedInUserWithToken(loggedInUser, createJwtSession(user.username)))
-          } else None
+            Some(LoginResult(user.username, createJwtSession(user.username)))
+          } else {
+            None
+          }
 
       } yield maybeUser
     }
@@ -157,13 +159,13 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
       ),
       Field(
         "login",
-        OptionType(loggedInUserWithTokenType),
+        OptionType(loginResultType),
         arguments = userCredentialsArgument :: Nil,
         resolve = context => authenticate(context.ctx.mongoQueries, context.arg(userCredentialsArgument))
       ),
       Field(
         "claimLtiWebToken",
-        OptionType(loggedInUserWithTokenType),
+        OptionType(loginResultType),
         arguments = ltiUuidArgument :: Nil,
         resolve = context => jwtHashesToClaim.remove(context.arg(ltiUuidArgument))
       )

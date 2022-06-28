@@ -2,7 +2,6 @@ package controllers
 
 import model._
 import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
-import model.lti.BasicLtiLaunchRequest
 import model.mongo.MongoClientQueries
 import play.api.libs.json._
 import play.api.mvc._
@@ -56,7 +55,7 @@ class Controller @Inject() (
 
   // Json Web Token session
 
-  private def getOrCreateUser(username: String): Future[LoggedInUser] = for {
+  private def getOrCreateUser(username: String): Future[String] = for {
     maybeUser <- mongoQueries.futureUserByUsername(username)
     user <- maybeUser match {
       case Some(u) => Future(u)
@@ -64,15 +63,15 @@ class Controller @Inject() (
         val newUser = User(username)
         mongoQueries.futureInsertUser(newUser).map { _ => newUser }
     }
-  } yield LoggedInUser(user.username)
+  } yield user.username
 
   def ltiLogin: Action[BasicLtiLaunchRequest] = Action.async(parse.form(BasicLtiLaunchRequest.form)) { request =>
     for {
-      loggedInUser <- getOrCreateUser(request.body.username)
+      username <- getOrCreateUser(request.body.username)
     } yield {
       val uuid = UUID.randomUUID().toString
 
-      jwtHashesToClaim.put(uuid, LoggedInUserWithToken(loggedInUser, createJwtSession(loggedInUser.username)))
+      jwtHashesToClaim.put(uuid, LoginResult(username, createJwtSession(username)))
 
       Redirect(s"/lti/$uuid").withNewSession
     }

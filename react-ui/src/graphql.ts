@@ -351,16 +351,10 @@ export type Level = {
   title: Scalars['String'];
 };
 
-export type LoggedInUser = {
-  __typename?: 'LoggedInUser';
-  isAdmin: Scalars['Boolean'];
-  username: Scalars['String'];
-};
-
-export type LoggedInUserWithToken = {
-  __typename?: 'LoggedInUserWithToken';
+export type LoginResult = {
+  __typename?: 'LoginResult';
   jwt: Scalars['String'];
-  loggedInUser: LoggedInUser;
+  username: Scalars['String'];
 };
 
 export enum MatchType {
@@ -371,10 +365,10 @@ export enum MatchType {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  claimLtiWebToken?: Maybe<LoggedInUserWithToken>;
+  claimLtiWebToken?: Maybe<LoginResult>;
   ebnfExercise?: Maybe<EbnfExerciseMutations>;
   flaskExercise?: Maybe<FlaskExerciseMutations>;
-  login?: Maybe<LoggedInUserWithToken>;
+  login?: Maybe<LoginResult>;
   programmingExercise?: Maybe<ProgrammingExerciseMutations>;
   regexExercise?: Maybe<RegexExerciseMutations>;
   register?: Maybe<Scalars['String']>;
@@ -1547,7 +1541,7 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register?: string | null };
 
-export type LoggedInUserWithTokenFragment = { __typename?: 'LoggedInUserWithToken', jwt: string, loggedInUser: { __typename?: 'LoggedInUser', username: string, isAdmin: boolean } };
+export type LoginResultFragment = { __typename?: 'LoginResult', username: string, jwt: string };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
@@ -1555,14 +1549,14 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'LoggedInUserWithToken', jwt: string, loggedInUser: { __typename?: 'LoggedInUser', username: string, isAdmin: boolean } } | null };
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'LoginResult', username: string, jwt: string } | null };
 
 export type ClaimLtiWebTokenMutationVariables = Exact<{
   ltiUuid: Scalars['String'];
 }>;
 
 
-export type ClaimLtiWebTokenMutation = { __typename?: 'Mutation', claimLtiWebToken?: { __typename?: 'LoggedInUserWithToken', jwt: string, loggedInUser: { __typename?: 'LoggedInUser', username: string, isAdmin: boolean } } | null };
+export type ClaimLtiWebTokenMutation = { __typename?: 'Mutation', claimLtiWebToken?: { __typename?: 'LoginResult', username: string, jwt: string } | null };
 
 export const FlaskTestResultFragmentDoc = gql`
     fragment FlaskTestResult on FlaskTestResult {
@@ -2490,12 +2484,9 @@ ${SqlExerciseContentFragmentDoc}
 ${UmlExerciseContentFragmentDoc}
 ${WebExerciseContentFragmentDoc}
 ${XmlExerciseContentFragmentDoc}`;
-export const LoggedInUserWithTokenFragmentDoc = gql`
-    fragment LoggedInUserWithToken on LoggedInUserWithToken {
-  loggedInUser {
-    username
-    isAdmin
-  }
+export const LoginResultFragmentDoc = gql`
+    fragment LoginResult on LoginResult {
+  username
   jwt
 }
     `;
@@ -3117,10 +3108,10 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutatio
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(credentials: {username: $username, password: $password}) {
-    ...LoggedInUserWithToken
+    ...LoginResult
   }
 }
-    ${LoggedInUserWithTokenFragmentDoc}`;
+    ${LoginResultFragmentDoc}`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
@@ -3151,10 +3142,10 @@ export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, Log
 export const ClaimLtiWebTokenDocument = gql`
     mutation ClaimLtiWebToken($ltiUuid: String!) {
   claimLtiWebToken(ltiUuid: $ltiUuid) {
-    ...LoggedInUserWithToken
+    ...LoginResult
   }
 }
-    ${LoggedInUserWithTokenFragmentDoc}`;
+    ${LoginResultFragmentDoc}`;
 export type ClaimLtiWebTokenMutationFn = Apollo.MutationFunction<ClaimLtiWebTokenMutation, ClaimLtiWebTokenMutationVariables>;
 
 /**

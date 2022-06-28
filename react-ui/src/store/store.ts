@@ -1,5 +1,5 @@
 import {createStore} from 'redux';
-import {LoggedInUserWithTokenFragment} from '../graphql';
+import {LoginResultFragment} from '../graphql';
 import {CHANGE_LANGUAGE, StoreAction, USER_LOGIN, USER_LOGOUT} from './actions';
 import i18next from 'i18next';
 
@@ -7,7 +7,7 @@ const userField = 'user';
 const languageField = 'language';
 
 interface StoreState {
-  currentUser?: LoggedInUserWithTokenFragment;
+  currentUser?: LoginResultFragment;
   chosenLanguage?: string;
 }
 
@@ -43,4 +43,4 @@ function initialState(): StoreState {
 
 export const store = createStore(rootReducer, initialState());
 
-export const currentUserSelector: (store: StoreState) => LoggedInUserWithTokenFragment | undefined = (store) => store.currentUser;
+export const currentUserSelector: (store: StoreState) => LoginResultFragment | undefined = (store) => store.currentUser;

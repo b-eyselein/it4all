@@ -7,14 +7,6 @@ import sangria.schema._
 
 trait BasicGraphQLModels {
 
-  private val loggedInUserType: ObjectType[Unit, LoggedInUser] = deriveObjectType()
-
-  protected val loggedInUserWithTokenType: ObjectType[Unit, LoggedInUserWithToken] = {
-    implicit val liut: ObjectType[Unit, LoggedInUser] = loggedInUserType
-
-    deriveObjectType()
-  }
-
   private val levelType: ObjectType[Unit, Level] = ObjectType(
     "Level",
     fields[Unit, Level](
@@ -23,7 +15,7 @@ trait BasicGraphQLModels {
     )
   )
 
-  protected val topicType: ObjectType[Unit, Topic] = {
+  private val topicType: ObjectType[Unit, Topic] = {
     implicit val lt: ObjectType[Unit, Level] = levelType
 
     deriveObjectType()

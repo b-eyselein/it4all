@@ -403,17 +403,14 @@ mutation Register($username: String!, $firstPassword: String!, $secondPassword: 
 
 # /loginForm
 
-fragment LoggedInUserWithToken on LoggedInUserWithToken {
-  loggedInUser {
-    username
-    isAdmin
-  }
+fragment LoginResult on LoginResult {
+  username
   jwt
 }
 
 mutation Login($username: String!, $password: String!) {
   login(credentials: {username: $username, password: $password}) {
-    ...LoggedInUserWithToken
+    ...LoginResult
   }
 }
 
@@ -421,6 +418,6 @@ mutation Login($username: String!, $password: String!) {
 
 mutation ClaimLtiWebToken($ltiUuid: String!) {
   claimLtiWebToken(ltiUuid: $ltiUuid) {
-    ...LoggedInUserWithToken
+    ...LoginResult
   }
 }

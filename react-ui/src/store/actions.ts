@@ -1,15 +1,15 @@
 import {Action} from 'redux';
-import {LoggedInUserWithTokenFragment} from '../graphql';
+import {LoginResultFragment} from '../graphql';
 
 // User login
 
 export const USER_LOGIN = 'USER_LOGIN';
 
 interface UserLoginAction extends Action<typeof USER_LOGIN> {
-  user: LoggedInUserWithTokenFragment;
+  user: LoginResultFragment;
 }
 
-export function userLoginAction(user: LoggedInUserWithTokenFragment): UserLoginAction {
+export function userLoginAction(user: LoginResultFragment): UserLoginAction {
   return {type: USER_LOGIN, user};
 }
 

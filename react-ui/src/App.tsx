@@ -56,7 +56,7 @@ export function App(): JSX.Element {
             <div className="navbar-item">
               {currentUser
                 ? <button onClick={() => dispatch(userLogoutAction)} className="button is-light">
-                  {t('logout')}&nbsp;{currentUser.loggedInUser.username}
+                  {t('logout')}&nbsp;{currentUser.username}
                 </button>
                 : <div className="buttons">
                   <Link to="/loginForm" className="button is-light">{t('login')}</Link>

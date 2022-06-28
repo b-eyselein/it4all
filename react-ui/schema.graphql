@@ -275,14 +275,9 @@ type Level {
   title: String!
 }
 
-type LoggedInUser {
-  isAdmin: Boolean!
-  username: String!
-}
-
-type LoggedInUserWithToken {
+type LoginResult {
   jwt: String!
-  loggedInUser: LoggedInUser!
+  username: String!
 }
 
 """
@@ -297,10 +292,10 @@ enum MatchType {
 }
 
 type Mutation {
-  claimLtiWebToken(ltiUuid: String!): LoggedInUserWithToken
+  claimLtiWebToken(ltiUuid: String!): LoginResult
   ebnfExercise(collId: Int!, exId: Int!): EbnfExerciseMutations
   flaskExercise(collId: Int!, exId: Int!): FlaskExerciseMutations
-  login(credentials: UserCredentials!): LoggedInUserWithToken
+  login(credentials: UserCredentials!): LoginResult
   programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
   regexExercise(collId: Int!, exId: Int!): RegexExerciseMutations
   register(registerValues: RegisterValues!): String

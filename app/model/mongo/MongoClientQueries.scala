@@ -12,9 +12,19 @@ import reactivemongo.play.json.compat.json2bson._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+trait MongoRepo extends ReactiveMongoComponents {
+
+  protected implicit val ec: ExecutionContext
+
+  protected def futureCollection(name: String): Future[BSONCollection] = for {
+    db <- reactiveMongoApi.database
+  } yield db.collection(name)
+
+}
+
 class MongoClientQueries @Inject() (override val reactiveMongoApi: ReactiveMongoApi)(override protected implicit val ec: ExecutionContext)
     extends ReactiveMongoComponents
-    with MongoUserQueries
+    with MongoUserRepo
     with MongoCollectionQueries
     with MongoExerciseQueries
     with MongoExercisePartResultQueries {

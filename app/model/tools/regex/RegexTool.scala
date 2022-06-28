@@ -5,7 +5,7 @@ import initialData.regex.RegexInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.matching.MatchingResult
 import model.tools._
-import model.{Exercise, LoggedInUser, User}
+import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
