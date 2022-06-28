@@ -4,8 +4,6 @@ import model._
 import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
 import model.lti.BasicLtiLaunchRequest
 import model.mongo.MongoClientQueries
-import play.api.Configuration
-import play.api.http.HttpErrorHandler
 import play.api.libs.json._
 import play.api.mvc._
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
@@ -21,8 +19,6 @@ import scala.util.{Failure, Success}
 class Controller @Inject() (
   assets: Assets,
   cc: ControllerComponents,
-  errorHandler: HttpErrorHandler,
-  configuration: Configuration,
   jwtAction: JwtAction,
   mongoQueries: MongoClientQueries
 )(override protected implicit val ec: ExecutionContext)
