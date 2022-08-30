@@ -39,10 +39,10 @@ trait DockerExecutionCorrector {
     resultFile: File,
     maybeCmd: Option[Seq[String]] = None,
     deleteContainerAfterRun: Int => Boolean = _ => true
-  )(convertResult: T => R)(implicit ec: ExecutionContext): Future[Try[R]] = for {
+  )(convertResult: T => R)(implicit ec: ExecutionContext): Future[R] = for {
     imageExists <- Future { DockerConnector.imageExists(dockerImage.name) }
 
-    () <-
+    _ <-
       if (imageExists) {
         Future.successful(())
       } else {
@@ -55,9 +55,12 @@ trait DockerExecutionCorrector {
       maybeCmd = maybeCmd,
       deleteContainerAfterRun = deleteContainerAfterRun
     )
-  } yield statusCode match {
-    case 0 => readDockerExecutionResultFile(resultFile, jsFormat).map(convertResult)
-    case _ => Failure(DockerCorrectionExecutionError(logs))
-  }
+
+    result <- statusCode match {
+      case 0 => Future.fromTry(readDockerExecutionResultFile(resultFile, jsFormat).map(convertResult))
+      case _ => Future.failed(DockerCorrectionExecutionError(logs))
+    }
+
+  } yield result
 
 }

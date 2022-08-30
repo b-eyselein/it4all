@@ -7,7 +7,6 @@ import model.tools.{Tool, ToolJsonProtocol}
 import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 object EbnfTool extends Tool("ebnf", "EBNF") {
 
@@ -27,7 +26,7 @@ object EbnfTool extends Tool("ebnf", "EBNF") {
     solution: EbnfGrammar,
     exercise: EbnfExercise,
     part: EbnfExercisePart
-  )(implicit executionContext: ExecutionContext): Future[Try[EbnfResult]] = ???
+  )(implicit executionContext: ExecutionContext): Future[EbnfResult] = ???
 
   override val initialData: InitialData[EbnfExerciseContent] = EbnfInitialData
 

@@ -3,6 +3,8 @@ package controllers
 import model._
 import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
 import model.mongo.MongoClientQueries
+import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
 import play.api.libs.json._
 import play.api.mvc._
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
@@ -13,6 +15,8 @@ import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
+
+final case class BasicLtiLaunchRequest(lms: String, username: String)
 
 @Singleton
 class Controller @Inject() (
@@ -56,26 +60,32 @@ class Controller @Inject() (
     }
   }
 
-  // Json Web Token session
+  // Lti
 
-  private def getOrCreateUser(username: String): Future[String] = for {
-    maybeUser <- tableDefs.futureUserByUsername(username)
-    user <- maybeUser match {
-      case Some(u) => Future(u)
-      case None    => tableDefs.futureInsertUser(username, None)
-    }
-  } yield user.username
+  private val basicLtiLaunchRequestForm: Form[BasicLtiLaunchRequest] = Form(
+    mapping(
+      "ext_lms"           -> text,
+      "ext_user_username" -> text
+    )(BasicLtiLaunchRequest.apply)(BasicLtiLaunchRequest.unapply)
+  )
 
-  def ltiLogin: Action[BasicLtiLaunchRequest] = Action.async(parse.form(BasicLtiLaunchRequest.form)) { request =>
+  def ltiLogin: Action[BasicLtiLaunchRequest] = Action.async(parse.form(basicLtiLaunchRequestForm)) { request =>
+    val username = request.body.username
+
     for {
-      username <- getOrCreateUser(request.body.username)
-    } yield {
-      val uuid = UUID.randomUUID().toString
+      maybeUser <- tableDefs.futureUserByUsername(username)
 
-      jwtHashesToClaim.put(uuid, LoginResult(username, createJwtSession(username)))
+      user <- maybeUser match {
+        case Some(u) => Future(u)
+        case None    => tableDefs.futureInsertUser(request.body.username, None)
+      }
 
-      Redirect(s"/lti/$uuid").withNewSession
-    }
+      username = user.username
+
+      uuid = UUID.randomUUID().toString
+
+      _ = jwtHashesToClaim.put(uuid, LoginResult(username, createJwtSession(username)))
+    } yield Redirect(s"/lti/$uuid").withNewSession
   }
 
 }

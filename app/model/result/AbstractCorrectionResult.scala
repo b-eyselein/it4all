@@ -1,13 +1,11 @@
 package model.result
 
 import model.points._
-import model.{Exercise, ExerciseContent}
 
 final case class CorrectionResult[R <: AbstractCorrectionResult](
-  solutionSaved: Boolean,
-  resultSaved: Boolean,
-  proficienciesUpdated: Option[Boolean],
-  result: R
+  result: R,
+  solutionId: Int,
+  proficienciesUpdated: Option[Boolean]
 )
 
 trait AbstractCorrectionResult {
@@ -17,25 +15,6 @@ trait AbstractCorrectionResult {
   def maxPoints: Points
 
   def isCompletelyCorrect: Boolean
-
-}
-
-object BasicExercisePartResult {
-
-  def forExerciseAndResult(
-    username: String,
-    exercise: Exercise[_ <: ExerciseContent],
-    partId: String,
-    result: AbstractCorrectionResult
-  ): BasicExercisePartResult = BasicExercisePartResult(
-    username,
-    exercise.exerciseId,
-    exercise.collectionId,
-    exercise.toolId,
-    partId,
-    result.points,
-    result.maxPoints
-  )
 
 }
 

@@ -15,7 +15,7 @@ object ProgrammingCorrector extends ProgrammingUnitTestCorrector with Programmin
     solution: IFilesSolution,
     solutionTargetDir: File,
     part: ProgExPart
-  )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] = {
+  )(implicit ec: ExecutionContext): Future[ProgrammingResult] = {
 
     // Create or truncate result file
     val resultFile = solutionTargetDir / resultFileName
@@ -33,9 +33,8 @@ object ProgrammingCorrector extends ProgrammingUnitTestCorrector with Programmin
     val defaultFileMounts = solutionFileMounts :+ resultFileMount
 
     part match {
-      case ProgExPart.TestCreation =>
-        correctUnitTestPart(defaultFileMounts, solutionTargetDir, exercise.content, resultFile)
-      case _ => correctImplementationPart(defaultFileMounts, solutionTargetDir, exercise.content, resultFile)
+      case ProgExPart.TestCreation => correctUnitTestPart(defaultFileMounts, solutionTargetDir, exercise.content, resultFile)
+      case _                       => correctImplementationPart(defaultFileMounts, solutionTargetDir, exercise.content, resultFile)
     }
   }
 

@@ -7,7 +7,6 @@ import model.graphql.ToolGraphQLModelBasics
 import model.result.AbstractCorrectionResult
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 // Tools
 
@@ -36,7 +35,7 @@ abstract class Tool(val id: String, val name: String, val isBeta: Boolean = fals
     solution: SolutionInputType,
     exercise: Exercise[ExContentType],
     part: PartType
-  )(implicit executionContext: ExecutionContext): Future[Try[ResType]]
+  )(implicit executionContext: ExecutionContext): Future[ResType]
 
   val allTopics: Seq[Topic] = Seq.empty
 

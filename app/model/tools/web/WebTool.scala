@@ -78,7 +78,7 @@ object WebTool extends Tool("web", "Web") {
     solution: FilesSolutionInput,
     exercise: WebExercise,
     part: WebExPart
-  )(implicit executionContext: ExecutionContext): Future[Try[WebResult]] = Future {
+  )(implicit executionContext: ExecutionContext): Future[WebResult] = Future.fromTry {
     writeFilesSolutionFiles(solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId), solution)
       .flatMap { _ =>
         val driver = new HtmlUnitDriver(true)

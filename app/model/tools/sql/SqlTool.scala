@@ -10,7 +10,6 @@ import model.{Exercise, Topic, User}
 import net.sf.jsqlparser.expression.BinaryExpression
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 object SqlTool extends Tool("sql", "Sql") {
 
@@ -41,7 +40,7 @@ object SqlTool extends Tool("sql", "Sql") {
     solution: String,
     exercise: SqlExercise,
     part: SqlExPart
-  )(implicit executionContext: ExecutionContext): Future[Try[SqlResult]] = Future {
+  )(implicit executionContext: ExecutionContext): Future[SqlResult] = {
 
     val corrector = exercise.content.exerciseType match {
       case SqlExerciseType.SELECT => SelectCorrector
@@ -51,7 +50,7 @@ object SqlTool extends Tool("sql", "Sql") {
       case SqlExerciseType.DELETE => DeleteCorrector
     }
 
-    corrector.correct(exercise.content.schemaName, solution, exercise.content.sampleSolutions)
+    Future.fromTry(corrector.correct(exercise.content.schemaName, solution, exercise.content.sampleSolutions))
   }
 
   override val initialData: InitialData[SqlExerciseContent] = SqlInitialData

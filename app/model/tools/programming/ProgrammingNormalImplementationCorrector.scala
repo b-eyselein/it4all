@@ -7,7 +7,6 @@ import model.points._
 import model.tools.programming.ProgrammingToolJsonProtocol.normalExecutionResultFileJsonReads
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Try}
 
 trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrector {
 
@@ -16,15 +15,15 @@ trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrec
     solTargetDir: File,
     exerciseContent: ProgrammingExerciseContent,
     resultFile: File
-  )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] = exerciseContent.sampleSolutions.headOption match {
-    case None => Future.successful(Failure(new Exception("No sample solution found!")))
+  )(implicit ec: ExecutionContext): Future[ProgrammingResult] = exerciseContent.sampleSolutions.headOption match {
+    case None => Future.failed(new Exception("No sample solution found!"))
     case Some(FilesSolution(files)) =>
       val maybeTestFileContent = files
         .find(_.name == exerciseContent.unitTestPart.testFileName)
         .map(_.content)
 
       maybeTestFileContent match {
-        case None => Future.successful(Failure(new Exception("No content for unit test file found!")))
+        case None => Future.failed(new Exception("No content for unit test file found!"))
         case Some(unitTestFileContent) =>
           val unitTestFileName = s"${exerciseContent.filename}_test.py"
 
@@ -41,7 +40,7 @@ trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrec
             resultFile,
             maybeCmd = Some(Seq("normal"))
           )(normalExecutionResult =>
-            //FIXME: points!
+            // FIXME: points!
             ProgrammingResult(
               implementationCorrectionResult = Some(normalExecutionResult),
               points = (-1).points /* normalUnitTestPart.unitTestTestConfigs.size.points */,

@@ -7,7 +7,6 @@ import model.graphql.FilesSolutionToolGraphQLModelBasics
 import model.tools.{FilesSolutionToolJsonProtocol, Tool}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 object ProgrammingTool extends Tool("programming", "Programmierung", true) {
 
@@ -33,7 +32,7 @@ object ProgrammingTool extends Tool("programming", "Programmierung", true) {
     solution: FilesSolutionInput,
     exercise: ProgrammingExercise,
     part: ProgExPart
-  )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] = {
+  )(implicit ec: ExecutionContext): Future[ProgrammingResult] = {
 
     val solTargetDir = solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId) / part.id
 

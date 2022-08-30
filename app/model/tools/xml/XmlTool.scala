@@ -9,7 +9,6 @@ import model.tools._
 import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 object XmlTool extends Tool("xml", "Xml") {
 
@@ -35,7 +34,7 @@ object XmlTool extends Tool("xml", "Xml") {
     solution: XmlSolution,
     exercise: XmlExercise,
     part: XmlExPart
-  )(implicit executionContext: ExecutionContext): Future[Try[XmlResult]] = Future.successful {
+  )(implicit executionContext: ExecutionContext): Future[XmlResult] = Future.fromTry {
     part match {
       case XmlExPart.GrammarCreationXmlPart => XmlCorrector.correctGrammar(solution, exercise.content.sampleSolutions)
 

@@ -1,60 +1,115 @@
 package model
 
-import model.mongo.MongoRepo
-import model.tools.Helper.UntypedExercise
-import play.api.libs.json.{Format, OFormat}
-import reactivemongo.api.bson.BSONDocument
-import reactivemongo.api.bson.collection.BSONCollection
-import reactivemongo.play.json.compat.json2bson._
+import model.points.Points
+import play.api.libs.json.{Format, JsValue}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-final case class UserSolution[SolType, PartType <: ExPart](
-  solutionId: Int,
-  exerciseId: Int,
-  collectionId: Int,
+private final case class DbUserSolution(
   toolId: String,
+  collectionId: Int,
+  exerciseId: Int,
   username: String,
-  solution: SolType,
-  part: PartType
+  partId: String,
+  solutionId: Int,
+  jsonSolution: JsValue,
+  pointsQuarters: Int,
+  maxPointsQuarters: Int
 )
 
-trait MongoUserSolutionRepo extends MongoRepo {
+trait UserSolutionRepository {
+  self: play.api.db.slick.HasDatabaseConfig[slick.jdbc.JdbcProfile] =>
 
-  private def futureUserSolutionsCollection: Future[BSONCollection] = futureCollection("userSolutions")
+  import MyPostgresProfile.api._
 
-  def nextUserSolutionId[P](exercise: UntypedExercise, part: P)(implicit pf: Format[P]): Future[Int] = {
-    val exFilter = BSONDocument(
-      "toolId"       -> exercise.toolId,
-      "collectionId" -> exercise.collectionId,
-      "exerciseId"   -> exercise.exerciseId,
-      "part"         -> part
-    )
+  protected implicit val ec: ExecutionContext
 
-    val solutionIdExtractor = BSONDocument("solutionId" -> 1, "_id" -> 0)
+  private val userSolutionTQ = TableQuery[UserSolutionsTable]
 
-    for {
-      userSolutionsCollection <- futureUserSolutionsCollection
-      maybeMaxKeyDocument <- userSolutionsCollection
-        .find(exFilter, Some(solutionIdExtractor))
-        .sort(BSONDocument("solutionId" -> -1))
-        .one[BSONDocument]
-    } yield maybeMaxKeyDocument match {
-      case None        => 1
-      case Some(jsObj) => jsObj.getAsOpt[Int]("solutionId").map(_ + 1).getOrElse(1)
+  private def solutionForUserAndExercisePart(toolId: String, collectionId: Int, exerciseId: Int, username: String, partId: String) = userSolutionTQ
+    .filter { us =>
+      us.toolId === toolId && us.collectionId === collectionId && us.exerciseId === exerciseId && us.username === username && us.partId === partId
     }
-  }
 
-  def insertSolution[S, P <: ExPart](
-    solution: UserSolution[S, P],
-    solutionFormat: OFormat[UserSolution[S, P]]
-  ): Future[Boolean] = {
-    implicit val sf: OFormat[UserSolution[S, P]] = solutionFormat
+  def futureNextUserSolutionId(toolId: String, collectionId: Int, exerciseId: Int, username: String, partId: String): Future[Int] = for {
+    maybeMaxSolutionId <- db.run(
+      solutionForUserAndExercisePart(toolId, collectionId, exerciseId, username, partId)
+        .map(_.solutionId)
+        .max
+        .result
+    )
+  } yield maybeMaxSolutionId.map(_ + 1).getOrElse(0)
 
-    for {
-      userSolutionsCollection <- futureUserSolutionsCollection
-      insertResult            <- userSolutionsCollection.insert(true).one(solution)
-    } yield insertResult.writeErrors.isEmpty
+  def futureInsertSolution[S](
+    toolId: String,
+    collectionId: Int,
+    exerciseId: Int,
+    username: String,
+    solution: S,
+    part: ExPart,
+    solutionFormat: Format[S],
+    points: Points,
+    maxPoints: Points
+  ): Future[Int] = for {
+    nextUserSolutionId <- futureNextUserSolutionId(toolId, collectionId, exerciseId, username, part.id)
+
+    inserted <- db.run(
+      userSolutionTQ += DbUserSolution(
+        toolId,
+        collectionId,
+        exerciseId,
+        username,
+        part.id,
+        nextUserSolutionId,
+        solutionFormat.writes(solution),
+        points.quarters,
+        maxPoints.quarters
+      )
+    )
+  } yield nextUserSolutionId
+
+  def futureUserHasCorrectExerciseResult(toolId: String, collectionId: Int, exerciseId: Int, username: String, partId: String): Future[Boolean] = for {
+    bestTryCompletelyCorrect <- db.run(
+      solutionForUserAndExercisePart(toolId, collectionId, exerciseId, username, partId)
+        .sortBy(_.pointsQuarters.desc)
+        .map { us => us.pointsQuarters === us.maxPointsQuarters }
+        .result
+        .headOption
+    )
+  } yield bestTryCompletelyCorrect.getOrElse(false)
+
+  private class UserSolutionsTable(tag: Tag) extends Table[DbUserSolution](tag, "user_solutions") {
+
+    def toolId = column[String]("tool_id")
+
+    def collectionId = column[Int]("collection_id")
+
+    def exerciseId = column[Int]("exercise_id")
+
+    def username = column[String]("username")
+
+    def solutionId = column[Int]("solution_id")
+
+    def partId = column[String]("part_id")
+
+    def jsonSolution = column[JsValue]("solution_json")
+
+    def pointsQuarters = column[Int]("points_quarters")
+
+    def maxPointsQuarters = column[Int]("max_points_quarters")
+
+    override def * = (
+      toolId,
+      collectionId,
+      exerciseId,
+      username,
+      partId,
+      solutionId,
+      jsonSolution,
+      pointsQuarters,
+      maxPointsQuarters
+    ) <> (DbUserSolution.tupled, DbUserSolution.unapply)
+
   }
 
 }

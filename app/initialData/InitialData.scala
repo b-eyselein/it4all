@@ -4,7 +4,6 @@ import better.files.File
 import com.google.inject.AbstractModule
 import initialData.InitialData.exerciseResourcesPath
 import model._
-import model.mongo.MongoClientQueries
 import model.tools.ToolList
 import play.api.Logger
 import play.api.libs.json.OFormat
@@ -56,13 +55,14 @@ object InitialData {
 }
 
 @Singleton
-class StartUpService @Inject() (mongoClientQueries: MongoClientQueries, tableDefs: TableDefs)(implicit ec: ExecutionContext) {
+class StartUpService @Inject() (tableDefs: TableDefs)(implicit ec: ExecutionContext) {
 
   private val logger = Logger(classOf[StartUpService])
 
-  private def insertInitialCollection(coll: ExerciseCollection): Future[Unit] = tableDefs
-    .futureCollectionById(coll.toolId, coll.collectionId)
-    .flatMap {
+  private def insertInitialCollection(coll: ExerciseCollection): Future[Unit] = for {
+    maybeCollection <- tableDefs.futureCollectionById(coll.toolId, coll.collectionId)
+
+    inserted <- maybeCollection match {
       case Some(_) => Future.successful(())
       case None =>
         val key = s"(${coll.toolId}, ${coll.collectionId})"
@@ -74,40 +74,45 @@ class StartUpService @Inject() (mongoClientQueries: MongoClientQueries, tableDef
             case true  => logger.debug(s"Inserted collection $key.")
           }
           .recover { case e =>
-            logger.error("Error while inserting collection", e)
+            logger.error(s"Error while inserting collection $key", e)
           }
     }
+  } yield inserted
 
-  private def insertInitialExercise[EC <: ExerciseContent](ex: Exercise[EC], exFormat: OFormat[Exercise[EC]]): Future[Unit] =
-    mongoClientQueries
-      .futureExerciseExists(ex.toolId, ex.collectionId, ex.exerciseId)
-      .flatMap {
-        case true => Future.successful(())
-        case false =>
-          val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"
+  private def insertInitialExercise[EC <: ExerciseContent](ex: Exercise[EC], exContentFormat: OFormat[EC]): Future[Unit] = for {
+    exerciseExists <- tableDefs.futureExerciseExists(ex.toolId, ex.collectionId, ex.exerciseId)
 
-          mongoClientQueries
-            .futureInsertExercise(ex, exFormat)
-            .map {
-              case false => logger.error(s"Exercise $key could not be inserted!")
-              case true  => logger.debug(s"Inserted exercise $key.")
-            }
-            .recover { case e =>
-              logger.error("Error while inserting exercise", e)
-            }
+    inserted <-
+      if (exerciseExists) {
+        Future.successful(())
+      } else {
+        val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"
+
+        tableDefs
+          .futureInsertExercise(ex, exContentFormat)
+          .map {
+            case false => logger.error(s"Exercise $key could not be inserted!")
+            case true  => logger.debug(s"Inserted exercise $key.")
+          }
+          .recover { case e =>
+            logger.error(s"Error while inserting exercise $key", e)
+          }
       }
+  } yield inserted
 
   ToolList.tools.foreach { tool =>
     // Insert all collections and exercises
 
     tool.initialData.initialData.foreach { case (collectionId, InitialCollection(title, initialExercises)) =>
-      insertInitialCollection(ExerciseCollection(tool.id, collectionId, title))
+      for {
+        _ <- insertInitialCollection(ExerciseCollection(tool.id, collectionId, title))
 
-      initialExercises.foreach { case (exerciseId, InitialExercise(title, authors, text, topicsWithLevels, difficulty, content)) =>
-        val exercise = Exercise(exerciseId, collectionId, tool.id, title, authors, text, topicsWithLevels, difficulty, content)
+        _ = initialExercises.foreach { case (exerciseId, InitialExercise(title, authors, text, topicsWithLevels, difficulty, content)) =>
+          val exercise = Exercise(exerciseId, collectionId, tool.id, title, authors, text, topicsWithLevels, difficulty, content)
 
-        insertInitialExercise(exercise, tool.jsonFormats.exerciseFormat)
-      }
+          insertInitialExercise(exercise, tool.jsonFormats.exerciseContentFormat)
+        }
+      } yield ()
     }
   }
 

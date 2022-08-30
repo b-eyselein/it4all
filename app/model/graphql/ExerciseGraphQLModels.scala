@@ -28,19 +28,18 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
       Field(
         "solved",
         BooleanType,
-        resolve = context => {
+        resolve = context =>
           context.ctx.loggedInUser match {
             case None => Future.successful(false)
             case Some(user) =>
-              context.ctx.mongoQueries.futureUserHasCorrectExerciseResult(
-                user.username,
+              context.ctx.tableDefs.futureUserHasCorrectExerciseResult(
                 context.value.toolId,
                 context.value.collectionId,
                 context.value.exerciseId,
+                user.username,
                 context.value.part.id
               )
           }
-        }
       )
     )
   )

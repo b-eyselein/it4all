@@ -30,13 +30,13 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
     AddFields[GraphQLContext, ExerciseCollection](
       Field(
         "exerciseCount",
-        LongType,
-        resolve = context => context.ctx.mongoQueries.futureExerciseCountForCollection(context.value.toolId, context.value.collectionId)
+        IntType,
+        resolve = context => context.ctx.tableDefs.futureExerciseCountForCollection(context.value.toolId, context.value.collectionId)
       ),
       Field(
         "exercises",
         ListType(exerciseType),
-        resolve = context => context.ctx.mongoQueries.futureExercisesForCollection(context.value.toolId, context.value.collectionId)
+        resolve = context => context.ctx.tableDefs.futureExercisesForCollection(context.value.toolId, context.value.collectionId)
       ),
       Field(
         "exercise",
@@ -46,7 +46,7 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
           ToolList.tools.find(_.id == context.value.toolId) match {
             case None => Future.successful(None)
             case Some(tool) =>
-              context.ctx.mongoQueries
+              context.ctx.tableDefs
                 .futureExerciseById(tool, context.value.collectionId, context.arg(exIdArgument))
                 .asInstanceOf[Future[Option[UntypedExercise]]]
           }
@@ -70,11 +70,11 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
         resolve = context => context.ctx.tableDefs.futureCollectionById(context.value.id, context.arg(collIdArgument))
       ),
       // Special fields for exercises
-      Field("exerciseCount", LongType, resolve = context => context.ctx.mongoQueries.futureExerciseCountForTool(context.value.id)),
+      Field("exerciseCount", IntType, resolve = context => context.ctx.tableDefs.futureExerciseCountForTool(context.value.id)),
       Field(
         "allExercises",
         ListType(exerciseType),
-        resolve = context => context.ctx.mongoQueries.futureExercisesForTool(context.value).asInstanceOf[Future[Seq[UntypedExercise]]]
+        resolve = context => context.ctx.tableDefs.futureExercisesForTool(context.value).asInstanceOf[Future[Seq[UntypedExercise]]]
       ),
       // Fields for users
       Field(

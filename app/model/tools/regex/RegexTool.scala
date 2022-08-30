@@ -35,14 +35,15 @@ object RegexTool extends Tool("regex", "Reguläre Ausdrücke") {
     solution: String,
     exercise: RegexExercise,
     part: RegexExPart
-  )(implicit executionContext: ExecutionContext): Future[Try[RegexAbstractResult]] = Future.successful {
-    Try(solution.r)
-      .flatMap { userRegex =>
-        exercise.content.correctionType match {
-          case RegexCorrectionType.MATCHING   => RegexMatchingCorrector.correctMatching(exercise.content, userRegex)
-          case RegexCorrectionType.EXTRACTION => RegexExtractionCorrector.correctExtraction(exercise.content, userRegex)
-        }
+  )(implicit executionContext: ExecutionContext): Future[RegexAbstractResult] = Future.fromTry {
+    for {
+      userRegex <- Try(solution.r)
+
+      result <- exercise.content.correctionType match {
+        case RegexCorrectionType.MATCHING   => RegexMatchingCorrector.correctMatching(exercise.content, userRegex)
+        case RegexCorrectionType.EXTRACTION => RegexExtractionCorrector.correctExtraction(exercise.content, userRegex)
       }
+    } yield result
   }
 
   override val initialData: InitialData[RegexExerciseContent] = RegexInitialData

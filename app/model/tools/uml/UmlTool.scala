@@ -9,7 +9,6 @@ import model.tools.uml.matcher._
 import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 object UmlTool extends Tool("uml", "Uml", true) {
 
@@ -39,7 +38,7 @@ object UmlTool extends Tool("uml", "Uml", true) {
     solution: UmlClassDiagram,
     exercise: UmlExercise,
     part: UmlExPart
-  )(implicit executionContext: ExecutionContext): Future[Try[UmlResult]] = Future.successful { UmlCorrector.correct(solution, exercise, part) }
+  )(implicit executionContext: ExecutionContext): Future[UmlResult] = Future.fromTry { UmlCorrector.correct(solution, exercise, part) }
 
   override val initialData: InitialData[UmlExerciseContent] = UmlInitialData
 

@@ -22,7 +22,7 @@ object FlaskCorrector extends DockerExecutionCorrector {
     solution: IFilesSolution,
     exercise: FlaskExercise,
     solTargetDir: File
-  )(implicit executionContext: ExecutionContext): Future[Try[FlaskResult]] = {
+  )(implicit executionContext: ExecutionContext): Future[FlaskResult] = {
 
     // Write solution files
     val appUnderTestTargetDir = solTargetDir / "app"

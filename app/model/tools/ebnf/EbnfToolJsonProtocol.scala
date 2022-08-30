@@ -18,7 +18,7 @@ object EbnfToolJsonProtocol extends ToolJsonProtocol[SolutionInputType, EbnfExer
 
   override val solutionInputFormat: Format[EbnfGrammar] = ebnfGrammarFormat
 
-  override protected val exerciseContentFormat: OFormat[EbnfExerciseContent] = {
+  override /* protected */ val exerciseContentFormat: OFormat[EbnfExerciseContent] = {
     implicit val egf: OFormat[EbnfGrammar] = ebnfGrammarFormat
 
     Json.format

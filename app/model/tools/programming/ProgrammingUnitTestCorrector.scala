@@ -7,7 +7,6 @@ import model.tools.programming.ProgrammingToolJsonProtocol.{UnitTestTestData, un
 import play.api.libs.json.{Json, Reads}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
 
@@ -16,7 +15,7 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
     solTargetDir: File,
     exerciseContent: ProgrammingExerciseContent,
     resultFile: File
-  )(implicit ec: ExecutionContext): Future[Try[ProgrammingResult]] = {
+  )(implicit ec: ExecutionContext): Future[ProgrammingResult] = {
 
     val unitTestPart: UnitTestPart = exerciseContent.unitTestPart
 
