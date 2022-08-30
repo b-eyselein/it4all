@@ -43,13 +43,13 @@ object ProgrammingColl4Ex4 extends ProgrammingInitialExerciseContainer(4, 4, "sl
     folderName = exerciseBaseName
   )
 
-  val programmingColl4Ex4 = InitialExercise(
+  val programmingColl4Ex4: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Slicing",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Lists, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Strings, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Lists   -> Level.Beginner,
+      ProgrammingTopics.Strings -> Level.Beginner
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(

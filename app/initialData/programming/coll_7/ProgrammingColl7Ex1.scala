@@ -35,15 +35,15 @@ object ProgrammingColl7Ex1 extends ProgrammingInitialExerciseContainer(7, 1, "ci
     folderName = exerciseBaseName
   )
 
-  val programmingColl7Ex1 = InitialExercise(
+  val programmingColl7Ex1: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Kreise",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Conditions, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Exceptions, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Classes, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Conditions -> Level.Beginner,
+      ProgrammingTopics.Exceptions -> Level.Beginner,
+      ProgrammingTopics.Classes    -> Level.Beginner,
+      ProgrammingTopics.Maths      -> Level.Beginner
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(

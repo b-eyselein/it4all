@@ -2,7 +2,6 @@ package model.mongo
 
 import model._
 import model.tools.Helper.UntypedExercise
-import model.tools.Tool
 import play.api.libs.json.OFormat
 import play.modules.reactivemongo.{ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.bson.BSONDocument
@@ -25,15 +24,6 @@ class MongoClientQueries @Inject() (override val reactiveMongoApi: ReactiveMongo
     userProficienciesCollection <- futureUserProficienciesCollection
     userProfs <- userProficienciesCollection.find(BSONDocument("username" -> username, "topic.toolId" -> toolId)).cursor[UserProficiency]().collect[Seq]()
   } yield userProfs
-
-  protected def allTopicsWithLevelForTool(username: String, tool: Tool): Future[Seq[TopicWithLevel]] = for {
-    dbUserProficiencies <- userProficienciesForTool(username, tool.id)
-    userProficiencies = dbUserProficiencies
-      .map(up => (up.topic, TopicWithLevel(up.topic, up.getLevel)))
-      .toMap
-    allUserProficiencies = tool.allTopics
-      .map { t => userProficiencies.getOrElse(t, TopicWithLevel(t, Level.Beginner)) }
-  } yield allUserProficiencies
 
   def updateUserProficiency(
     username: String,

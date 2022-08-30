@@ -7,18 +7,17 @@ mutation XmlCorrection($collId: Int!, $exId: Int!, $part: XmlExPart!, $solution:
 }
 
 fragment XmlCorrectionResult on XmlCorrectionResult {
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     ...XmlResult
   }
+  solutionId
+  proficienciesUpdated
 }
 
 fragment XmlResult on XmlResult {
   points
   maxPoints
-  successType
+  # successType
   grammarResult {
     ...XmlGrammarResult
   }
@@ -90,7 +89,6 @@ fragment XmlDocumentResult on XmlDocumentResult {
 }
 
 fragment XmlError on XmlError {
-  success
   line
   errorType
   errorMessage

@@ -68,14 +68,14 @@ object ProgrammingColl7Ex3 extends ProgrammingInitialExerciseContainer(7, 3, "ve
     folderName = exerciseBaseName
   )
 
-  val programmingColl7Ex3 = InitialExercise(
+  val programmingColl7Ex3: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Vektor2D",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Classes, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Strings, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Classes -> Level.Beginner,
+      ProgrammingTopics.Strings -> Level.Beginner,
+      ProgrammingTopics.Maths   -> Level.Beginner
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(

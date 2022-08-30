@@ -16,9 +16,9 @@ object SqlColl2Exes41To50 {
              |Die Datensätze sollen nach dem Nachnamen alphabetisch sortiert werden.""".stripMargin
       .replace("\n", " "),
     difficulty = 3,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.OrderBy, Level.Beginner),
-      TopicWithLevel(SqlTopics.Aggregate, Level.Intermediate)
+    topicsWithLevels = Map(
+      SqlTopics.OrderBy   -> Level.Beginner,
+      SqlTopics.Aggregate -> Level.Intermediate
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -39,8 +39,8 @@ object SqlColl2Exes41To50 {
              |deren Lagerbestand geringer als 40000 ist.""".stripMargin
       .replace("\n", " "),
     difficulty = 2,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.Join, Level.Beginner)
+    topicsWithLevels = Map(
+      SqlTopics.Join -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -66,8 +66,8 @@ object SqlColl2Exes41To50 {
              |Geburtstag: '1990 - 11 - 24 '.
              |Das Passwort und die Adresse soll vorerst leer gelassen werden.""".stripMargin,
     difficulty = 2,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.Insert, Level.Beginner)
+    topicsWithLevels = Map(
+      SqlTopics.Insert -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.INSERT,
@@ -86,8 +86,8 @@ object SqlColl2Exes41To50 {
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Kunden, die nach dem Jahr 1995 geboren wurden.",
     difficulty = 2,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.Delete, Level.Beginner)
+    topicsWithLevels = Map(
+      SqlTopics.Delete -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.DELETE,
@@ -104,8 +104,8 @@ object SqlColl2Exes41To50 {
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Kunden, die noch keine Bestellung abgegeben haben.",
     difficulty = 3,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.SubSelect, Level.Beginner)
+    topicsWithLevels = Map(
+      SqlTopics.SubSelect -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.DELETE,
@@ -123,8 +123,8 @@ object SqlColl2Exes41To50 {
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Bücher, die mehr als 8,50 Euro kosten und die Verlags-ID 7 besitzen.",
     difficulty = 1,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.Delete, Level.Beginner)
+    topicsWithLevels = Map(
+      SqlTopics.Delete -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.DELETE,
@@ -141,8 +141,8 @@ object SqlColl2Exes41To50 {
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Bücher, die vom Autor mit der ID 3 geschrieben wurden.",
     difficulty = 3,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.Delete, Level.Beginner)
+    topicsWithLevels = Map(
+      SqlTopics.Delete -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.DELETE,
@@ -162,8 +162,8 @@ object SqlColl2Exes41To50 {
              |Lagerbestand '289', Preis: '24.99 ').""".stripMargin
       .replace("\n", " "),
     difficulty = 2,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.Insert, Level.Beginner)
+    topicsWithLevels = Map(
+      SqlTopics.Insert -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.INSERT,

@@ -1,7 +1,6 @@
 import {MatchType, SelectAdditionalComparisonFragment, SqlBinaryExpressionMatch, SqlColumnMatch, SqlCorrectionMutationResult} from '../../../graphql';
 import {isEmpty, MatchingResultDisplay} from '../MatchingResultDisplay';
 import {SqlStringMatchingResult} from './SqlStringMatchingResult';
-import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {WithQuery} from '../../../WithQuery';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
 
@@ -32,13 +31,13 @@ function SelectAdditionalComparisonDisplay({addComp}: { addComp: SelectAdditiona
   return (
     <>
       {!isEmpty(orderByComparison) &&
-      <SqlStringMatchingResult matchName="Order Bys" matchSingularName="des Order By-Statements" matchingResult={orderByComparison}/>}
+        <SqlStringMatchingResult matchName="Order Bys" matchSingularName="des Order By-Statements" matchingResult={orderByComparison}/>}
 
       {!isEmpty(groupByComparison) &&
-      <SqlStringMatchingResult matchName="Group Bys" matchSingularName="des Group By-Statements" matchingResult={groupByComparison}/>}
+        <SqlStringMatchingResult matchName="Group Bys" matchSingularName="des Group By-Statements" matchingResult={groupByComparison}/>}
 
       {!isEmpty(limitComparison) &&
-      <SqlStringMatchingResult matchName="Limits" matchSingularName="des Limit-Statements" matchingResult={limitComparison}/>}
+        <SqlStringMatchingResult matchName="Limits" matchSingularName="des Limit-Statements" matchingResult={limitComparison}/>}
     </>
   );
 }
@@ -52,7 +51,6 @@ export function SqlCorrection({mutationResult}: IProps): JSX.Element {
       {({sqlExercise}) => <WithNullableNavigate t={sqlExercise}>
         {({
             correct: {
-              solutionSaved,
               result: {
                 staticComparison: {
                   columnComparison,
@@ -61,12 +59,14 @@ export function SqlCorrection({mutationResult}: IProps): JSX.Element {
                   whereComparison,
                   additionalComparisons: {selectComparisons, insertComparison}
                 }
-              }
-              /* TODO: , resultSaved, proficienciesUpdated */
+              }/*,
+              solutionId,
+              proficienciesUpdated
+              */
             }
           }) => <>
 
-          <SolutionSaved solutionSaved={solutionSaved}/>
+          {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
 
           {/*<PointsNotification points={result.points} maxPoints={result.maxPoints}/>*/}
 

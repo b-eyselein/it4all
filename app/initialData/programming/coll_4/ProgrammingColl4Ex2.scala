@@ -21,15 +21,15 @@ object ProgrammingColl4Ex2 extends ProgrammingInitialExerciseContainer(4, 2, "lo
     folderName = exerciseBaseName
   )
 
-  val programmingColl4Ex2 = InitialExercise(
+  val programmingColl4Ex2: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Längste Zeichenkette",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Conditions, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Lists, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Strings, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.ForLoops   -> Level.Beginner,
+      ProgrammingTopics.Conditions -> Level.Beginner,
+      ProgrammingTopics.Lists      -> Level.Beginner,
+      ProgrammingTopics.Strings    -> Level.Beginner
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(

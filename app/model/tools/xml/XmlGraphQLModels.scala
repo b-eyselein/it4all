@@ -4,7 +4,6 @@ import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
 import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
 import model.matching.MatchType
-import model.result.SuccessType
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -33,7 +32,6 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseC
   private val xmlErrorTypeType: EnumType[XmlErrorType] = deriveEnumType()
 
   private val xmlErrorType: ObjectType[Unit, XmlError] = {
-    implicit val st: EnumType[SuccessType]    = successTypeType
     implicit val xett: EnumType[XmlErrorType] = xmlErrorTypeType
 
     deriveObjectType()
@@ -85,7 +83,6 @@ object XmlGraphQLModels extends ToolGraphQLModelBasics[XmlSolution, XmlExerciseC
   // Abstract result
 
   override val resultType: OutputType[XmlResult] = {
-    implicit val st: EnumType[SuccessType]                 = successTypeType
     implicit val xdrt: ObjectType[Unit, XmlDocumentResult] = xmlDocumentResultType
     implicit val xgrt: ObjectType[Unit, XmlGrammarResult]  = xmlGrammarResultType
 

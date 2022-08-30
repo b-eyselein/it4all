@@ -4,7 +4,6 @@ import better.files.File
 import de.uniwue.dtd.parser.DocTypeDefParser
 import model.core.Levenshtein
 import model.points._
-import model.result.SuccessType
 import model.tools.xml.XmlTool.ElementLineComparison
 import org.xml.sax.{ErrorHandler, SAXException, SAXParseException}
 
@@ -68,7 +67,6 @@ object XmlCorrector {
 
       Success(
         XmlResult(
-          successType = if (xmlErrors.isEmpty) SuccessType.COMPLETE else SuccessType.PARTIALLY,
           // FIXME: points!
           points = (-1).points,
           maxPoints = (-1).points,
@@ -101,21 +99,9 @@ object XmlCorrector {
 
     val matchingResult: ElementLineComparison = DocTypeDefMatcher.doMatch(dtdParseResult.dtd.asElementLines, sampleGrammar.asElementLines)
 
-    val points = addUp(matchingResult.allMatches.map(_.points))
-
-    val maxPoints = addUp(matchingResult.allMatches.map(_.maxPoints))
-
-    val successType: SuccessType = points.quarters.toDouble / maxPoints.quarters match {
-      case it if 0 <= it && it <= 0.5 => SuccessType.NONE
-      case it if 0.5 < it && it < 1   => SuccessType.PARTIALLY
-      case 1                          => SuccessType.COMPLETE
-      case _                          => SuccessType.ERROR
-    }
-
     XmlResult(
-      successType,
-      points,
-      maxPoints,
+      points = addUp(matchingResult.allMatches.map(_.points)),
+      maxPoints = addUp(matchingResult.allMatches.map(_.maxPoints)),
       grammarResult = Some(XmlGrammarResult(dtdParseResult.parseErrors, matchingResult))
     )
   }

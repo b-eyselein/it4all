@@ -25,20 +25,17 @@ case class InitialExercise[EC <: ExerciseContent](
   title: String,
   authors: Seq[String],
   text: String,
-  topicsWithLevels: Seq[TopicWithLevel] = Seq.empty,
+  topicsWithLevels: Map[Topic, Level] = Map.empty,
   difficulty: Int,
   content: EC
 )
 
 final case class InitialCollection[EC <: ExerciseContent](
   title: String,
-  // authors: Seq[String],
   initialExercises: Map[Int, InitialExercise[EC]] = Map.empty
 )
 
 trait InitialData[EC <: ExerciseContent] {
-
-  type InitialEx = InitialExercise[EC]
 
   val initialData: Map[Int, InitialCollection[EC]]
 
@@ -107,7 +104,9 @@ class StartUpService @Inject() (tableDefs: TableDefs)(implicit ec: ExecutionCont
       for {
         _ <- insertInitialCollection(ExerciseCollection(tool.id, collectionId, title))
 
-        _ = initialExercises.foreach { case (exerciseId, InitialExercise(title, authors, text, topicsWithLevels, difficulty, content)) =>
+        _ = initialExercises.foreach { case (exerciseId, InitialExercise(title, authors, text, topicsWithLevelsMap, difficulty, content)) =>
+          val topicsWithLevels = topicsWithLevelsMap.map { case (topic, level) => TopicWithLevel(topic, level) }.toSeq
+
           val exercise = Exercise(exerciseId, collectionId, tool.id, title, authors, text, topicsWithLevels, difficulty, content)
 
           insertInitialExercise(exercise, tool.jsonFormats.exerciseContentFormat)

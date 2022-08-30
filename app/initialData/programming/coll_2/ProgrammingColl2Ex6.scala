@@ -68,14 +68,14 @@ object ProgrammingColl2Ex6 extends ProgrammingInitialExerciseContainer(2, 6, "xm
     folderName = exerciseBaseName
   )
 
-  val programmingColl2Ex6 = InitialExercise(
+  val programmingColl2Ex6: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Weihnachtsbaum",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Strings, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Maths    -> Level.Beginner,
+      ProgrammingTopics.Strings  -> Level.Beginner,
+      ProgrammingTopics.ForLoops -> Level.Beginner
     ),
     difficulty = 3,
     content = ProgrammingExerciseContent(

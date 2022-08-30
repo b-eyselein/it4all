@@ -25,3 +25,4 @@ class TableDefs @Inject() (override protected val dbConfigProvider: DatabaseConf
     with CollectionRepository
     with ExerciseRepository
     with UserSolutionRepository
+    with ProficiencyRepository

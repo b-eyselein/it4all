@@ -18,9 +18,9 @@ enum BinaryClassificationResultType {
 type CollectionTool {
   allExercises: [Exercise!]!
   collection(collId: Int!): ExerciseCollection
-  collectionCount: Long!
+  collectionCount: Int!
   collections: [ExerciseCollection!]!
-  exerciseCount: Long!
+  exerciseCount: Int!
   id: String!
   isBeta: Boolean!
   name: String!
@@ -35,8 +35,7 @@ type DTDParseException {
 type EbnfCorrectionResult {
   proficienciesUpdated: Boolean
   result: EbnfResult!
-  resultSaved: Boolean!
-  solutionSaved: Boolean!
+  solutionId: Int!
 }
 
 enum EbnfExPart {
@@ -117,10 +116,9 @@ type Exercise {
 }
 
 type ExerciseCollection {
-  authors: [String!]!
   collectionId: Int!
   exercise(exId: Int!): Exercise
-  exerciseCount: Long!
+  exerciseCount: Int!
   exercises: [Exercise!]!
   title: String!
   toolId: String!
@@ -151,8 +149,7 @@ input FilesSolutionInput {
 type FlaskCorrectionResult {
   proficienciesUpdated: Boolean
   result: FlaskResult!
-  resultSaved: Boolean!
-  solutionSaved: Boolean!
+  solutionId: Int!
 }
 
 type FlaskExerciseContent {
@@ -280,11 +277,6 @@ type LoginResult {
   username: String!
 }
 
-"""
-The `Long` scalar type represents non-fractional signed whole numeric values. Long can represent values between -(2^63) and 2^63 - 1.
-"""
-scalar Long
-
 enum MatchType {
   PARTIAL_MATCH
   SUCCESSFUL_MATCH
@@ -313,8 +305,7 @@ enum ProgExPart {
 type ProgrammingCorrectionResult {
   proficienciesUpdated: Boolean
   result: ProgrammingResult!
-  resultSaved: Boolean!
-  solutionSaved: Boolean!
+  solutionId: Int!
 }
 
 type ProgrammingExerciseContent {
@@ -353,8 +344,7 @@ interface RegexAbstractResult {
 type RegexCorrectionResult {
   proficienciesUpdated: Boolean
   result: RegexAbstractResult!
-  resultSaved: Boolean!
-  solutionSaved: Boolean!
+  solutionId: Int!
 }
 
 enum RegexCorrectionType {
@@ -483,8 +473,7 @@ type SqlColumnMatch {
 type SqlCorrectionResult {
   proficienciesUpdated: Boolean
   result: SqlResult!
-  resultSaved: Boolean!
-  solutionSaved: Boolean!
+  solutionId: Int!
 }
 
 enum SqlExPart {
@@ -729,8 +718,7 @@ enum UmlClassType {
 type UmlCorrectionResult {
   proficienciesUpdated: Boolean
   result: UmlResult!
-  resultSaved: Boolean!
-  solutionSaved: Boolean!
+  solutionId: Int!
 }
 
 enum UmlExPart {
@@ -881,8 +869,7 @@ type UserProficiency {
 type WebCorrectionResult {
   proficienciesUpdated: Boolean
   result: WebResult!
-  resultSaved: Boolean!
-  solutionSaved: Boolean!
+  solutionId: Int!
 }
 
 enum WebExPart {
@@ -912,8 +899,7 @@ type WebResult {
 type XmlCorrectionResult {
   proficienciesUpdated: Boolean
   result: XmlResult!
-  resultSaved: Boolean!
-  solutionSaved: Boolean!
+  solutionId: Int!
 }
 
 type XmlDocumentResult {
@@ -932,7 +918,6 @@ type XmlError {
   errorMessage: String!
   errorType: XmlErrorType!
   line: Int!
-  success: SuccessType!
 }
 
 enum XmlErrorType {
@@ -966,7 +951,6 @@ type XmlResult {
   grammarResult: XmlGrammarResult
   maxPoints: Float!
   points: Float!
-  successType: SuccessType!
 }
 
 type XmlSolution {

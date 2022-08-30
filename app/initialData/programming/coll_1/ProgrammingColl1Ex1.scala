@@ -2,21 +2,21 @@ package initialData.programming.coll_1
 
 import initialData.InitialData._
 import initialData.InitialExercise
-import initialData.programming.{ProgrammingInitialData, ProgrammingInitialExerciseContainer}
+import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
 import model.tools.programming._
 
 object ProgrammingColl1Ex1 extends ProgrammingInitialExerciseContainer(1, 1, "ggt") {
 
-  val programmingColl1Ex1: ProgrammingInitialData.InitialEx = InitialExercise(
+  val programmingColl1Ex1: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Größter gemeinsamer Teiler",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 2,
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Conditions, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.ForLoops   -> Level.Beginner,
+      ProgrammingTopics.Conditions -> Level.Beginner,
+      ProgrammingTopics.Maths      -> Level.Beginner
     ),
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,

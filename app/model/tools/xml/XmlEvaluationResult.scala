@@ -4,7 +4,6 @@ import de.uniwue.dtd.model._
 import enumeratum.{EnumEntry, PlayEnum}
 import model.matching.{Match, MatchType}
 import model.points._
-import model.result.SuccessType
 import org.xml.sax.SAXParseException
 
 sealed trait XmlEvaluationResult
@@ -27,23 +26,14 @@ object XmlErrorType extends PlayEnum[XmlErrorType] {
 
 object XmlError {
 
-  def fromSAXParseException(errorType: XmlErrorType, e: SAXParseException): XmlError = XmlError(
-    errorType,
-    e.getMessage,
-    e.getLineNumber,
-    errorType match {
-      case XmlErrorType.WARNING => SuccessType.PARTIALLY
-      case _                    => SuccessType.NONE
-    }
-  )
+  def fromSAXParseException(errorType: XmlErrorType, e: SAXParseException): XmlError = XmlError(errorType, e.getMessage, e.getLineNumber)
 
 }
 
 final case class XmlError(
   errorType: XmlErrorType,
   errorMessage: String,
-  line: Int,
-  success: SuccessType
+  line: Int
 ) extends XmlEvaluationResult
 
 // Grammar
@@ -64,15 +54,6 @@ final case class ElementLineMatch(
     with XmlEvaluationResult {
 
   import ElementLineMatch._
-
-  //  override protected def descArgForJson(arg: ElementLine): JsValue = Json.obj(nameName -> arg.elementName)
-
-  // override
-  def success: SuccessType = if (matchType == MatchType.SUCCESSFUL_MATCH) {
-    SuccessType.COMPLETE
-  } else {
-    SuccessType.NONE
-  }
 
   override def maxPoints: Points = pointsForElement + pointsForElementLine(sampleArg)
 

@@ -7,13 +7,11 @@ mutation ProgrammingCorrection($collId: Int!, $exId: Int!, $part: ProgExPart!, $
 }
 
 fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
-  __typename
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     ...ProgrammingResult
   }
+  solutionId
+  proficienciesUpdated
 }
 
 fragment ProgrammingResult on ProgrammingResult {

@@ -46,16 +46,16 @@ object ProgrammingColl5Ex2 extends ProgrammingInitialExerciseContainer(5, 2, "di
     folderName = exerciseBaseName
   )
 
-  val programmingColl5Ex2 = InitialExercise(
+  val programmingColl5Ex2: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Dictionaries",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Strings, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Conditions, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Lists, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Strings    -> Level.Beginner,
+      ProgrammingTopics.ForLoops   -> Level.Beginner,
+      ProgrammingTopics.Conditions -> Level.Beginner,
+      ProgrammingTopics.Maths      -> Level.Beginner,
+      ProgrammingTopics.Lists      -> Level.Beginner
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(

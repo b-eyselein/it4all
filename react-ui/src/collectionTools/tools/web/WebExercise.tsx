@@ -2,7 +2,6 @@ import {ConcreteExerciseIProps} from '../../Exercise';
 import {FilesSolutionInput, useWebCorrectionMutation, WebExerciseContentFragment, WebExPart} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
-import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import {HtmlTaskResultDisplay} from './HtmlTaskResultDisplay';
 import {JsTaskResultDisplay} from './JsTaskResultDisplay';
@@ -45,8 +44,8 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
   const correctionTabRender = (
     <WithQuery query={correctionMutationResult}>
       {({webExercise}) => <WithNullableNavigate t={webExercise}>
-        {({correct: {solutionSaved,/*proficienciesUpdated,resultSaved,*/result}}) => <>
-          <SolutionSaved solutionSaved={solutionSaved}/>
+        {({correct: {result/*, solutionId, proficienciesUpdated*/}}) => <>
+          {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
 
           <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 

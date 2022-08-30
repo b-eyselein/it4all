@@ -71,8 +71,8 @@ object ProgrammingColl6Ex1 extends ProgrammingInitialExerciseContainer(6, 1, "te
     title = "Temperaturen",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Maths -> Level.Beginner
     ),
     difficulty = 1,
     content = ProgrammingExerciseContent(

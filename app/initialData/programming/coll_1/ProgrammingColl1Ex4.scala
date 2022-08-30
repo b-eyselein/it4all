@@ -2,7 +2,7 @@ package initialData.programming.coll_1
 
 import initialData.InitialData._
 import initialData.InitialExercise
-import initialData.programming.{ProgrammingInitialData, ProgrammingInitialExerciseContainer}
+import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
 import model.tools.programming._
 
@@ -24,13 +24,13 @@ object ProgrammingColl1Ex4 extends ProgrammingInitialExerciseContainer(1, 4, "fi
     folderName = exerciseBaseName
   )
 
-  val programmingColl1Ex4: ProgrammingInitialData.InitialEx = InitialExercise(
+  val programmingColl1Ex4: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Fibonacci",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Exceptions, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Recursion, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Exceptions -> Level.Beginner,
+      ProgrammingTopics.Recursion  -> Level.Beginner
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(

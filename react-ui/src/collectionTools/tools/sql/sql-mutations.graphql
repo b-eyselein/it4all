@@ -7,12 +7,11 @@ mutation SqlCorrection($collectionId: Int!, $exerciseId: Int!, $part: SqlExPart!
 }
 
 fragment SqlCorrectionResult on SqlCorrectionResult {
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     ...SqlResult
   }
+  solutionId
+  proficienciesUpdated
 }
 
 # Select additional comparisons

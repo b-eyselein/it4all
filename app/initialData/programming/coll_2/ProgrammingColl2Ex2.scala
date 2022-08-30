@@ -4,7 +4,6 @@ import initialData.InitialData._
 import initialData.InitialExercise
 import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
-import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import model.tools.programming._
 
 object ProgrammingColl2Ex2 extends ProgrammingInitialExerciseContainer(2, 2, "floating_point_exponential") {
@@ -27,13 +26,13 @@ object ProgrammingColl2Ex2 extends ProgrammingInitialExerciseContainer(2, 2, "fl
     folderName = exerciseBaseName
   )
 
-  val programmingColl2Ex2 = InitialExercise(
+  val programmingColl2Ex2: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Fließkommazahl in Exponentialschreibweise",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Strings, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Strings -> Level.Beginner,
+      ProgrammingTopics.Maths   -> Level.Beginner
     ),
     difficulty = 1,
     content = ProgrammingExerciseContent(

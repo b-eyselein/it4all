@@ -29,15 +29,15 @@ object ProgrammingColl2Ex4 extends ProgrammingInitialExerciseContainer(2, 4, "na
     folderName = exerciseBaseName
   )
 
-  val programmingColl2Ex4 = InitialExercise(
+  val programmingColl2Ex4: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Namenssuche",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Strings, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Lists, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Tuples, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Strings  -> Level.Beginner,
+      ProgrammingTopics.Lists    -> Level.Beginner,
+      ProgrammingTopics.Tuples   -> Level.Beginner,
+      ProgrammingTopics.ForLoops -> Level.Beginner
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(

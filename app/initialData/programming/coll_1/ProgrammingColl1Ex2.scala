@@ -2,7 +2,7 @@ package initialData.programming.coll_1
 
 import initialData.InitialData._
 import initialData.InitialExercise
-import initialData.programming.{ProgrammingInitialData, ProgrammingInitialExerciseContainer}
+import initialData.programming.ProgrammingInitialExerciseContainer
 import model._
 import model.tools.programming._
 
@@ -31,15 +31,15 @@ object ProgrammingColl1Ex2 extends ProgrammingInitialExerciseContainer(1, 2, "fa
     folderName = exerciseBaseName
   )
 
-  val programmingColl1Ex2: ProgrammingInitialData.InitialEx = InitialExercise(
+  val programmingColl1Ex2: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Fakultät",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
     difficulty = 1,
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Exceptions, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Exceptions -> Level.Beginner,
+      ProgrammingTopics.Maths      -> Level.Beginner,
+      ProgrammingTopics.ForLoops   -> Level.Beginner
     ),
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,

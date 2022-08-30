@@ -53,7 +53,7 @@ trait UserSolutionRepository {
   ): Future[Int] = for {
     nextUserSolutionId <- futureNextUserSolutionId(toolId, collectionId, exerciseId, username, part.id)
 
-    inserted <- db.run(
+    _ <- db.run(
       userSolutionTQ += DbUserSolution(
         toolId,
         collectionId,

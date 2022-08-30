@@ -32,13 +32,13 @@ object ProgrammingColl3Ex3 extends ProgrammingInitialExerciseContainer(3, 3, "gr
     folderName = exerciseBaseName
   )
 
-  val programmingColl3Ex3 = InitialExercise(
+  val programmingColl3Ex3: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Grußformel",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Conditions, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Strings, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Conditions -> Level.Beginner,
+      ProgrammingTopics.Strings    -> Level.Beginner
     ),
     difficulty = 1,
     content = ProgrammingExerciseContent(

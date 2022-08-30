@@ -1,6 +1,5 @@
 import {MatchType, UmlCorrectionMutation, UmlImplementationMatchFragment} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
-import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {UmlAssocMatchResult} from './UmlAssocMatchResult';
 import {MatchingResultDisplay} from '../MatchingResultDisplay';
 import {UmlClassMatchResult} from './UmlClassMatchingResult';
@@ -37,13 +36,13 @@ export function UmlDiagramDrawingCorrectionTabContent({corrResult}: IProps): JSX
     return <div className="notification is-danger has-text-centered">{t('errorWhileCorrecting')}</div>;
   }
 
-  const {solutionSaved, /*proficienciesUpdated, resultSaved,*/ result} = corrResult.umlExercise.correct;
+  const {result/*,solutionId,proficienciesUpdated*/} = corrResult.umlExercise.correct;
 
   const {implResult, classResult, assocResult/*, points, maxPoints*/} = result;
 
   return (
     <>
-      <SolutionSaved solutionSaved={solutionSaved}/>
+      {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
 
       {/*<PointsNotification points={points} maxPoints={maxPoints}/>*/}
 

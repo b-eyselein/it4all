@@ -1,6 +1,5 @@
 import {RegexCorrectionMutationResult} from '../../../graphql';
 import {WithQuery} from '../../../WithQuery';
-import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import {RegexExtractionResultDisplay} from './RegexExtractionResultDisplay';
 import {RegexMatchingResultDisplay} from './RegexMatchingResultDisplay';
@@ -17,9 +16,9 @@ export function RegexCorrection({mutationResult}: IProps): JSX.Element {
   return (
     <WithQuery query={mutationResult}>
       {({regexExercise}) => <WithNullableNavigate t={regexExercise}>
-        {({correct: {solutionSaved, result/* TODO:, resultSaved, proficienciesUpdated*/}}) => <>
+        {({correct: {result/*,solutionId,proficienciesUpdated*/}}) => <>
 
-          <SolutionSaved solutionSaved={solutionSaved}/>
+          {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
 
           <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 

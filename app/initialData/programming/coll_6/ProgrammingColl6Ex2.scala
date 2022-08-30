@@ -47,12 +47,12 @@ object ProgrammingColl6Ex2 extends ProgrammingInitialExerciseContainer(6, 2, "di
     folderName = exerciseBaseName
   )
 
-  val programmingColl6Ex2 = InitialExercise(
+  val programmingColl6Ex2: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Längen",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Maths -> Level.Beginner
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(

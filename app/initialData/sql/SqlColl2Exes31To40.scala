@@ -15,8 +15,8 @@ object SqlColl2Exes31To40 {
              |Ordnen Sie die Einträge nach Erscheinungsjahr abwärts.""".stripMargin
       .replace("\n", " "),
     difficulty = 3,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.OrderBy, Level.Beginner)
+    topicsWithLevels = Map(
+      SqlTopics.OrderBy -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -49,9 +49,9 @@ object SqlColl2Exes31To40 {
              |weniger als fünf Euro gekostet haben. Geben Sie das Ergebnis unter dem Spaltenname 'Anzahl' aus.""".stripMargin
       .replace("\n", " "),
     difficulty = 2,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.Aggregate, Level.Beginner),
-      TopicWithLevel(SqlTopics.Alias, Level.Beginner)
+    topicsWithLevels = Map(
+      SqlTopics.Aggregate -> Level.Beginner,
+      SqlTopics.Alias -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -75,10 +75,10 @@ object SqlColl2Exes31To40 {
              |Benennen Sie die Spalte des kumulierten Bestandes 'stock_sum' (ohne Anführungszeichen).""".stripMargin
       .replace("\n", " "),
     difficulty = 3,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.Aggregate, Level.Intermediate),
-      TopicWithLevel(SqlTopics.GroupBy, Level.Beginner),
-      TopicWithLevel(SqlTopics.OrderBy, Level.Intermediate)
+    topicsWithLevels = Map(
+      SqlTopics.Aggregate -> Level.Intermediate,
+      SqlTopics.GroupBy -> Level.Beginner,
+      SqlTopics.OrderBy -> Level.Intermediate
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -117,9 +117,9 @@ object SqlColl2Exes31To40 {
     authors = Seq("bje40dc"),
     text = """Geben Sie den Vornamen, Nachnamen und Geburtstag des jüngsten Kunden aus.""",
     difficulty = 2,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.OrderBy, Level.Intermediate),
-      TopicWithLevel(SqlTopics.Limit, Level.Beginner)
+    topicsWithLevels = Map(
+      SqlTopics.OrderBy -> Level.Intermediate,
+      SqlTopics.Limit -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -164,12 +164,12 @@ object SqlColl2Exes31To40 {
     text = """Ermitteln Sie den Kunden, welcher die höchste durchschnittliche Bewertung abgegeben hat.
              |Geben Sie dazu Vorname, Nachname und seine durchschnittliche Bewertung (Spaltenbezeichnung 'avg_rating') aus.""".stripMargin,
     difficulty = 3,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.Join, Level.Beginner),
-      TopicWithLevel(SqlTopics.Aggregate, Level.Intermediate),
-      TopicWithLevel(SqlTopics.GroupBy, Level.Beginner),
-      TopicWithLevel(SqlTopics.OrderBy, Level.Intermediate),
-      TopicWithLevel(SqlTopics.Limit, Level.Beginner)
+    topicsWithLevels = Map(
+      SqlTopics.Join -> Level.Beginner,
+      SqlTopics.Aggregate -> Level.Intermediate,
+      SqlTopics.GroupBy -> Level.Beginner,
+      SqlTopics.OrderBy -> Level.Intermediate,
+      SqlTopics.Limit -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -211,12 +211,12 @@ object SqlColl2Exes31To40 {
              |Sortieren Sie die Einträge aufwärts nach Einkaufswert.""".stripMargin
       .replace("\n", " "),
     difficulty = 4,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.Aggregate, Level.Intermediate),
-      TopicWithLevel(SqlTopics.Alias, Level.Beginner),
-      TopicWithLevel(SqlTopics.Join, Level.Advanced),
-      TopicWithLevel(SqlTopics.GroupBy, Level.Intermediate),
-      TopicWithLevel(SqlTopics.OrderBy, Level.Intermediate)
+    topicsWithLevels = Map(
+      SqlTopics.Aggregate -> Level.Intermediate,
+      SqlTopics.Alias -> Level.Beginner,
+      SqlTopics.Join -> Level.Advanced,
+      SqlTopics.GroupBy -> Level.Intermediate,
+      SqlTopics.OrderBy -> Level.Intermediate
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -295,8 +295,8 @@ object SqlColl2Exes31To40 {
     text = """Es sind neue Exemplare des Buches mit dem Titel 1894 eingetroffen.
              |Aktualisieren Sie den Bestand auf den neuen Wert von 500.""".stripMargin.replace("\n", " "),
     difficulty = 1,
-    topicsWithLevels = Seq(
-      TopicWithLevel(SqlTopics.Update, Level.Intermediate)
+    topicsWithLevels = Map(
+      SqlTopics.Update -> Level.Intermediate
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.UPDATE,

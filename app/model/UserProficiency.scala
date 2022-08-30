@@ -55,3 +55,16 @@ final case class UserProficiency(
   }
 
 }
+
+trait ProficiencyRepository {
+  self: play.api.db.slick.HasDatabaseConfig[slick.jdbc.JdbcProfile] =>
+
+  import profile.api._
+
+  private class ProficienciesTable(tag: Tag) extends Table[UserProficiency](tag, "user_proficiencies") {
+
+    override def * = ???
+
+  }
+
+}

@@ -20,14 +20,14 @@ object ProgrammingColl2Ex8 extends ProgrammingInitialExerciseContainer(2, 8, "ce
     folderName = exerciseBaseName
   )
 
-  val programmingColl2Ex8 = InitialExercise(
+  val programmingColl2Ex8: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Caesar-Verschlüsselung",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Strings, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Conditions, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Maths      -> Level.Beginner,
+      ProgrammingTopics.Strings    -> Level.Beginner,
+      ProgrammingTopics.Conditions -> Level.Beginner
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(

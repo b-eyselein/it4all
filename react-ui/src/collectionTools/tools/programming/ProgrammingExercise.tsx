@@ -38,8 +38,8 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
   const correctionTabRender = (
     <WithQuery query={correctionMutationResult}>
       {({programmingExercise}) => <WithNullableNavigate t={programmingExercise}>
-        {({correct: {solutionSaved, /*proficienciesUpdated, resultSaved,*/ result}}) => <>
-          <SolutionSaved solutionSaved={solutionSaved}/>
+        {({correct: {result/*, solutionId, proficienciesUpdated*/}}) => <>
+          {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
 
           {/*<PointsNotification points={result.points} maxPoints={result.maxPoints}/>*/}
 

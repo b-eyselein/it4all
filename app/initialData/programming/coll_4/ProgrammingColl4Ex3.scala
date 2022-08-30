@@ -79,15 +79,15 @@ object ProgrammingColl4Ex3 extends ProgrammingInitialExerciseContainer(4, 3, "ge
     folderName = exerciseBaseName
   )
 
-  val programmingColl4Ex3 = InitialExercise(
+  val programmingColl4Ex3: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Allgemeine Aufgaben",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Lists, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Conditions, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Lists      -> Level.Beginner,
+      ProgrammingTopics.ForLoops   -> Level.Beginner,
+      ProgrammingTopics.Maths      -> Level.Beginner,
+      ProgrammingTopics.Conditions -> Level.Beginner
     ),
     difficulty = 3,
     content = ProgrammingExerciseContent(

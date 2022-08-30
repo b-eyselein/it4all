@@ -22,13 +22,13 @@ object ProgrammingColl4Ex1 extends ProgrammingInitialExerciseContainer(4, 1, "av
     folderName = exerciseBaseName
   )
 
-  val programmingColl4Ex1 = InitialExercise(
+  val programmingColl4Ex1: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Durchschnitt",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.ForLoops -> Level.Beginner,
+      ProgrammingTopics.Maths    -> Level.Beginner
     ),
     difficulty = 2,
     content = ProgrammingExerciseContent(

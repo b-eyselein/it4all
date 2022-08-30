@@ -7,9 +7,6 @@ mutation RegexCorrection($collectionId: Int!, $exerciseId: Int!, $part: RegexExP
 }
 
 fragment RegexCorrectionResult on RegexCorrectionResult {
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     __typename
     points
@@ -17,6 +14,8 @@ fragment RegexCorrectionResult on RegexCorrectionResult {
     ...RegexMatchingResult
     ...RegexExtractionResult
   }
+  solutionId
+  proficienciesUpdated
 }
 
 fragment RegexMatchingSingleResult on RegexMatchingSingleResult {

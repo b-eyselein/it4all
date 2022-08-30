@@ -34,14 +34,14 @@ object ProgrammingColl5Ex4 extends ProgrammingInitialExerciseContainer(5, 4, "re
     folderName = exerciseBaseName
   )
 
-  val programmingColl5Ex4 = InitialExercise(
+  val programmingColl5Ex4: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "Fitnessprogramm",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Dicts, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Maths, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Dicts    -> Level.Beginner,
+      ProgrammingTopics.Maths    -> Level.Beginner,
+      ProgrammingTopics.ForLoops -> Level.Beginner
     ),
     difficulty = 3,
     content = ProgrammingExerciseContent(

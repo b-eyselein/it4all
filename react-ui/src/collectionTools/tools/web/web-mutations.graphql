@@ -7,12 +7,11 @@ mutation WebCorrection($collId: Int!, $exId: Int!, $part: WebExPart!, $solution:
 }
 
 fragment WebCorrectionResult on WebCorrectionResult {
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     ...WebResult
   }
+  solutionId
+  proficienciesUpdated
 }
 
 fragment WebResult on WebResult {

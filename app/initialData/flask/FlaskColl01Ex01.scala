@@ -60,7 +60,7 @@ object FlaskColl01Ex01 extends FlaskInitialExerciseContainer(1, 1) {
     )
   )
 
-  val flaskColl01Ex01: FlaskInitialData.InitialEx = InitialExercise(
+  val flaskColl01Ex01: InitialExercise[FlaskExerciseContent] = InitialExercise(
     title = "Testaufgabe Login",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),

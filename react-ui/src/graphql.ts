@@ -13,7 +13,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Long: any;
 };
 
 export type AdditionalComparison = {
@@ -39,9 +38,9 @@ export type CollectionTool = {
   __typename?: 'CollectionTool';
   allExercises: Array<Exercise>;
   collection?: Maybe<ExerciseCollection>;
-  collectionCount: Scalars['Long'];
+  collectionCount: Scalars['Int'];
   collections: Array<ExerciseCollection>;
-  exerciseCount: Scalars['Long'];
+  exerciseCount: Scalars['Int'];
   id: Scalars['String'];
   isBeta: Scalars['Boolean'];
   name: Scalars['String'];
@@ -63,8 +62,7 @@ export type EbnfCorrectionResult = {
   __typename?: 'EbnfCorrectionResult';
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: EbnfResult;
-  resultSaved: Scalars['Boolean'];
-  solutionSaved: Scalars['Boolean'];
+  solutionId: Scalars['Int'];
 };
 
 export enum EbnfExPart {
@@ -162,10 +160,9 @@ export type Exercise = {
 
 export type ExerciseCollection = {
   __typename?: 'ExerciseCollection';
-  authors: Array<Scalars['String']>;
   collectionId: Scalars['Int'];
   exercise?: Maybe<Exercise>;
-  exerciseCount: Scalars['Long'];
+  exerciseCount: Scalars['Int'];
   exercises: Array<Exercise>;
   title: Scalars['String'];
   toolId: Scalars['String'];
@@ -204,8 +201,7 @@ export type FlaskCorrectionResult = {
   __typename?: 'FlaskCorrectionResult';
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: FlaskResult;
-  resultSaved: Scalars['Boolean'];
-  solutionSaved: Scalars['Boolean'];
+  solutionId: Scalars['Int'];
 };
 
 export type FlaskExerciseContent = {
@@ -450,8 +446,7 @@ export type ProgrammingCorrectionResult = {
   __typename?: 'ProgrammingCorrectionResult';
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: ProgrammingResult;
-  resultSaved: Scalars['Boolean'];
-  solutionSaved: Scalars['Boolean'];
+  solutionId: Scalars['Int'];
 };
 
 export type ProgrammingExerciseContent = {
@@ -506,8 +501,7 @@ export type RegexCorrectionResult = {
   __typename?: 'RegexCorrectionResult';
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: RegexAbstractResult;
-  resultSaved: Scalars['Boolean'];
-  solutionSaved: Scalars['Boolean'];
+  solutionId: Scalars['Int'];
 };
 
 export enum RegexCorrectionType {
@@ -660,8 +654,7 @@ export type SqlCorrectionResult = {
   __typename?: 'SqlCorrectionResult';
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: SqlResult;
-  resultSaved: Scalars['Boolean'];
-  solutionSaved: Scalars['Boolean'];
+  solutionId: Scalars['Int'];
 };
 
 export enum SqlExPart {
@@ -938,8 +931,7 @@ export type UmlCorrectionResult = {
   __typename?: 'UmlCorrectionResult';
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: UmlResult;
-  resultSaved: Scalars['Boolean'];
-  solutionSaved: Scalars['Boolean'];
+  solutionId: Scalars['Int'];
 };
 
 export enum UmlExPart {
@@ -1111,8 +1103,7 @@ export type WebCorrectionResult = {
   __typename?: 'WebCorrectionResult';
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: WebResult;
-  resultSaved: Scalars['Boolean'];
-  solutionSaved: Scalars['Boolean'];
+  solutionId: Scalars['Int'];
 };
 
 export enum WebExPart {
@@ -1152,8 +1143,7 @@ export type XmlCorrectionResult = {
   __typename?: 'XmlCorrectionResult';
   proficienciesUpdated?: Maybe<Scalars['Boolean']>;
   result: XmlResult;
-  resultSaved: Scalars['Boolean'];
-  solutionSaved: Scalars['Boolean'];
+  solutionId: Scalars['Int'];
 };
 
 export type XmlDocumentResult = {
@@ -1175,7 +1165,6 @@ export type XmlError = {
   errorMessage: Scalars['String'];
   errorType: XmlErrorType;
   line: Scalars['Int'];
-  success: SuccessType;
 };
 
 export enum XmlErrorType {
@@ -1219,7 +1208,6 @@ export type XmlResult = {
   grammarResult?: Maybe<XmlGrammarResult>;
   maxPoints: Scalars['Float'];
   points: Scalars['Float'];
-  successType: SuccessType;
 };
 
 export type XmlSolution = {
@@ -1240,7 +1228,7 @@ export type EbnfCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type EbnfCorrectionMutation = { __typename?: 'Mutation', ebnfExercise?: { __typename?: 'EbnfExerciseMutations', correct: { __typename?: 'EbnfCorrectionResult', solutionSaved: boolean, proficienciesUpdated?: boolean | null, resultSaved: boolean, result: { __typename?: 'EbnfResult', x: string } } } | null };
+export type EbnfCorrectionMutation = { __typename?: 'Mutation', ebnfExercise?: { __typename?: 'EbnfExerciseMutations', correct: { __typename?: 'EbnfCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'EbnfResult', x: string } } } | null };
 
 export type FlaskCorrectionMutationVariables = Exact<{
   collId: Scalars['Int'];
@@ -1250,9 +1238,9 @@ export type FlaskCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type FlaskCorrectionMutation = { __typename?: 'Mutation', flaskExercise?: { __typename?: 'FlaskExerciseMutations', correct: { __typename?: 'FlaskCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'FlaskResult', points: number, maxPoints: number, testResults: Array<{ __typename?: 'FlaskTestResult', testName: string, successful: boolean, stdout: Array<string>, stderr: Array<string> }> } } } | null };
+export type FlaskCorrectionMutation = { __typename?: 'Mutation', flaskExercise?: { __typename?: 'FlaskExerciseMutations', correct: { __typename?: 'FlaskCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'FlaskResult', points: number, maxPoints: number, testResults: Array<{ __typename?: 'FlaskTestResult', testName: string, successful: boolean, stdout: Array<string>, stderr: Array<string> }> } } } | null };
 
-export type FlaskCorrectionResultFragment = { __typename?: 'FlaskCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'FlaskResult', points: number, maxPoints: number, testResults: Array<{ __typename?: 'FlaskTestResult', testName: string, successful: boolean, stdout: Array<string>, stderr: Array<string> }> } };
+export type FlaskCorrectionResultFragment = { __typename?: 'FlaskCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'FlaskResult', points: number, maxPoints: number, testResults: Array<{ __typename?: 'FlaskTestResult', testName: string, successful: boolean, stdout: Array<string>, stderr: Array<string> }> } };
 
 export type FlaskResultFragment = { __typename?: 'FlaskResult', points: number, maxPoints: number, testResults: Array<{ __typename?: 'FlaskTestResult', testName: string, successful: boolean, stdout: Array<string>, stderr: Array<string> }> };
 
@@ -1266,9 +1254,9 @@ export type ProgrammingCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type ProgrammingCorrectionMutation = { __typename?: 'Mutation', programmingExercise?: { __typename?: 'ProgrammingExerciseMutations', correct: { __typename: 'ProgrammingCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'ProgrammingResult', points: number, maxPoints: number, implementationCorrectionResult?: { __typename?: 'ImplementationCorrectionResult', successful: boolean, stdout: Array<string>, stderr: Array<string> } | null, unitTestResults: Array<{ __typename?: 'UnitTestCorrectionResult', testId: number, successful: boolean, shouldFail: boolean, description: string, stderr: Array<string> }> } } } | null };
+export type ProgrammingCorrectionMutation = { __typename?: 'Mutation', programmingExercise?: { __typename?: 'ProgrammingExerciseMutations', correct: { __typename?: 'ProgrammingCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'ProgrammingResult', points: number, maxPoints: number, implementationCorrectionResult?: { __typename?: 'ImplementationCorrectionResult', successful: boolean, stdout: Array<string>, stderr: Array<string> } | null, unitTestResults: Array<{ __typename?: 'UnitTestCorrectionResult', testId: number, successful: boolean, shouldFail: boolean, description: string, stderr: Array<string> }> } } } | null };
 
-export type ProgrammingCorrectionResultFragment = { __typename: 'ProgrammingCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'ProgrammingResult', points: number, maxPoints: number, implementationCorrectionResult?: { __typename?: 'ImplementationCorrectionResult', successful: boolean, stdout: Array<string>, stderr: Array<string> } | null, unitTestResults: Array<{ __typename?: 'UnitTestCorrectionResult', testId: number, successful: boolean, shouldFail: boolean, description: string, stderr: Array<string> }> } };
+export type ProgrammingCorrectionResultFragment = { __typename?: 'ProgrammingCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'ProgrammingResult', points: number, maxPoints: number, implementationCorrectionResult?: { __typename?: 'ImplementationCorrectionResult', successful: boolean, stdout: Array<string>, stderr: Array<string> } | null, unitTestResults: Array<{ __typename?: 'UnitTestCorrectionResult', testId: number, successful: boolean, shouldFail: boolean, description: string, stderr: Array<string> }> } };
 
 export type ProgrammingResultFragment = { __typename?: 'ProgrammingResult', points: number, maxPoints: number, implementationCorrectionResult?: { __typename?: 'ImplementationCorrectionResult', successful: boolean, stdout: Array<string>, stderr: Array<string> } | null, unitTestResults: Array<{ __typename?: 'UnitTestCorrectionResult', testId: number, successful: boolean, shouldFail: boolean, description: string, stderr: Array<string> }> };
 
@@ -1284,9 +1272,9 @@ export type RegexCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type RegexCorrectionMutation = { __typename?: 'Mutation', regexExercise?: { __typename?: 'RegexExerciseMutations', correct: { __typename?: 'RegexCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename: 'RegexExtractionResult', points: number, maxPoints: number, extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg: string, sampleArg: string }> } }> } | { __typename: 'RegexMatchingResult', points: number, maxPoints: number, matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> } } } | null };
+export type RegexCorrectionMutation = { __typename?: 'Mutation', regexExercise?: { __typename?: 'RegexExerciseMutations', correct: { __typename?: 'RegexCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename: 'RegexExtractionResult', points: number, maxPoints: number, extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg: string, sampleArg: string }> } }> } | { __typename: 'RegexMatchingResult', points: number, maxPoints: number, matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> } } } | null };
 
-export type RegexCorrectionResultFragment = { __typename?: 'RegexCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename: 'RegexExtractionResult', points: number, maxPoints: number, extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg: string, sampleArg: string }> } }> } | { __typename: 'RegexMatchingResult', points: number, maxPoints: number, matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> } };
+export type RegexCorrectionResultFragment = { __typename?: 'RegexCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename: 'RegexExtractionResult', points: number, maxPoints: number, extractionResults: Array<{ __typename?: 'RegexExtractionSingleResult', base: string, extractionMatchingResult: { __typename?: 'RegexExtractedValuesComparisonMatchingResult', notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, points: number, maxPoints: number, allMatches: Array<{ __typename?: 'RegexMatchMatch', matchType: MatchType, userArg: string, sampleArg: string }> } }> } | { __typename: 'RegexMatchingResult', points: number, maxPoints: number, matchingResults: Array<{ __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string }> } };
 
 export type RegexMatchingSingleResultFragment = { __typename?: 'RegexMatchingSingleResult', resultType: BinaryClassificationResultType, matchData: string };
 
@@ -1308,9 +1296,9 @@ export type SqlCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type SqlCorrectionMutation = { __typename?: 'Mutation', sqlExercise?: { __typename?: 'SqlExerciseMutations', correct: { __typename?: 'SqlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: { __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, limitComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } } | null, insertComparison?: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } | null } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: { __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> } | null, sampleResult?: { __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> } | null } } } } | null };
+export type SqlCorrectionMutation = { __typename?: 'Mutation', sqlExercise?: { __typename?: 'SqlExerciseMutations', correct: { __typename?: 'SqlCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: { __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, limitComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } } | null, insertComparison?: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } | null } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: { __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> } | null, sampleResult?: { __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> } | null } } } } | null };
 
-export type SqlCorrectionResultFragment = { __typename?: 'SqlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: { __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, limitComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } } | null, insertComparison?: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } | null } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: { __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> } | null, sampleResult?: { __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> } | null } } };
+export type SqlCorrectionResultFragment = { __typename?: 'SqlCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'SqlResult', points: number, maxPoints: number, staticComparison: { __typename?: 'SqlQueriesStaticComparison', columnComparison: { __typename?: 'SqlColumnComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlColumnMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, tableComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, joinExpressionComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, whereComparison: { __typename?: 'SqlBinaryExpressionComparisonMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'SqlBinaryExpressionMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, additionalComparisons: { __typename?: 'AdditionalComparison', selectComparisons?: { __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, limitComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } } | null, insertComparison?: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } | null } }, executionResult: { __typename?: 'SqlExecutionResult', userResult?: { __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> } | null, sampleResult?: { __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> } | null } } };
 
 export type SelectAdditionalComparisonFragment = { __typename?: 'SelectAdditionalComparisons', groupByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, orderByComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> }, limitComparison: { __typename?: 'StringMatchingResult', points: number, maxPoints: number, notMatchedForUser: Array<string>, notMatchedForSample: Array<string>, allMatches: Array<{ __typename?: 'StringMatch', matchType: MatchType, userArg: string, sampleArg: string }> } };
 
@@ -1346,9 +1334,9 @@ export type UmlCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type UmlCorrectionMutation = { __typename?: 'Mutation', umlExercise?: { __typename?: 'UmlExerciseMutations', correct: { __typename?: 'UmlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'UmlResult', points: number, maxPoints: number, classResult?: { __typename?: 'UmlClassMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlClassMatch', matchType: MatchType, userArg: { __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }, sampleArg: { __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }, analysisResult: { __typename: 'UmlClassMatchAnalysisResult' } }>, notMatchedForUser: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }>, notMatchedForSample: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }> } | null, assocResult?: { __typename?: 'UmlAssociationMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlAssociationMatch', matchType: MatchType, userArg: { __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }, sampleArg: { __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }, analysisResult: { __typename?: 'UmlAssociationAnalysisResult', assocTypeEqual: boolean, correctAssocType: UmlAssociationType, multiplicitiesEqual: boolean } }>, notMatchedForUser: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, notMatchedForSample: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }> } | null, implResult?: { __typename?: 'UmlImplementationMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlImplementationMatch', matchType: MatchType, userArg: { __typename?: 'UmlImplementation', subClass: string, superClass: string }, sampleArg: { __typename?: 'UmlImplementation', subClass: string, superClass: string } }>, notMatchedForUser: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }>, notMatchedForSample: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> } | null } } } | null };
+export type UmlCorrectionMutation = { __typename?: 'Mutation', umlExercise?: { __typename?: 'UmlExerciseMutations', correct: { __typename?: 'UmlCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'UmlResult', points: number, maxPoints: number, classResult?: { __typename?: 'UmlClassMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlClassMatch', matchType: MatchType, userArg: { __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }, sampleArg: { __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }, analysisResult: { __typename: 'UmlClassMatchAnalysisResult' } }>, notMatchedForUser: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }>, notMatchedForSample: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }> } | null, assocResult?: { __typename?: 'UmlAssociationMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlAssociationMatch', matchType: MatchType, userArg: { __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }, sampleArg: { __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }, analysisResult: { __typename?: 'UmlAssociationAnalysisResult', assocTypeEqual: boolean, correctAssocType: UmlAssociationType, multiplicitiesEqual: boolean } }>, notMatchedForUser: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, notMatchedForSample: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }> } | null, implResult?: { __typename?: 'UmlImplementationMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlImplementationMatch', matchType: MatchType, userArg: { __typename?: 'UmlImplementation', subClass: string, superClass: string }, sampleArg: { __typename?: 'UmlImplementation', subClass: string, superClass: string } }>, notMatchedForUser: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }>, notMatchedForSample: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> } | null } } } | null };
 
-export type UmlCorrectionResultFragment = { __typename?: 'UmlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'UmlResult', points: number, maxPoints: number, classResult?: { __typename?: 'UmlClassMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlClassMatch', matchType: MatchType, userArg: { __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }, sampleArg: { __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }, analysisResult: { __typename: 'UmlClassMatchAnalysisResult' } }>, notMatchedForUser: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }>, notMatchedForSample: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }> } | null, assocResult?: { __typename?: 'UmlAssociationMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlAssociationMatch', matchType: MatchType, userArg: { __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }, sampleArg: { __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }, analysisResult: { __typename?: 'UmlAssociationAnalysisResult', assocTypeEqual: boolean, correctAssocType: UmlAssociationType, multiplicitiesEqual: boolean } }>, notMatchedForUser: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, notMatchedForSample: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }> } | null, implResult?: { __typename?: 'UmlImplementationMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlImplementationMatch', matchType: MatchType, userArg: { __typename?: 'UmlImplementation', subClass: string, superClass: string }, sampleArg: { __typename?: 'UmlImplementation', subClass: string, superClass: string } }>, notMatchedForUser: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }>, notMatchedForSample: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> } | null } };
+export type UmlCorrectionResultFragment = { __typename?: 'UmlCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'UmlResult', points: number, maxPoints: number, classResult?: { __typename?: 'UmlClassMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlClassMatch', matchType: MatchType, userArg: { __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }, sampleArg: { __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }, analysisResult: { __typename: 'UmlClassMatchAnalysisResult' } }>, notMatchedForUser: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }>, notMatchedForSample: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }> } | null, assocResult?: { __typename?: 'UmlAssociationMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlAssociationMatch', matchType: MatchType, userArg: { __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }, sampleArg: { __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }, analysisResult: { __typename?: 'UmlAssociationAnalysisResult', assocTypeEqual: boolean, correctAssocType: UmlAssociationType, multiplicitiesEqual: boolean } }>, notMatchedForUser: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, notMatchedForSample: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }> } | null, implResult?: { __typename?: 'UmlImplementationMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlImplementationMatch', matchType: MatchType, userArg: { __typename?: 'UmlImplementation', subClass: string, superClass: string }, sampleArg: { __typename?: 'UmlImplementation', subClass: string, superClass: string } }>, notMatchedForUser: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }>, notMatchedForSample: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> } | null } };
 
 export type UmlResultFragment = { __typename?: 'UmlResult', points: number, maxPoints: number, classResult?: { __typename?: 'UmlClassMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlClassMatch', matchType: MatchType, userArg: { __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }, sampleArg: { __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }, analysisResult: { __typename: 'UmlClassMatchAnalysisResult' } }>, notMatchedForUser: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }>, notMatchedForSample: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename: 'UmlAttribute' }>, methods: Array<{ __typename: 'UmlMethod' }> }> } | null, assocResult?: { __typename?: 'UmlAssociationMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlAssociationMatch', matchType: MatchType, userArg: { __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }, sampleArg: { __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }, analysisResult: { __typename?: 'UmlAssociationAnalysisResult', assocTypeEqual: boolean, correctAssocType: UmlAssociationType, multiplicitiesEqual: boolean } }>, notMatchedForUser: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, notMatchedForSample: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }> } | null, implResult?: { __typename?: 'UmlImplementationMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'UmlImplementationMatch', matchType: MatchType, userArg: { __typename?: 'UmlImplementation', subClass: string, superClass: string }, sampleArg: { __typename?: 'UmlImplementation', subClass: string, superClass: string } }>, notMatchedForUser: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }>, notMatchedForSample: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> } | null };
 
@@ -1378,9 +1366,9 @@ export type WebCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type WebCorrectionMutation = { __typename?: 'Mutation', webExercise?: { __typename?: 'WebExerciseMutations', correct: { __typename?: 'WebCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, elementSpecResult: { __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> } }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename?: 'JsAction', actionType: JsActionType, keysToSend?: string | null, xpathQuery: string } }, gradedPostResults: Array<{ __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> }> }> } } } | null };
+export type WebCorrectionMutation = { __typename?: 'Mutation', webExercise?: { __typename?: 'WebExerciseMutations', correct: { __typename?: 'WebCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, elementSpecResult: { __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> } }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename?: 'JsAction', actionType: JsActionType, keysToSend?: string | null, xpathQuery: string } }, gradedPostResults: Array<{ __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> }> }> } } } | null };
 
-export type WebCorrectionResultFragment = { __typename?: 'WebCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, elementSpecResult: { __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> } }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename?: 'JsAction', actionType: JsActionType, keysToSend?: string | null, xpathQuery: string } }, gradedPostResults: Array<{ __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> }> }> } };
+export type WebCorrectionResultFragment = { __typename?: 'WebCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, elementSpecResult: { __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> } }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename?: 'JsAction', actionType: JsActionType, keysToSend?: string | null, xpathQuery: string } }, gradedPostResults: Array<{ __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> }> }> } };
 
 export type WebResultFragment = { __typename?: 'WebResult', points: number, maxPoints: number, gradedHtmlTaskResults: Array<{ __typename?: 'GradedHtmlTaskResult', id: number, elementSpecResult: { __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> } }>, gradedJsTaskResults: Array<{ __typename?: 'GradedJsTaskResult', id: number, success: SuccessType, points: number, maxPoints: number, gradedPreResults: Array<{ __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> }>, gradedJsActionResult: { __typename?: 'GradedJsActionResult', actionPerformed: boolean, points: number, maxPoints: number, jsAction: { __typename?: 'JsAction', actionType: JsActionType, keysToSend?: string | null, xpathQuery: string } }, gradedPostResults: Array<{ __typename?: 'GradedElementSpecResult', success: SuccessType, elementFound: boolean, points: number, maxPoints: number, textContentResult?: { __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number } | null, attributeResults: Array<{ __typename?: 'GradedTextResult', keyName: string, awaitedContent: string, maybeFoundContent?: string | null, isSuccessful: boolean, points: number, maxPoints: number }> }> }> };
 
@@ -1402,11 +1390,11 @@ export type XmlCorrectionMutationVariables = Exact<{
 }>;
 
 
-export type XmlCorrectionMutation = { __typename?: 'Mutation', xmlExercise?: { __typename?: 'XmlExerciseMutations', correct: { __typename?: 'XmlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'XmlResult', points: number, maxPoints: number, successType: SuccessType, grammarResult?: { __typename?: 'XmlGrammarResult', parseErrors: Array<{ __typename?: 'DTDParseException', msg: string, parsedLine: string }>, results: { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> } } | null, documentResult?: { __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string }> } | null } } } | null };
+export type XmlCorrectionMutation = { __typename?: 'Mutation', xmlExercise?: { __typename?: 'XmlExerciseMutations', correct: { __typename?: 'XmlCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'XmlResult', points: number, maxPoints: number, grammarResult?: { __typename?: 'XmlGrammarResult', parseErrors: Array<{ __typename?: 'DTDParseException', msg: string, parsedLine: string }>, results: { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> } } | null, documentResult?: { __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', line: number, errorType: XmlErrorType, errorMessage: string }> } | null } } } | null };
 
-export type XmlCorrectionResultFragment = { __typename?: 'XmlCorrectionResult', solutionSaved: boolean, resultSaved: boolean, proficienciesUpdated?: boolean | null, result: { __typename?: 'XmlResult', points: number, maxPoints: number, successType: SuccessType, grammarResult?: { __typename?: 'XmlGrammarResult', parseErrors: Array<{ __typename?: 'DTDParseException', msg: string, parsedLine: string }>, results: { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> } } | null, documentResult?: { __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string }> } | null } };
+export type XmlCorrectionResultFragment = { __typename?: 'XmlCorrectionResult', solutionId: number, proficienciesUpdated?: boolean | null, result: { __typename?: 'XmlResult', points: number, maxPoints: number, grammarResult?: { __typename?: 'XmlGrammarResult', parseErrors: Array<{ __typename?: 'DTDParseException', msg: string, parsedLine: string }>, results: { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> } } | null, documentResult?: { __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', line: number, errorType: XmlErrorType, errorMessage: string }> } | null } };
 
-export type XmlResultFragment = { __typename?: 'XmlResult', points: number, maxPoints: number, successType: SuccessType, grammarResult?: { __typename?: 'XmlGrammarResult', parseErrors: Array<{ __typename?: 'DTDParseException', msg: string, parsedLine: string }>, results: { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> } } | null, documentResult?: { __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string }> } | null };
+export type XmlResultFragment = { __typename?: 'XmlResult', points: number, maxPoints: number, grammarResult?: { __typename?: 'XmlGrammarResult', parseErrors: Array<{ __typename?: 'DTDParseException', msg: string, parsedLine: string }>, results: { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> } } | null, documentResult?: { __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', line: number, errorType: XmlErrorType, errorMessage: string }> } | null };
 
 export type XmlGrammarResultFragment = { __typename?: 'XmlGrammarResult', parseErrors: Array<{ __typename?: 'DTDParseException', msg: string, parsedLine: string }>, results: { __typename?: 'XmlElementLineComparisonMatchingResult', points: number, maxPoints: number, allMatches: Array<{ __typename?: 'ElementLineMatch', matchType: MatchType, userArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, sampleArg: { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }, analysisResult: { __typename?: 'ElementLineAnalysisResult', attributesCorrect: boolean, correctAttributes: string, contentCorrect: boolean, correctContent: string } }>, notMatchedForUser: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }>, notMatchedForSample: Array<{ __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> }> } };
 
@@ -1418,23 +1406,23 @@ export type XmlElementLineAnalysisResultFragment = { __typename?: 'ElementLineAn
 
 export type ElementLineFragment = { __typename?: 'ElementLine', elementName: string, elementDefinition: { __typename?: 'ElementDefinition', elementName: string, content: string }, attributeLists: Array<{ __typename?: 'AttributeList', elementName: string, attributeDefinitions: Array<string> }> };
 
-export type XmlDocumentResultFragment = { __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string }> };
+export type XmlDocumentResultFragment = { __typename?: 'XmlDocumentResult', errors: Array<{ __typename?: 'XmlError', line: number, errorType: XmlErrorType, errorMessage: string }> };
 
-export type XmlErrorFragment = { __typename?: 'XmlError', success: SuccessType, line: number, errorType: XmlErrorType, errorMessage: string };
+export type XmlErrorFragment = { __typename?: 'XmlError', line: number, errorType: XmlErrorType, errorMessage: string };
 
-export type CollectionToolFragment = { __typename?: 'CollectionTool', id: string, name: string, collectionCount: any, exerciseCount: any };
+export type CollectionToolFragment = { __typename?: 'CollectionTool', id: string, name: string, collectionCount: number, exerciseCount: number };
 
 export type ToolOverviewQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ToolOverviewQuery = { __typename?: 'Query', tools: Array<{ __typename?: 'CollectionTool', id: string, name: string, collectionCount: any, exerciseCount: any }> };
+export type ToolOverviewQuery = { __typename?: 'Query', tools: Array<{ __typename?: 'CollectionTool', id: string, name: string, collectionCount: number, exerciseCount: number }> };
 
 export type CollectionToolOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
 }>;
 
 
-export type CollectionToolOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, collectionCount: any, exerciseCount: any, proficiencies: Array<{ __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }> } | null };
+export type CollectionToolOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, collectionCount: number, exerciseCount: number, proficiencies: Array<{ __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }> } | null };
 
 export type UserProficiencyFragment = { __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } };
 
@@ -1447,14 +1435,14 @@ export type AllExercisesOverviewQueryVariables = Exact<{
 
 export type AllExercisesOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, allExercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> }> } | null };
 
-export type CollectionValuesFragment = { __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: any };
+export type CollectionValuesFragment = { __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: number };
 
 export type CollectionListQueryVariables = Exact<{
   toolId: Scalars['String'];
 }>;
 
 
-export type CollectionListQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, collections: Array<{ __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: any }> } | null };
+export type CollectionListQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, collections: Array<{ __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: number }> } | null };
 
 export type CollOverviewToolFragment = { __typename?: 'CollectionTool', name: string, collection?: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> }> } | null };
 
@@ -1577,12 +1565,11 @@ export const FlaskResultFragmentDoc = gql`
     ${FlaskTestResultFragmentDoc}`;
 export const FlaskCorrectionResultFragmentDoc = gql`
     fragment FlaskCorrectionResult on FlaskCorrectionResult {
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     ...FlaskResult
   }
+  solutionId
+  proficienciesUpdated
 }
     ${FlaskResultFragmentDoc}`;
 export const ImplementationCorrectionResultFragmentDoc = gql`
@@ -1616,13 +1603,11 @@ export const ProgrammingResultFragmentDoc = gql`
 ${UnitTestCorrectionResultFragmentDoc}`;
 export const ProgrammingCorrectionResultFragmentDoc = gql`
     fragment ProgrammingCorrectionResult on ProgrammingCorrectionResult {
-  __typename
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     ...ProgrammingResult
   }
+  solutionId
+  proficienciesUpdated
 }
     ${ProgrammingResultFragmentDoc}`;
 export const RegexMatchingSingleResultFragmentDoc = gql`
@@ -1673,9 +1658,6 @@ export const RegexExtractionResultFragmentDoc = gql`
     ${RegexExtractionSingleResultFragmentDoc}`;
 export const RegexCorrectionResultFragmentDoc = gql`
     fragment RegexCorrectionResult on RegexCorrectionResult {
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     __typename
     points
@@ -1683,6 +1665,8 @@ export const RegexCorrectionResultFragmentDoc = gql`
     ...RegexMatchingResult
     ...RegexExtractionResult
   }
+  solutionId
+  proficienciesUpdated
 }
     ${RegexMatchingResultFragmentDoc}
 ${RegexExtractionResultFragmentDoc}`;
@@ -1831,12 +1815,11 @@ export const SqlResultFragmentDoc = gql`
 ${SqlExecutionResultFragmentDoc}`;
 export const SqlCorrectionResultFragmentDoc = gql`
     fragment SqlCorrectionResult on SqlCorrectionResult {
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     ...SqlResult
   }
+  solutionId
+  proficienciesUpdated
 }
     ${SqlResultFragmentDoc}`;
 export const UmlSolutionClassFragmentDoc = gql`
@@ -1975,12 +1958,11 @@ ${UmlAssociationMatchingResultFragmentDoc}
 ${UmlImplementationMatchingResultFragmentDoc}`;
 export const UmlCorrectionResultFragmentDoc = gql`
     fragment UmlCorrectionResult on UmlCorrectionResult {
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     ...UmlResult
   }
+  solutionId
+  proficienciesUpdated
 }
     ${UmlResultFragmentDoc}`;
 export const GradedTextContentResultFragmentDoc = gql`
@@ -2060,12 +2042,11 @@ export const WebResultFragmentDoc = gql`
 ${GradedJsTaskResultFragmentDoc}`;
 export const WebCorrectionResultFragmentDoc = gql`
     fragment WebCorrectionResult on WebCorrectionResult {
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     ...WebResult
   }
+  solutionId
+  proficienciesUpdated
 }
     ${WebResultFragmentDoc}`;
 export const ElementLineFragmentDoc = gql`
@@ -2133,7 +2114,6 @@ export const XmlGrammarResultFragmentDoc = gql`
     ${XmlElementLineMatchingResultFragmentDoc}`;
 export const XmlErrorFragmentDoc = gql`
     fragment XmlError on XmlError {
-  success
   line
   errorType
   errorMessage
@@ -2150,7 +2130,6 @@ export const XmlResultFragmentDoc = gql`
     fragment XmlResult on XmlResult {
   points
   maxPoints
-  successType
   grammarResult {
     ...XmlGrammarResult
   }
@@ -2162,12 +2141,11 @@ export const XmlResultFragmentDoc = gql`
 ${XmlDocumentResultFragmentDoc}`;
 export const XmlCorrectionResultFragmentDoc = gql`
     fragment XmlCorrectionResult on XmlCorrectionResult {
-  solutionSaved
-  resultSaved
-  proficienciesUpdated
   result {
     ...XmlResult
   }
+  solutionId
+  proficienciesUpdated
 }
     ${XmlResultFragmentDoc}`;
 export const CollectionToolFragmentDoc = gql`
@@ -2494,12 +2472,11 @@ export const EbnfCorrectionDocument = gql`
     mutation EbnfCorrection($collId: Int!, $exId: Int!, $solution: EbnfGrammarInput!) {
   ebnfExercise(collId: $collId, exId: $exId) {
     correct(solution: $solution, part: GrammarCreation) {
-      solutionSaved
-      proficienciesUpdated
-      resultSaved
       result {
         x
       }
+      solutionId
+      proficienciesUpdated
     }
   }
 }

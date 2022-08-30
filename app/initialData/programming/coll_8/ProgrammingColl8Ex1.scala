@@ -49,15 +49,15 @@ object ProgrammingColl8Ex1 extends ProgrammingInitialExerciseContainer(8, 1, "ta
     implFileName = implFileName
   )
 
-  val programmingColl8Ex1 = InitialExercise(
+  val programmingColl8Ex1: InitialExercise[ProgrammingExerciseContent] = InitialExercise(
     title = "PySQL",
     authors = Seq("amh12ry"),
     text = loadTextFromFile(exResPath / "text.html"),
-    topicsWithLevels = Seq(
-      TopicWithLevel(ProgrammingTopics.Exceptions, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Classes, Level.Intermediate),
-      TopicWithLevel(ProgrammingTopics.ForLoops, Level.Beginner),
-      TopicWithLevel(ProgrammingTopics.Conditions, Level.Beginner)
+    topicsWithLevels = Map(
+      ProgrammingTopics.Exceptions -> Level.Beginner,
+      ProgrammingTopics.Classes    -> Level.Intermediate,
+      ProgrammingTopics.ForLoops   -> Level.Beginner,
+      ProgrammingTopics.Conditions -> Level.Beginner
     ),
     difficulty = 4,
     content = ProgrammingExerciseContent(

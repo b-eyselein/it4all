@@ -2,7 +2,6 @@ import {FilesSolutionInput, FlaskExerciseContentFragment, FlaskExercisePart, use
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
-import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import classNames from 'classnames';
 import {database} from '../../DexieTable';
@@ -35,8 +34,8 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
   const correctionTabRender = (
     <WithQuery query={correctionMutationResult}>
       {({flaskExercise}) => <WithNullableNavigate t={flaskExercise}>
-        {({correct: {solutionSaved,/*proficienciesUpdated, resultSaved,*/ result}}) => <>
-          <SolutionSaved solutionSaved={solutionSaved}/>
+        {({correct: {result/*, solutionId, proficienciesUpdated*/}}) => <>
+          {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
 
           <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 

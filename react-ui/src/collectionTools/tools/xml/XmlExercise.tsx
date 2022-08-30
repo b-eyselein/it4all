@@ -84,8 +84,8 @@ export function XmlExercise({exercise, content, partId, oldSolution}: IProps): J
   const correctionTabRender = (
     <WithQuery query={correctionMutationResult}>
       {({xmlExercise}) => <WithNullableNavigate t={xmlExercise}>
-        {({correct: {solutionSaved, /*proficienciesUpdated, resultSaved,*/ result}}) => <>
-          <SolutionSaved solutionSaved={solutionSaved}/>
+        {({correct: {result/*, solutionId, proficienciesUpdated*/}}) => <>
+          {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
 
           {isGrammarPart && <PointsNotification points={result.points} maxPoints={result.maxPoints}/>}
 
