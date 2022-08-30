@@ -40,8 +40,8 @@ libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-play" % "5.0.0", // Apache 2.0
 
   // Mongo database
-  "org.reactivemongo" %% "play2-reactivemongo"            % "1.1.0-play28-RC5", // Apache 2.0
-  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.1.0-play29-RC5", // Apache 2.0
+  "org.reactivemongo" %% "play2-reactivemongo"            % "1.1.0-play28-RC6", // Apache 2.0
+  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.1.0-play29-RC6", // Apache 2.0
 
   // Other helpers
   "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0", // Apache 2.0
@@ -50,7 +50,7 @@ libraryDependencies ++= Seq(
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
 
   // GraphQL
-  "org.sangria-graphql" %% "sangria"           % "3.0.1", // Apache 2.0
+  "org.sangria-graphql" %% "sangria"           % "3.2.0", // Apache 2.0
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.2", // Apache 2.0
 
   // Sql
@@ -60,6 +60,6 @@ libraryDependencies ++= Seq(
 
   // Web correction
   "org.nanohttpd"           % "nanohttpd-webserver" % "2.3.1" % Test, // BSD 3-clause
-  "org.seleniumhq.selenium" % "selenium-java"       % "4.2.2", // Apache 2.0
-  "org.seleniumhq.selenium" % "htmlunit-driver"     % "3.62.0" // Apache 2.0
+  "org.seleniumhq.selenium" % "selenium-java"       % "4.4.0", // Apache 2.0
+  "org.seleniumhq.selenium" % "htmlunit-driver"     % "3.64.0" // Apache 2.0
 )

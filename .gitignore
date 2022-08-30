@@ -12,7 +12,8 @@ project/target
 
 public/
 
-data/
+data/*
+!data/web/solutions/.gitkeep
 
 .idea/
 
