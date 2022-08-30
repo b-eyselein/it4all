@@ -1,22 +1,20 @@
-import {GradedHtmlTaskResult, SuccessType} from '../../../graphql';
+import {GradedHtmlTaskResultFragment} from '../../../graphql';
 import {ElementSpecResultDisplay} from './ElementSpecResultDisplay';
 
 interface IProps {
-  htmlResult: GradedHtmlTaskResult;
+  htmlResult: GradedHtmlTaskResultFragment;
 }
 
 export function HtmlTaskResultDisplay({htmlResult}: IProps): JSX.Element {
 
   const {id, elementSpecResult} = htmlResult;
 
-  const {success, points, maxPoints} = elementSpecResult;
-
-  const isSuccessful = success === SuccessType.Complete;
+  const {points, maxPoints, isCorrect} = elementSpecResult;
 
   return (
     <>
-      <p className={isSuccessful ? 'has-text-success' : 'has-text-danger'}>
-        ({points} / {maxPoints}) Teilaufgabe {id} ist {isSuccessful ? '' : 'nicht'} korrekt:
+      <p className={isCorrect ? 'has-text-success' : 'has-text-danger'}>
+        ({points} / {maxPoints}) Teilaufgabe {id} ist {isCorrect ? '' : 'nicht'} korrekt:
       </p>
 
       <ElementSpecResultDisplay elementSpecResult={elementSpecResult}/>

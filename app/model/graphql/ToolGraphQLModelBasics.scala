@@ -3,7 +3,6 @@ package model.graphql
 import model._
 import model.matching.StringMatcher.StringMatchingResult
 import model.matching.{Match, MatchType, MatchingResult, StringMatch}
-import model.result.AbstractCorrectionResult
 import sangria.macros.derive._
 import sangria.schema._
 

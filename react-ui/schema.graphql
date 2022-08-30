@@ -198,9 +198,9 @@ type FlaskTestsConfig {
 type GradedElementSpecResult {
   attributeResults: [GradedTextResult!]!
   elementFound: Boolean!
+  isCorrect: Boolean!
   maxPoints: Float!
   points: Float!
-  success: SuccessType!
   textContentResult: GradedTextResult
 }
 
@@ -223,7 +223,6 @@ type GradedJsTaskResult {
   id: Int!
   maxPoints: Float!
   points: Float!
-  success: SuccessType!
 }
 
 type GradedTextResult {
@@ -547,13 +546,6 @@ type StringMatchingResult {
   notMatchedForSample: [String!]!
   notMatchedForUser: [String!]!
   points: Float!
-}
-
-enum SuccessType {
-  COMPLETE
-  ERROR
-  NONE
-  PARTIALLY
 }
 
 type Topic {

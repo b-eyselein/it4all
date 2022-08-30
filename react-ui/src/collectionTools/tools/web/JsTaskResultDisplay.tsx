@@ -1,4 +1,4 @@
-import {GradedJsTaskResultFragment, JsActionType, SuccessType} from '../../../graphql';
+import {GradedJsTaskResultFragment, JsActionType} from '../../../graphql';
 import {ElementSpecResultDisplay} from './ElementSpecResultDisplay';
 import {useTranslation} from 'react-i18next';
 
@@ -10,9 +10,10 @@ export function JsTaskResultDisplay({jsResult}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
 
-  const {id, success, points, maxPoints, gradedPostResults, gradedJsActionResult, gradedPreResults} = jsResult;
+  const {id, /*success,*/ points, maxPoints, gradedPostResults, gradedJsActionResult, gradedPreResults} = jsResult;
 
-  if (success === SuccessType.Complete) {
+
+  if (points === maxPoints) {
     return <span className="has-text-success">Test {id} war erfolgreich.</span>;
   }
 

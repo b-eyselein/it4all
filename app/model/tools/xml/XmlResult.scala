@@ -1,9 +1,9 @@
 package model.tools.xml
 
 import de.uniwue.dtd.parser.DTDParseException
+import model.AbstractCorrectionResult
 import model.matching.MatchType
 import model.points._
-import model.result.AbstractCorrectionResult
 import model.tools.xml.XmlTool.ElementLineComparison
 
 final case class XmlResult(

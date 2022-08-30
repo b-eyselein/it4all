@@ -3,7 +3,6 @@ package model.graphql
 import com.github.t3hnar.bcrypt._
 import model._
 import model.mongo.MongoClientQueries
-import model.result.CorrectionResult
 import model.tools.ToolList
 import play.api.libs.json._
 import sangria.macros.derive._

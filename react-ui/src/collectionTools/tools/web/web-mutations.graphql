@@ -26,7 +26,7 @@ fragment WebResult on WebResult {
 }
 
 fragment GradedElementSpecResult on GradedElementSpecResult {
-  success
+  isCorrect
   elementFound
   points
   maxPoints
@@ -65,7 +65,6 @@ fragment GradedJsTaskResult on GradedJsTaskResult {
   gradedPostResults {
     ...GradedElementSpecResult
   }
-  success
   points
   maxPoints
 }

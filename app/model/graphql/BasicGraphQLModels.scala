@@ -1,7 +1,6 @@
 package model.graphql
 
 import model._
-import model.result.SuccessType
 import sangria.macros.derive._
 import sangria.schema._
 
@@ -42,7 +41,5 @@ trait BasicGraphQLModels {
   }
 
   protected val KeyValueObjectType: ObjectType[Unit, KeyValueObject] = deriveObjectType()
-
-  protected val successTypeType: EnumType[SuccessType] = deriveEnumType()
 
 }

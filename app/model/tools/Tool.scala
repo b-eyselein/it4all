@@ -4,7 +4,6 @@ import better.files.File
 import initialData.InitialData
 import model._
 import model.graphql.ToolGraphQLModelBasics
-import model.result.AbstractCorrectionResult
 
 import scala.concurrent.{ExecutionContext, Future}
 

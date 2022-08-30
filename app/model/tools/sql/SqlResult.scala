@@ -1,8 +1,8 @@
 package model.tools.sql
 
+import model.AbstractCorrectionResult
 import model.matching.StringMatcher.StringMatchingResult
 import model.points._
-import model.result.AbstractCorrectionResult
 import model.tools.sql.SqlTool._
 
 final case class WrongStatementTypeException(awaited: String, gotten: String)

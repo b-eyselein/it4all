@@ -1,7 +1,6 @@
 package model.graphql
 
 import model._
-import model.result.AbstractCorrectionResult
 import sangria.macros.derive._
 import sangria.schema._
 

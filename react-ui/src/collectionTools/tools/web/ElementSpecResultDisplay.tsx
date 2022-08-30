@@ -1,7 +1,7 @@
-import {GradedElementSpecResult, GradedTextContentResultFragment} from '../../../graphql';
+import {GradedElementSpecResultFragment, GradedTextContentResultFragment} from '../../../graphql';
 
 interface IProps {
-  elementSpecResult: GradedElementSpecResult;
+  elementSpecResult: GradedElementSpecResultFragment;
 }
 
 function HtmlAttributeResultDisplay({attributeResult}: { attributeResult: GradedTextContentResultFragment }): JSX.Element {

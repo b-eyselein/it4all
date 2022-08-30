@@ -1,4 +1,4 @@
-package model.result
+package model
 
 import model.points._
 
@@ -15,19 +15,5 @@ trait AbstractCorrectionResult {
   def maxPoints: Points
 
   def isCompletelyCorrect: Boolean
-
-}
-
-final case class BasicExercisePartResult(
-  username: String,
-  exerciseId: Int,
-  collectionId: Int,
-  toolId: String,
-  partId: String,
-  points: Points,
-  maxPoints: Points
-) {
-
-  def isCorrect: Boolean = points.quarters == maxPoints.quarters
 
 }

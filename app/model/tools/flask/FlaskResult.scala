@@ -1,7 +1,7 @@
 package model.tools.flask
 
+import model.AbstractCorrectionResult
 import model.points.Points
-import model.result.AbstractCorrectionResult
 
 final case class FlaskResult(
   testResults: Seq[FlaskTestResult],

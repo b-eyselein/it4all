@@ -1,7 +1,6 @@
 package model.tools.web
 
 import model.graphql.{FilesSolutionToolGraphQLModelBasics, GraphQLArguments}
-import model.result.SuccessType
 import model.tools.web.sitespec.{HtmlTask, JsAction, JsActionType, SiteSpec}
 import model.{ExerciseFile, FilesSolution}
 import sangria.macros.derive._
@@ -67,10 +66,12 @@ object WebGraphQLModels extends FilesSolutionToolGraphQLModelBasics[WebExerciseC
   }
 
   private val gradedElementSpecResultType: ObjectType[Unit, GradedElementSpecResult] = {
-    implicit val stt: EnumType[SuccessType]               = successTypeType
     implicit val gtrt: ObjectType[Unit, GradedTextResult] = gradedTextResultType
 
     deriveObjectType(
+      AddFields(
+        Field("isCorrect", BooleanType, resolve = _.value.isCorrect)
+      ),
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
       ReplaceField("maxPoints", Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble))
     )
@@ -83,7 +84,6 @@ object WebGraphQLModels extends FilesSolutionToolGraphQLModelBasics[WebExerciseC
   }
 
   private val gradedJsTaskResultType: ObjectType[Unit, GradedJsTaskResult] = {
-    implicit val stt: EnumType[SuccessType]                       = successTypeType
     implicit val gesrt: ObjectType[Unit, GradedElementSpecResult] = gradedElementSpecResultType
 
     deriveObjectType(

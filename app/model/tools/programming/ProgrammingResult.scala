@@ -1,7 +1,7 @@
 package model.tools.programming
 
+import model.AbstractCorrectionResult
 import model.points._
-import model.result.AbstractCorrectionResult
 
 final case class ProgrammingResult(
   proficienciesUpdated: Option[Boolean] = None,

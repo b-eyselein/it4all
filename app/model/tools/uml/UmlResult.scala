@@ -1,8 +1,8 @@
 package model.tools.uml
 
+import model.AbstractCorrectionResult
 import model.matching.MatchType
 import model.points._
-import model.result.AbstractCorrectionResult
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 
 final case class UmlResult(
