@@ -33,7 +33,7 @@ case class InitialExercise[EC <: ExerciseContent](
 
 final case class InitialCollection[EC <: ExerciseContent](
   title: String,
-  authors: Seq[String],
+  // authors: Seq[String],
   initialExercises: Map[Int, InitialExercise[EC]] = Map.empty
 )
 
@@ -56,18 +56,18 @@ object InitialData {
 }
 
 @Singleton
-class StartUpService @Inject() (mongoQueries: MongoClientQueries)(implicit ec: ExecutionContext) {
+class StartUpService @Inject() (mongoClientQueries: MongoClientQueries, tableDefs: TableDefs)(implicit ec: ExecutionContext) {
 
   private val logger = Logger(classOf[StartUpService])
 
-  private def insertInitialCollection(coll: ExerciseCollection): Future[Unit] = mongoQueries
+  private def insertInitialCollection(coll: ExerciseCollection): Future[Unit] = tableDefs
     .futureCollectionById(coll.toolId, coll.collectionId)
     .flatMap {
       case Some(_) => Future.successful(())
       case None =>
         val key = s"(${coll.toolId}, ${coll.collectionId})"
 
-        mongoQueries
+        tableDefs
           .futureInsertCollection(coll)
           .map {
             case false => logger.error(s"Could not insert collection $key!")
@@ -79,14 +79,14 @@ class StartUpService @Inject() (mongoQueries: MongoClientQueries)(implicit ec: E
     }
 
   private def insertInitialExercise[EC <: ExerciseContent](ex: Exercise[EC], exFormat: OFormat[Exercise[EC]]): Future[Unit] =
-    mongoQueries
+    mongoClientQueries
       .futureExerciseExists(ex.toolId, ex.collectionId, ex.exerciseId)
       .flatMap {
         case true => Future.successful(())
         case false =>
           val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"
 
-          mongoQueries
+          mongoClientQueries
             .futureInsertExercise(ex, exFormat)
             .map {
               case false => logger.error(s"Exercise $key could not be inserted!")
@@ -99,8 +99,9 @@ class StartUpService @Inject() (mongoQueries: MongoClientQueries)(implicit ec: E
 
   ToolList.tools.foreach { tool =>
     // Insert all collections and exercises
-    tool.initialData.initialData.foreach { case (collectionId, InitialCollection(title, authors, initialExercises)) =>
-      insertInitialCollection(ExerciseCollection(collectionId, tool.id, title, authors))
+
+    tool.initialData.initialData.foreach { case (collectionId, InitialCollection(title, initialExercises)) =>
+      insertInitialCollection(ExerciseCollection(tool.id, collectionId, title))
 
       initialExercises.foreach { case (exerciseId, InitialExercise(title, authors, text, topicsWithLevels, difficulty, content)) =>
         val exercise = Exercise(exerciseId, collectionId, tool.id, title, authors, text, topicsWithLevels, difficulty, content)

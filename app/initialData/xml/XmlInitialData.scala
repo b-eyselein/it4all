@@ -123,10 +123,9 @@ object XmlInitialData extends InitialData[XmlExerciseContent] {
 
   }
 
-  override val initialData = Map(
+  override val initialData: Map[Int, InitialCollection[XmlExerciseContent]] = Map(
     1 -> InitialCollection(
       title = "Xml Basics",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> xmlColl1Ex1,
         2 -> xmlColl1Ex2,

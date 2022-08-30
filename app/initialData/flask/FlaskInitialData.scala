@@ -17,7 +17,6 @@ object FlaskInitialData extends InitialData[FlaskExerciseContent] {
   override val initialData = Map(
     1 -> InitialCollection(
       "Beispiel",
-      Seq("bje40dc"),
       initialExercises = Map(
         1 -> flaskColl01Ex01
       )

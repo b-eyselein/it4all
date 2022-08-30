@@ -7,10 +7,9 @@ import model.tools.uml.UmlExerciseContent
 
 object UmlInitialData extends InitialData[UmlExerciseContent] {
 
-  override val initialData = Map(
+  override val initialData: Map[Int, InitialCollection[UmlExerciseContent]] = Map(
     1 -> InitialCollection(
       title = "Uml Basics",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> umlColl1Ex1,
         2 -> umlColl1Ex2

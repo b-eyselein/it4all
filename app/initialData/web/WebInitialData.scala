@@ -11,14 +11,13 @@ import initialData.web.coll_2.WebColl2Ex3.webColl2Ex3
 import initialData.{InitialCollection, InitialData, InitialFilesExerciseContainer}
 import model.tools.web.WebExerciseContent
 
-abstract class WebInitialExerciseContainer(collectionId: Int, exerciseId: Int) extends InitialFilesExerciseContainer("web", collectionId, exerciseId) {}
+abstract class WebInitialExerciseContainer(collectionId: Int, exerciseId: Int) extends InitialFilesExerciseContainer("web", collectionId, exerciseId)
 
 object WebInitialData extends InitialData[WebExerciseContent] {
 
-  override val initialData = Map(
+  override val initialData: Map[Int, InitialCollection[WebExerciseContent]] = Map(
     1 -> InitialCollection(
       title = "Html Elemente",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> webColl1Ex1,
         2 -> webColl1Ex2,
@@ -29,7 +28,6 @@ object WebInitialData extends InitialData[WebExerciseContent] {
     ),
     2 -> InitialCollection(
       title = "Js Basics",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> webColl2Ex1,
         2 -> webColl2Ex2,

@@ -9,3 +9,4 @@ import scala.concurrent.ExecutionContext
 class TableDefs @Inject() (override protected val dbConfigProvider: DatabaseConfigProvider)(override implicit val ec: ExecutionContext)
     extends HasDatabaseConfigProvider[JdbcProfile]
     with UserRepository
+    with CollectionRepository

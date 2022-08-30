@@ -24,7 +24,6 @@ trait MongoRepo extends ReactiveMongoComponents {
 
 class MongoClientQueries @Inject() (override val reactiveMongoApi: ReactiveMongoApi)(override protected implicit val ec: ExecutionContext)
     extends ReactiveMongoComponents
-    with MongoCollectionRepo
     with MongoExerciseQueries
     with MongoUserSolutionRepo
     with MongoExercisePartResultQueries {

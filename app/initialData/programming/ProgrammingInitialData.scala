@@ -34,10 +34,9 @@ import model.tools.programming.ProgrammingExerciseContent
 
 object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
 
-  override val initialData = Map(
+  override val initialData: Map[Int, InitialCollection[ProgrammingExerciseContent]] = Map(
     1 -> InitialCollection(
       title = "Zahlen",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> programmingColl1Ex1,
         2 -> programmingColl1Ex2,
@@ -47,7 +46,6 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
     ),
     2 -> InitialCollection(
       title = "Strings",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> programmingColl2Ex1,
         2 -> programmingColl2Ex2,
@@ -61,7 +59,6 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
     ),
     3 -> InitialCollection(
       title = "Bedingungen",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> programmingColl3Ex1,
         2 -> programmingColl3Ex2,
@@ -70,7 +67,6 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
     ),
     4 -> InitialCollection(
       title = "Listen",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> programmingColl4Ex1,
         2 -> programmingColl4Ex2,
@@ -80,7 +76,6 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
     ),
     5 -> InitialCollection(
       title = "Tupel und Dicts",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> programmingColl5Ex1,
         2 -> programmingColl5Ex2,
@@ -90,7 +85,6 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
     ),
     6 -> InitialCollection(
       title = "Funktionen",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> programmingColl6Ex1,
         2 -> programmingColl6Ex2
@@ -98,7 +92,6 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
     ),
     7 -> InitialCollection(
       title = "Klassen",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> programmingColl7Ex1,
         2 -> programmingColl7Ex2,
@@ -107,7 +100,6 @@ object ProgrammingInitialData extends InitialData[ProgrammingExerciseContent] {
     ),
     8 -> InitialCollection(
       title = "Unit Testing",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> programmingColl8Ex1
       )

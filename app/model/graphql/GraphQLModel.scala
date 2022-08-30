@@ -16,12 +16,6 @@ final case class GraphQLRequest(
   variables: Option[JsObject]
 )
 
-object GraphQLRequest {
-
-  val jsonFormat: OFormat[GraphQLRequest] = Json.format
-
-}
-
 final case class GraphQLContext(
   loggedInUser: Option[User],
   mongoQueries: MongoClientQueries,
@@ -67,13 +61,13 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
       Field("name", StringType, resolve = _.value.name),
       Field("isBeta", BooleanType, resolve = _.value.isBeta),
       // Collection fields
-      Field("collectionCount", LongType, resolve = context => context.ctx.mongoQueries.futureCollectionCountForTool(context.value.id)),
-      Field("collections", ListType(collectionType), resolve = context => context.ctx.mongoQueries.futureCollectionsForTool(context.value.id)),
+      Field("collectionCount", IntType, resolve = context => context.ctx.tableDefs.futureCollectionCountForTool(context.value.id)),
+      Field("collections", ListType(collectionType), resolve = context => context.ctx.tableDefs.futureCollectionsForTool(context.value.id)),
       Field(
         "collection",
         OptionType(collectionType),
         arguments = collIdArgument :: Nil,
-        resolve = context => context.ctx.mongoQueries.futureCollectionById(context.value.id, context.arg(collIdArgument))
+        resolve = context => context.ctx.tableDefs.futureCollectionById(context.value.id, context.arg(collIdArgument))
       ),
       // Special fields for exercises
       Field("exerciseCount", LongType, resolve = context => context.ctx.mongoQueries.futureExerciseCountForTool(context.value.id)),

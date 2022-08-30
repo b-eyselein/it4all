@@ -25,13 +25,15 @@ class Controller @Inject() (
     extends AbstractController(cc)
     with GraphQLModel {
 
+  private val graphQlRequestJsonFormat: OFormat[GraphQLRequest] = Json.format
+
   def index: Action[AnyContent] = assets.at("index.html")
 
   def assetOrDefault(resource: String): Action[AnyContent] = if (resource.contains(".")) assets.at(resource) else index
 
   def graphiql: Action[AnyContent] = Action { _ => Ok(views.html.graphiql()) }
 
-  def graphql: Action[GraphQLRequest] = jwtAction.async(parse.json(GraphQLRequest.jsonFormat)) { case JwtRequest(maybeUser, request) =>
+  def graphql: Action[GraphQLRequest] = jwtAction.async(parse.json(graphQlRequestJsonFormat)) { case JwtRequest(maybeUser, request) =>
     request.body match {
       case GraphQLRequest(query, operationName, variables) =>
         QueryParser.parse(query) match {

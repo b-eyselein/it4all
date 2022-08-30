@@ -25,12 +25,9 @@ object EbnfColl01Ex01
 
 object EbnfInitialData extends InitialData[EbnfExerciseContent] {
 
-  type EbnfInitialExercise = InitialExercise[EbnfExerciseContent]
-
   override val initialData = Map(
     1 -> InitialCollection(
       "EBNF - Grundlagen",
-      Seq("bje40dc"),
       initialExercises = Map(
         1 -> EbnfColl01Ex01
       )

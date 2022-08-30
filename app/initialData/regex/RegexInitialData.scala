@@ -7,10 +7,9 @@ import model.tools.regex.RegexExerciseContent
 
 object RegexInitialData extends InitialData[RegexExerciseContent] {
 
-  override val initialData = Map(
+  override val initialData: Map[Int, InitialCollection[RegexExerciseContent]] = Map(
     1 -> InitialCollection(
       title = "Zahlen und Fakten",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> RegexColl1Ex1,
         2 -> RegexColl1Ex2,
@@ -21,7 +20,6 @@ object RegexInitialData extends InitialData[RegexExerciseContent] {
     ),
     2 -> InitialCollection(
       title = "Informationsextraktion",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> RegexColl2Ex1,
         2 -> RegexColl2Ex2

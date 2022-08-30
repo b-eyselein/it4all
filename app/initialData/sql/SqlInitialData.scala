@@ -11,10 +11,9 @@ import model.tools.sql.SqlExerciseContent
 
 object SqlInitialData extends InitialData[SqlExerciseContent] {
 
-  override val initialData = Map(
+  override val initialData: Map[Int, InitialCollection[SqlExerciseContent]] = Map(
     1 -> InitialCollection(
       title = "Angestellte",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1 -> sql_coll_1_ex_1,
         2 -> sql_coll_1_ex_2,
@@ -29,7 +28,6 @@ object SqlInitialData extends InitialData[SqlExerciseContent] {
     ),
     2 -> InitialCollection(
       title = "Amazon",
-      authors = Seq("bje40dc"),
       initialExercises = Map(
         1  -> sql_coll_2_ex_01,
         2  -> sql_coll_2_ex_02,
