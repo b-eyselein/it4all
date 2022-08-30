@@ -2,7 +2,7 @@ package controllers
 
 import com.google.inject.Inject
 import model.mongo.MongoClientQueries
-import model.{JwtHelpers, User}
+import model.{JwtHelpers, TableDefs, User}
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -12,7 +12,8 @@ final case class JwtRequest[A](username: Option[User], request: Request[A]) exte
 
 class JwtAction @Inject() (
   override val parser: BodyParsers.Default,
-  mongoQueries: MongoClientQueries
+  mongoQueries: MongoClientQueries,
+  tableDefs: TableDefs
 )(override implicit val executionContext: ExecutionContext)
     extends ActionBuilder[JwtRequest, AnyContent]
     with ActionRefiner[Request, JwtRequest]
@@ -39,7 +40,7 @@ class JwtAction @Inject() (
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, JwtRequest[A]]] = usernameFromRequest(request) match {
     case Failure(_)        => Future.successful(Right(JwtRequest(None, request)))
-    case Success(username) => mongoQueries.futureUserByUsername(username).map(maybeUser => Right(JwtRequest(maybeUser, request)))
+    case Success(username) => tableDefs.futureUserByUsername(username).map(maybeUser => Right(JwtRequest(maybeUser, request)))
   }
 
 }

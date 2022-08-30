@@ -1,12 +1,6 @@
 package model
 
-import model.mongo.MongoRepo
-import play.api.libs.json.{Json, OFormat}
-import reactivemongo.api.bson.BSONDocument
-import reactivemongo.api.bson.collection.BSONCollection
-import reactivemongo.play.json.compat.json2bson._
-
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 final case class RegisterValues(username: String, firstPassword: String, secondPassword: String) {
 
@@ -23,20 +17,27 @@ final case class LoginResult(
   jwt: String
 )
 
-trait MongoUserRepo extends MongoRepo {
+trait UserRepository {
+  self: play.api.db.slick.HasDatabaseConfig[slick.jdbc.JdbcProfile] =>
 
-  private implicit val userFormat: OFormat[User] = Json.format
+  import profile.api._
 
-  private def futureUsersCollection: Future[BSONCollection] = futureCollection("users")
+  protected implicit val ec: ExecutionContext
 
-  def futureUserByUsername(username: String): Future[Option[User]] = for {
-    usersCollection <- futureUsersCollection
-    maybeUser       <- usersCollection.find(BSONDocument("username" -> username)).one[User]
-  } yield maybeUser
+  private val usersTQ = TableQuery[UsersTable]
 
-  def futureInsertUser(user: User): Future[Boolean] = for {
-    usersCollection <- futureUsersCollection
-    insertResult    <- usersCollection.insert(true).one(user)
-  } yield insertResult.n == 1
+  def futureUserByUsername(username: String): Future[Option[User]] = db.run(usersTQ.filter(_.username === username).result.headOption)
+
+  def futureInsertUser(username: String, maybePwHash: Option[String]): Future[User] = db.run(usersTQ.returning(usersTQ) += User(username, maybePwHash))
+
+  private class UsersTable(tag: Tag) extends Table[User](tag, "users") {
+
+    def username = column[String]("username", O.PrimaryKey)
+
+    def maybePwHash = column[Option[String]]("maybe_pw_hash")
+
+    override def * = (username, maybePwHash) <> (User.tupled, User.unapply)
+
+  }
 
 }

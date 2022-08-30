@@ -20,30 +20,30 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
 
   private val loginResultType: ObjectType[Unit, LoginResult] = deriveObjectType()
 
-  private def register(mongoQueries: MongoClientQueries, registerValues: RegisterValues): Future[Option[String]] = if (registerValues.isInvalid) {
+  private def register(tableDefs: TableDefs, registerValues: RegisterValues): Future[Option[String]] = if (registerValues.isInvalid) {
+    // TODO: return error?
     Future.successful(None)
   } else {
     for {
-      maybeUser <- mongoQueries.futureUserByUsername(registerValues.username)
+      maybeUser <- tableDefs.futureUserByUsername(registerValues.username)
       newUser <- maybeUser match {
         case Some(_) => Future.successful(None)
         case None =>
-          val newUser = User(registerValues.username, Some(registerValues.firstPassword.boundedBcrypt))
+          val RegisterValues(username, firstPassword, _) = registerValues
 
-          mongoQueries.futureInsertUser(newUser).map {
-            case false => None
-            case true  => Some(newUser.username)
-          }
+          tableDefs
+            .futureInsertUser(username, Some(firstPassword.boundedBcrypt))
+            .map { case User(username, _) => Some(username) }
       }
     } yield newUser
   }
 
-  private def authenticate(mongoQueries: MongoClientQueries, credentials: UserCredentials): Future[Option[LoginResult]] =
-    mongoQueries.futureUserByUsername(credentials.username).map { maybeUser =>
+  private def authenticate(tableDefs: TableDefs, credentials: UserCredentials): Future[Option[LoginResult]] =
+    tableDefs.futureUserByUsername(credentials.username).map { maybeUser =>
       for {
-        user: User      <- maybeUser
-        pwHash: String  <- user.pwHash
-        pwOkay: Boolean <- credentials.password.isBcryptedSafeBounded(pwHash).toOption
+        user   <- maybeUser
+        pwHash <- user.pwHash
+        pwOkay <- credentials.password.isBcryptedSafeBounded(pwHash).toOption
         maybeUser <-
           if (pwOkay) {
             Some(LoginResult(user.username, createJwtSession(user.username)))
@@ -155,13 +155,13 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
         "register",
         OptionType(StringType),
         arguments = registerValuesArgument :: Nil,
-        resolve = context => register(context.ctx.mongoQueries, context.arg(registerValuesArgument))
+        resolve = context => register(context.ctx.tableDefs, context.arg(registerValuesArgument))
       ),
       Field(
         "login",
         OptionType(loginResultType),
         arguments = userCredentialsArgument :: Nil,
-        resolve = context => authenticate(context.ctx.mongoQueries, context.arg(userCredentialsArgument))
+        resolve = context => authenticate(context.ctx.tableDefs, context.arg(userCredentialsArgument))
       ),
       Field(
         "claimLtiWebToken",

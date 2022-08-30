@@ -1,4 +1,6 @@
 val enumeratumVersion = "1.7.0"
+val playSlickVersion  = "5.0.2"
+val slickPgVersion    = "0.20.4"
 
 val commonSettings = Seq(
   scalaVersion := "2.13.8",
@@ -31,8 +33,6 @@ lazy val root = (project in file("."))
     Compile / packageDoc / publishArtifact := false
   )
 
-dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.11.4"
-
 libraryDependencies ++= Seq(
   guice,
 
@@ -54,8 +54,14 @@ libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.2", // Apache 2.0
 
   // Sql
+  "org.postgresql"       % "postgresql"            % "42.5.0",         // BSD-2
+  "com.github.tminglei" %% "slick-pg"              % slickPgVersion,   // BSD-2
+  "com.github.tminglei" %% "slick-pg_play-json"    % slickPgVersion,   // BSD-2
+  "com.typesafe.play"   %% "play-slick"            % playSlickVersion, // Apache 2.0
+  "com.typesafe.play"   %% "play-slick-evolutions" % playSlickVersion, // Apache 2.0
+
+  // Sql correction
   "mysql"                 % "mysql-connector-java" % "8.0.30", // GPL 2.0
-  "com.typesafe.play"    %% "play-slick"           % "5.0.2",  // Apache 2.0
   "com.github.jsqlparser" % "jsqlparser"           % "4.5",    // Apache 2.0
 
   // Web correction

@@ -19,7 +19,8 @@ class Controller @Inject() (
   assets: Assets,
   cc: ControllerComponents,
   jwtAction: JwtAction,
-  mongoQueries: MongoClientQueries
+  mongoQueries: MongoClientQueries,
+  tableDefs: TableDefs
 )(override protected implicit val ec: ExecutionContext)
     extends AbstractController(cc)
     with GraphQLModel {
@@ -40,7 +41,7 @@ class Controller @Inject() (
               .execute(
                 schema,
                 queryAst,
-                userContext = GraphQLContext(maybeUser, mongoQueries),
+                userContext = GraphQLContext(maybeUser, mongoQueries, tableDefs),
                 operationName = operationName,
                 variables = variables.getOrElse(Json.obj())
               )
@@ -56,12 +57,10 @@ class Controller @Inject() (
   // Json Web Token session
 
   private def getOrCreateUser(username: String): Future[String] = for {
-    maybeUser <- mongoQueries.futureUserByUsername(username)
+    maybeUser <- tableDefs.futureUserByUsername(username)
     user <- maybeUser match {
       case Some(u) => Future(u)
-      case None =>
-        val newUser = User(username)
-        mongoQueries.futureInsertUser(newUser).map { _ => newUser }
+      case None    => tableDefs.futureInsertUser(username, None)
     }
   } yield user.username
 

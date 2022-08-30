@@ -16,13 +16,13 @@ import {NaryTwoConversion} from './randomTools/NaryTwoConversion';
 import {RandomToolOverview} from './randomTools/RandomToolOverview';
 import {boolRandomTool, naryRandomTool} from './randomTools/randomTools';
 
+const languages = ['de', 'en'];
+
 export function App(): JSX.Element {
 
   const {t} = useTranslation('common');
   const currentUser = useSelector(currentUserSelector);
   const dispatch = useDispatch();
-
-  const langs = ['de', 'en'];
 
   function changeLanguage(language: string): void {
     // console.error('TODO: change language to ' + language);
@@ -42,7 +42,7 @@ export function App(): JSX.Element {
             <div className="navbar-item has-dropdown is-hoverable">
               <div className="navbar-link">{t('language')}</div>
               <div className="navbar-dropdown">
-                {langs.map((lang) => <div key={lang} className="navbar-item" onClick={() => changeLanguage(lang)}>{lang}</div>)}
+                {languages.map((lang) => <div key={lang} className="navbar-item" onClick={() => changeLanguage(lang)}>{lang}</div>)}
               </div>
             </div>
 
@@ -60,7 +60,7 @@ export function App(): JSX.Element {
                 </button>
                 : <div className="buttons">
                   <Link to="/loginForm" className="button is-light">{t('login')}</Link>
-                  <Link to="/registerForm" className="button is-light">{t('register')}</Link>
+                  {/*<Link to="/registerForm" className="button is-light">{t('register')}</Link>*/}
                 </div>
               }
             </div>
@@ -72,6 +72,8 @@ export function App(): JSX.Element {
         <Route path={homeUrl} element={<Home/>}/>
 
         <Route path={'/loginForm'} element={<LoginForm/>}/>
+
+        {/* FIXME: <Route path={'/registerForm'} element={<RegisterForm/>}/> */}
 
         <Route path={`/${toolsUrlFragment}/:toolId/*`} element={<ToolBase/>}/>
 

@@ -3,7 +3,7 @@ package model.graphql
 import model.mongo.MongoClientQueries
 import model.tools.Helper.UntypedExercise
 import model.tools._
-import model.{ExerciseCollection, User}
+import model.{ExerciseCollection, TableDefs, User}
 import play.api.libs.json._
 import sangria.macros.derive._
 import sangria.schema._
@@ -24,7 +24,8 @@ object GraphQLRequest {
 
 final case class GraphQLContext(
   loggedInUser: Option[User],
-  mongoQueries: MongoClientQueries
+  mongoQueries: MongoClientQueries,
+  tableDefs: TableDefs
 )
 
 trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with GraphQLMutations {
