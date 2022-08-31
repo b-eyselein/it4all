@@ -1,7 +1,6 @@
 package controllers
 
 import com.google.inject.Inject
-import model.mongo.MongoClientQueries
 import model.{JwtHelpers, TableDefs, User}
 import play.api.mvc._
 
@@ -12,7 +11,6 @@ final case class JwtRequest[A](username: Option[User], request: Request[A]) exte
 
 class JwtAction @Inject() (
   override val parser: BodyParsers.Default,
-  mongoQueries: MongoClientQueries,
   tableDefs: TableDefs
 )(override implicit val executionContext: ExecutionContext)
     extends ActionBuilder[JwtRequest, AnyContent]

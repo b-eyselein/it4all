@@ -2,7 +2,6 @@ package model.graphql
 
 import com.github.t3hnar.bcrypt._
 import model._
-import model.mongo.MongoClientQueries
 import model.tools.ToolList
 import play.api.libs.json._
 import sangria.macros.derive._
@@ -53,16 +52,19 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
     }
 
   private def updateAllUserProficiencies[EC <: ExerciseContent](
-    mongoQueries: MongoClientQueries,
     username: String,
     exercise: Exercise[EC],
     topicsWithLevels: Seq[TopicWithLevel]
   ): Future[Boolean] = Future
     .sequence {
       topicsWithLevels.map { topicWithLevel =>
+        Future.successful(false)
+      /*
+        TODO:
         mongoQueries
           .updateUserProficiency(username, exercise, topicWithLevel)
           .recover { _ => false }
+       */
       }
     }
     .map { updateResults => updateResults.forall(identity) }
@@ -79,7 +81,7 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
     val partTypeInputArg: Argument[P] = Argument("part", tool.graphQlModels.partEnumType)
     val solTypeInputArg: Argument[S]  = Argument("solution", tool.graphQlModels.solutionInputType)
 
-    def correct(tableDefs: TableDefs, mongoQueries: MongoClientQueries, user: User, ex: Exercise[E], part: P, solution: S): Future[CorrectionResult[R]] = for {
+    def correct(tableDefs: TableDefs, user: User, ex: Exercise[E], part: P, solution: S): Future[CorrectionResult[R]] = for {
       result <- tool.correctAbstract(user, solution, ex, part)
 
       solutionId <- tableDefs.futureInsertSolution(
@@ -97,7 +99,7 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
       topicsForLevels <- tableDefs.futureTopicsForExercise(ex.toolId, ex.collectionId, ex.exerciseId)
 
       proficienciesUpdated <-
-        if (result.isCompletelyCorrect) updateAllUserProficiencies(mongoQueries, user.username, ex, topicsForLevels).map(Some.apply)
+        if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, ex, topicsForLevels).map(Some.apply)
         else Future.successful(None)
 
     } yield CorrectionResult(result, solutionId, proficienciesUpdated)
@@ -123,7 +125,6 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
               case Some(loggedInUser) =>
                 correct(
                   context.ctx.tableDefs,
-                  context.ctx.mongoQueries,
                   loggedInUser,
                   context.value,
                   context.arg(partTypeInputArg),

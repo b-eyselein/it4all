@@ -1,6 +1,5 @@
 package model.graphql
 
-import model.mongo.MongoClientQueries
 import model.tools.Helper.UntypedExercise
 import model.tools._
 import model.{ExerciseCollection, TableDefs, User}
@@ -18,7 +17,6 @@ final case class GraphQLRequest(
 
 final case class GraphQLContext(
   loggedInUser: Option[User],
-  mongoQueries: MongoClientQueries,
   tableDefs: TableDefs
 )
 
@@ -84,7 +82,7 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
         resolve = context =>
           context.ctx.loggedInUser match {
             case None       => Future.successful(Seq.empty)
-            case Some(user) => context.ctx.mongoQueries.userProficienciesForTool(user.username, context.value.id)
+            case Some(user) => Future.successful(Seq.empty) // TODO: context.ctx.mongoQueries.userProficienciesForTool(user.username, context.value.id)
           }
       )
     )

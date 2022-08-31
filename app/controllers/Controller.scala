@@ -2,7 +2,6 @@ package controllers
 
 import model._
 import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
-import model.mongo.MongoClientQueries
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.libs.json._
@@ -23,7 +22,6 @@ class Controller @Inject() (
   assets: Assets,
   cc: ControllerComponents,
   jwtAction: JwtAction,
-  mongoQueries: MongoClientQueries,
   tableDefs: TableDefs
 )(override protected implicit val ec: ExecutionContext)
     extends AbstractController(cc)
@@ -47,7 +45,7 @@ class Controller @Inject() (
               .execute(
                 schema,
                 queryAst,
-                userContext = GraphQLContext(maybeUser, mongoQueries, tableDefs),
+                userContext = GraphQLContext(maybeUser, tableDefs),
                 operationName = operationName,
                 variables = variables.getOrElse(Json.obj())
               )
