@@ -34,7 +34,11 @@ object SqlTopics {
     Aggregate,
     Alias,
     Limit,
-    SubSelect
+    SubSelect,
+    Create,
+    Update,
+    Insert,
+    Delete
   )
 }
 

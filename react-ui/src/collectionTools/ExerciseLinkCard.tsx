@@ -19,7 +19,7 @@ export function ExerciseLinkCard({exercise}: IProps): JSX.Element {
     {exerciseId}. {title}
     &nbsp;
     <div className="tag" title="Schwierigkeit">
-      <FilledPoints filledPoints={difficulty} maxPoints={5}/>
+      <FilledPoints filledPoints={difficulty.levelIndex} maxPoints={/* TODO: */4}/>
     </div>
   </>;
 
@@ -36,14 +36,17 @@ export function ExerciseLinkCard({exercise}: IProps): JSX.Element {
           )}
         </div>
         {topicsWithLevels.length > 0
-          ? <div className="tags">
-            {topicsWithLevels.map(({topic, level}) =>
-              <div className="tag" title={topic.title} key={topic.abbreviation}>
-                {topic.abbreviation}&nbsp; - &nbsp;
-                <FilledPoints filledPoints={level.levelIndex} maxPoints={topic.maxLevel.levelIndex}/>
-              </div>)}
-          </div>
-          : <div className="tag is-warning">Keine Tags vorhanden</div>}
+          ? (
+            <div className="tags">
+              {topicsWithLevels.map(({topic, level}) =>
+                <div className="tag" title={topic.title} key={topic.abbreviation}>
+                  {topic.abbreviation}&nbsp; - &nbsp;
+                  <FilledPoints filledPoints={level.levelIndex} maxPoints={/* TODO: topic.maxLevel.levelIndex */ 4}/>
+                </div>)}
+            </div>
+          ) : (
+            <div className="tag is-warning">Keine Tags vorhanden</div>
+          )}
       </>
     </BulmaCard>
   );

@@ -15,7 +15,7 @@ object SqlColl2Exes41To50 {
              |Geben Sie nur den Vornamen und Nachnamen aus.
              |Die Datensätze sollen nach dem Nachnamen alphabetisch sortiert werden.""".stripMargin
       .replace("\n", " "),
-    difficulty = 3,
+    difficulty = Level.Advanced,
     topicsWithLevels = Map(
       SqlTopics.OrderBy   -> Level.Beginner,
       SqlTopics.Aggregate -> Level.Intermediate
@@ -38,7 +38,7 @@ object SqlColl2Exes41To50 {
     text = """Zeigen Sie Titel, Verlag-Name und Lagerbestand sämtlicher Bücher an,
              |deren Lagerbestand geringer als 40000 ist.""".stripMargin
       .replace("\n", " "),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.Join -> Level.Beginner
     ),
@@ -65,7 +65,7 @@ object SqlColl2Exes41To50 {
              |Email: 'ferdinandus_1856 @yahoo.com',
              |Geburtstag: '1990 - 11 - 24 '.
              |Das Passwort und die Adresse soll vorerst leer gelassen werden.""".stripMargin,
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.Insert -> Level.Beginner
     ),
@@ -85,7 +85,7 @@ object SqlColl2Exes41To50 {
     title = "Immer diese Jugendlichen",
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Kunden, die nach dem Jahr 1995 geboren wurden.",
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.Delete -> Level.Beginner
     ),
@@ -103,7 +103,7 @@ object SqlColl2Exes41To50 {
     title = "Karteileichen",
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Kunden, die noch keine Bestellung abgegeben haben.",
-    difficulty = 3,
+    difficulty = Level.Advanced,
     topicsWithLevels = Map(
       SqlTopics.SubSelect -> Level.Beginner
     ),
@@ -122,7 +122,7 @@ object SqlColl2Exes41To50 {
     title = "Weg mit den Billigheimern",
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Bücher, die mehr als 8,50 Euro kosten und die Verlags-ID 7 besitzen.",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Delete -> Level.Beginner
     ),
@@ -140,7 +140,7 @@ object SqlColl2Exes41To50 {
     title = "Bye Bye, J. R. R!",
     authors = Seq("bje40dc"),
     text = "Löschen Sie alle Bücher, die vom Autor mit der ID 3 geschrieben wurden.",
-    difficulty = 3,
+    difficulty = Level.Advanced,
     topicsWithLevels = Map(
       SqlTopics.Delete -> Level.Beginner
     ),
@@ -161,7 +161,7 @@ object SqlColl2Exes41To50 {
              |(Autor-ID: 2, Erscheinungsjahr: 2010, Publisher-ID: '12' , Signatur 'PF / 520 - Y / 2',
              |Lagerbestand '289', Preis: '24.99 ').""".stripMargin
       .replace("\n", " "),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.Insert -> Level.Beginner
     ),

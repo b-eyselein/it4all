@@ -54,7 +54,7 @@ object ProgrammingColl6Ex2 extends ProgrammingInitialExerciseContainer(6, 2, "di
     topicsWithLevels = Map(
       ProgrammingTopics.Maths -> Level.Beginner
     ),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,

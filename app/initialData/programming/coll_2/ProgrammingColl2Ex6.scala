@@ -77,7 +77,7 @@ object ProgrammingColl2Ex6 extends ProgrammingInitialExerciseContainer(2, 6, "xm
       ProgrammingTopics.Strings  -> Level.Beginner,
       ProgrammingTopics.ForLoops -> Level.Beginner
     ),
-    difficulty = 3,
+    difficulty = Level.Advanced,
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,

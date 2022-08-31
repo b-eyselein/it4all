@@ -49,7 +49,7 @@ object ProgrammingColl5Ex1 extends ProgrammingInitialExerciseContainer(5, 1, "tu
       ProgrammingTopics.Maths      -> Level.Beginner,
       ProgrammingTopics.Conditions -> Level.Beginner
     ),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,

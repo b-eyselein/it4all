@@ -173,9 +173,10 @@ fragment Level on Level {
 fragment Topic on Topic {
   abbreviation
   title
-  maxLevel {
-    ...Level
-  }
+  # TODO:
+  #maxLevel {
+  #  ...Level
+  #}
 }
 
 fragment TopicWithLevel on TopicWithLevel {
@@ -198,7 +199,9 @@ fragment FieldsForLink on Exercise {
   collectionId
   toolId
   title
-  difficulty
+  difficulty {
+    ...Level
+  }
   topicsWithLevels {
     ...TopicWithLevel
   }

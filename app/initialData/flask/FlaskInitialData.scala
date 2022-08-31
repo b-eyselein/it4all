@@ -12,13 +12,15 @@ abstract class FlaskInitialExerciseContainer(collectionId: Int, exerciseId: Int)
 
 }
 
-object FlaskInitialData extends InitialData[FlaskExerciseContent] {
+object FlaskInitialData {
 
-  override val initialData = Map(
-    1 -> InitialCollection(
-      "Beispiel",
-      initialExercises = Map(
-        1 -> flaskColl01Ex01
+  val initialData: InitialData[FlaskExerciseContent] = InitialData[FlaskExerciseContent](
+    initialCollections = Map(
+      1 -> InitialCollection(
+        "Beispiel",
+        initialExercises = Map(
+          1 -> flaskColl01Ex01
+        )
       )
     )
   )

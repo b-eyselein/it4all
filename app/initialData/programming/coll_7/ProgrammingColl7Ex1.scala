@@ -45,7 +45,7 @@ object ProgrammingColl7Ex1 extends ProgrammingInitialExerciseContainer(7, 1, "ci
       ProgrammingTopics.Classes    -> Level.Beginner,
       ProgrammingTopics.Maths      -> Level.Beginner
     ),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,

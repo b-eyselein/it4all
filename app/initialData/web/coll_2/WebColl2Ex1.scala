@@ -3,9 +3,9 @@ package initialData.web.coll_2
 import initialData.InitialData._
 import initialData.web.WebInitialExerciseContainer
 import initialData.{FileLoadConfig, InitialExercise}
-import model.FilesSolution
 import model.tools.web.WebExerciseContent
 import model.tools.web.sitespec._
+import model.{FilesSolution, Level}
 
 object WebColl2Ex1 extends WebInitialExerciseContainer(2, 1) {
 
@@ -72,7 +72,7 @@ object WebColl2Ex1 extends WebInitialExerciseContainer(2, 1) {
     title = "Klickzähler",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = WebExerciseContent(
       SiteSpec("clickCounter.html", html_tasks, js_tasks),
       loadFilesFromFolder(

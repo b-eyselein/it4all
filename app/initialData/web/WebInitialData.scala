@@ -13,25 +13,27 @@ import model.tools.web.WebExerciseContent
 
 abstract class WebInitialExerciseContainer(collectionId: Int, exerciseId: Int) extends InitialFilesExerciseContainer("web", collectionId, exerciseId)
 
-object WebInitialData extends InitialData[WebExerciseContent] {
+object WebInitialData {
 
-  override val initialData: Map[Int, InitialCollection[WebExerciseContent]] = Map(
-    1 -> InitialCollection(
-      title = "Html Elemente",
-      initialExercises = Map(
-        1 -> webColl1Ex1,
-        2 -> webColl1Ex2,
-        3 -> webColl1Ex3,
-        4 -> webColl1Ex4,
-        5 -> webColl1Ex5
-      )
-    ),
-    2 -> InitialCollection(
-      title = "Js Basics",
-      initialExercises = Map(
-        1 -> webColl2Ex1,
-        2 -> webColl2Ex2,
-        3 -> webColl2Ex3
+  val initialData: InitialData[WebExerciseContent] = InitialData[WebExerciseContent](
+    initialCollections = Map(
+      1 -> InitialCollection(
+        title = "Html Elemente",
+        initialExercises = Map(
+          1 -> webColl1Ex1,
+          2 -> webColl1Ex2,
+          3 -> webColl1Ex3,
+          4 -> webColl1Ex4,
+          5 -> webColl1Ex5
+        )
+      ),
+      2 -> InitialCollection(
+        title = "Js Basics",
+        initialExercises = Map(
+          1 -> webColl2Ex1,
+          2 -> webColl2Ex2,
+          3 -> webColl2Ex3
+        )
       )
     )
   )

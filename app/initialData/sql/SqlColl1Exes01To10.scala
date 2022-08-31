@@ -12,7 +12,7 @@ object SqlColl1Exes01To10 {
     title = "Anzahl der Angestellten",
     authors = Seq("bje40dc"),
     text = """Wie viele Angestellte hat die Firma? Benennen Sie das Ergebnis als 'Anzahl'.""",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Aggregate -> Level.Beginner,
       SqlTopics.Alias -> Level.Beginner
@@ -33,7 +33,7 @@ object SqlColl1Exes01To10 {
     title = "Angestelltennummer",
     authors = Seq("bje40dc"),
     text = """Welche Angestelltennummer (id) hat Max Becker?""",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName,
@@ -49,7 +49,7 @@ object SqlColl1Exes01To10 {
     title = "Emailadresse",
     authors = Seq("bje40dc"),
     text = "Welche Emailadresse hat Max Becker für die Arbeit?",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Join -> Level.Beginner
     ),
@@ -77,7 +77,7 @@ object SqlColl1Exes01To10 {
     title = "Nutzernamen",
     authors = Seq("bje40dc"),
     text = "Geben Sie die Nutzernamen aller Angestellten alphabetisch geordnet aus!",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.OrderBy -> Level.Beginner
     ),
@@ -96,7 +96,7 @@ object SqlColl1Exes01To10 {
     title = "Anzahl der Untergebenen",
     authors = Seq("bje40dc"),
     text = """Wie viele Untergebene hat jeder Chef? Geben Sie jeweils die OID des Chefs und die Anzahl aus!""",
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.GroupBy -> Level.Beginner
     ),
@@ -116,7 +116,7 @@ object SqlColl1Exes01To10 {
     title = """Tabelle 'employee' erstellen""",
     authors = Seq("bje40dc"),
     text = "Erstellen Sie das CREATE TABLE-Skript für die Tabelle employee!",
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.Create -> Level.Beginner
     ),
@@ -142,7 +142,7 @@ object SqlColl1Exes01To10 {
     text = """Der Angestellte mit der OID 8 arbeitet jetzt für den Angestellten mit der OID 3.
              |Aktualisieren Sie die Datenbank!""".stripMargin
       .replace("\n", " "),
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Update -> Level.Beginner
     ),
@@ -161,7 +161,7 @@ object SqlColl1Exes01To10 {
     title = "Kündigung",
     authors = Seq("bje40dc"),
     text = """Der Angestellte mit der OID 7 hat gekündigt. Löschen Sie ihn aus der Angestelltentabelle.""",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Delete -> Level.Beginner
     ),
@@ -180,7 +180,7 @@ object SqlColl1Exes01To10 {
     authors = Seq("bje40dc"),
     text = """Es gibt eine neue Angestellte mit Namen Tina Sattler.
              |Diese arbeitet für die Person mit der OID 2 und soll als OID 9 und als Nutzernamen 'tina_sattler' bekommen.""".stripMargin,
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Insert -> Level.Beginner
     ),

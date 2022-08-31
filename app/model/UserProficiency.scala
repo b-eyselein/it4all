@@ -1,12 +1,13 @@
 package model
 
 import enumeratum.{EnumEntry, PlayEnum}
+import model.tools.Helper.UntypedExercise
+
+import scala.concurrent.Future
 
 sealed abstract class Level(val level: Int) extends EnumEntry {
 
   def pointsForExerciseCompletion: Int = Math.pow(2.toDouble, level.toDouble - 1).toInt
-
-  def pointsNeededForLevelCompletion: Int = 10 * level
 
 }
 
@@ -14,15 +15,10 @@ object Level extends PlayEnum[Level] {
 
   val values: IndexedSeq[Level] = findValues
 
-  case object Beginner extends Level(1)
-
+  case object Beginner     extends Level(1)
   case object Intermediate extends Level(2)
-
-  case object Advanced extends Level(3)
-
-  case object Expert extends Level(4)
-
-  val ordering: Ordering[Level] = (lvl1, lvl2) => lvl1.level - lvl2.level
+  case object Advanced     extends Level(3)
+  case object Expert       extends Level(4)
 
 }
 
@@ -35,10 +31,10 @@ final case class LevelForExercise(
 final case class UserProficiency(
   username: String,
   topic: Topic,
-  pointsForExercises: Set[LevelForExercise] = Set.empty
+  pointsForExercises: Seq[LevelForExercise] = Seq.empty
 ) {
 
-  lazy val getPoints: Int = pointsForExercises.toSeq.map { _.level.pointsForExerciseCompletion }.sum
+  lazy val getPoints: Int = pointsForExercises.map { _.level.pointsForExerciseCompletion }.sum
 
   def pointsForNextLevel: Int = getPoints match {
     case e if e >= 60 => Int.MaxValue
@@ -59,11 +55,24 @@ final case class UserProficiency(
 trait ProficiencyRepository {
   self: play.api.db.slick.HasDatabaseConfig[slick.jdbc.JdbcProfile] =>
 
-  import profile.api._
+  import MyPostgresProfile.api._
+
+  private val proficienciesTQ = TableQuery[ProficienciesTable]
+
+  def userProficienciesForTool(username: String, toolId: String): Future[Seq[UserProficiency]] = ???
+    // db.run(proficienciesTQ.filter { p => p.username === username && p.toolId === toolId }.result)
+
+  def updateUserProficiency(username: String, exercise: UntypedExercise, topicWithLevel: TopicWithLevel): Future[Boolean] = ???
 
   private class ProficienciesTable(tag: Tag) extends Table[UserProficiency](tag, "user_proficiencies") {
 
-    override def * = ???
+    def username = column[String]("username")
+
+    def topicJson = column[Topic]("topic_json")
+
+    def pointsForExercises = column[Seq[LevelForExercise]]("level_for_exercises")
+
+    override def * = (username, topicJson, pointsForExercises) <> (UserProficiency.tupled, UserProficiency.unapply)
 
   }
 

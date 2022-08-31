@@ -39,7 +39,7 @@ object ProgrammingColl2Ex4 extends ProgrammingInitialExerciseContainer(2, 4, "na
       ProgrammingTopics.Tuples   -> Level.Beginner,
       ProgrammingTopics.ForLoops -> Level.Beginner
     ),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,

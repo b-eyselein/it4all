@@ -3,7 +3,7 @@ package initialData.web.coll_1
 import initialData.InitialData._
 import initialData.web.WebInitialExerciseContainer
 import initialData.{FileLoadConfig, InitialExercise}
-import model.FilesSolution
+import model.{FilesSolution, Level}
 import model.tools.web.WebExerciseContent
 import model.tools.web.sitespec.{HtmlTask, SiteSpec, WebElementSpec}
 
@@ -81,7 +81,7 @@ object WebColl1Ex1 extends WebInitialExerciseContainer(1, 1) {
     title = "Listen in Html",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    difficulty = 1,
+    difficulty = Level.Beginner,
     content = WebExerciseContent(
       siteSpec = SiteSpec("carList.html", html_tasks, jsTasks = Seq.empty),
       files = loadFilesFromFolder(

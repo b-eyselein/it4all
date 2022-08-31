@@ -50,13 +50,19 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
   )
 
   protected val exerciseType: ObjectType[GraphQLContext, UntypedExercise] = {
-    implicit val x0: ObjectType[Unit, TopicWithLevel] = topicWithLevelType
+
+    implicit val x0: ObjectType[Unit, Level] = levelType
 
     val contentField: Field[GraphQLContext, UntypedExercise] = Field("content", exerciseContentUnionType, resolve = _.value.content)
 
     deriveObjectType(
       ReplaceField("content", contentField),
       AddFields(
+        Field(
+          "topicsWithLevels",
+          ListType(topicWithLevelType),
+          resolve = context => context.ctx.tableDefs.futureTopicsForExercise(context.value.toolId, context.value.collectionId, context.value.exerciseId)
+        ),
         Field(
           "parts",
           ListType(exPartType),

@@ -39,6 +39,6 @@ object ProgrammingTool extends Tool("programming", "Programmierung", true) {
     ProgrammingCorrector.correct(exercise, solution, solTargetDir, part)
   }
 
-  override val initialData: InitialData[ProgrammingExerciseContent] = ProgrammingInitialData
+  override val initialData: InitialData[ProgrammingExerciseContent] = ProgrammingInitialData.initialData
 
 }

@@ -3,9 +3,9 @@ package initialData.web.coll_2
 import initialData.InitialData._
 import initialData.web.WebInitialExerciseContainer
 import initialData.{FileLoadConfig, InitialExercise}
-import model.FilesSolution
 import model.tools.web.WebExerciseContent
 import model.tools.web.sitespec._
+import model.{FilesSolution, Level}
 
 object WebColl2Ex3 extends WebInitialExerciseContainer(2, 3) {
 
@@ -116,7 +116,7 @@ object WebColl2Ex3 extends WebInitialExerciseContainer(2, 3) {
     title = "Schleifen",
     authors = Seq("alg81dm"),
     text = loadTextFromFile(exResPath / "text.html"),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = WebExerciseContent(
       siteSpec = SiteSpec("factorial.html", html_tasks, js_tasks),
       files = loadFilesFromFolder(

@@ -4,9 +4,7 @@ import better.files.File
 import com.google.inject.AbstractModule
 import initialData.InitialData.exerciseResourcesPath
 import model._
-import model.tools.ToolList
-import play.api.Logger
-import play.api.libs.json.OFormat
+import model.tools.{Tool, ToolList}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -21,12 +19,12 @@ abstract class InitialExerciseContainer(
 
 }
 
-case class InitialExercise[EC <: ExerciseContent](
+final case class InitialExercise[EC <: ExerciseContent](
   title: String,
   authors: Seq[String],
   text: String,
   topicsWithLevels: Map[Topic, Level] = Map.empty,
-  difficulty: Int,
+  difficulty: Level,
   content: EC
 )
 
@@ -35,13 +33,14 @@ final case class InitialCollection[EC <: ExerciseContent](
   initialExercises: Map[Int, InitialExercise[EC]] = Map.empty
 )
 
-trait InitialData[EC <: ExerciseContent] {
-
-  val initialData: Map[Int, InitialCollection[EC]]
-
-}
+final case class InitialData[EC <: ExerciseContent](
+  topics: Seq[Topic] = Seq.empty,
+  initialCollections: Map[Int, InitialCollection[EC]]
+)
 
 object InitialData {
+
+  // TODO: type InitialData[EC <: ExerciseContent] = Map[Int, InitialCollection[EC]]
 
   private val baseResourcesPath = File.currentWorkingDirectory / "conf" / "resources"
 
@@ -54,65 +53,50 @@ object InitialData {
 @Singleton
 class StartUpService @Inject() (tableDefs: TableDefs)(implicit ec: ExecutionContext) {
 
-  private val logger = Logger(classOf[StartUpService])
+  private def newInsertInitialExercise(tool: Tool, collectionId: Int, exerciseId: Int)(initialExercise: InitialExercise[tool.ExContentType]): Future[Unit] =
+    tableDefs.futureExerciseExists(tool.id, collectionId, exerciseId).flatMap {
+      case true => Future.successful(())
+      case false =>
+        initialExercise match {
+          case InitialExercise(title, _ /* authors */, text, topicsWithLevels, difficulty, content) =>
+            for {
+              _ /* exerciseInserted */ <- tableDefs.futureInsertExercise(
+                Exercise(exerciseId, collectionId, tool.id, title, text, difficulty, content),
+                tool.jsonFormats.exerciseContentFormat
+              )
 
-  private def insertInitialCollection(coll: ExerciseCollection): Future[Unit] = for {
-    maybeCollection <- tableDefs.futureCollectionById(coll.toolId, coll.collectionId)
+              _ /* exerciseTopicsInserted */ <- tableDefs.futureInsertTopicsForExercise(tool.id, collectionId, exerciseId, topicsWithLevels)
+            } yield ()
+        }
+    }
 
-    inserted <- maybeCollection match {
+  private def newInsertInitialCollection(tool: Tool, collectionId: Int)(initialCollection: InitialCollection[tool.ExContentType]): Future[Unit] =
+    tableDefs.futureCollectionById(tool.id, collectionId).map {
       case Some(_) => Future.successful(())
       case None =>
-        val key = s"(${coll.toolId}, ${coll.collectionId})"
+        initialCollection match {
+          case InitialCollection(title, initialExercises) =>
+            for {
+              _ /* collectionInserted */ <- tableDefs.futureInsertCollection(ExerciseCollection(tool.id, collectionId, title))
 
-        tableDefs
-          .futureInsertCollection(coll)
-          .map {
-            case false => logger.error(s"Could not insert collection $key!")
-            case true  => logger.debug(s"Inserted collection $key.")
-          }
-          .recover { case e =>
-            logger.error(s"Error while inserting collection $key", e)
-          }
-    }
-  } yield inserted
-
-  private def insertInitialExercise[EC <: ExerciseContent](ex: Exercise[EC], exContentFormat: OFormat[EC]): Future[Unit] = for {
-    exerciseExists <- tableDefs.futureExerciseExists(ex.toolId, ex.collectionId, ex.exerciseId)
-
-    inserted <-
-      if (exerciseExists) {
-        Future.successful(())
-      } else {
-        val key = s"(${ex.toolId}, ${ex.collectionId}, ${ex.exerciseId})"
-
-        tableDefs
-          .futureInsertExercise(ex, exContentFormat)
-          .map {
-            case false => logger.error(s"Exercise $key could not be inserted!")
-            case true  => logger.debug(s"Inserted exercise $key.")
-          }
-          .recover { case e =>
-            logger.error(s"Error while inserting exercise $key", e)
-          }
-      }
-  } yield inserted
-
-  ToolList.tools.foreach { tool =>
-    // Insert all collections and exercises
-
-    tool.initialData.initialData.foreach { case (collectionId, InitialCollection(title, initialExercises)) =>
-      for {
-        _ <- insertInitialCollection(ExerciseCollection(tool.id, collectionId, title))
-
-        _ = initialExercises.foreach { case (exerciseId, InitialExercise(title, authors, text, topicsWithLevelsMap, difficulty, content)) =>
-          val topicsWithLevels = topicsWithLevelsMap.map { case (topic, level) => TopicWithLevel(topic, level) }.toSeq
-
-          val exercise = Exercise(exerciseId, collectionId, tool.id, title, authors, text, topicsWithLevels, difficulty, content)
-
-          insertInitialExercise(exercise, tool.jsonFormats.exerciseContentFormat)
+              _ /* exercisesInserted */ <- Future.sequence {
+                initialExercises.toSeq.map { case (exerciseId, initialExercise) => newInsertInitialExercise(tool, collectionId, exerciseId)(initialExercise) }
+              }
+            } yield ()
         }
-      } yield ()
     }
+
+  // Insert all collections and exercises
+
+  for (tool <- ToolList.tools; InitialData(topics, initialCollections) = tool.initialData) {
+    for {
+      _ /* topicsInserted */ <- tableDefs.futureInsertTopics(topics)
+
+      _ /* collectionsInserted */ <- Future.sequence {
+        tool.initialData.initialCollections.map { case (collectionId, initialCollection) => newInsertInitialCollection(tool, collectionId)(initialCollection) }
+      }
+
+    } yield ()
   }
 
 }

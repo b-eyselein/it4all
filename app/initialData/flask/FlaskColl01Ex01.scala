@@ -64,7 +64,7 @@ object FlaskColl01Ex01 extends FlaskInitialExerciseContainer(1, 1) {
     title = "Testaufgabe Login",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    difficulty = 1,
+    difficulty = Level.Beginner,
     content = FlaskExerciseContent(
       files = loadFilesFromFolder(
         declarationPath,

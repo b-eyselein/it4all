@@ -7,9 +7,10 @@ import model.graphql.ToolGraphQLModelBasics
 
 import scala.concurrent.{ExecutionContext, Future}
 
-// Tools
-
 abstract class Tool(val id: String, val name: String, val isBeta: Boolean = false) {
+
+  // FIXME: tools without parts?
+  // abstract class ToolWithParts(id: String, name: String, isBeta: Boolean = false) extends Tool(id, name, isBeta)
 
   // Abstract types
 
@@ -36,7 +37,7 @@ abstract class Tool(val id: String, val name: String, val isBeta: Boolean = fals
     part: PartType
   )(implicit executionContext: ExecutionContext): Future[ResType]
 
-  val allTopics: Seq[Topic] = Seq.empty
+  val allTopics: Seq[Topic]
 
   val initialData: InitialData[ExContentType]
 

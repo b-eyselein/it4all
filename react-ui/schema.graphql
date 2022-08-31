@@ -103,10 +103,9 @@ type ExPart {
 }
 
 type Exercise {
-  authors: [String!]!
   collectionId: Int!
   content: ExerciseContentUnionType!
-  difficulty: Int!
+  difficulty: Level!
   exerciseId: Int!
   parts: [ExPart!]!
   text: String!
@@ -550,7 +549,6 @@ type StringMatchingResult {
 
 type Topic {
   abbreviation: String!
-  maxLevel: Level!
   title: String!
   toolId: String!
 }

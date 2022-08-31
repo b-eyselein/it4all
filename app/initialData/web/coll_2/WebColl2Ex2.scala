@@ -3,9 +3,9 @@ package initialData.web.coll_2
 import initialData.InitialData._
 import initialData.web.WebInitialExerciseContainer
 import initialData.{FileLoadConfig, InitialExercise}
-import model.FilesSolution
 import model.tools.web.WebExerciseContent
 import model.tools.web.sitespec._
+import model.{FilesSolution, Level}
 
 object WebColl2Ex2 extends WebInitialExerciseContainer(2, 2) {
 
@@ -108,7 +108,7 @@ object WebColl2Ex2 extends WebInitialExerciseContainer(2, 2) {
     title = "Verzweigungen und Strings",
     authors = Seq("alg81dm"),
     text = loadTextFromFile(exResPath / "text.html"),
-    difficulty = 3,
+    difficulty = Level.Advanced,
     content = WebExerciseContent(
       SiteSpec("pwChecker.html", html_tasks, js_tasks),
       loadFilesFromFolder(

@@ -1,9 +1,10 @@
 package initialData.uml.coll_1
 
 import initialData.InitialExercise
+import model.Level
 import model.tools.uml._
 
-object UmlColl1Ex1  {
+object UmlColl1Ex1 {
 
   private val sample: UmlClassDiagram = UmlClassDiagram(
     classes = Seq(
@@ -62,7 +63,7 @@ object UmlColl1Ex1  {
              |Es soll außerdem jeweils der komplette Name gespeichert werden.
              |Jeder Kunde kann mehrere Konten besitzen und hat die Möglichkeit, sich das Gesamtsaldo aller Konten anzeigen
              |zu lassen und Geld auf ein Konto einzuzahlen.""".stripMargin.replace("\n", " "),
-    difficulty = 1,
+    difficulty = Level.Beginner,
     content = UmlExerciseContent(
       mappings = Map(
         "Konten" -> "Konto",

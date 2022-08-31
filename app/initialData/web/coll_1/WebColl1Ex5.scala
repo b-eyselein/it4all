@@ -3,9 +3,9 @@ package initialData.web.coll_1
 import initialData.InitialData._
 import initialData.web.WebInitialExerciseContainer
 import initialData.{FileLoadConfig, InitialExercise}
-import model.FilesSolution
 import model.tools.web.WebExerciseContent
 import model.tools.web.sitespec.{HtmlTask, SiteSpec, WebElementSpec}
+import model.{FilesSolution, Level}
 
 object WebColl1Ex5 extends WebInitialExerciseContainer(1, 5) {
 
@@ -52,7 +52,7 @@ object WebColl1Ex5 extends WebInitialExerciseContainer(1, 5) {
     title = "Audio in HTML 5",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    difficulty = 1,
+    difficulty = Level.Beginner,
     content = WebExerciseContent(
       SiteSpec("audio.html", html_tasks, jsTasks = Seq.empty),
       files = loadFilesFromFolder(

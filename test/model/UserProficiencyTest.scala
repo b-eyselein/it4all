@@ -14,12 +14,12 @@ class UserProficiencyTest extends AnyFlatSpec with Matchers {
     up1.getPoints shouldBe 0
     up1.getLevel shouldBe Level.Beginner
 
-    val up2 = up1.copy(pointsForExercises = Set(LevelForExercise(1, 1, Level.Beginner))) // 1 points
+    val up2 = up1.copy(pointsForExercises = Seq(LevelForExercise(1, 1, Level.Beginner))) // 1 points
     up2.getPoints shouldBe 1
     up2.getLevel shouldBe Level.Beginner
 
     val up3 = up2.copy(pointsForExercises =
-      Set(
+      Seq(
         LevelForExercise(1, 1, Level.Beginner),     // 1 points
         LevelForExercise(2, 2, Level.Intermediate), // 2 points
         LevelForExercise(3, 3, Level.Intermediate), // 2 points

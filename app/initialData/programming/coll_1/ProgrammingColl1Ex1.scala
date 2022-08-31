@@ -12,7 +12,7 @@ object ProgrammingColl1Ex1 extends ProgrammingInitialExerciseContainer(1, 1, "gg
     title = "Größter gemeinsamer Teiler",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       ProgrammingTopics.ForLoops   -> Level.Beginner,
       ProgrammingTopics.Conditions -> Level.Beginner,

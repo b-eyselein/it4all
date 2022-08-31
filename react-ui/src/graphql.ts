@@ -146,10 +146,9 @@ export type ExPart = {
 
 export type Exercise = {
   __typename?: 'Exercise';
-  authors: Array<Scalars['String']>;
   collectionId: Scalars['Int'];
   content: ExerciseContentUnionType;
-  difficulty: Scalars['Int'];
+  difficulty: Level;
   exerciseId: Scalars['Int'];
   parts: Array<ExPart>;
   text: Scalars['String'];
@@ -748,7 +747,6 @@ export type StringMatchingResult = {
 export type Topic = {
   __typename?: 'Topic';
   abbreviation: Scalars['String'];
-  maxLevel: Level;
   title: Scalars['String'];
   toolId: Scalars['String'];
 };
@@ -1414,18 +1412,18 @@ export type CollectionToolOverviewQueryVariables = Exact<{
 }>;
 
 
-export type CollectionToolOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, collectionCount: number, exerciseCount: number, proficiencies: Array<{ __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }> } | null };
+export type CollectionToolOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, collectionCount: number, exerciseCount: number, proficiencies: Array<{ __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }> } | null };
 
-export type UserProficiencyFragment = { __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } };
+export type UserProficiencyFragment = { __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } };
 
-export type AllExercisesOverviewExerciseFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> };
+export type AllExercisesOverviewExerciseFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> };
 
 export type AllExercisesOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
 }>;
 
 
-export type AllExercisesOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, allExercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> }> } | null };
+export type AllExercisesOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, allExercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> }> } | null };
 
 export type CollectionValuesFragment = { __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: number };
 
@@ -1436,7 +1434,7 @@ export type CollectionListQueryVariables = Exact<{
 
 export type CollectionListQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, collections: Array<{ __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: number }> } | null };
 
-export type CollOverviewToolFragment = { __typename?: 'CollectionTool', name: string, collection?: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> }> } | null };
+export type CollOverviewToolFragment = { __typename?: 'CollectionTool', name: string, collection?: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> }> } | null };
 
 export type CollectionOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
@@ -1444,7 +1442,7 @@ export type CollectionOverviewQueryVariables = Exact<{
 }>;
 
 
-export type CollectionOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, collection?: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> }> } | null } | null };
+export type CollectionOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'CollectionTool', name: string, collection?: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> }> } | null } | null };
 
 export type PartFragment = { __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean };
 
@@ -1476,13 +1474,13 @@ export type FilesSolutionFragment = { __typename?: 'FilesSolution', files: Array
 
 export type LevelFragment = { __typename?: 'Level', title: string, levelIndex: number };
 
-export type TopicFragment = { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } };
+export type TopicFragment = { __typename?: 'Topic', abbreviation: string, title: string };
 
-export type TopicWithLevelFragment = { __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } };
+export type TopicWithLevelFragment = { __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } };
 
 export type FieldsPartFragment = { __typename?: 'ExPart', id: string, name: string, solved: boolean };
 
-export type FieldsForLinkFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: number, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string, maxLevel: { __typename?: 'Level', title: string, levelIndex: number } }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> };
+export type FieldsForLinkFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> };
 
 export type EbnfExerciseContentFragment = { __typename?: 'EbnfExerciseContent', predefinedTerminals?: Array<string> | null, sampleSolutions: Array<{ __typename?: 'EbnfGrammar', startSymbol: string }> };
 
@@ -2147,21 +2145,18 @@ export const CollectionToolFragmentDoc = gql`
   exerciseCount
 }
     `;
+export const TopicFragmentDoc = gql`
+    fragment Topic on Topic {
+  abbreviation
+  title
+}
+    `;
 export const LevelFragmentDoc = gql`
     fragment Level on Level {
   title
   levelIndex
 }
     `;
-export const TopicFragmentDoc = gql`
-    fragment Topic on Topic {
-  abbreviation
-  title
-  maxLevel {
-    ...Level
-  }
-}
-    ${LevelFragmentDoc}`;
 export const UserProficiencyFragmentDoc = gql`
     fragment UserProficiency on UserProficiency {
   topic {
@@ -2199,7 +2194,9 @@ export const FieldsForLinkFragmentDoc = gql`
   collectionId
   toolId
   title
-  difficulty
+  difficulty {
+    ...Level
+  }
   topicsWithLevels {
     ...TopicWithLevel
   }
@@ -2207,7 +2204,8 @@ export const FieldsForLinkFragmentDoc = gql`
     ...FieldsPart
   }
 }
-    ${TopicWithLevelFragmentDoc}
+    ${LevelFragmentDoc}
+${TopicWithLevelFragmentDoc}
 ${FieldsPartFragmentDoc}`;
 export const AllExercisesOverviewExerciseFragmentDoc = gql`
     fragment AllExercisesOverviewExercise on Exercise {

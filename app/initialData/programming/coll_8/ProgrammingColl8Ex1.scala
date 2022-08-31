@@ -59,7 +59,7 @@ object ProgrammingColl8Ex1 extends ProgrammingInitialExerciseContainer(8, 1, "ta
       ProgrammingTopics.ForLoops   -> Level.Beginner,
       ProgrammingTopics.Conditions -> Level.Beginner
     ),
-    difficulty = 4,
+    difficulty = Level.Expert,
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,

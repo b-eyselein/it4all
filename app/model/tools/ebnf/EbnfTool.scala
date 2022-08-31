@@ -4,7 +4,7 @@ import initialData.InitialData
 import initialData.ebnf.EbnfInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.tools.{Tool, ToolJsonProtocol}
-import model.{Exercise, User}
+import model.{Exercise, Topic, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -28,6 +28,8 @@ object EbnfTool extends Tool("ebnf", "EBNF") {
     part: EbnfExercisePart
   )(implicit executionContext: ExecutionContext): Future[EbnfResult] = ???
 
-  override val initialData: InitialData[EbnfExerciseContent] = EbnfInitialData
+  override val initialData: InitialData[EbnfExerciseContent] = EbnfInitialData.initialData
+
+  override val allTopics: Seq[Topic] = Seq.empty
 
 }

@@ -29,7 +29,7 @@ object ProgrammingColl2Ex8 extends ProgrammingInitialExerciseContainer(2, 8, "ce
       ProgrammingTopics.Strings    -> Level.Beginner,
       ProgrammingTopics.Conditions -> Level.Beginner
     ),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,

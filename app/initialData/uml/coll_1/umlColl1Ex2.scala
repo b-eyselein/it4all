@@ -1,6 +1,7 @@
 package initialData.uml.coll_1
 
 import initialData.InitialExercise
+import model.Level
 import model.tools.uml._
 
 object umlColl1Ex2 {
@@ -118,7 +119,7 @@ object umlColl1Ex2 {
              |verschrieben werden.
              |Ein Patient wiederum kann in einer Station aufgenommen bzw. entlassen werden.""".stripMargin
       .replace("\n", " "),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = UmlExerciseContent(
       mappings = Map(
         "Stationen"         -> "Station",

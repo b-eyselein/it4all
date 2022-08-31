@@ -79,19 +79,23 @@ object WebTool extends Tool("web", "Web") {
     exercise: WebExercise,
     part: WebExPart
   )(implicit executionContext: ExecutionContext): Future[WebResult] = Future.fromTry {
-    writeFilesSolutionFiles(solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId), solution)
-      .flatMap { _ =>
-        val driver = new HtmlUnitDriver(true)
 
-        val fileName = exercise.content.siteSpec.fileName
-        val solutionUrl =
-          s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.exerciseId}/$fileName"
+    val fileName = exercise.content.siteSpec.fileName
 
-        Try(driver.get(solutionUrl))
-          .map(_ => onDriverGetSuccess(exercise.content, part, driver))
-      }
+    val solutionUrl = s"http://localhost:9080/${user.username}/${exercise.collectionId}/${exercise.exerciseId}/$fileName"
+
+    for {
+      _ <- writeFilesSolutionFiles(solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId), solution)
+
+      driver = new HtmlUnitDriver(true)
+
+      _ <- Try { driver.get(solutionUrl) }
+
+    } yield onDriverGetSuccess(exercise.content, part, driver)
   }
 
-  override val initialData: InitialData[WebExerciseContent] = WebInitialData
+  override val initialData: InitialData[WebExerciseContent] = WebInitialData.initialData
+
+  override val allTopics: Seq[Topic] = Seq.empty
 
 }

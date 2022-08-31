@@ -1,15 +1,16 @@
 package initialData.ebnf
 
 import initialData.{InitialCollection, InitialData, InitialExercise}
+import model.Level
 import model.tools.ebnf.{EbnfExerciseContent, EbnfGrammar, EbnfRule}
 
-object EbnfInitialData extends InitialData[EbnfExerciseContent] {
+object EbnfInitialData {
 
   private val ebnfColl01Ex01 = InitialExercise(
     title = "Binärpalindrome",
     Seq("bje40dc"),
     text = "Erstellen Sie eine EBNF-Grammatik, die alle Binärzahlen erzeugt, die gleichzeitig auch Palindrome sein!",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     content = EbnfExerciseContent(
       predefinedTerminals = Some(Seq("0", "1")),
       sampleSolutions = Seq(
@@ -23,11 +24,13 @@ object EbnfInitialData extends InitialData[EbnfExerciseContent] {
     )
   )
 
-  override val initialData: Map[Int, InitialCollection[EbnfExerciseContent]] = Map(
-    1 -> InitialCollection(
-      "EBNF - Grundlagen",
-      initialExercises = Map(
-        1 -> ebnfColl01Ex01
+  val initialData: InitialData[EbnfExerciseContent] = InitialData[EbnfExerciseContent](
+    initialCollections = Map(
+      1 -> InitialCollection(
+        "EBNF - Grundlagen",
+        initialExercises = Map(
+          1 -> ebnfColl01Ex01
+        )
       )
     )
   )

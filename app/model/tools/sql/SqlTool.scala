@@ -53,6 +53,6 @@ object SqlTool extends Tool("sql", "Sql") {
     Future.fromTry(corrector.correct(exercise.content.schemaName, solution, exercise.content.sampleSolutions))
   }
 
-  override val initialData: InitialData[SqlExerciseContent] = SqlInitialData
+  override val initialData: InitialData[SqlExerciseContent] = SqlInitialData.initialData
 
 }

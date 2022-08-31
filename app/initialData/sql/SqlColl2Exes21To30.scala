@@ -12,7 +12,7 @@ object SqlColl2Exes21To30 {
     title = "Sterne in der Wüste 1",
     authors = Seq("bje40dc"),
     text = """Wie oft wurde das Buch 'Die Stadt in der Wüste' bewertet? Nennen Sie die Spalte 'Anzahl'.""",
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.Aggregate -> Level.Beginner,
       SqlTopics.Join      -> Level.Beginner,
@@ -37,7 +37,7 @@ object SqlColl2Exes21To30 {
     authors = Seq("bje40dc"),
     text = """Welche Durchschnittsbewertung bekam das Buch 'Die Stadt in der Wüste'?
              |Nennen Sie die Spalte 'Durchschnitt'.""".stripMargin.replace("\n", " "),
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Aggregate -> Level.Beginner,
       SqlTopics.Join      -> Level.Beginner,
@@ -61,7 +61,7 @@ object SqlColl2Exes21To30 {
     title = "Harry Potters",
     authors = Seq("bje40dc"),
     text = """Wie hoch ist der Gesamtbestand an Harry Potter-Büchern? Nennen Sie die Spalte 'Gesamtbestand'.""",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Aggregate -> Level.Beginner,
       SqlTopics.Alias -> Level.Beginner
@@ -82,7 +82,7 @@ object SqlColl2Exes21To30 {
     authors = Seq("bje40dc"),
     text = """Geben Sie jeweils die schlechteste und beste Bewertung des Buches 'Harry Potter und der Halbblutprinz' aus.
              |Nennen Sie die Spalten jeweils 'Schlechteste' und 'Beste'.""".stripMargin.replace("\n", " "),
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Aggregate -> Level.Intermediate,
       SqlTopics.Alias -> Level.Intermediate,
@@ -106,7 +106,7 @@ object SqlColl2Exes21To30 {
     title = "Durchschnittlicher Bestand",
     authors = Seq("bje40dc"),
     text = """Wie hoch ist der durchschnittliche Bestand aller Bücher? Nennen Sie die Spalte 'Durchschnitt'.""",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Aggregate -> Level.Beginner
     ),
@@ -124,7 +124,7 @@ object SqlColl2Exes21To30 {
     title = "Wunsch des Phönix",
     authors = Seq("bje40dc"),
     text = """Wie lauten die Nachnamen der Kunden die sich das Buch 'Harry Potter und der Orden des Phönix' wünschen?""",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Join -> Level.Intermediate
     ),
@@ -151,7 +151,7 @@ object SqlColl2Exes21To30 {
     authors = Seq("bje40dc"),
     text = """Suchen Sie die Titel aller Bücher, deren Autor George Orwell ist.
              |Ordnen Sie die Titel nach Erscheinungsjahr abwärts.""".stripMargin.replace("\n", " "),
-    difficulty = 3,
+    difficulty = Level.Advanced,
     topicsWithLevels = Map(
       SqlTopics.OrderBy -> Level.Beginner,
       SqlTopics.Join -> Level.Beginner
@@ -177,7 +177,7 @@ object SqlColl2Exes21To30 {
     authors = Seq("bje40dc"),
     text = """Zeigen sie Titel und Autor-ID der drei teuersten Bücher an.
              |Sortieren Sie die Einträge nach Preis abwärts.""".stripMargin.replace("\n", " "),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.OrderBy -> Level.Beginner,
       SqlTopics.Limit -> Level.Beginner
@@ -199,7 +199,7 @@ object SqlColl2Exes21To30 {
     authors = Seq("bje40dc"),
     text = """Wählen Sie alle Bestellungen aus, die das Buch 'Harry Potter und der Halbblutprinz' enthalten.
              |Geben Sie für diese Bestellungen jeweils das Datum und die Anzahl der bestellten Exemplare des Buches aus.""".stripMargin.replace("\n", " "),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.Join -> Level.Intermediate
     ),
@@ -225,7 +225,7 @@ object SqlColl2Exes21To30 {
     title = "Emails mit G",
     authors = Seq("bje40dc"),
     text = """Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de ' oder mit 'gmail.com' enden.""",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,

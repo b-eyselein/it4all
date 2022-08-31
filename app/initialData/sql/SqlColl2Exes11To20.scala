@@ -14,7 +14,7 @@ object SqlColl2Exes11To20 {
     text = """Ordnen Sie allen Büchern ihre jeweiligen Autoren zu.
              |Geben Sie jeweils den Titel des Buches und den Nachnamen des Autoren aus!""".stripMargin
       .replace("\n", " "),
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Join -> Level.Beginner
     ),
@@ -34,7 +34,7 @@ object SqlColl2Exes11To20 {
     title = "Bücher von Carlsen",
     authors = Seq("bje40dc"),
     text = """Bestimmen Sie Titel und Preis aller Bücher die im Verlag 'Carlsen' erschienen sind.""",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Join -> Level.Beginner
     ),
@@ -57,7 +57,7 @@ object SqlColl2Exes11To20 {
     title = "Harry Potters Leben",
     authors = Seq("bje40dc"),
     text = """Bestimmen Sie Titel und ISBN sämtlicher Bücher der Autorin 'Rowling' (ohne Anführungszeichen).""",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Join -> Level.Beginner
     ),
@@ -79,7 +79,7 @@ object SqlColl2Exes11To20 {
     title = "Wilhards Wertungen",
     authors = Seq("bje40dc"),
     text = """Zeigen Sie die Werte aller Ratings an, die der Kunde mit der Email 'wilhard_1041@web.de' abgegeben hat.""",
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.Join -> Level.Beginner
     ),
@@ -101,7 +101,7 @@ object SqlColl2Exes11To20 {
     title = """Wer hat hier so viel bestellt?""",
     authors = Seq("bje40dc"),
     text = """Wie lauten die Nachnamen der Kunden, die mindestens 3 Bestellung aufgegeben haben?""",
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.Join -> Level.Beginner
     ),
@@ -124,7 +124,7 @@ object SqlColl2Exes11To20 {
     title = "GMX-Kunden",
     authors = Seq("bje40dc"),
     text = """Geben Sie alle Email-Adressen der Kunden aus die mit 'gmx.de' enden.""",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -141,7 +141,7 @@ object SqlColl2Exes11To20 {
     title = "Billige Bücher",
     authors = Seq("bje40dc"),
     text = """Geben Sie die Titel aller Bücher aus die weniger als 10,00 € kosten.""",
-    difficulty = 1,
+    difficulty = Level.Beginner,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -159,7 +159,7 @@ object SqlColl2Exes11To20 {
     authors = Seq("bje40dc"),
     text = """Geben die die IDs aller Bücher aus, die von Kunden gewünscht werden.
              |Achten Sie darauf, dass eine ID nur einmal vorkommt.""".stripMargin,
-    difficulty = 1,
+    difficulty = Level.Beginner,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -174,7 +174,7 @@ object SqlColl2Exes11To20 {
     title = "Jahrgang 81",
     authors = Seq("bje40dc"),
     text = """Wählen Sie die Vor- und Nachnamen der Kunden aus, die im Jahr 1981 Geburtstag haben.""",
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,
@@ -195,7 +195,7 @@ object SqlColl2Exes11To20 {
     authors = Seq("bje40dc"),
     text = """Geben Sie die Titel aller Bücher aus, die einen Bestand von weniger als 20.000 Exemplaren
              |oder einen Preis unter 14€ haben.""".stripMargin.replace("\n", " "),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
       schemaName = schemaName,

@@ -5,7 +5,7 @@ import initialData.regex.RegexInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.matching.MatchingResult
 import model.tools._
-import model.{Exercise, User}
+import model.{Exercise, Topic, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -46,6 +46,8 @@ object RegexTool extends Tool("regex", "Reguläre Ausdrücke") {
     } yield result
   }
 
-  override val initialData: InitialData[RegexExerciseContent] = RegexInitialData
+  override val initialData: InitialData[RegexExerciseContent] = RegexInitialData.initialData
+
+  override val allTopics: Seq[Topic] = Seq.empty
 
 }

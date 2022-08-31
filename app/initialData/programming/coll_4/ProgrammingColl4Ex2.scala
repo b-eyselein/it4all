@@ -31,7 +31,7 @@ object ProgrammingColl4Ex2 extends ProgrammingInitialExerciseContainer(4, 2, "lo
       ProgrammingTopics.Lists      -> Level.Beginner,
       ProgrammingTopics.Strings    -> Level.Beginner
     ),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,

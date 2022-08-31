@@ -37,7 +37,7 @@ object ProgrammingColl1Ex3 extends ProgrammingInitialExerciseContainer(1, 3, "ba
     title = "Babylonisches Wurzelziehen",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       ProgrammingTopics.Exceptions -> Level.Beginner,
       ProgrammingTopics.ForLoops   -> Level.Beginner,

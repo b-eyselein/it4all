@@ -6,7 +6,7 @@ import sangria.schema._
 
 trait BasicGraphQLModels {
 
-  private val levelType: ObjectType[Unit, Level] = ObjectType(
+  protected val levelType: ObjectType[Unit, Level] = ObjectType(
     "Level",
     fields[Unit, Level](
       Field("title", StringType, resolve = _.value.entryName),

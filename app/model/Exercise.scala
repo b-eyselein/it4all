@@ -38,10 +38,8 @@ final case class Exercise[C <: ExerciseContent](
   collectionId: Int,
   toolId: String,
   title: String,
-  authors: Seq[String],
   text: String,
-  topicsWithLevels: Seq[TopicWithLevel] = Seq.empty,
-  difficulty: Int,
+  difficulty: Level,
   content: C
 )
 
@@ -51,7 +49,7 @@ private final case class DbExercise(
   exerciseId: Int,
   title: String,
   text: String,
-  difficulty: Int,
+  difficulty: Level,
   jsonContent: JsValue
 )
 
@@ -75,39 +73,56 @@ trait ExerciseRepository {
       // TODO: filters out exercises if content can't be read, log error!
       for {
         content <- tool.jsonFormats.exerciseContentFormat.reads(jsonContent).asOpt
-      } yield Exercise(exerciseId, collectionId, toolId, title, Seq.empty, text, Seq.empty, difficulty, content)
+      } yield Exercise(exerciseId, collectionId, toolId, title, text, difficulty, content)
   }
 
   private def readDbExercises(tool: Tool, dbExercises: Seq[DbExercise]): Seq[Exercise[tool.ExContentType]] = dbExercises.flatMap(readDbExercise(tool, _))
 
   def futureExercisesForTool(tool: Tool): Future[Seq[Exercise[tool.ExContentType]]] = for {
-    dbExercises <- db.run(exercisesTQ.filter(_.toolId === tool.id).result)
+    dbExercises <- db.run(
+      exercisesTQ
+        .filter(_.toolId === tool.id)
+        .sortBy(_.exerciseId)
+        .result
+    )
   } yield readDbExercises(tool, dbExercises)
 
-  def futureExercisesForCollection(toolId: String, collectionId: Int): Future[Seq[UntypedExercise]] = {
+  def futureExercisesForCollection(toolId: String, collectionId: Int): Future[Seq[UntypedExercise]] = for {
+    tool <- ToolList.tools.find(_.id == toolId) match {
+      case Some(tool) => Future.successful(tool)
+      case None       => Future.failed(new Exception(s"No such tool with id $toolId"))
+    }
 
-    // FIXME: solve differently!
-    val tool = ToolList.tools.find(_.id == toolId).get
-
-    for {
-      dbExercises <- db.run(exercisesTQ.filter { ex => ex.toolId === tool.id && ex.collectionId === collectionId }.result)
-    } yield readDbExercises(tool, dbExercises)
-  }
+    dbExercises <- db.run(
+      exercisesTQ
+        .filter { ex => ex.toolId === tool.id && ex.collectionId === collectionId }
+        .sortBy(_.exerciseId)
+        .result
+    )
+  } yield readDbExercises(tool, dbExercises)
 
   def futureExerciseExists(toolId: String, collectionId: Int, exerciseId: Int): Future[Boolean] = for {
-    lineCount <- db.run(exercisesTQ.filter { ex => ex.toolId === toolId && ex.collectionId === collectionId && ex.exerciseId === exerciseId }.length.result)
+    lineCount <- db.run(
+      exercisesTQ
+        .filter { ex => ex.toolId === toolId && ex.collectionId === collectionId && ex.exerciseId === exerciseId }
+        .length
+        .result
+    )
   } yield lineCount > 0
 
   def futureExerciseById(tool: Tool, collectionId: Int, exerciseId: Int): Future[Option[Exercise[tool.ExContentType]]] = for {
     dbExercise <- db.run(
-      exercisesTQ.filter { ex => ex.toolId === tool.id && ex.collectionId === collectionId && ex.exerciseId === exerciseId }.result.headOption
+      exercisesTQ
+        .filter { ex => ex.toolId === tool.id && ex.collectionId === collectionId && ex.exerciseId === exerciseId }
+        .result
+        .headOption
     )
 
     maybeExercise = dbExercise.flatMap(readDbExercise(tool, _))
   } yield maybeExercise
 
   def futureInsertExercise[EC <: ExerciseContent](exercise: Exercise[EC], contentFormat: Format[EC]): Future[Boolean] = exercise match {
-    case Exercise(exerciseId, collectionId, toolId, title, authors, text, topicsWithLevels, difficulty, content) =>
+    case Exercise(exerciseId, collectionId, toolId, title, text, difficulty, content) =>
       for {
         lineCount <- db.run(exercisesTQ += DbExercise(toolId, collectionId, exerciseId, title, text, difficulty, contentFormat.writes(content)))
       } yield lineCount == 1
@@ -125,7 +140,7 @@ trait ExerciseRepository {
 
     def text = column[String]("text")
 
-    def difficulty = column[Int]("difficulty")
+    def difficulty = column[Level]("difficulty")
 
     def jsonContent = column[JsValue]("content_json")
 

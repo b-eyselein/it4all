@@ -55,10 +55,11 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
   private def updateAllUserProficiencies[EC <: ExerciseContent](
     mongoQueries: MongoClientQueries,
     username: String,
-    exercise: Exercise[EC]
+    exercise: Exercise[EC],
+    topicsWithLevels: Seq[TopicWithLevel]
   ): Future[Boolean] = Future
     .sequence {
-      exercise.topicsWithLevels.map { topicWithLevel =>
+      topicsWithLevels.map { topicWithLevel =>
         mongoQueries
           .updateUserProficiency(username, exercise, topicWithLevel)
           .recover { _ => false }
@@ -93,8 +94,10 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
         result.maxPoints
       )
 
+      topicsForLevels <- tableDefs.futureTopicsForExercise(ex.toolId, ex.collectionId, ex.exerciseId)
+
       proficienciesUpdated <-
-        if (result.isCompletelyCorrect) updateAllUserProficiencies(mongoQueries, user.username, ex).map(Some.apply)
+        if (result.isCompletelyCorrect) updateAllUserProficiencies(mongoQueries, user.username, ex, topicsForLevels).map(Some.apply)
         else Future.successful(None)
 
     } yield CorrectionResult(result, solutionId, proficienciesUpdated)

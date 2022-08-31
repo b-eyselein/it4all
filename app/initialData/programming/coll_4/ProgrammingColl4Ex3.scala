@@ -89,7 +89,7 @@ object ProgrammingColl4Ex3 extends ProgrammingInitialExerciseContainer(4, 3, "ge
       ProgrammingTopics.Maths      -> Level.Beginner,
       ProgrammingTopics.Conditions -> Level.Beginner
     ),
-    difficulty = 3,
+    difficulty = Level.Advanced,
     content = ProgrammingExerciseContent(
       filename = exerciseBaseName,
       unitTestPart,

@@ -3,7 +3,7 @@ package initialData.web.coll_1
 import initialData.InitialData._
 import initialData.web.WebInitialExerciseContainer
 import initialData.{FileLoadConfig, InitialExercise}
-import model.FilesSolution
+import model.{FilesSolution, Level}
 import model.tools.web.WebExerciseContent
 import model.tools.web.sitespec.{HtmlTask, SiteSpec, WebElementSpec}
 
@@ -140,7 +140,7 @@ object WebColl1Ex2 extends WebInitialExerciseContainer(1, 2) {
     title = "Tabellen in Html",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    difficulty = 2,
+    difficulty = Level.Intermediate,
     content = WebExerciseContent(
       siteSpec = SiteSpec("production.html", html_tasks, jsTasks = Seq.empty),
       files = loadFilesFromFolder(

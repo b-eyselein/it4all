@@ -19,10 +19,15 @@ trait CollectionRepository {
 
   def futureCollectionCountForTool(toolId: String): Future[Int] = db.run(collectionsTQ.filter(_.toolId === toolId).length.result)
 
-  def futureCollectionsForTool(toolId: String): Future[Seq[ExerciseCollection]] = db.run(collectionsTQ.filter(_.toolId === toolId).result)
+  def futureCollectionsForTool(toolId: String): Future[Seq[ExerciseCollection]] =
+    db.run(collectionsTQ.filter(_.toolId === toolId).sortBy(_.collectionId).result)
 
-  def futureCollectionById(toolId: String, collectionId: Int): Future[Option[ExerciseCollection]] =
-    db.run(collectionsTQ.filter { c => c.toolId === toolId && c.collectionId === collectionId }.result.headOption)
+  def futureCollectionById(toolId: String, collectionId: Int): Future[Option[ExerciseCollection]] = db.run(
+    collectionsTQ
+      .filter { c => c.toolId === toolId && c.collectionId === collectionId }
+      .result
+      .headOption
+  )
 
   def futureInsertCollection(collection: ExerciseCollection): Future[Boolean] = for {
     lineCount <- db.run(collectionsTQ += collection)

@@ -35,7 +35,7 @@ object ProgrammingColl1Ex2 extends ProgrammingInitialExerciseContainer(1, 2, "fa
     title = "Fakultät",
     authors = Seq("bje40dc"),
     text = loadTextFromFile(exResPath / "text.html"),
-    difficulty = 1,
+    difficulty = Level.Beginner,
     topicsWithLevels = Map(
       ProgrammingTopics.Exceptions -> Level.Beginner,
       ProgrammingTopics.Maths      -> Level.Beginner,

@@ -52,7 +52,7 @@ class MongoClientQueries @Inject() (override val reactiveMongoApi: ReactiveMongo
         .map(_.getOrElse(UserProficiency(username, topicWithLevel.topic)))
 
       newUserProficiency: UserProficiency = oldUserProficiency.copy(
-        pointsForExercises = oldUserProficiency.pointsForExercises + levelForExerciseToAdd
+        pointsForExercises = oldUserProficiency.pointsForExercises :+ levelForExerciseToAdd
       )
 
       updateResult <- userProficienciesCollection.update(true).one(filter, newUserProficiency, upsert = true)

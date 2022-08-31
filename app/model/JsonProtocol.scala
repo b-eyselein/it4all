@@ -16,9 +16,11 @@ object JsonProtocols {
     Json.format
   }
 
+  val levelForExerciseFormat: OFormat[LevelForExercise] = Json.format
+
   val userProficiencyFormat: OFormat[UserProficiency] = {
-    implicit val tf: OFormat[Topic]              = topicFormat
-    implicit val lfef: OFormat[LevelForExercise] = Json.format
+    implicit val x0: OFormat[Topic]            = topicFormat
+    implicit val x1: OFormat[LevelForExercise] = levelForExerciseFormat
 
     Json.format
   }

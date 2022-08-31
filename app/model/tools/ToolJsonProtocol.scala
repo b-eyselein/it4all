@@ -20,15 +20,7 @@ trait ToolJsonProtocol[SolutionInputFormat, C <: ExerciseContent, P <: ExPart] {
 
   val solutionInputFormat: Format[SolutionInputFormat]
 
-  /* protected */
   val exerciseContentFormat: OFormat[C]
-
-  final lazy val exerciseFormat: OFormat[Exercise[C]] = {
-    implicit val x0: OFormat[TopicWithLevel] = JsonProtocols.topicWithLevelFormat
-    implicit val x1: OFormat[C]              = exerciseContentFormat
-
-    Json.format
-  }
 
 }
 
