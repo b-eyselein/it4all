@@ -2,6 +2,7 @@ import {Link, Route, Routes} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {Home} from './Home';
 import {LoginForm} from './LoginForm';
+import {RegisterForm} from './RegisterForm';
 import {ToolBase} from './ToolBase';
 import {currentUserSelector} from './store/store';
 import {useDispatch, useSelector} from 'react-redux';
@@ -60,7 +61,7 @@ export function App(): JSX.Element {
                 </button>
                 : <div className="buttons">
                   <Link to="/loginForm" className="button is-light">{t('login')}</Link>
-                  {/*<Link to="/registerForm" className="button is-light">{t('register')}</Link>*/}
+                  <Link to="/registerForm" className="button is-light">{t('register')}</Link>
                 </div>
               }
             </div>
@@ -73,7 +74,7 @@ export function App(): JSX.Element {
 
         <Route path={'/loginForm'} element={<LoginForm/>}/>
 
-        {/* FIXME: <Route path={'/registerForm'} element={<RegisterForm/>}/> */}
+        <Route path={'/registerForm'} element={<RegisterForm/>}/>
 
         <Route path={`/${toolsUrlFragment}/:toolId/*`} element={<ToolBase/>}/>
 
