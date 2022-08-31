@@ -2,7 +2,6 @@ import {ConcreteExerciseIProps} from '../../Exercise';
 import {ExerciseFileFragment, FilesSolution, useXmlCorrectionMutation, XmlExerciseContentFragment, XmlExPart, XmlSolutionInput} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
-import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {PointsNotification} from '../../../helpers/PointsNotification';
 import {XmlDocumentResultDisplay} from './XmlDocumentResultDisplay';
 import {XmlGrammarResultDisplay} from './XmlGrammarResultDisplay';

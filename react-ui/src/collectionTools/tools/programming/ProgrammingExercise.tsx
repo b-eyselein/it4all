@@ -3,7 +3,6 @@ import {FilesSolutionInput, ProgExPart, ProgrammingExerciseContentFragment, useP
 import {FilesExercise} from '../FilesExercise';
 import {database} from '../../DexieTable';
 import {WithQuery} from '../../../WithQuery';
-import {SolutionSaved} from '../../../helpers/SolutionSaved';
 import {UnitTestResult} from './UnitTestResult';
 import {ImplementationResult} from './ImplementationResult';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
