@@ -43,7 +43,7 @@ final case class Exercise[C <: ExerciseContent](
   content: C
 )
 
-private final case class DbExercise(
+protected final case class DbExercise(
   toolId: String,
   collectionId: Int,
   exerciseId: Int,
