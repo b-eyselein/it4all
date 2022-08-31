@@ -60,11 +60,13 @@ trait ProficiencyRepository {
   private val proficienciesTQ = TableQuery[ProficienciesTable]
 
   def userProficienciesForTool(username: String, toolId: String): Future[Seq[UserProficiency]] = ???
-    // db.run(proficienciesTQ.filter { p => p.username === username && p.toolId === toolId }.result)
+  // db.run(proficienciesTQ.filter { p => p.username === username && p.toolId === toolId }.result)
 
   def updateUserProficiency(username: String, exercise: UntypedExercise, topicWithLevel: TopicWithLevel): Future[Boolean] = ???
 
   private class ProficienciesTable(tag: Tag) extends Table[UserProficiency](tag, "user_proficiencies") {
+
+    // Primary key cols
 
     def username = column[String]("username")
 

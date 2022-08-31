@@ -1,7 +1,5 @@
 package model
 
-import model.tools.ToolList
-
 import scala.concurrent.Future
 
 //noinspection ScalaFileName
@@ -24,18 +22,10 @@ trait ExerciseTopicsRepository {
   } yield maybeRowCount.getOrElse(0)
 
   def futureTopicsForExercise(toolId: String, collectionId: Int, exerciseId: Int): Future[Seq[TopicWithLevel]] = for {
-    tool <- ToolList.tools.find(_.id == toolId) match {
-      case Some(tool) => Future.successful(tool)
-      case None       => Future.failed(new Exception(s"No such tool with id $toolId"))
-    }
-
     topicLevelTuples <- db.run(
       exerciseTopicsTQ
         .filter { row => row.toolId === toolId && row.collectionId === collectionId && row.exerciseId === exerciseId }
         .join(topicsTQ)
-        .on { case (exerciseTopic, topic) =>
-          exerciseTopic.toolId === topic.toolId && exerciseTopic.topicAbbreviation === topic.abbreviation
-        }
         .map { case (exerciseTopic, topic) => (topic, exerciseTopic.level) }
         .result
     )
@@ -46,6 +36,8 @@ trait ExerciseTopicsRepository {
 
   protected class ExerciseTopicsTable(tag: Tag) extends Table[Row](tag, "exercise_topics") {
 
+    // Primary key cols
+
     def toolId = column[String]("tool_id")
 
     def collectionId = column[Int]("collection_id")
@@ -54,7 +46,19 @@ trait ExerciseTopicsRepository {
 
     def topicAbbreviation = column[String]("topic_abbreviation")
 
+    // Other cols
+
     def level = column[Level]("level")
+
+    // Key defs
+
+    def pk = primaryKey("exercise_topics_pk", (toolId, collectionId, exerciseId, topicAbbreviation))
+
+    def exerciseForeignKey = foreignKey("exercise_topics_exercise_fk", (toolId, collectionId, exerciseId), exercisesTQ)(
+      ex => (ex.toolId, ex.collectionId, ex.exerciseId),
+      onUpdate = ForeignKeyAction.Cascade,
+      onDelete = ForeignKeyAction.Cascade
+    )
 
     def topicsForeignKey = foreignKey("exercise_topics_topic_fk", (toolId, topicAbbreviation), topicsTQ)(
       t => (t.toolId, t.abbreviation),

@@ -38,6 +38,8 @@ trait TopicRepository {
 
     def title = column[String]("abbreviation")
 
+    def pk = primaryKey("topics_pk", (toolId, abbreviation))
+
     override def * = (abbreviation, toolId, title) <> (Topic.tupled, Topic.unapply)
 
   }

@@ -6,7 +6,7 @@ import model.graphql.ToolGraphQLModelBasics
 import model.matching.MatchingResult
 import model.tools._
 import model.tools.uml.matcher._
-import model.{Exercise, Topic, User}
+import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,7 +41,5 @@ object UmlTool extends Tool("uml", "Uml", true) {
   )(implicit executionContext: ExecutionContext): Future[UmlResult] = Future.fromTry { UmlCorrector.correct(solution, exercise, part) }
 
   override val initialData: InitialData[UmlExerciseContent] = UmlInitialData.initialData
-
-  override val allTopics: Seq[Topic] = Seq.empty
 
 }

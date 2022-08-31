@@ -54,13 +54,13 @@ private final case class DbExercise(
 )
 
 trait ExerciseRepository {
-  self: play.api.db.slick.HasDatabaseConfig[slick.jdbc.JdbcProfile] =>
+  self: TableDefs =>
 
   import MyPostgresProfile.api._
 
   protected implicit val ec: ExecutionContext
 
-  private val exercisesTQ = TableQuery[ExercisesTable]
+  protected val exercisesTQ = TableQuery[ExercisesTable]
 
   def futureExerciseCountForTool(toolId: String): Future[Int] = db.run(exercisesTQ.filter(_.toolId === toolId).length.result)
 
@@ -128,7 +128,9 @@ trait ExerciseRepository {
       } yield lineCount == 1
   }
 
-  private class ExercisesTable(tag: Tag) extends Table[DbExercise](tag, "exercises") {
+  protected class ExercisesTable(tag: Tag) extends Table[DbExercise](tag, "exercises") {
+
+    // Primary key cols
 
     def toolId = column[String]("tool_id")
 
@@ -136,13 +138,25 @@ trait ExerciseRepository {
 
     def exerciseId = column[Int]("exercise_id")
 
-    def title = column[String]("title")
+    // Other cols
+
+    def title = column[String]("title", O.Unique)
 
     def text = column[String]("text")
 
     def difficulty = column[Level]("difficulty")
 
     def jsonContent = column[JsValue]("content_json")
+
+    // Key defs
+
+    def pk = primaryKey("exercises_pk", (toolId, collectionId))
+
+    def collectionsForeignKey = foreignKey("exercises_collections_fk", (toolId, collectionId), collectionsTQ)(
+      c => (c.toolId, c.collectionId),
+      onUpdate = ForeignKeyAction.Cascade,
+      onDelete = ForeignKeyAction.Cascade
+    )
 
     override def * = (toolId, collectionId, exerciseId, title, text, difficulty, jsonContent) <> (DbExercise.tupled, DbExercise.unapply)
 

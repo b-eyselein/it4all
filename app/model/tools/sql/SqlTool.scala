@@ -6,7 +6,7 @@ import model.graphql.ToolGraphQLModelBasics
 import model.matching.MatchingResult
 import model.tools._
 import model.tools.sql.matcher._
-import model.{Exercise, Topic, User}
+import model.{Exercise, User}
 import net.sf.jsqlparser.expression.BinaryExpression
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,8 +30,6 @@ object SqlTool extends Tool("sql", "Sql") {
   override val jsonFormats: StringSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] = SqlToolJsonProtocols
 
   override val graphQlModels: ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlResult] = SqlGraphQLModels
-
-  override val allTopics: Seq[Topic] = SqlTopics.values
 
   // Correction
 

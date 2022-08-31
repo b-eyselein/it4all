@@ -18,7 +18,7 @@ private final case class DbUserSolution(
 )
 
 trait UserSolutionRepository {
-  self: play.api.db.slick.HasDatabaseConfig[slick.jdbc.JdbcProfile] =>
+  self: TableDefs =>
 
   import MyPostgresProfile.api._
 
@@ -80,6 +80,8 @@ trait UserSolutionRepository {
 
   private class UserSolutionsTable(tag: Tag) extends Table[DbUserSolution](tag, "user_solutions") {
 
+    // Primary key cols
+
     def toolId = column[String]("tool_id")
 
     def collectionId = column[Int]("collection_id")
@@ -92,11 +94,26 @@ trait UserSolutionRepository {
 
     def partId = column[String]("part_id")
 
+    // Other cols
+
     def jsonSolution = column[JsValue]("solution_json")
 
     def pointsQuarters = column[Int]("points_quarters")
 
     def maxPointsQuarters = column[Int]("max_points_quarters")
+
+    // Key defs
+
+    def pk = primaryKey("user_solutions_pk", (toolId, collectionId, exerciseId, username, partId, solutionId, partId))
+
+    def exerciseForeignKey = foreignKey("user_solutions_exercise_fk", (toolId, collectionId, exerciseId), exercisesTQ)(
+      ex => (ex.toolId, ex.collectionId, ex.exerciseId),
+      onUpdate = ForeignKeyAction.Cascade,
+      onDelete = ForeignKeyAction.Cascade
+    )
+
+    def userForeignKey =
+      foreignKey("user_solutions_user_fk", username, usersTQ)(_.username, onUpdate = ForeignKeyAction.Cascade, onDelete = ForeignKeyAction.Cascade)
 
     override def * = (
       toolId,

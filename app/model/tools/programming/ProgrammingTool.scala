@@ -23,8 +23,6 @@ object ProgrammingTool extends Tool("programming", "Programmierung", true) {
 
   override val graphQlModels: FilesSolutionToolGraphQLModelBasics[ProgrammingExerciseContent, ProgExPart, ProgrammingResult] = ProgrammingGraphQLModels
 
-  override val allTopics: Seq[Topic] = ProgrammingTopics.values
-
   // Correction
 
   override def correctAbstract(

@@ -37,8 +37,6 @@ abstract class Tool(val id: String, val name: String, val isBeta: Boolean = fals
     part: PartType
   )(implicit executionContext: ExecutionContext): Future[ResType]
 
-  val allTopics: Seq[Topic]
-
   val initialData: InitialData[ExContentType]
 
 }

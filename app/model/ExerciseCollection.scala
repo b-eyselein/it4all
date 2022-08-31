@@ -9,13 +9,13 @@ final case class ExerciseCollection(
 )
 
 trait CollectionRepository {
-  self: play.api.db.slick.HasDatabaseConfig[slick.jdbc.JdbcProfile] =>
+  self: TableDefs =>
 
   import profile.api._
 
   protected implicit val ec: ExecutionContext
 
-  private val collectionsTQ = TableQuery[CollectionsTable]
+  protected val collectionsTQ = TableQuery[CollectionsTable]
 
   def futureCollectionCountForTool(toolId: String): Future[Int] = db.run(collectionsTQ.filter(_.toolId === toolId).length.result)
 
@@ -33,13 +33,21 @@ trait CollectionRepository {
     lineCount <- db.run(collectionsTQ += collection)
   } yield lineCount == 1
 
-  private class CollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
+  protected class CollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
+
+    // Primary key cols
 
     def toolId = column[String]("tool_id")
 
     def collectionId = column[Int]("collection_id")
 
+    // Other cols
+
     def title = column[String]("title")
+
+    // Key defs
+
+    def pk = primaryKey("collections_pk", (toolId, collectionId))
 
     override def * = (toolId, collectionId, title) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
 

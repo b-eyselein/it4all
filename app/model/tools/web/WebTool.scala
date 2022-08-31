@@ -96,6 +96,4 @@ object WebTool extends Tool("web", "Web") {
 
   override val initialData: InitialData[WebExerciseContent] = WebInitialData.initialData
 
-  override val allTopics: Seq[Topic] = Seq.empty
-
 }

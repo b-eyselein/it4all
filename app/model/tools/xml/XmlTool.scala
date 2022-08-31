@@ -6,7 +6,7 @@ import initialData.xml.XmlInitialData
 import model.graphql.ToolGraphQLModelBasics
 import model.matching.MatchingResult
 import model.tools._
-import model.{Exercise, Topic, User}
+import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,7 +48,5 @@ object XmlTool extends Tool("xml", "Xml") {
   }
 
   override val initialData: InitialData[XmlExerciseContent] = XmlInitialData.initialData
-
-  override val allTopics: Seq[Topic] = Seq.empty
 
 }
