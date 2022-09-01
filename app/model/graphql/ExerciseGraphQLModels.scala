@@ -37,7 +37,8 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
                 context.value.collectionId,
                 context.value.exerciseId,
                 user.username,
-                context.value.part.id
+                // FIXME: how to get none?
+                Some(context.value.part.id)
               )
           }
       )

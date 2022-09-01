@@ -98,7 +98,7 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
       ): Future[CorrectionResult[toolWithParts.ResType]] = for {
         result <- toolWithParts.correctAbstract(user, solution, ex, part)
 
-        solutionId <- tableDefs.futureInsertSolution(
+        solutionId <- tableDefs.futureInsertSolutionWithPart(
           ex.toolId,
           ex.collectionId,
           ex.exerciseId,
@@ -168,13 +168,12 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
       ): Future[CorrectionResult[toolWithoutParts.ResType]] = for {
         result <- toolWithoutParts.correctAbstract(user, solution, ex)
 
-        solutionId <- tableDefs.futureInsertSolution(
+        solutionId <- tableDefs.futureInsertSolutionWithoutPart(
           ex.toolId,
           ex.collectionId,
           ex.exerciseId,
           user.username,
           solution,
-          null,
           toolWithoutParts.jsonFormats.solutionInputFormat,
           result.points,
           result.maxPoints

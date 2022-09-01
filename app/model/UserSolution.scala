@@ -5,7 +5,20 @@ import play.api.libs.json.{Format, JsValue}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-private final case class DbUserSolution(
+sealed trait DbUserSolution
+
+private final case class DbUserSolutionWithoutPart(
+  toolId: String,
+  collectionId: Int,
+  exerciseId: Int,
+  username: String,
+  solutionId: Int,
+  jsonSolution: JsValue,
+  pointsQuarters: Int,
+  maxPointsQuarters: Int
+) extends DbUserSolution
+
+private final case class DbUserSolutionWithPart(
   toolId: String,
   collectionId: Int,
   exerciseId: Int,
@@ -15,7 +28,7 @@ private final case class DbUserSolution(
   jsonSolution: JsValue,
   pointsQuarters: Int,
   maxPointsQuarters: Int
-)
+) extends DbUserSolution
 
 trait UserSolutionRepository {
   self: TableDefs =>
@@ -24,23 +37,29 @@ trait UserSolutionRepository {
 
   protected implicit val ec: ExecutionContext
 
-  private val userSolutionTQ = TableQuery[UserSolutionsTable]
+  private val userSolutionWithPartsTQ    = TableQuery[UserSolutionsWithPartsTable]
+  private val userSolutionWithoutPartsTQ = TableQuery[UserSolutionsWithoutPartsTable]
 
-  private def solutionForUserAndExercisePart(toolId: String, collectionId: Int, exerciseId: Int, username: String, partId: String) = userSolutionTQ
-    .filter { us =>
-      us.toolId === toolId && us.collectionId === collectionId && us.exerciseId === exerciseId && us.username === username && us.partId === partId
+  private def solForUserExAndPart(toolId: String, collectionId: Int, exerciseId: Int, username: String, partId: String) = userSolutionWithPartsTQ.filter { us =>
+    us.toolId === toolId && us.collectionId === collectionId && us.exerciseId === exerciseId && us.username === username && us.partId === partId
+  }
+
+  private def solForUserAndEx(toolId: String, collectionId: Int, exerciseId: Int, username: String) = userSolutionWithoutPartsTQ.filter { us =>
+    us.toolId === toolId && us.collectionId === collectionId && us.exerciseId === exerciseId && us.username === username
+  }
+
+  private def futureNextUserSolutionId(toolId: String, collectionId: Int, exerciseId: Int, username: String, maybePartId: Option[String]): Future[Int] = {
+    val query = maybePartId match {
+      case Some(partId) => solForUserExAndPart(toolId, collectionId, exerciseId, username, partId)
+      case None         => solForUserAndEx(toolId, collectionId, exerciseId, username)
     }
 
-  def futureNextUserSolutionId(toolId: String, collectionId: Int, exerciseId: Int, username: String, partId: String): Future[Int] = for {
-    maybeMaxSolutionId <- db.run(
-      solutionForUserAndExercisePart(toolId, collectionId, exerciseId, username, partId)
-        .map(_.solutionId)
-        .max
-        .result
-    )
-  } yield maybeMaxSolutionId.map(_ + 1).getOrElse(0)
+    for {
+      maybeMaxSolutionId <- db.run(query.map(_.solutionId).max.result)
+    } yield maybeMaxSolutionId.map(_ + 1).getOrElse(0)
+  }
 
-  def futureInsertSolution[S](
+  def futureInsertSolutionWithPart[S](
     toolId: String,
     collectionId: Int,
     exerciseId: Int,
@@ -51,10 +70,10 @@ trait UserSolutionRepository {
     points: Points,
     maxPoints: Points
   ): Future[Int] = for {
-    nextUserSolutionId <- futureNextUserSolutionId(toolId, collectionId, exerciseId, username, part.id)
+    nextUserSolutionId <- futureNextUserSolutionId(toolId, collectionId, exerciseId, username, Some(part.id))
 
     _ <- db.run(
-      userSolutionTQ += DbUserSolution(
+      userSolutionWithPartsTQ += DbUserSolutionWithPart(
         toolId,
         collectionId,
         exerciseId,
@@ -68,17 +87,46 @@ trait UserSolutionRepository {
     )
   } yield nextUserSolutionId
 
-  def futureUserHasCorrectExerciseResult(toolId: String, collectionId: Int, exerciseId: Int, username: String, partId: String): Future[Boolean] = for {
-    bestTryCompletelyCorrect <- db.run(
-      solutionForUserAndExercisePart(toolId, collectionId, exerciseId, username, partId)
-        .sortBy(_.pointsQuarters.desc)
-        .map { us => us.pointsQuarters === us.maxPointsQuarters }
-        .result
-        .headOption
-    )
-  } yield bestTryCompletelyCorrect.getOrElse(false)
+  def futureInsertSolutionWithoutPart[S](
+    toolId: String,
+    collectionId: Int,
+    exerciseId: Int,
+    username: String,
+    solution: S,
+    solutionFormat: Format[S],
+    points: Points,
+    maxPoints: Points
+  ): Future[Int] = for {
+    nextUserSolutionId <- futureNextUserSolutionId(toolId, collectionId, exerciseId, username, None)
 
-  private class UserSolutionsTable(tag: Tag) extends Table[DbUserSolution](tag, "user_solutions") {
+    _ <- db.run(
+      userSolutionWithoutPartsTQ += DbUserSolutionWithoutPart(
+        toolId,
+        collectionId,
+        exerciseId,
+        username,
+        nextUserSolutionId,
+        solutionFormat.writes(solution),
+        points.quarters,
+        maxPoints.quarters
+      )
+    )
+  } yield nextUserSolutionId
+
+  def futureUserHasCorrectExerciseResult(toolId: String, collectionId: Int, exerciseId: Int, username: String, maybePartId: Option[String]): Future[Boolean] = {
+    val query = maybePartId match {
+      case Some(partId) => solForUserExAndPart(toolId, collectionId, exerciseId, username, partId)
+      case None         => solForUserAndEx(toolId, collectionId, exerciseId, username)
+    }
+
+    for {
+      bestTryCompletelyCorrect <- db.run(
+        query.sortBy(_.pointsQuarters.desc).map { us => us.pointsQuarters === us.maxPointsQuarters }.result.headOption
+      )
+    } yield bestTryCompletelyCorrect.getOrElse(false)
+  }
+
+  private abstract class UserSolutionsTable[DbSolType <: DbUserSolution](tag: Tag, _tableName: String) extends Table[DbSolType](tag, _tableName) {
 
     // Primary key cols
 
@@ -92,8 +140,6 @@ trait UserSolutionRepository {
 
     def solutionId = column[Int]("solution_id")
 
-    def partId = column[String]("part_id")
-
     // Other cols
 
     def jsonSolution = column[JsValue]("solution_json")
@@ -104,16 +150,25 @@ trait UserSolutionRepository {
 
     // Key defs
 
-    def pk = primaryKey("user_solutions_pk", (toolId, collectionId, exerciseId, username, partId, solutionId, partId))
-
+    // noinspection ScalaUnusedSymbol
     def exerciseForeignKey = foreignKey("user_solutions_exercise_fk", (toolId, collectionId, exerciseId), exercisesTQ)(
       ex => (ex.toolId, ex.collectionId, ex.exerciseId),
       onUpdate = ForeignKeyAction.Cascade,
       onDelete = ForeignKeyAction.Cascade
     )
 
+    // noinspection ScalaUnusedSymbol
     def userForeignKey =
       foreignKey("user_solutions_user_fk", username, usersTQ)(_.username, onUpdate = ForeignKeyAction.Cascade, onDelete = ForeignKeyAction.Cascade)
+
+  }
+
+  private class UserSolutionsWithPartsTable(tag: Tag) extends UserSolutionsTable[DbUserSolutionWithPart](tag, "user_solutions_with_parts") {
+
+    def partId = column[String]("part_id")
+
+    // noinspection ScalaUnusedSymbol
+    def pk = primaryKey("user_solutions_pk", (toolId, collectionId, exerciseId, username, partId, solutionId))
 
     override def * = (
       toolId,
@@ -125,7 +180,25 @@ trait UserSolutionRepository {
       jsonSolution,
       pointsQuarters,
       maxPointsQuarters
-    ) <> (DbUserSolution.tupled, DbUserSolution.unapply)
+    ) <> (DbUserSolutionWithPart.tupled, DbUserSolutionWithPart.unapply)
+
+  }
+
+  private class UserSolutionsWithoutPartsTable(tag: Tag) extends UserSolutionsTable[DbUserSolutionWithoutPart](tag, "user_solutions_without_parts") {
+
+    // noinspection ScalaUnusedSymbol
+    def pk = primaryKey("user_solutions_pk", (toolId, collectionId, exerciseId, username, solutionId))
+
+    override def * = (
+      toolId,
+      collectionId,
+      exerciseId,
+      username,
+      solutionId,
+      jsonSolution,
+      pointsQuarters,
+      maxPointsQuarters
+    ) <> (DbUserSolutionWithoutPart.tupled, DbUserSolutionWithoutPart.unapply)
 
   }
 
