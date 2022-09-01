@@ -5,8 +5,7 @@ import model.{ExerciseFile, FilesSolution}
 import sangria.macros.derive._
 import sangria.schema._
 
-object FlaskToolGraphQLModels
-    extends FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskExPart, FlaskResult] {
+object FlaskToolGraphQLModels extends FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskResult, FlaskExPart] {
 
   private val flaskTestsConfigType: ObjectType[Unit, FlaskTestsConfig] = {
     implicit val flaskSingleTestConfigType: ObjectType[Unit, FlaskSingleTestConfig] = deriveObjectType()

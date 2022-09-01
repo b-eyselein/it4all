@@ -14,10 +14,10 @@ import java.nio.file.StandardOpenOption
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-object WebTool extends Tool("web", "Web") {
+object WebTool extends ToolWithParts("web", "Web") {
 
-  override type SolutionInputType = FilesSolutionInput
-  override type ExContentType     = WebExerciseContent
+  override type SolInputType = FilesSolutionInput
+  override type ExContType     = WebExerciseContent
   override type PartType          = WebExPart
   override type ResType           = WebResult
 
@@ -25,7 +25,7 @@ object WebTool extends Tool("web", "Web") {
 
   override val jsonFormats: FilesSolutionToolJsonProtocol[WebExerciseContent, WebExPart] = WebToolJsonProtocol
 
-  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebResult] = WebGraphQLModels
+  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebResult, WebExPart] = WebGraphQLModels
 
   private val openOptions: OpenOptions = Seq(
     StandardOpenOption.TRUNCATE_EXISTING,

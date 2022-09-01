@@ -1,9 +1,9 @@
 package model.tools.uml
 
-import model.tools.ToolJsonProtocol
+import model.tools.ToolWithPartsJsonProtocol
 import play.api.libs.json._
 
-object UmlToolJsonProtocol extends ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] {
+object UmlToolJsonProtocol extends ToolWithPartsJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] {
 
   // class diagram format
 

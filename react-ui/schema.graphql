@@ -38,17 +38,13 @@ type EbnfCorrectionResult {
   solutionId: Int!
 }
 
-enum EbnfExPart {
-  GrammarCreation
-}
-
 type EbnfExerciseContent {
   predefinedTerminals: [String!]
   sampleSolutions: [EbnfGrammar!]!
 }
 
 type EbnfExerciseMutations {
-  correct(part: EbnfExPart!, solution: EbnfGrammarInput!): EbnfCorrectionResult!
+  correct(solution: EbnfGrammarInput!): EbnfCorrectionResult!
 }
 
 type EbnfGrammar {
@@ -350,10 +346,6 @@ enum RegexCorrectionType {
   MATCHING
 }
 
-enum RegexExPart {
-  RegexSingleExPart
-}
-
 type RegexExerciseContent {
   correctionType: RegexCorrectionType!
   extractionTestData: [RegexExtractionTestData!]!
@@ -363,7 +355,7 @@ type RegexExerciseContent {
 }
 
 type RegexExerciseMutations {
-  correct(part: RegexExPart!, solution: String!): RegexCorrectionResult!
+  correct(solution: String!): RegexCorrectionResult!
 }
 
 type RegexExtractedValuesComparisonMatchingResult {
@@ -474,10 +466,6 @@ type SqlCorrectionResult {
   solutionId: Int!
 }
 
-enum SqlExPart {
-  SqlSingleExPart
-}
-
 type SqlExecutionResult {
   sampleResult: SqlQueryResult
   userResult: SqlQueryResult
@@ -492,7 +480,7 @@ type SqlExerciseContent {
 }
 
 type SqlExerciseMutations {
-  correct(part: SqlExPart!, solution: String!): SqlCorrectionResult!
+  correct(solution: String!): SqlCorrectionResult!
 }
 
 enum SqlExerciseType {

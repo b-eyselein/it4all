@@ -1,6 +1,6 @@
-mutation SqlCorrection($collectionId: Int!, $exerciseId: Int!, $part: SqlExPart!, $solution: String!) {
+mutation SqlCorrection($collectionId: Int!, $exerciseId: Int!, $solution: String!) {
   sqlExercise(collId: $collectionId, exId: $exerciseId) {
-    correct(part: $part, solution: $solution) {
+    correct(solution: $solution) {
       ...SqlCorrectionResult
     }
   }

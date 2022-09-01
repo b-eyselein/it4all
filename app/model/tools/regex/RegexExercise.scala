@@ -3,6 +3,7 @@ package model.tools.regex
 import enumeratum.{EnumEntry, PlayEnum}
 import model.{ExPart, ExerciseContent}
 
+@deprecated()
 sealed abstract class RegexExPart(val partName: String, val id: String) extends ExPart
 
 object RegexExPart extends PlayEnum[RegexExPart] {

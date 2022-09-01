@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import {RegexExerciseContentFragment, RegexExPart, useRegexCorrectionMutation} from '../../../graphql';
+import {useState} from 'react';
+import {RegexExerciseContentFragment, useRegexCorrectionMutation} from '../../../graphql';
 import {RegexCheatSheet} from './RegexCheatSheet';
 import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
 import {useTranslation} from 'react-i18next';
@@ -22,12 +22,10 @@ export function RegexExercise({exercise, content, partId, oldSolution}: IProps):
 
   const correcting = correctionMutationResult.called && correctionMutationResult.loading;
 
-  const part = RegexExPart.RegexSingleExPart;
-
   function correct(): void {
     database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
 
-    correctExercise({variables: {collectionId: exercise.collectionId, exerciseId: exercise.exerciseId, part, solution}})
+    correctExercise({variables: {collectionId: exercise.collectionId, exerciseId: exercise.exerciseId, solution}})
       .then(() => setActiveTabId('correction'))
       .catch((error) => console.error(error));
   }

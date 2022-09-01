@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import './SqlExercise.sass';
-import {SqlExecutionResultFragment, SqlExerciseContentFragment, SqlExPart, useSqlCorrectionMutation} from '../../../graphql';
+import {SqlExecutionResultFragment, SqlExerciseContentFragment, useSqlCorrectionMutation} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
 import CodeMirror from '@uiw/react-codemirror';
 import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
@@ -28,12 +28,10 @@ export function SqlExercise({exercise, content, partId, oldSolution}: IProps): J
     ? correctionMutationResult.data.sqlExercise?.correct.result.executionResult
     : undefined;
 
-  const part = SqlExPart.SqlSingleExPart;
-
   function correct(): void {
     database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
 
-    correctExercise({variables: {collectionId: exercise.collectionId, exerciseId: exercise.exerciseId, part, solution}})
+    correctExercise({variables: {collectionId: exercise.collectionId, exerciseId: exercise.exerciseId, solution}})
       .then(() => setActiveTabId('correction'))
       .catch((error) => console.error(error));
   }

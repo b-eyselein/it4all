@@ -3,17 +3,17 @@ package model.tools.xml
 import de.uniwue.dtd.model.ElementLine
 import initialData.InitialData
 import initialData.xml.XmlInitialData
-import model.graphql.ToolGraphQLModelBasics
+import model.graphql.ToolWithPartsGraphQLModel
 import model.matching.MatchingResult
 import model.tools._
 import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object XmlTool extends Tool("xml", "Xml") {
+object XmlTool extends ToolWithParts("xml", "Xml") {
 
-  override type SolutionInputType = XmlSolution
-  override type ExContentType     = XmlExerciseContent
+  override type SolInputType = XmlSolution
+  override type ExContType     = XmlExerciseContent
   override type PartType          = XmlExPart
   override type ResType           = XmlResult
 
@@ -23,9 +23,9 @@ object XmlTool extends Tool("xml", "Xml") {
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: ToolJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] = XmlToolJsonProtocol
+  override val jsonFormats: ToolWithPartsJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] = XmlToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[XmlSolution, XmlExerciseContent, XmlExPart, XmlResult] = XmlGraphQLModels
+  override val graphQlModels: ToolWithPartsGraphQLModel[XmlSolution, XmlExerciseContent, XmlResult, XmlExPart] = XmlGraphQLModels
 
   // Correction
 

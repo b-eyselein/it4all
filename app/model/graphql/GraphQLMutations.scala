@@ -2,7 +2,7 @@ package model.graphql
 
 import com.github.t3hnar.bcrypt._
 import model._
-import model.tools.ToolList
+import model.tools.{ToolList, ToolWithParts, ToolWithoutParts}
 import play.api.libs.json._
 import sangria.macros.derive._
 import sangria.marshalling.playJson._
@@ -69,78 +69,154 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
     }
     .map { updateResults => updateResults.forall(identity) }
 
-  private val exerciseCorrectionFields: Seq[Field[GraphQLContext, Unit]] = ToolList.tools.map[Field[GraphQLContext, Unit]] { tool =>
-    type P = tool.PartType
-    type S = tool.SolutionInputType
-    type E = tool.ExContentType
-    type R = tool.ResType
+  // FIXME: tools without parts!
+  private val exerciseCorrectionFields: Seq[Field[GraphQLContext, Unit]] = ToolList.tools.map[Field[GraphQLContext, Unit]] {
+    case toolWithParts: ToolWithParts =>
+      val partTypeInputArg: Argument[toolWithParts.PartType] = {
+        implicit val partFormat: Format[toolWithParts.PartType] = toolWithParts.jsonFormats.partTypeFormat
 
-    implicit val partFormat: Format[P]    = tool.jsonFormats.partTypeFormat
-    implicit val solTypeFormat: Format[S] = tool.jsonFormats.solutionInputFormat
+        Argument("part", toolWithParts.graphQlModels.partEnumType)
+      }
 
-    val partTypeInputArg: Argument[P] = Argument("part", tool.graphQlModels.partEnumType)
-    val solTypeInputArg: Argument[S]  = Argument("solution", tool.graphQlModels.solutionInputType)
+      val solTypeInputArg: Argument[toolWithParts.SolInputType] = {
+        implicit val solTypeFormat: Format[toolWithParts.SolInputType] = toolWithParts.jsonFormats.solutionInputFormat
 
-    def correct(tableDefs: TableDefs, user: User, ex: Exercise[E], part: P, solution: S): Future[CorrectionResult[R]] = for {
-      result <- tool.correctAbstract(user, solution, ex, part)
+        Argument("solution", toolWithParts.graphQlModels.solutionInputType)
+      }
 
-      solutionId <- tableDefs.futureInsertSolution(
-        ex.toolId,
-        ex.collectionId,
-        ex.exerciseId,
-        user.username,
-        solution,
-        part,
-        tool.jsonFormats.solutionInputFormat,
-        result.points,
-        result.maxPoints
+      val correctionResultType: ObjectType[Unit, CorrectionResult[toolWithParts.ResType]] = deriveObjectType(
+        ObjectTypeName(s"${toolWithParts.id.capitalize}CorrectionResult"),
+        ReplaceField("result", Field("result", toolWithParts.graphQlModels.resultType, resolve = _.value.result))
       )
 
-      topicsForLevels <- tableDefs.futureTopicsForExercise(ex.toolId, ex.collectionId, ex.exerciseId)
+      def correct(
+        tableDefs: TableDefs,
+        user: User,
+        ex: Exercise[toolWithParts.ExContType],
+        part: toolWithParts.PartType,
+        solution: toolWithParts.SolInputType
+      ): Future[CorrectionResult[toolWithParts.ResType]] = for {
+        result <- toolWithParts.correctAbstract(user, solution, ex, part)
 
-      proficienciesUpdated <-
-        if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, ex, topicsForLevels).map(Some.apply)
-        else Future.successful(None)
+        solutionId <- tableDefs.futureInsertSolution(
+          ex.toolId,
+          ex.collectionId,
+          ex.exerciseId,
+          user.username,
+          solution,
+          part,
+          toolWithParts.jsonFormats.solutionInputFormat,
+          result.points,
+          result.maxPoints
+        )
 
-    } yield CorrectionResult(result, solutionId, proficienciesUpdated)
+        topicsForLevels <- tableDefs.futureTopicsForExercise(ex.toolId, ex.collectionId, ex.exerciseId)
 
-    val correctionResultType: ObjectType[Unit, CorrectionResult[R]] = deriveObjectType(
-      ObjectTypeName(s"${tool.id.capitalize}CorrectionResult"),
-      ReplaceField(
-        "result",
-        Field("result", tool.graphQlModels.resultType, resolve = _.value.result)
-      )
-    )
+        proficienciesUpdated <-
+          if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, ex, topicsForLevels).map(Some.apply)
+          else Future.successful(None)
 
-    val toolExerciseMutationsType = ObjectType(
-      s"${tool.id.capitalize}ExerciseMutations",
-      fields[GraphQLContext, Exercise[tool.ExContentType]](
-        Field(
-          "correct",
-          correctionResultType,
-          arguments = partTypeInputArg :: solTypeInputArg :: Nil,
-          resolve = context =>
-            context.ctx.loggedInUser match {
-              case None => Future.failed(new Exception("User is not logged in!"))
-              case Some(loggedInUser) =>
-                correct(
-                  context.ctx.tableDefs,
-                  loggedInUser,
-                  context.value,
-                  context.arg(partTypeInputArg),
-                  context.arg(solTypeInputArg)
-                )
-            }
+      } yield CorrectionResult(result, solutionId, proficienciesUpdated)
+
+      val toolExerciseMutationsType = ObjectType(
+        s"${toolWithParts.id.capitalize}ExerciseMutations",
+        fields[GraphQLContext, Exercise[toolWithParts.ExContType]](
+          Field(
+            "correct",
+            correctionResultType,
+            arguments = partTypeInputArg :: solTypeInputArg :: Nil,
+            resolve = context =>
+              context.ctx.loggedInUser match {
+                case None => Future.failed(new Exception("User is not logged in!"))
+                case Some(loggedInUser) =>
+                  correct(
+                    context.ctx.tableDefs,
+                    loggedInUser,
+                    context.value,
+                    context.arg(partTypeInputArg),
+                    context.arg(solTypeInputArg)
+                  )
+              }
+          )
         )
       )
-    )
 
-    Field(
-      s"${tool.id}Exercise",
-      OptionType(toolExerciseMutationsType),
-      arguments = collIdArgument :: exIdArgument :: Nil,
-      resolve = context => context.ctx.tableDefs.futureExerciseById(tool, context.arg(collIdArgument), context.arg(exIdArgument))
-    )
+      Field(
+        s"${toolWithParts.id}Exercise",
+        OptionType(toolExerciseMutationsType),
+        arguments = collIdArgument :: exIdArgument :: Nil,
+        resolve = context => context.ctx.tableDefs.futureExerciseById(toolWithParts, context.arg(collIdArgument), context.arg(exIdArgument))
+      )
+
+    case toolWithoutParts: ToolWithoutParts =>
+      val solTypeInputArg: Argument[toolWithoutParts.SolInputType] = {
+        implicit val solTypeFormat: Format[toolWithoutParts.SolInputType] = toolWithoutParts.jsonFormats.solutionInputFormat
+
+        Argument("solution", toolWithoutParts.graphQlModels.solutionInputType)
+      }
+
+      val correctionResultType: ObjectType[Unit, CorrectionResult[toolWithoutParts.ResType]] = deriveObjectType(
+        ObjectTypeName(s"${toolWithoutParts.id.capitalize}CorrectionResult"),
+        ReplaceField("result", Field("result", toolWithoutParts.graphQlModels.resultType, resolve = _.value.result))
+      )
+
+      def correct(
+        tableDefs: TableDefs,
+        user: User,
+        ex: Exercise[toolWithoutParts.ExContType],
+        solution: toolWithoutParts.SolInputType
+      ): Future[CorrectionResult[toolWithoutParts.ResType]] = for {
+        result <- toolWithoutParts.correctAbstract(user, solution, ex)
+
+        solutionId <- tableDefs.futureInsertSolution(
+          ex.toolId,
+          ex.collectionId,
+          ex.exerciseId,
+          user.username,
+          solution,
+          null,
+          toolWithoutParts.jsonFormats.solutionInputFormat,
+          result.points,
+          result.maxPoints
+        )
+
+        topicsForLevels <- tableDefs.futureTopicsForExercise(ex.toolId, ex.collectionId, ex.exerciseId)
+
+        proficienciesUpdated <-
+          if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, ex, topicsForLevels).map(Some.apply)
+          else Future.successful(None)
+
+      } yield CorrectionResult(result, solutionId, proficienciesUpdated)
+
+      val toolExerciseMutationsType = ObjectType(
+        s"${toolWithoutParts.id.capitalize}ExerciseMutations",
+        fields[GraphQLContext, Exercise[toolWithoutParts.ExContType]](
+          Field(
+            "correct",
+            correctionResultType,
+            arguments = solTypeInputArg :: Nil,
+            resolve = context =>
+              context.ctx.loggedInUser match {
+                case None => Future.failed(new Exception("User is not logged in!"))
+                case Some(loggedInUser) =>
+                  correct(
+                    context.ctx.tableDefs,
+                    loggedInUser,
+                    context.value,
+                    context.arg(solTypeInputArg)
+                  )
+              }
+          )
+        )
+      )
+
+      Field(
+        s"${toolWithoutParts.id}Exercise",
+        OptionType(toolExerciseMutationsType),
+        arguments = collIdArgument :: exIdArgument :: Nil,
+        resolve = context => context.ctx.tableDefs.futureExerciseById(toolWithoutParts, context.arg(collIdArgument), context.arg(exIdArgument))
+      )
+
   }
 
   protected val MutationType: ObjectType[GraphQLContext, Unit] = ObjectType(

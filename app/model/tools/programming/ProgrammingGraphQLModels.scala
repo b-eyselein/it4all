@@ -5,7 +5,7 @@ import model.{ExerciseFile, FilesSolution}
 import sangria.macros.derive._
 import sangria.schema._
 
-object ProgrammingGraphQLModels extends FilesSolutionToolGraphQLModelBasics[ProgrammingExerciseContent, ProgExPart, ProgrammingResult] with GraphQLArguments {
+object ProgrammingGraphQLModels extends FilesSolutionToolGraphQLModelBasics[ProgrammingExerciseContent, ProgrammingResult, ProgExPart] with GraphQLArguments {
 
   override val partEnumType: EnumType[ProgExPart] = EnumType(
     "ProgExPart",

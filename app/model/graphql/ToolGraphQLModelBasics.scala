@@ -8,13 +8,11 @@ import sangria.schema._
 
 import scala.reflect.ClassTag
 
-trait ToolGraphQLModelBasics[SolutionInputType, C <: ExerciseContent, PT <: ExPart, ResType <: AbstractCorrectionResult] extends BasicGraphQLModels {
+sealed trait ToolGraphQLModelBasics[SolInputType, EC <: ExerciseContent, ResType <: AbstractCorrectionResult] extends BasicGraphQLModels {
 
   // Arguments
 
-  val solutionInputType: InputType[SolutionInputType]
-
-  val partEnumType: EnumType[PT]
+  val solutionInputType: InputType[SolInputType]
 
   // Matching types
 
@@ -62,8 +60,17 @@ trait ToolGraphQLModelBasics[SolutionInputType, C <: ExerciseContent, PT <: ExPa
     )
   )
 
-  val exerciseContentType: ObjectType[Unit, C]
+  val exerciseContentType: ObjectType[Unit, EC]
 
   val resultType: OutputType[ResType]
+
+}
+trait ToolWithoutPartsGraphQLModel[SolInputType, EC <: ExerciseContent, ResType <: AbstractCorrectionResult]
+    extends ToolGraphQLModelBasics[SolInputType, EC, ResType] {}
+
+trait ToolWithPartsGraphQLModel[SolInputType, EC <: ExerciseContent, ResType <: AbstractCorrectionResult, P <: ExPart]
+    extends ToolGraphQLModelBasics[SolInputType, EC, ResType] {
+
+  val partEnumType: EnumType[P]
 
 }

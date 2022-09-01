@@ -1,9 +1,9 @@
 package model.tools.xml
 
-import model.tools.ToolJsonProtocol
+import model.tools.ToolWithPartsJsonProtocol
 import play.api.libs.json._
 
-object XmlToolJsonProtocol extends ToolJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] {
+object XmlToolJsonProtocol extends ToolWithPartsJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] {
 
   override val partTypeFormat: Format[XmlExPart] = XmlExPart.jsonFormat
 

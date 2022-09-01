@@ -1,18 +1,13 @@
 package model.tools.regex
 
-import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
+import model.graphql.{GraphQLArguments, ToolWithoutPartsGraphQLModel}
 import model.tools.regex.RegexTool.ExtractedValuesComparison
 import sangria.macros.derive._
 import sangria.schema._
 
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-object RegexGraphQLModels extends ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart, RegexAbstractResult] with GraphQLArguments {
-
-  override val partEnumType: EnumType[RegexExPart] = EnumType(
-    "RegexExPart",
-    values = RegexExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
-  )
+object RegexGraphQLModels extends ToolWithoutPartsGraphQLModel[String, RegexExerciseContent, RegexAbstractResult] with GraphQLArguments {
 
   // Enum types
 

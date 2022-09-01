@@ -2,7 +2,7 @@ package model.tools.regex
 
 import initialData.InitialData
 import initialData.regex.RegexInitialData
-import model.graphql.ToolGraphQLModelBasics
+import model.graphql.ToolWithoutPartsGraphQLModel
 import model.matching.MatchingResult
 import model.tools._
 import model.{Exercise, User}
@@ -11,11 +11,10 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-object RegexTool extends Tool("regex", "Reguläre Ausdrücke") {
+object RegexTool extends ToolWithoutParts("regex", "Reguläre Ausdrücke") {
 
-  override type SolutionInputType = String
-  override type ExContentType     = RegexExerciseContent
-  override type PartType          = RegexExPart
+  override type SolInputType = String
+  override type ExContType     = RegexExerciseContent
   override type ResType           = RegexAbstractResult
 
   type RegexExercise = Exercise[RegexExerciseContent]
@@ -24,17 +23,16 @@ object RegexTool extends Tool("regex", "Reguläre Ausdrücke") {
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: StringSolutionToolJsonProtocol[RegexExerciseContent, RegexExPart] = RegexToolJsonProtocol
+  override val jsonFormats: StringSolutionToolJsonProtocol[RegexExerciseContent] = RegexToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[String, RegexExerciseContent, RegexExPart, RegexAbstractResult] = RegexGraphQLModels
+  override val graphQlModels: ToolWithoutPartsGraphQLModel[String, RegexExerciseContent, RegexAbstractResult] = RegexGraphQLModels
 
   // Correction
 
   override def correctAbstract(
     user: User,
     solution: String,
-    exercise: RegexExercise,
-    part: RegexExPart
+    exercise: RegexExercise
   )(implicit executionContext: ExecutionContext): Future[RegexAbstractResult] = Future.fromTry {
     for {
       userRegex <- Try(solution.r)

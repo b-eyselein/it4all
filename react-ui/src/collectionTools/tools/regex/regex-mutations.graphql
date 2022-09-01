@@ -1,6 +1,6 @@
-mutation RegexCorrection($collectionId: Int!, $exerciseId: Int!, $part: RegexExPart!, $solution: String!) {
+mutation RegexCorrection($collectionId: Int!, $exerciseId: Int!, $solution: String!) {
   regexExercise(collId: $collectionId, exId: $exerciseId) {
-    correct(part: $part, solution: $solution) {
+    correct(solution: $solution) {
       ...RegexCorrectionResult
     }
   }

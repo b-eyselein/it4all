@@ -1,7 +1,7 @@
 package model.tools.uml
 
 import model.KeyValueObject
-import model.graphql.{GraphQLArguments, ToolGraphQLModelBasics}
+import model.graphql.{GraphQLArguments, ToolWithPartsGraphQLModel}
 import model.matching.{MatchType, MatchingResult}
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
@@ -10,7 +10,7 @@ import sangria.macros.derive._
 import sangria.schema._
 import sangria.marshalling.playJson._
 
-object UmlGraphQLModels extends ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlResult] with GraphQLArguments {
+object UmlGraphQLModels extends ToolWithPartsGraphQLModel[UmlClassDiagram, UmlExerciseContent, UmlResult, UmlExPart] with GraphQLArguments {
 
   override val partEnumType: EnumType[UmlExPart] = EnumType(
     "UmlExPart",

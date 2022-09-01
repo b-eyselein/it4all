@@ -2,22 +2,29 @@ package model.tools.sql
 
 import initialData.InitialData
 import initialData.sql.SqlInitialData
-import model.graphql.ToolGraphQLModelBasics
+import model.graphql.ToolWithoutPartsGraphQLModel
 import model.matching.MatchingResult
 import model.tools._
 import model.tools.sql.matcher._
 import model.{Exercise, User}
 import net.sf.jsqlparser.expression.BinaryExpression
+import play.api.libs.json.{Json, OFormat}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object SqlTool extends Tool("sql", "Sql") {
+//noinspection ScalaFileName
+object SqlToolJsonProtocols extends StringSolutionToolJsonProtocol[SqlExerciseContent] {
+
+  override val exerciseContentFormat: OFormat[SqlExerciseContent] = Json.format
+
+}
+
+object SqlTool extends ToolWithoutParts("sql", "Sql") {
 
   // Abstract types
 
-  override type SolutionInputType = String
-  override type ExContentType     = SqlExerciseContent
-  override type PartType          = SqlExPart
+  override type SolInputType = String
+  override type ExContType     = SqlExerciseContent
   override type ResType           = SqlResult
 
   type SqlExercise = Exercise[SqlExerciseContent]
@@ -27,18 +34,13 @@ object SqlTool extends Tool("sql", "Sql") {
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: StringSolutionToolJsonProtocol[SqlExerciseContent, SqlExPart] = SqlToolJsonProtocols
+  override val jsonFormats: StringSolutionToolJsonProtocol[SqlExerciseContent] = SqlToolJsonProtocols
 
-  override val graphQlModels: ToolGraphQLModelBasics[String, SqlExerciseContent, SqlExPart, SqlResult] = SqlGraphQLModels
+  override val graphQlModels: ToolWithoutPartsGraphQLModel[String, SqlExerciseContent, SqlResult] = SqlGraphQLModels
 
   // Correction
 
-  override def correctAbstract(
-    user: User,
-    solution: String,
-    exercise: SqlExercise,
-    part: SqlExPart
-  )(implicit executionContext: ExecutionContext): Future[SqlResult] = {
+  override def correctAbstract(user: User, solution: String, exercise: SqlExercise)(implicit executionContext: ExecutionContext): Future[SqlResult] = {
 
     val corrector = exercise.content.exerciseType match {
       case SqlExerciseType.SELECT => SelectCorrector
@@ -48,7 +50,9 @@ object SqlTool extends Tool("sql", "Sql") {
       case SqlExerciseType.DELETE => DeleteCorrector
     }
 
-    Future.fromTry(corrector.correct(exercise.content.schemaName, solution, exercise.content.sampleSolutions))
+    Future.fromTry {
+      corrector.correct(exercise.content.schemaName, solution, exercise.content.sampleSolutions)
+    }
   }
 
   override val initialData: InitialData[SqlExerciseContent] = SqlInitialData.initialData

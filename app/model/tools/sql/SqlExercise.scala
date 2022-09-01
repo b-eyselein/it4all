@@ -3,6 +3,7 @@ package model.tools.sql
 import enumeratum.{EnumEntry, PlayEnum}
 import model._
 
+@deprecated()
 sealed abstract class SqlExPart(val partName: String, val id: String) extends ExPart
 
 object SqlExPart extends PlayEnum[SqlExPart] {

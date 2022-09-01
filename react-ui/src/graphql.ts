@@ -65,10 +65,6 @@ export type EbnfCorrectionResult = {
   solutionId: Scalars['Int'];
 };
 
-export enum EbnfExPart {
-  GrammarCreation = 'GrammarCreation'
-}
-
 export type EbnfExerciseContent = {
   __typename?: 'EbnfExerciseContent';
   predefinedTerminals?: Maybe<Array<Scalars['String']>>;
@@ -82,7 +78,6 @@ export type EbnfExerciseMutations = {
 
 
 export type EbnfExerciseMutationsCorrectArgs = {
-  part: EbnfExPart;
   solution: EbnfGrammarInput;
 };
 
@@ -507,10 +502,6 @@ export enum RegexCorrectionType {
   Matching = 'MATCHING'
 }
 
-export enum RegexExPart {
-  RegexSingleExPart = 'RegexSingleExPart'
-}
-
 export type RegexExerciseContent = {
   __typename?: 'RegexExerciseContent';
   correctionType: RegexCorrectionType;
@@ -527,7 +518,6 @@ export type RegexExerciseMutations = {
 
 
 export type RegexExerciseMutationsCorrectArgs = {
-  part: RegexExPart;
   solution: Scalars['String'];
 };
 
@@ -655,10 +645,6 @@ export type SqlCorrectionResult = {
   solutionId: Scalars['Int'];
 };
 
-export enum SqlExPart {
-  SqlSingleExPart = 'SqlSingleExPart'
-}
-
 export type SqlExecutionResult = {
   __typename?: 'SqlExecutionResult';
   sampleResult?: Maybe<SqlQueryResult>;
@@ -681,7 +667,6 @@ export type SqlExerciseMutations = {
 
 
 export type SqlExerciseMutationsCorrectArgs = {
-  part: SqlExPart;
   solution: Scalars['String'];
 };
 
@@ -1257,7 +1242,6 @@ export type UnitTestCorrectionResultFragment = { __typename?: 'UnitTestCorrectio
 export type RegexCorrectionMutationVariables = Exact<{
   collectionId: Scalars['Int'];
   exerciseId: Scalars['Int'];
-  part: RegexExPart;
   solution: Scalars['String'];
 }>;
 
@@ -1281,7 +1265,6 @@ export type RegexExtractionResultFragment = { __typename?: 'RegexExtractionResul
 export type SqlCorrectionMutationVariables = Exact<{
   collectionId: Scalars['Int'];
   exerciseId: Scalars['Int'];
-  part: SqlExPart;
   solution: Scalars['String'];
 }>;
 
@@ -2460,7 +2443,7 @@ export const LoginResultFragmentDoc = gql`
 export const EbnfCorrectionDocument = gql`
     mutation EbnfCorrection($collId: Int!, $exId: Int!, $solution: EbnfGrammarInput!) {
   ebnfExercise(collId: $collId, exId: $exId) {
-    correct(solution: $solution, part: GrammarCreation) {
+    correct(solution: $solution) {
       result {
         x
       }
@@ -2575,9 +2558,9 @@ export type ProgrammingCorrectionMutationHookResult = ReturnType<typeof useProgr
 export type ProgrammingCorrectionMutationResult = Apollo.MutationResult<ProgrammingCorrectionMutation>;
 export type ProgrammingCorrectionMutationOptions = Apollo.BaseMutationOptions<ProgrammingCorrectionMutation, ProgrammingCorrectionMutationVariables>;
 export const RegexCorrectionDocument = gql`
-    mutation RegexCorrection($collectionId: Int!, $exerciseId: Int!, $part: RegexExPart!, $solution: String!) {
+    mutation RegexCorrection($collectionId: Int!, $exerciseId: Int!, $solution: String!) {
   regexExercise(collId: $collectionId, exId: $exerciseId) {
-    correct(part: $part, solution: $solution) {
+    correct(solution: $solution) {
       ...RegexCorrectionResult
     }
   }
@@ -2600,7 +2583,6 @@ export type RegexCorrectionMutationFn = Apollo.MutationFunction<RegexCorrectionM
  *   variables: {
  *      collectionId: // value for 'collectionId'
  *      exerciseId: // value for 'exerciseId'
- *      part: // value for 'part'
  *      solution: // value for 'solution'
  *   },
  * });
@@ -2613,9 +2595,9 @@ export type RegexCorrectionMutationHookResult = ReturnType<typeof useRegexCorrec
 export type RegexCorrectionMutationResult = Apollo.MutationResult<RegexCorrectionMutation>;
 export type RegexCorrectionMutationOptions = Apollo.BaseMutationOptions<RegexCorrectionMutation, RegexCorrectionMutationVariables>;
 export const SqlCorrectionDocument = gql`
-    mutation SqlCorrection($collectionId: Int!, $exerciseId: Int!, $part: SqlExPart!, $solution: String!) {
+    mutation SqlCorrection($collectionId: Int!, $exerciseId: Int!, $solution: String!) {
   sqlExercise(collId: $collectionId, exId: $exerciseId) {
-    correct(part: $part, solution: $solution) {
+    correct(solution: $solution) {
       ...SqlCorrectionResult
     }
   }
@@ -2638,7 +2620,6 @@ export type SqlCorrectionMutationFn = Apollo.MutationFunction<SqlCorrectionMutat
  *   variables: {
  *      collectionId: // value for 'collectionId'
  *      exerciseId: // value for 'exerciseId'
- *      part: // value for 'part'
  *      solution: // value for 'solution'
  *   },
  * });

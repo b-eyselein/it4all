@@ -3,6 +3,7 @@ package model.tools.ebnf
 import enumeratum.PlayEnum
 import model.{ExPart, ExerciseContent}
 
+@deprecated()
 sealed abstract class EbnfExercisePart(val partName: String, val id: String) extends ExPart
 
 object EbnfExercisePart extends PlayEnum[EbnfExercisePart] {

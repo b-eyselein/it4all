@@ -3,15 +3,15 @@ package model.tools.flask
 import initialData.InitialData
 import initialData.flask.FlaskInitialData
 import model.graphql.FilesSolutionToolGraphQLModelBasics
-import model.tools.{FilesSolutionToolJsonProtocol, Tool}
+import model.tools.{FilesSolutionToolJsonProtocol, ToolWithParts}
 import model.{Exercise, FilesSolutionInput, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FlaskTool extends Tool("flask", "Flask", true) {
+object FlaskTool extends ToolWithParts("flask", "Flask", true) {
 
-  override type SolutionInputType = FilesSolutionInput
-  override type ExContentType     = FlaskExerciseContent
+  override type SolInputType = FilesSolutionInput
+  override type ExContType     = FlaskExerciseContent
   override type PartType          = FlaskExPart
   override type ResType           = FlaskResult
 
@@ -19,7 +19,7 @@ object FlaskTool extends Tool("flask", "Flask", true) {
 
   override val jsonFormats: FilesSolutionToolJsonProtocol[FlaskExerciseContent, FlaskExPart] = FlaskToolJsonProtocol
 
-  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskExPart, FlaskResult] = FlaskToolGraphQLModels
+  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskResult, FlaskExPart] = FlaskToolGraphQLModels
 
   override def correctAbstract(
     user: User,

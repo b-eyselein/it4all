@@ -4,7 +4,7 @@ import better.files.File
 import com.google.inject.AbstractModule
 import initialData.InitialData.exerciseResourcesPath
 import model._
-import model.tools.{Tool, ToolList}
+import model.tools.{Tool, ToolList, ToolWithParts}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,7 +53,7 @@ object InitialData {
 @Singleton
 class StartUpService @Inject() (tableDefs: TableDefs)(implicit ec: ExecutionContext) {
 
-  private def newInsertInitialExercise(tool: Tool, collectionId: Int, exerciseId: Int)(initialExercise: InitialExercise[tool.ExContentType]): Future[Unit] =
+  private def newInsertInitialExercise(tool: Tool, collectionId: Int, exerciseId: Int)(initialExercise: InitialExercise[tool.ExContType]): Future[Unit] =
     tableDefs.futureExerciseExists(tool.id, collectionId, exerciseId).flatMap {
       case true => Future.successful(())
       case false =>
@@ -70,7 +70,7 @@ class StartUpService @Inject() (tableDefs: TableDefs)(implicit ec: ExecutionCont
         }
     }
 
-  private def newInsertInitialCollection(tool: Tool, collectionId: Int)(initialCollection: InitialCollection[tool.ExContentType]): Future[Unit] =
+  private def newInsertInitialCollection(tool: Tool, collectionId: Int)(initialCollection: InitialCollection[tool.ExContType]): Future[Unit] =
     tableDefs.futureCollectionById(tool.id, collectionId).map {
       case Some(_) => Future.successful(())
       case None =>

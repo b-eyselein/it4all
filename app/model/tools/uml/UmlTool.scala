@@ -2,7 +2,7 @@ package model.tools.uml
 
 import initialData.InitialData
 import initialData.uml.UmlInitialData
-import model.graphql.ToolGraphQLModelBasics
+import model.graphql.ToolWithPartsGraphQLModel
 import model.matching.MatchingResult
 import model.tools._
 import model.tools.uml.matcher._
@@ -10,10 +10,10 @@ import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object UmlTool extends Tool("uml", "Uml", true) {
+object UmlTool extends ToolWithParts("uml", "Uml", true) {
 
-  override type SolutionInputType = UmlClassDiagram
-  override type ExContentType     = UmlExerciseContent
+  override type SolInputType = UmlClassDiagram
+  override type ExContType     = UmlExerciseContent
   override type PartType          = UmlExPart
   override type ResType           = UmlResult
 
@@ -27,9 +27,9 @@ object UmlTool extends Tool("uml", "Uml", true) {
 
   // Yaml, Html forms, Json
 
-  override val jsonFormats: ToolJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] = UmlToolJsonProtocol
+  override val jsonFormats: ToolWithPartsJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] = UmlToolJsonProtocol
 
-  override val graphQlModels: ToolGraphQLModelBasics[UmlClassDiagram, UmlExerciseContent, UmlExPart, UmlResult] = UmlGraphQLModels
+  override val graphQlModels: ToolWithPartsGraphQLModel[UmlClassDiagram, UmlExerciseContent, UmlResult, UmlExPart] = UmlGraphQLModels
 
   // Correction
 

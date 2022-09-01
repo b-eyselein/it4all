@@ -4,8 +4,8 @@ import model._
 import sangria.macros.derive._
 import sangria.schema._
 
-trait FilesSolutionToolGraphQLModelBasics[C <: ExerciseContent, PT <: ExPart, ResType <: AbstractCorrectionResult]
-    extends ToolGraphQLModelBasics[FilesSolutionInput, C, PT, ResType] {
+trait FilesSolutionToolGraphQLModelBasics[EC <: ExerciseContent, ResType <: AbstractCorrectionResult, P <: ExPart]
+    extends ToolWithPartsGraphQLModel[FilesSolutionInput, EC, ResType, P] {
 
   // Files solution input
 

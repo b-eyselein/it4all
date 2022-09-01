@@ -6,7 +6,7 @@ import model.{ExerciseFile, FilesSolution}
 import sangria.macros.derive._
 import sangria.schema._
 
-object WebGraphQLModels extends FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebExPart, WebResult] with GraphQLArguments {
+object WebGraphQLModels extends FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebResult, WebExPart] with GraphQLArguments {
 
   override val partEnumType: EnumType[WebExPart] = EnumType(
     "WebExPart",

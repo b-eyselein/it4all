@@ -68,7 +68,7 @@ trait ExerciseRepository {
     exercisesTQ.filter { ex => ex.toolId === toolId && ex.collectionId === collectionId }.length.result
   )
 
-  private def readDbExercise(tool: Tool, dbExercise: DbExercise): Option[Exercise[tool.ExContentType]] = dbExercise match {
+  private def readDbExercise(tool: Tool, dbExercise: DbExercise): Option[Exercise[tool.ExContType]] = dbExercise match {
     case DbExercise(toolId, collectionId, exerciseId, title, text, difficulty, jsonContent) =>
       // TODO: filters out exercises if content can't be read, log error!
       for {
@@ -76,9 +76,9 @@ trait ExerciseRepository {
       } yield Exercise(exerciseId, collectionId, toolId, title, text, difficulty, content)
   }
 
-  private def readDbExercises(tool: Tool, dbExercises: Seq[DbExercise]): Seq[Exercise[tool.ExContentType]] = dbExercises.flatMap(readDbExercise(tool, _))
+  private def readDbExercises(tool: Tool, dbExercises: Seq[DbExercise]): Seq[Exercise[tool.ExContType]] = dbExercises.flatMap(readDbExercise(tool, _))
 
-  def futureExercisesForTool(tool: Tool): Future[Seq[Exercise[tool.ExContentType]]] = for {
+  def futureExercisesForTool(tool: Tool): Future[Seq[Exercise[tool.ExContType]]] = for {
     dbExercises <- db.run(
       exercisesTQ
         .filter(_.toolId === tool.id)
@@ -110,7 +110,7 @@ trait ExerciseRepository {
     )
   } yield lineCount > 0
 
-  def futureExerciseById(tool: Tool, collectionId: Int, exerciseId: Int): Future[Option[Exercise[tool.ExContentType]]] = for {
+  def futureExerciseById(tool: Tool, collectionId: Int, exerciseId: Int): Future[Option[Exercise[tool.ExContType]]] = for {
     dbExercise <- db.run(
       exercisesTQ
         .filter { ex => ex.toolId === tool.id && ex.collectionId === collectionId && ex.exerciseId === exerciseId }
@@ -152,6 +152,7 @@ trait ExerciseRepository {
 
     def pk = primaryKey("exercises_pk", (toolId, collectionId))
 
+    // noinspection ScalaUnusedSymbol
     def collectionsForeignKey = foreignKey("exercises_collections_fk", (toolId, collectionId), collectionsTQ)(
       c => (c.toolId, c.collectionId),
       onUpdate = ForeignKeyAction.Cascade,
