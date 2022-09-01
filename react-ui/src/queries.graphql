@@ -1,6 +1,6 @@
 # /tools
 
-fragment CollectionTool on CollectionTool {
+fragment Tool on Tool {
   id
   name
   collectionCount
@@ -9,7 +9,7 @@ fragment CollectionTool on CollectionTool {
 
 query ToolOverview {
   tools {
-    ...CollectionTool
+    ...Tool
   }
 }
 
@@ -71,7 +71,7 @@ query CollectionList($toolId: String!) {
 }
 
 # /tools/:toolId/collections/:collId
-fragment CollOverviewTool on CollectionTool {
+fragment CollOverviewTool on Tool {
   name
   collection(collId: $collId) {
     title

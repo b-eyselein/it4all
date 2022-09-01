@@ -15,18 +15,6 @@ enum BinaryClassificationResultType {
   TruePositive
 }
 
-type CollectionTool {
-  allExercises: [Exercise!]!
-  collection(collId: Int!): ExerciseCollection
-  collectionCount: Int!
-  collections: [ExerciseCollection!]!
-  exerciseCount: Int!
-  id: String!
-  isBeta: Boolean!
-  name: String!
-  proficiencies: [UserProficiency!]!
-}
-
 type DTDParseException {
   msg: String!
   parsedLine: String!
@@ -326,8 +314,8 @@ interface ProgrammingTestCorrectionResult {
 }
 
 type Query {
-  tool(toolId: String!): CollectionTool
-  tools: [CollectionTool!]!
+  tool(toolId: String!): Tool
+  tools: [Tool!]!
 }
 
 interface RegexAbstractResult {
@@ -533,6 +521,18 @@ type StringMatchingResult {
   notMatchedForSample: [String!]!
   notMatchedForUser: [String!]!
   points: Float!
+}
+
+type Tool {
+  allExercises: [Exercise!]!
+  collection(collId: Int!): ExerciseCollection
+  collectionCount: Int!
+  collections: [ExerciseCollection!]!
+  exerciseCount: Int!
+  id: String!
+  isBeta: Boolean!
+  name: String!
+  proficiencies: [UserProficiency!]!
 }
 
 type Topic {

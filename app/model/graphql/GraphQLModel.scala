@@ -53,7 +53,7 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
   )
 
   private val ToolType: ObjectType[GraphQLContext, Tool] = ObjectType(
-    "CollectionTool",
+    "Tool",
     fields[GraphQLContext, Tool](
       Field("id", StringType, resolve = _.value.id),
       Field("name", StringType, resolve = _.value.name),
