@@ -1,22 +1,19 @@
 package model.tools.flask
 
-import model.graphql.FilesSolutionToolGraphQLModelBasics
-import model.{ExerciseFile, FilesSolution}
+import model.graphql.{FilesSolutionToolGraphQLModelBasics, ToolGraphQLModel}
+import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
 import sangria.macros.derive._
 import sangria.schema._
 
-object FlaskToolGraphQLModels extends FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskResult, FlaskExPart] {
+object FlaskToolGraphQLModels
+    extends ToolGraphQLModel[FilesSolutionInput, FlaskExerciseContent, FlaskResult]
+    with FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskResult] {
 
   private val flaskTestsConfigType: ObjectType[Unit, FlaskTestsConfig] = {
     implicit val flaskSingleTestConfigType: ObjectType[Unit, FlaskSingleTestConfig] = deriveObjectType()
 
     deriveObjectType()
   }
-
-  override val partEnumType: EnumType[FlaskExPart] = EnumType(
-    "FlaskExercisePart",
-    values = FlaskExPart.values.map(exPart => EnumValue(exPart.entryName, value = exPart)).toList
-  )
 
   override val exerciseContentType: ObjectType[Unit, FlaskExerciseContent] = {
     implicit val eft: ObjectType[Unit, ExerciseFile]      = exerciseFileType

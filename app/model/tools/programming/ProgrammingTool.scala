@@ -3,25 +3,26 @@ package model.tools.programming
 import initialData.InitialData
 import initialData.programming.ProgrammingInitialData
 import model._
-import model.graphql.FilesSolutionToolGraphQLModelBasics
-import model.tools.{FilesSolutionToolJsonProtocol, ToolWithParts}
+import model.tools.ToolWithParts
 
 import scala.concurrent.{ExecutionContext, Future}
 
 object ProgrammingTool extends ToolWithParts("programming", "Programmierung", true) {
 
   override type SolInputType = FilesSolutionInput
-  override type ExContType     = ProgrammingExerciseContent
-  override type PartType          = ProgExPart
-  override type ResType           = ProgrammingResult
+  override type ExContType   = ProgrammingExerciseContent
+  override type PartType     = ProgExPart
+  override type ResType      = ProgrammingResult
 
   type ProgrammingExercise = Exercise[ProgrammingExerciseContent]
 
   // Yaml, Html Forms, Json
 
-  override val jsonFormats: FilesSolutionToolJsonProtocol[ProgrammingExerciseContent, ProgExPart] = ProgrammingToolJsonProtocol
+  // noinspection TypeAnnotation
+  override val jsonFormats = ProgrammingToolJsonProtocol
 
-  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[ProgrammingExerciseContent, ProgrammingResult, ProgExPart] = ProgrammingGraphQLModels
+  // noinspection TypeAnnotation
+  override val graphQlModels = ProgrammingGraphQLModels
 
   // Correction
 

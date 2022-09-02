@@ -3,7 +3,7 @@ package model.tools
 import better.files.File
 import initialData.InitialData
 import model._
-import model.graphql.{ToolGraphQLModelBasics, ToolWithPartsGraphQLModel, ToolWithoutPartsGraphQLModel}
+import model.graphql.{ToolGraphQLModel, ToolWithPartsGraphQLModel}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -21,7 +21,7 @@ sealed trait Tool {
 
   val jsonFormats: ToolJsonProtocol[SolInputType, ExContType]
 
-  val graphQlModels: ToolGraphQLModelBasics[SolInputType, ExContType, ResType]
+  val graphQlModels: ToolGraphQLModel[SolInputType, ExContType, ResType]
 
   protected def solutionDirForExercise(username: String, collId: Int, exId: Int): File =
     File.currentWorkingDirectory / "data" / id / "solutions" / username / s"$collId" / s"$exId"
@@ -34,9 +34,7 @@ abstract class ToolWithoutParts(val id: String, val name: String, val isBeta: Bo
 
   // Json & GraphQL Formats
 
-  val jsonFormats: ToolWithoutPartsJsonProtocol[SolInputType, ExContType]
-
-  val graphQlModels: ToolWithoutPartsGraphQLModel[SolInputType, ExContType, ResType]
+  val graphQlModels: ToolGraphQLModel[SolInputType, ExContType, ResType]
 
   // Other helper methods
 

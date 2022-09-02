@@ -1,10 +1,10 @@
 package model.tools.ebnf
 
-import model.graphql.{GraphQLArguments, ToolWithoutPartsGraphQLModel}
+import model.graphql.{GraphQLArguments, ToolGraphQLModel}
 import sangria.macros.derive._
 import sangria.schema._
 
-object EbnfGraphQLModels extends ToolWithoutPartsGraphQLModel[EbnfGrammar, EbnfExerciseContent, EbnfResult] with GraphQLArguments {
+object EbnfGraphQLModels extends ToolGraphQLModel[EbnfGrammar, EbnfExerciseContent, EbnfResult] with GraphQLArguments {
 
   private val ebnfGrammarType: ObjectType[Unit, EbnfGrammar] = deriveObjectType(
     ReplaceField("rules", Field("rules", StringType, resolve = _ => "TODO!"))

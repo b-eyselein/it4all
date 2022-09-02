@@ -4,7 +4,7 @@ import better.files.File
 import model._
 import play.api.libs.json._
 
-sealed trait ToolJsonProtocol[SolutionInputFormat, C <: ExerciseContent] {
+trait ToolJsonProtocol[SolutionInputFormat, C <: ExerciseContent] {
 
   val solutionInputFormat: Format[SolutionInputFormat]
 
@@ -28,9 +28,7 @@ trait ToolWithPartsJsonProtocol[SolutionInputFormat, C <: ExerciseContent, P <: 
 
 }
 
-trait ToolWithoutPartsJsonProtocol[SolutionInputFormat, C <: ExerciseContent] extends ToolJsonProtocol[SolutionInputFormat, C] {}
-
-abstract class StringSolutionToolJsonProtocol[C <: ExerciseContent] extends ToolWithoutPartsJsonProtocol[String, C] {
+abstract class StringSolutionToolJsonProtocol[C <: ExerciseContent] extends ToolJsonProtocol[String, C] {
 
   private val stringFormat = Format(Reads.StringReads, Writes.StringWrites)
 
@@ -38,7 +36,8 @@ abstract class StringSolutionToolJsonProtocol[C <: ExerciseContent] extends Tool
 
 }
 
-abstract class FilesSolutionToolJsonProtocol[C <: ExerciseContent, PartType <: ExPart] extends ToolWithPartsJsonProtocol[FilesSolutionInput, C, PartType] {
+trait FilesSolutionToolJsonProtocol {
+  self: ToolJsonProtocol[FilesSolutionInput, _] =>
 
   protected val pathExerciseFileFormat: OFormat[PathExerciseFile] = {
 

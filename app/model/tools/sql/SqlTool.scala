@@ -2,7 +2,7 @@ package model.tools.sql
 
 import initialData.InitialData
 import initialData.sql.SqlInitialData
-import model.graphql.ToolWithoutPartsGraphQLModel
+import model.graphql.ToolGraphQLModel
 import model.matching.MatchingResult
 import model.tools._
 import model.tools.sql.matcher._
@@ -36,7 +36,7 @@ object SqlTool extends ToolWithoutParts("sql", "Sql") {
 
   override val jsonFormats: StringSolutionToolJsonProtocol[SqlExerciseContent] = SqlToolJsonProtocols
 
-  override val graphQlModels: ToolWithoutPartsGraphQLModel[String, SqlExerciseContent, SqlResult] = SqlGraphQLModels
+  override val graphQlModels: ToolGraphQLModel[String, SqlExerciseContent, SqlResult] = SqlGraphQLModels
 
   // Correction
 

@@ -2,7 +2,7 @@ package model.tools.regex
 
 import initialData.InitialData
 import initialData.regex.RegexInitialData
-import model.graphql.ToolWithoutPartsGraphQLModel
+import model.graphql.ToolGraphQLModel
 import model.matching.MatchingResult
 import model.tools._
 import model.{Exercise, User}
@@ -25,7 +25,7 @@ object RegexTool extends ToolWithoutParts("regex", "Reguläre Ausdrücke") {
 
   override val jsonFormats: StringSolutionToolJsonProtocol[RegexExerciseContent] = RegexToolJsonProtocol
 
-  override val graphQlModels: ToolWithoutPartsGraphQLModel[String, RegexExerciseContent, RegexAbstractResult] = RegexGraphQLModels
+  override val graphQlModels: ToolGraphQLModel[String, RegexExerciseContent, RegexAbstractResult] = RegexGraphQLModels
 
   // Correction
 

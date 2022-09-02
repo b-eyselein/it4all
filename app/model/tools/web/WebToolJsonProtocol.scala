@@ -2,10 +2,10 @@ package model.tools.web
 
 import model.tools._
 import model.tools.web.sitespec._
-import model.{ExerciseFile, FilesSolution}
+import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
 import play.api.libs.json.{Format, Json, OFormat}
 
-object WebToolJsonProtocol extends FilesSolutionToolJsonProtocol[WebExerciseContent, WebExPart] {
+object WebToolJsonProtocol extends ToolWithPartsJsonProtocol[FilesSolutionInput, WebExerciseContent, WebExPart] with FilesSolutionToolJsonProtocol {
 
   override val partTypeFormat: Format[WebExPart] = WebExPart.jsonFormat
 

@@ -1,12 +1,14 @@
 package model.tools.web
 
-import model.graphql.{FilesSolutionToolGraphQLModelBasics, GraphQLArguments}
+import model.graphql.{FilesSolutionToolGraphQLModelBasics, ToolWithPartsGraphQLModel}
 import model.tools.web.sitespec.{HtmlTask, JsAction, JsActionType, SiteSpec}
-import model.{ExerciseFile, FilesSolution}
+import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
 import sangria.macros.derive._
 import sangria.schema._
 
-object WebGraphQLModels extends FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebResult, WebExPart] with GraphQLArguments {
+object WebGraphQLModels
+    extends ToolWithPartsGraphQLModel[FilesSolutionInput, WebExerciseContent, WebResult, WebExPart]
+    with FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebResult] {
 
   override val partEnumType: EnumType[WebExPart] = EnumType(
     "WebExPart",

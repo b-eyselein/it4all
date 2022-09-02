@@ -1,10 +1,12 @@
 package model.tools.programming
 
 import model.tools._
-import model.{ExerciseFile, FilesSolution}
+import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
 import play.api.libs.json._
 
-object ProgrammingToolJsonProtocol extends FilesSolutionToolJsonProtocol[ProgrammingExerciseContent, ProgExPart] {
+object ProgrammingToolJsonProtocol
+    extends ToolWithPartsJsonProtocol[FilesSolutionInput, ProgrammingExerciseContent, ProgExPart]
+    with FilesSolutionToolJsonProtocol {
 
   override val partTypeFormat: Format[ProgExPart] = ProgExPart.jsonFormat
 

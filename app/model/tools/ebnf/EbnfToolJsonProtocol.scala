@@ -1,10 +1,10 @@
 package model.tools.ebnf
 
-import model.tools.ToolWithoutPartsJsonProtocol
+import model.tools.ToolJsonProtocol
 import model.tools.ebnf.EbnfTool.SolInputType
 import play.api.libs.json._
 
-object EbnfToolJsonProtocol extends ToolWithoutPartsJsonProtocol[SolInputType, EbnfExerciseContent] {
+object EbnfToolJsonProtocol extends ToolJsonProtocol[SolInputType, EbnfExerciseContent] {
 
   private val ebnfRuleFormat: OFormat[EbnfRule] = Json.format
 

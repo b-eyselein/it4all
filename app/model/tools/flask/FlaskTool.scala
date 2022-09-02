@@ -2,32 +2,34 @@ package model.tools.flask
 
 import initialData.InitialData
 import initialData.flask.FlaskInitialData
-import model.graphql.FilesSolutionToolGraphQLModelBasics
-import model.tools.{FilesSolutionToolJsonProtocol, ToolWithParts}
+import model.tools.ToolWithoutParts
 import model.{Exercise, FilesSolutionInput, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FlaskTool extends ToolWithParts("flask", "Flask", true) {
+object FlaskTool extends ToolWithoutParts("flask", "Flask", true) {
 
   override type SolInputType = FilesSolutionInput
-  override type ExContType     = FlaskExerciseContent
-  override type PartType          = FlaskExPart
-  override type ResType           = FlaskResult
+  override type ExContType   = FlaskExerciseContent
+  override type ResType      = FlaskResult
 
   type FlaskExercise = Exercise[FlaskExerciseContent]
 
-  override val jsonFormats: FilesSolutionToolJsonProtocol[FlaskExerciseContent, FlaskExPart] = FlaskToolJsonProtocol
+  // noinspection TypeAnnotation
+  override val jsonFormats = FlaskToolJsonProtocol
 
-  override val graphQlModels: FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskResult, FlaskExPart] = FlaskToolGraphQLModels
+  // noinspection TypeAnnotation
+  override val graphQlModels = FlaskToolGraphQLModels
 
   override def correctAbstract(
     user: User,
     solution: FilesSolutionInput,
-    exercise: Exercise[FlaskExerciseContent],
-    part: FlaskExPart
-  )(implicit executionContext: ExecutionContext): Future[FlaskResult] =
-    FlaskCorrector.correct(solution, exercise, solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId))
+    exercise: Exercise[FlaskExerciseContent]
+  )(implicit executionContext: ExecutionContext): Future[FlaskResult] = FlaskCorrector.correct(
+    solution,
+    exercise,
+    solutionDirForExercise(user.username, exercise.collectionId, exercise.exerciseId)
+  )
 
   override val initialData: InitialData[FlaskExerciseContent] = FlaskInitialData.initialData
 

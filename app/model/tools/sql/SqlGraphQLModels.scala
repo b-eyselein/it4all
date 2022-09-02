@@ -1,6 +1,6 @@
 package model.tools.sql
 
-import model.graphql.{GraphQLArguments, ToolWithoutPartsGraphQLModel}
+import model.graphql.{GraphQLArguments, ToolGraphQLModel}
 import model.matching.StringMatcher.StringMatchingResult
 import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
@@ -8,7 +8,7 @@ import net.sf.jsqlparser.expression.BinaryExpression
 import sangria.macros.derive._
 import sangria.schema._
 
-object SqlGraphQLModels extends ToolWithoutPartsGraphQLModel[String, SqlExerciseContent, SqlResult] with GraphQLArguments {
+object SqlGraphQLModels extends ToolGraphQLModel[String, SqlExerciseContent, SqlResult] with GraphQLArguments {
 
   private val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
 
