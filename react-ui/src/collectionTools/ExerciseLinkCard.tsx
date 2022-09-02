@@ -15,25 +15,29 @@ export function ExerciseLinkCard({exercise}: IProps): JSX.Element {
 
   const {toolId, collectionId, exerciseId, title, parts, difficulty, topicsWithLevels} = exercise;
 
-  const cardTitle = <>
-    {exerciseId}. {title}
-    &nbsp;
-    <div className="tag" title="Schwierigkeit">
-      <FilledPoints filledPoints={difficulty.levelIndex} maxPoints={/* TODO: */4}/>
-    </div>
-  </>;
+  const cardTitle = (
+    <>
+      {exerciseId}. {title}
+      &nbsp;
+      <div className="tag" title="Schwierigkeit">
+        <FilledPoints filledPoints={difficulty.levelIndex} maxPoints={/* TODO: */4}/>
+      </div>
+    </>
+  );
+
+  const footerItems = [{
+    link: `/${toolsUrlFragment}/${toolId}/${collectionsUrlFragment}/${collectionId}/${exercisesUrlFragment}/${exerciseId}`,
+    title: t('toExercise')
+  }];
 
   return (
-    <BulmaCard title={cardTitle} footerItems={[{
-      link: `/${toolsUrlFragment}/${toolId}/${collectionsUrlFragment}/${collectionId}/${exercisesUrlFragment}/${exerciseId}`,
-      title: t('toExercise')
-    }]}>
+    <BulmaCard title={cardTitle} footerItems={footerItems}>
       <>
 
         <div className="tags">
-          {parts.map(({id, name, solved}) =>
-            <div key={id} className={classNames('tag', {'is-success': solved})}>{name}</div>
-          )}
+          {parts.length === 0
+            ? <div>TODO!</div>
+            : parts.map(({id, name, solved}) => <div key={id} className={classNames('tag', {'is-success': solved})}>{name}</div>)}
         </div>
         {topicsWithLevels.length > 0
           ? (

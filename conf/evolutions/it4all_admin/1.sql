@@ -1,6 +1,6 @@
 -- !Ups
 
-create type level as enum ('Beginner','Intermediate', 'Advanced', 'Expert');
+create type level_name as enum ('Beginner','Intermediate', 'Advanced', 'Expert');
 
 create table if not exists users (
   username      varchar(100) not null primary key,
@@ -30,7 +30,7 @@ create table if not exists exercises (
   exercise_id   int          not null,
   title         varchar(100) not null,
   text          text         not null,
-  difficulty    level        not null,
+  difficulty    level_name   not null,
   content_json  jsonb        not null,
 
   primary key (tool_id, collection_id, exercise_id),
@@ -42,7 +42,7 @@ create table if not exists exercise_topics (
   collection_id      int         not null,
   exercise_id        int         not null,
   topic_abbreviation varchar(20) not null,
-  level              level       not null,
+  level              level_name  not null,
 
   primary key (tool_id, collection_id, exercise_id, topic_abbreviation),
   foreign key (tool_id, collection_id, exercise_id) references exercises (tool_id, collection_id, exercise_id) on update cascade on delete cascade
@@ -103,4 +103,4 @@ drop table if exists collections;
 
 drop table if exists users;
 
-drop type if exists level;
+drop type if exists level_name;

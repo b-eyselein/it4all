@@ -310,7 +310,7 @@ interface ProgrammingTestCorrectionResult {
 }
 
 type Query {
-  tool(toolId: String!): Tool
+  tool(toolId: String!): Tool!
   tools: [Tool!]!
 }
 

@@ -38,7 +38,7 @@ trait TopicRepository {
 
     def abbreviation = column[String]("abbreviation")
 
-    def title = column[String]("abbreviation")
+    def title = column[String]("title")
 
     def pk = primaryKey("topics_pk", (toolId, abbreviation))
 

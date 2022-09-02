@@ -22,10 +22,12 @@ export function ToolBase(): JSX.Element {
   return (
     <Routes>
       <Route index element={<ToolOverview toolId={toolId}/>}/>
+
       <Route path={collectionsUrlFragment}>
         <Route index element={<CollectionList toolId={toolId}/>}/>
         <Route path={':collectionId/*'} element={<CollectionBase toolId={toolId}/>}/>
       </Route>
+
       <Route path={allExercisesUrlFragment} element={<AllExercisesOverview toolId={toolId}/>}/>
     </Routes>
   );

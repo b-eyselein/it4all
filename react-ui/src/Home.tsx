@@ -30,8 +30,8 @@ export function Home(): JSX.Element {
         )}
 
         <WithQuery query={query}>
-          {({tools: collectionTools}) => <>
-            {collectionTools.map(({id, name, /*state,*/ collectionCount, exerciseCount}) =>
+          {({tools}) => <>
+            {tools.map(({id, name, /*state,*/ collectionCount, exerciseCount}) =>
               <div className="column is-one-quarter-desktop is-half-tablet" key={id}>
                 <BulmaCard title={name} footerItems={[{link: `/tools/${id}`, title: t('toTool')}]}>
                   <p>{collectionCount} Sammlungen mit {exerciseCount} Aufgaben</p>

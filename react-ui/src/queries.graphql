@@ -1,5 +1,22 @@
 # common fragments
 
+fragment ExerciseFile on ExerciseFile {
+  name
+  content
+  editable
+}
+
+fragment FilesSolution on FilesSolution {
+  files {
+    ...ExerciseFile
+  }
+}
+
+fragment Level on Level {
+  title
+  levelIndex
+}
+
 fragment Topic on Topic {
   abbreviation
   title
@@ -10,6 +27,15 @@ fragment Topic on Topic {
 }
 
 
+fragment TopicWithLevel on TopicWithLevel {
+  topic {
+    ...Topic
+  }
+  level {
+    ...Level
+  }
+}
+
 fragment Part on ExPart {
   id
   name
@@ -17,6 +43,21 @@ fragment Part on ExPart {
   solved
 }
 
+fragment FieldsForLink on Exercise {
+  exerciseId
+  collectionId
+  toolId
+  title
+  difficulty {
+    ...Level
+  }
+  topicsWithLevels {
+    ...TopicWithLevel
+  }
+  parts {
+    ...Part
+  }
+}
 
 # /tools
 
@@ -34,16 +75,6 @@ query ToolOverview {
 }
 
 # /tools/:toolId
-query CollectionToolOverview($toolId: String!) {
-  tool(toolId: $toolId) {
-    name
-    collectionCount
-    exerciseCount
-    proficiencies {
-      ...UserProficiency
-    }
-  }
-}
 
 fragment UserProficiency on UserProficiency {
   topic {
@@ -53,6 +84,21 @@ fragment UserProficiency on UserProficiency {
   pointsForNextLevel
   level {
     ...Level
+  }
+}
+
+fragment ToolOverview on Tool {
+  name
+  collectionCount
+  exerciseCount
+  proficiencies {
+    ...UserProficiency
+  }
+}
+
+query CollectionToolOverview($toolId: String!) {
+  tool(toolId: $toolId) {
+    ...ToolOverview
   }
 }
 
@@ -75,22 +121,28 @@ query AllExercisesOverview($toolId: String!) {
 }
 
 # /tools/:toolId/collections
+
 fragment CollectionValues on ExerciseCollection {
   collectionId
   title
   exerciseCount
 }
 
+fragment ToolCollectionOverview on Tool {
+  name
+  collections {
+    ...CollectionValues
+  }
+}
+
 query CollectionList($toolId: String!) {
   tool(toolId: $toolId) {
-    name
-    collections {
-      ...CollectionValues
-    }
+    ...ToolCollectionOverview
   }
 }
 
 # /tools/:toolId/collections/:collId
+
 fragment CollOverviewTool on Tool {
   name
   collection(collId: $collId) {
@@ -162,50 +214,6 @@ query Exercise($toolId: String!, $collectionId: Int!, $exerciseId: Int!) {
         ...ExerciseSolveFields
       }
     }
-  }
-}
-
-# Fragments
-
-fragment ExerciseFile on ExerciseFile {
-  name
-  content
-  editable
-}
-
-fragment FilesSolution on FilesSolution {
-  files {
-    ...ExerciseFile
-  }
-}
-
-fragment Level on Level {
-  title
-  levelIndex
-}
-
-fragment TopicWithLevel on TopicWithLevel {
-  topic {
-    ...Topic
-  }
-  level {
-    ...Level
-  }
-}
-
-fragment FieldsForLink on Exercise {
-  exerciseId
-  collectionId
-  toolId
-  title
-  difficulty {
-    ...Level
-  }
-  topicsWithLevels {
-    ...TopicWithLevel
-  }
-  parts {
-    ...Part
   }
 }
 

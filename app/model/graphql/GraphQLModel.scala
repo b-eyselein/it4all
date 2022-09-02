@@ -8,6 +8,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 final case class GraphQLRequest(
   query: String,
@@ -93,9 +94,16 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
       Field("tools", ListType(toolType), resolve = _ => ToolList.tools),
       Field(
         "tool",
-        OptionType(toolType),
+        toolType,
         arguments = toolIdArgument :: Nil,
-        resolve = context => ToolList.tools.find(_.id == context.arg(toolIdArgument))
+        resolve = context => {
+          val toolId = context.arg(toolIdArgument)
+
+          ToolList.tools.find(_.id == toolId) match {
+            case Some(tool) => Success(tool)
+            case None       => Failure(new Exception(s"No such tool with id ${context.arg(toolIdArgument)}"))
+          }
+        }
       )
     )
   )

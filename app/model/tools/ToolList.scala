@@ -16,6 +16,6 @@ object ToolList {
     model.tools.xml.XmlTool
   )
 
-  def tools: List[Tool] = toolsWithoutParts ++ toolsWithParts
+  lazy val tools: List[Tool] = (toolsWithoutParts ++ toolsWithParts).sortBy(_.name)
 
 }

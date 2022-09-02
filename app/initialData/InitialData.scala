@@ -4,7 +4,7 @@ import better.files.File
 import com.google.inject.AbstractModule
 import initialData.InitialData.exerciseResourcesPath
 import model._
-import model.tools.{Tool, ToolList, ToolWithParts}
+import model.tools.{Tool, ToolList}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -88,9 +88,9 @@ class StartUpService @Inject() (tableDefs: TableDefs)(implicit ec: ExecutionCont
 
   // Insert all collections and exercises
 
-  for (tool <- ToolList.tools; InitialData(topics, initialCollections) = tool.initialData) {
+  for (tool <- ToolList.tools) {
     for {
-      _ /* topicsInserted */ <- tableDefs.futureInsertTopics(topics)
+      _ /* topicsInserted */ <- tableDefs.futureInsertTopics(tool.initialData.topics)
 
       _ /* collectionsInserted */ <- Future.sequence {
         tool.initialData.initialCollections.map { case (collectionId, initialCollection) => newInsertInitialCollection(tool, collectionId)(initialCollection) }
