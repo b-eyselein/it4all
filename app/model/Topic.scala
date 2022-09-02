@@ -24,11 +24,13 @@ trait TopicRepository {
     _ <- db.run(topicsTQ ++= topics)
   } yield ()
 
-  def futureTopicsForTool(toolId: String): Future[Seq[Topic]] = db.run(topicsTQ.filter(_.toolId === toolId).result)
+  // def futureTopicsForTool(toolId: String): Future[Seq[Topic]] = db.run(topicsTQ.filter(_.toolId === toolId).result)
 
+  /*
   def futureTopicByAbbreviation(toolId: String, abbreviation: String): Future[Option[Topic]] = db.run(
     topicsTQ.filter { t => t.toolId === toolId && t.abbreviation === abbreviation }.result.headOption
   )
+   */
 
   protected class TopicsTable(tag: Tag) extends Table[Topic](tag, "topics") {
 

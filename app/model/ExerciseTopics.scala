@@ -60,6 +60,7 @@ trait ExerciseTopicsRepository {
       onDelete = ForeignKeyAction.Cascade
     )
 
+    //noinspection ScalaUnusedSymbol
     def topicsForeignKey = foreignKey("exercise_topics_topic_fk", (toolId, topicAbbreviation), topicsTQ)(
       t => (t.toolId, t.abbreviation),
       onUpdate = ForeignKeyAction.Cascade,

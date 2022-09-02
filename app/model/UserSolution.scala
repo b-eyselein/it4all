@@ -123,6 +123,8 @@ trait UserSolutionRepository {
       bestTryCompletelyCorrect <- db.run(
         query.sortBy(_.pointsQuarters.desc).map { us => us.pointsQuarters === us.maxPointsQuarters }.result.headOption
       )
+
+      _ = println(bestTryCompletelyCorrect)
     } yield bestTryCompletelyCorrect.getOrElse(false)
   }
 

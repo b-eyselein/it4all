@@ -64,6 +64,7 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
           ListType(topicWithLevelType),
           resolve = context => context.ctx.tableDefs.futureTopicsForExercise(context.value.toolId, context.value.collectionId, context.value.exerciseId)
         ),
+        // FIXME: only for exercises with parts!
         Field(
           "parts",
           ListType(exPartType),
