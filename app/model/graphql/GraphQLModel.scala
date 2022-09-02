@@ -52,7 +52,7 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
     )
   )
 
-  private val ToolType: ObjectType[GraphQLContext, Tool] = ObjectType(
+  private val toolType: ObjectType[GraphQLContext, Tool] = ObjectType(
     "Tool",
     fields[GraphQLContext, Tool](
       Field("id", StringType, resolve = _.value.id),
@@ -76,7 +76,6 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
       ),
       // Fields for users
       Field(
-        // TODO: move to tool!
         "proficiencies",
         ListType(userProficiencyType),
         resolve = context =>
@@ -91,10 +90,10 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
   private val QueryType: ObjectType[GraphQLContext, Unit] = ObjectType(
     "Query",
     fields[GraphQLContext, Unit](
-      Field("tools", ListType(ToolType), resolve = _ => ToolList.tools),
+      Field("tools", ListType(toolType), resolve = _ => ToolList.tools),
       Field(
         "tool",
-        OptionType(ToolType),
+        OptionType(toolType),
         arguments = toolIdArgument :: Nil,
         resolve = context => ToolList.tools.find(_.id == context.arg(toolIdArgument))
       )

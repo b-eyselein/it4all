@@ -1,7 +1,7 @@
 package model.tools.xml
 
 import enumeratum.PlayEnum
-import model.{ExPart, ExerciseContent}
+import model.{ExPart, ExerciseContent, ExerciseContentWithParts}
 
 sealed abstract class XmlExPart(val partName: String, val id: String) extends ExPart
 
@@ -21,7 +21,8 @@ final case class XmlExerciseContent(
   grammarDescription: String,
   rootNode: String,
   sampleSolutions: Seq[XmlSolution]
-) extends ExerciseContent {
+) extends ExerciseContent
+    with ExerciseContentWithParts {
 
   override protected type S = XmlSolution
 

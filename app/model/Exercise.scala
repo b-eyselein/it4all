@@ -23,6 +23,10 @@ trait ExerciseContent {
 
   val sampleSolutions: Seq[S]
 
+}
+
+trait ExerciseContentWithParts extends ExerciseContent {
+
   def parts: Seq[ExPart]
 
 }

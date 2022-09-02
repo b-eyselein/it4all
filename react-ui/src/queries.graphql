@@ -1,3 +1,23 @@
+# common fragments
+
+fragment Topic on Topic {
+  abbreviation
+  title
+  # TODO:
+  #maxLevel {
+  #  ...Level
+  #}
+}
+
+
+fragment Part on ExPart {
+  id
+  name
+  isEntryPart
+  solved
+}
+
+
 # /tools
 
 fragment Tool on Tool {
@@ -89,12 +109,6 @@ query CollectionOverview($toolId: String!, $collId: Int!) {
 }
 
 # /tools/:toolId/collections/:collId/exercises/:exId
-fragment Part on ExPart {
-  id
-  name
-  isEntryPart
-  solved
-}
 
 fragment ExerciseOverview on Exercise {
   exerciseId
@@ -170,15 +184,6 @@ fragment Level on Level {
   levelIndex
 }
 
-fragment Topic on Topic {
-  abbreviation
-  title
-  # TODO:
-  #maxLevel {
-  #  ...Level
-  #}
-}
-
 fragment TopicWithLevel on TopicWithLevel {
   topic {
     ...Topic
@@ -186,12 +191,6 @@ fragment TopicWithLevel on TopicWithLevel {
   level {
     ...Level
   }
-}
-
-fragment FieldsPart on ExPart {
-  id
-  name
-  solved
 }
 
 fragment FieldsForLink on Exercise {
@@ -206,7 +205,7 @@ fragment FieldsForLink on Exercise {
     ...TopicWithLevel
   }
   parts {
-    ...FieldsPart
+    ...Part
   }
 }
 

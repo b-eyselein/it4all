@@ -1,18 +1,7 @@
 package model.tools.regex
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.{ExPart, ExerciseContent}
-
-@deprecated()
-sealed abstract class RegexExPart(val partName: String, val id: String) extends ExPart
-
-object RegexExPart extends PlayEnum[RegexExPart] {
-
-  val values: IndexedSeq[RegexExPart] = findValues
-
-  case object RegexSingleExPart extends RegexExPart(partName = "Ausdruck erstellen", id = "regex")
-
-}
+import model.ExerciseContent
 
 sealed trait RegexCorrectionType extends EnumEntry
 
@@ -35,8 +24,6 @@ final case class RegexExerciseContent(
 ) extends ExerciseContent {
 
   override protected type S = String
-
-  override def parts: Seq[ExPart] = RegexExPart.values
 
 }
 

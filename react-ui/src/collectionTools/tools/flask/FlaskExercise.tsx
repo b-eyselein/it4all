@@ -1,4 +1,4 @@
-import {FilesSolutionInput, FlaskExerciseContentFragment, FlaskExercisePart, useFlaskCorrectionMutation} from '../../../graphql';
+import {FilesSolutionInput, FlaskExerciseContentFragment, useFlaskCorrectionMutation} from '../../../graphql';
 import {ConcreteExerciseIProps} from '../../Exercise';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
@@ -15,8 +15,6 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
 
   const [correctExercise, correctionMutationResult] = useFlaskCorrectionMutation();
 
-  const part = FlaskExercisePart.FlaskSingleExPart;
-
   const exerciseDescription = <FlaskExerciseDescription exercise={exercise} content={content}/>;
 
   function correct(files: IExerciseFile[], onCorrect: () => void): void {
@@ -26,7 +24,7 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
 
     database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
 
-    correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution, part}})
+    correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution}})
       .then(onCorrect)
       .catch((err) => console.error(err));
   }

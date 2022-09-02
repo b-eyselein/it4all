@@ -1,6 +1,6 @@
-mutation FlaskCorrection($collId: Int!, $exId: Int!, $part: FlaskExercisePart!, $solution: FilesSolutionInput!) {
+mutation FlaskCorrection($collId: Int!, $exId: Int!, $solution: FilesSolutionInput!) {
   flaskExercise(collId: $collId, exId: $exId) {
-    correct(part: $part, solution: $solution) {
+    correct(solution: $solution) {
       ...FlaskCorrectionResult
     }
   }

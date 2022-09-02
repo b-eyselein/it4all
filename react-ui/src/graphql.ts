@@ -195,13 +195,8 @@ export type FlaskExerciseMutations = {
 
 
 export type FlaskExerciseMutationsCorrectArgs = {
-  part: FlaskExercisePart;
   solution: FilesSolutionInput;
 };
-
-export enum FlaskExercisePart {
-  FlaskSingleExPart = 'FlaskSingleExPart'
-}
 
 export type FlaskResult = {
   __typename?: 'FlaskResult';
@@ -1208,7 +1203,6 @@ export type EbnfCorrectionMutation = { __typename?: 'Mutation', ebnfExercise?: {
 export type FlaskCorrectionMutationVariables = Exact<{
   collId: Scalars['Int'];
   exId: Scalars['Int'];
-  part: FlaskExercisePart;
   solution: FilesSolutionInput;
 }>;
 
@@ -1383,6 +1377,10 @@ export type XmlDocumentResultFragment = { __typename?: 'XmlDocumentResult', erro
 
 export type XmlErrorFragment = { __typename?: 'XmlError', line: number, errorType: XmlErrorType, errorMessage: string };
 
+export type TopicFragment = { __typename?: 'Topic', abbreviation: string, title: string };
+
+export type PartFragment = { __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean };
+
 export type ToolFragment = { __typename?: 'Tool', id: string, name: string, collectionCount: number, exerciseCount: number };
 
 export type ToolOverviewQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1399,14 +1397,14 @@ export type CollectionToolOverviewQuery = { __typename?: 'Query', tool?: { __typ
 
 export type UserProficiencyFragment = { __typename?: 'UserProficiency', points: number, pointsForNextLevel: number, topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } };
 
-export type AllExercisesOverviewExerciseFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> };
+export type AllExercisesOverviewExerciseFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> };
 
 export type AllExercisesOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
 }>;
 
 
-export type AllExercisesOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'Tool', name: string, allExercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> }> } | null };
+export type AllExercisesOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'Tool', name: string, allExercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> }> } | null };
 
 export type CollectionValuesFragment = { __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: number };
 
@@ -1417,7 +1415,7 @@ export type CollectionListQueryVariables = Exact<{
 
 export type CollectionListQuery = { __typename?: 'Query', tool?: { __typename?: 'Tool', name: string, collections: Array<{ __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: number }> } | null };
 
-export type CollOverviewToolFragment = { __typename?: 'Tool', name: string, collection?: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> }> } | null };
+export type CollOverviewToolFragment = { __typename?: 'Tool', name: string, collection?: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> }> } | null };
 
 export type CollectionOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
@@ -1425,9 +1423,7 @@ export type CollectionOverviewQueryVariables = Exact<{
 }>;
 
 
-export type CollectionOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'Tool', name: string, collection?: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> }> } | null } | null };
-
-export type PartFragment = { __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean };
+export type CollectionOverviewQuery = { __typename?: 'Query', tool?: { __typename?: 'Tool', name: string, collection?: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> }> } | null } | null };
 
 export type ExerciseOverviewFragment = { __typename?: 'Exercise', exerciseId: number, title: string, text: string, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> };
 
@@ -1457,13 +1453,9 @@ export type FilesSolutionFragment = { __typename?: 'FilesSolution', files: Array
 
 export type LevelFragment = { __typename?: 'Level', title: string, levelIndex: number };
 
-export type TopicFragment = { __typename?: 'Topic', abbreviation: string, title: string };
-
 export type TopicWithLevelFragment = { __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } };
 
-export type FieldsPartFragment = { __typename?: 'ExPart', id: string, name: string, solved: boolean };
-
-export type FieldsForLinkFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, solved: boolean }> };
+export type FieldsForLinkFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> };
 
 export type EbnfExerciseContentFragment = { __typename?: 'EbnfExerciseContent', predefinedTerminals?: Array<string> | null, sampleSolutions: Array<{ __typename?: 'EbnfGrammar', startSymbol: string }> };
 
@@ -2164,10 +2156,11 @@ export const TopicWithLevelFragmentDoc = gql`
 }
     ${TopicFragmentDoc}
 ${LevelFragmentDoc}`;
-export const FieldsPartFragmentDoc = gql`
-    fragment FieldsPart on ExPart {
+export const PartFragmentDoc = gql`
+    fragment Part on ExPart {
   id
   name
+  isEntryPart
   solved
 }
     `;
@@ -2184,12 +2177,12 @@ export const FieldsForLinkFragmentDoc = gql`
     ...TopicWithLevel
   }
   parts {
-    ...FieldsPart
+    ...Part
   }
 }
     ${LevelFragmentDoc}
 ${TopicWithLevelFragmentDoc}
-${FieldsPartFragmentDoc}`;
+${PartFragmentDoc}`;
 export const AllExercisesOverviewExerciseFragmentDoc = gql`
     fragment AllExercisesOverviewExercise on Exercise {
   topicsWithLevels {
@@ -2217,14 +2210,6 @@ export const CollOverviewToolFragmentDoc = gql`
   }
 }
     ${FieldsForLinkFragmentDoc}`;
-export const PartFragmentDoc = gql`
-    fragment Part on ExPart {
-  id
-  name
-  isEntryPart
-  solved
-}
-    `;
 export const ExerciseOverviewFragmentDoc = gql`
     fragment ExerciseOverview on Exercise {
   exerciseId
@@ -2482,9 +2467,9 @@ export type EbnfCorrectionMutationHookResult = ReturnType<typeof useEbnfCorrecti
 export type EbnfCorrectionMutationResult = Apollo.MutationResult<EbnfCorrectionMutation>;
 export type EbnfCorrectionMutationOptions = Apollo.BaseMutationOptions<EbnfCorrectionMutation, EbnfCorrectionMutationVariables>;
 export const FlaskCorrectionDocument = gql`
-    mutation FlaskCorrection($collId: Int!, $exId: Int!, $part: FlaskExercisePart!, $solution: FilesSolutionInput!) {
+    mutation FlaskCorrection($collId: Int!, $exId: Int!, $solution: FilesSolutionInput!) {
   flaskExercise(collId: $collId, exId: $exId) {
-    correct(part: $part, solution: $solution) {
+    correct(solution: $solution) {
       ...FlaskCorrectionResult
     }
   }
@@ -2507,7 +2492,6 @@ export type FlaskCorrectionMutationFn = Apollo.MutationFunction<FlaskCorrectionM
  *   variables: {
  *      collId: // value for 'collId'
  *      exId: // value for 'exId'
- *      part: // value for 'part'
  *      solution: // value for 'solution'
  *   },
  * });

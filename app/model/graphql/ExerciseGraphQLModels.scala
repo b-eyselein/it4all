@@ -69,8 +69,13 @@ trait ExerciseGraphQLModels extends BasicGraphQLModels with GraphQLArguments {
           "parts",
           ListType(exPartType),
           resolve = context =>
-            context.value.content.parts
-              .map { exPart => GraphQLExPart(context.value.toolId, context.value.collectionId, context.value.exerciseId, exPart) }
+            Future.successful {
+              context.value.content match {
+                case exContent: ExerciseContentWithParts =>
+                  exContent.parts.map { exPart => GraphQLExPart(context.value.toolId, context.value.collectionId, context.value.exerciseId, exPart) }
+                case _ => Seq.empty
+              }
+            }
         )
       )
     )

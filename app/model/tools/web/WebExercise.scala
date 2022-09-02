@@ -22,7 +22,8 @@ final case class WebExerciseContent(
   sampleSolutions: Seq[FilesSolution],
   htmlText: Option[String] = None,
   jsText: Option[String] = None
-) extends FileExerciseContent {
+) extends FileExerciseContent
+    with ExerciseContentWithParts {
 
   override def parts: Seq[ExPart] = {
     val htmlPart = if (siteSpec.htmlTasks.nonEmpty) Some(WebExPart.HtmlPart) else None

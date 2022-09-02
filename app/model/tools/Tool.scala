@@ -7,8 +7,6 @@ import model.graphql.{ToolGraphQLModel, ToolWithPartsGraphQLModel}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-// FIXME: tools without parts?
-
 sealed trait Tool {
 
   val id: String
@@ -32,12 +30,6 @@ sealed trait Tool {
 
 abstract class ToolWithoutParts(val id: String, val name: String, val isBeta: Boolean = false) extends Tool {
 
-  // Json & GraphQL Formats
-
-  val graphQlModels: ToolGraphQLModel[SolInputType, ExContType, ResType]
-
-  // Other helper methods
-
   def correctAbstract(
     user: User,
     solution: SolInputType,
@@ -54,9 +46,9 @@ abstract class ToolWithParts(val id: String, val name: String, val isBeta: Boole
 
   // Json & GraphQL Formats
 
-  val jsonFormats: ToolWithPartsJsonProtocol[SolInputType, ExContType, PartType]
+  override val jsonFormats: ToolWithPartsJsonProtocol[SolInputType, ExContType, PartType]
 
-  val graphQlModels: ToolWithPartsGraphQLModel[SolInputType, ExContType, ResType, PartType]
+  override val graphQlModels: ToolWithPartsGraphQLModel[SolInputType, ExContType, ResType, PartType]
 
   // Other helper methods
 

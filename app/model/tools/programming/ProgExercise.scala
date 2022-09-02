@@ -1,13 +1,14 @@
 package model.tools.programming
 
-import model.{ExerciseFile, FileExerciseContent, FilesSolution}
+import model.{ExerciseContentWithParts, ExerciseFile, FileExerciseContent, FilesSolution}
 
 final case class ProgrammingExerciseContent(
   filename: String,
   unitTestPart: UnitTestPart,
   implementationPart: ImplementationPart,
   override val sampleSolutions: Seq[FilesSolution]
-) extends FileExerciseContent {
+) extends FileExerciseContent
+    with ExerciseContentWithParts {
 
   override def parts: Seq[ProgExPart] = ProgExPart.values
 

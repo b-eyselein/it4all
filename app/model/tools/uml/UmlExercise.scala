@@ -1,7 +1,7 @@
 package model.tools.uml
 
 import enumeratum.PlayEnum
-import model.{ExPart, ExerciseContent}
+import model.{ExPart, ExerciseContentWithParts}
 
 sealed abstract class UmlExPart(
   val partName: String,
@@ -15,13 +15,11 @@ object UmlExPart extends PlayEnum[UmlExPart] {
 
   case object ClassSelection extends UmlExPart(partName = "Klassenwahl", id = "classSelection")
 
-  case object DiagramDrawingHelp
-      extends UmlExPart(partName = "Zeichnen des Diagramms", id = "diagramDrawingHelp", isEntryPart = false)
+  case object DiagramDrawingHelp extends UmlExPart(partName = "Zeichnen des Diagramms", id = "diagramDrawingHelp", isEntryPart = false)
 
   case object DiagramDrawing extends UmlExPart(partName = "Zeichnen des Diagramms", id = "diagramDrawing")
 
-  case object MemberAllocation
-      extends UmlExPart(partName = "Zuordnung der Member", id = "memberAllocation", isEntryPart = false)
+  case object MemberAllocation extends UmlExPart(partName = "Zuordnung der Member", id = "memberAllocation", isEntryPart = false)
 
 }
 
@@ -29,7 +27,7 @@ final case class UmlExerciseContent(
   toIgnore: Seq[String],
   mappings: Map[String, String],
   sampleSolutions: Seq[UmlClassDiagram]
-) extends ExerciseContent {
+) extends ExerciseContentWithParts {
 
   override protected type S = UmlClassDiagram
 

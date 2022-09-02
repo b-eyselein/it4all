@@ -143,11 +143,7 @@ type FlaskExerciseContent {
 }
 
 type FlaskExerciseMutations {
-  correct(part: FlaskExercisePart!, solution: FilesSolutionInput!): FlaskCorrectionResult!
-}
-
-enum FlaskExercisePart {
-  FlaskSingleExPart
+  correct(solution: FilesSolutionInput!): FlaskCorrectionResult!
 }
 
 type FlaskResult {
