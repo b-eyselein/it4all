@@ -20,10 +20,6 @@ fragment Level on Level {
 fragment Topic on Topic {
   abbreviation
   title
-  # TODO:
-  #maxLevel {
-  #  ...Level
-  #}
 }
 
 
@@ -192,6 +188,7 @@ query ExerciseOverview($toolId: String!, $collectionId: Int!, $exerciseId: Int!)
   }
 }
 
+# TODO: /tools/:toolId/collections/:collId/exercises/:exId/solve ?
 # /tools/:toolId/collections/:collId/exercises/:exId/parts/:part
 
 fragment ExerciseSolveFields on Exercise {

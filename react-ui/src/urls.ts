@@ -1,5 +1,9 @@
 export const homeUrl = '/';
 
+export const loginUrl = '/loginForm';
+
+export const registerUrl = '/registerForm';
+
 // fragments
 
 export const randomToolsUrlFragment = 'randomTools';
