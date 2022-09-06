@@ -13,7 +13,6 @@ trait ProgrammingAbstractCorrector extends DockerExecutionCorrector {
   override protected val dockerImage: ScalaDockerImage = programmingCorrectionDockerImage
 
   protected val testDataFileName = "test_data.json"
-  protected val testMainFileName = "simplified_test_main.py"
 
   protected val implFileRegex: Regex = """.*_\d*\.py""".r
 

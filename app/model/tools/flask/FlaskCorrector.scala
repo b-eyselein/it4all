@@ -5,12 +5,11 @@ import model.core._
 import model.points._
 import model.tools.DockerExecutionCorrector
 import model.tools.flask.FlaskTool.FlaskExercise
-import model.tools.flask.FlaskToolJsonProtocol.{flaskCorrectionResultReads, flaskTestsConfigFormat}
+import model.tools.flask.FlaskToolJsonProtocol.{flaskTestResultReads, flaskTestsConfigFormat}
 import model.{ContentExerciseFile, IFilesSolution}
 import play.api.libs.json.{Json, Reads}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 object FlaskCorrector extends DockerExecutionCorrector {
 
@@ -37,7 +36,6 @@ object FlaskCorrector extends DockerExecutionCorrector {
     // Write test config
     val testConfigExerciseFile = ContentExerciseFile(
       testConfigFileName,
-      // fileType = "json",
       content = Json.stringify(
         flaskTestsConfigFormat.writes(exercise.content.testConfig)
       ),
@@ -62,23 +60,23 @@ object FlaskCorrector extends DockerExecutionCorrector {
 
     runContainer(
       dockerBinds,
-      Reads.seq(flaskCorrectionResultReads),
-      resultFile
-    )(testResults =>
-      FlaskResult(
-        testResults,
-        points = testResults
-          .filter(_.successful)
-          .map { tr =>
-            exercise.content.testConfig.tests
-              .find(_.id == tr.testId)
-              .map(_.maxPoints)
-              .getOrElse(0)
-          }
-          .sum
-          .points,
-        maxPoints = exercise.content.maxPoints.points
-      )
+      Reads.seq(flaskTestResultReads),
+      resultFile,
+      convertResult = (testResults: Seq[FlaskTestResult]) =>
+        FlaskResult(
+          testResults,
+          points = testResults
+            .filter(_.successful)
+            .map { tr =>
+              exercise.content.testConfig.tests
+                .find { _.id == tr.testId }
+                .map { _.maxPoints }
+                .getOrElse(0)
+            }
+            .sum
+            .points,
+          maxPoints = exercise.content.maxPoints.points
+        )
     )
 
   }

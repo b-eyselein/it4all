@@ -38,8 +38,9 @@ trait DockerExecutionCorrector {
     jsFormat: Reads[T],
     resultFile: File,
     maybeCmd: Option[Seq[String]] = None,
-    deleteContainerAfterRun: Int => Boolean = _ => true
-  )(convertResult: T => R)(implicit ec: ExecutionContext): Future[R] = for {
+    deleteContainerAfterRun: Int => Boolean = _ => true,
+    convertResult: T => R
+  )(implicit ec: ExecutionContext): Future[R] = for {
     imageExists <- Future { DockerConnector.imageExists(dockerImage.name) }
 
     _ <-

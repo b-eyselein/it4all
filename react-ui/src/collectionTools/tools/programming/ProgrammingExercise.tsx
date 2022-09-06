@@ -7,6 +7,7 @@ import {UnitTestResult} from './UnitTestResult';
 import {ImplementationResult} from './ImplementationResult';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
 import {IExerciseFile} from '../../exerciseFile';
+import {PointsNotification} from '../../../helpers/PointsNotification';
 
 type IProps = ConcreteExerciseWithPartsProps<ProgrammingExerciseContentFragment, FilesSolutionInput>;
 
@@ -40,7 +41,7 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
         {({correct: {result/*, solutionId, proficienciesUpdated*/}}) => <>
           {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
 
-          {/*<PointsNotification points={result.points} maxPoints={result.maxPoints}/>*/}
+          <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 
           {result.unitTestResults.length > 0 && <ul>
             {result.unitTestResults.map((unitTestResult, index) => <UnitTestResult key={index} result={unitTestResult}/>)}

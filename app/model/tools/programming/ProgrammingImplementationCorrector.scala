@@ -4,11 +4,11 @@ import better.files.File
 import model.FilesSolution
 import model.core.DockerBind
 import model.points._
-import model.tools.programming.ProgrammingToolJsonProtocol.normalExecutionResultFileJsonReads
+import model.tools.programming.ProgrammingToolJsonProtocol.implementationCorrectionResultReads
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrector {
+trait ProgrammingImplementationCorrector extends ProgrammingAbstractCorrector {
 
   def correctImplementationPart(
     solutionFilesMounts: Seq[DockerBind],
@@ -36,16 +36,19 @@ trait ProgrammingNormalImplementationCorrector extends ProgrammingAbstractCorrec
 
           runContainer(
             solutionFilesMounts :+ unitTestFileMount,
-            normalExecutionResultFileJsonReads,
+            implementationCorrectionResultReads,
             resultFile,
-            maybeCmd = Some(Seq("normal"))
-          )(normalExecutionResult =>
-            // FIXME: points!
-            ProgrammingResult(
-              implementationCorrectionResult = Some(normalExecutionResult),
-              points = (-1).points /* normalUnitTestPart.unitTestTestConfigs.size.points */,
-              maxPoints = maxPoints(exerciseContent.unitTestPart)
-            )
+            maybeCmd = Some(Seq("normal")),
+            convertResult = (normalExecutionResult: ImplementationCorrectionResult) => {
+
+              val theMaxPoints = maxPoints(exerciseContent.unitTestPart)
+
+              ProgrammingResult(
+                implementationCorrectionResult = Some(normalExecutionResult),
+                points = if (normalExecutionResult.successful) theMaxPoints else zeroPoints,
+                maxPoints = theMaxPoints
+              )
+            }
           )
       }
   }

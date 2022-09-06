@@ -8,7 +8,7 @@ import model.tools.programming.ProgrammingTool.ProgrammingExercise
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-object ProgrammingCorrector extends ProgrammingUnitTestCorrector with ProgrammingNormalImplementationCorrector {
+object ProgrammingCorrector extends ProgrammingUnitTestCorrector with ProgrammingImplementationCorrector {
 
   def correct(
     exercise: ProgrammingExercise,

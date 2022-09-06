@@ -2,7 +2,7 @@ package model.tools.programming
 
 import better.files.File
 import model.core.DockerBind
-import model.points._
+import model.points.toPointsOps
 import model.tools.programming.ProgrammingToolJsonProtocol.{UnitTestTestData, unitTestCorrectionResultReads}
 import play.api.libs.json.{Json, Reads}
 
@@ -63,13 +63,13 @@ trait ProgrammingUnitTestCorrector extends ProgrammingAbstractCorrector {
       Reads.seq(unitTestCorrectionResultReads),
       resultFile,
       maybeCmd = Some(Seq("unit_test")),
-      deleteContainerAfterRun = _ == 0
-    )(results =>
-      ProgrammingResult(
-        unitTestResults = results,
-        points = results.count(_.successful).points,
-        maxPoints = maxPoints(unitTestPart)
-      )
+      deleteContainerAfterRun = _ == 0,
+      convertResult = (results: Seq[UnitTestCorrectionResult]) =>
+        ProgrammingResult(
+          unitTestResults = results,
+          points = results.count(_.successful).points,
+          maxPoints = maxPoints(unitTestPart)
+        )
     )
   }
 

@@ -42,12 +42,7 @@ object ProgrammingToolJsonProtocol
 
   // Result
 
-  // Normal execution
-
-  val normalExecutionResultFileJsonReads: Reads[ImplementationCorrectionResult] = {
-
-    Json.reads
-  }
+  val implementationCorrectionResultReads: Reads[ImplementationCorrectionResult] = Json.reads
 
   // Unit test correction
 
