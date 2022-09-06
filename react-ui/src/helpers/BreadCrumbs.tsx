@@ -23,12 +23,12 @@ export function BreadCrumbs({parts}: IProps): JSX.Element {
     return parts.map(({routerLinkPart, title}) => {
       partAggregator.push(routerLinkPart);
 
-      return {routerLink: partAggregator.join(''), title};
+      return {routerLink: partAggregator.join('/'), title};
     });
   }
 
   return (
-    <nav className="breadcrumb" aria-label="breadcrumbs">
+    <nav className="my-3 breadcrumb" aria-label="breadcrumbs">
       <ul>
         {breadCrumbs().map((part, index, arr) =>
           <li className={classNames({'is-active': index === arr.length - 1})} key={part.routerLink}>

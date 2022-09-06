@@ -26,6 +26,9 @@ trait ExerciseTopicsRepository {
       exerciseTopicsTQ
         .filter { row => row.toolId === toolId && row.collectionId === collectionId && row.exerciseId === exerciseId }
         .join(topicsTQ)
+        .on { case (exerciseTopic, topic) =>
+          exerciseTopic.toolId === topic.toolId && exerciseTopic.topicAbbreviation === topic.abbreviation
+        }
         .map { case (exerciseTopic, topic) => (topic, exerciseTopic.level) }
         .result
     )
@@ -60,7 +63,9 @@ trait ExerciseTopicsRepository {
       onDelete = ForeignKeyAction.Cascade
     )
 
-    //noinspection ScalaUnusedSymbol
+    /** @return
+      */
+    // noinspection ScalaUnusedSymbol
     def topicsForeignKey = foreignKey("exercise_topics_topic_fk", (toolId, topicAbbreviation), topicsTQ)(
       t => (t.toolId, t.abbreviation),
       onUpdate = ForeignKeyAction.Cascade,

@@ -18,7 +18,7 @@ export function ProficiencyCard({proficiency: {topic, level, points, pointsForNe
         <p>{points} von {pointsForNextLevel} Punkten für nächstes Level</p>
 
         <p>
-          <FilledPoints filledPoints={level.levelIndex} maxPoints={/*TODO: topic.maxLevel.levelIndex*/4}/>
+          <FilledPoints filledPoints={level.levelIndex}/>
         </p>
 
 

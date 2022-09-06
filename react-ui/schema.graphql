@@ -521,7 +521,7 @@ type StringMatchingResult {
 
 type Tool {
   allExercises: [Exercise!]!
-  collection(collId: Int!): ExerciseCollection
+  collection(collId: Int!): ExerciseCollection!
   collectionCount: Int!
   collections: [ExerciseCollection!]!
   exerciseCount: Int!

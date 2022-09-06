@@ -709,7 +709,7 @@ export type StringMatchingResult = {
 export type Tool = {
   __typename?: 'Tool';
   allExercises: Array<Exercise>;
-  collection?: Maybe<ExerciseCollection>;
+  collection: ExerciseCollection;
   collectionCount: Scalars['Int'];
   collections: Array<ExerciseCollection>;
   exerciseCount: Scalars['Int'];
@@ -1411,6 +1411,8 @@ export type CollectionToolOverviewQuery = { __typename?: 'Query', tool: { __type
 
 export type AllExercisesOverviewExerciseFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> };
 
+export type AllExesOverviewToolFragment = { __typename?: 'Tool', name: string, allExercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> }> };
+
 export type AllExercisesOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
 }>;
@@ -1429,7 +1431,7 @@ export type CollectionListQueryVariables = Exact<{
 
 export type CollectionListQuery = { __typename?: 'Query', tool: { __typename?: 'Tool', name: string, collections: Array<{ __typename?: 'ExerciseCollection', collectionId: number, title: string, exerciseCount: number }> } };
 
-export type CollOverviewToolFragment = { __typename?: 'Tool', name: string, collection?: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> }> } | null };
+export type CollOverviewToolFragment = { __typename?: 'Tool', name: string, collection: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> }> } };
 
 export type CollectionOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
@@ -1437,9 +1439,11 @@ export type CollectionOverviewQueryVariables = Exact<{
 }>;
 
 
-export type CollectionOverviewQuery = { __typename?: 'Query', tool: { __typename?: 'Tool', name: string, collection?: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> }> } | null } };
+export type CollectionOverviewQuery = { __typename?: 'Query', tool: { __typename?: 'Tool', name: string, collection: { __typename?: 'ExerciseCollection', title: string, exercises: Array<{ __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, difficulty: { __typename?: 'Level', title: string, levelIndex: number }, topicsWithLevels: Array<{ __typename?: 'TopicWithLevel', topic: { __typename?: 'Topic', abbreviation: string, title: string }, level: { __typename?: 'Level', title: string, levelIndex: number } }>, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> }> } } };
 
 export type ExerciseOverviewFragment = { __typename?: 'Exercise', exerciseId: number, title: string, text: string, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> };
+
+export type ExOverviewToolFragment = { __typename?: 'Tool', id: string, name: string, collection: { __typename?: 'ExerciseCollection', collectionId: number, title: string, exercise?: { __typename?: 'Exercise', exerciseId: number, title: string, text: string, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> } | null } };
 
 export type ExerciseOverviewQueryVariables = Exact<{
   toolId: Scalars['String'];
@@ -1448,7 +1452,7 @@ export type ExerciseOverviewQueryVariables = Exact<{
 }>;
 
 
-export type ExerciseOverviewQuery = { __typename?: 'Query', tool: { __typename?: 'Tool', id: string, name: string, collection?: { __typename?: 'ExerciseCollection', collectionId: number, title: string, exercise?: { __typename?: 'Exercise', exerciseId: number, title: string, text: string, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> } | null } | null } };
+export type ExerciseOverviewQuery = { __typename?: 'Query', tool: { __typename?: 'Tool', id: string, name: string, collection: { __typename?: 'ExerciseCollection', collectionId: number, title: string, exercise?: { __typename?: 'Exercise', exerciseId: number, title: string, text: string, parts: Array<{ __typename?: 'ExPart', id: string, name: string, isEntryPart: boolean, solved: boolean }> } | null } } };
 
 export type ExerciseSolveFieldsFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, text: string, content: { __typename: 'EbnfExerciseContent', predefinedTerminals?: Array<string> | null, sampleSolutions: Array<{ __typename?: 'EbnfGrammar', startSymbol: string }> } | { __typename: 'FlaskExerciseContent', testConfig: { __typename?: 'FlaskTestsConfig', tests: Array<{ __typename?: 'FlaskSingleTestConfig', id: number, testName: string, description: string }> }, files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }>, flaskSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'ProgrammingExerciseContent', unitTestPart: { __typename?: 'UnitTestPart', unitTestFiles: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }, implementationPart: { __typename?: 'ImplementationPart', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }, programmingSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'RegexExerciseContent', regexSampleSolutions: Array<string> } | { __typename: 'SqlExerciseContent', hint?: string | null, sqlSampleSolutions: Array<string>, sqlDbContents: Array<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> }> } | { __typename: 'UmlExerciseContent', toIgnore: Array<string>, mappings: Array<{ __typename?: 'KeyValueObject', key: string, value: string }>, umlSampleSolutions: Array<{ __typename?: 'UmlClassDiagram', classes: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename?: 'UmlAttribute', isAbstract: boolean, isDerived: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, memberType: string }>, methods: Array<{ __typename?: 'UmlMethod', isAbstract: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, parameters: string, memberType: string }> }>, associations: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, implementations: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> }> } | { __typename: 'WebExerciseContent', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }>, siteSpec: { __typename?: 'SiteSpec', fileName: string, jsTaskCount: number, htmlTasks: Array<{ __typename?: 'HtmlTask', text: string }> }, webSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'XmlExerciseContent', rootNode: string, grammarDescription: string, xmlSampleSolutions: Array<{ __typename?: 'XmlSolution', document: string, grammar: string }> } };
 
@@ -1459,7 +1463,7 @@ export type ExerciseQueryVariables = Exact<{
 }>;
 
 
-export type ExerciseQuery = { __typename?: 'Query', tool: { __typename?: 'Tool', collection?: { __typename?: 'ExerciseCollection', exercise?: { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, text: string, content: { __typename: 'EbnfExerciseContent', predefinedTerminals?: Array<string> | null, sampleSolutions: Array<{ __typename?: 'EbnfGrammar', startSymbol: string }> } | { __typename: 'FlaskExerciseContent', testConfig: { __typename?: 'FlaskTestsConfig', tests: Array<{ __typename?: 'FlaskSingleTestConfig', id: number, testName: string, description: string }> }, files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }>, flaskSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'ProgrammingExerciseContent', unitTestPart: { __typename?: 'UnitTestPart', unitTestFiles: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }, implementationPart: { __typename?: 'ImplementationPart', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }, programmingSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'RegexExerciseContent', regexSampleSolutions: Array<string> } | { __typename: 'SqlExerciseContent', hint?: string | null, sqlSampleSolutions: Array<string>, sqlDbContents: Array<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> }> } | { __typename: 'UmlExerciseContent', toIgnore: Array<string>, mappings: Array<{ __typename?: 'KeyValueObject', key: string, value: string }>, umlSampleSolutions: Array<{ __typename?: 'UmlClassDiagram', classes: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename?: 'UmlAttribute', isAbstract: boolean, isDerived: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, memberType: string }>, methods: Array<{ __typename?: 'UmlMethod', isAbstract: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, parameters: string, memberType: string }> }>, associations: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, implementations: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> }> } | { __typename: 'WebExerciseContent', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }>, siteSpec: { __typename?: 'SiteSpec', fileName: string, jsTaskCount: number, htmlTasks: Array<{ __typename?: 'HtmlTask', text: string }> }, webSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'XmlExerciseContent', rootNode: string, grammarDescription: string, xmlSampleSolutions: Array<{ __typename?: 'XmlSolution', document: string, grammar: string }> } } | null } | null } };
+export type ExerciseQuery = { __typename?: 'Query', tool: { __typename?: 'Tool', collection: { __typename?: 'ExerciseCollection', exercise?: { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, text: string, content: { __typename: 'EbnfExerciseContent', predefinedTerminals?: Array<string> | null, sampleSolutions: Array<{ __typename?: 'EbnfGrammar', startSymbol: string }> } | { __typename: 'FlaskExerciseContent', testConfig: { __typename?: 'FlaskTestsConfig', tests: Array<{ __typename?: 'FlaskSingleTestConfig', id: number, testName: string, description: string }> }, files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }>, flaskSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'ProgrammingExerciseContent', unitTestPart: { __typename?: 'UnitTestPart', unitTestFiles: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }, implementationPart: { __typename?: 'ImplementationPart', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }, programmingSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'RegexExerciseContent', regexSampleSolutions: Array<string> } | { __typename: 'SqlExerciseContent', hint?: string | null, sqlSampleSolutions: Array<string>, sqlDbContents: Array<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> }> } | { __typename: 'UmlExerciseContent', toIgnore: Array<string>, mappings: Array<{ __typename?: 'KeyValueObject', key: string, value: string }>, umlSampleSolutions: Array<{ __typename?: 'UmlClassDiagram', classes: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename?: 'UmlAttribute', isAbstract: boolean, isDerived: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, memberType: string }>, methods: Array<{ __typename?: 'UmlMethod', isAbstract: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, parameters: string, memberType: string }> }>, associations: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, implementations: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> }> } | { __typename: 'WebExerciseContent', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }>, siteSpec: { __typename?: 'SiteSpec', fileName: string, jsTaskCount: number, htmlTasks: Array<{ __typename?: 'HtmlTask', text: string }> }, webSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'XmlExerciseContent', rootNode: string, grammarDescription: string, xmlSampleSolutions: Array<{ __typename?: 'XmlSolution', document: string, grammar: string }> } } | null } } };
 
 export type EbnfExerciseContentFragment = { __typename?: 'EbnfExerciseContent', predefinedTerminals?: Array<string> | null, sampleSolutions: Array<{ __typename?: 'EbnfGrammar', startSymbol: string }> };
 
@@ -2206,6 +2210,14 @@ export const AllExercisesOverviewExerciseFragmentDoc = gql`
 }
     ${TopicWithLevelFragmentDoc}
 ${FieldsForLinkFragmentDoc}`;
+export const AllExesOverviewToolFragmentDoc = gql`
+    fragment AllExesOverviewTool on Tool {
+  name
+  allExercises {
+    ...AllExercisesOverviewExercise
+  }
+}
+    ${AllExercisesOverviewExerciseFragmentDoc}`;
 export const CollectionValuesFragmentDoc = gql`
     fragment CollectionValues on ExerciseCollection {
   collectionId
@@ -2242,6 +2254,19 @@ export const ExerciseOverviewFragmentDoc = gql`
   }
 }
     ${PartFragmentDoc}`;
+export const ExOverviewToolFragmentDoc = gql`
+    fragment ExOverviewTool on Tool {
+  id
+  name
+  collection(collId: $collectionId) {
+    collectionId
+    title
+    exercise(exId: $exerciseId) {
+      ...ExerciseOverview
+    }
+  }
+}
+    ${ExerciseOverviewFragmentDoc}`;
 export const EbnfExerciseContentFragmentDoc = gql`
     fragment EbnfExerciseContent on EbnfExerciseContent {
   predefinedTerminals
@@ -2823,13 +2848,10 @@ export type CollectionToolOverviewQueryResult = Apollo.QueryResult<CollectionToo
 export const AllExercisesOverviewDocument = gql`
     query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
-    name
-    allExercises {
-      ...AllExercisesOverviewExercise
-    }
+    ...AllExesOverviewTool
   }
 }
-    ${AllExercisesOverviewExerciseFragmentDoc}`;
+    ${AllExesOverviewToolFragmentDoc}`;
 
 /**
  * __useAllExercisesOverviewQuery__
@@ -2932,18 +2954,10 @@ export type CollectionOverviewQueryResult = Apollo.QueryResult<CollectionOvervie
 export const ExerciseOverviewDocument = gql`
     query ExerciseOverview($toolId: String!, $collectionId: Int!, $exerciseId: Int!) {
   tool(toolId: $toolId) {
-    id
-    name
-    collection(collId: $collectionId) {
-      collectionId
-      title
-      exercise(exId: $exerciseId) {
-        ...ExerciseOverview
-      }
-    }
+    ...ExOverviewTool
   }
 }
-    ${ExerciseOverviewFragmentDoc}`;
+    ${ExOverviewToolFragmentDoc}`;
 
 /**
  * __useExerciseOverviewQuery__

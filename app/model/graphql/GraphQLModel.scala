@@ -41,14 +41,18 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
         "exercise",
         OptionType(exerciseType),
         arguments = exIdArgument :: Nil,
-        resolve = context =>
-          ToolList.tools.find(_.id == context.value.toolId) match {
-            case None => Future.successful(None)
+        resolve = context => {
+          val toolId     = context.value.toolId
+          val exerciseId = context.arg(exIdArgument)
+
+          ToolList.tools.find(_.id == toolId) match {
+            case None => Future.failed(new Exception(s"No such tool with id ${toolId}"))
             case Some(tool) =>
               context.ctx.tableDefs
-                .futureExerciseById(tool, context.value.collectionId, context.arg(exIdArgument))
+                .futureExerciseById(tool, context.value.collectionId, exerciseId)
                 .asInstanceOf[Future[Option[UntypedExercise]]]
           }
+        }
       )
     )
   )
@@ -64,9 +68,18 @@ trait GraphQLModel extends BasicGraphQLModels with ExerciseGraphQLModels with Gr
       Field("collections", ListType(collectionType), resolve = context => context.ctx.tableDefs.futureCollectionsForTool(context.value.id)),
       Field(
         "collection",
-        OptionType(collectionType),
+        collectionType,
         arguments = collIdArgument :: Nil,
-        resolve = context => context.ctx.tableDefs.futureCollectionById(context.value.id, context.arg(collIdArgument))
+        resolve = context => {
+          val collectionId = context.arg(collIdArgument)
+
+          context.ctx.tableDefs
+            .futureCollectionById(context.value.id, collectionId)
+            .flatMap {
+              case Some(collection) => Future.successful(collection)
+              case None             => Future.failed(new Exception(s"No such collection with id $collectionId"))
+            }
+        }
       ),
       // Special fields for exercises
       Field("exerciseCount", IntType, resolve = context => context.ctx.tableDefs.futureExerciseCountForTool(context.value.id)),

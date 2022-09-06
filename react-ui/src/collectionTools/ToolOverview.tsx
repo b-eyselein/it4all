@@ -30,9 +30,7 @@ function Inner({toolId, tool}: InnerProps): JSX.Element {
     <>
       <h1 className="title is-3 has-text-centered">{t('tool')} {name}</h1>
 
-      <div className="mb-3">
-        <BreadCrumbs parts={breadCrumbParts}/>
-      </div>
+      <BreadCrumbs parts={breadCrumbParts}/>
 
       <div className="columns">
         <div className="column">

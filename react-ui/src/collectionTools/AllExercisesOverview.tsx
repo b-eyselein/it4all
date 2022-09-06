@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import {AllExercisesOverviewExerciseFragment, useAllExercisesOverviewQuery} from '../graphql';
+import {useState} from 'react';
+import {AllExesOverviewToolFragment, useAllExercisesOverviewQuery} from '../graphql';
 import {WithQuery} from '../WithQuery';
 import {useTranslation} from 'react-i18next';
 import {distinctObjectArray} from './tools/uml/UmlMemberAllocation';
 import classNames from 'classnames';
 import {ExerciseLinkCard} from './ExerciseLinkCard';
-import {WithNullableNavigate} from '../WithNullableNavigate';
 
-interface IProps {
-  name: string;
-  allExercises: AllExercisesOverviewExerciseFragment[];
+interface InnerProps {
+  tool: AllExesOverviewToolFragment;
 }
 
-function FilteredExerciseOverview({name, allExercises}: IProps): JSX.Element {
+function Inner({tool}: InnerProps): JSX.Element {
+
+  const {name, allExercises} = tool;
 
   const {t} = useTranslation('common');
   const [filterAbbreviationsActivated, setFilterAbbreviationsActivated] = useState<string[]>([]);
@@ -37,7 +37,7 @@ function FilteredExerciseOverview({name, allExercises}: IProps): JSX.Element {
     <>
       <h1 className="title is-3 has-text-centered">{t('tool')} {name}: {t('allExercises')}</h1>
 
-      <section>
+      {distinctTopicWithLevels.length > 0 && <section>
         <h2 className="title is-3 has-text-centered">Filter</h2>
 
         <div className="columns is-multiline">
@@ -50,11 +50,9 @@ function FilteredExerciseOverview({name, allExercises}: IProps): JSX.Element {
               </button>
             </div>)}
         </div>
-      </section>
+      </section>}
 
       <hr/>
-
-      <h1 className="title is-3 has-text-centered">Alle Aufgaben</h1>
 
       <div className="columns is-multiline">
         {filteredExercises.map((exercise) => <div className="column is-one-third-desktop" key={exercise.title}>
@@ -74,9 +72,7 @@ export function AllExercisesOverview({toolId}: { toolId: string }): JSX.Element 
   return (
     <div className="container">
       <WithQuery query={allExercisesOverviewQuery}>
-        {({tool}) => <WithNullableNavigate t={tool}>
-          {({name, allExercises}) => <FilteredExerciseOverview name={name} allExercises={allExercises}/>}
-        </WithNullableNavigate>}
+        {({tool}) => <Inner tool={tool}/>}
       </WithQuery>
     </div>
   );

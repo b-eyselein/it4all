@@ -120,11 +120,9 @@ trait UserSolutionRepository {
     }
 
     for {
-      bestTryCompletelyCorrect <- db.run(
+      bestTryCompletelyCorrect <- db.run {
         query.sortBy(_.pointsQuarters.desc).map { us => us.pointsQuarters === us.maxPointsQuarters }.result.headOption
-      )
-
-      _ = println(bestTryCompletelyCorrect)
+      }
     } yield bestTryCompletelyCorrect.getOrElse(false)
   }
 

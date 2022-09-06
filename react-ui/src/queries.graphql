@@ -111,12 +111,16 @@ fragment AllExercisesOverviewExercise on Exercise {
   ...FieldsForLink
 }
 
+fragment AllExesOverviewTool on Tool {
+  name
+  allExercises {
+    ...AllExercisesOverviewExercise
+  }
+}
+
 query AllExercisesOverview($toolId: String!) {
   tool(toolId: $toolId) {
-    name
-    allExercises {
-      ...AllExercisesOverviewExercise
-    }
+    ...AllExesOverviewTool
   }
 }
 
@@ -153,7 +157,6 @@ fragment CollOverviewTool on Tool {
   }
 }
 
-
 query CollectionOverview($toolId: String!, $collId: Int!) {
   tool(toolId: $toolId) {
     ...CollOverviewTool
@@ -171,17 +174,21 @@ fragment ExerciseOverview on Exercise {
   }
 }
 
+fragment ExOverviewTool on Tool {
+  id
+  name
+  collection(collId: $collectionId) {
+    collectionId
+    title
+    exercise(exId: $exerciseId) {
+      ...ExerciseOverview
+    }
+  }
+}
+
 query ExerciseOverview($toolId: String!, $collectionId: Int!, $exerciseId: Int!) {
   tool(toolId: $toolId) {
-    id
-    name
-    collection(collId: $collectionId) {
-      collectionId
-      title
-      exercise(exId: $exerciseId) {
-        ...ExerciseOverview
-      }
-    }
+    ...ExOverviewTool
   }
 }
 
