@@ -18,6 +18,7 @@ class DexieTable extends Dexie {
 
   // eslint-disable-next-line
   private solutionsWithoutParts: Table<DbSolutionWithoutParts<any>, SolWithoutPartsKey>;
+  // eslint-disable-next-line
   private solutionsWithParts: Table<DbSolutionWithParts<any>, SolWithPartsKey>;
 
   constructor() {

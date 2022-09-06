@@ -55,10 +55,6 @@ function CollectionBase({toolId}: ToolBaseParams): JSX.Element {
   );
 }
 
-export interface ExerciseIProps extends CollectionBaseParams {
-  exerciseId: number;
-}
-
 function ExerciseBase({toolId, collectionId}: CollectionBaseParams): JSX.Element {
 
   const params = useParams<'exerciseId'>();
@@ -78,14 +74,11 @@ function ExerciseBase({toolId, collectionId}: CollectionBaseParams): JSX.Element
   );
 }
 
-
-function ExerciseContainer({toolId, collectionId, exerciseId}: ExerciseIProps): JSX.Element {
+function ExerciseContainer({toolId, collectionId, exerciseId}: CollectionBaseParams & { exerciseId: number }): JSX.Element {
 
   const {partId} = useParams<'partId'>();
 
-  if (!partId) {
-    return <Navigate to={homeUrl}/>;
-  }
-
-  return <Exercise toolId={toolId} collectionId={collectionId} exerciseId={exerciseId} partId={partId}/>;
+  return partId
+    ? <Exercise toolId={toolId} collectionId={collectionId} exerciseId={exerciseId} partId={partId}/>
+    : <Navigate to={homeUrl}/>;
 }

@@ -16,7 +16,7 @@ interface InnerProps {
   tool: CollOverviewToolFragment;
 }
 
-function Inner({toolId, collectionId, tool}: InnerProps): JSX.Element {
+function Inner({toolId, tool}: InnerProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [currentPage, setCurrentPage] = useState(0);
@@ -26,13 +26,6 @@ function Inner({toolId, collectionId, tool}: InnerProps): JSX.Element {
   const paginationNeeded = exercises.length > SLICE_COUNT;
   const maxPage = Math.ceil(exercises.length / SLICE_COUNT);
   const pages: number[] = Array(maxPage).fill(0).map((value, index) => index);
-
-  const breadCrumbParts = [
-    {routerLinkPart: '/', title: 'Tools'},
-    {routerLinkPart: `tools/${toolId}`, title: tool.name},
-    {routerLinkPart: 'collections', title: 'Sammlungen'},
-    {routerLinkPart: collectionId.toString(), title: title}
-  ];
 
   const exercisesPaginated = exercises.slice(currentPage * SLICE_COUNT, (currentPage + 1) * SLICE_COUNT);
 
