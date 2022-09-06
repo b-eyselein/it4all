@@ -77,7 +77,7 @@ function Inner<SolutionType>({toolId, collectionId, exerciseId, partId, tool}: I
   }
 }
 
-export function Exercise<SolutionType>({toolId, collectionId, exerciseId, partId}: IProps): JSX.Element {
+export function Exercise({toolId, collectionId, exerciseId, partId}: IProps): JSX.Element {
 
   const exerciseQuery = useExerciseQuery({variables: {toolId, collectionId, exerciseId}});
 
