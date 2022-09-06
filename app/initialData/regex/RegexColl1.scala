@@ -33,8 +33,7 @@ object RegexColl1 {
   private val regexColl1Ex2 = InitialExercise(
     title = "Einfache Datumsangaben",
     authors = Seq("bje40dc"),
-    text = """\
-        Schreiben Sie einen regulären Ausdruck, der eine einfache Version von Datumsangaben findet.
+    text = """Schreiben Sie einen regulären Ausdruck, der eine einfache Version von Datumsangaben findet.
              |Dabei sollen der Tag und der Monat jeweils aus zwei und die Jahresangabe aus vier Zahlen bestehen.
              |Als Trennzeichen soll jeweils ein Punkt verwendet werden.
              |Eine Validierung auf kalendarische Korrektheit (zum Beispiel, dass der 30.02.2019 oder der 99.17.3005 nicht

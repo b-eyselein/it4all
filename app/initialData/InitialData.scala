@@ -5,6 +5,7 @@ import com.google.inject.AbstractModule
 import initialData.InitialData.exerciseResourcesPath
 import model._
 import model.tools.{Tool, ToolList}
+import play.api.Logger
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,49 +54,70 @@ object InitialData {
 @Singleton
 class StartUpService @Inject() (tableDefs: TableDefs)(implicit ec: ExecutionContext) {
 
+  private val logger = Logger(classOf[StartUpService])
+
   private def newInsertInitialExercise(tool: Tool, collectionId: Int, exerciseId: Int)(initialExercise: InitialExercise[tool.ExContType]): Future[Unit] =
     tableDefs.futureExerciseExists(tool.id, collectionId, exerciseId).flatMap {
       case true => Future.successful(())
       case false =>
-        initialExercise match {
-          case InitialExercise(title, _ /* authors */, text, topicsWithLevels, difficulty, content) =>
-            for {
-              _ /* exerciseInserted */ <- tableDefs.futureInsertExercise(
-                Exercise(exerciseId, collectionId, tool.id, title, text, difficulty, content),
-                tool.jsonFormats.exerciseContentFormat
-              )
+        val InitialExercise(title, _ /* authors */, text, topicsWithLevels, difficulty, content) = initialExercise
 
-              _ /* exerciseTopicsInserted */ <- tableDefs.futureInsertTopicsForExercise(tool.id, collectionId, exerciseId, topicsWithLevels)
-            } yield ()
-        }
+        val key = (tool.id, collectionId, exerciseId)
+
+        for {
+          _ /* exerciseInserted */ <- tableDefs
+            .futureInsertExercise(
+              Exercise(exerciseId, collectionId, tool.id, title, text, difficulty, content),
+              tool.jsonFormats.exerciseContentFormat
+            )
+            .recover { logger.error(s"Error while inserting exercise $key", _) }
+
+          _ /* exerciseTopicsInserted */ <- tableDefs
+            .futureInsertTopicsForExercise(tool.id, collectionId, exerciseId, topicsWithLevels)
+            .recover { logger.error("Error while inserting topics for exercise", _) }
+        } yield ()
     }
 
   private def newInsertInitialCollection(tool: Tool, collectionId: Int)(initialCollection: InitialCollection[tool.ExContType]): Future[Unit] =
     tableDefs.futureCollectionById(tool.id, collectionId).map {
       case Some(_) => Future.successful(())
       case None =>
-        initialCollection match {
-          case InitialCollection(title, initialExercises) =>
-            for {
-              _ /* collectionInserted */ <- tableDefs.futureInsertCollection(ExerciseCollection(tool.id, collectionId, title))
+        val InitialCollection(title, initialExercises) = initialCollection
 
-              _ /* exercisesInserted */ <- Future.sequence {
-                initialExercises.toSeq.map { case (exerciseId, initialExercise) => newInsertInitialExercise(tool, collectionId, exerciseId)(initialExercise) }
-              }
-            } yield ()
-        }
+        val key = (tool.id, collectionId)
+
+        for {
+          _ /* collectionInserted */ <- tableDefs
+            .futureInsertCollection(ExerciseCollection(tool.id, collectionId, title))
+            .recover { logger.error(s"Error while inserting collection $key", _) }
+
+          _ /* exercisesInserted */ <- Future
+            .sequence {
+              initialExercises.toSeq.map { case (exerciseId, initialExercise) => newInsertInitialExercise(tool, collectionId, exerciseId)(initialExercise) }
+            }
+            .recover { logger.error(s"Error while inserting exercises for collection $key", _) }
+        } yield ()
     }
 
   // Insert all collections and exercises
 
   for (tool <- ToolList.tools) {
     for {
-      _ /* topicsInserted */ <- tableDefs.futureInsertTopics(tool.initialData.topics)
+      existingTopics <- tableDefs.futureTopicsForTool(tool.id)
 
-      _ /* collectionsInserted */ <- Future.sequence {
-        tool.initialData.initialCollections.map { case (collectionId, initialCollection) => newInsertInitialCollection(tool, collectionId)(initialCollection) }
-      }
+      topicsToInsert = tool.initialData.topics.filterNot { existingTopics.contains }
 
+      _ /* topicsInserted */ <- tableDefs
+        .futureInsertTopics(topicsToInsert)
+        .recover { logger.error("Error while inserting topics", _) }
+
+      _ /* collectionsInserted */ <- Future
+        .sequence {
+          tool.initialData.initialCollections.map { case (collectionId, initialCollection) =>
+            newInsertInitialCollection(tool, collectionId)(initialCollection)
+          }
+        }
+        .recover { logger.error(s"Error while inserting collections for tool ${tool.id}", _) }
     } yield ()
   }
 

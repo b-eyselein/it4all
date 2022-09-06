@@ -21,6 +21,7 @@ create table if not exists collections (
   title         varchar(100) not null,
 
   primary key (tool_id, collection_id),
+
   unique (tool_id, title)
 );
 
@@ -34,7 +35,10 @@ create table if not exists exercises (
   content_json  jsonb        not null,
 
   primary key (tool_id, collection_id, exercise_id),
-  foreign key (tool_id, collection_id) references collections (tool_id, collection_id) on update cascade on delete cascade
+
+  foreign key (tool_id, collection_id)
+    references collections (tool_id, collection_id)
+    on update cascade on delete cascade
 );
 
 create table if not exists exercise_topics (
@@ -45,7 +49,13 @@ create table if not exists exercise_topics (
   level              level_name  not null,
 
   primary key (tool_id, collection_id, exercise_id, topic_abbreviation),
-  foreign key (tool_id, collection_id, exercise_id) references exercises (tool_id, collection_id, exercise_id) on update cascade on delete cascade
+
+  foreign key (tool_id, collection_id, exercise_id)
+    references exercises (tool_id, collection_id, exercise_id)
+    on update cascade on delete cascade,
+  foreign key (tool_id, topic_abbreviation)
+    references topics (tool_id, abbreviation)
+    on update cascade on delete cascade
 );
 
 create table if not exists user_solutions_without_parts (
@@ -60,8 +70,13 @@ create table if not exists user_solutions_without_parts (
   max_points_quarters int          not null,
 
   primary key (tool_id, collection_id, exercise_id, username, solution_id),
-  foreign key (tool_id, collection_id, exercise_id) references exercises (tool_id, collection_id, exercise_id) on update cascade on delete cascade,
-  foreign key (username) references users (username) on update cascade on delete cascade
+
+  foreign key (tool_id, collection_id, exercise_id)
+    references exercises (tool_id, collection_id, exercise_id)
+    on update cascade on delete cascade,
+  foreign key (username)
+    references users (username)
+    on update cascade on delete cascade
 );
 
 create table if not exists user_solutions_with_parts (
@@ -77,8 +92,13 @@ create table if not exists user_solutions_with_parts (
   max_points_quarters int          not null,
 
   primary key (tool_id, collection_id, exercise_id, username, part_id, solution_id),
-  foreign key (tool_id, collection_id, exercise_id) references exercises (tool_id, collection_id, exercise_id) on update cascade on delete cascade,
-  foreign key (username) references users (username) on update cascade on delete cascade
+
+  foreign key (tool_id, collection_id, exercise_id)
+    references exercises (tool_id, collection_id, exercise_id)
+    on update cascade on delete cascade,
+  foreign key (username)
+    references users (username)
+    on update cascade on delete cascade
 );
 
 -- grant privileges...
