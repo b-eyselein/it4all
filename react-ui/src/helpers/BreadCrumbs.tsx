@@ -1,40 +1,23 @@
 import {Link} from 'react-router-dom';
-import classNames from 'classnames';
 
-export interface BreadCrumbPart {
-  routerLinkPart: string;
+export interface BreadCrumb {
   title: string;
-}
-
-interface BreadCrumb {
-  routerLink: string;
-  title: string;
+  to: string;
 }
 
 interface IProps {
-  parts: BreadCrumbPart[];
+  parents: BreadCrumb[];
+  current: string;
 }
 
-export function BreadCrumbs({parts}: IProps): JSX.Element {
-
-  function breadCrumbs(): BreadCrumb[] {
-    const partAggregator: string[] = [];
-
-    return parts.map(({routerLinkPart, title}) => {
-      partAggregator.push(routerLinkPart);
-
-      return {routerLink: partAggregator.join('/'), title};
-    });
-  }
-
+export function BreadCrumbs({parents, current}: IProps): JSX.Element {
   return (
     <nav className="my-3 breadcrumb" aria-label="breadcrumbs">
       <ul>
-        {breadCrumbs().map((part, index, arr) =>
-          <li className={classNames({'is-active': index === arr.length - 1})} key={part.routerLink}>
-            <Link to={part.routerLink}>{part.title}</Link>
-          </li>
-        )}
+        {parents.map(({title, to}, index) => <li key={index}><Link to={to}>{title}</Link></li>)}
+        <li className="is-active">
+          <Link className="disabled" to="">{current}</Link>
+        </li>
       </ul>
     </nav>
   );

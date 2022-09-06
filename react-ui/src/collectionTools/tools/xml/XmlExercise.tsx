@@ -1,4 +1,4 @@
-import {ConcreteExerciseIProps} from '../../Exercise';
+import {ConcreteExerciseWithPartsProps} from '../../Exercise';
 import {ExerciseFileFragment, FilesSolution, useXmlCorrectionMutation, XmlExerciseContentFragment, XmlExPart, XmlSolutionInput} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
@@ -8,7 +8,7 @@ import {XmlGrammarResultDisplay} from './XmlGrammarResultDisplay';
 import {database} from '../../DexieTable';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
 
-type IProps = ConcreteExerciseIProps<XmlExerciseContentFragment, XmlSolutionInput>;
+type IProps = ConcreteExerciseWithPartsProps<XmlExerciseContentFragment, XmlSolutionInput>;
 
 export function getXmlGrammarContent(rootNode: string): string {
   return `<!ELEMENT ${rootNode} (EMPTY)>`;
@@ -64,7 +64,7 @@ export function XmlExercise({exercise, content, partId, oldSolution}: IProps): J
   function correct(files: ExerciseFileFragment[], onCorrect: () => void): void {
     const solution: XmlSolutionInput = {grammar: files[0].content, document: files[1].content};
 
-    database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
+    database.upsertSolutionWithParts(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
 
     correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution, part}})
       .then(onCorrect)

@@ -5,14 +5,14 @@ import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
 import {useTranslation} from 'react-i18next';
 import {RegexCorrection} from './RegexCorrection';
 import {StringSampleSolution} from '../StringSampleSolution';
-import {ConcreteExerciseIProps} from '../../Exercise';
+import {ConcreteExerciseWithoutPartsProps} from '../../Exercise';
 import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 import {ChildLink, ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 import {database} from '../../DexieTable';
 
-type IProps = ConcreteExerciseIProps<RegexExerciseContentFragment, string>;
+type IProps = ConcreteExerciseWithoutPartsProps<RegexExerciseContentFragment, string>;
 
-export function RegexExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
+export function RegexExercise({exercise, content, oldSolution}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [showInfo, setShowInfo] = useState(false);
@@ -23,7 +23,7 @@ export function RegexExercise({exercise, content, partId, oldSolution}: IProps):
   const correcting = correctionMutationResult.called && correctionMutationResult.loading;
 
   function correct(): void {
-    database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
+    database.upsertSolutionWithoutParts(exercise.toolId, exercise.collectionId, exercise.exerciseId, solution);
 
     correctExercise({variables: {collectionId: exercise.collectionId, exerciseId: exercise.exerciseId, solution}})
       .then(() => setActiveTabId('correction'))
@@ -34,11 +34,11 @@ export function RegexExercise({exercise, content, partId, oldSolution}: IProps):
     correction: {name: t('correction'), render: <RegexCorrection mutationResult={correctionMutationResult}/>},
     sampleSolution: {
       name: t('sampleSolution_plural'),
-      render: <SampleSolutionTabContent>
-        {() => content.regexSampleSolutions.map((sample, index) =>
-          <StringSampleSolution sample={sample} key={index}/>
-        )}
-      </SampleSolutionTabContent>
+      render: (
+        <SampleSolutionTabContent>
+          {() => content.regexSampleSolutions.map((sample, index) => <StringSampleSolution sample={sample} key={index}/>)}
+        </SampleSolutionTabContent>
+      )
     }
   };
 

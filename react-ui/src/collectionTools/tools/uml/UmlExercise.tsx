@@ -1,10 +1,10 @@
-import {ConcreteExerciseIProps} from '../../Exercise';
+import {ConcreteExerciseWithPartsProps} from '../../Exercise';
 import {UmlExerciseContentFragment, UmlExPart} from '../../../graphql';
 import {UmlClassSelection} from './UmlClassSelection';
 import {UmlMemberAllocation} from './UmlMemberAllocation';
 import {UmlDbClassDiagram, UmlDiagramDrawing} from './UmlDiagramDrawing';
 
-type IProps = ConcreteExerciseIProps<UmlExerciseContentFragment, UmlDbClassDiagram>;
+type IProps = ConcreteExerciseWithPartsProps<UmlExerciseContentFragment, UmlDbClassDiagram>;
 
 function getUmlExPart(partId: string): UmlExPart {
   switch (partId) {

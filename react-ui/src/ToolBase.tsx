@@ -50,9 +50,7 @@ function CollectionBase({toolId}: ToolBaseParams): JSX.Element {
   return (
     <Routes>
       <Route index element={<CollectionOverview toolId={toolId} collectionId={collectionId}/>}/>
-      <Route path={exercisesUrlFragment}>
-        <Route path={':exerciseId/*'} element={<ExerciseBase toolId={toolId} collectionId={collectionId}/>}/>
-      </Route>
+      <Route path={`${exercisesUrlFragment}/:exerciseId/*`} element={<ExerciseBase toolId={toolId} collectionId={collectionId}/>}/>
     </Routes>
   );
 }
@@ -74,7 +72,7 @@ function ExerciseBase({toolId, collectionId}: CollectionBaseParams): JSX.Element
   return (
     <Routes>
       <Route index element={<ExerciseOverview exerciseId={exerciseId} collectionId={collectionId} toolId={toolId}/>}/>
-      <Route path={'/solve'} element={<ExerciseContainer toolId={toolId} collectionId={collectionId} exerciseId={exerciseId}/>}/>
+      <Route path={'/solve'} element={<Exercise toolId={toolId} collectionId={collectionId} exerciseId={exerciseId}/>}/>
       <Route path={'/parts/:partId'} element={<ExerciseContainer toolId={toolId} collectionId={collectionId} exerciseId={exerciseId}/>}/>
     </Routes>
   );

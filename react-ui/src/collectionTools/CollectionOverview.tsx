@@ -6,6 +6,7 @@ import {BreadCrumbs} from '../helpers/BreadCrumbs';
 import {WithQuery} from '../WithQuery';
 import {ExerciseLinkCard} from './ExerciseLinkCard';
 import {Pagination} from '../Pagination';
+import {collectionsBreadCrumbs} from '../urls';
 
 const SLICE_COUNT = 12;
 
@@ -39,7 +40,7 @@ function Inner({toolId, collectionId, tool}: InnerProps): JSX.Element {
     <>
       <h1 className="title is-3 has-text-centered">{t('collection')} &quot;{title}&quot; - {t('exercise_plural')}</h1>
 
-      <BreadCrumbs parts={breadCrumbParts}/>
+      <BreadCrumbs parents={collectionsBreadCrumbs(toolId, tool.name, t)} current={tool.collection.title}/>
 
       {paginationNeeded && <Pagination pages={pages} maxPage={maxPage} currentPage={currentPage} setCurrentPage={setCurrentPage}/>}
 

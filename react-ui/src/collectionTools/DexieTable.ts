@@ -1,38 +1,59 @@
 import Dexie, {PromiseExtended, Table} from 'dexie';
 
-export interface DbSolution<T> {
+export interface DbSolutionWithoutParts<T> {
   toolId: string;
   collectionId: number;
   exerciseId: number;
-  partId: string;
   solution: T;
 }
+
+export interface DbSolutionWithParts<T> extends DbSolutionWithoutParts<T> {
+  partId: string;
+}
+
+type SolWithoutPartsKey = [string, number, number];
+type SolWithPartsKey = [string, number, number, string];
 
 class DexieTable extends Dexie {
 
   // eslint-disable-next-line
-  private solutions: Table<DbSolution<any>, [string, number, number, string]>;
+  private solutionsWithoutParts: Table<DbSolutionWithoutParts<any>, SolWithoutPartsKey>;
+  private solutionsWithParts: Table<DbSolutionWithParts<any>, SolWithPartsKey>;
 
   constructor() {
     super('it4all');
 
     this.version(1).stores({
-      solutions: '[toolId+collectionId+exerciseId+partId]'
+      solutionsWithoutParts: '[toolId+collectionId+exerciseId]',
+      solutionsWithParts: '[toolId+collectionId+exerciseId+partId]'
     });
 
-    this.solutions = this.table('solutions');
+    this.solutionsWithoutParts = this.table('solutionsWithoutParts');
+    this.solutionsWithParts = this.table('solutionsWithParts');
   }
 
-  getSolution<T>(toolId: string, collectionId: number, exerciseId: number, partId: string): PromiseExtended<DbSolution<T> | undefined> {
-    return this.solutions.get([toolId, collectionId, exerciseId, partId]);
+  getSolutionWithoutParts<T>(key: SolWithoutPartsKey): PromiseExtended<DbSolutionWithoutParts<T> | undefined> {
+    return this.solutionsWithoutParts.get(key);
   }
 
-  upsertSolution<T>(toolId: string, collectionId: number, exerciseId: number, partId: string, solution: T): PromiseExtended<[string, number, number, string]> {
-    return this.solutions.put({toolId, collectionId, exerciseId, partId, solution});
+  getSolutionWithParts<T>(key: SolWithPartsKey): PromiseExtended<DbSolutionWithParts<T> | undefined> {
+    return this.solutionsWithParts.get(key);
   }
 
-  deleteSolution(toolId: string, collectionId: number, exerciseId: number, partId: string): PromiseExtended<void> {
-    return this.solutions.delete([toolId, collectionId, exerciseId, partId]);
+  upsertSolutionWithoutParts<T>(toolId: string, collectionId: number, exerciseId: number, solution: T): PromiseExtended<SolWithoutPartsKey> {
+    return this.solutionsWithoutParts.put({toolId, collectionId, exerciseId, solution});
+  }
+
+  upsertSolutionWithParts<T>(toolId: string, collectionId: number, exerciseId: number, partId: string, solution: T): PromiseExtended<SolWithPartsKey> {
+    return this.solutionsWithParts.put({toolId, collectionId, exerciseId, partId, solution});
+  }
+
+  deleteSolutionWithoutParts(key: SolWithoutPartsKey): PromiseExtended<void> {
+    return this.solutionsWithoutParts.delete(key);
+  }
+
+  deleteSolutionWithParts(key: SolWithPartsKey): PromiseExtended<void> {
+    return this.solutionsWithParts.delete(key);
   }
 
 }

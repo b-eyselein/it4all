@@ -43,9 +43,8 @@ function Inner({tool}: InnerProps): JSX.Element {
         <div className="columns is-multiline">
           {distinctTopicWithLevels.map((topicWithLevel) =>
             <div className="column is-one-fifth" key={topicWithLevel.topic.abbreviation}>
-              <button
-                className={classNames('button', 'is-fullwidth', {'is-link': filterAbbreviationsActivated.includes(topicWithLevel.topic.abbreviation)})}
-                onClick={() => toggleFilter(topicWithLevel.topic.abbreviation)}>
+              <button type="button" onClick={() => toggleFilter(topicWithLevel.topic.abbreviation)}
+                      className={classNames('button', 'is-fullwidth', {'is-link': filterAbbreviationsActivated.includes(topicWithLevel.topic.abbreviation)})}>
                 {topicWithLevel.topic.title}
               </button>
             </div>)}

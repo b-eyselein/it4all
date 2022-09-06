@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import {ConcreteExerciseIProps} from '../../Exercise';
+import {useState} from 'react';
+import {ConcreteExerciseWithoutPartsProps} from '../../Exercise';
 import {EbnfExerciseContentFragment, EbnfGrammarInput, EbnfRuleInput} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
 import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
@@ -12,7 +12,7 @@ import {ExtendedBackusNaurFormGrammarElement, getVariablesFromGrammarElement} fr
 import classNames from 'classnames';
 import {correctEbnfExercise} from './ebnfCorrector';
 
-type IProps = ConcreteExerciseIProps<EbnfExerciseContentFragment, string>;
+type IProps = ConcreteExerciseWithoutPartsProps<EbnfExerciseContentFragment, string>;
 
 interface FormEbnfRule extends EbnfRuleInput {
   parsed?: Result<ExtendedBackusNaurFormGrammarElement>;
@@ -35,7 +35,7 @@ const minimalGrammar: EbnfGrammarInput = {
   ]
 };
 
-export function EbnfExercise({exercise, content, /*partId, oldSolution*/}: IProps): JSX.Element {
+export function EbnfExercise({exercise, content, /*oldSolution*/}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
 
@@ -47,9 +47,11 @@ export function EbnfExercise({exercise, content, /*partId, oldSolution*/}: IProp
     correction: {name: t('correction'), render: <EbnfCorrection/>},
     sampleSolution: {
       name: t('sampleSolution_plural'),
-      render: <SampleSolutionTabContent>
-        {() => content.sampleSolutions.map((s, i) => <div key={i}>TODO!</div>)}
-      </SampleSolutionTabContent>
+      render: (
+        <SampleSolutionTabContent>
+          {() => content.sampleSolutions.map((s, i) => <div key={i}>TODO!</div>)}
+        </SampleSolutionTabContent>
+      )
     }
   };
 

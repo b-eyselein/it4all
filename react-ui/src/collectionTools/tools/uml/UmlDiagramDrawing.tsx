@@ -203,7 +203,7 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
       implementations: graph.getLinks().filter(isImplementation).map(umlImplFromConnection)
     };
 
-    database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, dbSolution);
+    database.upsertSolutionWithParts(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, dbSolution);
 
     const solution: UmlClassDiagramInput = {
       ...dbSolution,
@@ -263,7 +263,7 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
           {state.editedClass && <UmlClassEdit editedClass={state.editedClass} cancelEdit={() => setState((state) => ({...state, editedClass: undefined}))}/>}
 
           {state.editedAssociation &&
-          <UmlAssocEdit editedAssociation={state.editedAssociation} cancelEdit={() => setState((state) => ({...state, editedAssociation: undefined}))}/>}
+            <UmlAssocEdit editedAssociation={state.editedAssociation} cancelEdit={() => setState((state) => ({...state, editedAssociation: undefined}))}/>}
 
         </div>
       </div>

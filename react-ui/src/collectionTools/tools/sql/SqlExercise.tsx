@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import './SqlExercise.sass';
 import {SqlExecutionResultFragment, SqlExerciseContentFragment, useSqlCorrectionMutation} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
 import CodeMirror from '@uiw/react-codemirror';
@@ -8,15 +7,16 @@ import {SqlTableContents} from './SqlTableContents';
 import {SqlCorrection} from './SqlCorrection';
 import {StringSampleSolution} from '../StringSampleSolution';
 import {SqlExecutionResultDisplay} from './SqlExecutionResultDisplay';
-import {ConcreteExerciseIProps} from '../../Exercise';
+import {ConcreteExerciseWithoutPartsProps} from '../../Exercise';
 import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 import {database} from '../../DexieTable';
 import {sql} from '@codemirror/lang-sql';
+import './SqlExercise.sass';
 
-type IProps = ConcreteExerciseIProps<SqlExerciseContentFragment, string>;
+type IProps = ConcreteExerciseWithoutPartsProps<SqlExerciseContentFragment, string>;
 
-export function SqlExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
+export function SqlExercise({exercise, content, oldSolution}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
   const [solution, setSolution] = useState('');
@@ -29,7 +29,7 @@ export function SqlExercise({exercise, content, partId, oldSolution}: IProps): J
     : undefined;
 
   function correct(): void {
-    database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
+    database.upsertSolutionWithoutParts(exercise.toolId, exercise.collectionId, exercise.exerciseId, solution);
 
     correctExercise({variables: {collectionId: exercise.collectionId, exerciseId: exercise.exerciseId, solution}})
       .then(() => setActiveTabId('correction'))
@@ -41,11 +41,11 @@ export function SqlExercise({exercise, content, partId, oldSolution}: IProps): J
     correction: {name: t('correction'), render: <SqlCorrection mutationResult={correctionMutationResult}/>},
     sampleSolution: {
       name: t('sampleSolution_plural'),
-      render: <SampleSolutionTabContent>
-        {() => content.sqlSampleSolutions.map((sample) =>
-          <StringSampleSolution sample={sample} key={sample}/>
-        )}
-      </SampleSolutionTabContent>
+      render: (
+        <SampleSolutionTabContent>
+          {() => content.sqlSampleSolutions.map((sample) => <StringSampleSolution sample={sample} key={sample}/>)}
+        </SampleSolutionTabContent>
+      )
     }
   };
 

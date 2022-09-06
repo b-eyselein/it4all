@@ -1,5 +1,5 @@
 import {FilesSolutionInput, FlaskExerciseContentFragment, useFlaskCorrectionMutation} from '../../../graphql';
-import {ConcreteExerciseIProps} from '../../Exercise';
+import {ConcreteExerciseWithoutPartsProps} from '../../Exercise';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {PointsNotification} from '../../../helpers/PointsNotification';
@@ -9,9 +9,9 @@ import {WithNullableNavigate} from '../../../WithNullableNavigate';
 import {IExerciseFile} from '../../exerciseFile';
 import {FlaskExerciseDescription} from './FlaskExerciseDescription';
 
-type IProps = ConcreteExerciseIProps<FlaskExerciseContentFragment, FilesSolutionInput>;
+type IProps = ConcreteExerciseWithoutPartsProps<FlaskExerciseContentFragment, FilesSolutionInput>;
 
-export function FlaskExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
+export function FlaskExercise({exercise, content, oldSolution}: IProps): JSX.Element {
 
   const [correctExercise, correctionMutationResult] = useFlaskCorrectionMutation();
 
@@ -22,7 +22,7 @@ export function FlaskExercise({exercise, content, partId, oldSolution}: IProps):
       files: files.map(({name, content, editable}) => ({name, content, editable}))
     };
 
-    database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
+    database.upsertSolutionWithoutParts(exercise.toolId, exercise.collectionId, exercise.exerciseId, solution);
 
     correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution}})
       .then(onCorrect)

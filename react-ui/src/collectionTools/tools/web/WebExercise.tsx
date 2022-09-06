@@ -1,4 +1,4 @@
-import {ConcreteExerciseIProps} from '../../Exercise';
+import {ConcreteExerciseWithPartsProps} from '../../Exercise';
 import {FilesSolutionInput, useWebCorrectionMutation, WebExerciseContentFragment, WebExPart} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
@@ -9,7 +9,7 @@ import {database} from '../../DexieTable';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
 import {IExerciseFile} from '../../exerciseFile';
 
-type IProps = ConcreteExerciseIProps<WebExerciseContentFragment, FilesSolutionInput>;
+type IProps = ConcreteExerciseWithPartsProps<WebExerciseContentFragment, FilesSolutionInput>;
 
 
 export function WebExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
@@ -34,7 +34,7 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
       files: files.map(({name, content, /*fileType,*/ editable}) => ({name, content, /*fileType,*/ editable}))
     };
 
-    database.upsertSolution(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
+    database.upsertSolutionWithParts(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
 
     correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution, part}})
       .then(onCorrect)

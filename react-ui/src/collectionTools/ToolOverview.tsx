@@ -5,7 +5,7 @@ import {WithQuery} from '../WithQuery';
 import {ToolBaseParams} from '../ToolBase';
 import {BulmaCard} from '../helpers/BulmaCard';
 import {useTranslation} from 'react-i18next';
-import {allExercisesUrlFragment, collectionsUrlFragment, homeUrl, toolsUrlFragment} from '../urls';
+import {allExercisesUrlFragment, collectionsUrlFragment, toolsBreadCrumbs, toolsUrlFragment} from '../urls';
 
 interface InnerProps {
   toolId: string;
@@ -18,11 +18,6 @@ function Inner({toolId, tool}: InnerProps): JSX.Element {
 
   const {name, collectionCount, exerciseCount, proficiencies} = tool;
 
-  const breadCrumbParts = [
-    {routerLinkPart: homeUrl, title: 'Tools'},
-    {routerLinkPart: `${toolsUrlFragment}/${toolId}`, title: name}
-  ];
-
   const collectionsLink = `/${toolsUrlFragment}/${toolId}/${collectionsUrlFragment}`;
   const allExercisesLink = `/${toolsUrlFragment}/${toolId}/${allExercisesUrlFragment}`;
 
@@ -30,7 +25,7 @@ function Inner({toolId, tool}: InnerProps): JSX.Element {
     <>
       <h1 className="title is-3 has-text-centered">{t('tool')} {name}</h1>
 
-      <BreadCrumbs parts={breadCrumbParts}/>
+      <BreadCrumbs parents={[toolsBreadCrumbs(t)]} current={tool.name}/>
 
       <div className="columns">
         <div className="column">
