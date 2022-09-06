@@ -48,15 +48,18 @@ export function XmlExercise({exercise, content, partId, oldSolution}: IProps): J
   };
 
   const exerciseDescription = isGrammarPart
-    ? <>
-      <p className="has-text-weight-bold">Erstellen Sie eine DTD zu folgender Beschreibung:</p>
-      <p>{content.grammarDescription}</p>
-      <p className="is-italic has-text-info">
-        Hinweis: Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen. Falls nichts anderes
-        angegeben ist, sollen die Elemente nur Text enthalten.
-      </p>
-    </>
-    : <span>{exercise.text}</span>;
+    ? (
+      <>
+        <p className="has-text-weight-bold">Erstellen Sie eine DTD zu folgender Beschreibung:</p>
+        <p>{content.grammarDescription}</p>
+        <p className="is-italic has-text-info">
+          Hinweis: Benutzen Sie die in Klammern angegebenen Element- bzw. Attributnamen. Falls nichts anderes
+          angegeben ist, sollen die Elemente nur Text enthalten.
+        </p>
+      </>
+    ) : (
+      <span>{exercise.text}</span>
+    );
 
   function correct(files: ExerciseFileFragment[], onCorrect: () => void): void {
     const solution: XmlSolutionInput = {grammar: files[0].content, document: files[1].content};

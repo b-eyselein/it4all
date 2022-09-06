@@ -1456,6 +1456,8 @@ export type ExerciseOverviewQuery = { __typename?: 'Query', tool: { __typename?:
 
 export type ExerciseSolveFieldsFragment = { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, text: string, content: { __typename: 'EbnfExerciseContent', predefinedTerminals?: Array<string> | null, sampleSolutions: Array<{ __typename?: 'EbnfGrammar', startSymbol: string }> } | { __typename: 'FlaskExerciseContent', testConfig: { __typename?: 'FlaskTestsConfig', tests: Array<{ __typename?: 'FlaskSingleTestConfig', id: number, testName: string, description: string }> }, files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }>, flaskSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'ProgrammingExerciseContent', unitTestPart: { __typename?: 'UnitTestPart', unitTestFiles: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }, implementationPart: { __typename?: 'ImplementationPart', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }, programmingSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'RegexExerciseContent', regexSampleSolutions: Array<string> } | { __typename: 'SqlExerciseContent', hint?: string | null, sqlSampleSolutions: Array<string>, sqlDbContents: Array<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> }> } | { __typename: 'UmlExerciseContent', toIgnore: Array<string>, mappings: Array<{ __typename?: 'KeyValueObject', key: string, value: string }>, umlSampleSolutions: Array<{ __typename?: 'UmlClassDiagram', classes: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename?: 'UmlAttribute', isAbstract: boolean, isDerived: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, memberType: string }>, methods: Array<{ __typename?: 'UmlMethod', isAbstract: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, parameters: string, memberType: string }> }>, associations: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, implementations: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> }> } | { __typename: 'WebExerciseContent', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }>, siteSpec: { __typename?: 'SiteSpec', fileName: string, jsTaskCount: number, htmlTasks: Array<{ __typename?: 'HtmlTask', text: string }> }, webSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'XmlExerciseContent', rootNode: string, grammarDescription: string, xmlSampleSolutions: Array<{ __typename?: 'XmlSolution', document: string, grammar: string }> } };
 
+export type ExerciseSolveFieldsToolFragment = { __typename?: 'Tool', collection: { __typename?: 'ExerciseCollection', exercise?: { __typename?: 'Exercise', exerciseId: number, collectionId: number, toolId: string, title: string, text: string, content: { __typename: 'EbnfExerciseContent', predefinedTerminals?: Array<string> | null, sampleSolutions: Array<{ __typename?: 'EbnfGrammar', startSymbol: string }> } | { __typename: 'FlaskExerciseContent', testConfig: { __typename?: 'FlaskTestsConfig', tests: Array<{ __typename?: 'FlaskSingleTestConfig', id: number, testName: string, description: string }> }, files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }>, flaskSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'ProgrammingExerciseContent', unitTestPart: { __typename?: 'UnitTestPart', unitTestFiles: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }, implementationPart: { __typename?: 'ImplementationPart', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }, programmingSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'RegexExerciseContent', regexSampleSolutions: Array<string> } | { __typename: 'SqlExerciseContent', hint?: string | null, sqlSampleSolutions: Array<string>, sqlDbContents: Array<{ __typename?: 'SqlQueryResult', tableName: string, columnNames: Array<string>, rows: Array<{ __typename?: 'SqlRow', cells: Array<{ __typename?: 'SqlKeyCellValueObject', key: string, value: { __typename?: 'SqlCell', colName: string, content?: string | null, different: boolean } }> }> }> } | { __typename: 'UmlExerciseContent', toIgnore: Array<string>, mappings: Array<{ __typename?: 'KeyValueObject', key: string, value: string }>, umlSampleSolutions: Array<{ __typename?: 'UmlClassDiagram', classes: Array<{ __typename?: 'UmlClass', classType: UmlClassType, name: string, attributes: Array<{ __typename?: 'UmlAttribute', isAbstract: boolean, isDerived: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, memberType: string }>, methods: Array<{ __typename?: 'UmlMethod', isAbstract: boolean, isStatic: boolean, visibility: UmlVisibility, memberName: string, parameters: string, memberType: string }> }>, associations: Array<{ __typename?: 'UmlAssociation', assocType: UmlAssociationType, assocName?: string | null, firstEnd: string, firstMult: UmlMultiplicity, secondEnd: string, secondMult: UmlMultiplicity }>, implementations: Array<{ __typename?: 'UmlImplementation', subClass: string, superClass: string }> }> } | { __typename: 'WebExerciseContent', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }>, siteSpec: { __typename?: 'SiteSpec', fileName: string, jsTaskCount: number, htmlTasks: Array<{ __typename?: 'HtmlTask', text: string }> }, webSampleSolutions: Array<{ __typename?: 'FilesSolution', files: Array<{ __typename?: 'ExerciseFile', name: string, content: string, editable: boolean }> }> } | { __typename: 'XmlExerciseContent', rootNode: string, grammarDescription: string, xmlSampleSolutions: Array<{ __typename?: 'XmlSolution', document: string, grammar: string }> } } | null } };
+
 export type ExerciseQueryVariables = Exact<{
   toolId: Scalars['String'];
   collectionId: Scalars['Int'];
@@ -2466,6 +2468,15 @@ ${SqlExerciseContentFragmentDoc}
 ${UmlExerciseContentFragmentDoc}
 ${WebExerciseContentFragmentDoc}
 ${XmlExerciseContentFragmentDoc}`;
+export const ExerciseSolveFieldsToolFragmentDoc = gql`
+    fragment ExerciseSolveFieldsTool on Tool {
+  collection(collId: $collectionId) {
+    exercise(exId: $exerciseId) {
+      ...ExerciseSolveFields
+    }
+  }
+}
+    ${ExerciseSolveFieldsFragmentDoc}`;
 export const LoginResultFragmentDoc = gql`
     fragment LoginResult on LoginResult {
   username
@@ -2991,14 +3002,10 @@ export type ExerciseOverviewQueryResult = Apollo.QueryResult<ExerciseOverviewQue
 export const ExerciseDocument = gql`
     query Exercise($toolId: String!, $collectionId: Int!, $exerciseId: Int!) {
   tool(toolId: $toolId) {
-    collection(collId: $collectionId) {
-      exercise(exId: $exerciseId) {
-        ...ExerciseSolveFields
-      }
-    }
+    ...ExerciseSolveFieldsTool
   }
 }
-    ${ExerciseSolveFieldsFragmentDoc}`;
+    ${ExerciseSolveFieldsToolFragmentDoc}`;
 
 /**
  * __useExerciseQuery__

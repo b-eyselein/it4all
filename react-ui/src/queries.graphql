@@ -211,13 +211,17 @@ fragment ExerciseSolveFields on Exercise {
   }
 }
 
+fragment ExerciseSolveFieldsTool on Tool {
+  collection(collId: $collectionId) {
+    exercise(exId: $exerciseId) {
+      ...ExerciseSolveFields
+    }
+  }
+}
+
 query Exercise($toolId: String!, $collectionId: Int!, $exerciseId: Int!) {
   tool(toolId: $toolId) {
-    collection(collId: $collectionId) {
-      exercise(exId: $exerciseId) {
-        ...ExerciseSolveFields
-      }
-    }
+    ...ExerciseSolveFieldsTool
   }
 }
 

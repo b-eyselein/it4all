@@ -74,6 +74,7 @@ function ExerciseBase({toolId, collectionId}: CollectionBaseParams): JSX.Element
   return (
     <Routes>
       <Route index element={<ExerciseOverview exerciseId={exerciseId} collectionId={collectionId} toolId={toolId}/>}/>
+      <Route path={'/solve'} element={<ExerciseContainer toolId={toolId} collectionId={collectionId} exerciseId={exerciseId}/>}/>
       <Route path={'/parts/:partId'} element={<ExerciseContainer toolId={toolId} collectionId={collectionId} exerciseId={exerciseId}/>}/>
     </Routes>
   );
