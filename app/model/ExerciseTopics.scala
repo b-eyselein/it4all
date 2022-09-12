@@ -8,14 +8,9 @@ trait ExerciseTopicsRepository {
 
   import MyPostgresProfile.api._
 
-  private type Row = (String, Int, Int, String, Level)
+  protected type ExerciseTopicRow = (String, Int, Int, String, Level)
 
-  private val exerciseTopicsTQ = TableQuery[ExerciseTopicsTable]
-
-  /*
-  def futureInsertTopicForExercise(toolId: String, collectionId: Int, exerciseId: Int, topicAbbreviation: String, level: Level): Future[Int] =
-    db.run(exerciseTopicsTQ += (toolId, collectionId, exerciseId, topicAbbreviation, level))
-   */
+  protected val exerciseTopicsTQ = TableQuery[ExerciseTopicsTable]
 
   def futureInsertTopicsForExercise(toolId: String, collectionId: Int, exerciseId: Int, topics: Map[Topic, Level]): Future[Int] = for {
     maybeRowCount <- db.run(exerciseTopicsTQ ++= topics.map { case (topic, level) => (toolId, collectionId, exerciseId, topic.abbreviation, level) })
@@ -37,7 +32,7 @@ trait ExerciseTopicsRepository {
 
   } yield topicWithLevels
 
-  protected class ExerciseTopicsTable(tag: Tag) extends Table[Row](tag, "exercise_topics") {
+  protected class ExerciseTopicsTable(tag: Tag) extends Table[ExerciseTopicRow](tag, "exercise_topics") {
 
     // Primary key cols
 
@@ -63,8 +58,6 @@ trait ExerciseTopicsRepository {
       onDelete = ForeignKeyAction.Cascade
     )
 
-    /** @return
-      */
     // noinspection ScalaUnusedSymbol
     def topicsForeignKey = foreignKey("exercise_topics_topic_fk", (toolId, topicAbbreviation), topicsTQ)(
       t => (t.toolId, t.abbreviation),

@@ -12,7 +12,8 @@ create table if not exists topics (
   abbreviation varchar(20)  not null,
   title        varchar(100) not null,
 
-  primary key (tool_id, abbreviation, title)
+  primary key (tool_id, abbreviation),
+  unique (tool_id, abbreviation)
 );
 
 create table if not exists collections (

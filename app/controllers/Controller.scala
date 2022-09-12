@@ -1,7 +1,7 @@
 package controllers
 
 import model._
-import model.graphql.{GraphQLContext, GraphQLModel, GraphQLRequest}
+import model.graphql.{GraphQLContext, GraphQLModel}
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.libs.json._
@@ -16,6 +16,12 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 final case class BasicLtiLaunchRequest(lms: String, username: String)
+
+final case class GraphQLRequest(
+  query: String,
+  operationName: Option[String],
+  variables: Option[JsObject]
+)
 
 @Singleton
 class Controller @Inject() (

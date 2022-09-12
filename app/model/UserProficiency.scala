@@ -1,7 +1,6 @@
 package model
 
 import enumeratum.{EnumEntry, PlayEnum}
-import model.tools.Helper.UntypedExercise
 
 import scala.concurrent.Future
 
@@ -53,29 +52,40 @@ final case class UserProficiency(
 }
 
 trait ProficiencyRepository {
-  self: play.api.db.slick.HasDatabaseConfig[slick.jdbc.JdbcProfile] =>
+  self: TableDefs =>
 
   import MyPostgresProfile.api._
 
-  private val proficienciesTQ = TableQuery[ProficienciesTable]
+  // FIXME: make view?
+  def userProficienciesForToolWithParts(username: String, toolId: String): Future[Seq[UserProficiency]] = {
 
-  def userProficienciesForTool(username: String, toolId: String): Future[Seq[UserProficiency]] = ???
-  // db.run(proficienciesTQ.filter { p => p.username === username && p.toolId === toolId }.result)
+    val query = userSolutionWithPartsTQ
+      // Filter solutions for tool and user, only take completely correct solutions
+      .filter { userSol => userSol.toolId === toolId && userSol.username === username && userSol.pointsQuarters === userSol.maxPointsQuarters }
+      // filter out multiple solutions
+      .distinctOn { userSol => (userSol.toolId, userSol.collectionId, userSol.exerciseId, userSol.partId) }
+      // Join with topics for exercise
+      .join(exerciseTopicsTQ)
+      .on { case (userSol, exTopic) =>
+        userSol.toolId === exTopic.toolId && userSol.collectionId === exTopic.collectionId && userSol.exerciseId === exTopic.exerciseId
+      }
+      .map { case (userSol, exTopic) => (exTopic, userSol.maxPointsQuarters) }
+      .result
 
-  def updateUserProficiency(username: String, exercise: UntypedExercise, topicWithLevel: TopicWithLevel): Future[Boolean] = ???
+    val x = for {
+      queryResult: Seq[(ExerciseTopicRow, Int)] <- db.run(query)
 
-  private class ProficienciesTable(tag: Tag) extends Table[UserProficiency](tag, "user_proficiencies") {
+      result = queryResult
+        .groupBy(_._1)
+        .map { case (partId, levelsAndMaxPoints) =>
+          val points = levelsAndMaxPoints.map { case (topic, maxPointsQuarters) => topic._5.level * (maxPointsQuarters / 4) }.sum
 
-    // Primary key cols
+          (partId, points)
+        }
+    } yield result
 
-    def username = column[String]("username")
-
-    def topicJson = column[Topic]("topic_json")
-
-    def pointsForExercises = column[Seq[LevelForExercise]]("level_for_exercises")
-
-    override def * = (username, topicJson, pointsForExercises) <> (UserProficiency.tupled, UserProficiency.unapply)
-
+    ???
+    // db.run(proficienciesTQ.filter { p => p.username === username && p.toolId === toolId }.result)
   }
 
 }

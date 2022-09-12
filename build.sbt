@@ -39,10 +39,6 @@ libraryDependencies ++= Seq(
   // JWT
   "com.pauldijou" %% "jwt-play" % "5.0.0", // Apache 2.0
 
-  // Mongo database
-  "org.reactivemongo" %% "play2-reactivemongo"            % "1.1.0-play28-RC6", // Apache 2.0
-  "org.reactivemongo" %% "reactivemongo-play-json-compat" % "1.1.0-play29-RC6", // Apache 2.0
-
   // Other helpers
   "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0", // Apache 2.0
 

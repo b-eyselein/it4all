@@ -21,7 +21,6 @@ type DTDParseException {
 }
 
 type EbnfCorrectionResult {
-  proficienciesUpdated: Boolean
   result: EbnfResult!
   solutionId: Int!
 }
@@ -130,7 +129,6 @@ input FilesSolutionInput {
 }
 
 type FlaskCorrectionResult {
-  proficienciesUpdated: Boolean
   result: FlaskResult!
   solutionId: Int!
 }
@@ -265,7 +263,7 @@ type Mutation {
   claimLtiWebToken(ltiUuid: String!): LoginResult
   ebnfExercise(collId: Int!, exId: Int!): EbnfExerciseMutations
   flaskExercise(collId: Int!, exId: Int!): FlaskExerciseMutations
-  login(credentials: UserCredentials!): LoginResult
+  login(credentials: UserCredentials!): LoginResult!
   programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
   regexExercise(collId: Int!, exId: Int!): RegexExerciseMutations
   register(registerValues: RegisterValues!): String
@@ -281,7 +279,6 @@ enum ProgExPart {
 }
 
 type ProgrammingCorrectionResult {
-  proficienciesUpdated: Boolean
   result: ProgrammingResult!
   solutionId: Int!
 }
@@ -320,7 +317,6 @@ interface RegexAbstractResult {
 }
 
 type RegexCorrectionResult {
-  proficienciesUpdated: Boolean
   result: RegexAbstractResult!
   solutionId: Int!
 }
@@ -445,7 +441,6 @@ type SqlColumnMatch {
 }
 
 type SqlCorrectionResult {
-  proficienciesUpdated: Boolean
   result: SqlResult!
   solutionId: Int!
 }
@@ -690,7 +685,6 @@ enum UmlClassType {
 }
 
 type UmlCorrectionResult {
-  proficienciesUpdated: Boolean
   result: UmlResult!
   solutionId: Int!
 }
@@ -841,7 +835,6 @@ type UserProficiency {
 }
 
 type WebCorrectionResult {
-  proficienciesUpdated: Boolean
   result: WebResult!
   solutionId: Int!
 }
@@ -871,7 +864,6 @@ type WebResult {
 }
 
 type XmlCorrectionResult {
-  proficienciesUpdated: Boolean
   result: XmlResult!
   solutionId: Int!
 }

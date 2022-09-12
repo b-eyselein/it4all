@@ -5,9 +5,9 @@ import play.api.libs.json.{Format, JsValue}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-sealed trait DbUserSolution
+protected sealed trait DbUserSolution
 
-private final case class DbUserSolutionWithoutPart(
+protected final case class DbUserSolutionWithoutPart(
   toolId: String,
   collectionId: Int,
   exerciseId: Int,
@@ -18,7 +18,7 @@ private final case class DbUserSolutionWithoutPart(
   maxPointsQuarters: Int
 ) extends DbUserSolution
 
-private final case class DbUserSolutionWithPart(
+protected final case class DbUserSolutionWithPart(
   toolId: String,
   collectionId: Int,
   exerciseId: Int,
@@ -37,8 +37,8 @@ trait UserSolutionRepository {
 
   protected implicit val ec: ExecutionContext
 
-  private val userSolutionWithPartsTQ    = TableQuery[UserSolutionsWithPartsTable]
-  private val userSolutionWithoutPartsTQ = TableQuery[UserSolutionsWithoutPartsTable]
+  protected val userSolutionWithPartsTQ    = TableQuery[UserSolutionsWithPartsTable]
+  protected val userSolutionWithoutPartsTQ = TableQuery[UserSolutionsWithoutPartsTable]
 
   private def solForUserExAndPart(toolId: String, collectionId: Int, exerciseId: Int, username: String, partId: String) = userSolutionWithPartsTQ.filter { us =>
     us.toolId === toolId && us.collectionId === collectionId && us.exerciseId === exerciseId && us.username === username && us.partId === partId
@@ -126,7 +126,7 @@ trait UserSolutionRepository {
     } yield bestTryCompletelyCorrect.getOrElse(false)
   }
 
-  private abstract class UserSolutionsTable[DbSolType <: DbUserSolution](tag: Tag, _tableName: String) extends Table[DbSolType](tag, _tableName) {
+  protected abstract class UserSolutionsTable[DbSolType <: DbUserSolution](tag: Tag, _tableName: String) extends Table[DbSolType](tag, _tableName) {
 
     // Primary key cols
 
@@ -163,7 +163,7 @@ trait UserSolutionRepository {
 
   }
 
-  private class UserSolutionsWithPartsTable(tag: Tag) extends UserSolutionsTable[DbUserSolutionWithPart](tag, "user_solutions_with_parts") {
+  protected class UserSolutionsWithPartsTable(tag: Tag) extends UserSolutionsTable[DbUserSolutionWithPart](tag, "user_solutions_with_parts") {
 
     def partId = column[String]("part_id")
 
@@ -184,7 +184,7 @@ trait UserSolutionRepository {
 
   }
 
-  private class UserSolutionsWithoutPartsTable(tag: Tag) extends UserSolutionsTable[DbUserSolutionWithoutPart](tag, "user_solutions_without_parts") {
+  protected class UserSolutionsWithoutPartsTable(tag: Tag) extends UserSolutionsTable[DbUserSolutionWithoutPart](tag, "user_solutions_without_parts") {
 
     // noinspection ScalaUnusedSymbol
     def pk = primaryKey("user_solutions_pk", (toolId, collectionId, exerciseId, username, solutionId))

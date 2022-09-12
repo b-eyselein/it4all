@@ -11,63 +11,80 @@ import sangria.schema._
 import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent.Future
 
-trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
+trait RootMutations extends ExerciseQuery with JwtHelpers {
 
-  protected val jwtHashesToClaim: MutableMap[String, LoginResult] = MutableMap.empty
+  // Registration
 
-  private val loginResultType: ObjectType[Unit, LoginResult] = deriveObjectType()
+  protected val registerValuesArgument: Argument[RegisterValues] = {
+    implicit val x0: OFormat[RegisterValues]                     = Json.format
+    val registerValuesInputType: InputObjectType[RegisterValues] = deriveInputObjectType()
 
-  private def register(tableDefs: TableDefs, registerValues: RegisterValues): Future[Option[String]] = if (registerValues.isInvalid) {
-    // TODO: return error?
-    Future.successful(None)
-  } else {
+    Argument[RegisterValues]("registerValues", registerValuesInputType)
+  }
+
+  private val resolveRegister: Resolver[Unit, Option[String]] = context => {
+    val registerValues = context.arg(registerValuesArgument)
+
     for {
-      maybeUser <- tableDefs.futureUserByUsername(registerValues.username)
+      _ <-
+        if (registerValues.isInvalid) {
+          Future.failed(new Exception(s"Passwords don't match!"))
+        } else {
+          Future.successful(())
+        }
+
+      maybeUser <- context.ctx.tableDefs.futureUserByUsername(registerValues.username)
+
       newUser <- maybeUser match {
         case Some(_) => Future.successful(None)
         case None =>
           val RegisterValues(username, firstPassword, _) = registerValues
 
-          tableDefs
+          context.ctx.tableDefs
             .futureInsertUser(username, Some(firstPassword.boundedBcrypt))
             .map { case User(username, _) => Some(username) }
       }
     } yield newUser
   }
 
-  private def authenticate(tableDefs: TableDefs, credentials: UserCredentials): Future[Option[LoginResult]] =
-    tableDefs.futureUserByUsername(credentials.username).map { maybeUser =>
-      for {
-        user   <- maybeUser
-        pwHash <- user.pwHash
-        pwOkay <- credentials.password.isBcryptedSafeBounded(pwHash).toOption
-        maybeUser <-
-          if (pwOkay) {
-            Some(LoginResult(user.username, createJwtSession(user.username)))
-          } else {
-            None
-          }
+  // Login
 
-      } yield maybeUser
-    }
+  protected val userCredentialsArgument: Argument[UserCredentials] = {
+    implicit val ucf: OFormat[UserCredentials]                     = Json.format
+    val userCredentialsInputType: InputObjectType[UserCredentials] = deriveInputObjectType()
 
-  private def updateAllUserProficiencies[EC <: ExerciseContent](
-    username: String,
-    exercise: Exercise[EC],
-    topicsWithLevels: Seq[TopicWithLevel]
-  ): Future[Boolean] = Future
-    .sequence {
-      topicsWithLevels.map { topicWithLevel =>
-        Future.successful(false)
-      /*
-        TODO:
-        mongoQueries
-          .updateUserProficiency(username, exercise, topicWithLevel)
-          .recover { _ => false }
-       */
+    Argument("credentials", userCredentialsInputType)
+  }
+
+  private val loginResultType: ObjectType[Unit, LoginResult] = deriveObjectType()
+
+  protected val jwtHashesToClaim: MutableMap[String, LoginResult] = MutableMap.empty
+
+  private val resolveLogin: Resolver[Unit, LoginResult] = context => {
+    val credentials = context.arg(userCredentialsArgument)
+
+    val onError = new Exception(s"Invalid combination of username and password!")
+
+    for {
+      maybeUser <- context.ctx.tableDefs.futureUserByUsername(credentials.username)
+
+      user <- futureFromOption(maybeUser, onError)
+
+      pwHash <- futureFromOption(user.pwHash, onError)
+
+      pwOkay <- Future.fromTry {
+        credentials.password.isBcryptedSafeBounded(pwHash)
       }
-    }
-    .map { updateResults => updateResults.forall(identity) }
+
+      maybeUser <-
+        if (pwOkay) {
+          Future.successful(LoginResult(user.username, createJwtSession(user.username)))
+        } else {
+          Future.failed(onError)
+        }
+
+    } yield maybeUser
+  }
 
   // FIXME: tools without parts!
   private val exerciseCorrectionFields: Seq[Field[GraphQLContext, Unit]] = ToolList.tools.map[Field[GraphQLContext, Unit]] {
@@ -109,14 +126,7 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
           result.points,
           result.maxPoints
         )
-
-        topicsForLevels <- tableDefs.futureTopicsForExercise(ex.toolId, ex.collectionId, ex.exerciseId)
-
-        proficienciesUpdated <-
-          if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, ex, topicsForLevels).map(Some.apply)
-          else Future.successful(None)
-
-      } yield CorrectionResult(result, solutionId, proficienciesUpdated)
+      } yield CorrectionResult(result, solutionId)
 
       val toolExerciseMutationsType = ObjectType(
         s"${toolWithParts.id.capitalize}ExerciseMutations",
@@ -178,14 +188,7 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
           result.points,
           result.maxPoints
         )
-
-        topicsForLevels <- tableDefs.futureTopicsForExercise(ex.toolId, ex.collectionId, ex.exerciseId)
-
-        proficienciesUpdated <-
-          if (result.isCompletelyCorrect) updateAllUserProficiencies(user.username, ex, topicsForLevels).map(Some.apply)
-          else Future.successful(None)
-
-      } yield CorrectionResult(result, solutionId, proficienciesUpdated)
+      } yield CorrectionResult(result, solutionId)
 
       val toolExerciseMutationsType = ObjectType(
         s"${toolWithoutParts.id.capitalize}ExerciseMutations",
@@ -218,21 +221,13 @@ trait GraphQLMutations extends ExerciseGraphQLModels with JwtHelpers {
 
   }
 
-  protected val MutationType: ObjectType[GraphQLContext, Unit] = ObjectType(
+  private val ltiUuidArgument: Argument[String] = Argument("ltiUuid", StringType)
+
+  protected val mutationType: ObjectType[GraphQLContext, Unit] = ObjectType(
     "Mutation",
     fields = fields[GraphQLContext, Unit](
-      Field(
-        "register",
-        OptionType(StringType),
-        arguments = registerValuesArgument :: Nil,
-        resolve = context => register(context.ctx.tableDefs, context.arg(registerValuesArgument))
-      ),
-      Field(
-        "login",
-        OptionType(loginResultType),
-        arguments = userCredentialsArgument :: Nil,
-        resolve = context => authenticate(context.ctx.tableDefs, context.arg(userCredentialsArgument))
-      ),
+      Field("register", OptionType(StringType), arguments = registerValuesArgument :: Nil, resolve = resolveRegister),
+      Field("login", loginResultType, arguments = userCredentialsArgument :: Nil, resolve = resolveLogin),
       Field(
         "claimLtiWebToken",
         OptionType(loginResultType),

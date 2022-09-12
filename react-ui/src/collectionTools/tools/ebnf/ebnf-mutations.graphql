@@ -5,7 +5,6 @@ mutation EbnfCorrection($collId: Int!, $exId: Int!, $solution: EbnfGrammarInput!
         x
       }
       solutionId
-      proficienciesUpdated
     }
   }
 }

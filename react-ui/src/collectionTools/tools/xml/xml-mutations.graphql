@@ -11,7 +11,6 @@ fragment XmlCorrectionResult on XmlCorrectionResult {
     ...XmlResult
   }
   solutionId
-  proficienciesUpdated
 }
 
 fragment XmlResult on XmlResult {

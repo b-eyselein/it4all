@@ -15,7 +15,6 @@ fragment RegexCorrectionResult on RegexCorrectionResult {
     ...RegexExtractionResult
   }
   solutionId
-  proficienciesUpdated
 }
 
 fragment RegexMatchingSingleResult on RegexMatchingSingleResult {

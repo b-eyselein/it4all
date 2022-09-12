@@ -4,8 +4,7 @@ import model.points._
 
 final case class CorrectionResult[R <: AbstractCorrectionResult](
   result: R,
-  solutionId: Int,
-  proficienciesUpdated: Option[Boolean]
+  solutionId: Int
 )
 
 trait AbstractCorrectionResult {
