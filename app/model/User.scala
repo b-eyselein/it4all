@@ -2,20 +2,7 @@ package model
 
 import scala.concurrent.{ExecutionContext, Future}
 
-final case class RegisterValues(username: String, firstPassword: String, secondPassword: String) {
-
-  def isInvalid: Boolean = firstPassword != secondPassword
-
-}
-
-final case class UserCredentials(username: String, password: String)
-
 final case class User(username: String, pwHash: Option[String] = None)
-
-final case class LoginResult(
-  username: String,
-  jwt: String
-)
 
 trait UserRepository {
   self: TableDefs =>

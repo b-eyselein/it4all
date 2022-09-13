@@ -1,36 +1,33 @@
 import {StrictMode} from 'react';
-import './index.sass';
 import {App} from './App';
 import reportWebVitals from './reportWebVitals';
-import {Provider} from 'react-redux';
+import {Provider as ReduxProvider} from 'react-redux';
 import i18next from 'i18next';
 import {I18nextProvider, initReactI18next} from 'react-i18next';
 import {ApolloClient, ApolloLink, ApolloProvider, concat, HttpLink, InMemoryCache} from '@apollo/client';
 import {BrowserRouter} from 'react-router-dom';
-import {store} from './store/store';
 import common_de from './locales/de/common.json';
 import common_en from './locales/en/common.json';
 import {createRoot} from 'react-dom/client';
+import {newStore} from './newStore';
+import {serverUrl} from './urls';
+import './index.css';
 
-
-// noinspection JSIgnoredPromiseFromCall
 i18next
   .use(initReactI18next)
   .init({
+    lng: 'de',
+    fallbackLng: 'en',
     resources: {
       de: {common: common_de},
       en: {common: common_en}
-    },
-    lng: 'de',
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false
     }
-  });
+  })
+  .catch((err) => console.error('could not init i18n' + err));
 
 const apolloAuthMiddleware = new ApolloLink((operation, forward) => {
 
-  const currentUser = store.getState().currentUser;
+  const currentUser = newStore.getState().user;
 
   const Authorization = currentUser
     ? `Bearer ${currentUser.jwt}`
@@ -46,11 +43,12 @@ const apolloAuthMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-const apolloUrl = (process.env.NODE_ENV === 'development' ? 'http://localhost:9000' : '') + '/graphql';
-
 const client = new ApolloClient({
+  link: concat(
+    apolloAuthMiddleware,
+    new HttpLink({uri: `${serverUrl}/graphql`})
+  ),
   cache: new InMemoryCache(),
-  link: concat(apolloAuthMiddleware, new HttpLink({uri: apolloUrl})),
   defaultOptions: {
     query: {fetchPolicy: 'no-cache'},
     watchQuery: {fetchPolicy: 'no-cache'},
@@ -58,24 +56,20 @@ const client = new ApolloClient({
   }
 });
 
-const rootElement = document.getElementById('root');
-
-if (!rootElement) {
-  throw new Error('Could not find root element?');
-}
-
-const root = createRoot(rootElement);
+const root = createRoot(
+  document.getElementById('root') as HTMLElement
+);
 
 root.render(
   <StrictMode>
     <I18nextProvider i18n={i18next}>
-      <Provider store={store}>
+      <ReduxProvider store={newStore}>
         <ApolloProvider client={client}>
           <BrowserRouter>
             <App/>
           </BrowserRouter>
         </ApolloProvider>
-      </Provider>
+      </ReduxProvider>
     </I18nextProvider>
   </StrictMode>
 );

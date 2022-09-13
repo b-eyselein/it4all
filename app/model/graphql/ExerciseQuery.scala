@@ -19,7 +19,7 @@ trait ExPartQuery extends GraphQLBasics with GraphQLArguments {
 
   private val resolveSolved: Resolver[GraphQLExPart, Boolean] = context =>
     context.ctx.loggedInUser match {
-      case None => Future.failed(new Exception(s"User is not logged in!"))
+      case None => Future.failed(MyUserFacingGraphQLError(s"User is not logged in!"))
       case Some(user) =>
         context.ctx.tableDefs.futureUserHasCorrectExerciseResult(
           context.value.toolId,

@@ -1,9 +1,24 @@
 import {useTranslation} from 'react-i18next';
-import {useToolOverviewQuery} from './graphql';
+import {ToolFragment, useToolOverviewQuery} from './graphql';
 import {WithQuery} from './WithQuery';
-import {BulmaCard, FooterItem} from './helpers/BulmaCard';
+import {FooterItem, NewCard} from './helpers/BulmaCard';
 import {randomTools} from './randomTools/randomTools';
 import {randomToolsUrlFragment} from './urls';
+
+function Inner({tools}: { tools: ToolFragment[] }): JSX.Element {
+
+  const {t} = useTranslation('common');
+
+  return (
+    <>
+      {tools.map(({id, name, /*state,*/ collectionCount, exerciseCount}) =>
+        <NewCard key={id} title={name} footerItems={[{link: `/tools/${id}`, title: t('toTool')}]}>
+          <>{collectionCount} Sammlungen mit {exerciseCount} Aufgaben</>
+        </NewCard>
+      )}
+    </>
+  );
+}
 
 export function Home(): JSX.Element {
 
@@ -11,34 +26,20 @@ export function Home(): JSX.Element {
   const query = useToolOverviewQuery();
 
   function randomToolsRoutes(id: string): FooterItem[] {
-    return [
-      {link: `/${randomToolsUrlFragment}/${id}`, title: t('toTool')}
-    ];
+    return [{link: `/${randomToolsUrlFragment}/${id}`, title: t('toTool')}];
   }
 
   return (
-    <div className="container">
-      <h1 className="title is-3 has-text-centered">{t('tool_plural')}&nbsp; <code>it4all</code></h1>
+    <div className="container mx-auto">
+      <h1 className="font-bold text-2xl text-center">{t('tool_plural')}&nbsp; <code>it4all</code></h1>
 
-      <div className="columns is-multiline">
-        {randomTools.map(({id, name}) =>
-          <div className="column is-one-quarter-desktop is-half-tablet" key={id}>
-            <BulmaCard title={name} footerItems={randomToolsRoutes(id)}>
-              <p>&nbsp;</p>
-            </BulmaCard>
-          </div>
-        )}
+      <div className="mt-4 grid grid-cols-4 gap-x-4 gap-y-8">
+
+        {randomTools.map(({id, name}) => <NewCard key={id} title={name} footerItems={randomToolsRoutes(id)}><>&nbsp;</>
+        </NewCard>)}
 
         <WithQuery query={query}>
-          {({tools}) => <>
-            {tools.map(({id, name, /*state,*/ collectionCount, exerciseCount}) =>
-              <div className="column is-one-quarter-desktop is-half-tablet" key={id}>
-                <BulmaCard title={name} footerItems={[{link: `/tools/${id}`, title: t('toTool')}]}>
-                  <p>{collectionCount} Sammlungen mit {exerciseCount} Aufgaben</p>
-                </BulmaCard>
-              </div>
-            )}
-          </>}
+          {({tools}) => <Inner tools={tools}/>}
         </WithQuery>
       </div>
     </div>

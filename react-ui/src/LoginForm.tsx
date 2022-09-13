@@ -3,18 +3,15 @@ import {useTranslation} from 'react-i18next';
 import {useState} from 'react';
 import {LoginMutationVariables, useLoginMutation} from './graphql';
 import {useDispatch, useSelector} from 'react-redux';
-import {userLoginAction} from './store/actions';
-import {currentUserSelector} from './store/store';
 import {Navigate} from 'react-router-dom';
-import {BulmaInputField} from './BulmaFields';
 import classNames from 'classnames';
-import * as yup from 'yup';
-import {object as yupObject} from 'yup';
+import {object as yupObject, SchemaOf, string as yupString} from 'yup';
 import {homeUrl} from './urls';
+import {loginUser, newCurrentUserSelector} from './newStore';
 
-const loginValuesSchema: yup.SchemaOf<LoginMutationVariables> = yupObject({
-  username: yup.string().required(),
-  password: yup.string().required()
+const loginValuesSchema: SchemaOf<LoginMutationVariables> = yupObject({
+  username: yupString().required(),
+  password: yupString().required()
 }).required();
 
 const initialValues: LoginMutationVariables = {username: '', password: ''};
@@ -26,16 +23,16 @@ export function LoginForm(): JSX.Element {
   const [loginInvalid, setLoginInvalid] = useState<boolean>();
   const [loginMutation, {loading, error}] = useLoginMutation();
 
-  if (useSelector(currentUserSelector)) {
+  if (useSelector(newCurrentUserSelector)) {
     return <Navigate to={homeUrl}/>;
   }
 
   function handleSubmit(variables: LoginMutationVariables): void {
     loginMutation({variables})
       .then(({data}) => {
-        if (data && data.login) {
+        if (data) {
           setLoginInvalid(false);
-          dispatch(userLoginAction(data.login));
+          dispatch(loginUser(data.login));
         } else {
           setLoginInvalid(true);
         }
@@ -44,23 +41,31 @@ export function LoginForm(): JSX.Element {
   }
 
   return (
-    <div className="container">
-      <h1 className="title is-3 has-text-centered">{t('login')}</h1>
+    <div className="container mx-auto">
+      <h1 className="font-bold text-2xl text-center">{t('login')}</h1>
 
       <Formik initialValues={initialValues} validationSchema={loginValuesSchema} onSubmit={handleSubmit}>
-        {() => <Form>
+        {({touched, errors}) => <Form>
 
-          <Field name="username" id="username" label={t('username')} required autoFocus component={BulmaInputField}/>
+          <div className="my-2">
+            <label htmlFor="username" className="font-bold">{t('username')}*:</label>
+            <Field type="text" name="username" id="username" placeholder={t('username')} required autoFocus
+                   className={classNames('mt-2', 'p-2', 'rounded', 'border', 'w-full',
+                     touched.username && errors.username ? 'border-red-500' : 'border-slate-300')}/>
+          </div>
 
-          <Field type="password" name="password" id="password" label={t('password')} required component={BulmaInputField}/>
+          <div className="my-2">
+            <label htmlFor="password" className="font-bold">{t('password')}*:</label>
+            <Field type="password" name="password" id="password" placeholder={t('password')} required
+                   className={classNames('mt-2', 'p-2', 'rounded', 'border', 'w-full',
+                     touched.password && errors.password ? 'border-red-500' : 'border-slate-300')}/>
+          </div>
 
-          {loginInvalid && <div className="notification is-warning has-text-centered">{t('invalidUsernamePasswordCombination')}</div>}
+          {loginInvalid && <div className="p-2">{t('invalidUsernamePasswordCombination')}</div>}
 
-          {error && <div className="notification is-danger has-text-centered">{error.message}</div>}
+          {error && <div className="mt-4 p-2 rounded bg-red-500 text-white text-center w-full">{error.message}</div>}
 
-          <button type="submit" className={classNames('button', 'is-link', 'is-fullwidth', {'is-loading': loading})} disabled={loading}>
-            {t('login')}
-          </button>
+          <button type="submit" className="mt-4 p-2 rounded bg-blue-500 text-white w-full" disabled={loading}>{t('login')}</button>
         </Form>}
       </Formik>
     </div>

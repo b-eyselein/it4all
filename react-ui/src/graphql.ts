@@ -552,8 +552,8 @@ export type RegexMatchingSingleResult = {
 };
 
 export type RegisterValues = {
-  firstPassword: Scalars['String'];
-  secondPassword: Scalars['String'];
+  password: Scalars['String'];
+  passwordRepeat: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -1489,8 +1489,8 @@ export type XmlSolutionFragment = { __typename?: 'XmlSolution', document: string
 
 export type RegisterMutationVariables = Exact<{
   username: Scalars['String'];
-  firstPassword: Scalars['String'];
-  secondPassword: Scalars['String'];
+  password: Scalars['String'];
+  passwordRepeat: Scalars['String'];
 }>;
 
 
@@ -3021,9 +3021,9 @@ export type ExerciseQueryHookResult = ReturnType<typeof useExerciseQuery>;
 export type ExerciseLazyQueryHookResult = ReturnType<typeof useExerciseLazyQuery>;
 export type ExerciseQueryResult = Apollo.QueryResult<ExerciseQuery, ExerciseQueryVariables>;
 export const RegisterDocument = gql`
-    mutation Register($username: String!, $firstPassword: String!, $secondPassword: String!) {
+    mutation Register($username: String!, $password: String!, $passwordRepeat: String!) {
   register(
-    registerValues: {username: $username, firstPassword: $firstPassword, secondPassword: $secondPassword}
+    registerValues: {username: $username, password: $password, passwordRepeat: $passwordRepeat}
   )
 }
     `;
@@ -3043,8 +3043,8 @@ export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, Regis
  * const [registerMutation, { data, loading, error }] = useRegisterMutation({
  *   variables: {
  *      username: // value for 'username'
- *      firstPassword: // value for 'firstPassword'
- *      secondPassword: // value for 'secondPassword'
+ *      password: // value for 'password'
+ *      passwordRepeat: // value for 'passwordRepeat'
  *   },
  * });
  */

@@ -1,61 +1,43 @@
 import {useTranslation} from 'react-i18next';
-import {Link} from 'react-router-dom';
-import {homeUrl} from './urls';
-import {changeLanguageAction, userLogoutAction} from './store/actions';
+import {NavLink} from 'react-router-dom';
+import {homeUrl, loginUrl, registerUrl} from './urls';
 import {useDispatch, useSelector} from 'react-redux';
-import {currentUserSelector} from './store/store';
-
-const languages = ['de', 'en'];
+import {changeLanguage, languages, logoutUser, newCurrentUserSelector, newLanguageSelector} from './newStore';
+import classNames from 'classnames';
 
 export function NavBar(): JSX.Element {
 
   const {t} = useTranslation('common');
-  const currentUser = useSelector(currentUserSelector);
   const dispatch = useDispatch();
-
-  function changeLanguage(language: string): void {
-    dispatch(changeLanguageAction(language));
-  }
+  const currentUser = useSelector(newCurrentUserSelector);
+  const currentLang = useSelector(newLanguageSelector);
 
   return (
-    <nav className="navbar is-dark" role="navigation" aria-label="main navigation">
-      <div className="navbar-brand">
-        <Link className="navbar-item" to={homeUrl}>it4all - &beta;</Link>
-      </div>
+    <nav className="mb-4 flex bg-slate-600 text-white" role="navigation" aria-label="main navigation">
+      <NavLink className="p-4 font-bold hover:bg-slate-400" to={homeUrl}>it4all - &beta;</NavLink>
 
-      <div className="navbar-menu">
-        <div className="navbar-end">
-          <div className="navbar-item has-dropdown is-hoverable">
-            <div className="navbar-link">{t('language')}</div>
-            <div className="navbar-dropdown">
-              {languages.map((lang) => <div key={lang} className="navbar-item" onClick={() => changeLanguage(lang)}>{lang}</div>)}
-            </div>
-          </div>
+      <div className="flex-grow"/>
 
-          <a className="navbar-item" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/impressum/" rel="noreferrer">
-            {t('imprint')}
-          </a>
-          <a className="navbar-item" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/datenschutz/" rel="noreferrer">
-            {t('dataProtection')}
-          </a>
+      <div className="py-4 pr-2">{t('language')}:</div>
+      {languages.map((lang) => <button key={lang} className={classNames('py-4', 'px-2', 'hover:bg-slate-400', {'font-bold': currentLang === lang})}
+                                       onClick={() => dispatch(changeLanguage(lang))}>{lang}</button>)}
 
-          <div className="navbar-item">
-            {currentUser
-              ? (
-                <button onClick={() => dispatch(userLogoutAction)} className="button is-light">
-                  {t('logout')}&nbsp;{currentUser.username}
-                </button>
-              ) : (
-                <div className="buttons">
-                  <Link to="/loginForm" className="button is-light">{t('login')}</Link>
-                  <Link to="/registerForm" className="button is-light">{t('register')}</Link>
-                </div>
-              )
-            }
-          </div>
-        </div>
-      </div>
+      <a className="p-4 hover:bg-slate-400" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/impressum/" rel="noreferrer">
+        {t('imprint')}
+      </a>
+      <a className="p-4 hover:bg-slate-400" target="_blank" href="https://www.uni-wuerzburg.de/sonstiges/datenschutz/" rel="noreferrer">
+        {t('dataProtection')}
+      </a>
+
+      {currentUser
+        ? <button className="p-4 hover:bg-slate-400" onClick={() => dispatch(logoutUser())}>{t('logout')}&nbsp;{currentUser.username}</button>
+        : (
+          <>
+            <NavLink to={loginUrl} className="p-4 hover:bg-slate-400">{t('login')}</NavLink>
+            <NavLink to={registerUrl} className="p-4 hover:bg-slate-400">{t('register')}</NavLink>
+          </>
+        )
+      }
     </nav>
-
   );
 }

@@ -12,7 +12,7 @@ trait RootQuery extends ToolQuery with GraphQLBasics with GraphQLArguments {
 
     futureFromOption(
       ToolList.tools.find(_.id == toolId),
-      new Exception(s"No such tool with id $toolId")
+      MyUserFacingGraphQLError(s"No such tool with id $toolId")
     )
   }
 

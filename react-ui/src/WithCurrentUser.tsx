@@ -1,8 +1,8 @@
 import {useSelector} from 'react-redux';
-import {currentUserSelector} from './store/store';
 import {LoginResultFragment} from './graphql';
 import {Navigate} from 'react-router-dom';
 import {loginUrl} from './urls';
+import {newCurrentUserSelector} from './newStore';
 
 interface IProps {
   children: (currentUser: LoginResultFragment) => JSX.Element;
@@ -12,7 +12,7 @@ interface IProps {
 // FIXME: use?
 export function WithCurrentUser({children, noLoginOption}: IProps): JSX.Element {
 
-  const currentUser = useSelector(currentUserSelector);
+  const currentUser = useSelector(newCurrentUserSelector);
 
   if (currentUser) {
     return children(currentUser);

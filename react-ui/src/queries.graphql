@@ -415,8 +415,8 @@ fragment XmlSolution on XmlSolution {
 
 # /registerForm
 
-mutation Register($username: String!, $firstPassword: String!, $secondPassword: String!) {
-  register(registerValues: {username: $username, firstPassword: $firstPassword, secondPassword: $secondPassword})
+mutation Register($username: String!, $password: String!, $passwordRepeat: String!) {
+  register(registerValues: {username: $username, password: $password, passwordRepeat: $passwordRepeat})
 }
 
 # /loginForm

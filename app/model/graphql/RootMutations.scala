@@ -11,6 +11,12 @@ import sangria.schema._
 import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent.Future
 
+final case class RegisterValues(username: String, password: String, passwordRepeat: String)
+
+final case class UserCredentials(username: String, password: String)
+
+final case class LoginResult(username: String, jwt: String)
+
 trait RootMutations extends ExerciseQuery with JwtHelpers {
 
   // Registration
@@ -22,29 +28,27 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
     Argument[RegisterValues]("registerValues", registerValuesInputType)
   }
 
-  private val resolveRegister: Resolver[Unit, Option[String]] = context => {
-    val registerValues = context.arg(registerValuesArgument)
+  private val resolveRegister: Resolver[Unit, String] = context => {
+    val RegisterValues(username, password, passwordRepeat) = context.arg(registerValuesArgument)
 
-    for {
-      _ <-
-        if (registerValues.isInvalid) {
-          Future.failed(new Exception(s"Passwords don't match!"))
-        } else {
-          Future.successful(())
+    if (password != passwordRepeat) {
+
+      Future.failed(MyUserFacingGraphQLError("Passwords don't match!"))
+
+    } else {
+
+      for {
+        maybeUser <- context.ctx.tableDefs.futureUserByUsername(username)
+
+        newUser <- maybeUser match {
+          case Some(_) => Future.failed(MyUserFacingGraphQLError("Could not register user!"))
+          case None =>
+            context.ctx.tableDefs
+              .futureInsertUser(username, Some(password.boundedBcrypt))
+              .map { case User(username, _) => username }
         }
-
-      maybeUser <- context.ctx.tableDefs.futureUserByUsername(registerValues.username)
-
-      newUser <- maybeUser match {
-        case Some(_) => Future.successful(None)
-        case None =>
-          val RegisterValues(username, firstPassword, _) = registerValues
-
-          context.ctx.tableDefs
-            .futureInsertUser(username, Some(firstPassword.boundedBcrypt))
-            .map { case User(username, _) => Some(username) }
-      }
-    } yield newUser
+      } yield newUser
+    }
   }
 
   // Login
@@ -56,25 +60,19 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
     Argument("credentials", userCredentialsInputType)
   }
 
-  private val loginResultType: ObjectType[Unit, LoginResult] = deriveObjectType()
-
-  protected val jwtHashesToClaim: MutableMap[String, LoginResult] = MutableMap.empty
-
   private val resolveLogin: Resolver[Unit, LoginResult] = context => {
-    val credentials = context.arg(userCredentialsArgument)
+    val UserCredentials(username, password) = context.arg(userCredentialsArgument)
 
-    val onError = new Exception(s"Invalid combination of username and password!")
+    val onError = MyUserFacingGraphQLError(s"Invalid combination of username and password!")
 
     for {
-      maybeUser <- context.ctx.tableDefs.futureUserByUsername(credentials.username)
+      maybeUser <- context.ctx.tableDefs.futureUserByUsername(username)
 
       user <- futureFromOption(maybeUser, onError)
 
       pwHash <- futureFromOption(user.pwHash, onError)
 
-      pwOkay <- Future.fromTry {
-        credentials.password.isBcryptedSafeBounded(pwHash)
-      }
+      pwOkay <- Future.fromTry { password.isBcryptedSafeBounded(pwHash) }
 
       maybeUser <-
         if (pwOkay) {
@@ -137,7 +135,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
             arguments = partTypeInputArg :: solTypeInputArg :: Nil,
             resolve = context =>
               context.ctx.loggedInUser match {
-                case None => Future.failed(new Exception("User is not logged in!"))
+                case None => Future.failed(MyUserFacingGraphQLError("User is not logged in!"))
                 case Some(loggedInUser) =>
                   correct(
                     context.ctx.tableDefs,
@@ -199,7 +197,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
             arguments = solTypeInputArg :: Nil,
             resolve = context =>
               context.ctx.loggedInUser match {
-                case None => Future.failed(new Exception("User is not logged in!"))
+                case None => Future.failed(MyUserFacingGraphQLError("User is not logged in!"))
                 case Some(loggedInUser) =>
                   correct(
                     context.ctx.tableDefs,
@@ -222,6 +220,10 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
   }
 
   private val ltiUuidArgument: Argument[String] = Argument("ltiUuid", StringType)
+
+  private val loginResultType: ObjectType[Unit, LoginResult] = deriveObjectType()
+
+  protected val jwtHashesToClaim: MutableMap[String, LoginResult] = MutableMap.empty
 
   protected val mutationType: ObjectType[GraphQLContext, Unit] = ObjectType(
     "Mutation",

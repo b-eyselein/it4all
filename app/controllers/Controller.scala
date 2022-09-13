@@ -1,7 +1,7 @@
 package controllers
 
 import model._
-import model.graphql.{GraphQLContext, GraphQLModel}
+import model.graphql.{GraphQLContext, GraphQLModel, LoginResult}
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.libs.json._

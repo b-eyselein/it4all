@@ -21,7 +21,7 @@ trait CollectionQuery extends ExerciseQuery {
     val exerciseId = context.arg(exIdArgument)
 
     for {
-      tool <- futureFromOption(ToolList.tools.find(_.id == toolId), new Exception(s"No such tool with id $toolId"))
+      tool <- futureFromOption(ToolList.tools.find(_.id == toolId), MyUserFacingGraphQLError(s"No such tool with id $toolId"))
 
       exercise <- context.ctx.tableDefs
         .futureExerciseById(tool, context.value.collectionId, exerciseId)

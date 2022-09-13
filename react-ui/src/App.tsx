@@ -15,7 +15,6 @@ import {RandomToolOverview} from './randomTools/RandomToolOverview';
 import {boolRandomTool, naryRandomTool} from './randomTools/randomTools';
 
 export function App(): JSX.Element {
-
   return (
     <>
       <NavBar/>
@@ -29,7 +28,7 @@ export function App(): JSX.Element {
 
         <Route path={`/${toolsUrlFragment}/:toolId/*`} element={<ToolBase/>}/>
 
-        <Route path={`/${randomToolsUrlFragment}/*`}>
+        <Route path={`/${randomToolsUrlFragment}`}>
           <Route path={'bool'}>
             <Route index element={<RandomToolOverview tool={boolRandomTool}/>}/>
             <Route path={'fillOut'} element={<BoolFillOut/>}/>

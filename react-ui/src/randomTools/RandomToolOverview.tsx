@@ -11,14 +11,12 @@ export function RandomToolOverview({tool: {name, parts}}: IProps): JSX.Element {
   const {t} = useTranslation('common');
 
   return (
-    <div className="container">
-      <h1 className="title is-3 has-text-centered">{t('tool')} {name}</h1>
+    <div className="container mx-auto">
+      <h1 className="mb-4 font-bold text-2xl text-center">{t('tool')} {name}</h1>
 
-      <div className="buttons">
-        {parts.filter((p) => !p.disabled).map(({id, name}) =>
-          <Link to={id} key={id} className="button is-link is-fullwidth">{name}</Link>
-        )}
-      </div>
+      {parts.filter((p) => !p.disabled).map(({id, name}) =>
+        <Link to={id} key={id} className="mt-2 p-2 block rounded bg-blue-500 text-white text-center w-full">{name}</Link>
+      )}
     </div>
   );
 }

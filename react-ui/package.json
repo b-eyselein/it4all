@@ -9,6 +9,7 @@
     "@codemirror/lang-python": "^6.0.0",
     "@codemirror/lang-sql": "^6.0.0",
     "@codemirror/lang-xml": "^6.0.0",
+    "@reduxjs/toolkit": "^1.8.5",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.2.1",
@@ -78,9 +79,12 @@
     "@types/react-router-dom": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
+    "autoprefixer": "^10.4.9",
     "backbone": "^1.4.0",
     "eslint": "^8.4.1",
     "eslint-plugin-react": "^7.24.0",
-    "i18next-parser": "^6.5.0"
+    "i18next-parser": "^6.5.0",
+    "postcss": "^8.4.16",
+    "tailwindcss": "^3.1.8"
   }
 }

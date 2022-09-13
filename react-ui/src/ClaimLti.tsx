@@ -1,19 +1,18 @@
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 import {Navigate, useParams} from 'react-router-dom';
-import {userLoginAction} from './store/actions';
 import {useClaimLtiWebTokenMutation} from './graphql';
 import {useDispatch, useSelector} from 'react-redux';
-import {currentUserSelector} from './store/store';
 import {homeUrl} from './urls';
 import {useTranslation} from 'react-i18next';
+import {loginUser, newCurrentUserSelector} from './newStore';
 
 export function ClaimLti(): JSX.Element {
 
-  const {ltiUuid} = useParams<'ltiUuid'>();
-  const dispatch = useDispatch();
-  const [claimLtiWebToken, {error}] = useClaimLtiWebTokenMutation();
   const {t} = useTranslation('common');
-  const currentUser = useSelector(currentUserSelector);
+  const {ltiUuid} = useParams<'ltiUuid'>();
+  const [claimLtiWebToken, {error}] = useClaimLtiWebTokenMutation();
+  const dispatch = useDispatch();
+  const currentUser = useSelector(newCurrentUserSelector);
 
   if (!ltiUuid) {
     return <Navigate to={homeUrl}/>;
@@ -23,7 +22,7 @@ export function ClaimLti(): JSX.Element {
     claimLtiWebToken({variables: {ltiUuid}})
       .then(({data}) => {
         if (data && data.claimLtiWebToken) {
-          dispatch(userLoginAction(data.claimLtiWebToken));
+          dispatch(loginUser(data.claimLtiWebToken));
         } else {
           console.info('ERROR!');
         }

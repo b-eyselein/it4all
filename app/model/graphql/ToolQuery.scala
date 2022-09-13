@@ -21,7 +21,7 @@ trait ToolQuery extends CollectionQuery {
 
       result <- maybeCollection match {
         case Some(collection) => Future.successful(collection)
-        case None             => Future.failed(new Exception(s"No such collection with id $collectionId"))
+        case None             => Future.failed(MyUserFacingGraphQLError(s"No such collection with id $collectionId"))
       }
     } yield result
   }

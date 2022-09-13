@@ -1,6 +1,10 @@
 import {BreadCrumb} from './helpers/BreadCrumbs';
 import {TFunction} from 'i18next';
 
+export const serverUrl = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:9000'
+  : '';
+
 export const homeUrl = '/';
 
 export const loginUrl = '/loginForm';
