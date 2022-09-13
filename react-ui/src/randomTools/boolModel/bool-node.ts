@@ -1,6 +1,12 @@
 const HTML_REPLACERS: { [key: string]: RegExp } = {
-  '&#x22bc;': /nand/g, '&#x22bd;': /nor/g, '&oplus;': /xor/g, '&not;': /not/g,
-  '&and;': /and/g, '&or;': /or/g, '&rArr;': /impl/g, '&hArr;': /equiv/g
+  '&#x22bc;': /nand/g,
+  '&#x22bd;': /nor/g,
+  '&oplus;': /xor/g,
+  '&not;': /not/g,
+  '&and;': /and/g,
+  '&or;': /or/g,
+  '&rArr;': /impl/g,
+  '&hArr;': /equiv/g
 };
 
 export type Assignment = { [key: string]: boolean };
@@ -50,7 +56,8 @@ export abstract class BooleanNode {
   abstract asString(): string;
 
   asHtmlString(): string {
-    return Object.entries(HTML_REPLACERS).reduce((acc, [replacement, toReplace]) => acc.replace(toReplace, replacement), this.asString());
+    return Object.entries(HTML_REPLACERS)
+      .reduce((acc, [replacement, toReplace]) => acc.replace(toReplace, replacement), this.asString());
   }
 
 }
@@ -75,7 +82,6 @@ export class BooleanVariable extends BooleanNode {
   getSubFormulas(): BooleanNode[] {
     return [];
   }
-
 }
 
 export class BooleanConstant extends BooleanNode {
@@ -98,7 +104,6 @@ export class BooleanConstant extends BooleanNode {
   getSubFormulas(): BooleanNode[] {
     return [];
   }
-
 }
 
 export const BooleanTrue: BooleanConstant = new BooleanConstant(true);
@@ -139,7 +144,6 @@ export function not(c: BooleanNode): BooleanNot {
 export abstract class BooleanBinaryNode extends BooleanNode {
 
   protected abstract operator: string;
-
 
   constructor(readonly left: BooleanNode, readonly right: BooleanNode) {
     super();

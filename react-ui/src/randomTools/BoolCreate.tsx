@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {BooleanFormula, generateBooleanFormula} from './boolModel/bool-formula';
 import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/bool-component-helper';
 import {useTranslation} from 'react-i18next';
@@ -8,6 +8,7 @@ import {RandomSolveButtons} from './RandomSolveButtons';
 import {BoolCreateInstructions} from './BoolCreateInstructions';
 import {parseBooleanFormulaFromLanguage} from './boolModel/boolean-formula-parser';
 import {Result} from 'parsimmon';
+import update from 'immutability-helper';
 
 interface IState {
   formula: BooleanFormula;
@@ -48,14 +49,13 @@ export function BoolCreate(): JSX.Element {
         return {...rest, userSolutionFormula, assignments, corrected: true};
       });
     } else {
-      setState((state) => ({...state, userSolutionFormula: undefined, corrected: true}));
+      setState((state) => update(state, {userSolutionFormula: {$set: undefined}, corrected: {$set: true}}));
     }
   }
 
-
   return (
-    <div className="container">
-      <h1 className="title is-3 has-text-centered">{t('createBooleanFormula')}</h1>
+    <div className="container mx-auto">
+      <h1 className="mb-4 font-bold text-2xl text-center">{t('createBooleanFormula')}</h1>
 
       <table className="table is-bordered is-fullwidth">
         <thead>

@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import {RandomSolveButtons} from './RandomSolveButtons';
 import {Assignment, BooleanNode, calculateAssignments} from './boolModel/bool-node';
 import {useTranslation} from 'react-i18next';
+import {BoolFormulaDisplay} from './BoolFormulaDisplay';
 import update from 'immutability-helper';
 
 interface IState {
@@ -45,7 +46,7 @@ export function BoolFillOut(): JSX.Element {
   }
 
   function correct(): void {
-    setState((state) => ({...state, corrected: true}));
+    setState((state) => update(state, {corrected: {$set: true}}));
   }
 
   const completelyCorrect = state.assignments.every(isCorrect);
@@ -63,7 +64,9 @@ export function BoolFillOut(): JSX.Element {
       </div>*/}
 
       <div className="my-3">
-        <h2 className="text-xl text-center" dangerouslySetInnerHTML={{__html: `<code>${state.formula.asHtmlString()}</code>`}}/>
+        <h2 className="text-xl text-center">
+          <BoolFormulaDisplay formula={state.formula}/>
+        </h2>
         <h3 className="text-center text-gray-500">{state.formula.asString()}</h3>
       </div>
 
