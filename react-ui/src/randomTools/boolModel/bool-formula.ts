@@ -1,17 +1,21 @@
 import {
-  Assignment,
-  BooleanAnd,
-  BooleanEquivalency,
-  BooleanImplication,
-  BooleanNAnd,
-  BooleanNode,
-  BooleanNOr,
-  BooleanNot,
-  BooleanOr,
+  and,
+  booleanVariable,
   BooleanVariable,
-  BooleanXOr,
-  calculateAssignments
+  equiv,
+  evaluate,
+  getSubNodes,
+  getVariables,
+  impl,
+  nand,
+  NewBooleanNode,
+  nor,
+  not,
+  or,
+  stringify,
+  xor
 } from './bool-node';
+import {Assignment} from './assignment';
 
 export function randomInt(minInclusive: number, maxExclusive: number): number {
   const intMax = Math.floor(maxExclusive);
@@ -24,74 +28,58 @@ function takeRandom<T>(from: T[]): T {
 }
 
 
-function generateRandomOperator(left: BooleanNode, right: BooleanNode): BooleanNode {
+function generateRandomOperator(left: NewBooleanNode, right: NewBooleanNode): NewBooleanNode {
   const leftNegated: boolean = randomInt(0, 3) === 2;
   const rightNegated: boolean = randomInt(0, 3) === 2;
 
-  const leftChild = leftNegated ? new BooleanNot(left) : left;
-  const rightChild = rightNegated ? new BooleanNot(right) : right;
+  const leftChild = leftNegated ? not(left) : left;
+  const rightChild = rightNegated ? not(right) : right;
 
   const operatorInt: number = randomInt(0, 20);
 
   if (0 <= operatorInt && operatorInt < 8) {
-    return new BooleanAnd(leftChild, rightChild);
+    return and(leftChild, rightChild);
   } else if (8 <= operatorInt && operatorInt < 16) {
-    return new BooleanOr(leftChild, rightChild);
+    return or(leftChild, rightChild);
   } else if (operatorInt === 16) {
-    return new BooleanXOr(leftChild, rightChild);
+    return xor(leftChild, rightChild);
   } else if (operatorInt === 17) {
-    return new BooleanNAnd(leftChild, rightChild);
+    return nand(leftChild, rightChild);
   } else if (operatorInt === 18) {
-    return new BooleanNOr(leftChild, rightChild);
+    return nor(leftChild, rightChild);
   } else if (operatorInt === 19) {
-    return new BooleanEquivalency(leftChild, rightChild);
+    return equiv(leftChild, rightChild);
   } else {
-    return new BooleanImplication(leftChild, rightChild);
+    return impl(leftChild, rightChild);
   }
 }
 
 export class BooleanFormula {
 
-  private readonly assignments: Assignment[];
-
-  constructor(public left: BooleanVariable, public right: BooleanNode) {
-    this.assignments = calculateAssignments(right.getVariables());
+  constructor(public left: BooleanVariable, public right: NewBooleanNode) {
   }
 
   getVariables(): BooleanVariable[] {
-    return this.right.getVariables();
+    return getVariables(this.right);
   }
 
-  getSubFormulas(): BooleanNode[] {
-    return this.right.getSubFormulas();
-  }
-
-  getAssignments(): Assignment[] {
-    return this.assignments;
-  }
-
-  getValueFor(assignment: Assignment): boolean {
-    return this.right.evaluate(assignment);
+  getSubFormulas(): NewBooleanNode[] {
+    return getSubNodes(this.right);
   }
 
   asString(): string {
-    return this.left.variable + ' = ' + this.right.asString();
-  }
-
-  asHtmlString(): string {
-    return this.left.variable + ' = ' + this.right.asHtmlString();
+    return this.left.variable + ' = ' + stringify(this.right);
   }
 
   evaluate(assignments: Assignment): boolean {
-    return this.right.evaluate(assignments);
+    return evaluate(this.right, assignments);
   }
-
 }
 
 
-const varA: BooleanVariable = new BooleanVariable('a');
-const varB: BooleanVariable = new BooleanVariable('b');
-const varC: BooleanVariable = new BooleanVariable('c');
+const varA: BooleanVariable = booleanVariable('a');
+const varB: BooleanVariable = booleanVariable('b');
+const varC: BooleanVariable = booleanVariable('c');
 
 export function generateBooleanFormula(left: BooleanVariable): BooleanFormula {
   const depth: number = randomInt(1, 3);

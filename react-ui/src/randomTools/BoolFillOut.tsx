@@ -3,15 +3,16 @@ import {BooleanFormula, generateBooleanFormula} from './boolModel/bool-formula';
 import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/bool-component-helper';
 import classNames from 'classnames';
 import {RandomSolveButtons} from './RandomSolveButtons';
-import {Assignment, BooleanNode, calculateAssignments} from './boolModel/bool-node';
+import {NewBooleanNode, stringify} from './boolModel/bool-node';
+import {Assignment, calculateAssignments} from './boolModel/assignment';
 import {useTranslation} from 'react-i18next';
-import {BoolFormulaDisplay} from './BoolFormulaDisplay';
+import {BooleanNodeDisplay, BoolFormulaDisplay} from './BoolFormulaDisplay';
 import update from 'immutability-helper';
 
 interface IState {
   formula: BooleanFormula;
   assignments: Assignment[];
-  subFormulas: BooleanNode[];
+  subFormulas: NewBooleanNode[];
   withSubFormulas: boolean;
   corrected: boolean;
 }
@@ -77,7 +78,7 @@ export function BoolFillOut(): JSX.Element {
               <th key={variable} className={cellClassName}>{variable}</th>
             )}
             {state.withSubFormulas && state.subFormulas.map((subFormula) =>
-              <th key={subFormula.asString()} className={cellClassName}>{subFormula.asHtmlString()}</th>
+              <th key={stringify(subFormula)} className={cellClassName}><BooleanNodeDisplay node={subFormula}/></th>
             )}
             <th className={cellClassName}>{learnerVariable.variable}</th>
           </tr>

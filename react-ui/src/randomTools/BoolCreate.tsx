@@ -2,7 +2,8 @@ import {useState} from 'react';
 import {BooleanFormula, generateBooleanFormula} from './boolModel/bool-formula';
 import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/bool-component-helper';
 import {useTranslation} from 'react-i18next';
-import {Assignment, BooleanNode, calculateAssignments} from './boolModel/bool-node';
+import {evaluate, NewBooleanNode} from './boolModel/bool-node';
+import {Assignment, calculateAssignments} from './boolModel/assignment';
 import classNames from 'classnames';
 import {RandomSolveButtons} from './RandomSolveButtons';
 import {BoolCreateInstructions} from './BoolCreateInstructions';
@@ -16,7 +17,7 @@ interface IState {
   corrected: boolean;
   showSampleSolutions: boolean;
   solution: string;
-  userSolutionFormula?: BooleanNode;
+  userSolutionFormula?: NewBooleanNode;
 }
 
 function initState(): IState {
@@ -38,13 +39,13 @@ export function BoolCreate(): JSX.Element {
   const [showInstructions, setShowInstructions] = useState(false);
 
   function correct(): void {
-    const parsed: Result<BooleanNode> = parseBooleanFormulaFromLanguage(state.solution);
+    const parsed: Result<NewBooleanNode> = parseBooleanFormulaFromLanguage(state.solution);
 
     if (parsed.status) {
       const userSolutionFormula = parsed.value;
 
       setState(({assignments, ...rest}) => {
-        assignments.forEach((a) => a[learnerVariable.variable] = userSolutionFormula.evaluate(a));
+        assignments.forEach((a) => a[learnerVariable.variable] = evaluate(userSolutionFormula, a));
 
         return {...rest, userSolutionFormula, assignments, corrected: true};
       });

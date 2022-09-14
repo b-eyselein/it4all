@@ -1,7 +1,8 @@
-import {Assignment, BooleanVariable} from './bool-node';
+import {booleanVariable, BooleanVariable} from './bool-node';
+import {Assignment} from './assignment';
 
-export const sampleVariable: BooleanVariable = new BooleanVariable('z');
-export const learnerVariable: BooleanVariable = new BooleanVariable('y');
+export const sampleVariable: BooleanVariable = booleanVariable('z');
+export const learnerVariable: BooleanVariable = booleanVariable('y');
 
 export function displayAssignmentValue(assignment: Assignment, variable: BooleanVariable): string {
   if (variable.variable in assignment) {

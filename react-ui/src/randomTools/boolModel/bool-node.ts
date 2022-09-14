@@ -1,305 +1,182 @@
-const HTML_REPLACERS: { [key: string]: RegExp } = {
-  '&#x22bc;': /nand/g,
-  '&#x22bd;': /nor/g,
-  '&oplus;': /xor/g,
-  '&not;': /not/g,
-  '&and;': /and/g,
-  '&or;': /or/g,
-  '&rArr;': /impl/g,
-  '&hArr;': /equiv/g
-};
+import {Assignment} from './assignment';
 
-export type Assignment = { [key: string]: boolean };
+export type NewBooleanNode = BooleanConstant | BooleanVariable | BooleanNot | BooleanBinaryNode;
 
-export function calculateAssignments(variables: BooleanVariable[]): Assignment[] {
-  let assignments: Assignment[] = [];
-
-  for (const variable of variables) {
-    if (assignments.length === 0) {
-      assignments = [
-        {[variable.variable]: false},
-        {[variable.variable]: true}
-      ];
-    } else {
-      assignments = assignments.flatMap(
-        (assignment: Assignment) => [
-          {...assignment, [variable.variable]: false},
-          {...assignment, [variable.variable]: true}
-        ]
-      );
-    }
-  }
-
-  return assignments;
-}
-
-// Boolean nodes
-export abstract class BooleanNode {
-
-  private variables: BooleanVariable[] | undefined;
-
-  getVariables(): BooleanVariable[] {
-    if (!this.variables) {
-      this.variables = this.calculateVariables()
-        .sort((v1, v2) => v1.variable.charCodeAt(0) - v2.variable.charCodeAt(0));
-    }
-
-    return this.variables;
-  }
-
-  protected abstract calculateVariables(): BooleanVariable[];
-
-  abstract getSubFormulas(): BooleanNode[];
-
-  abstract evaluate(assignments: Assignment): boolean ;
-
-  abstract asString(): string;
-
-  asHtmlString(): string {
-    return Object.entries(HTML_REPLACERS)
-      .reduce((acc, [replacement, toReplace]) => acc.replace(toReplace, replacement), this.asString());
-  }
-
-}
-
-export class BooleanVariable extends BooleanNode {
-  constructor(readonly variable: string) {
-    super();
-  }
-
-  evaluate(assignments: Assignment): boolean {
-    return assignments[this.variable] || false;
-  }
-
-  protected calculateVariables(): BooleanVariable[] {
-    return [this];
-  }
-
-  asString(): string {
-    return this.variable;
-  }
-
-  getSubFormulas(): BooleanNode[] {
-    return [];
+export function getSubNodes(node: NewBooleanNode): NewBooleanNode[] {
+  // FIXME: test!
+  switch (node._type) {
+    case 'Constant':
+    case 'Variable':
+      return [];
+    case 'Not':
+      return [node.child];
+    case 'And':
+    default:
+      return [node.left, node.right];
   }
 }
 
-export class BooleanConstant extends BooleanNode {
-  constructor(readonly value: boolean) {
-    super();
-  }
-
-  evaluate(/*assignments: Assignment*/): boolean {
-    return this.value || false;
-  }
-
-  protected calculateVariables(): BooleanVariable[] {
-    return [];
-  }
-
-  asString(): string {
-    return this.value ? '1' : '0';
-  }
-
-  getSubFormulas(): BooleanNode[] {
-    return [];
+export function evaluate(node: NewBooleanNode, assignments: Assignment): boolean {
+  switch (node._type) {
+    case 'Constant':
+      return node.value;
+    case 'Variable':
+      return assignments[node.variable] || false;
+    case 'Not':
+      return !evaluate(node.child, assignments);
+    default:
+      return evaluateBinaryNode(node, assignments);
   }
 }
 
-export const BooleanTrue: BooleanConstant = new BooleanConstant(true);
+function evaluateBinaryNode({_type, left, right}: BooleanBinaryNode, assignment: Assignment): boolean {
+  const leftVal = evaluate(left, assignment);
+  const rightVal = evaluate(right, assignment);
 
-export const BooleanFalse: BooleanConstant = new BooleanConstant(false);
-
-export class BooleanNot extends BooleanNode {
-  constructor(readonly child: BooleanNode) {
-    super();
+  switch (_type) {
+    case 'And':
+      return leftVal && rightVal;
+    case 'Or':
+      return leftVal || rightVal;
+    case 'NAnd':
+      return !(leftVal && rightVal);
+    case 'NOr':
+      return !(leftVal || rightVal);
+    case 'XOr':
+      return (leftVal && !rightVal) || (!leftVal && rightVal);
+    case 'Equiv':
+      return leftVal === rightVal;
+    case 'Impl':
+      return !leftVal || rightVal;
   }
-
-  evaluate(assignments: Assignment): boolean {
-    return !(this.child.evaluate(assignments));
-  }
-
-  protected calculateVariables(): BooleanVariable[] {
-    return this.child.getVariables();
-  }
-
-  asString(): string {
-    const childString = this.child instanceof BooleanBinaryNode ? '(' + this.child.asString() + ')' : this.child.asString();
-    return 'not ' + childString;
-  }
-
-  getSubFormulas(): BooleanNode[] {
-    return [this.child];
-  }
-
 }
 
-export function not(c: BooleanNode): BooleanNot {
-  return new BooleanNot(c);
+export function stringify(node: NewBooleanNode): string {
+  switch (node._type) {
+    case 'Constant':
+      return node.value ? '1' : '0';
+    case 'Variable':
+      return node.variable;
+    case 'Not':
+      return 'not ' + stringify(node.child);
+    default:
+      return stringify(node.left) + ' ' + node._type.toLowerCase() + ' ' + stringify(node.right);
+  }
+}
+
+export function getVariables(node: NewBooleanNode): BooleanVariable[] {
+  // FIXME: test!
+  switch (node._type) {
+    case 'Constant':
+      return [];
+    case 'Variable':
+      return [node];
+    case 'Not':
+      return getVariables(node.child);
+    default:
+      return Array.from(new Set([...getVariables(node.left), ...getVariables(node.right)]));
+  }
+}
+
+export interface BooleanVariable {
+  _type: 'Variable';
+  variable: string;
+}
+
+export function booleanVariable(variable: string): BooleanVariable {
+  return {_type: 'Variable', variable};
+}
+
+
+export interface BooleanConstant {
+  _type: 'Constant';
+  value: boolean;
+}
+
+export const BooleanTrue: BooleanConstant = {_type: 'Constant', value: true};
+
+export const BooleanFalse: BooleanConstant = {_type: 'Constant', value: false};
+
+
+export interface BooleanNot {
+  _type: 'Not';
+  child: NewBooleanNode;
+}
+
+export function not(child: NewBooleanNode): BooleanNot {
+  return {_type: 'Not', child};
 }
 
 
 // Boolean binary nodes
 
-export abstract class BooleanBinaryNode extends BooleanNode {
-
-  protected abstract operator: string;
-
-  constructor(readonly left: BooleanNode, readonly right: BooleanNode) {
-    super();
-  }
-
-  protected calculateVariables(): BooleanVariable[] {
-    const leftVars: BooleanVariable[] = this.left.getVariables();
-    const rightVars: BooleanVariable[] = this.right.getVariables();
-
-    return Array.from(new Set(leftVars.concat(rightVars)));
-  }
-
-  asString(): string {
-    // FIXME: test parentheses!
-    const leftChildString: string = this.left instanceof BooleanBinaryNode ? `(${this.left.asString()})` : this.left.asString();
-    const rightChildString: string = this.right instanceof BooleanBinaryNode ? `(${this.right.asString()})` : this.right.asString();
-
-    return leftChildString + ' ' + this.operator + ' ' + rightChildString;
-  }
-
-  evaluate(assignments: Assignment): boolean {
-    return this.evalFunc(this.left.evaluate(assignments), this.right.evaluate(assignments));
-  }
-
-  getSubFormulas(): BooleanNode[] {
-    const maybeLeftSubFormula = (this.left instanceof BooleanVariable) ? [] : [this.left];
-    const maybeRightSubFormula = (this.right instanceof BooleanVariable) ? [] : [this.right];
-
-    return [...maybeLeftSubFormula, ...maybeRightSubFormula];
-  }
-
-  protected abstract evalFunc(a: boolean, b: boolean): boolean;
+export interface IBooleanBinaryNode {
+  left: NewBooleanNode;
+  right: NewBooleanNode;
 }
 
-export class BooleanAnd extends BooleanBinaryNode {
-  protected operator = 'and';
+export type BooleanBinaryNode = BooleanAnd | BooleanOr | BooleanNAnd | BooleanNOr | BooleanXOr | BooleanEquivalency | BooleanImplication;
 
-  protected evalFunc(a: boolean, b: boolean): boolean {
-    return a && b;
-  }
+
+export interface BooleanAnd extends IBooleanBinaryNode {
+  _type: 'And';
 }
 
-export function and(a: BooleanNode, b: BooleanNode): BooleanAnd {
-  return new BooleanAnd(a, b);
+export function and(left: NewBooleanNode, right: NewBooleanNode): BooleanAnd {
+  return {_type: 'And', left, right};
 }
 
 
-export class BooleanOr extends BooleanBinaryNode {
-  protected operator = 'or';
-
-  protected evalFunc(a: boolean, b: boolean): boolean {
-    return a || b;
-  }
+export interface BooleanOr extends IBooleanBinaryNode {
+  _type: 'Or';
 }
 
-export function or(a: BooleanNode, b: BooleanNode): BooleanOr {
-  return new BooleanOr(a, b);
+export function or(left: NewBooleanNode, right: NewBooleanNode): BooleanOr {
+  return {_type: 'Or', left, right};
 }
 
 
-export class BooleanNAnd extends BooleanBinaryNode {
-  protected operator = 'nand';
-
-  protected evalFunc(a: boolean, b: boolean): boolean {
-    return !(a && b);
-  }
+export interface BooleanNAnd extends IBooleanBinaryNode {
+  _type: 'NAnd';
 }
 
-export function nand(a: BooleanNode, b: BooleanNode): BooleanNAnd {
-  return new BooleanNAnd(a, b);
+export function nand(left: NewBooleanNode, right: NewBooleanNode): BooleanNAnd {
+  return {_type: 'NAnd', left, right};
 }
 
 
-export class BooleanNOr extends BooleanBinaryNode {
-  protected operator = 'nor';
-
-  protected evalFunc(a: boolean, b: boolean): boolean {
-    return !(a || b);
-  }
+export interface BooleanNOr extends IBooleanBinaryNode {
+  _type: 'NOr';
 }
 
-export function nor(a: BooleanNode, b: BooleanNode): BooleanNOr {
-  return new BooleanNOr(a, b);
+export function nor(left: NewBooleanNode, right: NewBooleanNode): BooleanNOr {
+  return {_type: 'NOr', left, right};
 }
 
 
-export class BooleanXOr extends BooleanBinaryNode {
-  protected operator = 'xor';
-
-  protected evalFunc(a: boolean, b: boolean): boolean {
-    return (a && !b) || (!a && b);
-  }
+export interface BooleanXOr extends IBooleanBinaryNode {
+  _type: 'XOr';
 }
 
-export function xor(a: BooleanNode, b: BooleanNode): BooleanXOr {
-  return new BooleanXOr(a, b);
+export function xor(left: NewBooleanNode, right: NewBooleanNode): BooleanXOr {
+  return {_type: 'XOr', left, right};
 }
 
 
-export class BooleanXNor extends BooleanBinaryNode {
-  protected operator = 'xnor';
-
-  protected evalFunc(a: boolean, b: boolean): boolean {
-    return (!a || b) && (a || !b);
-  }
+export interface BooleanEquivalency extends IBooleanBinaryNode {
+  _type: 'Equiv';
 }
 
-export function xnor(a: BooleanNode, b: BooleanNode): BooleanXNor {
-  return new BooleanXNor(a, b);
+export function equiv(left: NewBooleanNode, right: NewBooleanNode): BooleanEquivalency {
+  return {_type: 'Equiv', left, right};
 }
 
 
-export class BooleanEquivalency extends BooleanBinaryNode {
-  protected operator = 'equiv';
-
-  protected evalFunc(a: boolean, b: boolean): boolean {
-    return a === b;
-  }
+export interface BooleanImplication extends IBooleanBinaryNode {
+  _type: 'Impl';
 }
 
-export function equiv(a: BooleanNode, b: BooleanNode): BooleanEquivalency {
-  return new BooleanEquivalency(a, b);
+export function impl(left: NewBooleanNode, right: NewBooleanNode): BooleanImplication {
+  return {_type: 'Impl', left, right};
 }
 
-
-export class BooleanImplication extends BooleanBinaryNode {
-  protected operator = 'impl';
-
-  protected evalFunc(a: boolean, b: boolean): boolean {
-    return !a || b;
-  }
-}
-
-export function impl(a: BooleanNode, b: BooleanNode): BooleanImplication {
-  return new BooleanImplication(a, b);
-}
-
-
-export function instantiateOperator(leftOp: BooleanNode, opString: string, rightOp: BooleanNode): BooleanBinaryNode {
-  switch (opString) {
-    case 'or':
-      return new BooleanOr(leftOp, rightOp);
-    case 'xor':
-      return new BooleanXOr(leftOp, rightOp);
-    case 'nor':
-      return new BooleanNOr(leftOp, rightOp);
-    case 'xnor':
-      return new BooleanXNor(leftOp, rightOp);
-    case 'nand':
-      return new BooleanNAnd(leftOp, rightOp);
-    case 'equiv':
-      return new BooleanEquivalency(leftOp, rightOp);
-    case 'impl':
-      return new BooleanImplication(leftOp, rightOp);
-    case 'and':
-    default:
-      return new BooleanAnd(leftOp, rightOp);
-  }
-}
