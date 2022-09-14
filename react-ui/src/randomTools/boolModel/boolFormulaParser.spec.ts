@@ -1,5 +1,5 @@
-import {and, BooleanFalse, BooleanTrue, booleanVariable, equiv, impl, nand, NewBooleanNode, nor, not, or, xor} from './bool-node';
-import {parseBooleanFormulaFromLanguage} from './boolean-formula-parser';
+import {and, BooleanFalse, BooleanTrue, booleanVariable, equiv, impl, nand, BooleanNode, nor, not, or, xor} from './boolNode';
+import {parseBooleanFormulaFromLanguage} from './boolFormulaParser';
 import {Result} from 'parsimmon';
 
 const a = booleanVariable('a');
@@ -30,7 +30,7 @@ describe('Boolean Formula Language', () => {
   const formula4 = '(a equiv b nand c) xor (c impl b nand c xor b)';
   const formula4Expected = xor(nand(equiv(a, b), c), xor(nand(impl(c, b), c), b));
 
-  test.each<{ toParse: string, expected: NewBooleanNode }>([
+  test.each<{ toParse: string, expected: BooleanNode }>([
     // Constants
     {toParse: 'true', expected: BooleanTrue},
     {toParse: '1', expected: BooleanTrue},
@@ -58,5 +58,5 @@ describe('Boolean Formula Language', () => {
     {toParse: formula4, expected: formula4Expected}
   ])(
     'it should parse $toParse as $expected',
-    ({toParse, expected}) => expect(parseBooleanFormulaFromLanguage(toParse)).toEqual<Result<NewBooleanNode>>({status: true, value: expected}));
+    ({toParse, expected}) => expect(parseBooleanFormulaFromLanguage(toParse)).toEqual<Result<BooleanNode>>({status: true, value: expected}));
 });

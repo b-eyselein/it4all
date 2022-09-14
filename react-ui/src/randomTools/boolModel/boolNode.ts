@@ -1,8 +1,8 @@
 import {Assignment} from './assignment';
 
-export type NewBooleanNode = BooleanConstant | BooleanVariable | BooleanNot | BooleanBinaryNode;
+export type BooleanNode = BooleanConstant | BooleanVariable | BooleanNot | BooleanBinaryNode;
 
-export function getSubNodes(node: NewBooleanNode): NewBooleanNode[] {
+export function getSubNodes(node: BooleanNode): BooleanNode[] {
   // FIXME: test!
   switch (node._type) {
     case 'Constant':
@@ -16,7 +16,7 @@ export function getSubNodes(node: NewBooleanNode): NewBooleanNode[] {
   }
 }
 
-export function evaluate(node: NewBooleanNode, assignments: Assignment): boolean {
+export function evaluate(node: BooleanNode, assignments: Assignment): boolean {
   switch (node._type) {
     case 'Constant':
       return node.value;
@@ -51,20 +51,20 @@ function evaluateBinaryNode({_type, left, right}: BooleanBinaryNode, assignment:
   }
 }
 
-export function stringify(node: NewBooleanNode): string {
+export function stringifyNode(node: BooleanNode): string {
   switch (node._type) {
     case 'Constant':
       return node.value ? '1' : '0';
     case 'Variable':
       return node.variable;
     case 'Not':
-      return 'not ' + stringify(node.child);
+      return 'not ' + stringifyNode(node.child);
     default:
-      return stringify(node.left) + ' ' + node._type.toLowerCase() + ' ' + stringify(node.right);
+      return stringifyNode(node.left) + ' ' + node._type.toLowerCase() + ' ' + stringifyNode(node.right);
   }
 }
 
-export function getVariables(node: NewBooleanNode): BooleanVariable[] {
+export function getVariables(node: BooleanNode): BooleanVariable[] {
   // FIXME: test!
   switch (node._type) {
     case 'Constant':
@@ -100,10 +100,10 @@ export const BooleanFalse: BooleanConstant = {_type: 'Constant', value: false};
 
 export interface BooleanNot {
   _type: 'Not';
-  child: NewBooleanNode;
+  child: BooleanNode;
 }
 
-export function not(child: NewBooleanNode): BooleanNot {
+export function not(child: BooleanNode): BooleanNot {
   return {_type: 'Not', child};
 }
 
@@ -111,8 +111,8 @@ export function not(child: NewBooleanNode): BooleanNot {
 // Boolean binary nodes
 
 export interface IBooleanBinaryNode {
-  left: NewBooleanNode;
-  right: NewBooleanNode;
+  left: BooleanNode;
+  right: BooleanNode;
 }
 
 export type BooleanBinaryNode = BooleanAnd | BooleanOr | BooleanNAnd | BooleanNOr | BooleanXOr | BooleanEquivalency | BooleanImplication;
@@ -122,7 +122,7 @@ export interface BooleanAnd extends IBooleanBinaryNode {
   _type: 'And';
 }
 
-export function and(left: NewBooleanNode, right: NewBooleanNode): BooleanAnd {
+export function and(left: BooleanNode, right: BooleanNode): BooleanAnd {
   return {_type: 'And', left, right};
 }
 
@@ -131,7 +131,7 @@ export interface BooleanOr extends IBooleanBinaryNode {
   _type: 'Or';
 }
 
-export function or(left: NewBooleanNode, right: NewBooleanNode): BooleanOr {
+export function or(left: BooleanNode, right: BooleanNode): BooleanOr {
   return {_type: 'Or', left, right};
 }
 
@@ -140,7 +140,7 @@ export interface BooleanNAnd extends IBooleanBinaryNode {
   _type: 'NAnd';
 }
 
-export function nand(left: NewBooleanNode, right: NewBooleanNode): BooleanNAnd {
+export function nand(left: BooleanNode, right: BooleanNode): BooleanNAnd {
   return {_type: 'NAnd', left, right};
 }
 
@@ -149,7 +149,7 @@ export interface BooleanNOr extends IBooleanBinaryNode {
   _type: 'NOr';
 }
 
-export function nor(left: NewBooleanNode, right: NewBooleanNode): BooleanNOr {
+export function nor(left: BooleanNode, right: BooleanNode): BooleanNOr {
   return {_type: 'NOr', left, right};
 }
 
@@ -158,7 +158,7 @@ export interface BooleanXOr extends IBooleanBinaryNode {
   _type: 'XOr';
 }
 
-export function xor(left: NewBooleanNode, right: NewBooleanNode): BooleanXOr {
+export function xor(left: BooleanNode, right: BooleanNode): BooleanXOr {
   return {_type: 'XOr', left, right};
 }
 
@@ -167,7 +167,7 @@ export interface BooleanEquivalency extends IBooleanBinaryNode {
   _type: 'Equiv';
 }
 
-export function equiv(left: NewBooleanNode, right: NewBooleanNode): BooleanEquivalency {
+export function equiv(left: BooleanNode, right: BooleanNode): BooleanEquivalency {
   return {_type: 'Equiv', left, right};
 }
 
@@ -176,7 +176,7 @@ export interface BooleanImplication extends IBooleanBinaryNode {
   _type: 'Impl';
 }
 
-export function impl(left: NewBooleanNode, right: NewBooleanNode): BooleanImplication {
+export function impl(left: BooleanNode, right: BooleanNode): BooleanImplication {
   return {_type: 'Impl', left, right};
 }
 

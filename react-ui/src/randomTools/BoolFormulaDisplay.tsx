@@ -1,11 +1,15 @@
-import {BooleanBinaryNode, NewBooleanNode} from './boolModel/bool-node';
-import {BooleanFormula} from './boolModel/bool-formula';
+import {BooleanBinaryNode, BooleanVariable, BooleanNode} from './boolModel/boolNode';
 
-export function BoolFormulaDisplay({formula: {left, right}}: { formula: BooleanFormula }): JSX.Element {
+interface IProps {
+  left: BooleanVariable;
+  right: BooleanNode;
+}
+
+export function BoolFormulaDisplay({left, right}: IProps): JSX.Element {
   return <>{left.variable} = <BooleanNodeDisplay node={right}/></>;
 }
 
-export function BooleanNodeDisplay({node}: { node: NewBooleanNode }): JSX.Element {
+export function BooleanNodeDisplay({node}: { node: BooleanNode }): JSX.Element {
   switch (node._type) {
     case 'Variable':
       return <span>{node.variable}</span>;

@@ -1,4 +1,4 @@
-import {BooleanVariable} from './bool-node';
+import {BooleanNode, booleanVariable, BooleanVariable, evaluate} from './boolNode';
 
 export type Assignment = { [key: string]: boolean };
 
@@ -22,4 +22,15 @@ export function calculateAssignments(variables: BooleanVariable[]): Assignment[]
   }
 
   return assignments;
+}
+
+export const sampleVariable: BooleanVariable = booleanVariable('z');
+export const learnerVariable: BooleanVariable = booleanVariable('y');
+
+export function displayAssignmentValue(assignment: Assignment, variable: BooleanNode): string {
+  return evaluate(variable, assignment) ? '1' : '0';
+}
+
+export function isCorrect(assignment: Assignment): boolean {
+  return assignment[learnerVariable.variable] === assignment[sampleVariable.variable];
 }

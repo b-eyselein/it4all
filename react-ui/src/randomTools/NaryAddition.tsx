@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {RandomSolveButtons} from './RandomSolveButtons';
 import {NaryNumberReadOnlyInputComponent, NaryReadOnlyNumberInput} from './NaryNumberReadOnlyInput';
 import {BINARY_SYSTEM, NaryIState, NumberingSystem} from './nary';
-import {randomInt} from './boolModel/bool-formula';
+import {randomInt} from './boolModel/booleanFormulaGenerator';
 import {useTranslation} from 'react-i18next';
 import {NaryLimits} from './NaryLimits';
 import {NaryNumberInput} from './NaryNumberInput';

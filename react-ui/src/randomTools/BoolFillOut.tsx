@@ -1,41 +1,35 @@
-import {useState} from 'react';
-import {BooleanFormula, generateBooleanFormula} from './boolModel/bool-formula';
-import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/bool-component-helper';
-import classNames from 'classnames';
+import {Fragment, useState} from 'react';
 import {RandomSolveButtons} from './RandomSolveButtons';
-import {NewBooleanNode, stringify} from './boolModel/bool-node';
-import {Assignment, calculateAssignments} from './boolModel/assignment';
+import {BooleanNode, evaluate, getSubNodes, getVariables, stringifyNode} from './boolModel/boolNode';
+import {Assignment, calculateAssignments, displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/assignment';
 import {useTranslation} from 'react-i18next';
-import {BooleanNodeDisplay, BoolFormulaDisplay} from './BoolFormulaDisplay';
+import {BoolFormulaDisplay} from './BoolFormulaDisplay';
+import classNames from 'classnames';
 import update from 'immutability-helper';
+import {generateBooleanFormula} from './boolModel/booleanFormulaGenerator';
+import {BoolTable, BoolTableColumn} from './BoolTable';
+import {correctBgColor, incorrectBgColor} from '../consts';
 
 interface IState {
-  formula: BooleanFormula;
+  formula: BooleanNode;
   assignments: Assignment[];
-  subFormulas: NewBooleanNode[];
+  subFormulas: BooleanNode[];
   withSubFormulas: boolean;
   corrected: boolean;
 }
 
 function initState(withSubFormulas = false): IState {
+  const formula = generateBooleanFormula();
 
-  const formula = generateBooleanFormula(sampleVariable);
-
-  const subFormulas = formula.getSubFormulas();
-
-  const assignments = calculateAssignments(formula.getVariables());
+  const assignments = calculateAssignments(getVariables(formula));
 
   assignments.forEach((assignment) => {
-    assignment[sampleVariable.variable] = formula.evaluate(assignment);
+    assignment[sampleVariable.variable] = evaluate(formula, assignment);
     assignment[learnerVariable.variable] = false;
   });
 
-  return {formula, assignments, subFormulas, withSubFormulas, corrected: false};
+  return {formula, assignments, subFormulas: getSubNodes(formula), withSubFormulas, corrected: false};
 }
-
-const cellClasses = ['p-2 text-center border border-slate-200'];
-
-const cellClassName = classNames(cellClasses);
 
 export function BoolFillOut(): JSX.Element {
 
@@ -51,6 +45,39 @@ export function BoolFillOut(): JSX.Element {
   }
 
   const completelyCorrect = state.assignments.every(isCorrect);
+  const variables = getVariables(state.formula);
+
+  const columns: BoolTableColumn[] = [
+    ...variables.map((node) => ({node})),
+    // TODO: subFormulas...?
+    {
+      node: sampleVariable,
+      children: (node, assignment) => state.corrected ? <>{displayAssignmentValue(assignment, node)}</> : <Fragment/>
+    },
+    {
+      node: learnerVariable,
+      trClasses: (node, assignment) => ({
+        [incorrectBgColor]: state.corrected && !isCorrect(assignment),
+        [correctBgColor]: state.corrected && isCorrect(assignment),
+        'text-white': state.corrected
+      }),
+      children: (node, assignment, assignmentIndex) => {
+
+        const classes = classNames('px-4', 'py-2', 'rounded', 'border',
+          assignment[learnerVariable.variable] ? ['bg-blue-600', 'border-blue-600', 'text-white'] : ['border-slate-500']);
+
+        return (
+          <>
+            <button onClick={() => updateAssignment(assignmentIndex)} className={classes}>
+              {displayAssignmentValue(assignment, learnerVariable)}
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            {state.corrected && (isCorrect(assignment) ? <span>&#10004;</span> : <span>&#10008;</span>)}
+          </>
+        );
+      }
+    }
+  ];
 
   return (
     <div className="container mx-auto">
@@ -66,50 +93,14 @@ export function BoolFillOut(): JSX.Element {
 
       <div className="my-3">
         <h2 className="text-xl text-center">
-          <BoolFormulaDisplay formula={state.formula}/>
+          <BoolFormulaDisplay left={sampleVariable} right={state.formula}/>
         </h2>
-        <h3 className="text-center text-gray-500">{state.formula.asString()}</h3>
+        <h3 className="text-center text-gray-500">{sampleVariable.variable} = {stringifyNode(state.formula)}</h3>
       </div>
 
-      <table className="w-full">
-        <thead>
-          <tr>
-            {state.formula.getVariables().map(({variable}) =>
-              <th key={variable} className={cellClassName}>{variable}</th>
-            )}
-            {state.withSubFormulas && state.subFormulas.map((subFormula) =>
-              <th key={stringify(subFormula)} className={cellClassName}><BooleanNodeDisplay node={subFormula}/></th>
-            )}
-            <th className={cellClassName}>{learnerVariable.variable}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {state.assignments.map((assignment, index) =>
-            <tr key={index}>
-              {state.formula.getVariables().map((variable) =>
-                <td key={variable.variable} className={cellClassName}>{displayAssignmentValue(assignment, variable)}</td>
-              )}
-              {state.withSubFormulas && state.subFormulas.map((subFormula, index) =>
-                <th key={index}>{/* FIXME: button for subFormula... */}</th>
-              )}
+      <BoolTable columns={columns} assignments={state.assignments}/>
 
-              <td className={classNames(cellClasses, {
-                'bg-red-500': state.corrected && !isCorrect(assignment),
-                'bg-green-500': state.corrected && isCorrect(assignment)
-              })}>
-                <button onClick={() => updateAssignment(index)}
-                        className={classNames('px-4', 'py-2', 'rounded', 'border', assignment[learnerVariable.variable] ? ['bg-blue-600', 'border-blue-600', 'text-white'] : ['border-slate-500'])}>
-                  {displayAssignmentValue(assignment, learnerVariable)}
-                </button>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                {state.corrected && (isCorrect(assignment) ? <span className="text-white">&#10004;</span> : <span className="text-white">&#10008;</span>)}
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-
-      {state.corrected && <div className={classNames('my-4', 'p-2', 'text-center', 'text-white', completelyCorrect ? 'bg-green-500' : 'bg-red-500')}>
+      {state.corrected && <div className={classNames('my-4', 'p-2', 'rounded', 'text-center', 'text-white', completelyCorrect ? 'bg-green-500' : 'bg-red-500')}>
         {completelyCorrect
           ? <>&#10004; {t('solutionCorrect')}.</>
           : <>&#10008; {t('solutionNotCorrect')}.</>}

@@ -1,4 +1,5 @@
 import {Link} from 'react-router-dom';
+import classNames from 'classnames';
 
 export interface FooterItem {
   title: string;
@@ -41,12 +42,12 @@ export function NewCard({title, children, footerItems}: IProps): JSX.Element {
 
       <header className="px-4 py-2 border border-slate-200 font-bold shadow-sm">{title}</header>
 
-      <div className="p-4 border-x border-slate-200">
+      <div className={classNames('p-4', 'border-x', 'border-slate-200', {'border-b': !footerItems})}>
         {children}
       </div>
 
-      {footerItems && <footer className="px-4 py-2 border border-slate-200 text-center shadow-sm">
-        {footerItems.map(({link, title}) => <Link key={link} to={link} className="text-blue-700">{title}</Link>)}
+      {footerItems && <footer className="px-4 py-2 border border-slate-200 text-center shadow-sm flex">
+        {footerItems.map(({link, title}) => <Link key={link} to={link} className="text-blue-700 flex-grow">{title}</Link>)}
       </footer>}
     </div>
   );

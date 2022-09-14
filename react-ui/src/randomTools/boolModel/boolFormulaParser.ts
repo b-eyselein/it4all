@@ -9,12 +9,12 @@ import {
   equiv,
   impl,
   nand,
-  NewBooleanNode,
+  BooleanNode,
   nor,
   not,
   or,
   xor
-} from './bool-node';
+} from './boolNode';
 
 type OtherOps = 'xor' | 'nor' | 'nand' | 'equiv' | 'impl';
 
@@ -23,15 +23,15 @@ interface BooleanFormulaParser {
   false: typeof BooleanFalse;
   variable: BooleanVariable;
   operators: OtherOps;
-  factor: NewBooleanNode;
-  notFactor: NewBooleanNode;
-  binaryTermComponent: NewBooleanNode;
-  andTermComponent: NewBooleanNode;
-  orTermComponent: NewBooleanNode;
-  booleanFormula: NewBooleanNode;
+  factor: BooleanNode;
+  notFactor: BooleanNode;
+  binaryTermComponent: BooleanNode;
+  andTermComponent: BooleanNode;
+  orTermComponent: BooleanNode;
+  booleanFormula: BooleanNode;
 }
 
-export function instantiateOperator(leftOp: NewBooleanNode, opString: OtherOps, rightOp: NewBooleanNode): BooleanBinaryNode {
+export function instantiateOperator(leftOp: BooleanNode, opString: OtherOps, rightOp: BooleanNode): BooleanBinaryNode {
   switch (opString) {
     case 'xor':
       return xor(leftOp, rightOp);
@@ -65,7 +65,7 @@ const boolFormulaLanguage = createLanguage<BooleanFormulaParser>({
   binaryTermComponent: (r) => alt(r.notFactor, r.factor),
 
   andTermComponent: (r) => {
-    const x: Parser<[string, OtherOps, string, NewBooleanNode][]> = seq(whitespace, r.operators, whitespace, r.binaryTermComponent).many();
+    const x: Parser<[string, OtherOps, string, BooleanNode][]> = seq(whitespace, r.operators, whitespace, r.binaryTermComponent).many();
 
     return seq(r.binaryTermComponent, x)
       .map(([first, rest]) => rest.reduce((acc, [, op, , cur]) => instantiateOperator(acc, op, cur), first));
@@ -79,6 +79,6 @@ const boolFormulaLanguage = createLanguage<BooleanFormulaParser>({
       .map(([first, ...rest]) => rest.reduce((acc, cur) => or(acc, cur), first))
 });
 
-export function parseBooleanFormulaFromLanguage(formula: string): Result<NewBooleanNode> {
+export function parseBooleanFormulaFromLanguage(formula: string): Result<BooleanNode> {
   return boolFormulaLanguage.booleanFormula.parse(formula);
 }

@@ -1,32 +1,36 @@
-import {useState} from 'react';
-import {BooleanFormula, generateBooleanFormula} from './boolModel/bool-formula';
-import {displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/bool-component-helper';
+import {ChangeEvent, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {evaluate, NewBooleanNode} from './boolModel/bool-node';
-import {Assignment, calculateAssignments} from './boolModel/assignment';
+import {BooleanNode, evaluate, getVariables, stringifyNode} from './boolModel/boolNode';
+import {Assignment, calculateAssignments, displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/assignment';
 import classNames from 'classnames';
 import {RandomSolveButtons} from './RandomSolveButtons';
 import {BoolCreateInstructions} from './BoolCreateInstructions';
-import {parseBooleanFormulaFromLanguage} from './boolModel/boolean-formula-parser';
+import {parseBooleanFormulaFromLanguage} from './boolModel/boolFormulaParser';
 import {Result} from 'parsimmon';
 import update from 'immutability-helper';
+import {generateBooleanFormula} from './boolModel/booleanFormulaGenerator';
+import {BoolTable, BoolTableColumn} from './BoolTable';
+import {correctBgColor, incorrectBgColor} from '../consts';
+import {NewCard} from '../helpers/BulmaCard';
 
 interface IState {
-  formula: BooleanFormula;
+  formula: BooleanNode;
   assignments: Assignment[];
   corrected: boolean;
   showSampleSolutions: boolean;
   solution: string;
-  userSolutionFormula?: NewBooleanNode;
+  userSolutionFormula?: BooleanNode;
 }
 
 function initState(): IState {
-  const formula = generateBooleanFormula(sampleVariable);
+  const formula = generateBooleanFormula();
 
-  const assignments = calculateAssignments(formula.getVariables());
+  const variables = getVariables(formula);
+
+  const assignments = calculateAssignments(variables);
 
   assignments.forEach((assignment) => {
-    assignment[sampleVariable.variable] = formula.evaluate(assignment);
+    assignment[sampleVariable.variable] = evaluate(formula, assignment);
   });
 
   return {formula, assignments, corrected: false, showSampleSolutions: false, solution: ''};
@@ -39,7 +43,7 @@ export function BoolCreate(): JSX.Element {
   const [showInstructions, setShowInstructions] = useState(false);
 
   function correct(): void {
-    const parsed: Result<NewBooleanNode> = parseBooleanFormulaFromLanguage(state.solution);
+    const parsed: Result<BooleanNode> = parseBooleanFormulaFromLanguage(state.solution);
 
     if (parsed.status) {
       const userSolutionFormula = parsed.value;
@@ -54,77 +58,68 @@ export function BoolCreate(): JSX.Element {
     }
   }
 
+  const completelyCorrect = state.corrected && state.assignments.every(isCorrect);
+  const variables = getVariables(state.formula);
+
+  const columns: BoolTableColumn[] = [
+    ...variables.map((node) => ({node})),
+    {node: sampleVariable},
+    {
+      node: learnerVariable,
+      trClasses: (node, assignment) => ({
+        [incorrectBgColor]: state.corrected && !isCorrect(assignment),
+        [correctBgColor]: state.corrected && isCorrect(assignment),
+        'text-white': state.corrected
+      }),
+      children: (node, assignment) => {
+        return (
+          <>
+            {displayAssignmentValue(assignment, node)}
+            &nbsp;
+            {state.corrected && (isCorrect(assignment) ? <span>&#10004;</span> : <span>&#10008;</span>)}
+          </>);
+      }
+    }
+  ];
+
+  function updateSolution(event: ChangeEvent<HTMLInputElement>): void {
+    setState((state) => update(state, {solution: {$set: event.target.value}}));
+  }
+
   return (
     <div className="container mx-auto">
       <h1 className="mb-4 font-bold text-2xl text-center">{t('createBooleanFormula')}</h1>
 
-      <table className="table is-bordered is-fullwidth">
-        <thead>
-          <tr>
-            {state.formula.getVariables().map(({variable}) => <th className="has-text-centered" key={variable}>{variable}</th>)}
-            <th className="has-text-centered">{sampleVariable.variable}</th>
-            <th className="has-text-centered">{learnerVariable.variable}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {state.assignments.map((assignment, index) =>
-            <tr key={index}>
-              {state.formula.getVariables().map((variable) =>
-                <td className="has-text-centered" key={variable.variable}>{displayAssignmentValue(assignment, variable)}</td>
-              )}
-              <td className="has-text-centered">{displayAssignmentValue(assignment, sampleVariable)}</td>
-              <td className={classNames({
-                'has-background-danger': state.corrected && !isCorrect(assignment),
-                'has-background-success': state.corrected && isCorrect(assignment),
-                'has-text-white': state.corrected
-              }, 'has-text-centered')}>
-                {displayAssignmentValue(assignment, learnerVariable)}
-                &nbsp;
-                {state.corrected && !isCorrect(assignment) && <span className="has-text-white">&#10008;</span>}
-                {state.corrected && !isCorrect(assignment) && <span className="has-text-white">&#10004;</span>}
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <BoolTable columns={columns} assignments={state.assignments}/>
 
       <hr/>
 
-      <div className="field has-addons">
-        <div className="control">
-          <label htmlFor="solution" className="button is-static">{sampleVariable.variable} = </label>
-        </div>
-        <div className="control is-expanded">
-          <input type="text" value={state.solution} onChange={(event) => setState((state) => ({...state, solution: event.target.value}))}
-                 className="input" id="solution" autoComplete="off" placeholder="Boolesche Formel" autoFocus/>
-        </div>
+      <div className="my-4 flex">
+        <label htmlFor="solution" className="p-2 font-bold">{sampleVariable.variable} = </label>
+        <input type="text" value={state.solution} onChange={updateSolution} id="solution" autoComplete="off" placeholder={t('booleanFormula')} autoFocus
+               className="p-2 flex-grow rounded border border-slate-500"/>
       </div>
+
+      {state.corrected && <div className={classNames('my-4', 'p-2', 'rounded', 'text-center', 'text-white', completelyCorrect ? 'bg-green-500' : 'bg-red-500')}>
+        {completelyCorrect
+          ? <>&#10004; {t('solutionCorrect')}.</>
+          : <>&#10008; {t('solutionNotCorrect')}.</>}
+      </div>}
 
       <RandomSolveButtons toolId={'bool'} correct={correct} nextExercise={() => setState(initState())}/>
 
-      <div className="columns my-3">
-        <div className="column is-half-desktop">
-          <button className="button is-primary is-fullwidth"
-                  onClick={() => setState(({showSampleSolutions, ...rest}) => ({...rest, showSampleSolutions: !showSampleSolutions}))}>
-            Musterlösungen anzeigen
-          </button>
-        </div>
-        <div className="column is-half-desktop">
-          <button className="button is-info is-fullwidth" onClick={() => setShowInstructions((showInstructions) => !showInstructions)}>
-            Hilfe anzeigen
-          </button>
-        </div>
+      <div className="my-4 grid grid-cols-2 gap-2">
+        <button className="p-2 rounded bg-blue-500 text-white w-full" onClick={() => setState((state) => update(state, {$toggle: ['showSampleSolutions']}))}>
+          {t('showSampleSolution')}
+        </button>
+        <button className="p-2 rounded bg-cyan-400 text-white w-full" onClick={() => setShowInstructions((showInstructions) => !showInstructions)}>
+          {t('showHelp')}
+        </button>
       </div>
 
-      {state.showSampleSolutions && <div className="card">
-        <header className="card-header">
-          <p className="card-header-title is-centered">Musterlösungen</p>
-        </header>
-        <div className="card-content">
-          <code>{state.formula.asString()}</code>
-        </div>
-      </div>}
-
+      {state.showSampleSolutions && <NewCard title={t('sampleSolution_plural')}>
+        <code>{sampleVariable.variable} = {stringifyNode(state.formula)}</code>
+      </NewCard>}
 
       {showInstructions && <BoolCreateInstructions/>}
 

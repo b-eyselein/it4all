@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {BINARY_SYSTEM, HEXADECIMAL_SYSTEM, NaryIState, NumberingSystem} from './nary';
 import {NaryNumberReadOnlyInputComponent, NaryReadOnlyNumberInput} from './NaryNumberReadOnlyInput';
 import {RandomSolveButtons} from './RandomSolveButtons';
-import {randomInt} from './boolModel/bool-formula';
+import {randomInt} from './boolModel/booleanFormulaGenerator';
 import {useTranslation} from 'react-i18next';
 import {NaryLimits} from './NaryLimits';
 import {NaryNumberInput} from './NaryNumberInput';

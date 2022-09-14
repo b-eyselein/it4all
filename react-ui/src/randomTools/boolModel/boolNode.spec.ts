@@ -12,9 +12,9 @@ import {
   nor,
   not,
   or,
-  stringify,
+  stringifyNode,
   xor
-} from './bool-node';
+} from './boolNode';
 
 const variableA = booleanVariable('a');
 const variableB = booleanVariable('b');
@@ -45,7 +45,7 @@ describe('BooleanVariable', () => {
   });
 
   it('should convert to string', () => {
-    expect(stringify(variableA)).toBe('a');
+    expect(stringifyNode(variableA)).toBe('a');
   });
 });
 
@@ -62,8 +62,8 @@ describe('BooleanConstant', () => {
   });
 
   it('should convert to string', () => {
-    expect(stringify(BooleanTrue)).toBe('1');
-    expect(stringify(BooleanFalse)).toBe('0');
+    expect(stringifyNode(BooleanTrue)).toBe('1');
+    expect(stringifyNode(BooleanFalse)).toBe('0');
   });
 });
 
@@ -84,7 +84,7 @@ describe('BooleanNot', () => {
   });
 
   it('should convert to string', () => {
-    expect(stringify(boolNot)).toBe('not a');
+    expect(stringifyNode(boolNot)).toBe('not a');
   });
 });
 
@@ -110,7 +110,7 @@ describe('BooleanAnd', () => {
   );
 
   it('should convert to string', () => {
-    expect(stringify(boolAnd)).toBe('a and b');
+    expect(stringifyNode(boolAnd)).toBe('a and b');
   });
 });
 
@@ -136,7 +136,7 @@ describe('BooleanOr', () => {
   );
 
   it('should convert to string', () => {
-    expect(stringify(boolOr)).toBe('a or b');
+    expect(stringifyNode(boolOr)).toBe('a or b');
   });
 });
 
@@ -162,7 +162,7 @@ describe('BooleanNAnd', () => {
   );
 
   it('should convert to string', () => {
-    expect(stringify(boolNAnd)).toBe('a nand b');
+    expect(stringifyNode(boolNAnd)).toBe('a nand b');
   });
 });
 
@@ -188,7 +188,7 @@ describe('BooleanNOr', () => {
   );
 
   it('should convert to string', () => {
-    expect(stringify(boolNOr)).toBe('a nor b');
+    expect(stringifyNode(boolNOr)).toBe('a nor b');
   });
 });
 
@@ -214,7 +214,7 @@ describe('BooleanXOr', () => {
   );
 
   it('should convert to string', () => {
-    expect(stringify(boolXOr)).toBe('a xor b');
+    expect(stringifyNode(boolXOr)).toBe('a xor b');
   });
 });
 
@@ -240,7 +240,7 @@ describe('BooleanEquivalency', () => {
   );
 
   it('should convert to string', () => {
-    expect(stringify(boolEquiv)).toBe('a equiv b');
+    expect(stringifyNode(boolEquiv)).toBe('a equiv b');
   });
 });
 
@@ -266,6 +266,6 @@ describe('BooleanImplication', () => {
   );
 
   it('should convert to string', () => {
-    expect(stringify(boolImpl)).toBe('a impl b');
+    expect(stringifyNode(boolImpl)).toBe('a impl b');
   });
 });
