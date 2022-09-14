@@ -174,7 +174,7 @@ export function EbnfExercise({exercise, content, /*oldSolution*/}: IProps): JSX.
         <button className="button is-static">R = &#123;</button>
       </div>
 
-      <div className="field indented">
+      <div className="field ml-2">
         {state.solution.rules.map(({variable, rule, parsed}, index) =>
           <div className="field has-addons" key={variable}>
             <div className="control">

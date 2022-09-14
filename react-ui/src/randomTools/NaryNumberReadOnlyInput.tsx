@@ -17,7 +17,7 @@ function chunkSubstr(str: string, size: number): string[] {
   const chunks = new Array(numChunks);
 
   for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
-    chunks[i] = str.substr(o, size);
+    chunks[i] = str.substring(o, o + size);
   }
 
   return chunks;
@@ -38,17 +38,11 @@ export function NaryNumberReadOnlyInputComponent({labelContent, naryNumberInput}
   }
 
   return (
-    <div className="field has-addons">
-      <div className="control">
-        <div className="button is-static">{labelContent}</div>
-      </div>
-      <div className="control is-expanded">
-        <input className="input has-text-right numberInput" value={getSummandNary()} placeholder={labelContent} readOnly/>
-      </div>
-      <div className="control">
-        <div className="button is-static">
-          <sub>{numberingSystem.radix}</sub>
-        </div>
+    <div className="flex">
+      <div className="p-2 rounded-l border-l border-y border-slate-400 bg-slate-100">{labelContent}</div>
+      <input className="flex-grow p-2 border border-slate-400 text-right font-mono" value={getSummandNary()} placeholder={labelContent} readOnly/>
+      <div className="p-2 rounded-r border-r border-y border-slate-400 bg-slate-100">
+        <sub>{numberingSystem.radix}</sub>
       </div>
     </div>
   );

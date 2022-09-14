@@ -52,29 +52,25 @@ export function NaryAddition(): JSX.Element {
     <div className="container mx-auto">
       <h1 className="mb-4 font-bold text-2xl text-center">{t('naryAddition')}</h1>
 
-      <div className="columns">
-        <div className="column">
-          <NaryLimits max={state.max} update={(newValue) => setState(generateExercise(newValue))}/>
-        </div>
-        <div className="column">
-          <NaryNumberingSystemSelect label={t('numberingSystem')} system={state.numberingSystem}
-                                     update={(newSystem) => setState(({max}) => generateExercise(max, newSystem))}/>
-        </div>
+      <div className="grid grid-cols-2 gap-2">
+        <NaryLimits max={state.max} update={(newValue) => setState(generateExercise(newValue))}/>
+        <NaryNumberingSystemSelect label={t('numberingSystem')} system={state.numberingSystem}
+                                   update={(newSystem) => setState(({max}) => generateExercise(max, newSystem))}/>
       </div>
 
-      <hr/>
+      <hr className="my-4"/>
 
-      <div className="my-3">
+      <div className="my-4">
         <NaryNumberReadOnlyInputComponent labelContent={'Summand 1'} naryNumberInput={state.firstSummand}/>
       </div>
 
-      <div className="my-3">
+      <div className="my-4">
         <NaryNumberReadOnlyInputComponent labelContent={'Summand 2'} naryNumberInput={state.secondSummand}/>
       </div>
 
-      <hr/>
+      <hr className="my-4"/>
 
-      <NaryNumberInput labelContent={t('solution')} initialValue={state.solutionString} checked={state.checked} correct={state.correct}
+      <NaryNumberInput key={state.solutionString} labelContent={t('solution')} initialValue={state.solutionString} checked={state.checked} correct={state.correct}
                        radix={state.numberingSystem.radix} update={(newValue) => setState((state) => ({...state, solutionString: newValue}))} rtl={true}/>
 
       <RandomSolveButtons toolId={'nary'} correct={checkSolution} nextExercise={nextExercise}/>

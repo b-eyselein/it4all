@@ -47,25 +47,21 @@ export function NaryConversion(): JSX.Element {
   }
 
   return (
-    <div className="container">
-      <h1 className="title is-3 has-text-centered">{t('naryConversion')}</h1>
+    <div className="container mx-auto">
+      <h1 className="mb-4 font-bold text-2xl text-center">{t('naryConversion')}</h1>
 
       <NaryLimits max={state.max} update={(newValue) => setState((state) => generateExercise(newValue, state.startSystem, state.targetSystem))}/>
 
-      <div className="columns">
-        <div className="column is-half-desktop">
-          <NaryNumberingSystemSelect label={t('startSystem')} system={state.startSystem} update={(newSystem) => updateStartSystem(newSystem)}/>
-        </div>
-        <div className="column is-half-desktop">
-          <NaryNumberingSystemSelect label={t('targetSytem')} system={state.targetSystem} update={(newSystem) => updateTargetSystem(newSystem)}/>
-        </div>
+      <div className="grid grid-cols-2 gap-2">
+        <NaryNumberingSystemSelect label={t('startSystem')} system={state.startSystem} update={(newSystem) => updateStartSystem(newSystem)}/>
+        <NaryNumberingSystemSelect label={t('targetSytem')} system={state.targetSystem} update={(newSystem) => updateTargetSystem(newSystem)}/>
       </div>
 
-      <hr/>
+      <hr className="my-4"/>
 
       <NaryNumberReadOnlyInputComponent labelContent={t('startNumber')} naryNumberInput={state.toConvertInput}/>
 
-      <hr/>
+      <hr className="my-4"/>
 
       <NaryNumberInput labelContent={t('solution')} initialValue={state.solutionString} checked={state.checked} correct={state.correct}
                        radix={state.targetSystem.radix} update={(newValue) => setState((state) => ({...state, solutionString: newValue}))}/>

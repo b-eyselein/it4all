@@ -59,42 +59,36 @@ export function NaryTwoConversion(): JSX.Element {
   }
 
   return (
-    <div className="container">
-      <h1 className="title is-3 has-text-centered">{t('naryTwoConversion')}</h1>
+    <div className="container mx-auto">
+      <h1 className="mb-4 font-bold text-2xl text-center">{t('naryTwoConversion')}</h1>
 
       <NaryLimits max={state.max} update={(newValue) => setState(generateExercise(newValue))}/>
 
-      <div className="field">
-        <div className="control has-text-centered">
-          <label className="checkbox">
-            <input type="checkbox" checked={state.withIntermediateSteps}
-                   onChange={(event) => setState((state) => ({...state, withIntermediateSteps: event.target.checked}))}/> Mit Zwischenschritten
-          </label>
-        </div>
+      <div className="my-4 text-center">
+        <label htmlFor="withSubSteps">
+          <input type="checkbox" id="withSubSteps" checked={state.withIntermediateSteps}
+                 onChange={(event) => setState((state) => ({...state, withIntermediateSteps: event.target.checked}))}/> Mit Zwischenschritten
+        </label>
       </div>
 
-      <p className="is-italic has-text-info has-text-centered">Geben Sie alle Binärzahlen mit einer Länge von 8 Bit ein!</p>
+      <p className="italic text-cyan-600 text-center">Geben Sie alle Binärzahlen mit einer Länge von 8 Bit ein!</p>
 
-      <hr/>
+      <hr className="my-4"/>
 
-      <h2 className="subtitle is-4 has-text-centered">Bilden Sie das Zweierkomplement der Zahl -{state.toConvert}<sub>10</sub>!</h2>
+      <h2 className="text-2xl text-center">Bilden Sie das Zweierkomplement der Zahl -{state.toConvert}<sub>10</sub>!</h2>
 
       <NaryNumberInput labelContent={`Binärdarstellung von ${state.toConvert}`} initialValue={state.binaryAbsoluteString}
                        checked={state.checked && state.withIntermediateSteps} correct={state.withIntermediateSteps} radix={2}
                        update={(newValue) => setState((state) => ({...state, binaryAbsoluteString: newValue}))} disabled={!state.withIntermediateSteps}/>
 
-      <br/>
-
       <NaryNumberInput labelContent="Invertierung aller Bits" initialValue={state.invertedAbsoluteString} checked={state.checked && state.withIntermediateSteps}
                        correct={state.invertedAbsoluteCorrect} radix={2}
                        update={(newValue) => setState((state) => ({...state, invertedAbsoluteString: newValue}))} disabled={!state.withIntermediateSteps}/>
 
-      <hr/>
+      <hr className="my-4"/>
 
       <NaryNumberInput labelContent={t('twoComplement')} initialValue={state.solutionString} checked={state.checked} correct={state.correct} radix={2}
                        update={(newValue) => setState((state) => ({...state, solutionString: newValue}))}/>
-
-      <br/>
 
       <RandomSolveButtons toolId={'nary'} correct={correct}
                           nextExercise={() => setState(({max, withIntermediateSteps}) => generateExercise(max, withIntermediateSteps))}/>

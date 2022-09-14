@@ -19,12 +19,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-/* nary */
-
-.numberInput {
-  font-family: monospace;
-}
-
 /* jointjs */
 
 .myPaper {
@@ -32,7 +26,3 @@ code {
   border-radius: 5px;
 }
 
-/* other */
-.indented {
-  margin-left: 40px;
-}

@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import {ChangeEvent} from 'react';
 import {NumberingSystem, numberingSystems} from './nary';
 
 interface IProps {
@@ -14,15 +14,12 @@ export function NaryNumberingSystemSelect({label, system, update}: IProps): JSX.
   }
 
   return (
-    <div className="field">
-      <label htmlFor="startSystem" className="label has-text-centered">{label}</label>
-      <div className="control">
-        <div className="select is-fullwidth">
-          <select onChange={onChange} id="startSystem" defaultValue={system.radix}>
-            {Object.values(numberingSystems).map((ns) => <option key={ns.radix} value={ns.radix}>{ns.radix} - {ns.name}</option>)}
-          </select>
-        </div>
-      </div>
+    <div>
+      <label htmlFor="startSystem" className="font-bold block text-center">{label}:</label>
+
+      <select onChange={onChange} id="startSystem" defaultValue={system.radix} className="p-2 rounded border border-slate-400 bg-white w-full">
+        {Object.values(numberingSystems).map((ns) => <option key={ns.radix} value={ns.radix}>{ns.radix} - {ns.name}</option>)}
+      </select>
     </div>
   );
 }

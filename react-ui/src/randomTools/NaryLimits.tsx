@@ -13,19 +13,17 @@ export function NaryLimits({max, update}: IProps): JSX.Element {
   const {t} = useTranslation('common');
 
   return (
-    <div className="field">
-      <label className="label has-text-centered">{t('maximalValue')}:</label>
+    <div>
+      <label htmlFor="max" className="font-bold block text-center">{t('maximalValue')}:</label>
 
-      <div className="field has-addons">
-        <div className="control">
-          <button className="button" onClick={() => update(max / 2)} disabled={max === minimalMax}>/ 2</button>
-        </div>
-        <div className="control is-expanded">
-          <input className="input has-text-centered" type="number" id="max" value={max} readOnly/>
-        </div>
-        <div className="control">
-          <button className="button" onClick={() => update(max * 2)} disabled={max === maximalMax}>* 2</button>
-        </div>
+      <div className="flex">
+        <button type="button" className="p-2 rounded-l border-l border-y border-slate-400" onClick={() => update(max / 2)} disabled={max === minimalMax}>
+          / 2
+        </button>
+        <input type="number" className="flex-grow p-2 border border-slate-400 text-center" id="max" value={max} readOnly/>
+        <button type="button" className="p-2 rounded-r border-r border-y border-slate-400" onClick={() => update(max * 2)} disabled={max === maximalMax}>
+          * 2
+        </button>
       </div>
     </div>
   );
