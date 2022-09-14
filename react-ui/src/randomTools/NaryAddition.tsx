@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {RandomSolveButtons} from './RandomSolveButtons';
 import {NaryNumberReadOnlyInputComponent, NaryReadOnlyNumberInput} from './NaryNumberReadOnlyInput';
 import {BINARY_SYSTEM, NaryIState, NumberingSystem} from './nary';
@@ -49,8 +49,8 @@ export function NaryAddition(): JSX.Element {
   }
 
   return (
-    <div className="container">
-      <h1 className="title is-3 has-text-centered">{t('naryAddition')}</h1>
+    <div className="container mx-auto">
+      <h1 className="mb-4 font-bold text-2xl text-center">{t('naryAddition')}</h1>
 
       <div className="columns">
         <div className="column">
