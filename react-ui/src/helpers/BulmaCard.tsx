@@ -1,5 +1,6 @@
 import {Link} from 'react-router-dom';
 import classNames from 'classnames';
+import {linkColor} from '../consts';
 
 export interface FooterItem {
   title: string;
@@ -47,7 +48,7 @@ export function NewCard({title, children, footerItems}: IProps): JSX.Element {
       </div>
 
       {footerItems && <footer className="px-4 py-2 border border-slate-200 text-center shadow-sm flex">
-        {footerItems.map(({link, title}) => <Link key={link} to={link} className="text-blue-700 flex-grow">{title}</Link>)}
+        {footerItems.map(({link, title}) => <Link key={link} to={link} className={classNames(linkColor, 'flex-grow')}>{title}</Link>)}
       </footer>}
     </div>
   );

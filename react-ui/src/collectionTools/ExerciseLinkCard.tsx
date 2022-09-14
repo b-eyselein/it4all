@@ -1,15 +1,17 @@
 import {FilledPoints} from '../helpers/FilledPoints';
-import classNames from 'classnames';
-import {BulmaCard} from '../helpers/BulmaCard';
+import {NewCard} from '../helpers/BulmaCard';
 import {FieldsForLinkFragment} from '../graphql';
 import {collectionsUrlFragment, exercisesUrlFragment, toolsUrlFragment} from '../urls';
 import {useTranslation} from 'react-i18next';
+import {Tag} from '../helpers/Tag';
+import {correctBgColor} from '../consts';
 
 interface IProps {
   exercise: FieldsForLinkFragment;
+  showCollection?: boolean;
 }
 
-export function ExerciseLinkCard({exercise}: IProps): JSX.Element {
+export function ExerciseLinkCard({exercise, showCollection}: IProps): JSX.Element {
 
   const {t} = useTranslation('common');
 
@@ -17,11 +19,8 @@ export function ExerciseLinkCard({exercise}: IProps): JSX.Element {
 
   const cardTitle = (
     <>
-      {exerciseId}. {title}
-      &nbsp;
-      <div className="tag" title={t('difficulty_{{title}}', {title: difficulty.title})}>
-        <FilledPoints filledPoints={difficulty.levelIndex}/>
-      </div>
+      {showCollection ? collectionId + '.' : ''}{exerciseId} {title}&nbsp;<FilledPoints filledPoints={difficulty.levelIndex}
+                                                                                   title={t('difficulty_{{title}}', {title: difficulty.title})}/>
     </>
   );
 
@@ -31,22 +30,20 @@ export function ExerciseLinkCard({exercise}: IProps): JSX.Element {
   }];
 
   return (
-    <BulmaCard title={cardTitle} footerItems={footerItems}>
+    <NewCard title={cardTitle} footerItems={footerItems}>
       <>
-        <div className="tags">
+        <div className="grid grid-cols-2 gap-2">
           {parts.length === 0
-            ? <div>TODO!</div>
-            : parts.map(({id, name, solved}) => <div key={id} className={classNames('tag', {'is-success': solved})}>{name}</div>)}
+            ? <span>&nbsp;</span>
+            : parts.map(({id, name, solved}) => <Tag key={id} otherClasses={{[correctBgColor]: solved}}>{name}</Tag>)}
         </div>
 
-        {topicsWithLevels.length > 0 && <div className="tags">
-          {topicsWithLevels.map(({topic, level}) =>
-            <div className="tag" title={topic.title} key={topic.abbreviation}>
-              {topic.abbreviation}&nbsp; - &nbsp;
-              <FilledPoints filledPoints={level.levelIndex}/>
-            </div>)}
+        {topicsWithLevels.length > 0 && <div className="grid grid-cols-3 gap-2">
+          {topicsWithLevels.map(({topic, level}) => <Tag key={topic.abbreviation} title={topic.title}>
+            <>{topic.abbreviation}&nbsp; - &nbsp;<FilledPoints filledPoints={level.levelIndex}/></>
+          </Tag>)}
         </div>}
       </>
-    </BulmaCard>
+    </NewCard>
   );
 }

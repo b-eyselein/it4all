@@ -9,7 +9,7 @@ import {BrowserRouter} from 'react-router-dom';
 import common_de from './locales/de/common.json';
 import common_en from './locales/en/common.json';
 import {createRoot} from 'react-dom/client';
-import {newStore} from './newStore';
+import {newCurrentUserSelector, newStore} from './newStore';
 import {serverUrl} from './urls';
 import './index.css';
 
@@ -27,7 +27,7 @@ i18next
 
 const apolloAuthMiddleware = new ApolloLink((operation, forward) => {
 
-  const currentUser = newStore.getState().user;
+  const currentUser = newCurrentUserSelector(newStore.getState());
 
   const Authorization = currentUser
     ? `Bearer ${currentUser.jwt}`

@@ -6,12 +6,14 @@ import i18next from 'i18next';
 
 const userField = 'user';
 
-function initialUserState(): LoginResultFragment | null {
+function initialUserState(): { user: LoginResultFragment | null } {
   const currentUserString = localStorage.getItem(userField);
 
-  return currentUserString
-    ? JSON.parse(currentUserString) as LoginResultFragment
-    : null;
+  return {
+    user: currentUserString
+      ? JSON.parse(currentUserString) as LoginResultFragment
+      : null
+  };
 }
 
 const userSlice = createSlice({
@@ -20,12 +22,12 @@ const userSlice = createSlice({
   reducers: {
     loginUser(state, {payload}: PayloadAction<LoginResultFragment>) {
       localStorage.setItem(userField, JSON.stringify(payload));
-      state = payload;
+      state.user = payload;
     },
     logoutUser(state) {
       localStorage.removeItem(userField);
       // eslint-disable-next-line
-      state = null;
+      state.user = null;
     }
   }
 });
@@ -64,7 +66,7 @@ const languageSlice = createSlice({
 export const {changeLanguage} = languageSlice.actions;
 
 export interface NewStoreState {
-  user: LoginResultFragment | null;
+  user: { user: LoginResultFragment | null };
   language: Language;
 }
 
@@ -75,6 +77,6 @@ export const newStore: EnhancedStore<NewStoreState> = configureStore({
   }
 });
 
-export const newCurrentUserSelector: (s: NewStoreState) => LoginResultFragment | null = ({user}) => user;
+export const newCurrentUserSelector: (s: NewStoreState) => LoginResultFragment | null = ({user}) => user.user;
 
 export const newLanguageSelector: (s: NewStoreState) => Language = ({language}) => language;

@@ -1,4 +1,6 @@
 import {Link} from 'react-router-dom';
+import {linkColor} from '../consts';
+import classNames from 'classnames';
 
 export interface BreadCrumb {
   title: string;
@@ -12,13 +14,11 @@ interface IProps {
 
 export function BreadCrumbs({parents, current}: IProps): JSX.Element {
   return (
-    <nav className="my-3 breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        {parents.map(({title, to}, index) => <li key={index}><Link to={to}>{title}</Link></li>)}
-        <li className="is-active">
-          <Link className="disabled" to="">{current}</Link>
-        </li>
-      </ul>
+    <nav className="my-4" aria-label="breadcrumbs">
+      {parents.map(({title, to}, index) =>
+        <span className="mr-2" key={index}><Link to={to} className={classNames('mr-2', linkColor)}>{title}</Link> / </span>
+      )}
+      <span className="is-active">{current}</span>
     </nav>
   );
 }

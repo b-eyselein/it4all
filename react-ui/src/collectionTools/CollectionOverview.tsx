@@ -31,7 +31,7 @@ function Inner({toolId, tool}: InnerProps): JSX.Element {
 
   return (
     <>
-      <h1 className="title is-3 has-text-centered">{t('collection')} &quot;{title}&quot; - {t('exercise_plural')}</h1>
+      <h1 className="mb-4 font-bold text-2xl text-center">{t('collection')} &quot;{title}&quot; - {t('exercise_plural')}</h1>
 
       <BreadCrumbs parents={collectionsBreadCrumbs(toolId, tool.name, t)} current={tool.collection.title}/>
 
@@ -39,17 +39,10 @@ function Inner({toolId, tool}: InnerProps): JSX.Element {
 
       {exercises.length > 0
         ? (
-          <div className="columns is-multiline">
-            {exercisesPaginated.map((exercise) =>
-              <div className="column is-one-third-desktop is-half" key={exercise.exerciseId}>
-                <ExerciseLinkCard exercise={exercise}/>
-              </div>
-            )}
+          <div className="grid grid-cols-3 gap-2">
+            {exercisesPaginated.map((exercise) => <ExerciseLinkCard key={exercise.exerciseId} exercise={exercise}/>)}
           </div>
-        ) : (
-          <div className="notification is-danger has-text-centered">{t('noExercisesFound')}</div>
-        )
-      }
+        ) : <div className="notification is-danger has-text-centered">{t('noExercisesFound')}</div>}
     </>
   );
 }
@@ -59,7 +52,7 @@ export function CollectionOverview({toolId, collectionId}: CollectionBaseParams)
   const query = useCollectionOverviewQuery({variables: {toolId, collId: collectionId}});
 
   return (
-    <div className="container">
+    <div className="container mx-auto">
       <WithQuery query={query}>
         {({tool}) => <Inner toolId={toolId} collectionId={collectionId} tool={tool}/>}
       </WithQuery>

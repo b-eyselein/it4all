@@ -3,7 +3,7 @@ import {BreadCrumbs} from '../helpers/BreadCrumbs';
 import {ProficiencyCard} from '../helpers/ProficiencyCard';
 import {WithQuery} from '../WithQuery';
 import {ToolBaseParams} from '../ToolBase';
-import {BulmaCard} from '../helpers/BulmaCard';
+import {NewCard} from '../helpers/BulmaCard';
 import {useTranslation} from 'react-i18next';
 import {allExercisesUrlFragment, collectionsUrlFragment, toolsBreadCrumbs, toolsUrlFragment} from '../urls';
 
@@ -23,26 +23,22 @@ function Inner({toolId, tool}: InnerProps): JSX.Element {
 
   return (
     <>
-      <h1 className="title is-3 has-text-centered">{t('tool')} {name}</h1>
+      <h1 className="mb-4 font-bold text-2xl text-center">{t('tool')} {name}</h1>
 
       <BreadCrumbs parents={[toolsBreadCrumbs(t)]} current={tool.name}/>
 
-      <div className="columns">
-        <div className="column">
-          <BulmaCard title={t('collection_plural')} footerItems={[{link: collectionsLink, title: t('toCollections')}]}>
-            <span>{collectionCount} {t('collection_plural')} {t('with')} {exerciseCount} {t('exercise_plural')}</span>
-          </BulmaCard>
-        </div>
+      <div className="grid grid-cols-2 gap-2">
+        <NewCard title={t('collection_plural')} footerItems={[{link: collectionsLink, title: t('toCollections')}]}>
+          <span>{collectionCount} {t('collection_plural')} {t('with')} {exerciseCount} {t('exercise_plural')}</span>
+        </NewCard>
 
-        <div className="column">
-          <BulmaCard title={'allExercises'} footerItems={[{link: allExercisesLink, title: t('toAllExercises')}]}>
-            <span>{exerciseCount} {t('exercise_plural')}</span>
-          </BulmaCard>
-        </div>
+        <NewCard title={'allExercises'} footerItems={[{link: allExercisesLink, title: t('toAllExercises')}]}>
+          <span>{exerciseCount} {t('exercise_plural')}</span>
+        </NewCard>
       </div>
 
       <div className="my-3">
-        <h2 className="subtitle is-3 has-text-centered">{t('myProficiencies')}</h2>
+        <h2 className="text-2xl text-center">{t('myProficiencies')}</h2>
 
         {proficiencies.length > 0
           ? (
@@ -52,9 +48,8 @@ function Inner({toolId, tool}: InnerProps): JSX.Element {
                   <ProficiencyCard proficiency={proficiency}/>
                 </div>)}
             </div>
-          ) : (
-            <div className="notification is-primary has-text-centered">{t('noProficienciesYet')}</div>
-          )
+          ) : <div className="my-4 p-2 rounded bg-blue-500 text-white text-center">{t('noProficienciesYet')}</div>
+
         }
       </div>
     </>
@@ -66,12 +61,11 @@ export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
   const query = useCollectionToolOverviewQuery({variables: {toolId}});
 
   return (
-    <div className="container">
+    <div className="container mx-auto">
 
       <WithQuery query={query}>
         {({tool}) => <Inner toolId={toolId} tool={tool}/>}
       </WithQuery>
-
     </div>
   );
 }

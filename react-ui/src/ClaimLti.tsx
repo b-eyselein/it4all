@@ -35,7 +35,7 @@ export function ClaimLti(): JSX.Element {
   }
 
   return (
-    <div className="container">
+    <div className="container mx-auto">
       <div className="notification is-primary has-text-centered">{t('performingLogin')}...</div>
 
       {error && <div className="notification is-danger has-text-centered">{error.message}</div>}

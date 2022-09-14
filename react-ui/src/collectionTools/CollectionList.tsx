@@ -3,8 +3,8 @@ import {ToolCollectionOverviewFragment, useCollectionListQuery} from '../graphql
 import {WithQuery} from '../WithQuery';
 import {BreadCrumbs} from '../helpers/BreadCrumbs';
 import {useTranslation} from 'react-i18next';
-import {BulmaCard} from '../helpers/BulmaCard';
 import {toolBreadCrumbs} from '../urls';
+import {NewCard} from '../helpers/BulmaCard';
 
 interface InnerProps {
   toolId: string;
@@ -17,17 +17,15 @@ function Inner({toolId, tool}: InnerProps): JSX.Element {
 
   return (
     <>
-      <h1 className="title is-3 has-text-centered">{t('tool')} {tool.name}: {t('collection_plural')}</h1>
+      <h1 className="mb-4 font-bold text-2xl text-center">{t('tool')} {tool.name}: {t('collection_plural')}</h1>
 
       <BreadCrumbs parents={toolBreadCrumbs(toolId, tool.name, t)} current={t('collection_plural')}/>
 
-      <div className="columns is-multiline">
+      <div className="grid grid-cols-4 gap-2">
         {tool.collections.map(({collectionId, title, exerciseCount}) =>
-          <div className="column is-one-quarter" key={collectionId}>
-            <BulmaCard title={`${collectionId}. ${title}`} footerItems={[{link: `./${collectionId}`, title: t('toCollection')}]}>
-              <span>{exerciseCount} {t('exercise_plural')}</span>
-            </BulmaCard>
-          </div>
+          <NewCard key={collectionId} title={`${collectionId}. ${title}`} footerItems={[{link: `./${collectionId}`, title: t('toCollection')}]}>
+            <span>{exerciseCount} {t('exercise_plural')}</span>
+          </NewCard>
         )}
       </div>
     </>
@@ -39,7 +37,7 @@ export function CollectionList({toolId}: ToolBaseParams): JSX.Element {
   const query = useCollectionListQuery({variables: {toolId}});
 
   return (
-    <div className="container">
+    <div className="container mx-auto">
       <WithQuery query={query}>
         {({tool}) => <Inner toolId={toolId} tool={tool}/>}
       </WithQuery>

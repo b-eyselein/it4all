@@ -3,8 +3,8 @@ import {AllExesOverviewToolFragment, useAllExercisesOverviewQuery} from '../grap
 import {WithQuery} from '../WithQuery';
 import {useTranslation} from 'react-i18next';
 import {distinctObjectArray} from './tools/uml/UmlMemberAllocation';
-import classNames from 'classnames';
 import {ExerciseLinkCard} from './ExerciseLinkCard';
+import classNames from 'classnames';
 
 interface InnerProps {
   tool: AllExesOverviewToolFragment;
@@ -35,28 +35,24 @@ function Inner({tool}: InnerProps): JSX.Element {
 
   return (
     <>
-      <h1 className="title is-3 has-text-centered">{t('tool')} {name}: {t('allExercises')}</h1>
+      <h1 className="mb-4 font-bold text-2xl text-center">{t('tool')} {name}: {t('allExercises')}</h1>
 
       {distinctTopicWithLevels.length > 0 && <section>
-        <h2 className="title is-3 has-text-centered">Filter</h2>
+        <h2 className="mb-4 font-bold text-2xl text-center">Filter</h2>
 
-        <div className="columns is-multiline">
+        <div className="grid grid-cols-5 gap-2">
           {distinctTopicWithLevels.map((topicWithLevel) =>
-            <div className="column is-one-fifth" key={topicWithLevel.topic.abbreviation}>
-              <button type="button" onClick={() => toggleFilter(topicWithLevel.topic.abbreviation)}
-                      className={classNames('button', 'is-fullwidth', {'is-link': filterAbbreviationsActivated.includes(topicWithLevel.topic.abbreviation)})}>
-                {topicWithLevel.topic.title}
-              </button>
-            </div>)}
+            <button key={topicWithLevel.topic.abbreviation} type="button" onClick={() => toggleFilter(topicWithLevel.topic.abbreviation)}
+                    className={classNames('p-2', 'rounded', 'w-full', filterAbbreviationsActivated.includes(topicWithLevel.topic.abbreviation) ? ['bg-blue-500', 'text-white'] : ['border', 'border-slate-500'])}>
+              {topicWithLevel.topic.title}
+            </button>)}
         </div>
       </section>}
 
-      <hr/>
+      <hr className="my-4"/>
 
-      <div className="columns is-multiline">
-        {filteredExercises.map((exercise) => <div className="column is-one-third-desktop" key={exercise.title}>
-          <ExerciseLinkCard exercise={exercise}/>
-        </div>)}
+      <div className="grid grid-cols-3 gap-2">
+        {filteredExercises.map((exercise) => <ExerciseLinkCard key={exercise.title} showCollection={true} exercise={exercise}/>)}
       </div>
     </>
   );
@@ -69,7 +65,7 @@ export function AllExercisesOverview({toolId}: { toolId: string }): JSX.Element 
   const allExercisesOverviewQuery = useAllExercisesOverviewQuery({variables: {toolId}});
 
   return (
-    <div className="container">
+    <div className="container mx-auto">
       <WithQuery query={allExercisesOverviewQuery}>
         {({tool}) => <Inner tool={tool}/>}
       </WithQuery>
