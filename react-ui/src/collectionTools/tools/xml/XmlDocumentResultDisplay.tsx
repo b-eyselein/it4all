@@ -1,4 +1,7 @@
 import {XmlDocumentResultFragment} from '../../../graphql';
+import {bgColors, textColors} from '../../../consts';
+import {useTranslation} from 'react-i18next';
+import classNames from 'classnames';
 
 interface IProps {
   result: XmlDocumentResultFragment;
@@ -6,23 +9,25 @@ interface IProps {
 
 export function XmlDocumentResultDisplay({result}: IProps): JSX.Element {
 
-  const isCorrect = result.errors.length === 0;
+  const {t} = useTranslation('common');
 
-  return (
-    <>
-      <p className={isCorrect ? 'has-text-dark-success' : 'has-text-danger'}>
-        Die Korrektur war {isCorrect ? '' : 'nicht'} erfolgreich. Es wurden {isCorrect ? 'keine' : result.errors.length} Fehler gefunden{isCorrect ? '.' : ':'}
-      </p>
+  return result.errors.length === 0
+    ? <div className={classNames('mt-2', 'p-2', 'rounded', bgColors.correct, 'text-white', 'text-center')}>{t('correctionSuccessful')}</div>
+    : (
+      <>
+        {/*<PointsNotification points={0} maxPoints={0}/>*/}
 
-      {!isCorrect && <div className="content">
-        <ul>
-          {result.errors.map((err, index) =>
-            <li className={err.errorType === 'WARNING' ? 'has-text-dark-warning' : 'has-text-danger'} key={index}>
-              <b>Fehler in Zeile {err.line}</b>: <code>{err.errorMessage}</code>
+        <p className={classNames('mt-2', 'mb-4', textColors.inCorrect)}>
+          {t('correctionNotSuccessful')}. {t('ErrorsFound_{{count}}', {count: result.errors.length})}:
+        </p>
+
+        <ul className="list-disc list-inside">
+          {result.errors.map(({errorType, errorMessage, line}, index) =>
+            <li key={index} className={classNames('my-2', errorType === 'WARNING' ? 'has-text-dark-warning' : 'has-text-danger')}>
+              <span className="font-bold">{t('errorInLine_{{line}}', {line})}</span>: <code>{errorMessage}</code>
             </li>
           )}
         </ul>
-      </div>}
-    </>
-  );
+      </>
+    );
 }

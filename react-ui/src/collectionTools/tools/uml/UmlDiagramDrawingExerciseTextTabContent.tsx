@@ -38,7 +38,7 @@ export function UmlDiagramDrawingExerciseTextTabContent({
   const childLinks: ChildLink[] = part === UmlExPart.DiagramDrawingHelp
     ? [{
       text: t('goToNextPart'),
-      classNames: classNames('button', 'is-fullwidth', corrected ? 'is-link' : 'is-dark'),
+      otherClassNames: classNames('button', 'is-fullwidth', corrected ? 'is-link' : 'is-dark'),
       to: `/${toolsUrlFragment}/${exercise.toolId}/${collectionsUrlFragment}/${exercise.collectionId}/${exercisesUrlFragment}/${exercise.exerciseId}/${partsUrlFragment}/memberAllocation`
     }]
     : [];

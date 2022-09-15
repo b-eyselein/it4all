@@ -10,7 +10,7 @@ import {Result} from 'parsimmon';
 import update from 'immutability-helper';
 import {generateBooleanFormula} from './boolModel/booleanFormulaGenerator';
 import {BoolTable, BoolTableColumn} from './BoolTable';
-import {correctBgColor, incorrectBgColor} from '../consts';
+import {bgColors} from '../consts';
 import {NewCard} from '../helpers/BulmaCard';
 
 interface IState {
@@ -67,8 +67,8 @@ export function BoolCreate(): JSX.Element {
     {
       node: learnerVariable,
       trClasses: (node, assignment) => ({
-        [incorrectBgColor]: state.corrected && !isCorrect(assignment),
-        [correctBgColor]: state.corrected && isCorrect(assignment),
+        [bgColors.inCorrect]: state.corrected && !isCorrect(assignment),
+        [bgColors.correct]: state.corrected && isCorrect(assignment),
         'text-white': state.corrected
       }),
       children: (node, assignment) => {

@@ -47,7 +47,7 @@ export function RegexExercise({exercise, content, oldSolution}: IProps): JSX.Ele
   const showHideHelpButton: ChildLink = {
     text: showInfo ? t('hideHelp') : t('showHelp'),
     to: () => setShowInfo((value) => !value),
-    classNames: 'button is-info is-fullwidth'
+    otherClassNames: 'button is-info is-fullwidth'
   };
 
   return (

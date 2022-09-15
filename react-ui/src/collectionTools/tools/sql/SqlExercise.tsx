@@ -12,7 +12,7 @@ import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 import {database} from '../../DexieTable';
 import {sql} from '@codemirror/lang-sql';
-import './SqlExercise.sass';
+import './SqlExercise.css';
 
 type IProps = ConcreteExerciseWithoutPartsProps<SqlExerciseContentFragment, string>;
 

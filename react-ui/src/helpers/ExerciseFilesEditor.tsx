@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import {ExerciseFileFragment} from '../graphql';
 import CodeMirror from '@uiw/react-codemirror';
 import {python} from '@codemirror/lang-python';
@@ -8,6 +7,7 @@ import {xml} from '@codemirror/lang-xml';
 import {sql} from '@codemirror/lang-sql';
 import {javascript} from '@codemirror/lang-javascript';
 import {LanguageSupport} from '@codemirror/language';
+import {TabPills} from './BulmaTabs';
 
 interface IProps {
   files: Workspace;
@@ -34,52 +34,43 @@ function getFileExtension(filename: string): string | undefined {
   }
 }
 
-function getExtensionForFileExtension(fileExtension: string): LanguageSupport | undefined {
+function getExtensionForFileExtension(fileExtension: string): LanguageSupport[] {
   switch (fileExtension) {
     case 'py':
-      return python();
+      return [python()];
     case 'css':
-      return css();
+      return [css()];
     case 'html':
-      return html();
+      return [html()];
     case 'xml':
-      return xml();
+      return [xml()];
     case 'sql':
-      return sql();
+      return [sql()];
     case 'js':
-      return javascript();
+      return [javascript()];
     default:
-      return undefined;
+      return [];
   }
 }
 
 export function ExerciseFilesEditor({files, activeFileName, setActiveFile, updateActiveFileContent}: IProps): JSX.Element {
 
   const activeFile: ExerciseFileFragment = files[activeFileName];
-
   const fileExtension = getFileExtension(activeFile.name);
 
-  const newExtension = fileExtension
+  const extensions = fileExtension
     ? getExtensionForFileExtension(fileExtension)
-    : undefined;
+    : [];
 
-  const extensions = newExtension ? [newExtension] : [];
+  const pills = Object.entries(files).map(([id, {name}]) => ({id, name}));
 
   return (
-    <>
-      <div className="tabs is-centered">
-        <ul>
-          {Object.values(files).map((file) =>
-            <li key={file.name} onClick={() => setActiveFile(file.name)} className={classNames({'is-active': file.name === activeFileName})}>
-              <a className={classNames({'has-text-grey-light': file.editable})} title={file.editable ? '' : 'Nicht editierbar'}>{file.name}</a>
-            </li>
-          )}
-        </ul>
-      </div>
+    <div>
+      <TabPills pills={pills} activePillId={activeFile.name} onClick={setActiveFile}/>
 
-      {/* options={getDefaultCodeMirrorEditorOptions(mode)} */}
-      <CodeMirror value={activeFile.content} height={'700px'} onChange={(ed) => updateActiveFileContent(ed)} extensions={extensions}/>
-    </>
+      <CodeMirror style={{fontSize: '16px'}} value={activeFile.content} height={'700px'} onChange={(ed) => updateActiveFileContent(ed)}
+                  extensions={extensions}/>
+    </div>
   );
 
 }

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import {CSSProperties} from 'react';
-import {correctBgColor, incorrectBgColor} from '../consts';
+import {bgColors} from '../consts';
 import {useTranslation} from 'react-i18next';
 
 interface IProps {
@@ -42,7 +42,7 @@ export function NaryNumberInput({labelContent, initialValue, checked, correct, r
         </div>
       </div>
 
-      {checked && <div className={classNames('my-4', 'p-2', 'rounded', 'text-center', 'text-white', correct ? correctBgColor : incorrectBgColor)}>
+      {checked && <div className={classNames('my-4', 'p-2', 'rounded', 'text-center', 'text-white', correct ? bgColors.correct : bgColors.inCorrect)}>
         {correct ? <span>&#10004; {t('solutionCorrect')}.</span> : <span>&#10008; {t('solutionNotCorrect')}.</span>}
       </div>}
     </div>

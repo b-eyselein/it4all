@@ -4,7 +4,7 @@ import {FieldsForLinkFragment} from '../graphql';
 import {collectionsUrlFragment, exercisesUrlFragment, toolsUrlFragment} from '../urls';
 import {useTranslation} from 'react-i18next';
 import {Tag} from '../helpers/Tag';
-import {correctBgColor} from '../consts';
+import {bgColors} from '../consts';
 
 interface IProps {
   exercise: FieldsForLinkFragment;
@@ -20,7 +20,7 @@ export function ExerciseLinkCard({exercise, showCollection}: IProps): JSX.Elemen
   const cardTitle = (
     <>
       {showCollection ? collectionId + '.' : ''}{exerciseId} {title}&nbsp;<FilledPoints filledPoints={difficulty.levelIndex}
-                                                                                   title={t('difficulty_{{title}}', {title: difficulty.title})}/>
+                                                                                        title={t('difficulty_{{title}}', {title: difficulty.title})}/>
     </>
   );
 
@@ -35,7 +35,7 @@ export function ExerciseLinkCard({exercise, showCollection}: IProps): JSX.Elemen
         <div className="grid grid-cols-2 gap-2">
           {parts.length === 0
             ? <span>&nbsp;</span>
-            : parts.map(({id, name, solved}) => <Tag key={id} otherClasses={{[correctBgColor]: solved}}>{name}</Tag>)}
+            : parts.map(({id, name, solved}) => <Tag key={id} otherClasses={{[bgColors.correct]: solved}}>{name}</Tag>)}
         </div>
 
         {topicsWithLevels.length > 0 && <div className="grid grid-cols-3 gap-2">

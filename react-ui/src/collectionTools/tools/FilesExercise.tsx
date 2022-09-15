@@ -2,12 +2,12 @@ import {useState} from 'react';
 import {ExerciseFilesEditor, Workspace, workspace} from '../../helpers/ExerciseFilesEditor';
 import {ExerciseControlButtons} from '../../helpers/ExerciseControlButtons';
 import {SampleSolutionTabContent} from '../SampleSolutionTabContent';
-import {BulmaTabs, Tabs} from '../../helpers/BulmaTabs';
-import {FilesSolution} from '../../graphql';
+import {NewTabs, Tabs} from '../../helpers/BulmaTabs';
+import {ExerciseFileFragment, FilesSolution} from '../../graphql';
 import {useTranslation} from 'react-i18next';
-import {ExerciseFileCard} from './ExerciseFileCard';
 import update from 'immutability-helper';
 import {IExerciseFile, IFilesSolution} from '../exerciseFile';
+import {NewCard} from '../../helpers/BulmaCard';
 
 interface IProps {
   exerciseDescription: JSX.Element;
@@ -17,6 +17,14 @@ interface IProps {
   correctionTabRender: JSX.Element;
   correct: (files: IExerciseFile[], onCorrected: () => void) => void;
   isCorrecting: boolean;
+}
+
+export function ExerciseFileCard({exerciseFile}: { exerciseFile: ExerciseFileFragment }): JSX.Element {
+  return (
+    <NewCard title={exerciseFile.name}>
+      <pre>{exerciseFile.content}</pre>
+    </NewCard>
+  );
 }
 
 interface IState {
@@ -50,6 +58,7 @@ export function FilesExercise({
     : defaultFiles;
 
   const {t} = useTranslation('common');
+  const [activeTabId, setActiveTabId] = useState<keyof Tabs>('exerciseText');
   const [state, setState] = useState<IState>({
     workspace: workspace(initialFiles),
     activeFile: initialFiles[0].name
@@ -65,40 +74,39 @@ export function FilesExercise({
     correct(Object.values(state.workspace), () => setActiveTabId('correction'));
   }
 
-
-  const exerciseDescriptionTabRender = <>
-    <div className="notification is-light-grey">{exerciseDescription}</div>
-
-    <ExerciseControlButtons isCorrecting={isCorrecting} correct={onCorrect} endLink={'./../..'}/>
-  </>;
-
-  const sampleSolutionTabRender = <SampleSolutionTabContent>
-    {() => sampleSolutions.map(({files}, index) => <div className="mb-3" key={index}>
-      {files.map((file) => <ExerciseFileCard exerciseFile={file} key={file.name}/>)}
-    </div>)}
-  </SampleSolutionTabContent>;
-
-  const tabs: Tabs = {
-    exerciseText: {name: t('exerciseDescription'), render: exerciseDescriptionTabRender},
-    correction: {name: t('correction'), render: correctionTabRender},
-    sampleSolutions: {name: t('sampleSolution_plural'), render: sampleSolutionTabRender}
-  };
-
-  const [activeTabId, setActiveTabId] = useState<keyof Tabs>(Object.keys(tabs)[0]);
-
   return (
-    <div className="container is-fluid">
-      <div className="columns">
-        <div className="column is-half-desktop">
-          <ExerciseFilesEditor files={state.workspace} activeFileName={state.activeFile}
-                               setActiveFile={(activeFile) => setState(({workspace}) => ({workspace, activeFile}))}
-                               updateActiveFileContent={updateActiveFileContent}/>
-        </div>
+    <div className="p-4 grid grid-cols-2 gap-2">
+      <ExerciseFilesEditor files={state.workspace} activeFileName={state.activeFile}
+                           setActiveFile={(activeFile) => setState(({workspace}) => ({workspace, activeFile}))}
+                           updateActiveFileContent={updateActiveFileContent}/>
 
-        <div className="column is-half-desktop">
-          <BulmaTabs tabs={tabs} activeTabId={activeTabId} setActiveTabId={setActiveTabId}/>
-        </div>
-      </div>
+      <NewTabs activeTabId={activeTabId} setActiveTabId={setActiveTabId}>
+        {
+          {
+            exerciseText: {
+              name: t('exerciseDescription'),
+              render: () => (
+                <>
+                  <div className="my-2 p-2 rounded bg-gray-200">{exerciseDescription}</div>
+
+                  <ExerciseControlButtons isCorrecting={isCorrecting} correct={onCorrect} endLink={'./../..'}/>
+                </>
+              )
+            },
+            correction: {name: t('correction'), render: correctionTabRender/*, disabled: !corrected*/},
+            sampleSolutions: {
+              name: t('sampleSolution_plural'),
+              render: () => (
+                <SampleSolutionTabContent>
+                  {() => sampleSolutions.map(({files}, index) => <div className="mb-3" key={index}>
+                    {files.map((file) => <ExerciseFileCard exerciseFile={file} key={file.name}/>)}
+                  </div>)}
+                </SampleSolutionTabContent>
+              )
+            }
+          }
+        }
+      </NewTabs>
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import {useState} from 'react';
+import {useTranslation} from 'react-i18next';
 
 interface IProps {
   children: () => JSX.Element[];
@@ -6,17 +7,16 @@ interface IProps {
 
 export function SampleSolutionTabContent({children}: IProps): JSX.Element {
 
+  const {t} = useTranslation('common');
   const [showSampleSolutions, setShowSampleSolutions] = useState(false);
 
   return (
-    <div>
-      <div className="buttons">
-        <button className="button is-primary is-fullwidth" onClick={() => setShowSampleSolutions((value) => !value)}>
-          Musterlösungen {showSampleSolutions ? 'ausblenden' : 'anzeigen'}
-        </button>
-      </div>
+    <>
+      <button className="mt-2 mb-4 p-2 rounded bg-cyan-500 w-full" onClick={() => setShowSampleSolutions((value) => !value)}>
+        {showSampleSolutions ? t('hideSampleSolutions') : t('showSampleSolutions')}
+      </button>
 
       {showSampleSolutions && children()}
-    </div>
+    </>
   );
 }
