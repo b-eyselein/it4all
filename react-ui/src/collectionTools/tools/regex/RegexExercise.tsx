@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {RegexExerciseContentFragment, useRegexCorrectionMutation} from '../../../graphql';
 import {RegexCheatSheet} from './RegexCheatSheet';
-import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
+import {NewTabs} from '../../../helpers/BulmaTabs';
 import {useTranslation} from 'react-i18next';
 import {RegexCorrection} from './RegexCorrection';
 import {StringSampleSolution} from '../StringSampleSolution';
@@ -17,6 +17,7 @@ export function RegexExercise({exercise, content, oldSolution}: IProps): JSX.Ele
   const {t} = useTranslation('common');
   const [showInfo, setShowInfo] = useState(false);
   const [solution, setSolution] = useState(oldSolution ? oldSolution : '');
+  const [activeTabId, setActiveTabId] = useState('correction');
 
   const [correctExercise, correctionMutationResult] = useRegexCorrectionMutation();
 
@@ -29,20 +30,6 @@ export function RegexExercise({exercise, content, oldSolution}: IProps): JSX.Ele
       .then(() => setActiveTabId('correction'))
       .catch((error) => console.error(error));
   }
-
-  const tabs: Tabs = {
-    correction: {name: t('correction'), render: <RegexCorrection mutationResult={correctionMutationResult}/>},
-    sampleSolution: {
-      name: t('sampleSolution_plural'),
-      render: (
-        <SampleSolutionTabContent>
-          {() => content.regexSampleSolutions.map((sample, index) => <StringSampleSolution sample={sample} key={index}/>)}
-        </SampleSolutionTabContent>
-      )
-    }
-  };
-
-  const [activeTabId, setActiveTabId] = useState<keyof Tabs>(Object.keys(tabs)[0]);
 
   const showHideHelpButton: ChildLink = {
     text: showInfo ? t('hideHelp') : t('showHelp'),
@@ -70,7 +57,19 @@ export function RegexExercise({exercise, content, oldSolution}: IProps): JSX.Ele
 
       {showInfo && <RegexCheatSheet/>}
 
-      <BulmaTabs tabs={tabs} activeTabId={activeTabId} setActiveTabId={setActiveTabId}/>
+      <NewTabs activeTabId={activeTabId} setActiveTabId={setActiveTabId}>
+        {{
+          correction: {name: t('correction'), render: <RegexCorrection mutationResult={correctionMutationResult}/>},
+          sampleSolution: {
+            name: t('sampleSolution_plural'),
+            render: (
+              <SampleSolutionTabContent>
+                {() => content.regexSampleSolutions.map((sample, index) => <StringSampleSolution sample={sample} key={index}/>)}
+              </SampleSolutionTabContent>
+            )
+          }
+        }}
+      </NewTabs>
     </div>
   );
 }

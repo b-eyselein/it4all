@@ -40,18 +40,23 @@ function Inner({toolId, collectionId, exerciseId, tool}: InnerProps): JSX.Elemen
       <div className="my-4 p-4 rounded bg-slate-200" dangerouslySetInnerHTML={{__html: text}}/>
 
       <WithCurrentUser noLoginOption={noLoginOption}>
-        {() => parts.length === 0
-          ? <Link className="button is-link is-fullwidth" to="./solve">{t('solve')}</Link>
-          : (
-            <div className="text-center">
-              {parts.filter(({isEntryPart}) => isEntryPart).map(({id, name, solved}) =>
-                <Link key={id} to={`./parts/${id}`} title={solved ? t('partAlreadySolved') : undefined}
-                      className={classNames('mx-2', 'p-2', 'rounded', solved ? bgColors.correct : 'bg-blue-500', 'text-white', 'text-center')}>
-                  {name}{solved && <span> &#10004;</span>}
-                </Link>
-              )}
-            </div>
-          )}
+        {() => <div className="text-center">
+          {parts.length === 0
+            ? (
+              <Link className={classNames('mx-2', 'p-2', 'rounded', /*solved ? bgColors.correct :*/ 'bg-blue-500', 'text-white', 'text-center')} to="./solve">
+                {t('solve')}
+              </Link>
+            ) : (
+              <>
+                {parts.filter(({isEntryPart}) => isEntryPart).map(({id, name, solved}) =>
+                  <Link key={id} to={`./parts/${id}`} title={solved ? t('partAlreadySolved') : undefined}
+                        className={classNames('mx-2', 'p-2', 'rounded', solved ? bgColors.correct : 'bg-blue-500', 'text-white', 'text-center')}>
+                    {name}{solved && <span> &#10004;</span>}
+                  </Link>
+                )}
+              </>
+            )}
+        </div>}
       </WithCurrentUser>
     </>
   );

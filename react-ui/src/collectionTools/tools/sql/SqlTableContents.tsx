@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {SqlQueryResultFragment} from '../../../graphql';
 import classNames from 'classnames';
 import {SqlQueryResultTable} from './SqlQueryResultTable';
+import {NewCard} from '../../../helpers/BulmaCard';
 
 interface IProps {
   tables: SqlQueryResultFragment[];
@@ -19,27 +20,18 @@ export function SqlTableContents({tables}: IProps): JSX.Element {
 
   return (
     <>
-      <div className="columns is-multiline">
+      <div className="my-4 grid grid-cols-4 gap-2">
         {tables.map((dbContent, index) =>
-          <div className="column is-one-quarter-desktop" key={index}>
-            <button className={classNames('button', 'is-fullwidth', {'is-info': dbContent === shownDbContent})} onClick={() => activateModal(dbContent)}>
-              {dbContent.tableName}
-            </button>
-          </div>
+          <button key={index} onClick={() => activateModal(dbContent)}
+                  className={classNames('p-2', 'rounded', 'w-full', dbContent === shownDbContent ? ['bg-blue-500', 'text-white'] : ['border', 'border-slate-500',])}>
+            {dbContent.tableName}
+          </button>
         )}
-
       </div>
 
-      {shownDbContent && <div className="card">
-        <header className="card-header">
-          <p className="card-header-title">{shownDbContent.tableName}</p>
-        </header>
-        <section className="card-content">
-          <div className=" table-container">
-            <SqlQueryResultTable queryResult={shownDbContent}/>
-          </div>
-        </section>
-      </div>}
+      {shownDbContent && <NewCard title={shownDbContent.tableName}>
+        <SqlQueryResultTable queryResult={shownDbContent}/>
+      </NewCard>}
     </>
   );
 }

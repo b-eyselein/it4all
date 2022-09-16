@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {ExerciseFilesEditor, Workspace, workspace} from '../../helpers/ExerciseFilesEditor';
 import {ExerciseControlButtons} from '../../helpers/ExerciseControlButtons';
 import {SampleSolutionTabContent} from '../SampleSolutionTabContent';
-import {NewTabs, Tabs} from '../../helpers/BulmaTabs';
+import {NewTabs} from '../../helpers/BulmaTabs';
 import {ExerciseFileFragment, FilesSolution} from '../../graphql';
 import {useTranslation} from 'react-i18next';
 import update from 'immutability-helper';
@@ -58,7 +58,7 @@ export function FilesExercise({
     : defaultFiles;
 
   const {t} = useTranslation('common');
-  const [activeTabId, setActiveTabId] = useState<keyof Tabs>('exerciseText');
+  const [activeTabId, setActiveTabId] = useState('exerciseText');
   const [state, setState] = useState<IState>({
     workspace: workspace(initialFiles),
     activeFile: initialFiles[0].name
@@ -81,31 +81,29 @@ export function FilesExercise({
                            updateActiveFileContent={updateActiveFileContent}/>
 
       <NewTabs activeTabId={activeTabId} setActiveTabId={setActiveTabId}>
-        {
-          {
-            exerciseText: {
-              name: t('exerciseDescription'),
-              render: () => (
-                <>
-                  <div className="my-2 p-2 rounded bg-gray-200">{exerciseDescription}</div>
+        {{
+          exerciseText: {
+            name: t('exerciseDescription'),
+            render: () => (
+              <>
+                <div className="my-2 p-2 rounded bg-gray-200">{exerciseDescription}</div>
 
-                  <ExerciseControlButtons isCorrecting={isCorrecting} correct={onCorrect} endLink={'./../..'}/>
-                </>
-              )
-            },
-            correction: {name: t('correction'), render: correctionTabRender/*, disabled: !corrected*/},
-            sampleSolutions: {
-              name: t('sampleSolution_plural'),
-              render: () => (
-                <SampleSolutionTabContent>
-                  {() => sampleSolutions.map(({files}, index) => <div className="mb-3" key={index}>
-                    {files.map((file) => <ExerciseFileCard exerciseFile={file} key={file.name}/>)}
-                  </div>)}
-                </SampleSolutionTabContent>
-              )
-            }
+                <ExerciseControlButtons isCorrecting={isCorrecting} correct={onCorrect} endLink={'./../..'}/>
+              </>
+            )
+          },
+          correction: {name: t('correction'), render: correctionTabRender/*, disabled: !corrected*/},
+          sampleSolutions: {
+            name: t('sampleSolution_plural'),
+            render: () => (
+              <SampleSolutionTabContent>
+                {() => sampleSolutions.map(({files}, index) => <div className="mb-3" key={index}>
+                  {files.map((file) => <ExerciseFileCard exerciseFile={file} key={file.name}/>)}
+                </div>)}
+              </SampleSolutionTabContent>
+            )
           }
-        }
+        }}
       </NewTabs>
     </div>
   );

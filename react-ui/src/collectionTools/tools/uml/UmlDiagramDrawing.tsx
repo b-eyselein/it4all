@@ -9,7 +9,7 @@ import {
   UmlMultiplicity,
   useUmlCorrectionMutation
 } from '../../../graphql';
-import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
+import {NewTabs} from '../../../helpers/BulmaTabs';
 import {useTranslation} from 'react-i18next';
 import {GRID_SIZE, PAPER_HEIGHT} from './model/uml-consts';
 import {addAssociationToGraph, addClassToGraph, addImplementationToGraph, findFreePositionForNextClass} from './model/class-diag-helpers';
@@ -59,7 +59,7 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
   const {t} = useTranslation('common');
   const canvas = useRef<HTMLDivElement>(null);
 
-  const [activeTab, setActiveTab] = useState<keyof Tabs>('exerciseText');
+  const [activeTab, setActiveTab] = useState('exerciseText');
   const [state, setState] = useState<IState>({});
 
   const [correctExercise, correctionMutationResult] = useUmlCorrectionMutation();
@@ -215,29 +215,6 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
       .catch((error) => console.error(error));
   }
 
-  const tabs: Tabs = {
-    exerciseText: {
-      name: t('exerciseText'),
-      render: (
-        <UmlDiagramDrawingExerciseTextTabContent
-          exercise={exercise}
-          content={content}
-          correct={() => correct()}
-          creatableClassDiagramObjects={creatableClassDiagramObjects}
-          onClassClick={(name) => console.warn(name)} toggle={toggle}
-          selectedCreatableObject={state.selectedCreatableObject}
-          isCorrecting={correctionMutationResult.called && correctionMutationResult.loading}
-          part={part}/>
-      )
-    },
-    correction: {
-      name: t('correction'),
-      render: <WithQuery query={correctionMutationResult}>
-        {(data) => <UmlDiagramDrawingCorrectionTabContent corrResult={data}/>}
-      </WithQuery>
-    }
-  };
-
   return (
     <div className="container is-fluid">
 
@@ -258,7 +235,30 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
 
         <div className="column">
 
-          <BulmaTabs tabs={tabs} activeTabId={activeTab} setActiveTabId={setActiveTab}/>
+          <NewTabs activeTabId={activeTab} setActiveTabId={setActiveTab}>
+            {{
+              exerciseText: {
+                name: t('exerciseText'),
+                render: (
+                  <UmlDiagramDrawingExerciseTextTabContent
+                    exercise={exercise}
+                    content={content}
+                    correct={() => correct()}
+                    creatableClassDiagramObjects={creatableClassDiagramObjects}
+                    onClassClick={(name) => console.warn(name)} toggle={toggle}
+                    selectedCreatableObject={state.selectedCreatableObject}
+                    isCorrecting={correctionMutationResult.called && correctionMutationResult.loading}
+                    part={part}/>
+                )
+              },
+              correction: {
+                name: t('correction'),
+                render: <WithQuery query={correctionMutationResult}>
+                  {(data) => <UmlDiagramDrawingCorrectionTabContent corrResult={data}/>}
+                </WithQuery>
+              }
+            }}
+          </NewTabs>
 
           {state.editedClass && <UmlClassEdit editedClass={state.editedClass} cancelEdit={() => setState((state) => ({...state, editedClass: undefined}))}/>}
 

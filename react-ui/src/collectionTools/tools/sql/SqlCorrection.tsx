@@ -44,29 +44,22 @@ function SelectAdditionalComparisonDisplay({addComp}: { addComp: SelectAdditiona
 
 export function SqlCorrection({mutationResult}: IProps): JSX.Element {
 
-  // notCalledMessage={<></>}
-
   return (
     <WithQuery query={mutationResult}>
       {({sqlExercise}) => <WithNullableNavigate t={sqlExercise}>
         {({
-            correct: {
-              result: {
-                staticComparison: {
-                  columnComparison,
-                  tableComparison,
-                  joinExpressionComparison,
-                  whereComparison,
-                  additionalComparisons: {selectComparisons, insertComparison}
-                }
-              }/*,
-              solutionId,
-              proficienciesUpdated
-              */
+          correct: {
+            result: {
+              staticComparison: {
+                columnComparison,
+                tableComparison,
+                joinExpressionComparison,
+                whereComparison,
+                additionalComparisons: {selectComparisons, insertComparison}
+              }
             }
-          }) => <>
-
-          {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
+          }
+        }) => <>
 
           {/*<PointsNotification points={result.points} maxPoints={result.maxPoints}/>*/}
 

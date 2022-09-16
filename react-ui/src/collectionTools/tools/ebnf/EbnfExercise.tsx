@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {ConcreteExerciseWithoutPartsProps} from '../../Exercise';
 import {EbnfExerciseContentFragment, EbnfGrammarInput, EbnfRuleInput} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
-import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
+import {NewTabs} from '../../../helpers/BulmaTabs';
 import {EbnfCorrection} from './EbnfCorrection';
 import {SampleSolutionTabContent} from '../../SampleSolutionTabContent';
 import {ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
@@ -40,25 +40,10 @@ export function EbnfExercise({exercise, content, /*oldSolution*/}: IProps): JSX.
   const {t} = useTranslation('common');
 
   const [isCorrecting, setIsCorrecting] = useState(false);
-
+  const [activeTabId, setActiveTabId] = useState('correction');
   const [state, setState] = useState<IState>({solution: minimalGrammar, variables: [minimalGrammar.startSymbol], terminals: content.predefinedTerminals || []});
 
-  const tabs: Tabs = {
-    correction: {name: t('correction'), render: <EbnfCorrection/>},
-    sampleSolution: {
-      name: t('sampleSolution_plural'),
-      render: (
-        <SampleSolutionTabContent>
-          {() => content.sampleSolutions.map((s, i) => <div key={i}>TODO!</div>)}
-        </SampleSolutionTabContent>
-      )
-    }
-  };
-
-  const [activeTabId, setActiveTabId] = useState<keyof Tabs>(Object.keys(tabs)[0]);
-
   function correct(): void {
-
     const {startSymbol, rules} = state.solution;
 
     const solution: EbnfGrammarInput = {
@@ -196,7 +181,19 @@ export function EbnfExercise({exercise, content, /*oldSolution*/}: IProps): JSX.
 
       <ExerciseControlButtons isCorrecting={isCorrecting} correct={correct} endLink={`./../../${exercise.exerciseId}`}/>
 
-      <BulmaTabs tabs={tabs} activeTabId={activeTabId} setActiveTabId={setActiveTabId}/>
+      <NewTabs activeTabId={activeTabId} setActiveTabId={setActiveTabId}>
+        {{
+          correction: {name: t('correction'), render: <EbnfCorrection/>},
+          sampleSolution: {
+            name: t('sampleSolution_plural'),
+            render: (
+              <SampleSolutionTabContent>
+                {() => content.sampleSolutions.map((s, i) => <div key={i}>TODO!</div>)}
+              </SampleSolutionTabContent>
+            )
+          }
+        }}
+      </NewTabs>
 
     </div>
   );

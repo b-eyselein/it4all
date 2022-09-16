@@ -1,47 +1,5 @@
 import classNames from 'classnames';
 
-export interface Tabs {
-  [key: string]: {
-    name: string;
-    render: JSX.Element | (() => JSX.Element);
-    disabled?: boolean;
-  };
-}
-
-interface IProps {
-  tabs: Tabs;
-  activeTabId: keyof Tabs;
-  setActiveTabId: (id: keyof Tabs) => void;
-}
-
-/**
- * @deprecated
- *
- * @param tabs
- * @param activeTabId
- * @param setActiveTabId
- * @constructor
- */
-export function BulmaTabs({tabs, activeTabId, setActiveTabId}: IProps): JSX.Element {
-
-  const activeTab = tabs[activeTabId].render;
-
-  return (
-    <div>
-      <div className="tabs is-centered">
-        <ul>
-          {Object.entries(tabs).map(([id, {name}]) =>
-            <li className={classNames({'is-active': activeTabId === id})} key={id}>
-              <a onClick={() => setActiveTabId(id)}>{name}</a>
-            </li>
-          )}
-        </ul>
-      </div>
-      {typeof activeTab === 'function' ? activeTab() : activeTab}
-    </div>
-  );
-}
-
 interface TabPillProps {
   pills: {
     id: string;
@@ -69,9 +27,15 @@ export function TabPills({pills, activePillId, onClick}: TabPillProps): JSX.Elem
 }
 
 interface NewTabsProps {
-  children: Tabs;
-  activeTabId: keyof Tabs;
-  setActiveTabId: (id: keyof Tabs) => void;
+  children: {
+    [key: string]: {
+      name: string;
+      render: JSX.Element | (() => JSX.Element);
+      disabled?: boolean;
+    };
+  };
+  activeTabId: string;
+  setActiveTabId: (id: string) => void;
 }
 
 export function NewTabs({children, activeTabId, setActiveTabId}: NewTabsProps): JSX.Element {

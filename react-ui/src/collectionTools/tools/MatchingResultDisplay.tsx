@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {MatchType} from '../../graphql';
 import classNames from 'classnames';
-import {HiChevronDown, HiChevronRight} from 'react-icons/hi';
+import {textColors} from '../../consts';
 
 export interface GenericMatch<T> {
   matchType: MatchType;
@@ -38,25 +38,23 @@ export function MatchingResultDisplay<T, M extends GenericMatch<T>>(iprops: IPro
   const [displayContent, setDisplayContent] = useState(!matchingResultSuccessful);
 
   return (
-    <>
-      <h3 className={classNames('subtitle', 'is-5', matchingResultSuccessful ? 'has-text-dark-success' : 'has-text-danger')}>
-        <span onClick={() => setDisplayContent((value) => !value)}>{displayContent ? <HiChevronDown/> : <HiChevronRight/>}</span> &nbsp;
+    <div className="my-4">
+      <h3 className={classNames('text-xl', matchingResultSuccessful ? textColors.correct : textColors.inCorrect)}
+          onClick={() => setDisplayContent((value) => !value)}>
+        {displayContent ? <span>&#x2228;</span> : <span>&#xff1e;</span>}
+        &nbsp;
         Der Vergleich der {comparedItemPluralName} war {matchingResultSuccessful ? '' : ' nicht'} erfolgreich.
       </h3>
 
-      {displayContent && <div className="content">
-        <ul>
+      {displayContent && <ul className="ml-4 list-disc list-inside">
+        {allMatches.map((m, index) => <li key={index} className={classNames('my-2', {[textColors.correct]: m.matchType === MatchType.SuccessfulMatch})}>
+          {describeMatch(m)}
+        </li>)}
 
-          {allMatches.map((m, index) => <li key={index} className={classNames({'has-text-dark-success': m.matchType === MatchType.SuccessfulMatch})}>
-            {describeMatch(m)}
-          </li>)}
+        {notMatchedForUser.map((item, index) => <li className={classNames('my-2', textColors.inCorrect)} key={index}>{describeNotMatchedItem(item)} ist falsch.</li>)}
 
-          {notMatchedForUser.map((item, index) => <li className="has-text-danger" key={index}>{describeNotMatchedItem(item)} ist falsch.</li>)}
-
-          {notMatchedForSample.map((item, index) => <li className="has-text-danger" key={index}>{describeNotMatchedItem(item)} fehlt.</li>)}
-
-        </ul>
-      </div>}
-    </>
+        {notMatchedForSample.map((item, index) => <li className={classNames('my-2', textColors.inCorrect)} key={index}>{describeNotMatchedItem(item)} fehlt.</li>)}
+      </ul>}
+    </div>
   );
 }

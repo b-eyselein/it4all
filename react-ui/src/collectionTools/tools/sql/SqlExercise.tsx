@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {SqlExecutionResultFragment, SqlExerciseContentFragment, useSqlCorrectionMutation} from '../../../graphql';
 import {useTranslation} from 'react-i18next';
 import CodeMirror from '@uiw/react-codemirror';
-import {BulmaTabs, Tabs} from '../../../helpers/BulmaTabs';
+import {NewTabs} from '../../../helpers/BulmaTabs';
 import {SqlTableContents} from './SqlTableContents';
 import {SqlCorrection} from './SqlCorrection';
 import {StringSampleSolution} from '../StringSampleSolution';
@@ -20,6 +20,7 @@ export function SqlExercise({exercise, content, oldSolution}: IProps): JSX.Eleme
 
   const {t} = useTranslation('common');
   const [solution, setSolution] = useState('');
+  const [activeTabId, setActiveTabId] = useState('databaseContent');
   const [correctExercise, correctionMutationResult] = useSqlCorrectionMutation();
 
   const correcting = correctionMutationResult.called && correctionMutationResult.loading;
@@ -36,40 +37,45 @@ export function SqlExercise({exercise, content, oldSolution}: IProps): JSX.Eleme
       .catch((error) => console.error(error));
   }
 
-  const tabs: Tabs = {
-    databaseContent: {name: t('databaseContent'), render: <SqlTableContents tables={content.sqlDbContents}/>},
-    correction: {name: t('correction'), render: <SqlCorrection mutationResult={correctionMutationResult}/>},
-    sampleSolution: {
-      name: t('sampleSolution_plural'),
-      render: (
-        <SampleSolutionTabContent>
-          {() => content.sqlSampleSolutions.map((sample) => <StringSampleSolution sample={sample} key={sample}/>)}
-        </SampleSolutionTabContent>
-      )
-    }
-  };
-
-  const [activeTabId, setActiveTabId] = useState<keyof Tabs>(Object.keys(tabs)[0]);
-
   return (
-    <div className="container is-fluid">
+    <div className="p-4">
 
-      <div className="columns">
-        <div className="column is-two-fifths-desktop">
-          <h1 className="title is-3 has-text-centered">{t('exerciseText')}</h1>
-          <div className="notification is-light-grey">{exercise.text}</div>
+      <div className="grid grid-cols-5 gap-2">
 
-          <h1 className="title is-4 has-text-centered">{t('query')}</h1>
+        <div className="col-span-2">
+          <h1 className="mb-4 font-bold text-xl text-center">{t('exerciseText')}</h1>
+          <div className="p-4 rounded bg-slate-200">{exercise.text}</div>
 
-          {/* options={getDefaultCodeMirrorEditorOptions('sql')} */}
-          <CodeMirror value={oldSolution ? oldSolution : solution} height={'200px'} onChange={(ed) => setSolution(ed)} extensions={[sql()]}/>
+          <h1 className="my-4 font-bold text-xl text-center">{t('query')}</h1>
+
+          <CodeMirror value={oldSolution || solution} height={'200px'} onChange={setSolution} extensions={[sql()]}/>
 
           <ExerciseControlButtons isCorrecting={correcting} correct={correct} endLink={`./../../${exercise.exerciseId}`}/>
         </div>
 
-        <div className="column">
-          <BulmaTabs tabs={tabs} activeTabId={activeTabId} setActiveTabId={setActiveTabId}/>
+        <div className="col-span-3">
+          <NewTabs activeTabId={activeTabId} setActiveTabId={setActiveTabId}>
+            {{
+              databaseContent: {
+                name: t('databaseContent'),
+                render: <SqlTableContents tables={content.sqlDbContents}/>
+              },
+              correction: {
+                name: t('correction'),
+                render: <SqlCorrection mutationResult={correctionMutationResult}/>
+              },
+              sampleSolution: {
+                name: t('sampleSolution_plural'),
+                render: (
+                  <SampleSolutionTabContent>
+                    {() => content.sqlSampleSolutions.map((sample) => <StringSampleSolution sample={sample} key={sample}/>)}
+                  </SampleSolutionTabContent>
+                )
+              }
+            }}
+          </NewTabs>
         </div>
+
       </div>
 
       {executionResult && <SqlExecutionResultDisplay queryResult={executionResult}/>}
