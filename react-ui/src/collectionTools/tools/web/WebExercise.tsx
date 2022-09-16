@@ -3,11 +3,12 @@ import {FilesSolutionInput, useWebCorrectionMutation, WebExerciseContentFragment
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {PointsNotification} from '../../../helpers/PointsNotification';
-import {HtmlTaskResultDisplay} from './HtmlTaskResultDisplay';
 import {JsTaskResultDisplay} from './JsTaskResultDisplay';
 import {database} from '../../DexieTable';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
 import {IExerciseFile} from '../../exerciseFile';
+import {textColors} from '../../../consts';
+import {ElementSpecResultDisplay} from './ElementSpecResultDisplay';
 
 type IProps = ConcreteExerciseWithPartsProps<WebExerciseContentFragment, FilesSolutionInput>;
 
@@ -31,7 +32,7 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
 
   function correct(files: IExerciseFile[], onCorrect: () => void): void {
     const solution: FilesSolutionInput = {
-      files: files.map(({name, content, /*fileType,*/ editable}) => ({name, content, /*fileType,*/ editable}))
+      files: files.map(({name, content, editable}) => ({name, content, editable}))
     };
 
     database.upsertSolutionWithParts(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
@@ -44,29 +45,30 @@ export function WebExercise({exercise, content, partId, oldSolution}: IProps): J
   const correctionTabRender = (
     <WithQuery query={correctionMutationResult}>
       {({webExercise}) => <WithNullableNavigate t={webExercise}>
-        {({correct: {result/*, solutionId, proficienciesUpdated*/}}) => <>
-          {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
-
+        {({correct: {result/*, solutionId */}}) => <>
           <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 
-          <div className="content my-3">
-            {result.gradedHtmlTaskResults.length > 0 && <ul>
-              {result.gradedHtmlTaskResults.map((htmlTaskResult, index) =>
-                <li key={index}>
-                  <HtmlTaskResultDisplay htmlResult={htmlTaskResult}/>
-                </li>
-              )}
+          {result.gradedHtmlTaskResults.length > 0 &&
+            <ul className="my-3 list-disc list-inside">
+              {result.gradedHtmlTaskResults.map(({id, elementSpecResult}, index) =>
+                <li key={index} className="my-4">
+                  <span className={elementSpecResult.isCorrect ? textColors.correct : textColors.inCorrect}>
+                    ({elementSpecResult.points} / {elementSpecResult.maxPoints} P) Teilaufgabe {id} ist {elementSpecResult.isCorrect ? '' : 'nicht'} korrekt:
+                  </span>
+
+                  <div className="ml-4">
+                    <ElementSpecResultDisplay elementSpecResult={elementSpecResult}/>
+                  </div>
+                </li>)}
             </ul>}
 
-            {result.gradedJsTaskResults.length > 0 && <ul>
-              {result.gradedJsTaskResults.map((jsResult, index) =>
-                <li key={index}>
-                  <JsTaskResultDisplay jsResult={jsResult}/>
-                </li>
-              )}
-            </ul>
-            }
-          </div>
+          {result.gradedJsTaskResults.length > 0 && <ul className="my-3 list-disc list-inside">
+            {result.gradedJsTaskResults.map((jsResult, index) =>
+              <li key={index} className="my-4">
+                <JsTaskResultDisplay jsResult={jsResult}/>
+              </li>
+            )}
+          </ul>}
 
         </>}
       </WithNullableNavigate>}

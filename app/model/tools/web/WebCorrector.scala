@@ -15,20 +15,23 @@ object WebCorrector {
 
   // HtmlElementSpec
 
-  private def evaluateHtmlElementSpec(
-    elementSpec: WebElementSpec,
-    searchContext: SearchContext
-  ): ElementSpecResult = findElementsByXPath(searchContext, elementSpec.xpathQuery) match {
-    case Nil => NoElementFoundElementSpecResult(elementSpec)
+  private def evaluateHtmlElementSpec(elementSpec: WebElementSpec, searchContext: SearchContext): ElementSpecResult = {
 
-    case foundElement :: Nil =>
-      val attrResults = elementSpec.attributes.toSeq.map { case (key, value) => evaluateAttribute(key, value, foundElement) }
+    val WebElementSpec(xpathQuery, _ /* awaitedTagName */, awaitedTextContent, attributes) = elementSpec
 
-      val textResult = elementSpec.awaitedTextContent.map(evaluateTextContent(_, foundElement))
+    findElementsByXPath(searchContext, xpathQuery) match {
+      case Nil => NoElementFoundElementSpecResult(elementSpec)
 
-      ElementFoundElementSpecResult(elementSpec, foundElement, textResult, attrResults)
+      case foundElement :: Nil =>
+        ElementFoundElementSpecResult(
+          elementSpec,
+          foundElement,
+          textContentResult = awaitedTextContent.map { evaluateTextContent(_, foundElement) },
+          attributeResults = attributes.toSeq.map { case (key, value) => evaluateAttribute(key, value, foundElement) }
+        )
 
-    case other => TooManyElementsFoundElementSpecResult(elementSpec, other.size)
+      case other => TooManyElementsFoundElementSpecResult(elementSpec, other.size)
+    }
   }
 
   private def evaluateTextContent(awaitedContent: String, element: WebElement): TextContentResult =
@@ -65,37 +68,24 @@ object WebCorrector {
   def evaluateHtmlTask(htmlTask: HtmlTask, searchContext: SearchContext): HtmlTaskResult =
     HtmlTaskResult(htmlTask, evaluateHtmlElementSpec(htmlTask.elementSpec, searchContext))
 
-  def evaluateJsTask(jsTask: JsTask, searchContext: SearchContext): JsTaskResult = {
-
-    val preConditionResults = jsTask.preConditions.map(evaluateHtmlElementSpec(_, searchContext))
-
-    val actionResult = performAction(jsTask.action, searchContext)
-
-    val postConditionResults = jsTask.postConditions.map(evaluateHtmlElementSpec(_, searchContext))
-
-    JsTaskResult(jsTask, preConditionResults, actionResult, postConditionResults)
-  }
-
-  // Helper method
-
-  private def getDriverWithUrl(url: String): Try[HtmlUnitDriver] = Try {
-    val driver = new HtmlUnitDriver(true)
-    driver.get(url)
-    driver
-  }
+  def evaluateJsTask(jsTask: JsTask, searchContext: SearchContext): JsTaskResult = JsTaskResult(
+    jsTask,
+    preResults = jsTask.preConditions.map(evaluateHtmlElementSpec(_, searchContext)),
+    actionResult = performAction(jsTask.action, searchContext),
+    postResults = jsTask.postConditions.map(evaluateHtmlElementSpec(_, searchContext))
+  )
 
   // complete site spec
 
-  def evaluateSiteSpec(baseUrl: String, siteSpec: SiteSpec): Try[SiteSpecResult] = {
-    val url = s"$baseUrl/${siteSpec.fileName}"
+  def evaluateSiteSpec(baseUrl: String, siteSpec: SiteSpec): Try[SiteSpecResult] = Try {
+    val driver = new HtmlUnitDriver(true)
 
-    getDriverWithUrl(url) map { driver =>
-      val htmlTaskResults = siteSpec.htmlTasks.map(evaluateHtmlTask(_, driver))
+    driver.get(s"$baseUrl/${siteSpec.fileName}")
 
-      val jsTaskResults = siteSpec.jsTasks.map(evaluateJsTask(_, driver))
-
-      result.SiteSpecResult(htmlTaskResults, jsTaskResults)
-    }
+    SiteSpecResult(
+      htmlResults = siteSpec.htmlTasks.map(evaluateHtmlTask(_, driver)),
+      jsResults = siteSpec.jsTasks.map(evaluateJsTask(_, driver))
+    )
   }
 
 }

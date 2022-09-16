@@ -1,6 +1,7 @@
 import {GradedJsTaskResultFragment, JsActionType} from '../../../graphql';
 import {ElementSpecResultDisplay} from './ElementSpecResultDisplay';
 import {useTranslation} from 'react-i18next';
+import {textColors} from '../../../consts';
 
 interface IProps {
   jsResult: GradedJsTaskResultFragment;
@@ -14,7 +15,7 @@ export function JsTaskResultDisplay({jsResult}: IProps): JSX.Element {
 
 
   if (points === maxPoints) {
-    return <span className="has-text-success">Test {id} war erfolgreich.</span>;
+    return <span className={textColors.correct}>Test {id} war erfolgreich.</span>;
   }
 
   const {actionPerformed, jsAction} = gradedJsActionResult;
@@ -25,10 +26,9 @@ export function JsTaskResultDisplay({jsResult}: IProps): JSX.Element {
     ? <span>Klicke auf Element mit XPath Query <code>${jsAction.xpathQuery}</code></span>
     : <span>Sende Keys &quot;${keysToSend || ''}&quot; an Element mit XPath Query &quot;{jsAction.xpathQuery}&quot;</span>;
 
-
   return (
     <>
-      <span className="has-text-danger">({points} / {maxPoints}) Test {id} war nicht erfolgreich</span>
+      <span className={textColors.inCorrect}>({points} / {maxPoints}) Test {id} war nicht erfolgreich</span>
 
       <ul>
         <li>
@@ -37,7 +37,7 @@ export function JsTaskResultDisplay({jsResult}: IProps): JSX.Element {
           {gradedPreResults.map((r, index) => <ElementSpecResultDisplay key={index} elementSpecResult={r}/>)}
         </li>
 
-        <li className={actionPerformed ? 'has-text-success' : 'has-text-danger'}>{actionDescription}</li>
+        <li className={actionPerformed ? textColors.correct : textColors.inCorrect}>{actionDescription}</li>
 
         <li>
           {t('postConditions')}

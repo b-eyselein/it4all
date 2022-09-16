@@ -5,7 +5,6 @@ import better.files.File.OpenOptions
 import initialData.InitialData
 import initialData.web.WebInitialData
 import model._
-import model.graphql.FilesSolutionToolGraphQLModelBasics
 import model.points._
 import model.tools._
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
@@ -45,11 +44,7 @@ object WebTool extends ToolWithParts("web", "Web") {
 
   // Correction
 
-  private def onDriverGetSuccess(
-    exContent: WebExerciseContent,
-    part: WebExPart,
-    driver: HtmlUnitDriver
-  ): WebResult = part match {
+  private def onDriverGetSuccess(exContent: WebExerciseContent, part: WebExPart, driver: HtmlUnitDriver): WebResult = part match {
     case WebExPart.HtmlPart =>
       val gradedHtmlTaskResults: Seq[GradedHtmlTaskResult] = exContent.siteSpec.htmlTasks
         .map(WebCorrector.evaluateHtmlTask(_, driver))
