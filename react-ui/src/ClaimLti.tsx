@@ -4,7 +4,7 @@ import {useClaimLtiWebTokenMutation} from './graphql';
 import {useDispatch, useSelector} from 'react-redux';
 import {homeUrl} from './urls';
 import {useTranslation} from 'react-i18next';
-import {loginUser, newCurrentUserSelector} from './newStore';
+import {login, newCurrentUserSelector} from './store';
 
 export function ClaimLti(): JSX.Element {
 
@@ -22,7 +22,7 @@ export function ClaimLti(): JSX.Element {
     claimLtiWebToken({variables: {ltiUuid}})
       .then(({data}) => {
         if (data && data.claimLtiWebToken) {
-          dispatch(loginUser(data.claimLtiWebToken));
+          dispatch(login(data.claimLtiWebToken));
         } else {
           console.info('ERROR!');
         }

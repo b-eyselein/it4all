@@ -1,7 +1,7 @@
 package controllers
 
 import model._
-import model.graphql.{GraphQLContext, GraphQLModel, LoginResult}
+import model.graphql.{GraphQLContext, GraphQLModel}
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.libs.json._
@@ -86,7 +86,7 @@ class Controller @Inject() (
 
       uuid = UUID.randomUUID().toString
 
-      _ = jwtHashesToClaim.put(uuid, LoginResult(username, createJwtSession(username)))
+      _ = jwtHashesToClaim.put(uuid, createJwtSession(username))
     } yield Redirect(s"/lti/$uuid").withNewSession
   }
 

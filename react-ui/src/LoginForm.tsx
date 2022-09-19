@@ -7,7 +7,7 @@ import {Navigate} from 'react-router-dom';
 import classNames from 'classnames';
 import {object as yupObject, SchemaOf, string as yupString} from 'yup';
 import {homeUrl} from './urls';
-import {loginUser, newCurrentUserSelector} from './newStore';
+import {login, newCurrentUserSelector} from './store';
 
 const loginValuesSchema: SchemaOf<LoginMutationVariables> = yupObject({
   username: yupString().required(),
@@ -32,7 +32,7 @@ export function LoginForm(): JSX.Element {
       .then(({data}) => {
         if (data) {
           setLoginInvalid(false);
-          dispatch(loginUser(data.login));
+          dispatch(login(data.login));
         } else {
           setLoginInvalid(true);
         }

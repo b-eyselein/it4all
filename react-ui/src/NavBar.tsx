@@ -2,7 +2,7 @@ import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
 import {homeUrl, loginUrl, registerUrl} from './urls';
 import {useDispatch, useSelector} from 'react-redux';
-import {changeLanguage, languages, logoutUser, newCurrentUserSelector, newLanguageSelector} from './newStore';
+import {changeLanguage, languages, logout, newCurrentUserSelector, newLanguageSelector} from './store';
 import classNames from 'classnames';
 
 export function NavBar(): JSX.Element {
@@ -30,7 +30,7 @@ export function NavBar(): JSX.Element {
       </a>
 
       {currentUser
-        ? <button className="p-4 hover:bg-slate-400" onClick={() => dispatch(logoutUser())}>{t('logout')}&nbsp;{currentUser.username}</button>
+        ? <button className="p-4 hover:bg-slate-400" onClick={() => dispatch(logout())}>{t('logout')}&nbsp;{currentUser.sub}</button>
         : (
           <>
             <NavLink to={loginUrl} className="p-4 hover:bg-slate-400">{t('login')}</NavLink>

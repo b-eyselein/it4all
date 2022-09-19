@@ -248,11 +248,6 @@ type Level {
   title: String!
 }
 
-type LoginResult {
-  jwt: String!
-  username: String!
-}
-
 enum MatchType {
   PARTIAL_MATCH
   SUCCESSFUL_MATCH
@@ -260,10 +255,10 @@ enum MatchType {
 }
 
 type Mutation {
-  claimLtiWebToken(ltiUuid: String!): LoginResult
+  claimLtiWebToken(ltiUuid: String!): String
   ebnfExercise(collId: Int!, exId: Int!): EbnfExerciseMutations
   flaskExercise(collId: Int!, exId: Int!): FlaskExerciseMutations
-  login(credentials: UserCredentials!): LoginResult!
+  login(credentials: UserCredentials!): String!
   programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
   regexExercise(collId: Int!, exId: Int!): RegexExerciseMutations
   register(registerValues: RegisterValues!): String

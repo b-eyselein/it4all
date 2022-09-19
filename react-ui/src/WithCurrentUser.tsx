@@ -1,11 +1,10 @@
 import {useSelector} from 'react-redux';
-import {LoginResultFragment} from './graphql';
 import {Navigate} from 'react-router-dom';
 import {loginUrl} from './urls';
-import {newCurrentUserSelector} from './newStore';
+import {newCurrentUserSelector, User} from './store';
 
 interface IProps {
-  children: (currentUser: LoginResultFragment) => JSX.Element;
+  children: (currentUser: User) => JSX.Element;
   noLoginOption?: JSX.Element;
 }
 

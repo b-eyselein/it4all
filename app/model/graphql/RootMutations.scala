@@ -15,8 +15,6 @@ final case class RegisterValues(username: String, password: String, passwordRepe
 
 final case class UserCredentials(username: String, password: String)
 
-final case class LoginResult(username: String, jwt: String)
-
 trait RootMutations extends ExerciseQuery with JwtHelpers {
 
   // Registration
@@ -60,7 +58,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
     Argument("credentials", userCredentialsInputType)
   }
 
-  private val resolveLogin: Resolver[Unit, LoginResult] = context => {
+  private val resolveLogin: Resolver[Unit, String] = context => {
     val UserCredentials(username, password) = context.arg(userCredentialsArgument)
 
     val onError = MyUserFacingGraphQLError(s"Invalid combination of username and password!")
@@ -76,7 +74,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
 
       maybeUser <-
         if (pwOkay) {
-          Future.successful(LoginResult(user.username, createJwtSession(user.username)))
+          Future.successful(createJwtSession(user.username))
         } else {
           Future.failed(onError)
         }
@@ -221,18 +219,16 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
 
   private val ltiUuidArgument: Argument[String] = Argument("ltiUuid", StringType)
 
-  private val loginResultType: ObjectType[Unit, LoginResult] = deriveObjectType()
-
-  protected val jwtHashesToClaim: MutableMap[String, LoginResult] = MutableMap.empty
+  protected val jwtHashesToClaim: MutableMap[String, String] = MutableMap.empty
 
   protected val mutationType: ObjectType[GraphQLContext, Unit] = ObjectType(
     "Mutation",
     fields = fields[GraphQLContext, Unit](
       Field("register", OptionType(StringType), arguments = registerValuesArgument :: Nil, resolve = resolveRegister),
-      Field("login", loginResultType, arguments = userCredentialsArgument :: Nil, resolve = resolveLogin),
+      Field("login", StringType, arguments = userCredentialsArgument :: Nil, resolve = resolveLogin),
       Field(
         "claimLtiWebToken",
-        OptionType(loginResultType),
+        OptionType(StringType),
         arguments = ltiUuidArgument :: Nil,
         resolve = context => jwtHashesToClaim.remove(context.arg(ltiUuidArgument))
       )

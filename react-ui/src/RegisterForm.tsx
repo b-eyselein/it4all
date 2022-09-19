@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux';
 import {Navigate} from 'react-router-dom';
 import {homeUrl} from './urls';
 import classNames from 'classnames';
-import {newCurrentUserSelector} from './newStore';
+import {newCurrentUserSelector} from './store';
 
 const registerValuesSchema: SchemaOf<RegisterValues> = yupObject({
   username: yupString().required(),
