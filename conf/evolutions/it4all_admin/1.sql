@@ -1,6 +1,6 @@
 -- !Ups
 
-create type level_name as enum ('Beginner','Intermediate', 'Advanced', 'Expert');
+create type level_name as enum ('Beginner', 'Intermediate', 'Advanced', 'Expert');
 
 create table if not exists users (
   username      varchar(100) not null primary key,

@@ -1,6 +1,6 @@
 package model
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 final case class ExerciseCollection(
   toolId: String,
@@ -13,14 +13,12 @@ trait CollectionRepository {
 
   import profile.api._
 
-  protected implicit val ec: ExecutionContext
-
   protected val collectionsTQ = TableQuery[CollectionsTable]
 
-  def futureCollectionCountForTool(toolId: String): Future[Int] = db.run(collectionsTQ.filter(_.toolId === toolId).length.result)
+  def futureCollectionCountForTool(toolId: String): Future[Int] = db.run(collectionsTQ.filter { _.toolId === toolId }.length.result)
 
   def futureCollectionsForTool(toolId: String): Future[Seq[ExerciseCollection]] =
-    db.run(collectionsTQ.filter(_.toolId === toolId).sortBy(_.collectionId).result)
+    db.run(collectionsTQ.filter { _.toolId === toolId }.sortBy { _.collectionId }.result)
 
   def futureCollectionById(toolId: String, collectionId: Int): Future[Option[ExerciseCollection]] = db.run(
     collectionsTQ
@@ -35,17 +33,11 @@ trait CollectionRepository {
 
   protected class CollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
 
-    // Primary key cols
-
     def toolId = column[String]("tool_id")
 
     def collectionId = column[Int]("collection_id")
 
-    // Other cols
-
-    def title = column[String]("title")
-
-    // Key defs
+    private def title = column[String]("title")
 
     def pk = primaryKey("collections_pk", (toolId, collectionId))
 

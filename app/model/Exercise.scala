@@ -5,7 +5,8 @@ import model.tools.Helper.UntypedExercise
 import model.tools.{Tool, ToolList}
 import play.api.libs.json.{Format, JsValue}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.annotation.unused
+import scala.concurrent.Future
 
 trait ExPart extends EnumEntry {
 
@@ -62,15 +63,7 @@ trait ExerciseRepository {
 
   import MyPostgresProfile.api._
 
-  protected implicit val ec: ExecutionContext
-
-  protected val exercisesTQ = TableQuery[ExercisesTable]
-
-  def futureExerciseCountForTool(toolId: String): Future[Int] = db.run(exercisesTQ.filter(_.toolId === toolId).length.result)
-
-  def futureExerciseCountForCollection(toolId: String, collectionId: Int): Future[Int] = db.run(
-    exercisesTQ.filter { ex => ex.toolId === toolId && ex.collectionId === collectionId }.length.result
-  )
+  // Helper functions
 
   private def readDbExercise(tool: Tool, dbExercise: DbExercise): Option[Exercise[tool.ExContType]] = dbExercise match {
     case DbExercise(toolId, collectionId, exerciseId, title, text, difficulty, jsonContent) =>
@@ -82,13 +75,28 @@ trait ExerciseRepository {
 
   private def readDbExercises(tool: Tool, dbExercises: Seq[DbExercise]): Seq[Exercise[tool.ExContType]] = dbExercises.flatMap(readDbExercise(tool, _))
 
+  // Queries
+
+  protected object exercisesTQ extends TableQuery[ExercisesTable](new ExercisesTable(_)) {
+
+    def forTool(toolId: String): Query[ExercisesTable, DbExercise, Seq] = this.filter { _.toolId === toolId }
+
+    def forCollection(toolId: String, collectionId: Int): Query[ExercisesTable, DbExercise, Seq] = this.filter { ex =>
+      ex.toolId === toolId && ex.collectionId === collectionId
+    }
+
+    def byId(toolId: String, collectionId: Int, exerciseId: Int): Query[ExercisesTable, DbExercise, Seq] = this.filter { ex =>
+      ex.toolId === toolId && ex.collectionId === collectionId && ex.exerciseId === exerciseId
+    }
+
+  }
+
+  def futureExerciseCountForTool(toolId: String): Future[Int] = db.run(exercisesTQ.forTool(toolId).length.result)
+
+  def futureExerciseCountForCollection(toolId: String, collectionId: Int): Future[Int] = db.run(exercisesTQ.forCollection(toolId, collectionId).length.result)
+
   def futureExercisesForTool(tool: Tool): Future[Seq[Exercise[tool.ExContType]]] = for {
-    dbExercises <- db.run(
-      exercisesTQ
-        .filter(_.toolId === tool.id)
-        .sortBy(_.exerciseId)
-        .result
-    )
+    dbExercises <- db.run(exercisesTQ.forTool(tool.id).sortBy { _.exerciseId }.result)
   } yield readDbExercises(tool, dbExercises)
 
   def futureExercisesForCollection(toolId: String, collectionId: Int): Future[Seq[UntypedExercise]] = for {
@@ -97,30 +105,15 @@ trait ExerciseRepository {
       case None       => Future.failed(new Exception(s"No such tool with id $toolId"))
     }
 
-    dbExercises <- db.run(
-      exercisesTQ
-        .filter { ex => ex.toolId === tool.id && ex.collectionId === collectionId }
-        .sortBy(_.exerciseId)
-        .result
-    )
+    dbExercises <- db.run(exercisesTQ.forCollection(tool.id, collectionId).sortBy { _.exerciseId }.result)
   } yield readDbExercises(tool, dbExercises)
 
   def futureExerciseExists(toolId: String, collectionId: Int, exerciseId: Int): Future[Boolean] = for {
-    lineCount <- db.run(
-      exercisesTQ
-        .filter { ex => ex.toolId === toolId && ex.collectionId === collectionId && ex.exerciseId === exerciseId }
-        .length
-        .result
-    )
+    lineCount <- db.run(exercisesTQ.byId(toolId, collectionId, exerciseId).length.result)
   } yield lineCount > 0
 
   def futureExerciseById(tool: Tool, collectionId: Int, exerciseId: Int): Future[Option[Exercise[tool.ExContType]]] = for {
-    dbExercise <- db.run(
-      exercisesTQ
-        .filter { ex => ex.toolId === tool.id && ex.collectionId === collectionId && ex.exerciseId === exerciseId }
-        .result
-        .headOption
-    )
+    dbExercise <- db.run(exercisesTQ.byId(tool.id, collectionId, exerciseId).result.headOption)
 
     maybeExercise = dbExercise.flatMap(readDbExercise(tool, _))
   } yield maybeExercise
@@ -134,29 +127,24 @@ trait ExerciseRepository {
 
   protected class ExercisesTable(tag: Tag) extends Table[DbExercise](tag, "exercises") {
 
-    // Primary key cols
-
     def toolId = column[String]("tool_id")
 
     def collectionId = column[Int]("collection_id")
 
     def exerciseId = column[Int]("exercise_id")
 
-    // Other cols
+    private def title = column[String]("title", O.Unique)
 
-    def title = column[String]("title", O.Unique)
+    private def text = column[String]("text")
 
-    def text = column[String]("text")
+    private def difficulty = column[Level]("difficulty")
 
-    def difficulty = column[Level]("difficulty")
+    private def jsonContent = column[JsValue]("content_json")
 
-    def jsonContent = column[JsValue]("content_json")
+    def pk = primaryKey("exercises_pk", (toolId, collectionId, exerciseId))
 
-    // Key defs
-
-    def pk = primaryKey("exercises_pk", (toolId, collectionId))
-
-    // noinspection ScalaUnusedSymbol
+    // noinspection ScalaWeakerAccess
+    @unused("used by slick")
     def collectionsForeignKey = foreignKey("exercises_collections_fk", (toolId, collectionId), collectionsTQ)(
       c => (c.toolId, c.collectionId),
       onUpdate = ForeignKeyAction.Cascade,

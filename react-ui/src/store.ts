@@ -31,7 +31,9 @@ const userSlice = createSlice({
   initialState: () => ({user: readJsonFromLocalStorage<User | null>(userField, null)}),
   reducers: {
     login(state, {payload}: PayloadAction<string>) {
+      console.info(payload);
       const user = {...userFromToken(payload), token: payload};
+      console.info(payload);
       localStorage.setItem(userField, JSON.stringify(user));
       state.user = user;
     },

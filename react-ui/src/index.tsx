@@ -16,7 +16,6 @@ import './index.css';
 i18next
   .use(initReactI18next)
   .init({
-    lng: 'de',
     fallbackLng: 'en',
     resources: {
       de: {common: common_de},
@@ -26,17 +25,11 @@ i18next
   .catch((err) => console.error('could not init i18n' + err));
 
 const apolloAuthMiddleware = new ApolloLink((operation, forward) => {
-
   const currentUser = newCurrentUserSelector(store.getState());
-
-  const Authorization = currentUser
-    ? `Bearer ${currentUser.token}`
-    : undefined;
 
   operation.setContext({
     headers: {
-      Authorization,
-      Language: 'de' //chosenLanguageCodeSelector(store.getState()),
+      Authorization: currentUser ? `Bearer ${currentUser.token}` : undefined,
     }
   });
 

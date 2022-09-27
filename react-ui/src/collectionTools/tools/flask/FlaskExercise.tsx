@@ -3,11 +3,12 @@ import {ConcreteExerciseWithoutPartsProps} from '../../Exercise';
 import {FilesExercise} from '../FilesExercise';
 import {WithQuery} from '../../../WithQuery';
 import {PointsNotification} from '../../../helpers/PointsNotification';
-import classNames from 'classnames';
 import {database} from '../../DexieTable';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
 import {IExerciseFile} from '../../exerciseFile';
 import {FlaskExerciseDescription} from './FlaskExerciseDescription';
+import classNames from 'classnames';
+import {bgColors, textColors} from '../../../consts';
 
 type IProps = ConcreteExerciseWithoutPartsProps<FlaskExerciseContentFragment, FilesSolutionInput>;
 
@@ -32,19 +33,18 @@ export function FlaskExercise({exercise, content, oldSolution}: IProps): JSX.Ele
   const correctionTabRender = (
     <WithQuery query={correctionMutationResult}>
       {({flaskExercise}) => <WithNullableNavigate t={flaskExercise}>
-        {({correct: {result/*, solutionId, proficienciesUpdated*/}}) => <>
-          {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
+        {({correct: {result/*, solutionId */}}) => <>
 
           <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 
           {result.testResults.map((testResult, index) =>
-            <div className="my-3" key={index}>
-              <div className={classNames('message', testResult.successful ? 'is-success' : 'is-danger')}>
-                <header className="message-header">{testResult.testName}</header>
-                <div className="message-body">
-                  <pre>{testResult.stderr.join('\n')}</pre>
-                </div>
-              </div>
+            <div key={index} className="my-4 rounded-t border border-slate-500">
+              <header className={classNames('p-2', 'rounded-t', 'font-bold', 'text-white', testResult.successful ? bgColors.correct : bgColors.inCorrect)}>
+                {testResult.successful ? <span>&#10004;</span> : <span>&#10008;</span>} {testResult.testName}
+              </header>
+              <pre className={classNames('p-2', 'font-mono', testResult.successful ? textColors.correct : textColors.inCorrect)}>
+                {testResult.stderr.join('\n')}
+              </pre>
             </div>
           )}
         </>}

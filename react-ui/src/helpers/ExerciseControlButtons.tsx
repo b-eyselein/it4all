@@ -23,7 +23,9 @@ export function ExerciseControlButtons({isCorrecting, correct, endLink, childLin
   return (
     <div className="flex flex-row my-3">
 
-      <button type="button" className="p-2 flex-grow rounded bg-blue-500 text-white" onClick={correct} disabled={isCorrecting}>{t('correct')}</button>
+      <button type="button" className="p-2 flex-grow rounded bg-blue-500 text-white disabled:opacity-25" onClick={correct} disabled={isCorrecting}>
+        {t('correct')}
+      </button>
 
       <Link to={endLink} className="ml-2 p-2 flex-grow rounded bg-gray-800 text-white text-center">{t('endSolve')}</Link>
 

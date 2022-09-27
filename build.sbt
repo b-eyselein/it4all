@@ -3,7 +3,7 @@ val playSlickVersion  = "5.0.2"
 val slickPgVersion    = "0.20.4"
 
 val commonSettings = Seq(
-  scalaVersion := "2.13.8",
+  scalaVersion := "2.13.9",
   organization := "de.uniwue.is",
   libraryDependencies ++= Seq(
     "org.scalatestplus.play" %% "scalatestplus-play"   % "5.1.0" % Test, // Apache 2.0
@@ -37,7 +37,7 @@ libraryDependencies ++= Seq(
   guice,
 
   // JWT
-  "com.pauldijou" %% "jwt-play" % "5.0.0", // Apache 2.0
+  "com.github.jwt-scala" %% "jwt-play" % "9.1.1", // Apache 2.0
 
   // Other helpers
   "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0", // Apache 2.0
@@ -51,10 +51,10 @@ libraryDependencies ++= Seq(
 
   // Sql
   "org.postgresql"       % "postgresql"            % "42.5.0",         // BSD-2
-  "com.github.tminglei" %% "slick-pg"              % slickPgVersion,   // BSD-2
-  "com.github.tminglei" %% "slick-pg_play-json"    % slickPgVersion,   // BSD-2
   "com.typesafe.play"   %% "play-slick"            % playSlickVersion, // Apache 2.0
   "com.typesafe.play"   %% "play-slick-evolutions" % playSlickVersion, // Apache 2.0
+  "com.github.tminglei" %% "slick-pg"              % slickPgVersion,   // BSD-2
+  "com.github.tminglei" %% "slick-pg_play-json"    % slickPgVersion,   // BSD-2
 
   // Sql correction
   "mysql"                 % "mysql-connector-java" % "8.0.30", // GPL 2.0

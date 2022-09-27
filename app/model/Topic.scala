@@ -24,7 +24,7 @@ trait TopicRepository {
     _ <- db.run(topicsTQ ++= topics)
   } yield ()
 
-  def futureTopicsForTool(toolId: String): Future[Seq[Topic]] = db.run(topicsTQ.filter(_.toolId === toolId).result)
+  def futureTopicsForTool(toolId: String): Future[Seq[Topic]] = db.run(topicsTQ.filter { _.toolId === toolId }.result)
 
   /*
   def futureTopicByAbbreviation(toolId: String, abbreviation: String): Future[Option[Topic]] = db.run(
@@ -38,7 +38,7 @@ trait TopicRepository {
 
     def abbreviation = column[String]("abbreviation")
 
-    def title = column[String]("title")
+    private def title = column[String]("title")
 
     def pk = primaryKey("topics_pk", (toolId, abbreviation))
 

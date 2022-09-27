@@ -25,9 +25,9 @@ object WebTesterSuite {
 
 class WebTesterSuite extends Suites(new WebCorrectorSpec(WebTesterSuite.port)) with BeforeAndAfterAll {
 
-  override def beforeAll: Unit = WebTesterSuite.simpleWebServer.start()
+  override def beforeAll(): Unit = WebTesterSuite.simpleWebServer.start()
 
-  override def afterAll: Unit = WebTesterSuite.simpleWebServer.stop()
+  override def afterAll(): Unit = WebTesterSuite.simpleWebServer.stop()
 
 }
 

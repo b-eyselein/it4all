@@ -21,9 +21,11 @@ interface IProps {
 
 export function ExerciseFileCard({exerciseFile}: { exerciseFile: ExerciseFileFragment }): JSX.Element {
   return (
-    <NewCard title={exerciseFile.name}>
-      <pre>{exerciseFile.content}</pre>
-    </NewCard>
+    <div className="my-4">
+      <NewCard title={exerciseFile.name} reducible={true}>
+        <pre>{exerciseFile.content}</pre>
+      </NewCard>
+    </div>
   );
 }
 
