@@ -13,6 +13,8 @@ import {loadLanguageFromLocalStorage, newCurrentUserSelector, store} from './sto
 import {serverUrl} from './urls';
 import './index.css';
 
+export type MyFunComponent<P = Record<string, never>> = (p: P) => JSX.Element;
+
 i18next
   .use(initReactI18next)
   .init({

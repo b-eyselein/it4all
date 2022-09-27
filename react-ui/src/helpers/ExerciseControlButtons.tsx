@@ -29,11 +29,11 @@ export function ExerciseControlButtons({isCorrecting, correct, endLink, childLin
 
       <Link to={endLink} className="ml-2 p-2 flex-grow rounded bg-gray-800 text-white text-center">{t('endSolve')}</Link>
 
-      {childLinks.map(({text, to, otherClassNames}) => <div className="column" key={text}>
-        {typeof to === 'function'
-          ? <button className={classNames('flex-grow', otherClassNames)} onClick={to}>{text}</button>
-          : <Link className={classNames('flex-grow', otherClassNames)} to={to}>{text}</Link>}
-      </div>)}
+      {childLinks.map(({text, to, otherClassNames}) =>
+        typeof to === 'function'
+          ? <button key={text} className={classNames('ml-2', 'p-2', 'flex-grow', 'rounded', otherClassNames)} onClick={to}>{text}</button>
+          : <Link key={text} className={classNames('ml-2', 'p-2', 'flex-grow', 'rounded', otherClassNames)} to={to}>{text}</Link>
+      )}
 
     </div>
   );
