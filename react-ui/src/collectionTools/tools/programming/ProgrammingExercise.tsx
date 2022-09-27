@@ -1,15 +1,48 @@
 import {ConcreteExerciseWithPartsProps} from '../../Exercise';
-import {FilesSolutionInput, ProgExPart, ProgrammingExerciseContentFragment, useProgrammingCorrectionMutation} from '../../../graphql';
+import {
+  FilesSolutionInput,
+  ImplementationCorrectionResultFragment,
+  ProgExPart,
+  ProgrammingExerciseContentFragment,
+  UnitTestCorrectionResultFragment,
+  useProgrammingCorrectionMutation
+} from '../../../graphql';
 import {FilesExercise} from '../FilesExercise';
 import {database} from '../../DexieTable';
 import {WithQuery} from '../../../WithQuery';
-import {UnitTestResult} from './UnitTestResult';
-import {ImplementationResult} from './ImplementationResult';
 import {WithNullableNavigate} from '../../../WithNullableNavigate';
 import {IExerciseFile} from '../../exerciseFile';
 import {PointsNotification} from '../../../helpers/PointsNotification';
+import {textColors} from '../../../consts';
+import classNames from 'classnames';
 
 type IProps = ConcreteExerciseWithPartsProps<ProgrammingExerciseContentFragment, FilesSolutionInput>;
+
+function ImplementationResult({result}: { result: ImplementationCorrectionResultFragment }): JSX.Element {
+  return (
+    <div className={classNames('p-2', 'rounded', 'border', 'border-slate-300', 'bg-slate-50', result.successful ? textColors.correct : textColors.inCorrect)}>
+      <pre>{result.stderr.join('\n')}</pre>
+    </div>
+  );
+}
+
+export function UnitTestResult({result}: { result: UnitTestCorrectionResultFragment }): JSX.Element {
+
+  const {testId, shouldFail, description, stderr, successful} = result;
+
+  return (
+    <li className="my-4">
+      <span className={successful ? textColors.correct : textColors.inCorrect}>
+        Der {testId}. Test war {successful ? '' : ' nicht'} erfolgreich.
+        Der Test sollte {shouldFail ? '' : ' nicht'} fehlschlagen.
+      </span>
+      {!successful && <>
+        <p className="p-2">Beschreibung: {description}</p>
+        <pre className="p-2 rounded border border-slate-300">{stderr.join('\n')}</pre>
+      </>}
+    </li>
+  );
+}
 
 export function ProgrammingExercise({exercise, content, partId, oldSolution}: IProps): JSX.Element {
 
