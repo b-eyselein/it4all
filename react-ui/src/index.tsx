@@ -6,12 +6,12 @@ import i18next from 'i18next';
 import {I18nextProvider, initReactI18next} from 'react-i18next';
 import {ApolloClient, ApolloLink, ApolloProvider, concat, HttpLink, InMemoryCache} from '@apollo/client';
 import {BrowserRouter} from 'react-router-dom';
-import common_de from './locales/de/common.json';
-import common_en from './locales/en/common.json';
 import {createRoot} from 'react-dom/client';
 import {loadLanguageFromLocalStorage, newCurrentUserSelector, store} from './store';
 import {serverUrl} from './urls';
 import './index.css';
+import common_de from './locales/common_de.json';
+import common_en from './locales/common_en.json';
 
 export type MyFunComponent<P = Record<string, never>> = (p: P) => JSX.Element;
 
