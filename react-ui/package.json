@@ -36,7 +36,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "i18n": "i18next",
-    "graphql-generate": "graphql-codegen --config codegen.yml"
+    "graphql-generate": "graphql-codegen --config codegen.yml",
+    "lint": "eslint src"
   },
   "eslintConfig": {
     "extends": [
