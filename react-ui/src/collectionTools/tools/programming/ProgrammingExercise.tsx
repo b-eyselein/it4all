@@ -24,8 +24,9 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
     : content.implementationPart.files;
 
   function correct(files: IExerciseFile[], onCorrect: () => void): void {
+    // remove other fields
     const solution: FilesSolutionInput = {
-      files: files.map(({name, content, /*fileType,*/ editable}) => ({name, content, /*fileType,*/ editable}))
+      files: files.map(({name, content, editable}) => ({name, content, editable}))
     };
 
     database.upsertSolutionWithParts(exercise.toolId, exercise.collectionId, exercise.exerciseId, partId, solution);
@@ -38,12 +39,10 @@ export function ProgrammingExercise({exercise, content, partId, oldSolution}: IP
   const correctionTabRender = (
     <WithQuery query={correctionMutationResult}>
       {({programmingExercise}) => <WithNullableNavigate t={programmingExercise}>
-        {({correct: {result/*, solutionId, proficienciesUpdated*/}}) => <>
-          {/*<SolutionSaved solutionSaved={solutionSaved}/>*/}
-
+        {({correct: {result/*,solutionId*/}}) => <>
           <PointsNotification points={result.points} maxPoints={result.maxPoints}/>
 
-          {result.unitTestResults.length > 0 && <ul>
+          {result.unitTestResults.length > 0 && <ul className="list-disc list-inside">
             {result.unitTestResults.map((unitTestResult, index) => <UnitTestResult key={index} result={unitTestResult}/>)}
           </ul>}
 
