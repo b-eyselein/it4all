@@ -9,13 +9,14 @@ import {BrowserRouter} from 'react-router-dom';
 import common_de from './locales/de/common.json';
 import common_en from './locales/en/common.json';
 import {createRoot} from 'react-dom/client';
-import {newCurrentUserSelector, store} from './store';
+import {loadLanguageFromLocalStorage, newCurrentUserSelector, store} from './store';
 import {serverUrl} from './urls';
 import './index.css';
 
 i18next
   .use(initReactI18next)
   .init({
+    lng: loadLanguageFromLocalStorage(),
     fallbackLng: 'en',
     resources: {
       de: {common: common_de},
@@ -25,11 +26,11 @@ i18next
   .catch((err) => console.error('could not init i18n' + err));
 
 const apolloAuthMiddleware = new ApolloLink((operation, forward) => {
-  const currentUser = newCurrentUserSelector(store.getState());
+  const token = newCurrentUserSelector(store.getState())?.token;
 
   operation.setContext({
     headers: {
-      Authorization: currentUser ? `Bearer ${currentUser.token}` : undefined,
+      Authorization: token ? `Bearer ${token}` : undefined,
     }
   });
 

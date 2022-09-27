@@ -31,9 +31,7 @@ const userSlice = createSlice({
   initialState: () => ({user: readJsonFromLocalStorage<User | null>(userField, null)}),
   reducers: {
     login(state, {payload}: PayloadAction<string>) {
-      console.info(payload);
       const user = {...userFromToken(payload), token: payload};
-      console.info(payload);
       localStorage.setItem(userField, JSON.stringify(user));
       state.user = user;
     },
@@ -53,9 +51,13 @@ const languageField = 'language';
 export type Language = 'en' | 'de';
 export const languages: Language[] = ['de', 'en'];
 
+export function loadLanguageFromLocalStorage(): Language | undefined {
+  return localStorage.getItem(languageField) as Language;
+}
+
 const languageSlice = createSlice({
   name: 'language',
-  initialState: (): { language: Language } => ({language: localStorage.getItem(languageField) as Language || 'en'}),
+  initialState: (): { language: Language } => ({language: loadLanguageFromLocalStorage() || 'en'}),
   reducers: {
     changeLanguage(state, {payload}: PayloadAction<Language>) {
       localStorage.setItem(languageField, payload);
