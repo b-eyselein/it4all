@@ -1,6 +1,5 @@
 {
-  "toLections": "",
-  "toTool": "",
-  "tool_plural": "",
-  "loading_data": ""
+  "toTool": "Go to tool",
+  "tool_plural": "Tools",
+  "loading_data": "Loading Data"
 }
