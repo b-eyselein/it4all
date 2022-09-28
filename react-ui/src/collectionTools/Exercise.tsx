@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 import {ExerciseSolveFieldsFragment, ExerciseSolveFieldsToolFragment, FilesSolutionInput, useExerciseQuery, XmlSolutionInput} from '../graphql';
 import {WithQuery} from '../WithQuery';
-import {EbnfExercise} from './tools/ebnf/EbnfExercise';
 import {RegexExercise} from './tools/regex/RegexExercise';
 import {SqlExercise} from './tools/sql/SqlExercise';
 import {ProgrammingExercise} from './tools/programming/ProgrammingExercise';
@@ -63,8 +62,6 @@ function Inner<SolutionType>({toolId, collectionId, exerciseId, partId, tool}: I
 
   if (!state.oldSolutionLoaded) {
     return <div className="notification is-primary has-text-centered">{t('loadingOldSolution')}...</div>;
-  } else if (content.__typename === 'EbnfExerciseContent') {
-    return <EbnfExercise exercise={exercise} content={content} oldSolution={state.oldSolution as string | undefined}/>;
   } else if (content.__typename === 'FlaskExerciseContent') {
     return <FlaskExercise exercise={exercise} content={content} oldSolution={state.oldSolution as FilesSolutionInput | undefined}/>;
   } else if (content.__typename === 'ProgrammingExerciseContent') {

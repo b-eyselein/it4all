@@ -3,7 +3,6 @@ package model.tools
 object ToolList {
 
   val toolsWithoutParts: List[ToolWithoutParts] = List(
-    model.tools.ebnf.EbnfTool,
     model.tools.flask.FlaskTool,
     model.tools.regex.RegexTool,
     model.tools.sql.SqlTool

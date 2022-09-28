@@ -20,39 +20,6 @@ type DTDParseException {
   parsedLine: String!
 }
 
-type EbnfCorrectionResult {
-  result: EbnfResult!
-  solutionId: Int!
-}
-
-type EbnfExerciseContent {
-  predefinedTerminals: [String!]
-  sampleSolutions: [EbnfGrammar!]!
-}
-
-type EbnfExerciseMutations {
-  correct(solution: EbnfGrammarInput!): EbnfCorrectionResult!
-}
-
-type EbnfGrammar {
-  rules: String!
-  startSymbol: String!
-}
-
-input EbnfGrammarInput {
-  rules: [EbnfRuleInput!]!
-  startSymbol: String!
-}
-
-type EbnfResult {
-  x: String!
-}
-
-input EbnfRuleInput {
-  rule: String!
-  variable: String!
-}
-
 type ElementDefinition {
   content: String!
   elementName: String!
@@ -106,7 +73,7 @@ type ExerciseCollection {
   toolId: String!
 }
 
-union ExerciseContentUnionType = EbnfExerciseContent | FlaskExerciseContent | ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
+union ExerciseContentUnionType = FlaskExerciseContent | ProgrammingExerciseContent | RegexExerciseContent | SqlExerciseContent | UmlExerciseContent | WebExerciseContent | XmlExerciseContent
 
 type ExerciseFile {
   content: String!
@@ -256,7 +223,6 @@ enum MatchType {
 
 type Mutation {
   claimLtiWebToken(ltiUuid: String!): String
-  ebnfExercise(collId: Int!, exId: Int!): EbnfExerciseMutations
   flaskExercise(collId: Int!, exId: Int!): FlaskExerciseMutations
   login(credentials: UserCredentials!): String!
   programmingExercise(collId: Int!, exId: Int!): ProgrammingExerciseMutations
