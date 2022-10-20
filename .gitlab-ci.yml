@@ -8,7 +8,7 @@ build-client:
   stage: build-client
   script:
     - cd react-ui
-    - npm install
+    - npm ci
     - npm run build
 
 test:
