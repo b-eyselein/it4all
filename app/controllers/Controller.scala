@@ -2,6 +2,7 @@ package controllers
 
 import model._
 import model.graphql.{GraphQLContext, GraphQLModel}
+import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.libs.json._
@@ -33,6 +34,8 @@ class Controller @Inject() (
     extends AbstractController(cc)
     with GraphQLModel {
 
+  private val logger = Logger(classOf[Controller])
+
   private val graphQlRequestJsonFormat: OFormat[GraphQLRequest] = Json.format
 
   def index: Action[AnyContent] = assets.at("index.html")
@@ -42,25 +45,26 @@ class Controller @Inject() (
   def graphiql: Action[AnyContent] = Action { _ => Ok(views.html.graphiql()) }
 
   def graphql: Action[GraphQLRequest] = jwtAction.async(parse.json(graphQlRequestJsonFormat)) { case JwtRequest(maybeUser, request) =>
-    request.body match {
-      case GraphQLRequest(query, operationName, variables) =>
-        QueryParser.parse(query) match {
-          case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
-          case Success(queryAst) =>
-            Executor
-              .execute(
-                schema,
-                queryAst,
-                userContext = GraphQLContext(maybeUser, tableDefs),
-                operationName = operationName,
-                variables = variables.getOrElse(Json.obj())
-              )
-              .map(Ok(_))
-              .recover {
-                case error: QueryAnalysisError => BadRequest(error.resolveError)
-                case error: ErrorWithResolver  => InternalServerError(error.resolveError)
-              }
-        }
+    val GraphQLRequest(query, operationName, maybeVariables) = request.body
+
+    val variables = maybeVariables.getOrElse(Json.obj())
+
+    QueryParser.parse(query) match {
+      case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
+      case Success(queryAst) =>
+        Executor
+          .execute(schema, queryAst, userContext = GraphQLContext(maybeUser, tableDefs), operationName = operationName, variables = variables)
+          .map(Ok(_))
+          .recover {
+            case error: QueryAnalysisError => {
+              logger.error("Error while analysing query: ", error)
+              BadRequest(error.resolveError)
+            }
+            case error: ErrorWithResolver => {
+              logger.error("Error while resolving query: ", error)
+              InternalServerError(error.resolveError)
+            }
+          }
     }
   }
 

@@ -35,8 +35,11 @@ class JwtAction @Inject() (
   } yield username
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, JwtRequest[A]]] = usernameFromRequest(request) match {
-    case Failure(_)        => Future.successful(Right(JwtRequest(None, request)))
-    case Success(username) => tableDefs.futureUserByUsername(username).map(maybeUser => Right(JwtRequest(maybeUser, request)))
+    case Failure(_) => Future.successful(Right(JwtRequest(None, request)))
+    case Success(username) =>
+      for {
+        maybeUser <- tableDefs.futureUserByUsername(username)
+      } yield Right(JwtRequest(maybeUser, request))
   }
 
 }

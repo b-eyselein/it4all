@@ -18,16 +18,17 @@ export function FlaskExercise({exercise, content, oldSolution}: IProps): JSX.Ele
 
   const exerciseDescription = <FlaskExerciseDescription exercise={exercise} content={content}/>;
 
-  function correct(files: IExerciseFile[], onCorrect: () => void): void {
+  async function correct(files: IExerciseFile[], onCorrect: () => void): Promise<void> {
     const solution: FilesSolutionInput = {
       files: files.map(({name, content, editable}) => ({name, content, editable}))
     };
 
-    database.upsertSolutionWithoutParts(exercise.toolId, exercise.collectionId, exercise.exerciseId, solution);
+    await database.upsertSolutionWithoutParts(exercise.toolId, exercise.collectionId, exercise.exerciseId, solution);
 
-    correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution}})
-      .then(onCorrect)
+    await correctExercise({variables: {collId: exercise.collectionId, exId: exercise.exerciseId, solution}})
       .catch((err) => console.error(err));
+
+    onCorrect();
   }
 
   const correctionTabRender = (

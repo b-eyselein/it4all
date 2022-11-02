@@ -7,7 +7,7 @@ import {I18nextProvider, initReactI18next} from 'react-i18next';
 import {ApolloClient, ApolloLink, ApolloProvider, concat, HttpLink, InMemoryCache} from '@apollo/client';
 import {BrowserRouter} from 'react-router-dom';
 import {createRoot} from 'react-dom/client';
-import {loadLanguageFromLocalStorage, newCurrentUserSelector, store} from './store';
+import {loadLanguageFromLocalStorage, store} from './store';
 import {serverUrl} from './urls';
 import './index.css';
 import common_de from './locales/common_de.json';
@@ -28,7 +28,7 @@ i18next
   .catch((err) => console.error('could not init i18n' + err));
 
 const apolloAuthMiddleware = new ApolloLink((operation, forward) => {
-  const token = newCurrentUserSelector(store.getState())?.token;
+  const token = store.getState().user.user?.token;
 
   operation.setContext({
     headers: {

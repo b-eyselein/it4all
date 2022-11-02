@@ -17,6 +17,25 @@ object FlaskCorrector extends DockerExecutionCorrector {
 
   override protected val dockerImage: ScalaDockerImage = flaskCorrectionDockerImage
 
+  private def convertResult(exercise: FlaskExercise, testResults: Seq[FlaskTestResult]): FlaskResult = {
+    println(testResults)
+
+    FlaskResult(
+      testResults,
+      points = testResults
+        .filter(_.successful)
+        .map { tr =>
+          exercise.content.testConfig.tests
+            .find { _.id == tr.testId }
+            .map { _.maxPoints }
+            .getOrElse(0)
+        }
+        .sum
+        .points,
+      maxPoints = exercise.content.maxPoints.points
+    )
+  }
+
   def correct(
     solution: IFilesSolution,
     exercise: FlaskExercise,
@@ -45,9 +64,7 @@ object FlaskCorrector extends DockerExecutionCorrector {
 
     // write test files
     val testFileBinds = exercise.content.testFiles.map { f =>
-      val targetFile = f.writeOrCopyToDirectory(solTargetDir)
-
-      DockerBind(fromPath = targetFile, baseBindPath / f.name, isReadOnly = true)
+      DockerBind(fromPath = f.writeOrCopyToDirectory(solTargetDir), toPath = baseBindPath / f.name, isReadOnly = true)
     }
 
     // Create mounts
@@ -62,21 +79,7 @@ object FlaskCorrector extends DockerExecutionCorrector {
       dockerBinds,
       Reads.seq(flaskTestResultReads),
       resultFile,
-      convertResult = (testResults: Seq[FlaskTestResult]) =>
-        FlaskResult(
-          testResults,
-          points = testResults
-            .filter(_.successful)
-            .map { tr =>
-              exercise.content.testConfig.tests
-                .find { _.id == tr.testId }
-                .map { _.maxPoints }
-                .getOrElse(0)
-            }
-            .sum
-            .points,
-          maxPoints = exercise.content.maxPoints.points
-        )
+      convertResult = convertResult(exercise, _)
     )
 
   }

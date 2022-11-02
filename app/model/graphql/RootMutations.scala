@@ -2,7 +2,9 @@ package model.graphql
 
 import com.github.t3hnar.bcrypt._
 import model._
+import model.tools.flask.FlaskTool
 import model.tools.{ToolList, ToolWithParts, ToolWithoutParts}
+import play.api.Logger
 import play.api.libs.json._
 import sangria.macros.derive._
 import sangria.marshalling.playJson._
@@ -16,6 +18,8 @@ final case class RegisterValues(username: String, password: String, passwordRepe
 final case class UserCredentials(username: String, password: String)
 
 trait RootMutations extends ExerciseQuery with JwtHelpers {
+
+  private val logger = Logger(classOf[RootMutations])
 
   // Registration
 
@@ -109,7 +113,12 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
         part: toolWithParts.PartType,
         solution: toolWithParts.SolInputType
       ): Future[CorrectionResult[toolWithParts.ResType]] = for {
+
         result <- toolWithParts.correctAbstract(user, solution, ex, part)
+
+        _ =
+          if (ex.toolId == FlaskTool.id) { logger.warn(result.toString) }
+          else { () }
 
         solutionId <- tableDefs.futureInsertSolutionWithPart(
           ex.toolId,
@@ -122,6 +131,10 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
           result.points,
           result.maxPoints
         )
+
+        _ =
+          if (ex.toolId == FlaskTool.id) { logger.warn(result.toString) }
+          else { () }
       } yield CorrectionResult(result, solutionId)
 
       val toolExerciseMutationsType = ObjectType(
@@ -131,10 +144,13 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
             "correct",
             correctionResultType,
             arguments = partTypeInputArg :: solTypeInputArg :: Nil,
-            resolve = context =>
+            resolve = context => {
+              logger.warn("Resolving correction...")
+
               context.ctx.loggedInUser match {
                 case None => Future.failed(MyUserFacingGraphQLError("User is not logged in!"))
                 case Some(loggedInUser) =>
+                  logger.warn("TODO: correcting...")
                   correct(
                     context.ctx.tableDefs,
                     loggedInUser,
@@ -143,6 +159,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
                     context.arg(solTypeInputArg)
                   )
               }
+            }
           )
         )
       )
