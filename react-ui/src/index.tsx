@@ -4,14 +4,14 @@ import reportWebVitals from './reportWebVitals';
 import {Provider as ReduxProvider} from 'react-redux';
 import i18next from 'i18next';
 import {I18nextProvider, initReactI18next} from 'react-i18next';
-import {ApolloClient, ApolloLink, ApolloProvider, concat, HttpLink, InMemoryCache} from '@apollo/client';
+import {ApolloProvider} from '@apollo/client';
 import {BrowserRouter} from 'react-router-dom';
 import {createRoot} from 'react-dom/client';
 import {loadLanguageFromLocalStorage, store} from './store';
-import {serverUrl} from './urls';
-import './index.css';
+import {apolloClient} from './apolloClient';
 import common_de from './locales/common_de.json';
 import common_en from './locales/common_en.json';
+import './index.css';
 
 export type MyFunComponent<P = Record<string, never>> = (p: P) => JSX.Element;
 
@@ -27,31 +27,6 @@ i18next
   })
   .catch((err) => console.error('could not init i18n' + err));
 
-const apolloAuthMiddleware = new ApolloLink((operation, forward) => {
-  const token = store.getState().user.user?.token;
-
-  operation.setContext({
-    headers: {
-      Authorization: token ? `Bearer ${token}` : undefined,
-    }
-  });
-
-  return forward(operation);
-});
-
-const client = new ApolloClient({
-  link: concat(
-    apolloAuthMiddleware,
-    new HttpLink({uri: `${serverUrl}/graphql`})
-  ),
-  cache: new InMemoryCache(),
-  defaultOptions: {
-    query: {fetchPolicy: 'no-cache'},
-    watchQuery: {fetchPolicy: 'no-cache'},
-    mutate: {fetchPolicy: 'no-cache'}
-  }
-});
-
 const root = createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -60,7 +35,7 @@ root.render(
   <StrictMode>
     <I18nextProvider i18n={i18next}>
       <ReduxProvider store={store}>
-        <ApolloProvider client={client}>
+        <ApolloProvider client={apolloClient}>
           <BrowserRouter>
             <App/>
           </BrowserRouter>
