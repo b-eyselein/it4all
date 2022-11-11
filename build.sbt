@@ -3,7 +3,7 @@ val playSlickVersion  = "5.0.2"
 val slickPgVersion    = "0.20.4"
 
 val commonSettings = Seq(
-  scalaVersion := "2.13.9",
+  scalaVersion := "2.13.10",
   organization := "de.uniwue.is",
   libraryDependencies ++= Seq(
     "org.scalatestplus.play" %% "scalatestplus-play"   % "5.1.0" % Test, // Apache 2.0
@@ -37,7 +37,7 @@ libraryDependencies ++= Seq(
   guice,
 
   // JWT
-  "com.github.jwt-scala" %% "jwt-play" % "9.1.1", // Apache 2.0
+  "com.github.jwt-scala" %% "jwt-play" % "9.1.2", // Apache 2.0
 
   // Other helpers
   "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0", // Apache 2.0
@@ -46,7 +46,7 @@ libraryDependencies ++= Seq(
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
 
   // GraphQL
-  "org.sangria-graphql" %% "sangria"           % "3.3.0", // Apache 2.0
+  "org.sangria-graphql" %% "sangria"           % "3.4.1", // Apache 2.0
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.2", // Apache 2.0
 
   // Sql
@@ -57,11 +57,11 @@ libraryDependencies ++= Seq(
   "com.github.tminglei" %% "slick-pg_play-json"    % slickPgVersion,   // BSD-2
 
   // Sql correction
-  "mysql"                 % "mysql-connector-java" % "8.0.30", // GPL 2.0
+  "mysql"                 % "mysql-connector-java" % "8.0.31", // GPL 2.0
   "com.github.jsqlparser" % "jsqlparser"           % "4.5",    // Apache 2.0
 
   // Web correction
   "org.nanohttpd"           % "nanohttpd-webserver" % "2.3.1" % Test, // BSD 3-clause
-  "org.seleniumhq.selenium" % "selenium-java"       % "4.4.0", // Apache 2.0
-  "org.seleniumhq.selenium" % "htmlunit-driver"     % "3.64.0" // Apache 2.0
+  "org.seleniumhq.selenium" % "selenium-java"       % "4.6.0", // Apache 2.0
+  "org.seleniumhq.selenium" % "htmlunit-driver"     % "4.6.0" // Apache 2.0
 )
