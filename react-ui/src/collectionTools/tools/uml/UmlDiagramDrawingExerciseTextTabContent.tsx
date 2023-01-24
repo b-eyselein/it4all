@@ -1,7 +1,7 @@
 import {UmlExerciseText} from './UmlExerciseText';
 import classNames from 'classnames';
 import {ExerciseSolveFieldsFragment, UmlExerciseContentFragment, UmlExPart} from '../../../graphql';
-import {SelectableClassDiagramObject} from './UmlDiagramDrawing';
+import {CreatableClassDiagramObject, SelectableClassDiagramObject} from './UmlDiagramDrawing';
 import {ChildLink, ExerciseControlButtons} from '../../../helpers/ExerciseControlButtons';
 import {useTranslation} from 'react-i18next';
 import {collectionsUrlFragment, exercisesUrlFragment, partsUrlFragment, toolsUrlFragment} from '../../../urls';
@@ -12,9 +12,8 @@ interface IProps {
   creatableClassDiagramObjects: SelectableClassDiagramObject[];
   correct: () => void;
   onClassClick: (name: string) => void;
-  toggle: (x: SelectableClassDiagramObject) => void;
-  selectedCreatableObject: SelectableClassDiagramObject | undefined;
-  isCorrecting: boolean;
+  toggle: (x: CreatableClassDiagramObject) => void;
+  selectedCreatableObject: CreatableClassDiagramObject | undefined;
   part: UmlExPart;
 }
 
@@ -36,25 +35,25 @@ export function UmlDiagramDrawingExerciseTextTabContent({
 
   // FIXME: memberAllocation?
   const childLinks: ChildLink[] = part === UmlExPart.DiagramDrawingHelp
-    ? [{
-      text: t('goToNextPart'),
-      otherClassNames: classNames('button', 'is-fullwidth', corrected ? 'is-link' : 'is-dark'),
-      to: `/${toolsUrlFragment}/${exercise.toolId}/${collectionsUrlFragment}/${exercise.collectionId}/${exercisesUrlFragment}/${exercise.exerciseId}/${partsUrlFragment}/memberAllocation`
-    }]
+    ? [
+      {
+        text: t('goToNextPart'),
+        otherClassNames: 'bg-black text-white text-center',
+        to: `/${toolsUrlFragment}/${exercise.toolId}/${collectionsUrlFragment}/${exercise.collectionId}/${exercisesUrlFragment}/${exercise.exerciseId}/${partsUrlFragment}/memberAllocation`
+      }
+    ]
     : [];
 
   return (
     <>
       <UmlExerciseText exercise={exercise} content={content} onClassClick={onClassClick}/>
 
-      <div className="columns">
-        {creatableClassDiagramObjects.map((x) =>
-          <div className="column" key={x.name}>
-            <button className={classNames('button is-fullwidth', x.name === selectedCreatableObject?.name ? 'is-link' : '')} onClick={() => toggle(x)}
-                    disabled={x.disabled}>
-              {x.name}
-            </button>
-          </div>
+      <div className="grid grid-cols-3 gap-2">
+        {creatableClassDiagramObjects.map(({name, key, disabled}) =>
+          <button key={name} onClick={() => toggle(key)} disabled={disabled}
+                  className={classNames('flex-grow p-2 rounded', key === selectedCreatableObject ? 'bg-blue-500 text-white' : 'border border-slate-500')}>
+            {name}
+          </button>
         )}
       </div>
 

@@ -21,8 +21,13 @@ import {UmlDiagramDrawingCorrectionTabContent} from './UmlDiagramDrawingCorrecti
 import {WithQuery} from '../../../WithQuery';
 import {UmlClassEdit} from './UmlClassEdit';
 import {UmlAssocEdit} from './UmlAssocEdit';
+import update from 'immutability-helper';
 
-enum CreatableClassDiagramObject {Class, Association, Implementation}
+export const enum CreatableClassDiagramObject {
+  Class = 'Class',
+  Association = 'Association',
+  Implementation = 'Implementation'
+}
 
 export interface SelectableClassDiagramObject {
   name: string;
@@ -51,7 +56,7 @@ interface IState {
   markedClass?: MyJointClass;
   editedClass?: MyJointClass;
   editedAssociation?: joint.shapes.uml.Association;
-  selectedCreatableObject?: SelectableClassDiagramObject;
+  selectedCreatableObject?: CreatableClassDiagramObject;
 }
 
 export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, oldSolution}: IProps): JSX.Element {
@@ -63,7 +68,6 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
   const [state, setState] = useState<IState>({});
 
   const [correctExercise, correctionMutationResult] = useUmlCorrectionMutation();
-
 
   // vars get recreated after every rerender!
   const graph: joint.dia.Graph = useMemo(() => new joint.dia.Graph(), []);
@@ -96,50 +100,57 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
 
   function createPaperEvents(): void {
     paper.on('blank:pointerclick', (evt: joint.dia.Event, x: number, y: number) => setState((state) => {
-      if (state.selectedCreatableObject && state.selectedCreatableObject.key === CreatableClassDiagramObject.Class) {
+      if (state.selectedCreatableObject && state.selectedCreatableObject === CreatableClassDiagramObject.Class) {
         addClassToGraph(graph, 'Klasse 1', [], [], {x, y});
       }
 
       return state;
     }));
 
-    paper.on('cell:pointerclick', (cellView) =>
-      setState(({markedClass, selectedCreatableObject, ...rest}) => {
+    paper.on('cell:pointerclick', (cellView) => setState((state) => {
 
         const model = cellView.model;
 
         if (!(model instanceof MyJointClass)) {
-          return {...rest, markedClass: undefined, selectedCreatableObject};
+          return update(state, {markedClass: {$set: undefined}});
         }
 
-        if (!markedClass) {
+        console.info(cellView.model.id);
+        console.info(state.markedClass);
+
+        if (state.markedClass === undefined) {
           // Nothing set yet
           cellView.highlight();
-          return {...rest, markedClass: model, selectedCreatableObject};
+          return update(state, {markedClass: {$set: model}});
         }
 
-        if (markedClass.getClassName() === model.getClassName()) {
+        if (state.markedClass.getClassName() === model.getClassName()) {
           // class was clicked again
           cellView.unhighlight();
-          return {...rest, markedClass: undefined, selectedCreatableObject};
+          return update(state, {markedClass: {$set: undefined}});
         }
 
-        if (selectedCreatableObject) {
-          if (selectedCreatableObject.key === CreatableClassDiagramObject.Association) {
-            addAssociationToGraph(graph, markedClass, UmlMultiplicity.Unbound, model as MyJointClass, UmlMultiplicity.Unbound);
-          } else if (selectedCreatableObject.key === CreatableClassDiagramObject.Implementation) {
-            addImplementationToGraph(graph, markedClass, cellView.model as MyJointClass);
+        console.info(state.selectedCreatableObject);
+
+        if (state.selectedCreatableObject !== undefined) {
+          switch (state.selectedCreatableObject) {
+            case CreatableClassDiagramObject.Association:
+              addAssociationToGraph(graph, state.markedClass, UmlMultiplicity.Unbound, model, UmlMultiplicity.Unbound);
+              break;
+            case CreatableClassDiagramObject.Implementation:
+              addImplementationToGraph(graph, state.markedClass, model);
+              break;
           }
 
-          markedClass.findView(paper).unhighlight();
+          state.markedClass.findView(paper).unhighlight();
 
-          return {...rest, markedClass: undefined, selectedCreatableObject};
+          return update(state, {markedClass: {$set: undefined}});
         }
 
         // New class selected, nothing to create
-        markedClass.findView(paper).unhighlight();
+        state.markedClass.findView(paper).unhighlight();
         cellView.highlight();
-        return {...rest, markedClass: cellView.model as MyJointClass, selectedCreatableObject};
+        return update(state, {markedClass: {$set: model}});
       })
     );
 
@@ -147,15 +158,23 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
       const model = cellView.model;
 
       if (model instanceof joint.shapes.uml.Association) {
-        const editedAssociation = state.editedAssociation && state.editedAssociation.id === model.id ? undefined : model;
-
-        return {...state, editedAssociation};
+        return update(state, {
+          editedAssociation: {
+            $set: state.editedAssociation === undefined || state.editedAssociation.id !== model.id
+              ? model
+              : undefined
+          }
+        });
       }
 
       if (model instanceof MyJointClass && !withHelp) {
-        const editedClass = state.editedClass && state.editedClass.id === model.id ? undefined : model;
-
-        return {...state, editedClass};
+        return update(state, {
+          editedClass: {
+            $set: state.editedClass === undefined || state.editedClass.id !== model.id
+              ? model
+              : undefined
+          }
+        });
       }
 
       return state;
@@ -192,9 +211,8 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
     }
   }
 
-  function toggle(x: SelectableClassDiagramObject): void {
-    setState((state) => ({...state, selectedCreatableObject: x.key === state.selectedCreatableObject?.key ? undefined : x}));
-  }
+  const selectCreatableObject = (x: CreatableClassDiagramObject): void =>
+    setState((state) => update(state, {selectedCreatableObject: {$set: x === state.selectedCreatableObject ? undefined : x}}));
 
   function correct(): void {
     const dbSolution: UmlDbClassDiagram = {
@@ -216,10 +234,10 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
   }
 
   return (
-    <div className="container is-fluid">
+    <div className="px-2">
 
-      <div className="columns">
-        <div className="column is-three-fifths">
+      <div className="grid grid-cols-5 gap-2">
+        <div className="col-span-3">
 
           <div ref={canvas} className="myPaper"/>
 
@@ -233,8 +251,7 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
             </div>          */}
         </div>
 
-        <div className="column">
-
+        <div className="col-span-2">
           <NewTabs activeTabId={activeTab} setActiveTabId={setActiveTab}>
             {{
               exerciseText: {
@@ -243,27 +260,32 @@ export function UmlDiagramDrawing({exercise, content, withHelp, partId, part, ol
                   <UmlDiagramDrawingExerciseTextTabContent
                     exercise={exercise}
                     content={content}
-                    correct={() => correct()}
+                    correct={correct}
                     creatableClassDiagramObjects={creatableClassDiagramObjects}
-                    onClassClick={(name) => console.warn(name)} toggle={toggle}
+                    onClassClick={(name) => console.warn(name)}
+                    toggle={selectCreatableObject}
                     selectedCreatableObject={state.selectedCreatableObject}
-                    isCorrecting={correctionMutationResult.called && correctionMutationResult.loading}
+                    /* isCorrecting={correctionMutationResult.called && correctionMutationResult.loading}*/
                     part={part}/>
                 )
               },
               correction: {
                 name: t('correction'),
-                render: <WithQuery query={correctionMutationResult}>
-                  {(data) => <UmlDiagramDrawingCorrectionTabContent corrResult={data}/>}
-                </WithQuery>
+                render: (
+                  <WithQuery query={correctionMutationResult}>
+                    {(data) => <UmlDiagramDrawingCorrectionTabContent corrResult={data}/>}
+                  </WithQuery>
+                )
               }
             }}
           </NewTabs>
 
-          {state.editedClass && <UmlClassEdit editedClass={state.editedClass} cancelEdit={() => setState((state) => ({...state, editedClass: undefined}))}/>}
+          {state.editedClass &&
+            <UmlClassEdit editedClass={state.editedClass} cancelEdit={() => setState((state) => update(state, {editedClass: {$set: undefined}}))}/>}
 
           {state.editedAssociation &&
-            <UmlAssocEdit editedAssociation={state.editedAssociation} cancelEdit={() => setState((state) => ({...state, editedAssociation: undefined}))}/>}
+            <UmlAssocEdit editedAssociation={state.editedAssociation}
+                          cancelEdit={() => setState((state) => update(state, {editedAssociation: {$set: undefined}}))}/>}
 
         </div>
       </div>

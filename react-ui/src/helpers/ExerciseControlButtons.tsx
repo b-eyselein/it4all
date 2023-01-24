@@ -31,8 +31,8 @@ export function ExerciseControlButtons({isCorrecting, correct, endLink, childLin
 
       {childLinks.map(({text, to, otherClassNames}) =>
         typeof to === 'function'
-          ? <button key={text} className={classNames('ml-2', 'p-2', 'flex-grow', 'rounded', otherClassNames)} onClick={to}>{text}</button>
-          : <Link key={text} className={classNames('ml-2', 'p-2', 'flex-grow', 'rounded', otherClassNames)} to={to}>{text}</Link>
+          ? <button key={text} className={classNames('ml-2 p-2 flex-grow rounded', otherClassNames)} onClick={to}>{text}</button>
+          : <Link key={text} className={classNames('ml-2 p-2 flex-grow rounded', otherClassNames)} to={to}>{text}</Link>
       )}
 
     </div>
