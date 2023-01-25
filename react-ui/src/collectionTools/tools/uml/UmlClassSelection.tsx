@@ -1,16 +1,17 @@
-import {Fragment, useState} from 'react';
+import React, {Fragment, useState} from 'react';
 import {ExerciseSolveFieldsFragment, UmlExerciseContentFragment} from '../../../graphql';
 import {getUmlExerciseTextParts} from './uml-helpers';
 import classNames from 'classnames';
 import {Link} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
+import {UmlClassSelectionCorrection} from './UmlClassSelectionCorrection';
 
 interface IProps {
   exercise: ExerciseSolveFieldsFragment;
   content: UmlExerciseContentFragment;
 }
 
-interface Correction {
+export interface UmlClassSelectionCorrectionResult {
   correctClasses: string[];
   missingClasses: string[];
   wrongClasses: string[];
@@ -18,49 +19,15 @@ interface Correction {
 
 interface IState {
   selectedClasses: string[];
-  correction?: Correction;
+  correction?: UmlClassSelectionCorrectionResult;
 }
 
-function compareClasses(userClasses: string[], sampleClasses: string[]): Correction {
+function compareClasses(userClasses: string[], sampleClasses: string[]): UmlClassSelectionCorrectionResult {
   return {
     correctClasses: userClasses.filter((name) => sampleClasses.includes(name)),
     missingClasses: sampleClasses.filter((name) => !userClasses.includes(name)),
     wrongClasses: userClasses.filter((name) => !sampleClasses.includes(name))
   };
-}
-
-function UmlClassSelectionCorrection({correction}: { correction: Correction }): JSX.Element {
-
-  const {correctClasses, missingClasses, wrongClasses} = correction;
-
-  return (
-    <>
-      <h2 className="mb-2 font-bold text-center">Korrektur</h2>
-
-      <div className="grid grid-cols-3">
-        <div>
-          <h3 className="font-bold text-center">Korrekte Klassen:</h3>
-          <ul>
-            {correctClasses.map((name) => <li key={name}>&#10004;&nbsp;<code className="has-text-dark-success">{name}</code></li>)}
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="font-bold text-center">Fehlende Klassen:</h3>
-          <ul>
-            {missingClasses.map((name) => <li key={name}>&#10008;&nbsp;<code>{name}</code></li>)}
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="font-bold text-center">Falsche Klassen</h3>
-          <ul>
-            {wrongClasses.map((name) => <li key={name}>&#10067;&nbsp;<code>{name}</code></li>)}
-          </ul>
-        </div>
-      </div>
-    </>
-  );
 }
 
 export function UmlClassSelection({exercise, content}: IProps): JSX.Element {
@@ -93,6 +60,8 @@ export function UmlClassSelection({exercise, content}: IProps): JSX.Element {
   return (
     <div className="container mx-auto">
       <h1 className="text-2xl font-bold text-center">{t('classSelection')}</h1>
+
+      <p className="my-4 text-xl text-center">Wählen Sie die Klassen, die sie modellieren würden, durch Anklicken im Text aus.</p>
 
       <div className="my-4 grid grid-cols-3 gap-2">
         <div className="col-span-2">
@@ -133,7 +102,7 @@ export function UmlClassSelection({exercise, content}: IProps): JSX.Element {
         <Link to="['../..']" className="p-2 rounded bg-black text-center text-white w-full">Bearbeiten beenden</Link>
       </div>
 
-      {state.correction && <UmlClassSelectionCorrection correction={state.correction}/>}
+      {state.correction && <UmlClassSelectionCorrection {...state.correction}/>}
 
     </div>
   );
