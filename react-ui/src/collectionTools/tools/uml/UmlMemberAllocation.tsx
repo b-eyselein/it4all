@@ -58,7 +58,7 @@ interface IState {
 }
 
 export function UmlMemberAllocation({exercise, content}: IProps): JSX.Element {
- 
+
   const sample: UmlClassDiagram = content.umlSampleSolutions[0];
 
   const allAttributes: UmlAttribute[] = distinctObjectArray(sample.classes.flatMap((clazz) => clazz.attributes), (a) => a.memberName);
