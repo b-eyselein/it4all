@@ -30,9 +30,6 @@ export function UmlDiagramDrawingExerciseTextTabContent({
 
   const {t} = useTranslation('common');
 
-  const isCorrecting = false;
-  const corrected = false;
-
   // FIXME: memberAllocation?
   const childLinks: ChildLink[] = part === UmlExPart.DiagramDrawingHelp
     ? [
@@ -57,7 +54,7 @@ export function UmlDiagramDrawingExerciseTextTabContent({
         )}
       </div>
 
-      <ExerciseControlButtons isCorrecting={isCorrecting} correct={correct} endLink={''} childLinks={childLinks}/>
+      <ExerciseControlButtons isCorrecting={false} correct={correct} endLink={''} childLinks={childLinks}/>
     </>
   );
 }
