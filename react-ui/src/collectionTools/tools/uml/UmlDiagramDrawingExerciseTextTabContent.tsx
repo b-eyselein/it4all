@@ -45,7 +45,7 @@ export function UmlDiagramDrawingExerciseTextTabContent({
     <>
       <UmlExerciseText exercise={exercise} content={content} onClassClick={onClassClick}/>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="my-4 grid grid-cols-3 gap-2">
         {creatableClassDiagramObjects.map(({name, key, disabled}) =>
           <button key={name} onClick={() => toggle(key)} disabled={disabled}
                   className={classNames('flex-grow p-2 rounded', key === selectedCreatableObject ? 'bg-blue-500 text-white' : 'border border-slate-500')}>

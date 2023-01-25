@@ -10,7 +10,7 @@ export function UmlClassSelectionCorrection({correctClasses, missingClasses, wro
         <div>
           <h3 className="font-bold text-center">Korrekte Klassen:</h3>
           <ul>
-            {correctClasses.map((name) => <li key={name}>&#10004;&nbsp;<code className="has-text-dark-success">{name}</code></li>)}
+            {correctClasses.map((name) => <li key={name}>&#10004;&nbsp;<code>{name}</code></li>)}
           </ul>
         </div>
 

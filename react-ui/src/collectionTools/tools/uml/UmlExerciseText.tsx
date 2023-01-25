@@ -13,7 +13,7 @@ export function UmlExerciseText({exercise, content, onClassClick}: IProps): JSX.
   const textParts = getUmlExerciseTextParts(exercise, content);
 
   return (
-    <div className="notification is-light-grey">
+    <div className="my-4 p-2 rounded bg-gray-200">
       {textParts.map((textPart, index) =>
         <Fragment key={index}>
           {typeof textPart !== 'string'
