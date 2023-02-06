@@ -18,11 +18,11 @@ export function BooleanNodeDisplay({node}: { node: BooleanNode }): JSX.Element {
     case 'Not':
       return 'left' in node.child
         ? <span>&not; <BooleanNodeDisplay node={node.child}/></span>
-        : <span>&not; (<BooleanNodeDisplay node={node.child}/>)</span>;
+        : <span>&not; <BooleanNodeDisplay node={node.child}/></span>;
     default:
       return (
         <>
-          <BooleanNodeDisplay node={node.left}/>&nbsp;{getOperatorForNodeType(node)}&nbsp;<BooleanNodeDisplay node={node.right}/>
+          (<BooleanNodeDisplay node={node.left}/>&nbsp;{getOperatorForNodeType(node)}&nbsp;<BooleanNodeDisplay node={node.right}/>)
         </>
       );
   }

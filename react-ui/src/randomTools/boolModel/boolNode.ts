@@ -60,7 +60,7 @@ export function stringifyNode(node: BooleanNode): string {
     case 'Not':
       return 'not ' + stringifyNode(node.child);
     default:
-      return stringifyNode(node.left) + ' ' + node._type.toLowerCase() + ' ' + stringifyNode(node.right);
+      return '(' + stringifyNode(node.left) + ') ' + node._type.toLowerCase() + ' (' + stringifyNode(node.right) + ')';
   }
 }
 
