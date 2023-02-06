@@ -1,15 +1,10 @@
-import {BooleanBinaryNode, BooleanVariable, BooleanNode} from './boolModel/boolNode';
+import {BooleanBinaryNode, BooleanNode} from './boolModel/boolNode';
 
 interface IProps {
-  left: BooleanVariable;
-  right: BooleanNode;
+  node: BooleanNode;
 }
 
-export function BoolFormulaDisplay({left, right}: IProps): JSX.Element {
-  return <>{left.variable} = <BooleanNodeDisplay node={right}/></>;
-}
-
-export function BooleanNodeDisplay({node}: { node: BooleanNode }): JSX.Element {
+export function BooleanNodeDisplay({node}: IProps): JSX.Element {
   switch (node._type) {
     case 'Variable':
       return <span>{node.variable}</span>;
@@ -29,20 +24,13 @@ export function BooleanNodeDisplay({node}: { node: BooleanNode }): JSX.Element {
 }
 
 function getOperatorForNodeType(node: BooleanBinaryNode): JSX.Element {
-  switch (node._type) {
-    case 'And':
-      return <>&and;</>;
-    case'Or':
-      return <>&or;</>;
-    case'NAnd':
-      return <>&#x22bc;</>;
-    case'NOr':
-      return <>&#x22bd;</>;
-    case'XOr':
-      return <>&oplus;</>;
-    case'Impl':
-      return <>&rArr;</>;
-    case'Equiv':
-      return <>&hArr;</>;
-  }
+  return {
+    'And': <>&and;</>,
+    'Or': <>&or;</>,
+    'NAnd': <>&#x22bc;</>,
+    'NOr': <>&#x22bd;</>,
+    'XOr': <>&oplus;</>,
+    'Impl': <>&rArr;</>,
+    'Equiv': <>&hArr;</>
+  }[node._type];
 }

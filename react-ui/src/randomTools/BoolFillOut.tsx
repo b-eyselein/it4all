@@ -3,7 +3,7 @@ import {RandomSolveButtons} from './RandomSolveButtons';
 import {BooleanNode, evaluate, getSubNodes, getVariables, stringifyNode} from './boolModel/boolNode';
 import {Assignment, calculateAssignments, displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/assignment';
 import {useTranslation} from 'react-i18next';
-import {BoolFormulaDisplay} from './BoolFormulaDisplay';
+import {BooleanNodeDisplay} from './BoolFormulaDisplay';
 import classNames from 'classnames';
 import update from 'immutability-helper';
 import {generateBooleanFormula} from './boolModel/booleanFormulaGenerator';
@@ -93,7 +93,7 @@ export function BoolFillOut(): JSX.Element {
 
       <div className="my-3">
         <h2 className="text-xl text-center">
-          <BoolFormulaDisplay left={sampleVariable} right={state.formula}/>
+          <>{sampleVariable.variable} = <BooleanNodeDisplay node={state.formula}/></>
         </h2>
         <h3 className="text-center text-gray-500">{sampleVariable.variable} = {stringifyNode(state.formula)}</h3>
       </div>
