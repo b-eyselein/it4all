@@ -1,6 +1,6 @@
 import {BooleanNode, stringifyNode} from './boolModel/boolNode';
 import classNames, {Argument as ClassNameArgument} from 'classnames';
-import {BooleanNodeDisplay} from './BoolFormulaDisplay';
+import {BooleanNodeDisplay} from './BooleanNodeDisplay';
 import {Assignment, displayAssignmentValue} from './boolModel/assignment';
 
 const cellClasses = ['p-2 text-center border border-slate-200'];
