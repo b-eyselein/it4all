@@ -3,7 +3,7 @@ import {RandomSolveButtons} from './RandomSolveButtons';
 import {BooleanNode, evaluate, getSubNodes, getVariables, stringifyNode} from './boolModel/boolNode';
 import {Assignment, calculateAssignments, displayAssignmentValue, isCorrect, learnerVariable, sampleVariable} from './boolModel/assignment';
 import {useTranslation} from 'react-i18next';
-import {BooleanNodeDisplay} from './BoolFormulaDisplay';
+import {BooleanNodeDisplay} from './BooleanNodeDisplay';
 import classNames from 'classnames';
 import update from 'immutability-helper';
 import {generateBooleanFormula} from './boolModel/booleanFormulaGenerator';
