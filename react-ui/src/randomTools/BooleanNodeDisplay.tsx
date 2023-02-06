@@ -1,4 +1,4 @@
-import {BooleanBinaryNode, BooleanNode} from './boolModel/boolNode';
+import {BooleanNode, BooleanBinaryNode} from './boolModel/boolNode';
 
 interface IProps {
   node: BooleanNode;

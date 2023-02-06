@@ -1,15 +1,15 @@
 import {alt, createLanguage, optWhitespace, Parser, regexp, Result, sepBy1, seq, string, whitespace} from 'parsimmon';
 import {
   and,
-  BooleanBinaryNode,
   BooleanFalse,
+  BooleanNode,
   BooleanTrue,
   booleanVariable,
   BooleanVariable,
   equiv,
+  BooleanBinaryNode,
   impl,
   nand,
-  BooleanNode,
   nor,
   not,
   or,
@@ -32,18 +32,13 @@ interface BooleanFormulaParser {
 }
 
 export function instantiateOperator(leftOp: BooleanNode, opString: OtherOps, rightOp: BooleanNode): BooleanBinaryNode {
-  switch (opString) {
-    case 'xor':
-      return xor(leftOp, rightOp);
-    case 'nor':
-      return nor(leftOp, rightOp);
-    case 'nand':
-      return nand(leftOp, rightOp);
-    case 'equiv':
-      return equiv(leftOp, rightOp);
-    case 'impl':
-      return impl(leftOp, rightOp);
-  }
+  return {
+    'xor': xor(leftOp, rightOp),
+    'nor': nor(leftOp, rightOp),
+    'nand': nand(leftOp, rightOp),
+    'equiv': equiv(leftOp, rightOp),
+    'impl': impl(leftOp, rightOp)
+  }[opString];
 }
 
 const boolFormulaLanguage = createLanguage<BooleanFormulaParser>({
