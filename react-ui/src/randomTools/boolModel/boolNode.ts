@@ -3,14 +3,12 @@ import {Assignment} from './assignment';
 export type BooleanNode = BooleanConstant | BooleanVariable | BooleanNot | BooleanBinaryNode;
 
 export function getSubNodes(node: BooleanNode): BooleanNode[] {
-  // FIXME: test!
   switch (node._type) {
     case 'Constant':
     case 'Variable':
       return [];
     case 'Not':
       return [node.child];
-    case 'And':
     default:
       return [node.left, node.right];
   }
@@ -41,7 +39,7 @@ function evaluateBinaryNode({_type, left, right}: BooleanBinaryNode, assignment:
     'XOr': (leftVal && !rightVal) || (!leftVal && rightVal),
     'Equiv': leftVal === rightVal,
     'Impl': !leftVal || rightVal,
-  } [_type];
+  }[_type];
 }
 
 export function stringifyNode(node: BooleanNode): string {
@@ -90,7 +88,6 @@ export const BooleanTrue: BooleanConstant = {_type: 'Constant', value: true};
 
 export const BooleanFalse: BooleanConstant = {_type: 'Constant', value: false};
 
-
 export interface BooleanNot {
   _type: 'Not';
   child: BooleanNode;
@@ -105,36 +102,21 @@ export function not(child: BooleanNode): BooleanNot {
 type BooleanBinaryNodeType = 'And' | 'Or' | 'NAnd' | 'NOr' | 'XOr' | 'Equiv' | 'Impl';
 
 export interface BooleanBinaryNode {
-  _type: BooleanBinaryNodeType;
+  _type: 'And' | 'Or' | 'NAnd' | 'NOr' | 'XOr' | 'Equiv' | 'Impl';
   left: BooleanNode;
   right: BooleanNode;
 }
 
-export function and(left: BooleanNode, right: BooleanNode): BooleanBinaryNode {
-  return {_type: 'And', left, right};
+type BooleanBinaryNodeConstructor = (left: BooleanNode, right: BooleanNode) => BooleanBinaryNode;
+
+function createBinaryNodeFunc(_type: BooleanBinaryNodeType): BooleanBinaryNodeConstructor {
+  return (left, right) => ({_type, left, right});
 }
 
-export function or(left: BooleanNode, right: BooleanNode): BooleanBinaryNode {
-  return {_type: 'Or', left, right};
-}
-
-export function nand(left: BooleanNode, right: BooleanNode): BooleanBinaryNode {
-  return {_type: 'NAnd', left, right};
-}
-
-export function nor(left: BooleanNode, right: BooleanNode): BooleanBinaryNode {
-  return {_type: 'NOr', left, right};
-}
-
-export function xor(left: BooleanNode, right: BooleanNode): BooleanBinaryNode {
-  return {_type: 'XOr', left, right};
-}
-
-export function equiv(left: BooleanNode, right: BooleanNode): BooleanBinaryNode {
-  return {_type: 'Equiv', left, right};
-}
-
-export function impl(left: BooleanNode, right: BooleanNode): BooleanBinaryNode {
-  return {_type: 'Impl', left, right};
-}
-
+export const and = createBinaryNodeFunc('And');
+export const or = createBinaryNodeFunc('Or');
+export const nand = createBinaryNodeFunc('NAnd');
+export const nor = createBinaryNodeFunc('NOr');
+export const xor = createBinaryNodeFunc('XOr');
+export const equiv = createBinaryNodeFunc('Equiv');
+export const impl = createBinaryNodeFunc('Impl');
