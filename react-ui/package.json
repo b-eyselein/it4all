@@ -58,10 +58,10 @@
     ]
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^2.0.1",
-    "@graphql-codegen/schema-ast": "^2.0.0",
-    "@graphql-codegen/typescript": "^2.0.0",
-    "@graphql-codegen/typescript-operations": "^2.0.1",
+    "@graphql-codegen/cli": "^3.0.0",
+    "@graphql-codegen/schema-ast": "^3.0.0",
+    "@graphql-codegen/typescript": "^3.0.0",
+    "@graphql-codegen/typescript-operations": "^3.0.0",
     "@graphql-codegen/typescript-react-apollo": "^3.0.0",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^13.3.0",
