@@ -52,7 +52,7 @@ libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.2", // Apache 2.0
 
   // Sql
-  "org.postgresql"       % "postgresql"            % "42.5.1",         // BSD-2
+  "org.postgresql"       % "postgresql"            % "42.5.3",         // BSD-2
   "com.typesafe.play"   %% "play-slick"            % playSlickVersion, // Apache 2.0
   "com.typesafe.play"   %% "play-slick-evolutions" % playSlickVersion, // Apache 2.0
   "com.github.tminglei" %% "slick-pg"              % slickPgVersion,   // BSD-2
