@@ -1,25 +1,31 @@
-import {BooleanNode, BooleanBinaryNode} from './boolModel/boolNode';
+import {BooleanBinaryNode, BooleanNode} from './boolModel/boolNode';
 
 interface IProps {
   node: BooleanNode;
+  needsParentheses?: boolean;
 }
 
-export function BooleanNodeDisplay({node}: IProps): JSX.Element {
-  switch (node._type) {
-    case 'Variable':
-      return <span>{node.variable}</span>;
-    case 'Constant':
-      return <span>{node.value ? '1' : '0'}</span>;
-    case 'Not':
-      return 'left' in node.child
-        ? <span>&not; <BooleanNodeDisplay node={node.child}/></span>
-        : <span>&not; <BooleanNodeDisplay node={node.child}/></span>;
-    default:
-      return (
-        <>
-          (<BooleanNodeDisplay node={node.left}/>&nbsp;{getOperatorForNodeType(node)}&nbsp;<BooleanNodeDisplay node={node.right}/>)
-        </>
-      );
+export function BooleanNodeDisplay({node, needsParentheses}: IProps): JSX.Element {
+  if (node._type === 'Constant') {
+    return <span>{node.value ? '1' : '0'}</span>;
+  } else if (node._type === 'Variable') {
+    return <span>{node.variable}</span>;
+  } else if (node._type === 'Not') {
+    return <span>&not; <BooleanNodeDisplay node={node.child} needsParentheses={true}/></span>;
+  } else {
+    const childrenRender = (
+      <>
+        <BooleanNodeDisplay node={node.left} needsParentheses={true}/>
+        &nbsp;
+        {getOperatorForNodeType(node)}
+        &nbsp;
+        <BooleanNodeDisplay node={node.right} needsParentheses={true}/>
+      </>
+    );
+
+    return needsParentheses
+      ? <>({childrenRender})</>
+      : <>{childrenRender}</>;
   }
 }
 
