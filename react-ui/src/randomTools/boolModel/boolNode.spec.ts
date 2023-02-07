@@ -1,6 +1,7 @@
 import {
   and,
   BooleanFalse,
+  BooleanNode,
   BooleanTrue,
   booleanVariable,
   equiv,
@@ -269,3 +270,14 @@ describe('BooleanImplication', () => {
     expect(stringifyNode(boolImpl)).toBe('a impl b');
   });
 });
+
+describe('stringify', () => {
+  test.each<{ node: BooleanNode, awaited: string }>([
+    {node: variableA, awaited: 'a'},
+    {node: and(or(variableA, variableB), nor(variableA, variableB)), awaited: '(a or b) and (a nor b)'},
+    {node: and(not(or(variableA, variableB)), nor(not(variableA), variableB)), awaited: 'not (a or b) and (not a nor b)'},
+  ])(
+    'should stringify bool nodes with parentheses',
+    ({node, awaited}) => expect(stringifyNode(node)).toEqual(awaited)
+  );
+})

@@ -42,16 +42,19 @@ function evaluateBinaryNode({_type, left, right}: BooleanBinaryNode, assignment:
   }[_type];
 }
 
-export function stringifyNode(node: BooleanNode): string {
-  switch (node._type) {
-    case 'Constant':
-      return node.value ? '1' : '0';
-    case 'Variable':
-      return node.variable;
-    case 'Not':
-      return 'not ' + stringifyNode(node.child);
-    default:
-      return '(' + stringifyNode(node.left) + ') ' + node._type.toLowerCase() + ' (' + stringifyNode(node.right) + ')';
+export function stringifyNode(node: BooleanNode, needsParentheses = false): string {
+  if (node._type === 'Constant') {
+    return node.value ? '1' : '0';
+  } else if (node._type === 'Variable') {
+    return node.variable;
+  } else if (node._type === 'Not') {
+    return 'not ' + stringifyNode(node.child, true);
+  } else {
+    const child = stringifyNode(node.left, true) + ' ' + node._type.toLowerCase() + ' ' + stringifyNode(node.right, true);
+
+    return needsParentheses
+      ? '(' + child + ')'
+      : child;
   }
 }
 
