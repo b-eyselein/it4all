@@ -9,15 +9,17 @@ import net.sf.jsqlparser.statement.select.{AllColumns, AllTableColumns, SubSelec
 
 import scala.collection.mutable.ListBuffer
 
-class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
+class ExpressionExtractor extends ExpressionVisitor {
 
-  val binaryExpressions: ListBuffer[BinaryExpression] = new ListBuffer()
+  private val binaryExpressions: ListBuffer[BinaryExpression] = new ListBuffer()
 
   // FIXME: compare complete tree with and, or ...
 
-  def extracted: Seq[BinaryExpression] = {
-    if (expression != null)
+  def extractFrom(expression: Expression): Seq[BinaryExpression] = {
+
+    if (expression != null) {
       expression accept this
+    }
 
     binaryExpressions.toList
   }
@@ -200,5 +202,9 @@ class ExpressionExtractor(expression: Expression) extends ExpressionVisitor {
   override def visit(isDistinctExpression: IsDistinctExpression): Unit = {}
 
   override def visit(geometryDistance: GeometryDistance): Unit = {}
+
+  override def visit(overlapsCondition: OverlapsCondition): Unit = {}
+
+  override def visit(cast: SafeCastExpression): Unit = {}
 
 }

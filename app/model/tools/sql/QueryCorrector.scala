@@ -96,7 +96,7 @@ abstract class QueryCorrector(val queryType: String) {
   }
 
   private def getExpressions(statement: Q): Seq[BinaryExpression] = getWhere(statement) match {
-    case Some(expression) => new ExpressionExtractor(expression).extracted
+    case Some(expression) => new ExpressionExtractor().extractFrom(expression)
     case None             => Seq.empty
   }
 
