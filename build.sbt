@@ -35,6 +35,8 @@ lazy val root = (project in file("."))
     Compile / packageDoc / publishArtifact := false
   )
 
+Universal / mappings += (baseDirectory.value / "docker-compose.yaml") -> "docker-compose.yaml"
+
 libraryDependencies ++= Seq(
   guice,
 
