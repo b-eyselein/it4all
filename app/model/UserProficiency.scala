@@ -54,7 +54,7 @@ final case class UserProficiency(
 trait ProficiencyRepository {
   self: TableDefs =>
 
-  import MyPostgresProfile.api._
+  import profile.api._
 
   // FIXME: make view?
   def userProficienciesForToolWithParts(username: String, toolId: String): Future[Seq[UserProficiency]] = {

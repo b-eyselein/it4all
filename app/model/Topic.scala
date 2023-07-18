@@ -33,16 +33,14 @@ trait TopicRepository {
    */
 
   protected class TopicsTable(tag: Tag) extends Table[Topic](tag, "topics") {
-
-    def toolId = column[String]("tool_id")
-
-    def abbreviation = column[String]("abbreviation")
-
+    def toolId        = column[String]("tool_id")
+    def abbreviation  = column[String]("abbreviation")
     private def title = column[String]("title")
 
+    @scala.annotation.unused
     def pk = primaryKey("topics_pk", (toolId, abbreviation))
 
     override def * = (abbreviation, toolId, title) <> (Topic.tupled, Topic.unapply)
-
   }
+
 }
