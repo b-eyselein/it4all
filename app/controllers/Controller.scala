@@ -78,15 +78,15 @@ class Controller @Inject() (
   )
 
   def ltiLogin: Action[BasicLtiLaunchRequest] = Action.async(parse.form(basicLtiLaunchRequestForm)) { request =>
-    for {
-      maybeUser <- tableDefs.futureUserByUsername(request.body.username)
+    val username = request.body.username
 
-      user <- maybeUser match {
-        case Some(u) => Future(u)
+    for {
+      maybeUser <- tableDefs.futureUserByUsername(username)
+
+      _ <- maybeUser match {
+        case Some(_) => Future(())
         case None    => tableDefs.futureInsertUser(request.body.username, None)
       }
-
-      username = user.username
 
       uuid = UUID.randomUUID().toString
 

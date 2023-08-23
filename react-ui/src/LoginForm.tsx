@@ -1,6 +1,6 @@
 import {Field, Form, Formik} from 'formik';
 import {useTranslation} from 'react-i18next';
-import {useState} from 'react';
+import {ReactElement, useState} from 'react';
 import {LoginMutationVariables, useLoginMutation} from './graphql';
 import {useDispatch, useSelector} from 'react-redux';
 import {Navigate} from 'react-router-dom';
@@ -16,7 +16,7 @@ const loginValuesSchema: Schema<LoginMutationVariables> = yupObject({
 
 const initialValues: LoginMutationVariables = {username: '', password: ''};
 
-export function LoginForm(): JSX.Element {
+export function LoginForm(): ReactElement {
 
   const {t} = useTranslation('common');
   const dispatch = useDispatch();
@@ -27,18 +27,20 @@ export function LoginForm(): JSX.Element {
     return <Navigate to={homeUrl}/>;
   }
 
-  function handleSubmit(variables: LoginMutationVariables): void {
-    loginMutation({variables})
-      .then(({data}) => {
-        if (data) {
-          setLoginInvalid(false);
-          dispatch(login(data.login));
-        } else {
-          setLoginInvalid(true);
-        }
-      })
-      .catch((error) => console.error(error));
-  }
+  const handleSubmit = async (variables: LoginMutationVariables): Promise<void> => {
+    try {
+      const {data} = await loginMutation({variables});
+
+      if (data) {
+        setLoginInvalid(false);
+        dispatch(login(data.login));
+      } else {
+        setLoginInvalid(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="container mx-auto">
@@ -50,15 +52,13 @@ export function LoginForm(): JSX.Element {
           <div className="my-2">
             <label htmlFor="username" className="font-bold">{t('username')}*:</label>
             <Field type="text" name="username" id="username" placeholder={t('username')} required autoFocus
-                   className={classNames('mt-2', 'p-2', 'rounded', 'border', 'w-full',
-                     touched.username && errors.username ? 'border-red-500' : 'border-slate-300')}/>
+                   className={classNames('mt-2 p-2 rounded border w-full', touched.username && errors.username ? 'border-red-500' : 'border-slate-300')}/>
           </div>
 
           <div className="my-2">
             <label htmlFor="password" className="font-bold">{t('password')}*:</label>
             <Field type="password" name="password" id="password" placeholder={t('password')} required
-                   className={classNames('mt-2', 'p-2', 'rounded', 'border', 'w-full',
-                     touched.password && errors.password ? 'border-red-500' : 'border-slate-300')}/>
+                   className={classNames('mt-2 p-2 rounded border w-full', touched.password && errors.password ? 'border-red-500' : 'border-slate-300')}/>
           </div>
 
           {loginInvalid && <div className="p-2">{t('invalidUsernamePasswordCombination')}</div>}

@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {ReactElement, useEffect} from 'react';
 import {Navigate, useParams} from 'react-router-dom';
 import {useClaimLtiWebTokenMutation} from './graphql';
 import {useDispatch, useSelector} from 'react-redux';
@@ -6,7 +6,7 @@ import {homeUrl} from './urls';
 import {useTranslation} from 'react-i18next';
 import {login, newCurrentUserSelector} from './store';
 
-export function ClaimLti(): JSX.Element {
+export function ClaimLti(): ReactElement {
 
   const {t} = useTranslation('common');
   const {ltiUuid} = useParams<'ltiUuid'>();

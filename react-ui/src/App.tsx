@@ -13,8 +13,9 @@ import {NaryConversion} from './randomTools/NaryConversion';
 import {NaryTwoConversion} from './randomTools/NaryTwoConversion';
 import {RandomToolOverview} from './randomTools/RandomToolOverview';
 import {boolRandomTool, naryRandomTool} from './randomTools/randomTools';
+import {ReactElement} from 'react';
 
-export function App(): JSX.Element {
+export function App(): ReactElement {
   return (
     <>
       <NavBar/>
