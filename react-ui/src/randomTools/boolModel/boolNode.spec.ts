@@ -280,4 +280,4 @@ describe('stringify', () => {
     'should stringify bool nodes with parentheses',
     ({node, awaited}) => expect(stringifyNode(node)).toEqual(awaited)
   );
-})
+});
