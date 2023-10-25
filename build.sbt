@@ -1,7 +1,7 @@
-val enumeratumVersion = "1.7.3"
+val enumeratumVersion = "1.7.2"
 val playSlickVersion  = "5.1.0"
 val slickPgVersion    = "0.21.1"
-val seleniumVersion   = "4.11.0"
+val seleniumVersion   = "4.10.0"
 
 val commonSettings = Seq(
   scalaVersion := "2.13.11",
