@@ -4,13 +4,8 @@ import {WithQuery} from './WithQuery';
 import {FooterItem, NewCard} from './helpers/BulmaCard';
 import {randomTools} from './randomTools/randomTools';
 import {randomToolsUrlFragment} from './urls';
-import {ReactElement} from 'react';
 
-interface IProps {
-  tools: ToolFragment[];
-}
-
-function Inner({tools}: IProps): ReactElement {
+function Inner({tools}: { tools: ToolFragment[] }): JSX.Element {
 
   const {t} = useTranslation('common');
 
@@ -25,7 +20,7 @@ function Inner({tools}: IProps): ReactElement {
   );
 }
 
-export function Home(): ReactElement {
+export function Home(): JSX.Element {
 
   const {t} = useTranslation('common');
   const query = useToolOverviewQuery();
@@ -39,10 +34,9 @@ export function Home(): ReactElement {
       <h1 className="font-bold text-2xl text-center">{t('tool_plural')}&nbsp; <code>it4all</code></h1>
 
       <div className="mt-4 grid grid-cols-4 gap-x-4 gap-y-8">
-        {randomTools.map(({id, name}) =>
-          <NewCard key={id} title={name} footerItems={randomToolsRoutes(id)}>
-            <>&nbsp;</>
-          </NewCard>)}
+
+        {randomTools.map(({id, name}) => <NewCard key={id} title={name} footerItems={randomToolsRoutes(id)}><>&nbsp;</>
+        </NewCard>)}
 
         <WithQuery query={query}>
           {({tools}) => <Inner tools={tools}/>}

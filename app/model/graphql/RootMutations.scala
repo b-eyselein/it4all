@@ -23,7 +23,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
 
   // Registration
 
-  private val registerValuesArgument: Argument[RegisterValues] = {
+  protected val registerValuesArgument: Argument[RegisterValues] = {
     implicit val x0: OFormat[RegisterValues]                     = Json.format
     val registerValuesInputType: InputObjectType[RegisterValues] = deriveInputObjectType()
 
@@ -33,21 +33,29 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
   private val resolveRegister: Resolver[Unit, String] = context => {
     val RegisterValues(username, password, passwordRepeat) = context.arg(registerValuesArgument)
 
-    for {
-      _ <- futureFromBoolean(password == passwordRepeat, MyUserFacingGraphQLError("Passwords don't match!"))
+    if (password != passwordRepeat) {
 
-      maybeUser <- context.ctx.tableDefs.futureUserByUsername(username)
+      Future.failed(MyUserFacingGraphQLError("Passwords don't match!"))
 
-      _ <- maybeUser match {
-        case Some(_) => Future.failed { MyUserFacingGraphQLError("Could not register user!") }
-        case None    => context.ctx.tableDefs.futureInsertUser(username, Some(password.boundedBcrypt))
-      }
-    } yield username
+    } else {
+
+      for {
+        maybeUser <- context.ctx.tableDefs.futureUserByUsername(username)
+
+        newUser <- maybeUser match {
+          case Some(_) => Future.failed(MyUserFacingGraphQLError("Could not register user!"))
+          case None =>
+            context.ctx.tableDefs
+              .futureInsertUser(username, Some(password.boundedBcrypt))
+              .map { case User(username, _) => username }
+        }
+      } yield newUser
+    }
   }
 
   // Login
 
-  private val userCredentialsArgument: Argument[UserCredentials] = {
+  protected val userCredentialsArgument: Argument[UserCredentials] = {
     implicit val ucf: OFormat[UserCredentials]                     = Json.format
     val userCredentialsInputType: InputObjectType[UserCredentials] = deriveInputObjectType()
 
