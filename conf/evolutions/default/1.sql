@@ -1,5 +1,7 @@
 -- !Ups
 
+create type level_name as enum ('Beginner', 'Intermediate', 'Advanced', 'Expert');
+
 create table if not exists users (
   username      varchar(100) not null primary key,
   maybe_pw_hash varchar(100)
@@ -25,13 +27,13 @@ create table if not exists collections (
 );
 
 create table if not exists exercises (
-  tool_id       varchar(20)                                             not null,
-  collection_id int                                                     not null,
-  exercise_id   int                                                     not null,
-  title         varchar(100)                                            not null,
-  text          text                                                    not null,
-  difficulty    enum ('Beginner', 'Intermediate', 'Advanced', 'Expert') not null,
-  content_json  json                                                    not null,
+  tool_id       varchar(20)  not null,
+  collection_id int          not null,
+  exercise_id   int          not null,
+  title         varchar(100) not null,
+  text          text         not null,
+  difficulty    level_name   not null,
+  content_json  jsonb        not null,
 
   primary key (tool_id, collection_id, exercise_id),
 
@@ -41,11 +43,11 @@ create table if not exists exercises (
 );
 
 create table if not exists exercise_topics (
-  tool_id            varchar(20)                                             not null,
-  collection_id      int                                                     not null,
-  exercise_id        int                                                     not null,
-  topic_abbreviation varchar(20)                                             not null,
-  level              enum ('Beginner', 'Intermediate', 'Advanced', 'Expert') not null,
+  tool_id            varchar(20) not null,
+  collection_id      int         not null,
+  exercise_id        int         not null,
+  topic_abbreviation varchar(20) not null,
+  level              level_name  not null,
 
   primary key (tool_id, collection_id, exercise_id, topic_abbreviation),
 
@@ -64,7 +66,7 @@ create table if not exists user_solutions_without_parts (
   username            varchar(100) not null,
   solution_id         int          not null,
 
-  solution_json       json         not null,
+  solution_json       jsonb        not null,
   points_quarters     int          not null,
   max_points_quarters int          not null,
 
@@ -86,7 +88,7 @@ create table if not exists user_solutions_with_parts (
   part_id             varchar(20)  not null,
   solution_id         int          not null,
 
-  solution_json       json         not null,
+  solution_json       jsonb        not null,
   points_quarters     int          not null,
   max_points_quarters int          not null,
 
@@ -102,11 +104,16 @@ create table if not exists user_solutions_with_parts (
 
 -- !Downs
 
-drop table if exists
-  user_solutions_with_parts,
-  user_solutions_without_parts,
-  exercise_topics,
-  exercises,
-  collections,
-  users;
+drop table if exists user_solutions_with_parts;
 
+drop table if exists user_solutions_without_parts;
+
+drop table if exists exercise_topics;
+
+drop table if exists exercises;
+
+drop table if exists collections;
+
+drop table if exists users;
+
+drop type if exists level_name;

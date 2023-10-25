@@ -61,7 +61,7 @@ protected final case class DbExercise(
 trait ExerciseRepository {
   self: TableDefs =>
 
-  import profile.api._
+  import MyPostgresProfile.api._
 
   // Helper functions
 
@@ -126,23 +126,33 @@ trait ExerciseRepository {
   }
 
   protected class ExercisesTable(tag: Tag) extends Table[DbExercise](tag, "exercises") {
-    def toolId              = column[String]("tool_id")
-    def collectionId        = column[Int]("collection_id")
-    def exerciseId          = column[Int]("exercise_id")
-    private def title       = column[String]("title", O.Unique)
-    private def text        = column[String]("text")
-    private def difficulty  = column[Level]("difficulty")
+
+    def toolId = column[String]("tool_id")
+
+    def collectionId = column[Int]("collection_id")
+
+    def exerciseId = column[Int]("exercise_id")
+
+    private def title = column[String]("title", O.Unique)
+
+    private def text = column[String]("text")
+
+    private def difficulty = column[Level]("difficulty")
+
     private def jsonContent = column[JsValue]("content_json")
 
-    @unused def pk = primaryKey("exercises_pk", (toolId, collectionId, exerciseId))
+    def pk = primaryKey("exercises_pk", (toolId, collectionId, exerciseId))
 
-    @unused def collectionsForeignKey = foreignKey("exercises_collections_fk", (toolId, collectionId), collectionsTQ)(
+    // noinspection ScalaWeakerAccess
+    @unused("used by slick")
+    def collectionsForeignKey = foreignKey("exercises_collections_fk", (toolId, collectionId), collectionsTQ)(
       c => (c.toolId, c.collectionId),
       onUpdate = ForeignKeyAction.Cascade,
       onDelete = ForeignKeyAction.Cascade
     )
 
     override def * = (toolId, collectionId, exerciseId, title, text, difficulty, jsonContent) <> (DbExercise.tupled, DbExercise.unapply)
+
   }
 
 }

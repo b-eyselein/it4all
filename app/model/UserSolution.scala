@@ -33,7 +33,7 @@ protected final case class DbUserSolutionWithPart(
 trait UserSolutionRepository {
   self: TableDefs =>
 
-  import profile.api._
+  import MyPostgresProfile.api._
 
   protected implicit val ec: ExecutionContext
 

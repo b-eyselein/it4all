@@ -17,9 +17,8 @@ trait CollectionRepository {
 
   def futureCollectionCountForTool(toolId: String): Future[Int] = db.run(collectionsTQ.filter { _.toolId === toolId }.length.result)
 
-  def futureCollectionsForTool(toolId: String): Future[Seq[ExerciseCollection]] = db.run(
-    collectionsTQ.filter { _.toolId === toolId }.sortBy { _.collectionId }.result
-  )
+  def futureCollectionsForTool(toolId: String): Future[Seq[ExerciseCollection]] =
+    db.run(collectionsTQ.filter { _.toolId === toolId }.sortBy { _.collectionId }.result)
 
   def futureCollectionById(toolId: String, collectionId: Int): Future[Option[ExerciseCollection]] = db.run(
     collectionsTQ
@@ -33,14 +32,17 @@ trait CollectionRepository {
   } yield lineCount == 1
 
   protected class CollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
-    def toolId        = column[String]("tool_id")
-    def collectionId  = column[Int]("collection_id")
+
+    def toolId = column[String]("tool_id")
+
+    def collectionId = column[Int]("collection_id")
+
     private def title = column[String]("title")
 
-    @scala.annotation.unused
     def pk = primaryKey("collections_pk", (toolId, collectionId))
 
     override def * = (toolId, collectionId, title) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
+
   }
 
 }

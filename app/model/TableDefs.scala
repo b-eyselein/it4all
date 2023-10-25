@@ -1,10 +1,26 @@
 package model
 
+import com.github.tminglei.slickpg.{ExPostgresProfile, PgEnumSupport, PgPlayJsonSupport}
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import play.api.libs.json.{JsValue, Json}
-import slick.jdbc.JdbcProfile
+import slick.jdbc.{JdbcProfile, JdbcType}
 
 import scala.concurrent.ExecutionContext
+
+trait MyPostgresProfile extends ExPostgresProfile with PgEnumSupport with PgPlayJsonSupport {
+
+  override val pgjson = "jsonb"
+
+  trait MyAPI extends super.API with JsonImplicits {
+
+    implicit val levelMappedType: JdbcType[Level] = createEnumJdbcType("level", _.entryName, Level.withName, quoteName = false)
+
+  }
+
+  override val api: MyAPI = new MyAPI {}
+
+}
+
+object MyPostgresProfile extends MyPostgresProfile {}
 
 class TableDefs @javax.inject.Inject() (override protected val dbConfigProvider: DatabaseConfigProvider)(implicit val ec: ExecutionContext)
     extends HasDatabaseConfigProvider[JdbcProfile]
@@ -14,12 +30,4 @@ class TableDefs @javax.inject.Inject() (override protected val dbConfigProvider:
     with ExerciseRepository
     with ExerciseTopicsRepository
     with UserSolutionRepository
-    with ProficiencyRepository {
-
-  import profile.api._
-
-  protected implicit val levelType: BaseColumnType[Level] = MappedColumnType.base[Level, String](_.entryName, Level.withNameInsensitive)
-
-  protected implicit val jsValueType: BaseColumnType[JsValue] = MappedColumnType.base[JsValue, String](Json.stringify, Json.parse)
-
-}
+    with ProficiencyRepository

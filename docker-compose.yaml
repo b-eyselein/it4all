@@ -1,28 +1,11 @@
 version: "3.3"
 
 volumes:
-  db_data_volume: { }
   select_db_volume: { }
   update_db_volume: { }
   create_db_volume: { }
 
 services:
-  db:
-    image: mariadb
-    restart: always
-    ports:
-      - "3326:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: abcd
-      MYSQL_DATABASE: it4all
-    volumes:
-      - type: volume
-        source: db_data_volume
-        target: /var/lib/mysql
-      - type: bind
-        source: init.sql
-        target: /docker-entrypoint-initdb.d/init.sql
-
   webtester:
     image: httpd:alpine
     restart: always

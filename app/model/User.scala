@@ -16,10 +16,13 @@ trait UserRepository {
   def futureInsertUser(username: String, maybePwHash: Option[String]): Future[User] = db.run(usersTQ.returning(usersTQ) += User(username, maybePwHash))
 
   protected class UsersTable(tag: Tag) extends Table[User](tag, "users") {
-    def username            = column[String]("username", O.PrimaryKey)
+
+    def username = column[String]("username", O.PrimaryKey)
+
     private def maybePwHash = column[Option[String]]("maybe_pw_hash")
 
     override def * = (username, maybePwHash) <> (User.tupled, User.unapply)
+
   }
 
 }
