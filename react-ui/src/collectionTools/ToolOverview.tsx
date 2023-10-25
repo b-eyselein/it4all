@@ -6,14 +6,13 @@ import {ToolBaseParams} from '../ToolBase';
 import {NewCard} from '../helpers/BulmaCard';
 import {useTranslation} from 'react-i18next';
 import {allExercisesUrlFragment, collectionsUrlFragment, toolsBreadCrumbs, toolsUrlFragment} from '../urls';
-import {ReactElement} from 'react';
 
 interface InnerProps {
   toolId: string;
   tool: ToolOverviewFragment;
 }
 
-function Inner({toolId, tool}: InnerProps): ReactElement {
+function Inner({toolId, tool}: InnerProps): JSX.Element {
 
   const {t} = useTranslation('common');
 
@@ -57,7 +56,7 @@ function Inner({toolId, tool}: InnerProps): ReactElement {
   );
 }
 
-export function ToolOverview({toolId}: ToolBaseParams): ReactElement {
+export function ToolOverview({toolId}: ToolBaseParams): JSX.Element {
 
   const query = useCollectionToolOverviewQuery({variables: {toolId}});
 
