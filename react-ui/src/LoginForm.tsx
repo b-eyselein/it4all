@@ -1,35 +1,35 @@
-import {Field, Form, Formik} from 'formik';
-import {useTranslation} from 'react-i18next';
-import {useState} from 'react';
-import {LoginMutationVariables, useLoginMutation} from './graphql';
-import {useDispatch, useSelector} from 'react-redux';
-import {Navigate} from 'react-router-dom';
+import { Field, Form, Formik } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import { LoginMutationVariables, useLoginMutation } from './graphql';
+import { useDispatch, useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 import classNames from 'classnames';
-import {object as yupObject, SchemaOf, string as yupString} from 'yup';
-import {homeUrl} from './urls';
-import {login, newCurrentUserSelector} from './store';
+import * as yup from 'yup';
+import { homeUrl } from './urls';
+import { login, newCurrentUserSelector } from './store';
 
-const loginValuesSchema: SchemaOf<LoginMutationVariables> = yupObject({
-  username: yupString().required(),
-  password: yupString().required()
+const loginValuesSchema: yup.ObjectSchema<LoginMutationVariables> = yup.object({
+  username: yup.string().required(),
+  password: yup.string().required()
 }).required();
 
-const initialValues: LoginMutationVariables = {username: '', password: ''};
+const initialValues: LoginMutationVariables = { username: '', password: '' };
 
 export function LoginForm(): JSX.Element {
 
-  const {t} = useTranslation('common');
+  const { t } = useTranslation('common');
   const dispatch = useDispatch();
   const [loginInvalid, setLoginInvalid] = useState<boolean>();
-  const [loginMutation, {loading, error}] = useLoginMutation();
+  const [loginMutation, { loading, error }] = useLoginMutation();
 
   if (useSelector(newCurrentUserSelector)) {
-    return <Navigate to={homeUrl}/>;
+    return <Navigate to={homeUrl} />;
   }
 
   function handleSubmit(variables: LoginMutationVariables): void {
-    loginMutation({variables})
-      .then(({data}) => {
+    loginMutation({ variables })
+      .then(({ data }) => {
         if (data) {
           setLoginInvalid(false);
           dispatch(login(data.login));
@@ -45,20 +45,20 @@ export function LoginForm(): JSX.Element {
       <h1 className="font-bold text-2xl text-center">{t('login')}</h1>
 
       <Formik initialValues={initialValues} validationSchema={loginValuesSchema} onSubmit={handleSubmit}>
-        {({touched, errors}) => <Form>
+        {({ touched, errors }) => <Form>
 
           <div className="my-2">
             <label htmlFor="username" className="font-bold">{t('username')}*:</label>
             <Field type="text" name="username" id="username" placeholder={t('username')} required autoFocus
-                   className={classNames('mt-2', 'p-2', 'rounded', 'border', 'w-full',
-                     touched.username && errors.username ? 'border-red-500' : 'border-slate-300')}/>
+              className={classNames('mt-2', 'p-2', 'rounded', 'border', 'w-full',
+                touched.username && errors.username ? 'border-red-500' : 'border-slate-300')} />
           </div>
 
           <div className="my-2">
             <label htmlFor="password" className="font-bold">{t('password')}*:</label>
             <Field type="password" name="password" id="password" placeholder={t('password')} required
-                   className={classNames('mt-2', 'p-2', 'rounded', 'border', 'w-full',
-                     touched.password && errors.password ? 'border-red-500' : 'border-slate-300')}/>
+              className={classNames('mt-2', 'p-2', 'rounded', 'border', 'w-full',
+                touched.password && errors.password ? 'border-red-500' : 'border-slate-300')} />
           </div>
 
           {loginInvalid && <div className="p-2">{t('invalidUsernamePasswordCombination')}</div>}
