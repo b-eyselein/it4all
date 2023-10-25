@@ -1,5 +1,5 @@
 import {useTranslation} from 'react-i18next';
-import {object as yupObject, Schema, string as yupString} from 'yup';
+import {object as yupObject, SchemaOf, string as yupString} from 'yup';
 import {RegisterValues, useRegisterMutation} from './graphql';
 import {Field, Form, Formik} from 'formik';
 import {useSelector} from 'react-redux';
@@ -8,7 +8,7 @@ import {homeUrl} from './urls';
 import classNames from 'classnames';
 import {newCurrentUserSelector} from './store';
 
-const registerValuesSchema: Schema<RegisterValues> = yupObject({
+const registerValuesSchema: SchemaOf<RegisterValues> = yupObject({
   username: yupString().required(),
   password: yupString().required(),
   passwordRepeat: yupString().required()

@@ -5,11 +5,11 @@ import {LoginMutationVariables, useLoginMutation} from './graphql';
 import {useDispatch, useSelector} from 'react-redux';
 import {Navigate} from 'react-router-dom';
 import classNames from 'classnames';
-import {object as yupObject, Schema, string as yupString} from 'yup';
+import {object as yupObject, SchemaOf, string as yupString} from 'yup';
 import {homeUrl} from './urls';
 import {login, newCurrentUserSelector} from './store';
 
-const loginValuesSchema: Schema<LoginMutationVariables> = yupObject({
+const loginValuesSchema: SchemaOf<LoginMutationVariables> = yupObject({
   username: yupString().required(),
   password: yupString().required()
 }).required();
