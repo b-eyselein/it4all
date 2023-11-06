@@ -31,7 +31,7 @@ object DockerConnector {
 
   private val dockerClient: DockerClient = DefaultDockerClient.fromEnv().build()
 
-  def imageExists(scalaDockerImage: ScalaDockerImage)(implicit ec: ExecutionContext): Boolean = imageExists(scalaDockerImage.name)
+  def imageExists(scalaDockerImage: ScalaDockerImage): Boolean = imageExists(scalaDockerImage.name)
 
   def imageExists(imageName: String): Boolean = dockerClient
     .listImages()

@@ -3,9 +3,9 @@ package initialData.web.coll_1
 import initialData.InitialData._
 import initialData.web.WebInitialExerciseContainer
 import initialData.{FileLoadConfig, InitialExercise}
-import model.{FilesSolution, Level}
 import model.tools.web.WebExerciseContent
 import model.tools.web.sitespec.{HtmlTask, SiteSpec, WebElementSpec}
+import model.{FilesSolution, Level}
 
 object WebColl1Ex1 extends WebInitialExerciseContainer(1, 1) {
 

@@ -13,10 +13,11 @@ class DocTypeDefParserTest extends AnyFlatSpec with Matchers {
     assert(DocTypeDefParser.parse(parseSpec, toParse).isInstanceOf[DocTypeDefParser.NoSuccess])
   }
 
-  private def testParse[T](parseSpec: DocTypeDefParser.Parser[T], toParse: String, awaited: T): Unit = DocTypeDefParser.parse(parseSpec, toParse) match {
-    case DocTypeDefParser.Success(res, _)   => assert(res == awaited)
-    case DocTypeDefParser.NoSuccess(msg, _) => fail("Parsing failed with msg: " + msg)
-  }
+  private def testParse[T](
+    parseSpec: DocTypeDefParser.Parser[T],
+    toParse: String,
+    awaited: T
+  ): Unit = assert(DocTypeDefParser.parse(parseSpec, toParse).get == awaited)
 
   val testData: Seq[String] = Seq("MyDef", "My Default TestData", "This is my def testdata")
 

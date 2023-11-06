@@ -5,6 +5,7 @@ import model.tools.regex.RegexTool.ExtractedValuesComparison
 import sangria.macros.derive._
 import sangria.schema._
 
+import scala.annotation.unused
 import scala.util.matching.Regex.{Match => RegexMatch}
 
 object RegexGraphQLModels extends ToolGraphQLModel[String, RegexExerciseContent, RegexAbstractResult] with GraphQLArguments {
@@ -18,9 +19,9 @@ object RegexGraphQLModels extends ToolGraphQLModel[String, RegexExerciseContent,
   // Exercise content types
 
   override val exerciseContentType: ObjectType[Unit, RegexExerciseContent] = {
-    implicit val rctt: EnumType[RegexCorrectionType]              = regexCorrectionTypeType
-    implicit val rmtdt: ObjectType[Unit, RegexMatchTestData]      = deriveObjectType()
-    implicit val retdt: ObjectType[Unit, RegexExtractionTestData] = deriveObjectType()
+    @unused implicit val rctt: EnumType[RegexCorrectionType]              = regexCorrectionTypeType
+    @unused implicit val rmtdt: ObjectType[Unit, RegexMatchTestData]      = deriveObjectType()
+    @unused implicit val retdt: ObjectType[Unit, RegexExtractionTestData] = deriveObjectType()
 
     deriveObjectType()
   }
@@ -32,7 +33,7 @@ object RegexGraphQLModels extends ToolGraphQLModel[String, RegexExerciseContent,
   // Result types
 
   private val regexMatchingEvaluationResultType: ObjectType[Unit, RegexMatchingSingleResult] = {
-    implicit val bcrtt: EnumType[BinaryClassificationResultType] = binaryClassificationResultTypeType
+    @unused implicit val bcrtt: EnumType[BinaryClassificationResultType] = binaryClassificationResultTypeType
 
     deriveObjectType()
   }
@@ -41,7 +42,7 @@ object RegexGraphQLModels extends ToolGraphQLModel[String, RegexExerciseContent,
     buildStringMatchTypeType[RegexMatch, RegexMatchMatch]("RegexMatchMatch")
 
   private val regexExtractionEvaluationResultType: ObjectType[Unit, RegexExtractionSingleResult] = {
-    implicit val extractedValuesComparisonType: ObjectType[Unit, ExtractedValuesComparison] =
+    @unused implicit val extractedValuesComparisonType: ObjectType[Unit, ExtractedValuesComparison] =
       matchingResultType("RegexExtractedValuesComparison", regexMatchMatchType, StringType, _.source.toString)
 
     deriveObjectType()
@@ -58,7 +59,7 @@ object RegexGraphQLModels extends ToolGraphQLModel[String, RegexExerciseContent,
   ).withPossibleTypes(() => List(regexMatchingResultType, regexExtractionResultType))
 
   private val regexMatchingResultType: ObjectType[Unit, RegexMatchingResult] = {
-    implicit val rmert: ObjectType[Unit, RegexMatchingSingleResult] = regexMatchingEvaluationResultType
+    @unused implicit val rmert: ObjectType[Unit, RegexMatchingSingleResult] = regexMatchingEvaluationResultType
 
     deriveObjectType(
       Interfaces(regexAbstractResultType),
@@ -67,7 +68,7 @@ object RegexGraphQLModels extends ToolGraphQLModel[String, RegexExerciseContent,
   }
 
   private val regexExtractionResultType: ObjectType[Unit, RegexExtractionResult] = {
-    implicit val reert: ObjectType[Unit, RegexExtractionSingleResult] = regexExtractionEvaluationResultType
+    @unused implicit val reert: ObjectType[Unit, RegexExtractionSingleResult] = regexExtractionEvaluationResultType
 
     deriveObjectType(
       Interfaces(regexAbstractResultType),

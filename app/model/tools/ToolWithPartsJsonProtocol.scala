@@ -4,6 +4,8 @@ import better.files.File
 import model._
 import play.api.libs.json._
 
+import scala.annotation.unused
+
 trait ToolJsonProtocol[SolutionInputFormat, C <: ExerciseContent] {
 
   val solutionInputFormat: Format[SolutionInputFormat]
@@ -41,7 +43,7 @@ trait FilesSolutionToolJsonProtocol {
 
   protected val pathExerciseFileFormat: OFormat[PathExerciseFile] = {
 
-    implicit val fileFormat: Format[File] = Format(
+    @unused implicit val fileFormat: Format[File] = Format(
       {
         case JsString(value) => JsSuccess(File(value))
         case _               => JsError()
@@ -55,20 +57,20 @@ trait FilesSolutionToolJsonProtocol {
   private val contentExerciseFileFormat: OFormat[ContentExerciseFile] = Json.format
 
   protected val exerciseFileFormat: OFormat[ExerciseFile] = {
-    implicit val peff: OFormat[PathExerciseFile]    = pathExerciseFileFormat
-    implicit val ceff: OFormat[ContentExerciseFile] = contentExerciseFileFormat
+    @unused implicit val peff: OFormat[PathExerciseFile]    = pathExerciseFileFormat
+    @unused implicit val ceff: OFormat[ContentExerciseFile] = contentExerciseFileFormat
 
     Json.format
   }
 
   protected val filesSolutionFormat: Format[FilesSolution] = {
-    implicit val eff: Format[ExerciseFile] = exerciseFileFormat
+    @unused implicit val eff: Format[ExerciseFile] = exerciseFileFormat
 
     Json.format
   }
 
   override val solutionInputFormat: Format[FilesSolutionInput] = {
-    implicit val ceff: OFormat[ContentExerciseFile] = contentExerciseFileFormat
+    @unused implicit val ceff: OFormat[ContentExerciseFile] = contentExerciseFileFormat
 
     Json.format
   }

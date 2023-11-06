@@ -2,10 +2,9 @@ package de.uniwue.dtd.parser
 
 import de.uniwue.dtd.model._
 
-import scala.language.postfixOps
 import scala.util.matching.Regex
 import scala.util.parsing.combinator.JavaTokenParsers
-import scala.util.{Try, Failure => TryFailure, Success => TrySuccess}
+import scala.util.{Failure => TryFailure, Success => TrySuccess, Try}
 
 final case class DTDParseException(msg: String, parsedLine: String) extends Exception(msg)
 
@@ -119,8 +118,9 @@ object DocTypeDefParser extends JavaTokenParsers {
     }
 
     result <- parse(parser, str) match {
-      case DocTypeDefParser.Success(res, _)   => TrySuccess(res)
-      case DocTypeDefParser.NoSuccess(msg, _) => TryFailure[DocTypeDefLine](new Exception(msg))
+      case DocTypeDefParser.Success(res, _) => TrySuccess(res)
+      case DocTypeDefParser.Error(msg, _)   => TryFailure[DocTypeDefLine](new Exception(msg))
+      case DocTypeDefParser.Failure(msg, _) => TryFailure[DocTypeDefLine](new Exception(msg))
     }
   } yield result
 

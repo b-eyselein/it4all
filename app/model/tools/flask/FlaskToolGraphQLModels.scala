@@ -5,26 +5,28 @@ import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
 import sangria.macros.derive._
 import sangria.schema._
 
+import scala.annotation.unused
+
 object FlaskToolGraphQLModels
     extends ToolGraphQLModel[FilesSolutionInput, FlaskExerciseContent, FlaskResult]
     with FilesSolutionToolGraphQLModelBasics[FlaskExerciseContent, FlaskResult] {
 
   private val flaskTestsConfigType: ObjectType[Unit, FlaskTestsConfig] = {
-    implicit val flaskSingleTestConfigType: ObjectType[Unit, FlaskSingleTestConfig] = deriveObjectType()
+    @unused implicit val flaskSingleTestConfigType: ObjectType[Unit, FlaskSingleTestConfig] = deriveObjectType()
 
     deriveObjectType()
   }
 
   override val exerciseContentType: ObjectType[Unit, FlaskExerciseContent] = {
-    implicit val eft: ObjectType[Unit, ExerciseFile]      = exerciseFileType
-    implicit val ftct: ObjectType[Unit, FlaskTestsConfig] = flaskTestsConfigType
-    implicit val sst: ObjectType[Unit, FilesSolution]     = solutionOutputType
+    @unused implicit val eft: ObjectType[Unit, ExerciseFile]      = exerciseFileType
+    @unused implicit val ftct: ObjectType[Unit, FlaskTestsConfig] = flaskTestsConfigType
+    @unused implicit val sst: ObjectType[Unit, FilesSolution]     = solutionOutputType
 
     deriveObjectType()
   }
 
   override val resultType: OutputType[FlaskResult] = {
-    implicit val flaskTestResultType: ObjectType[Unit, FlaskTestResult] = deriveObjectType()
+    @unused implicit val flaskTestResultType: ObjectType[Unit, FlaskTestResult] = deriveObjectType()
 
     deriveObjectType[Unit, FlaskResult](
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),

@@ -5,8 +5,6 @@ import initialData.{FileLoadConfig, InitialExercise}
 import model._
 import model.tools.flask.{FlaskExerciseContent, FlaskSingleTestConfig, FlaskTestsConfig}
 
-import scala.language.implicitConversions
-
 object FlaskColl01Ex01 extends FlaskInitialExerciseContainer(1, 1) {
 
   private val testsConfig = FlaskTestsConfig(

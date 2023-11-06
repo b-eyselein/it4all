@@ -3,7 +3,7 @@ package model.graphql
 import model.tools.Helper.UntypedExercise
 import model.tools.Tool
 import model.{ExerciseCollection, UserProficiency}
-import sangria.schema.{BooleanType, Field, IntType, ListType, ObjectType, StringType, fields}
+import sangria.schema._
 
 import scala.concurrent.Future
 
@@ -33,8 +33,8 @@ trait ToolQuery extends CollectionQuery {
 
   private val resolveUserProficiencies: Resolver[Tool, Seq[UserProficiency]] = context =>
     context.ctx.loggedInUser match {
-      case None       => Future.successful(Seq.empty)
-      case Some(user) => Future.successful(Seq.empty) // TODO: context.ctx.tableDefs.userProficienciesForTool(user.username, context.value.id)
+      case None    => Future.successful(Seq.empty)
+      case Some(_) => Future.successful(Seq.empty) // TODO: context.ctx.tableDefs.userProficienciesForTool(user.username, context.value.id)
     }
 
   protected val toolType: ObjectType[GraphQLContext, Tool] = ObjectType(

@@ -6,7 +6,7 @@ import scala.concurrent.Future
 trait ExerciseTopicsRepository {
   self: TableDefs =>
 
-  import MyPostgresProfile.api._
+  import profile.api._
 
   protected type ExerciseTopicRow = (String, Int, Int, String, Level)
 

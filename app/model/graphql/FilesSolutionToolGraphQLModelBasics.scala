@@ -4,6 +4,8 @@ import model._
 import sangria.macros.derive._
 import sangria.schema._
 
+import scala.annotation.unused
+
 trait FilesSolutionToolGraphQLModelBasics[EC <: ExerciseContent, ResType <: AbstractCorrectionResult] {
   self: ToolGraphQLModel[FilesSolutionInput, EC, ResType] =>
 
@@ -14,7 +16,7 @@ trait FilesSolutionToolGraphQLModelBasics[EC <: ExerciseContent, ResType <: Abst
   )
 
   override val solutionInputType: InputObjectType[FilesSolutionInput] = {
-    implicit val efit: InputObjectType[ContentExerciseFile] = exerciseFileInputType
+    @unused implicit val efit: InputObjectType[ContentExerciseFile] = exerciseFileInputType
 
     deriveInputObjectType()
   }
@@ -31,7 +33,7 @@ trait FilesSolutionToolGraphQLModelBasics[EC <: ExerciseContent, ResType <: Abst
   )
 
   protected val solutionOutputType: ObjectType[Unit, FilesSolution] = {
-    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
+    @unused implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
 
     deriveObjectType()
   }

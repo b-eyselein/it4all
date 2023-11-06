@@ -1,8 +1,8 @@
 package initialData.sql
 
 import initialData.InitialExercise
+import model.Level
 import model.tools.sql.{SqlExerciseContent, SqlExerciseType, SqlTopics}
-import model.{Level, TopicWithLevel}
 
 object SqlColl1Exes01To10 {
 

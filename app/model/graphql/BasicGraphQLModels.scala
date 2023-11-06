@@ -4,6 +4,8 @@ import model._
 import sangria.macros.derive._
 import sangria.schema._
 
+import scala.annotation.unused
+
 trait BasicGraphQLModels {
 
   protected val levelType: ObjectType[Unit, Level] = ObjectType(
@@ -15,20 +17,20 @@ trait BasicGraphQLModels {
   )
 
   private val topicType: ObjectType[Unit, Topic] = {
-    implicit val lt: ObjectType[Unit, Level] = levelType
+    @unused implicit val lt: ObjectType[Unit, Level] = levelType
 
     deriveObjectType()
   }
 
   protected val topicWithLevelType: ObjectType[Unit, TopicWithLevel] = {
-    implicit val tt: ObjectType[Unit, Topic] = topicType
-    implicit val lt: ObjectType[Unit, Level] = levelType
+    @unused implicit val tt: ObjectType[Unit, Topic] = topicType
+    @unused implicit val lt: ObjectType[Unit, Level] = levelType
 
     deriveObjectType()
   }
 
   protected val userProficiencyType: ObjectType[Unit, UserProficiency] = {
-    implicit val tt: ObjectType[Unit, Topic] = topicType
+    @unused implicit val tt: ObjectType[Unit, Topic] = topicType
 
     deriveObjectType(
       AddFields(

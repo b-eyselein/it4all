@@ -61,7 +61,7 @@ protected final case class DbExercise(
 trait ExerciseRepository {
   self: TableDefs =>
 
-  import MyPostgresProfile.api._
+  import profile.api._
 
   // Helper functions
 

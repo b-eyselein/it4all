@@ -1,7 +1,7 @@
 package model.graphql
 
 import model.tools.{Tool, ToolList}
-import sangria.schema.{Argument, Field, ListType, ObjectType, StringType, fields}
+import sangria.schema._
 
 trait RootQuery extends ToolQuery with GraphQLBasics with GraphQLArguments {
 

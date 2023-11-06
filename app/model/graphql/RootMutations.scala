@@ -10,6 +10,7 @@ import sangria.macros.derive._
 import sangria.marshalling.playJson._
 import sangria.schema._
 
+import scala.annotation.unused
 import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent.Future
 
@@ -90,7 +91,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
   private val exerciseCorrectionFields: Seq[Field[GraphQLContext, Unit]] = ToolList.tools.map[Field[GraphQLContext, Unit]] {
     case toolWithParts: ToolWithParts =>
       val partTypeInputArg: Argument[toolWithParts.PartType] = {
-        implicit val partFormat: Format[toolWithParts.PartType] = toolWithParts.jsonFormats.partTypeFormat
+        @unused implicit val partFormat: Format[toolWithParts.PartType] = toolWithParts.jsonFormats.partTypeFormat
 
         Argument("part", toolWithParts.graphQlModels.partEnumType)
       }

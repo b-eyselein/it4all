@@ -4,20 +4,22 @@ import model.tools.{FilesSolutionToolJsonProtocol, ToolJsonProtocol}
 import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
 import play.api.libs.json._
 
+import scala.annotation.unused
+
 object FlaskToolJsonProtocol extends ToolJsonProtocol[FilesSolutionInput, FlaskExerciseContent] with FilesSolutionToolJsonProtocol {
 
   // Test Config
 
   val flaskTestsConfigFormat: OFormat[FlaskTestsConfig] = {
-    implicit val flaskSingleTestConfigWrites: OFormat[FlaskSingleTestConfig] = Json.format
+    @unused implicit val flaskSingleTestConfigWrites: OFormat[FlaskSingleTestConfig] = Json.format
 
     Json.format
   }
 
   override val exerciseContentFormat: OFormat[FlaskExerciseContent] = {
-    implicit val eff: Format[ExerciseFile]      = exerciseFileFormat
-    implicit val ftcf: Format[FlaskTestsConfig] = flaskTestsConfigFormat
-    implicit val fsf: Format[FilesSolution]     = filesSolutionFormat
+    @unused implicit val eff: Format[ExerciseFile]      = exerciseFileFormat
+    @unused implicit val ftcf: Format[FlaskTestsConfig] = flaskTestsConfigFormat
+    @unused implicit val fsf: Format[FilesSolution]     = filesSolutionFormat
 
     Json.format
   }

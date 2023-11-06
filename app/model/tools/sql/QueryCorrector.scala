@@ -9,6 +9,7 @@ import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 import play.api.Logger
 
+import scala.annotation.unused
 import scala.util.{Failure, Success, Try}
 
 final case class ExtractedQuery[Q](
@@ -109,11 +110,11 @@ abstract class QueryCorrector(val queryType: String) {
 
   protected def getTables(query: Q): Seq[Table]
 
-  protected def getJoinExpressions(query: Q): Seq[BinaryExpression] = Seq.empty
+  protected def getJoinExpressions(@unused query: Q): Seq[BinaryExpression] = Seq.empty
 
   protected def getWhere(query: Q): Option[Expression]
 
-  protected def performAdditionalComparisons(userQuery: Q, sampleQuery: Q): AdditionalComparison = AdditionalComparison(None, None)
+  protected def performAdditionalComparisons(@unused userQuery: Q, @unused sampleQuery: Q): AdditionalComparison = AdditionalComparison(None, None)
 
   // Parsing
 

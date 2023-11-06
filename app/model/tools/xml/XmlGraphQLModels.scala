@@ -7,6 +7,8 @@ import model.matching.MatchType
 import sangria.macros.derive._
 import sangria.schema._
 
+import scala.annotation.unused
+
 object XmlGraphQLModels extends ToolWithPartsGraphQLModel[XmlSolution, XmlExerciseContent, XmlResult, XmlExPart] with GraphQLArguments {
 
   override val partEnumType: EnumType[XmlExPart] = EnumType(
@@ -17,7 +19,7 @@ object XmlGraphQLModels extends ToolWithPartsGraphQLModel[XmlSolution, XmlExerci
   private val xmlSolutionType: ObjectType[Unit, XmlSolution] = deriveObjectType()
 
   override val exerciseContentType: ObjectType[Unit, XmlExerciseContent] = {
-    implicit val sst: ObjectType[Unit, XmlSolution] = xmlSolutionType
+    @unused implicit val sst: ObjectType[Unit, XmlSolution] = xmlSolutionType
 
     deriveObjectType()
   }
@@ -32,13 +34,13 @@ object XmlGraphQLModels extends ToolWithPartsGraphQLModel[XmlSolution, XmlExerci
   private val xmlErrorTypeType: EnumType[XmlErrorType] = deriveEnumType()
 
   private val xmlErrorType: ObjectType[Unit, XmlError] = {
-    implicit val xett: EnumType[XmlErrorType] = xmlErrorTypeType
+    @unused implicit val xett: EnumType[XmlErrorType] = xmlErrorTypeType
 
     deriveObjectType()
   }
 
   private val xmlDocumentResultType: ObjectType[Unit, XmlDocumentResult] = {
-    implicit val xet: ObjectType[Unit, XmlError] = xmlErrorType
+    @unused implicit val xet: ObjectType[Unit, XmlError] = xmlErrorType
 
     deriveObjectType()
   }
@@ -57,24 +59,24 @@ object XmlGraphQLModels extends ToolWithPartsGraphQLModel[XmlSolution, XmlExerci
   )
 
   private val elementLineType: ObjectType[Unit, ElementLine] = {
-    implicit val edt: ObjectType[Unit, ElementDefinition] = elementDefinitionType
-    implicit val alt: ObjectType[Unit, AttributeList]     = attributeListType
+    @unused implicit val edt: ObjectType[Unit, ElementDefinition] = elementDefinitionType
+    @unused implicit val alt: ObjectType[Unit, AttributeList]     = attributeListType
 
     deriveObjectType()
   }
 
   private val elementLineMatchType: ObjectType[Unit, ElementLineMatch] = {
-    implicit val mt: EnumType[MatchType]                           = matchTypeType
-    implicit val elt: ObjectType[Unit, ElementLine]                = elementLineType
-    implicit val elar: ObjectType[Unit, ElementLineAnalysisResult] = deriveObjectType()
+    @unused implicit val mt: EnumType[MatchType]                           = matchTypeType
+    @unused implicit val elt: ObjectType[Unit, ElementLine]                = elementLineType
+    @unused implicit val elar: ObjectType[Unit, ElementLineAnalysisResult] = deriveObjectType()
 
     deriveObjectType()
   }
 
   private val xmlGrammarResultType: ObjectType[Unit, XmlGrammarResult] = {
-    implicit val dpet: ObjectType[Unit, DTDParseException] = dtdParseExceptionType
+    @unused implicit val dpet: ObjectType[Unit, DTDParseException] = dtdParseExceptionType
 
-    implicit val elct: ObjectType[Unit, XmlTool.ElementLineComparison] =
+    @unused implicit val elct: ObjectType[Unit, XmlTool.ElementLineComparison] =
       matchingResultType("XmlElementLineComparison", elementLineMatchType, elementLineType, identity)
 
     deriveObjectType()
@@ -83,8 +85,8 @@ object XmlGraphQLModels extends ToolWithPartsGraphQLModel[XmlSolution, XmlExerci
   // Abstract result
 
   override val resultType: OutputType[XmlResult] = {
-    implicit val xdrt: ObjectType[Unit, XmlDocumentResult] = xmlDocumentResultType
-    implicit val xgrt: ObjectType[Unit, XmlGrammarResult]  = xmlGrammarResultType
+    @unused implicit val xdrt: ObjectType[Unit, XmlDocumentResult] = xmlDocumentResultType
+    @unused implicit val xgrt: ObjectType[Unit, XmlGrammarResult]  = xmlGrammarResultType
 
     deriveObjectType[Unit, XmlResult](
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),

@@ -8,6 +8,8 @@ import net.sf.jsqlparser.expression.BinaryExpression
 import sangria.macros.derive._
 import sangria.schema._
 
+import scala.annotation.unused
+
 object SqlGraphQLModels extends ToolGraphQLModel[String, SqlExerciseContent, SqlResult] with GraphQLArguments {
 
   private val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
@@ -19,30 +21,30 @@ object SqlGraphQLModels extends ToolGraphQLModel[String, SqlExerciseContent, Sql
   // Result types
 
   private val sqlSelectAdditionalComparisons: ObjectType[Unit, SelectAdditionalComparisons] = {
-    implicit val smrt: ObjectType[Unit, StringMatchingResult] = stringMatchingResultType
+    @unused implicit val smrt: ObjectType[Unit, StringMatchingResult] = stringMatchingResultType
 
     deriveObjectType()
   }
 
   private val additionalComparisonsType: ObjectType[Unit, AdditionalComparison] = {
-    implicit val ssac: ObjectType[Unit, SelectAdditionalComparisons] = sqlSelectAdditionalComparisons
-    implicit val smrt: ObjectType[Unit, StringMatchingResult]        = stringMatchingResultType
+    @unused implicit val ssac: ObjectType[Unit, SelectAdditionalComparisons] = sqlSelectAdditionalComparisons
+    @unused implicit val smrt: ObjectType[Unit, StringMatchingResult]        = stringMatchingResultType
 
     deriveObjectType()
   }
 
   private val sqlQueriesStaticComparisonType: ObjectType[Unit, SqlQueriesStaticComparison] = {
 
-    implicit val smrt: ObjectType[Unit, StringMatchingResult] = stringMatchingResultType
+    @unused implicit val smrt: ObjectType[Unit, StringMatchingResult] = stringMatchingResultType
 
-    implicit val cct: ObjectType[Unit, ColumnComparison] = matchingResultType(
+    @unused implicit val cct: ObjectType[Unit, ColumnComparison] = matchingResultType(
       "SqlColumnComparison",
       buildStringMatchTypeType[ColumnWrapper, ColumnMatch]("SqlColumnMatch"),
       StringType,
       col => col.columnName + col.alias.map("as " + _)
     )
 
-    implicit val jct: ObjectType[Unit, BinaryExpressionComparison] = matchingResultType(
+    @unused implicit val jct: ObjectType[Unit, BinaryExpressionComparison] = matchingResultType(
       "SqlBinaryExpressionComparison",
       buildStringMatchTypeType[BinaryExpression, BinaryExpressionMatch]("SqlBinaryExpressionMatch"),
       StringType,
@@ -69,13 +71,13 @@ object SqlGraphQLModels extends ToolGraphQLModel[String, SqlExerciseContent, Sql
   )
 
   private val sqlQueryResultType: ObjectType[Unit, SqlQueryResult] = {
-    implicit val srt: ObjectType[Unit, SqlRow] = sqlRowType
+    @unused implicit val srt: ObjectType[Unit, SqlRow] = sqlRowType
 
     deriveObjectType()
   }
 
   private val sqlExecutionResultType: ObjectType[Unit, SqlExecutionResult] = {
-    implicit val sqrt: ObjectType[Unit, SqlQueryResult] = sqlQueryResultType
+    @unused implicit val sqrt: ObjectType[Unit, SqlQueryResult] = sqlQueryResultType
 
     deriveObjectType()
   }
@@ -83,8 +85,8 @@ object SqlGraphQLModels extends ToolGraphQLModel[String, SqlExerciseContent, Sql
   // Abstract result
 
   override val resultType: OutputType[SqlResult] = {
-    implicit val sqsct: ObjectType[Unit, SqlQueriesStaticComparison] = sqlQueriesStaticComparisonType
-    implicit val sert: ObjectType[Unit, SqlExecutionResult]          = sqlExecutionResultType
+    @unused implicit val sqsct: ObjectType[Unit, SqlQueriesStaticComparison] = sqlQueriesStaticComparisonType
+    @unused implicit val sert: ObjectType[Unit, SqlExecutionResult]          = sqlExecutionResultType
 
     deriveObjectType[Unit, SqlResult](
       AddFields(
@@ -101,7 +103,7 @@ object SqlGraphQLModels extends ToolGraphQLModel[String, SqlExerciseContent, Sql
   )
 
   override val exerciseContentType: ObjectType[Unit, SqlExerciseContent] = {
-    implicit val seTypeT: EnumType[SqlExerciseType] = sqlExerciseTypeType
+    @unused implicit val seTypeT: EnumType[SqlExerciseType] = sqlExerciseTypeType
 
     deriveObjectType(
       AddFields(dbContentQueryField)

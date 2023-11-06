@@ -6,7 +6,6 @@ import model.core.DockerBind
 import model.tools.programming.ProgrammingTool.ProgrammingExercise
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 object ProgrammingCorrector extends ProgrammingUnitTestCorrector with ProgrammingImplementationCorrector {
 

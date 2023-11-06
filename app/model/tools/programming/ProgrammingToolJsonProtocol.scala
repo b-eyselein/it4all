@@ -4,6 +4,8 @@ import model.tools._
 import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
 import play.api.libs.json._
 
+import scala.annotation.unused
+
 object ProgrammingToolJsonProtocol
     extends ToolWithPartsJsonProtocol[FilesSolutionInput, ProgrammingExerciseContent, ProgExPart]
     with FilesSolutionToolJsonProtocol {
@@ -13,29 +15,29 @@ object ProgrammingToolJsonProtocol
   // Exercise
 
   private val unitTestTestConfigFormat: Format[UnitTestTestConfig] = {
-    implicit val eff: Format[ExerciseFile] = exerciseFileFormat
+    @unused implicit val eff: Format[ExerciseFile] = exerciseFileFormat
 
     Json.format
   }
 
   private val unitTestPartFormat: Format[UnitTestPart] = {
-    implicit val eff: Format[ExerciseFile]         = exerciseFileFormat
-    implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
+    @unused implicit val eff: Format[ExerciseFile]         = exerciseFileFormat
+    @unused implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
 
     Json.format
 
   }
 
   val implementationPartFormat: Format[ImplementationPart] = {
-    implicit val eff: Format[ExerciseFile] = exerciseFileFormat
+    @unused implicit val eff: Format[ExerciseFile] = exerciseFileFormat
 
     Json.format
   }
 
   val exerciseContentFormat: OFormat[ProgrammingExerciseContent] = {
-    implicit val utf: Format[UnitTestPart]       = unitTestPartFormat
-    implicit val ipf: Format[ImplementationPart] = implementationPartFormat
-    implicit val ssf: Format[FilesSolution]      = filesSolutionFormat
+    @unused implicit val utf: Format[UnitTestPart]       = unitTestPartFormat
+    @unused implicit val ipf: Format[ImplementationPart] = implementationPartFormat
+    @unused implicit val ssf: Format[FilesSolution]      = filesSolutionFormat
 
     Json.format
   }
@@ -54,7 +56,7 @@ object ProgrammingToolJsonProtocol
   )
 
   val unitTestDataWrites: Writes[UnitTestTestData] = {
-    implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
+    @unused implicit val uttcf: Format[UnitTestTestConfig] = unitTestTestConfigFormat
 
     Json.writes
   }

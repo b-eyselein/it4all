@@ -6,6 +6,8 @@ import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
 import sangria.macros.derive._
 import sangria.schema._
 
+import scala.annotation.unused
+
 object WebGraphQLModels
     extends ToolWithPartsGraphQLModel[FilesSolutionInput, WebExerciseContent, WebResult, WebExPart]
     with FilesSolutionToolGraphQLModelBasics[WebExerciseContent, WebResult] {
@@ -25,13 +27,13 @@ object WebGraphQLModels
   private val jsActionTypeType: EnumType[JsActionType] = deriveEnumType()
 
   private val jsActionType: ObjectType[Unit, JsAction] = {
-    implicit val jatt: EnumType[JsActionType] = jsActionTypeType
+    @unused implicit val jatt: EnumType[JsActionType] = jsActionTypeType
 
     deriveObjectType()
   }
 
   private val siteSpecType: ObjectType[Unit, SiteSpec] = {
-    implicit val htt: ObjectType[Unit, HtmlTask] = HtmlTaskType
+    @unused implicit val htt: ObjectType[Unit, HtmlTask] = HtmlTaskType
 
     deriveObjectType(
       // TODO: include fields!?!
@@ -44,9 +46,9 @@ object WebGraphQLModels
   }
 
   override val exerciseContentType: ObjectType[Unit, WebExerciseContent] = {
-    implicit val siteSpecT: ObjectType[Unit, SiteSpec] = siteSpecType
-    implicit val eft: ObjectType[Unit, ExerciseFile]   = exerciseFileType
-    implicit val sst: ObjectType[Unit, FilesSolution]  = solutionOutputType
+    @unused implicit val siteSpecT: ObjectType[Unit, SiteSpec] = siteSpecType
+    @unused implicit val eft: ObjectType[Unit, ExerciseFile]   = exerciseFileType
+    @unused implicit val sst: ObjectType[Unit, FilesSolution]  = solutionOutputType
 
     deriveObjectType()
   }
@@ -59,7 +61,7 @@ object WebGraphQLModels
   )
 
   implicit val gradedJsActionResultType: ObjectType[Unit, GradedJsActionResult] = {
-    implicit val jat: ObjectType[Unit, JsAction] = jsActionType
+    @unused implicit val jat: ObjectType[Unit, JsAction] = jsActionType
 
     deriveObjectType(
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
@@ -68,7 +70,7 @@ object WebGraphQLModels
   }
 
   private val gradedElementSpecResultType: ObjectType[Unit, GradedElementSpecResult] = {
-    implicit val gtrt: ObjectType[Unit, GradedTextResult] = gradedTextResultType
+    @unused implicit val gtrt: ObjectType[Unit, GradedTextResult] = gradedTextResultType
 
     deriveObjectType(
       AddFields(
@@ -80,13 +82,13 @@ object WebGraphQLModels
   }
 
   private val gradedHtmlTaskResultType: ObjectType[Unit, GradedHtmlTaskResult] = {
-    implicit val gesrt: ObjectType[Unit, GradedElementSpecResult] = gradedElementSpecResultType
+    @unused implicit val gesrt: ObjectType[Unit, GradedElementSpecResult] = gradedElementSpecResultType
 
     deriveObjectType()
   }
 
   private val gradedJsTaskResultType: ObjectType[Unit, GradedJsTaskResult] = {
-    implicit val gesrt: ObjectType[Unit, GradedElementSpecResult] = gradedElementSpecResultType
+    @unused implicit val gesrt: ObjectType[Unit, GradedElementSpecResult] = gradedElementSpecResultType
 
     deriveObjectType(
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),
@@ -100,8 +102,8 @@ object WebGraphQLModels
   }
 
   override val resultType: OutputType[WebResult] = {
-    implicit val ghtrt: ObjectType[Unit, GradedHtmlTaskResult] = gradedHtmlTaskResultType
-    implicit val gjtrt: ObjectType[Unit, GradedJsTaskResult]   = gradedJsTaskResultType
+    @unused implicit val ghtrt: ObjectType[Unit, GradedHtmlTaskResult] = gradedHtmlTaskResultType
+    @unused implicit val gjtrt: ObjectType[Unit, GradedJsTaskResult]   = gradedJsTaskResultType
 
     deriveObjectType[Unit, WebResult](
       ReplaceField("points", Field("points", FloatType, resolve = _.value.points.asDouble)),

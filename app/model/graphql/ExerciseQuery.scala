@@ -6,6 +6,7 @@ import model.tools.ToolList
 import sangria.macros.derive._
 import sangria.schema._
 
+import scala.annotation.unused
 import scala.concurrent.Future
 
 final case class GraphQLExPart(
@@ -64,7 +65,7 @@ trait ExerciseQuery extends BasicGraphQLModels with ExPartQuery {
 
   protected val exerciseType: ObjectType[GraphQLContext, UntypedExercise] = {
 
-    implicit val x0: ObjectType[Unit, Level] = levelType
+    @unused implicit val x0: ObjectType[Unit, Level] = levelType
 
     val contentField: Field[GraphQLContext, UntypedExercise] = Field("content", exerciseContentUnionType, resolve = _.value.content)
 

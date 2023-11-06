@@ -6,6 +6,7 @@ import model.matching.{Match, MatchType, MatchingResult, StringMatch}
 import sangria.macros.derive._
 import sangria.schema._
 
+import scala.annotation.unused
 import scala.reflect.ClassTag
 
 trait ToolGraphQLModel[SolInputType, EC <: ExerciseContent, ResType <: AbstractCorrectionResult] extends BasicGraphQLModels {
@@ -44,7 +45,7 @@ trait ToolGraphQLModel[SolInputType, EC <: ExerciseContent, ResType <: AbstractC
   )
 
   private val stringMatchType: ObjectType[Unit, StringMatch] = {
-    implicit val mtt: EnumType[MatchType] = matchTypeType
+    @unused implicit val mtt: EnumType[MatchType] = matchTypeType
 
     deriveObjectType()
   }

@@ -1,9 +1,9 @@
 package de.uniwue.dtd.model
 
 import de.uniwue.dtd.model.TestHelperValues._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
-class AttributeTypeTest extends FlatSpec {
+class AttributeTypeTest extends AnyFlatSpec {
 
   "An ID attribute type" should "have a toString representation" in {
     assert(IDAttributeType.toString == "ID")

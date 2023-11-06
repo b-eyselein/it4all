@@ -1,7 +1,9 @@
 val enumeratumVersion = "1.7.3"
-val playSlickVersion  = "5.1.0"
+val playSlickVersion  = "6.0.0-M2"
 val slickPgVersion    = "0.21.1"
 val seleniumVersion   = "4.13.0"
+
+val playFrameworkGroupId = "org.playframework"
 
 val commonSettings = Seq(
   scalaVersion := "2.13.12",
@@ -11,7 +13,10 @@ val commonSettings = Seq(
     "com.github.pathikrit"   %% "better-files"         % "3.9.2", // MIT
     "com.beachape"           %% "enumeratum-play"      % enumeratumVersion, // MIT
     "com.beachape"           %% "enumeratum-play-json" % enumeratumVersion // MIT
-  )
+  ),
+  scalacOptions ++= Seq("-Wunused"),
+  semanticdbEnabled := true,
+  semanticdbVersion := scalafixSemanticdb.revision
 )
 
 lazy val dtd_parser = (project in file("./dtd_parser"))
@@ -41,7 +46,7 @@ libraryDependencies ++= Seq(
   guice,
 
   // JWT
-  "com.github.jwt-scala" %% "jwt-play" % "9.4.4", // Apache 2.0
+  "com.github.jwt-scala" %% "jwt-play-json" % "9.4.4", // Apache 2.0
 
   // Other helpers
   "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0", // Apache 2.0
@@ -54,11 +59,9 @@ libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.2", // Apache 2.0
 
   // Sql
-  "org.postgresql"       % "postgresql"            % "42.6.0",         // BSD-2
-  "com.typesafe.play"   %% "play-slick"            % playSlickVersion, // Apache 2.0
-  "com.typesafe.play"   %% "play-slick-evolutions" % playSlickVersion, // Apache 2.0
-  "com.github.tminglei" %% "slick-pg"              % slickPgVersion,   // BSD-2
-  "com.github.tminglei" %% "slick-pg_play-json"    % slickPgVersion,   // BSD-2
+  "org.postgresql"      % "postgresql"            % "42.6.0",         // BSD-2
+  playFrameworkGroupId %% "play-slick"            % playSlickVersion, // Apache 2.0
+  playFrameworkGroupId %% "play-slick-evolutions" % playSlickVersion, // Apache 2.0
 
   // Sql correction
   "mysql"                 % "mysql-connector-java" % "8.0.33", // GPL 2.0

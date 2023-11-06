@@ -3,6 +3,8 @@ package model.tools.xml
 import model.tools.ToolWithPartsJsonProtocol
 import play.api.libs.json._
 
+import scala.annotation.unused
+
 object XmlToolJsonProtocol extends ToolWithPartsJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] {
 
   override val partTypeFormat: Format[XmlExPart] = XmlExPart.jsonFormat
@@ -12,7 +14,7 @@ object XmlToolJsonProtocol extends ToolWithPartsJsonProtocol[XmlSolution, XmlExe
   override val solutionInputFormat: Format[XmlSolution] = xmlSolutionFormat
 
   override val exerciseContentFormat: OFormat[XmlExerciseContent] = {
-    implicit val ssf: Format[XmlSolution] = xmlSolutionFormat
+    @unused implicit val ssf: Format[XmlSolution] = xmlSolutionFormat
 
     Json.format
   }

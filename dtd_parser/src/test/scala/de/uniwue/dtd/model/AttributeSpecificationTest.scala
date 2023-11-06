@@ -1,9 +1,9 @@
 package de.uniwue.dtd.model
 
 import de.uniwue.dtd.model.TestHelperValues._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
-class AttributeSpecificationTest extends FlatSpec {
+class AttributeSpecificationTest extends AnyFlatSpec {
 
   "A #REQUIRED attribute specification" should "have a toString representation of" in {
     assert(RequiredSpecification.toString == "#REQUIRED")

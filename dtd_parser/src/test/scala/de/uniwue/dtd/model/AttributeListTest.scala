@@ -1,10 +1,12 @@
 package de.uniwue.dtd.model
 
 import de.uniwue.dtd.model.TestHelperValues._
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 
-class AttributeListTest extends FlatSpec {
-  "An attribute list" should "contain several values" in {
+class AttributeListTest extends AnyFlatSpec {
+  behavior of "AttributeList"
+
+  it should "contain several values" in {
 
     // AttributeList with single attribute definition
     for (attrType <- attrTypes; attrSpec <- attrSpecs) {
@@ -35,20 +37,24 @@ class AttributeListTest extends FlatSpec {
       assert(attList.attributeDefinitions.lengthCompare(2) == 0)
       assert(attList.attributeDefinitions == attrDefs)
 
-      assert(attList.asString ==
-        s"""<!ATTLIST $elementName
-           |    ${attrDef1.asString}
-           |    ${attrDef2.asString}
-           |>""".stripMargin)
+      assert(
+        attList.asString ==
+          s"""<!ATTLIST $elementName
+             |    ${attrDef1.asString}
+             |    ${attrDef2.asString}
+             |>""".stripMargin
+      )
 
       assert(AttributeList.unapply(attList).contains((elementName, attrDefs)))
     }
   }
 }
 
+class AttributeDefinitionTest extends AnyFlatSpec {
 
-class AttributeDefinitionTest extends FlatSpec {
-  "An attribute definition" should "contain several values" in {
+  behavior of "AttributeDefinition"
+
+  it should "contain several values" in {
 
     for (attrType <- attrTypes; attrSpec <- attrSpecs) {
       val definition = AttributeDefinition(attrName, attrType, attrSpec)

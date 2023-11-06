@@ -5,6 +5,8 @@ import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
 import sangria.macros.derive._
 import sangria.schema._
 
+import scala.annotation.unused
+
 object ProgrammingGraphQLModels
     extends ToolWithPartsGraphQLModel[FilesSolutionInput, ProgrammingExerciseContent, ProgrammingResult, ProgExPart]
     with FilesSolutionToolGraphQLModelBasics[ProgrammingExerciseContent, ProgrammingResult] {
@@ -15,28 +17,28 @@ object ProgrammingGraphQLModels
   )
 
   private val unitTestTestConfigType: ObjectType[Unit, UnitTestTestConfig] = {
-    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
+    @unused implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
 
     deriveObjectType()
   }
 
   private val unitTestPartType: ObjectType[Unit, UnitTestPart] = {
-    implicit val uttct: ObjectType[Unit, UnitTestTestConfig] = unitTestTestConfigType
-    implicit val exFileType: ObjectType[Unit, ExerciseFile]  = exerciseFileType
+    @unused implicit val uttct: ObjectType[Unit, UnitTestTestConfig] = unitTestTestConfigType
+    @unused implicit val exFileType: ObjectType[Unit, ExerciseFile]  = exerciseFileType
 
     deriveObjectType()
   }
 
   private val implementationPartType: ObjectType[Unit, ImplementationPart] = {
-    implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
+    @unused implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
 
     deriveObjectType()
   }
 
   override val exerciseContentType: ObjectType[Unit, ProgrammingExerciseContent] = {
-    implicit val upt: ObjectType[Unit, UnitTestPart]       = unitTestPartType
-    implicit val ipt: ObjectType[Unit, ImplementationPart] = implementationPartType
-    implicit val sst: ObjectType[Unit, FilesSolution]      = solutionOutputType
+    @unused implicit val upt: ObjectType[Unit, UnitTestPart]       = unitTestPartType
+    @unused implicit val ipt: ObjectType[Unit, ImplementationPart] = implementationPartType
+    @unused implicit val sst: ObjectType[Unit, FilesSolution]      = solutionOutputType
 
     deriveObjectType()
   }
@@ -50,10 +52,11 @@ object ProgrammingGraphQLModels
     )
 
   override val resultType: OutputType[ProgrammingResult] = {
-    implicit val nert: ObjectType[Unit, ImplementationCorrectionResult] = deriveObjectType(
+    @unused implicit val nert: ObjectType[Unit, ImplementationCorrectionResult] = deriveObjectType(
       Interfaces(programmingTestCorrectionResultInterfaceType)
     )
-    implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = deriveObjectType(
+
+    @unused implicit val utcrt: ObjectType[Unit, UnitTestCorrectionResult] = deriveObjectType(
       Interfaces(programmingTestCorrectionResultInterfaceType)
     )
 
