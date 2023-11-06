@@ -64,7 +64,7 @@ object SqlColl2Exes21To30 {
     difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Aggregate -> Level.Beginner,
-      SqlTopics.Alias -> Level.Beginner
+      SqlTopics.Alias     -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -85,8 +85,8 @@ object SqlColl2Exes21To30 {
     difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Aggregate -> Level.Intermediate,
-      SqlTopics.Alias -> Level.Intermediate,
-      SqlTopics.Join -> Level.Beginner
+      SqlTopics.Alias     -> Level.Intermediate,
+      SqlTopics.Join      -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -154,7 +154,7 @@ object SqlColl2Exes21To30 {
     difficulty = Level.Advanced,
     topicsWithLevels = Map(
       SqlTopics.OrderBy -> Level.Beginner,
-      SqlTopics.Join -> Level.Beginner
+      SqlTopics.Join    -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,
@@ -180,7 +180,7 @@ object SqlColl2Exes21To30 {
     difficulty = Level.Intermediate,
     topicsWithLevels = Map(
       SqlTopics.OrderBy -> Level.Beginner,
-      SqlTopics.Limit -> Level.Beginner
+      SqlTopics.Limit   -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,

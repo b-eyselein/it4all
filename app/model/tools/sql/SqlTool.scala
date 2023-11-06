@@ -24,8 +24,8 @@ object SqlTool extends ToolWithoutParts("sql", "Sql") {
   // Abstract types
 
   override type SolInputType = String
-  override type ExContType     = SqlExerciseContent
-  override type ResType           = SqlResult
+  override type ExContType   = SqlExerciseContent
+  override type ResType      = SqlResult
 
   type SqlExercise = Exercise[SqlExerciseContent]
 

@@ -13,9 +13,9 @@ import scala.concurrent.{ExecutionContext, Future}
 object XmlTool extends ToolWithParts("xml", "Xml") {
 
   override type SolInputType = XmlSolution
-  override type ExContType     = XmlExerciseContent
-  override type PartType          = XmlExPart
-  override type ResType           = XmlResult
+  override type ExContType   = XmlExerciseContent
+  override type PartType     = XmlExPart
+  override type ResType      = XmlResult
 
   type XmlExercise = Exercise[XmlExerciseContent]
 

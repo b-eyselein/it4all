@@ -14,8 +14,8 @@ import scala.util.matching.Regex.{Match => RegexMatch}
 object RegexTool extends ToolWithoutParts("regex", "Reguläre Ausdrücke") {
 
   override type SolInputType = String
-  override type ExContType     = RegexExerciseContent
-  override type ResType           = RegexAbstractResult
+  override type ExContType   = RegexExerciseContent
+  override type ResType      = RegexAbstractResult
 
   type RegexExercise = Exercise[RegexExerciseContent]
 

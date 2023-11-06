@@ -13,9 +13,9 @@ import scala.concurrent.{ExecutionContext, Future}
 object UmlTool extends ToolWithParts("uml", "Uml", true) {
 
   override type SolInputType = UmlClassDiagram
-  override type ExContType     = UmlExerciseContent
-  override type PartType          = UmlExPart
-  override type ResType           = UmlResult
+  override type ExContType   = UmlExerciseContent
+  override type PartType     = UmlExPart
+  override type ResType      = UmlResult
 
   type UmlExercise = Exercise[UmlExerciseContent]
 

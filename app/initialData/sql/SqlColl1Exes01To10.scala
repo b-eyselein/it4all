@@ -15,7 +15,7 @@ object SqlColl1Exes01To10 {
     difficulty = Level.Beginner,
     topicsWithLevels = Map(
       SqlTopics.Aggregate -> Level.Beginner,
-      SqlTopics.Alias -> Level.Beginner
+      SqlTopics.Alias     -> Level.Beginner
     ),
     content = SqlExerciseContent(
       exerciseType = SqlExerciseType.SELECT,

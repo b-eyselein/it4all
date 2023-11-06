@@ -7,8 +7,7 @@ import scala.util.matching.Regex
 import scala.util.matching.Regex.{Match => RegexMatch}
 import scala.util.{Success, Try}
 
-final case class RegexMatchMatch(matchType: MatchType, userArg: RegexMatch, sampleArg: RegexMatch)
-    extends Match[RegexMatch] {
+final case class RegexMatchMatch(matchType: MatchType, userArg: RegexMatch, sampleArg: RegexMatch) extends Match[RegexMatch] {
 
   override protected def argDescription: RegexMatch => String = _.group(0)
 
