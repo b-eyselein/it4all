@@ -7,7 +7,7 @@ val commonSettings = Seq(
   scalaVersion := "2.13.12",
   organization := "de.uniwue.is",
   libraryDependencies ++= Seq(
-    "org.scalatestplus.play" %% "scalatestplus-play"   % "5.1.0" % Test, // Apache 2.0
+    "org.scalatestplus.play" %% "scalatestplus-play"   % "7.0.0" % Test, // Apache 2.0
     "com.github.pathikrit"   %% "better-files"         % "3.9.2", // MIT
     "com.beachape"           %% "enumeratum-play"      % enumeratumVersion, // MIT
     "com.beachape"           %% "enumeratum-play-json" % enumeratumVersion // MIT
