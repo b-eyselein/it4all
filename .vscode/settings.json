@@ -1,5 +1,20 @@
 {
-    "files.watcherExclude": {
-        "**/target": true
-    }
+  "editor.rulers": [
+    160
+  ],
+  "files.watcherExclude": {
+    "**/target": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
 }
