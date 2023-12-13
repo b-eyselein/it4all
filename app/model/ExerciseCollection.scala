@@ -32,17 +32,13 @@ trait CollectionRepository {
   } yield lineCount == 1
 
   protected class CollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
-
-    def toolId = column[String]("tool_id")
-
+    def toolId       = column[String]("tool_id")
     def collectionId = column[Int]("collection_id")
-
-    private def title = column[String]("title")
+    def title        = column[String]("title")
 
     def pk = primaryKey("collections_pk", (toolId, collectionId))
 
-    override def * = (toolId, collectionId, title) <> (ExerciseCollection.tupled, ExerciseCollection.unapply)
-
+    override def * = (toolId, collectionId, title).mapTo[ExerciseCollection]
   }
 
 }

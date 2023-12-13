@@ -129,76 +129,42 @@ trait UserSolutionRepository {
   protected abstract class UserSolutionsTable[DbSolType <: DbUserSolution](tag: Tag, _tableName: String) extends Table[DbSolType](tag, _tableName) {
 
     // Primary key cols
-
-    def toolId = column[String]("tool_id")
-
+    def toolId       = column[String]("tool_id")
     def collectionId = column[Int]("collection_id")
-
-    def exerciseId = column[Int]("exercise_id")
-
-    def username = column[String]("username")
-
-    def solutionId = column[Int]("solution_id")
+    def exerciseId   = column[Int]("exercise_id")
+    def username     = column[String]("username")
+    def solutionId   = column[Int]("solution_id")
 
     // Other cols
-
-    def jsonSolution = column[JsValue]("solution_json")
-
-    def pointsQuarters = column[Int]("points_quarters")
-
+    def jsonSolution      = column[JsValue]("solution_json")
+    def pointsQuarters    = column[Int]("points_quarters")
     def maxPointsQuarters = column[Int]("max_points_quarters")
 
     // Key defs
 
-    // noinspection ScalaUnusedSymbol
     def exerciseForeignKey = foreignKey("user_solutions_exercise_fk", (toolId, collectionId, exerciseId), exercisesTQ)(
       ex => (ex.toolId, ex.collectionId, ex.exerciseId),
       onUpdate = ForeignKeyAction.Cascade,
       onDelete = ForeignKeyAction.Cascade
     )
-
-    // noinspection ScalaUnusedSymbol
     def userForeignKey =
       foreignKey("user_solutions_user_fk", username, usersTQ)(_.username, onUpdate = ForeignKeyAction.Cascade, onDelete = ForeignKeyAction.Cascade)
 
   }
 
   protected class UserSolutionsWithPartsTable(tag: Tag) extends UserSolutionsTable[DbUserSolutionWithPart](tag, "user_solutions_with_parts") {
-
     def partId = column[String]("part_id")
+    def pk     = primaryKey("user_solutions_pk", (toolId, collectionId, exerciseId, username, partId, solutionId))
 
-    // noinspection ScalaUnusedSymbol
-    def pk = primaryKey("user_solutions_pk", (toolId, collectionId, exerciseId, username, partId, solutionId))
-
-    override def * = (
-      toolId,
-      collectionId,
-      exerciseId,
-      username,
-      partId,
-      solutionId,
-      jsonSolution,
-      pointsQuarters,
-      maxPointsQuarters
-    ) <> (DbUserSolutionWithPart.tupled, DbUserSolutionWithPart.unapply)
+    override def * =
+      (toolId, collectionId, exerciseId, username, partId, solutionId, jsonSolution, pointsQuarters, maxPointsQuarters).mapTo[DbUserSolutionWithPart]
 
   }
 
   protected class UserSolutionsWithoutPartsTable(tag: Tag) extends UserSolutionsTable[DbUserSolutionWithoutPart](tag, "user_solutions_without_parts") {
-
-    // noinspection ScalaUnusedSymbol
     def pk = primaryKey("user_solutions_pk", (toolId, collectionId, exerciseId, username, solutionId))
 
-    override def * = (
-      toolId,
-      collectionId,
-      exerciseId,
-      username,
-      solutionId,
-      jsonSolution,
-      pointsQuarters,
-      maxPointsQuarters
-    ) <> (DbUserSolutionWithoutPart.tupled, DbUserSolutionWithoutPart.unapply)
+    override def * = (toolId, collectionId, exerciseId, username, solutionId, jsonSolution, pointsQuarters, maxPointsQuarters).mapTo[DbUserSolutionWithoutPart]
 
   }
 

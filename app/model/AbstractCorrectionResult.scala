@@ -8,11 +8,7 @@ final case class CorrectionResult[R <: AbstractCorrectionResult](
 )
 
 trait AbstractCorrectionResult {
-
   def points: Points
-
   def maxPoints: Points
-
   def isCompletelyCorrect: Boolean
-
 }

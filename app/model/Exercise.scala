@@ -5,37 +5,25 @@ import model.tools.Helper.UntypedExercise
 import model.tools.{Tool, ToolList}
 import play.api.libs.json.{Format, JsValue}
 
-import scala.annotation.unused
 import scala.concurrent.Future
 
 trait ExPart extends EnumEntry {
-
   val id: String
-
   val partName: String
-
   def isEntryPart: Boolean = true
-
 }
 
 trait ExerciseContent {
-
   protected type S
-
   val sampleSolutions: Seq[S]
-
 }
 
 trait ExerciseContentWithParts extends ExerciseContent {
-
   def parts: Seq[ExPart]
-
 }
 
 trait FileExerciseContent extends ExerciseContent {
-
   override protected type S = FilesSolution
-
 }
 
 final case class Exercise[C <: ExerciseContent](
@@ -126,33 +114,23 @@ trait ExerciseRepository {
   }
 
   protected class ExercisesTable(tag: Tag) extends Table[DbExercise](tag, "exercises") {
-
-    def toolId = column[String]("tool_id")
-
+    def toolId       = column[String]("tool_id")
     def collectionId = column[Int]("collection_id")
+    def exerciseId   = column[Int]("exercise_id")
 
-    def exerciseId = column[Int]("exercise_id")
-
-    private def title = column[String]("title", O.Unique)
-
-    private def text = column[String]("text")
-
-    private def difficulty = column[Level]("difficulty")
-
-    private def jsonContent = column[JsValue]("content_json")
+    def title       = column[String]("title", O.Unique)
+    def text        = column[String]("text")
+    def difficulty  = column[Level]("difficulty")
+    def jsonContent = column[JsValue]("content_json")
 
     def pk = primaryKey("exercises_pk", (toolId, collectionId, exerciseId))
-
-    // noinspection ScalaWeakerAccess
-    @unused("used by slick")
     def collectionsForeignKey = foreignKey("exercises_collections_fk", (toolId, collectionId), collectionsTQ)(
       c => (c.toolId, c.collectionId),
       onUpdate = ForeignKeyAction.Cascade,
       onDelete = ForeignKeyAction.Cascade
     )
 
-    override def * = (toolId, collectionId, exerciseId, title, text, difficulty, jsonContent) <> (DbExercise.tupled, DbExercise.unapply)
-
+    override def * = (toolId, collectionId, exerciseId, title, text, difficulty, jsonContent).mapTo[DbExercise]
   }
 
 }

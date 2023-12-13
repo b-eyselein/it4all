@@ -2,7 +2,6 @@ package model
 
 import scala.concurrent.Future
 
-//noinspection ScalaFileName
 trait ExerciseTopicsRepository {
   self: TableDefs =>
 
@@ -34,21 +33,11 @@ trait ExerciseTopicsRepository {
 
   protected class ExerciseTopicsTable(tag: Tag) extends Table[ExerciseTopicRow](tag, "exercise_topics") {
 
-    // Primary key cols
-
-    def toolId = column[String]("tool_id")
-
-    def collectionId = column[Int]("collection_id")
-
-    def exerciseId = column[Int]("exercise_id")
-
+    def toolId            = column[String]("tool_id")
+    def collectionId      = column[Int]("collection_id")
+    def exerciseId        = column[Int]("exercise_id")
     def topicAbbreviation = column[String]("topic_abbreviation")
-
-    // Other cols
-
-    def level = column[Level]("level")
-
-    // Key defs
+    def level             = column[Level]("level")
 
     def pk = primaryKey("exercise_topics_pk", (toolId, collectionId, exerciseId, topicAbbreviation))
 
@@ -57,8 +46,6 @@ trait ExerciseTopicsRepository {
       onUpdate = ForeignKeyAction.Cascade,
       onDelete = ForeignKeyAction.Cascade
     )
-
-    // noinspection ScalaUnusedSymbol
     def topicsForeignKey = foreignKey("exercise_topics_topic_fk", (toolId, topicAbbreviation), topicsTQ)(
       t => (t.toolId, t.abbreviation),
       onUpdate = ForeignKeyAction.Cascade,
@@ -66,7 +53,6 @@ trait ExerciseTopicsRepository {
     )
 
     override def * = (toolId, collectionId, exerciseId, topicAbbreviation, level)
-
   }
 
 }

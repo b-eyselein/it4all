@@ -26,23 +26,13 @@ trait TopicRepository {
 
   def futureTopicsForTool(toolId: String): Future[Seq[Topic]] = db.run(topicsTQ.filter { _.toolId === toolId }.result)
 
-  /*
-  def futureTopicByAbbreviation(toolId: String, abbreviation: String): Future[Option[Topic]] = db.run(
-    topicsTQ.filter { t => t.toolId === toolId && t.abbreviation === abbreviation }.result.headOption
-  )
-   */
-
   protected class TopicsTable(tag: Tag) extends Table[Topic](tag, "topics") {
-
-    def toolId = column[String]("tool_id")
-
+    def toolId       = column[String]("tool_id")
     def abbreviation = column[String]("abbreviation")
-
-    private def title = column[String]("title")
+    def title        = column[String]("title")
 
     def pk = primaryKey("topics_pk", (toolId, abbreviation))
 
     override def * = (abbreviation, toolId, title) <> (Topic.tupled, Topic.unapply)
-
   }
 }
