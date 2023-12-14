@@ -1,20 +1,20 @@
-import {useState} from 'react';
-import {AllExesOverviewToolFragment, useAllExercisesOverviewQuery} from '../graphql';
-import {WithQuery} from '../WithQuery';
-import {useTranslation} from 'react-i18next';
-import {distinctObjectArray} from './tools/uml/UmlMemberAllocation';
-import {ExerciseLinkCard} from './ExerciseLinkCard';
+import { useState } from 'react';
+import { AllExesOverviewToolFragment, useAllExercisesOverviewQuery } from '../graphql';
+import { WithQuery } from '../WithQuery';
+import { useTranslation } from 'react-i18next';
+import { distinctObjectArray } from './tools/uml/UmlMemberAllocation';
+import { ExerciseLinkCard } from './ExerciseLinkCard';
 import classNames from 'classnames';
 
 interface InnerProps {
   tool: AllExesOverviewToolFragment;
 }
 
-function Inner({tool}: InnerProps): JSX.Element {
+function Inner({ tool }: InnerProps): JSX.Element {
 
-  const {name, allExercises} = tool;
+  const { name, allExercises } = tool;
 
-  const {t} = useTranslation('common');
+  const { t } = useTranslation('common');
   const [filterAbbreviationsActivated, setFilterAbbreviationsActivated] = useState<string[]>([]);
 
   const distinctTopicWithLevels = distinctObjectArray(
@@ -23,7 +23,7 @@ function Inner({tool}: InnerProps): JSX.Element {
   );
 
   const filteredExercises = filterAbbreviationsActivated.length > 0
-    ? allExercises.filter((exercise) => filterAbbreviationsActivated.every((topicAbb) => exercise.topicsWithLevels.map(({topic}) => topic.abbreviation).includes(topicAbb)))
+    ? allExercises.filter((exercise) => filterAbbreviationsActivated.every((topicAbb) => exercise.topicsWithLevels.map(({ topic }) => topic.abbreviation).includes(topicAbb)))
     : allExercises;
 
   function toggleFilter(topicWithLevelAbbreviation: string): void {
@@ -43,16 +43,16 @@ function Inner({tool}: InnerProps): JSX.Element {
         <div className="grid grid-cols-5 gap-2">
           {distinctTopicWithLevels.map((topicWithLevel) =>
             <button key={topicWithLevel.topic.abbreviation} type="button" onClick={() => toggleFilter(topicWithLevel.topic.abbreviation)}
-                    className={classNames('p-2', 'rounded', 'w-full', filterAbbreviationsActivated.includes(topicWithLevel.topic.abbreviation) ? ['bg-blue-500', 'text-white'] : ['border', 'border-slate-500'])}>
+              className={classNames('p-2', 'rounded', 'w-full', filterAbbreviationsActivated.includes(topicWithLevel.topic.abbreviation) ? ['bg-blue-500', 'text-white'] : ['border', 'border-slate-500'])}>
               {topicWithLevel.topic.title}
             </button>)}
         </div>
       </section>}
 
-      <hr className="my-4"/>
+      <hr className="my-4" />
 
       <div className="grid grid-cols-3 gap-2">
-        {filteredExercises.map((exercise) => <ExerciseLinkCard key={exercise.title} showCollection={true} exercise={exercise}/>)}
+        {filteredExercises.map((exercise) => <ExerciseLinkCard key={exercise.title} showCollection={true} exercise={exercise} />)}
       </div>
     </>
   );
@@ -60,14 +60,17 @@ function Inner({tool}: InnerProps): JSX.Element {
 }
 
 
-export function AllExercisesOverview({toolId}: { toolId: string }): JSX.Element {
+export function AllExercisesOverview({ toolId }: { toolId: string }): JSX.Element {
 
-  const allExercisesOverviewQuery = useAllExercisesOverviewQuery({variables: {toolId}});
+  const allExercisesOverviewQuery = useAllExercisesOverviewQuery({ variables: { toolId } });
 
   return (
     <div className="container mx-auto">
       <WithQuery query={allExercisesOverviewQuery}>
-        {({tool}) => <Inner tool={tool}/>}
+        {({ tool }) =>
+          tool
+            ? <Inner tool={tool} />
+            : <div>TODO!</div>}
       </WithQuery>
     </div>
   );

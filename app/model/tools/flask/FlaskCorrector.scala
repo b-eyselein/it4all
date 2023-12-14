@@ -18,22 +18,19 @@ object FlaskCorrector extends DockerExecutionCorrector {
   override protected val dockerImage: ScalaDockerImage = flaskCorrectionDockerImage
 
   private def convertResult(exercise: FlaskExercise, testResults: Seq[FlaskTestResult]): FlaskResult = {
-    println(testResults)
 
-    FlaskResult(
-      testResults,
-      points = testResults
-        .filter(_.successful)
-        .map { tr =>
-          exercise.content.testConfig.tests
-            .find { _.id == tr.testId }
-            .map { _.maxPoints }
-            .getOrElse(0)
-        }
-        .sum
-        .points,
-      maxPoints = exercise.content.maxPoints.points
-    )
+    val points = testResults
+      .filter { _.successful }
+      .map { tr =>
+        exercise.content.testConfig.tests
+          .find { _.id == tr.testId }
+          .map { _.maxPoints }
+          .getOrElse(0)
+      }
+      .sum
+      .points
+
+    FlaskResult(testResults, points, maxPoints = exercise.content.maxPoints.points)
   }
 
   def correct(

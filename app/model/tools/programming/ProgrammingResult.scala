@@ -41,7 +41,6 @@ final case class ImplementationCorrectionResult(
 
 final case class UnitTestCorrectionResult(
   testId: Int,
-  @deprecated
   description: String,
   shouldFail: Boolean,
   testSuccessful: Boolean,
