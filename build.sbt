@@ -40,7 +40,7 @@ libraryDependencies ++= Seq(
   guice,
 
   // better enums
-  "com.beachape" %% "enumeratum-play"      % "1.7.3", // MIT
+  // "com.beachape" %% "enumeratum-play"      % "1.7.3", // MIT
   "com.beachape" %% "enumeratum-play-json" % "1.7.3", // MIT
 
   // JWT

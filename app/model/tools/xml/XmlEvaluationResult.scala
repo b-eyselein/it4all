@@ -1,7 +1,7 @@
 package model.tools.xml
 
 import de.uniwue.dtd.model._
-import enumeratum.{EnumEntry, Enum}
+import enumeratum.{Enum, EnumEntry}
 import model.matching.{Match, MatchType}
 import model.points._
 import org.xml.sax.SAXParseException

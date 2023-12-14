@@ -1,6 +1,6 @@
 package model
 
-import enumeratum.{EnumEntry, Enum}
+import enumeratum.{Enum, EnumEntry}
 import model.graphql.GraphQLContext
 import sangria.schema.{Field, IntType, ObjectType, StringType, fields}
 

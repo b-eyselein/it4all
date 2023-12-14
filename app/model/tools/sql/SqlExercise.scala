@@ -1,7 +1,7 @@
 package model.tools.sql
 
-import enumeratum.{EnumEntry, PlayEnum}
-import model._
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
+import model.{ExerciseContent, Topic}
 
 object SqlTopics {
   val Join: Topic      = Topic("J", "sql", "Join")
@@ -34,7 +34,7 @@ object SqlTopics {
 
 sealed trait SqlExerciseType extends EnumEntry
 
-object SqlExerciseType extends PlayEnum[SqlExerciseType] {
+object SqlExerciseType extends Enum[SqlExerciseType] with PlayJsonEnum[SqlExerciseType] {
 
   case object CREATE extends SqlExerciseType
   case object SELECT extends SqlExerciseType

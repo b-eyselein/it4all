@@ -1,6 +1,6 @@
 package model.tools.regex
 
-import enumeratum.{EnumEntry, Enum}
+import enumeratum.{Enum, EnumEntry}
 
 sealed abstract class BinaryClassificationResultType(val correct: Boolean) extends EnumEntry
 

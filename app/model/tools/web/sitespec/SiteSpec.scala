@@ -1,6 +1,6 @@
 package model.tools.web.sitespec
 
-import enumeratum.{EnumEntry, PlayEnum}
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 
 // HtmlTask
 
@@ -21,7 +21,7 @@ final case class HtmlTask(
 
 sealed trait JsActionType extends EnumEntry
 
-object JsActionType extends PlayEnum[JsActionType] {
+object JsActionType extends Enum[JsActionType] with PlayJsonEnum[JsActionType] {
 
   case object Click   extends JsActionType
   case object FillOut extends JsActionType

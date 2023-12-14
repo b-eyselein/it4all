@@ -1,6 +1,6 @@
 package model.matching
 
-import enumeratum.{EnumEntry, Enum}
+import enumeratum.{Enum, EnumEntry}
 
 sealed trait MatchType extends EnumEntry
 

@@ -1,11 +1,11 @@
 package model.tools.regex
 
-import enumeratum.{EnumEntry, PlayEnum}
+import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
 import model.ExerciseContent
 
 sealed trait RegexCorrectionType extends EnumEntry
 
-object RegexCorrectionType extends PlayEnum[RegexCorrectionType] {
+object RegexCorrectionType extends Enum[RegexCorrectionType] with PlayJsonEnum[RegexCorrectionType] {
 
   case object MATCHING   extends RegexCorrectionType
   case object EXTRACTION extends RegexCorrectionType
