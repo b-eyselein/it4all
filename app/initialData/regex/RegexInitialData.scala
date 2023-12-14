@@ -10,7 +10,7 @@ object RegexInitialData {
       1 -> InitialCollection(
         title = "Zahlen und Fakten",
         initialExercises = RegexColl1.initialCollections
-      )/*,
+      ) /*,
       2 -> InitialCollection(
         title = "Informationsextraktion",
         initialExercises = RegexColl2.initialCollections
