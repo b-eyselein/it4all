@@ -5,8 +5,6 @@ import sangria.schema._
 
 trait RootQuery extends ToolQuery with GraphQLBasics with GraphQLArguments {
 
-  protected val toolIdArgument: Argument[String] = Argument("toolId", StringType)
-
   private val resolveTool: Resolver[Unit, Option[Tool]] = context => ToolList.tools.find { _.id == context.arg(toolIdArgument) }
 
   protected val queryType: ObjectType[GraphQLContext, Unit] = ObjectType(
