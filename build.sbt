@@ -46,7 +46,7 @@ libraryDependencies ++= Seq(
   guice,
 
   // JWT
-  "com.github.jwt-scala" %% "jwt-play-json" % "9.4.4", // Apache 2.0
+  "com.github.jwt-scala" %% "jwt-play-json" % "9.4.5", // Apache 2.0
 
   // Other helpers
   "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0", // Apache 2.0
@@ -59,7 +59,7 @@ libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.2", // Apache 2.0
 
   // Sql
-  "org.postgresql"      % "postgresql"            % "42.6.0",         // BSD-2
+  "org.postgresql"      % "postgresql"            % "42.7.1",         // BSD-2
   playFrameworkGroupId %% "play-slick"            % playSlickVersion, // Apache 2.0
   playFrameworkGroupId %% "play-slick-evolutions" % playSlickVersion, // Apache 2.0
 
