@@ -1,14 +1,14 @@
 package model.tools.regex
 
-import model.graphql.{GraphQLArguments, ToolGraphQLModel}
+import model.graphql.ToolGraphQLModel
 import model.tools.regex.RegexTool.ExtractedValuesComparison
-import sangria.macros.derive._
+import sangria.macros.derive.{ExcludeFields, Interfaces, deriveEnumType, deriveObjectType}
 import sangria.schema._
 
 import scala.annotation.unused
 import scala.util.matching.Regex.{Match => RegexMatch}
 
-object RegexGraphQLModels extends ToolGraphQLModel[String, RegexExerciseContent, RegexAbstractResult] with GraphQLArguments {
+object RegexGraphQLModels extends ToolGraphQLModel[String, RegexExerciseContent, RegexAbstractResult] {
 
   // Enum types
 

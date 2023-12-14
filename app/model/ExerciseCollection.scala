@@ -27,9 +27,9 @@ trait CollectionRepository {
       .headOption
   )
 
-  def futureInsertCollection(collection: ExerciseCollection): Future[Boolean] = for {
-    lineCount <- db.run(collectionsTQ += collection)
-  } yield lineCount == 1
+  def futureInsertCollection(collection: ExerciseCollection): Future[Unit] = for {
+    _ <- db.run(collectionsTQ += collection)
+  } yield ()
 
   protected class CollectionsTable(tag: Tag) extends Table[ExerciseCollection](tag, "collections") {
     def toolId       = column[String]("tool_id")

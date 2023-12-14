@@ -7,6 +7,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 import scala.annotation.unused
+import model.graphql.GraphQLContext
 
 object WebGraphQLModels
     extends ToolWithPartsGraphQLModel[FilesSolutionInput, WebExerciseContent, WebResult, WebExPart]
@@ -46,9 +47,9 @@ object WebGraphQLModels
   }
 
   override val exerciseContentType: ObjectType[Unit, WebExerciseContent] = {
-    @unused implicit val siteSpecT: ObjectType[Unit, SiteSpec] = siteSpecType
-    @unused implicit val eft: ObjectType[Unit, ExerciseFile]   = exerciseFileType
-    @unused implicit val sst: ObjectType[Unit, FilesSolution]  = solutionOutputType
+    @unused implicit val siteSpecT: ObjectType[Unit, SiteSpec]          = siteSpecType
+    @unused implicit val eft: ObjectType[GraphQLContext, ExerciseFile]  = ExerciseFile.queryType
+    @unused implicit val sst: ObjectType[GraphQLContext, FilesSolution] = FilesSolution.queryType
 
     deriveObjectType()
   }

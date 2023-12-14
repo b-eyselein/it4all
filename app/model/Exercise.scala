@@ -106,11 +106,11 @@ trait ExerciseRepository {
     maybeExercise = dbExercise.flatMap(readDbExercise(tool, _))
   } yield maybeExercise
 
-  def futureInsertExercise[EC <: ExerciseContent](exercise: Exercise[EC], contentFormat: Format[EC]): Future[Boolean] = exercise match {
+  def futureInsertExercise[EC <: ExerciseContent](exercise: Exercise[EC], contentFormat: Format[EC]): Future[Unit] = exercise match {
     case Exercise(exerciseId, collectionId, toolId, title, text, difficulty, content) =>
       for {
-        lineCount <- db.run(exercisesTQ += DbExercise(toolId, collectionId, exerciseId, title, text, difficulty, contentFormat.writes(content)))
-      } yield lineCount == 1
+        _ <- db.run(exercisesTQ += DbExercise(toolId, collectionId, exerciseId, title, text, difficulty, contentFormat.writes(content)))
+      } yield ()
   }
 
   protected class ExercisesTable(tag: Tag) extends Table[DbExercise](tag, "exercises") {

@@ -30,7 +30,7 @@ class Controller @Inject() (
   cc: ControllerComponents,
   jwtAction: JwtAction,
   tableDefs: TableDefs
-)(override protected implicit val ec: ExecutionContext)
+)(implicit val ec: ExecutionContext)
     extends AbstractController(cc)
     with GraphQLModel {
 
@@ -53,7 +53,7 @@ class Controller @Inject() (
       case Failure(error) => Future.successful(BadRequest(Json.obj("error" -> error.getMessage)))
       case Success(queryAst) =>
         Executor
-          .execute(schema, queryAst, userContext = GraphQLContext(maybeUser, tableDefs), operationName = operationName, variables = variables)
+          .execute(schema, queryAst, userContext = GraphQLContext(maybeUser, tableDefs, ec), operationName = operationName, variables = variables)
           .map(Ok(_))
           .recover {
             case error: QueryAnalysisError => {

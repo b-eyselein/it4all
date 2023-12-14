@@ -1,7 +1,7 @@
 package model.tools.uml
 
 import model.KeyValueObject
-import model.graphql.{GraphQLArguments, ToolWithPartsGraphQLModel}
+import model.graphql.ToolWithPartsGraphQLModel
 import model.matching.{MatchType, MatchingResult}
 import model.tools.uml.UmlTool.{AssociationComparison, ClassComparison, ImplementationComparison}
 import model.tools.uml.matcher._
@@ -12,7 +12,7 @@ import sangria.schema._
 
 import scala.annotation.unused
 
-object UmlGraphQLModels extends ToolWithPartsGraphQLModel[UmlClassDiagram, UmlExerciseContent, UmlResult, UmlExPart] with GraphQLArguments {
+object UmlGraphQLModels extends ToolWithPartsGraphQLModel[UmlClassDiagram, UmlExerciseContent, UmlResult, UmlExPart] {
 
   override val partEnumType: EnumType[UmlExPart] = EnumType(
     "UmlExPart",
@@ -97,7 +97,7 @@ object UmlGraphQLModels extends ToolWithPartsGraphQLModel[UmlClassDiagram, UmlEx
         "mappings",
         Field(
           "mappings",
-          ListType(KeyValueObjectType),
+          ListType(KeyValueObject.queryType),
           resolve = context => context.value.mappings.map { case (key, value) => KeyValueObject(key, value) }.toList
         )
       )

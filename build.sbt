@@ -1,18 +1,11 @@
-val enumeratumVersion = "1.7.3"
-val playSlickVersion  = "6.0.0-M2"
-val slickPgVersion    = "0.21.1"
-val seleniumVersion   = "4.13.0"
-
-val playFrameworkGroupId = "org.playframework"
-
 val commonSettings = Seq(
   scalaVersion := "2.13.12",
   organization := "de.uniwue.is",
   libraryDependencies ++= Seq(
     "org.scalatestplus.play" %% "scalatestplus-play"   % "7.0.0" % Test, // Apache 2.0
     "com.github.pathikrit"   %% "better-files"         % "3.9.2", // MIT
-    "com.beachape"           %% "enumeratum-play"      % enumeratumVersion, // MIT
-    "com.beachape"           %% "enumeratum-play-json" % enumeratumVersion // MIT
+    "com.beachape"           %% "enumeratum-play"      % "1.7.3", // MIT
+    "com.beachape"           %% "enumeratum-play-json" % "1.7.3" // MIT
   ),
   scalacOptions ++= Seq("-Wunused"),
   semanticdbEnabled := true,
@@ -42,13 +35,16 @@ lazy val root = (project in file("."))
 
 Universal / mappings += (baseDirectory.value / "docker-compose_prod.yaml") -> "docker-compose.yaml"
 
+val playSlickVersion = "6.0.0-M2"
+val seleniumVersion  = "4.13.0"
+
 libraryDependencies ++= Seq(
   guice,
 
   // JWT
   "com.github.jwt-scala" %% "jwt-play-json" % "9.4.5", // Apache 2.0
 
-  // Other helpers
+  // BCrypt
   "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0", // Apache 2.0
 
   // Docker
@@ -59,9 +55,9 @@ libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-play-json" % "2.0.2", // Apache 2.0
 
   // Sql
-  "org.postgresql"      % "postgresql"            % "42.7.1",         // BSD-2
-  playFrameworkGroupId %% "play-slick"            % playSlickVersion, // Apache 2.0
-  playFrameworkGroupId %% "play-slick-evolutions" % playSlickVersion, // Apache 2.0
+  "org.postgresql"     % "postgresql"            % "42.7.1",         // BSD-2
+  "org.playframework" %% "play-slick"            % playSlickVersion, // Apache 2.0
+  "org.playframework" %% "play-slick-evolutions" % playSlickVersion, // Apache 2.0
 
   // Sql correction
   "mysql"                 % "mysql-connector-java" % "8.0.33", // GPL 2.0

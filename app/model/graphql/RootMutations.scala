@@ -12,7 +12,7 @@ import sangria.schema._
 
 import scala.annotation.unused
 import scala.collection.mutable.{Map => MutableMap}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 final case class RegisterValues(username: String, password: String, passwordRepeat: String)
 
@@ -32,6 +32,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
   }
 
   private val resolveRegister: Resolver[Unit, String] = context => {
+    implicit val ec                                        = context.ctx.executionContext
     val RegisterValues(username, password, passwordRepeat) = context.arg(registerValuesArgument)
 
     if (password != passwordRepeat) {
@@ -64,6 +65,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
   }
 
   private val resolveLogin: Resolver[Unit, String] = context => {
+    implicit val ec                         = context.ctx.executionContext
     val UserCredentials(username, password) = context.arg(userCredentialsArgument)
 
     val onError = MyUserFacingGraphQLError(s"Invalid combination of username and password!")
@@ -113,7 +115,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
         ex: Exercise[toolWithParts.ExContType],
         part: toolWithParts.PartType,
         solution: toolWithParts.SolInputType
-      ): Future[CorrectionResult[toolWithParts.ResType]] = for {
+      )(implicit ec: ExecutionContext): Future[CorrectionResult[toolWithParts.ResType]] = for {
 
         result <- toolWithParts.correctAbstract(user, solution, ex, part)
 
@@ -146,12 +148,11 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
             correctionResultType,
             arguments = partTypeInputArg :: solTypeInputArg :: Nil,
             resolve = context => {
-              logger.warn("Resolving correction...")
+              implicit val ec = context.ctx.executionContext
 
               context.ctx.loggedInUser match {
                 case None => Future.failed(MyUserFacingGraphQLError("User is not logged in!"))
                 case Some(loggedInUser) =>
-                  logger.warn("TODO: correcting...")
                   correct(
                     context.ctx.tableDefs,
                     loggedInUser,
@@ -168,8 +169,9 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
       Field(
         s"${toolWithParts.id}Exercise",
         OptionType(toolExerciseMutationsType),
-        arguments = collIdArgument :: exIdArgument :: Nil,
-        resolve = context => context.ctx.tableDefs.futureExerciseById(toolWithParts, context.arg(collIdArgument), context.arg(exIdArgument))
+        arguments = GraphQLArguments.collIdArgument :: GraphQLArguments.exIdArgument :: Nil,
+        resolve = context =>
+          context.ctx.tableDefs.futureExerciseById(toolWithParts, context.arg(GraphQLArguments.collIdArgument), context.arg(GraphQLArguments.exIdArgument))
       )
 
     case toolWithoutParts: ToolWithoutParts =>
@@ -189,7 +191,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
         user: User,
         ex: Exercise[toolWithoutParts.ExContType],
         solution: toolWithoutParts.SolInputType
-      ): Future[CorrectionResult[toolWithoutParts.ResType]] = for {
+      )(implicit ec: ExecutionContext): Future[CorrectionResult[toolWithoutParts.ResType]] = for {
         result <- toolWithoutParts.correctAbstract(user, solution, ex)
 
         solutionId <- tableDefs.futureInsertSolutionWithoutPart(
@@ -220,7 +222,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
                     loggedInUser,
                     context.value,
                     context.arg(solTypeInputArg)
-                  )
+                  )(context.ctx.executionContext)
               }
           )
         )
@@ -229,8 +231,9 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
       Field(
         s"${toolWithoutParts.id}Exercise",
         OptionType(toolExerciseMutationsType),
-        arguments = collIdArgument :: exIdArgument :: Nil,
-        resolve = context => context.ctx.tableDefs.futureExerciseById(toolWithoutParts, context.arg(collIdArgument), context.arg(exIdArgument))
+        arguments = GraphQLArguments.collIdArgument :: GraphQLArguments.exIdArgument :: Nil,
+        resolve = context =>
+          context.ctx.tableDefs.futureExerciseById(toolWithoutParts, context.arg(GraphQLArguments.collIdArgument), context.arg(GraphQLArguments.exIdArgument))
       )
 
   }

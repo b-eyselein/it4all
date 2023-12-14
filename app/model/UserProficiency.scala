@@ -1,25 +1,9 @@
 package model
 
-import enumeratum.{EnumEntry, PlayEnum}
+import model.graphql.GraphQLContext
+import sangria.schema.{Field, IntType, ObjectType, StringType, fields}
 
 import scala.concurrent.Future
-
-sealed abstract class Level(val level: Int) extends EnumEntry {
-
-  def pointsForExerciseCompletion: Int = Math.pow(2.toDouble, level.toDouble - 1).toInt
-
-}
-
-object Level extends PlayEnum[Level] {
-
-  val values: IndexedSeq[Level] = findValues
-
-  case object Beginner     extends Level(1)
-  case object Intermediate extends Level(2)
-  case object Advanced     extends Level(3)
-  case object Expert       extends Level(4)
-
-}
 
 final case class LevelForExercise(
   exerciseId: Int,
@@ -48,6 +32,19 @@ final case class UserProficiency(
     case i if i > 10  => Level.Intermediate
     case _            => Level.Beginner
   }
+}
+
+object UserProficiency {
+  val queryType: ObjectType[GraphQLContext, UserProficiency] = ObjectType(
+    "UserProficiency",
+    fields[GraphQLContext, UserProficiency](
+      Field("username", StringType, resolve = _.value.username),
+      Field("topic", Topic.queryType, resolve = _.value.topic),
+      Field("points", IntType, resolve = _.value.getPoints),
+      Field("pointsForNextLevel", IntType, resolve = _.value.pointsForNextLevel),
+      Field("level", Level.queryType, resolve = _.value.getLevel)
+    )
+  )
 
 }
 

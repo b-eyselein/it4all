@@ -1,5 +1,8 @@
 package model
 
+import model.graphql.GraphQLContext
+import sangria.schema.{Field, ObjectType, StringType, fields}
+
 import scala.concurrent.Future
 
 final case class Topic(
@@ -8,10 +11,31 @@ final case class Topic(
   title: String
 )
 
+object Topic {
+  val queryType: ObjectType[GraphQLContext, Topic] = ObjectType(
+    "Topic",
+    fields[GraphQLContext, Topic](
+      Field("toolId", StringType, resolve = _.value.toolId),
+      Field("abbreviation", StringType, resolve = _.value.abbreviation),
+      Field("title", StringType, resolve = _.value.title)
+    )
+  )
+}
+
 final case class TopicWithLevel(
   topic: Topic,
   level: Level
 )
+
+object TopicWithLevel {
+  val queryType: ObjectType[GraphQLContext, TopicWithLevel] = ObjectType(
+    "TopicWithLevel",
+    fields[GraphQLContext, TopicWithLevel](
+      Field("topic", Topic.queryType, resolve = _.value.topic),
+      Field("level", Level.queryType, resolve = _.value.level)
+    )
+  )
+}
 
 trait TopicRepository {
   self: TableDefs =>
@@ -33,6 +57,6 @@ trait TopicRepository {
 
     def pk = primaryKey("topics_pk", (toolId, abbreviation))
 
-    override def * = (abbreviation, toolId, title) <> (Topic.tupled, Topic.unapply)
+    override def * = (abbreviation, toolId, title).mapTo[Topic]
   }
 }

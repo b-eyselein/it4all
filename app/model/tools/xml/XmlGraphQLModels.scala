@@ -2,14 +2,14 @@ package model.tools.xml
 
 import de.uniwue.dtd.model.{AttributeList, ElementDefinition, ElementLine}
 import de.uniwue.dtd.parser.DTDParseException
-import model.graphql.{GraphQLArguments, ToolWithPartsGraphQLModel}
+import model.graphql.ToolWithPartsGraphQLModel
 import model.matching.MatchType
 import sangria.macros.derive._
 import sangria.schema._
 
 import scala.annotation.unused
 
-object XmlGraphQLModels extends ToolWithPartsGraphQLModel[XmlSolution, XmlExerciseContent, XmlResult, XmlExPart] with GraphQLArguments {
+object XmlGraphQLModels extends ToolWithPartsGraphQLModel[XmlSolution, XmlExerciseContent, XmlResult, XmlExPart] {
 
   override val partEnumType: EnumType[XmlExPart] = EnumType(
     "XmlExPart",

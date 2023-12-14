@@ -1,6 +1,6 @@
 package model.tools.sql
 
-import model.graphql.{GraphQLArguments, ToolGraphQLModel}
+import model.graphql.ToolGraphQLModel
 import model.matching.StringMatcher.StringMatchingResult
 import model.tools.sql.SqlTool._
 import model.tools.sql.matcher._
@@ -10,7 +10,7 @@ import sangria.schema._
 
 import scala.annotation.unused
 
-object SqlGraphQLModels extends ToolGraphQLModel[String, SqlExerciseContent, SqlResult] with GraphQLArguments {
+object SqlGraphQLModels extends ToolGraphQLModel[String, SqlExerciseContent, SqlResult] {
 
   private val sqlExerciseTypeType: EnumType[SqlExerciseType] = deriveEnumType()
 
@@ -51,7 +51,7 @@ object SqlGraphQLModels extends ToolGraphQLModel[String, SqlExerciseContent, Sql
       _.toString
     )
 
-    implicit val act: ObjectType[Unit, AdditionalComparison] = additionalComparisonsType
+    @unused implicit val act: ObjectType[Unit, AdditionalComparison] = additionalComparisonsType
 
     deriveObjectType()
   }

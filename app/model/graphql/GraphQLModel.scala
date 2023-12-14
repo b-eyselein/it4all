@@ -4,9 +4,12 @@ import model.{TableDefs, User}
 import sangria.execution.UserFacingError
 import sangria.schema._
 
+import scala.concurrent.ExecutionContext
+
 final case class GraphQLContext(
   loggedInUser: Option[User],
-  tableDefs: TableDefs
+  tableDefs: TableDefs,
+  executionContext: ExecutionContext
 )
 
 final case class MyUserFacingGraphQLError(msg: String) extends Exception(msg) with UserFacingError

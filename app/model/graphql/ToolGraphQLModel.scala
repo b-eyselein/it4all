@@ -9,7 +9,7 @@ import sangria.schema._
 import scala.annotation.unused
 import scala.reflect.ClassTag
 
-trait ToolGraphQLModel[SolInputType, EC <: ExerciseContent, ResType <: AbstractCorrectionResult] extends BasicGraphQLModels {
+trait ToolGraphQLModel[SolInputType, EC <: ExerciseContent, ResType <: AbstractCorrectionResult] {
 
   // Arguments
 

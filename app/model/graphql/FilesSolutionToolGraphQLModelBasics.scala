@@ -1,41 +1,16 @@
 package model.graphql
 
 import model._
-import sangria.macros.derive._
 import sangria.schema._
-
-import scala.annotation.unused
 
 trait FilesSolutionToolGraphQLModelBasics[EC <: ExerciseContent, ResType <: AbstractCorrectionResult] {
   self: ToolGraphQLModel[FilesSolutionInput, EC, ResType] =>
 
-  // Files solution input
-
-  private val exerciseFileInputType: InputObjectType[ContentExerciseFile] = deriveInputObjectType(
-    InputObjectTypeName("ExerciseFileInput")
-  )
-
-  override val solutionInputType: InputObjectType[FilesSolutionInput] = {
-    @unused implicit val efit: InputObjectType[ContentExerciseFile] = exerciseFileInputType
-
-    deriveInputObjectType()
-  }
-
-  // Files solution output
-
-  protected val exerciseFileType: ObjectType[Unit, ExerciseFile] = ObjectType(
-    "ExerciseFile",
-    fields[Unit, ExerciseFile](
-      Field("name", StringType, resolve = _.value.name),
-      Field("editable", BooleanType, resolve = _.value.editable),
-      Field("content", StringType, resolve = _.value.content)
+  override val solutionInputType: InputObjectType[FilesSolutionInput] = InputObjectType[FilesSolutionInput](
+    "FilesSolutionInput",
+    List(
+      InputField("files", ListInputType(ExerciseFile.inputType))
     )
   )
-
-  protected val solutionOutputType: ObjectType[Unit, FilesSolution] = {
-    @unused implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
-
-    deriveObjectType()
-  }
 
 }

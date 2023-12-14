@@ -4,8 +4,6 @@ import play.api.libs.json._
 
 import scala.annotation.unused
 
-final case class KeyValueObject(key: String, value: String)
-
 object JsonProtocols {
 
   // Collections and exercises

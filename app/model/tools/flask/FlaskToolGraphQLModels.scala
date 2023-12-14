@@ -6,6 +6,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 import scala.annotation.unused
+import model.graphql.GraphQLContext
 
 object FlaskToolGraphQLModels
     extends ToolGraphQLModel[FilesSolutionInput, FlaskExerciseContent, FlaskResult]
@@ -18,9 +19,9 @@ object FlaskToolGraphQLModels
   }
 
   override val exerciseContentType: ObjectType[Unit, FlaskExerciseContent] = {
-    @unused implicit val eft: ObjectType[Unit, ExerciseFile]      = exerciseFileType
-    @unused implicit val ftct: ObjectType[Unit, FlaskTestsConfig] = flaskTestsConfigType
-    @unused implicit val sst: ObjectType[Unit, FilesSolution]     = solutionOutputType
+    @unused implicit val eft: ObjectType[GraphQLContext, ExerciseFile]  = ExerciseFile.queryType
+    @unused implicit val ftct: ObjectType[Unit, FlaskTestsConfig]       = flaskTestsConfigType
+    @unused implicit val sst: ObjectType[GraphQLContext, FilesSolution] = FilesSolution.queryType
 
     deriveObjectType()
   }

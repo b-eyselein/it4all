@@ -14,7 +14,8 @@ trait ToolQuery extends CollectionQuery {
   private val resolveCollections: Resolver[Tool, Seq[ExerciseCollection]] = context => context.ctx.tableDefs.futureCollectionsForTool(context.value.id)
 
   private val resolveCollection: Resolver[Tool, ExerciseCollection] = context => {
-    val collectionId = context.arg(collIdArgument)
+    implicit val ec  = context.ctx.executionContext
+    val collectionId = context.arg(GraphQLArguments.collIdArgument)
 
     for {
       maybeCollection <- context.ctx.tableDefs.futureCollectionById(context.value.id, collectionId)
@@ -46,12 +47,12 @@ trait ToolQuery extends CollectionQuery {
       // Collection fields
       Field("collectionCount", IntType, resolve = resolveCollectionCount),
       Field("collections", ListType(collectionType), resolve = resolveCollections),
-      Field("collection", collectionType, arguments = collIdArgument :: Nil, resolve = resolveCollection),
+      Field("collection", collectionType, arguments = GraphQLArguments.collIdArgument :: Nil, resolve = resolveCollection),
       // Special fields for exercises
       Field("exerciseCount", IntType, resolve = resolveExerciseCount),
       Field("allExercises", ListType(exerciseType), resolve = resolveAllExercises),
       // Fields for users
-      Field("proficiencies", ListType(userProficiencyType), resolve = resolveUserProficiencies)
+      Field("proficiencies", ListType(UserProficiency.queryType), resolve = resolveUserProficiencies)
     )
   )
 

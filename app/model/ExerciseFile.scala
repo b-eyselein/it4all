@@ -1,6 +1,8 @@
 package model
 
 import better.files._
+import sangria.schema.{ObjectType, fields, Field, StringType, BooleanType, InputObjectType, InputField}
+import model.graphql.GraphQLContext
 
 sealed trait ExerciseFile {
   val name: String
@@ -8,6 +10,26 @@ sealed trait ExerciseFile {
   def content: String
 
   def writeOrCopyToDirectory(directory: File): File
+}
+
+object ExerciseFile {
+  val queryType: ObjectType[GraphQLContext, ExerciseFile] = ObjectType(
+    "ExerciseFile",
+    fields[GraphQLContext, ExerciseFile](
+      Field("name", StringType, resolve = _.value.name),
+      Field("editable", BooleanType, resolve = _.value.editable),
+      Field("content", StringType, resolve = _.value.content)
+    )
+  )
+
+  val inputType: InputObjectType[ContentExerciseFile] = InputObjectType[ContentExerciseFile](
+    "ExerciseFileInput",
+    List(
+      InputField("name", StringType),
+      InputField("editable", BooleanType),
+      InputField("content", StringType)
+    )
+  )
 }
 
 final case class ContentExerciseFile(
@@ -40,19 +62,3 @@ final case class PathExerciseFile(
   def writeOrCopyToDirectory(directory: File): File = file.copyTo(directory / name, overwrite = true)
 
 }
-
-// FilesSolution
-
-sealed trait IFilesSolution {
-
-  val files: Seq[ExerciseFile]
-
-}
-
-final case class FilesSolutionInput(
-  files: Seq[ContentExerciseFile]
-) extends IFilesSolution
-
-final case class FilesSolution(
-  files: Seq[ExerciseFile]
-) extends IFilesSolution

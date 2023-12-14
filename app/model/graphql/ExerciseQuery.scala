@@ -3,10 +3,8 @@ package model.graphql
 import model._
 import model.tools.Helper.UntypedExercise
 import model.tools.ToolList
-import sangria.macros.derive._
 import sangria.schema._
 
-import scala.annotation.unused
 import scala.concurrent.Future
 
 final case class GraphQLExPart(
@@ -16,7 +14,7 @@ final case class GraphQLExPart(
   part: ExPart
 )
 
-trait ExPartQuery extends GraphQLBasics with GraphQLArguments {
+trait ExPartQuery extends GraphQLBasics {
 
   private val resolveSolved: Resolver[GraphQLExPart, Boolean] = context =>
     context.ctx.loggedInUser match {
@@ -44,7 +42,7 @@ trait ExPartQuery extends GraphQLBasics with GraphQLArguments {
 
 }
 
-trait ExerciseQuery extends BasicGraphQLModels with ExPartQuery {
+trait ExerciseQuery extends ExPartQuery {
 
   private val exerciseContentUnionType = UnionType(
     "ExerciseContentUnionType",
@@ -65,18 +63,19 @@ trait ExerciseQuery extends BasicGraphQLModels with ExPartQuery {
 
   protected val exerciseType: ObjectType[GraphQLContext, UntypedExercise] = {
 
-    @unused implicit val x0: ObjectType[Unit, Level] = levelType
-
-    val contentField: Field[GraphQLContext, UntypedExercise] = Field("content", exerciseContentUnionType, resolve = _.value.content)
-
-    deriveObjectType(
-      ReplaceField("content", contentField),
-      AddFields(
-        Field("topicsWithLevels", ListType(topicWithLevelType), resolve = resolveTopicsWithLevels),
+    ObjectType(
+      "Exercise",
+      fields[GraphQLContext, UntypedExercise](
+        Field("exerciseId", IntType, resolve = _.value.exerciseId),
+        Field("collectionId", IntType, resolve = _.value.collectionId),
+        Field("toolId", StringType, resolve = _.value.toolId),
+        Field("text", StringType, resolve = _.value.text),
+        Field("difficulty", Level.queryType, resolve = _.value.difficulty),
+        Field("content", exerciseContentUnionType, resolve = _.value.content),
+        Field("topicsWithLevels", ListType(TopicWithLevel.queryType), resolve = resolveTopicsWithLevels),
         // FIXME: only for exercises with parts!
         Field("parts", ListType(exPartType), resolve = resolveParts)
       )
     )
   }
-
 }

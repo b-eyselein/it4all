@@ -6,6 +6,7 @@ import sangria.macros.derive._
 import sangria.schema._
 
 import scala.annotation.unused
+import model.graphql.GraphQLContext
 
 object ProgrammingGraphQLModels
     extends ToolWithPartsGraphQLModel[FilesSolutionInput, ProgrammingExerciseContent, ProgrammingResult, ProgExPart]
@@ -17,28 +18,28 @@ object ProgrammingGraphQLModels
   )
 
   private val unitTestTestConfigType: ObjectType[Unit, UnitTestTestConfig] = {
-    @unused implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
+    @unused implicit val exFileType: ObjectType[GraphQLContext, ExerciseFile] = ExerciseFile.queryType
 
     deriveObjectType()
   }
 
   private val unitTestPartType: ObjectType[Unit, UnitTestPart] = {
-    @unused implicit val uttct: ObjectType[Unit, UnitTestTestConfig] = unitTestTestConfigType
-    @unused implicit val exFileType: ObjectType[Unit, ExerciseFile]  = exerciseFileType
+    @unused implicit val uttct: ObjectType[Unit, UnitTestTestConfig]          = unitTestTestConfigType
+    @unused implicit val exFileType: ObjectType[GraphQLContext, ExerciseFile] = ExerciseFile.queryType
 
     deriveObjectType()
   }
 
-  private val implementationPartType: ObjectType[Unit, ImplementationPart] = {
-    @unused implicit val exFileType: ObjectType[Unit, ExerciseFile] = exerciseFileType
+  private val implementationPartType: ObjectType[GraphQLContext, ImplementationPart] = {
+    @unused implicit val exFileType: ObjectType[GraphQLContext, ExerciseFile] = ExerciseFile.queryType
 
     deriveObjectType()
   }
 
   override val exerciseContentType: ObjectType[Unit, ProgrammingExerciseContent] = {
-    @unused implicit val upt: ObjectType[Unit, UnitTestPart]       = unitTestPartType
-    @unused implicit val ipt: ObjectType[Unit, ImplementationPart] = implementationPartType
-    @unused implicit val sst: ObjectType[Unit, FilesSolution]      = solutionOutputType
+    @unused implicit val upt: ObjectType[Unit, UnitTestPart]                 = unitTestPartType
+    @unused implicit val ipt: ObjectType[GraphQLContext, ImplementationPart] = implementationPartType
+    @unused implicit val sst: ObjectType[GraphQLContext, FilesSolution]      = FilesSolution.queryType
 
     deriveObjectType()
   }
