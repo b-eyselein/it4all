@@ -1,13 +1,12 @@
 package model.tools.web
 
-import model.graphql.{FilesSolutionToolGraphQLModelBasics, ToolWithPartsGraphQLModel}
+import model.graphql.{FilesSolutionToolGraphQLModelBasics, GraphQLContext, ToolWithPartsGraphQLModel}
 import model.tools.web.sitespec.{HtmlTask, JsAction, JsActionType, SiteSpec}
 import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
 import sangria.macros.derive._
 import sangria.schema._
 
 import scala.annotation.unused
-import model.graphql.GraphQLContext
 
 object WebGraphQLModels
     extends ToolWithPartsGraphQLModel[FilesSolutionInput, WebExerciseContent, WebResult, WebExPart]

@@ -1,0 +1,17 @@
+# /registerForm
+
+mutation Register($username: String!, $password: String!, $passwordRepeat: String!) {
+  register(registerValues: { username: $username, password: $password, passwordRepeat: $passwordRepeat })
+}
+
+# /loginForm
+
+mutation Login($username: String!, $password: String!) {
+  login(credentials: { username: $username, password: $password })
+}
+
+# /lti/:ltiUuid
+
+mutation ClaimLtiWebToken($ltiUuid: String!) {
+  claimLtiWebToken(ltiUuid: $ltiUuid)
+}

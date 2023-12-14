@@ -36,18 +36,13 @@ sealed trait SqlExerciseType extends EnumEntry
 
 object SqlExerciseType extends PlayEnum[SqlExerciseType] {
 
-  override def values: IndexedSeq[SqlExerciseType] = findValues
-
-  case object SELECT extends SqlExerciseType
-
   case object CREATE extends SqlExerciseType
-
+  case object SELECT extends SqlExerciseType
   case object UPDATE extends SqlExerciseType
-
   case object INSERT extends SqlExerciseType
-
   case object DELETE extends SqlExerciseType
 
+  override def values: IndexedSeq[SqlExerciseType] = findValues
 }
 
 final case class SqlExerciseContent(
@@ -56,7 +51,5 @@ final case class SqlExerciseContent(
   sampleSolutions: Seq[String],
   hint: Option[String] = None
 ) extends ExerciseContent {
-
   override protected type S = String
-
 }

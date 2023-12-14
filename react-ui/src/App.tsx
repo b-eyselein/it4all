@@ -1,10 +1,10 @@
 import {Route, Routes} from 'react-router-dom';
 import {Home} from './Home';
-import {LoginForm} from './LoginForm';
-import {RegisterForm} from './RegisterForm';
+import {LoginForm} from './userManagement/LoginForm';
+import {RegisterForm} from './userManagement/RegisterForm';
 import {ToolBase} from './ToolBase';
 import {homeUrl, loginUrl, randomToolsUrlFragment, registerUrl, toolsUrlFragment} from './urls';
-import {ClaimLti} from './ClaimLti';
+import {ClaimLti} from './userManagement/ClaimLti';
 import {NavBar} from './NavBar';
 import {BoolFillOut} from './randomTools/BoolFillOut';
 import {BoolCreate} from './randomTools/BoolCreate';

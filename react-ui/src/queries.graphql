@@ -22,7 +22,6 @@ fragment Topic on Topic {
   title
 }
 
-
 fragment TopicWithLevel on TopicWithLevel {
   topic {
     ...Topic
@@ -322,7 +321,7 @@ fragment UmlClassDiagram on UmlClassDiagram {
   associations {
     ...UmlAssociation
   }
-  implementations{
+  implementations {
     ...UmlImplementation
   }
 }
@@ -331,7 +330,7 @@ fragment UmlClass on UmlClass {
   classType
   name
   attributes {
-    ... UmlAttribute
+    ...UmlAttribute
   }
   methods {
     ...UmlMethod
@@ -401,22 +400,4 @@ fragment XmlExerciseContent on XmlExerciseContent {
 fragment XmlSolution on XmlSolution {
   document
   grammar
-}
-
-# /registerForm
-
-mutation Register($username: String!, $password: String!, $passwordRepeat: String!) {
-  register(registerValues: {username: $username, password: $password, passwordRepeat: $passwordRepeat})
-}
-
-# /loginForm
-
-mutation Login($username: String!, $password: String!) {
-  login(credentials: {username: $username, password: $password})
-}
-
-# /lti/:ltiUuid
-
-mutation ClaimLtiWebToken($ltiUuid: String!) {
-  claimLtiWebToken(ltiUuid: $ltiUuid)
 }

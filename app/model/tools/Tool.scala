@@ -46,7 +46,7 @@ abstract class ToolWithParts(val id: String, val name: String, val isBeta: Boole
 
   // Json & GraphQL Formats
 
-  override val jsonFormats: ToolWithPartsJsonProtocol[SolInputType, ExContType, PartType]
+  override val jsonFormats: ToolJsonProtocol[SolInputType, ExContType]
 
   override val graphQlModels: ToolWithPartsGraphQLModel[SolInputType, ExContType, ResType, PartType]
 

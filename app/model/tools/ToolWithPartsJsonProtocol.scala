@@ -7,30 +7,11 @@ import play.api.libs.json._
 import scala.annotation.unused
 
 trait ToolJsonProtocol[SolutionInputFormat, C <: ExerciseContent] {
-
   val solutionInputFormat: Format[SolutionInputFormat]
-
   val exerciseContentFormat: OFormat[C]
-
 }
 
-trait ToolWithPartsJsonProtocol[SolutionInputFormat, C <: ExerciseContent, P <: ExPart] extends ToolJsonProtocol[SolutionInputFormat, C] {
-
-  protected val keyValueObjectMapFormat: Format[Map[String, String]] = {
-
-    val keyValueObjectFormat: Format[KeyValueObject] = Json.format[KeyValueObject]
-
-    Format(
-      Reads.seq(keyValueObjectFormat).map(_.map { case KeyValueObject(key, value) => (key, value) }.toMap),
-      Writes.seq(keyValueObjectFormat).contramap(_.toSeq.map { case (key, value) => KeyValueObject(key, value) })
-    )
-  }
-
-  val partTypeFormat: Format[P]
-
-}
-
-abstract class StringSolutionToolJsonProtocol[C <: ExerciseContent] extends ToolJsonProtocol[String, C] {
+trait StringSolutionToolJsonProtocol[C <: ExerciseContent] extends ToolJsonProtocol[String, C] {
 
   private val stringFormat = Format(Reads.StringReads, Writes.StringWrites)
 
@@ -38,8 +19,7 @@ abstract class StringSolutionToolJsonProtocol[C <: ExerciseContent] extends Tool
 
 }
 
-trait FilesSolutionToolJsonProtocol {
-  self: ToolJsonProtocol[FilesSolutionInput, _] =>
+trait FilesSolutionToolJsonProtocol[C <: ExerciseContent] extends ToolJsonProtocol[FilesSolutionInput, C] {
 
   protected val pathExerciseFileFormat: OFormat[PathExerciseFile] = {
 

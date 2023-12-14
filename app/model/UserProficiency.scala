@@ -45,7 +45,6 @@ object UserProficiency {
       Field("level", Level.queryType, resolve = _.value.getLevel)
     )
   )
-
 }
 
 trait ProficiencyRepository {

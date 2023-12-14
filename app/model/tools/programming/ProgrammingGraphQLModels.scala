@@ -1,12 +1,11 @@
 package model.tools.programming
 
-import model.graphql.{FilesSolutionToolGraphQLModelBasics, ToolWithPartsGraphQLModel}
+import model.graphql.{FilesSolutionToolGraphQLModelBasics, GraphQLContext, ToolWithPartsGraphQLModel}
 import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
 import sangria.macros.derive._
 import sangria.schema._
 
 import scala.annotation.unused
-import model.graphql.GraphQLContext
 
 object ProgrammingGraphQLModels
     extends ToolWithPartsGraphQLModel[FilesSolutionInput, ProgrammingExerciseContent, ProgrammingResult, ProgExPart]

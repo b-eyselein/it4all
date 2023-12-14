@@ -53,13 +53,7 @@ trait ExerciseQuery extends ExPartQuery {
     context.ctx.tableDefs.futureTopicsForExercise(context.value.toolId, context.value.collectionId, context.value.exerciseId)
 
   private val resolveParts: Resolver[UntypedExercise, Seq[GraphQLExPart]] = context =>
-    Future.successful {
-      context.value.content match {
-        case exContent: ExerciseContentWithParts =>
-          exContent.parts.map { exPart => GraphQLExPart(context.value.toolId, context.value.collectionId, context.value.exerciseId, exPart) }
-        case _ => Seq.empty
-      }
-    }
+    context.value.content.parts.map { exPart => GraphQLExPart(context.value.toolId, context.value.collectionId, context.value.exerciseId, exPart) }
 
   protected val exerciseType: ObjectType[GraphQLContext, UntypedExercise] = {
 
@@ -70,6 +64,7 @@ trait ExerciseQuery extends ExPartQuery {
         Field("collectionId", IntType, resolve = _.value.collectionId),
         Field("toolId", StringType, resolve = _.value.toolId),
         Field("text", StringType, resolve = _.value.text),
+        Field("title", StringType, resolve = _.value.title),
         Field("difficulty", Level.queryType, resolve = _.value.difficulty),
         Field("content", exerciseContentUnionType, resolve = _.value.content),
         Field("topicsWithLevels", ListType(TopicWithLevel.queryType), resolve = resolveTopicsWithLevels),

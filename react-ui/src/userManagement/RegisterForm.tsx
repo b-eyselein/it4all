@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
-import { RegisterValues, useRegisterMutation } from './graphql';
+import { RegisterValues, useRegisterMutation } from '../graphql';
 import { Field, Form, Formik } from 'formik';
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { homeUrl } from './urls';
+import { homeUrl } from '../urls';
 import classNames from 'classnames';
-import { newCurrentUserSelector } from './store';
+import { newCurrentUserSelector } from '../store';
 
 const registerValuesSchema: yup.ObjectSchema<RegisterValues> = yup.object({
   username: yup.string().required(),

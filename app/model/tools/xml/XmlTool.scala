@@ -1,9 +1,7 @@
 package model.tools.xml
 
 import de.uniwue.dtd.model.ElementLine
-import initialData.InitialData
 import initialData.xml.XmlInitialData
-import model.graphql.ToolWithPartsGraphQLModel
 import model.matching.MatchingResult
 import model.tools._
 import model.{Exercise, User}
@@ -21,11 +19,9 @@ object XmlTool extends ToolWithParts("xml", "Xml") {
 
   type ElementLineComparison = MatchingResult[ElementLine, ElementLineMatch]
 
-  // Yaml, Html forms, Json
-
-  override val jsonFormats: ToolWithPartsJsonProtocol[XmlSolution, XmlExerciseContent, XmlExPart] = XmlToolJsonProtocol
-
-  override val graphQlModels: ToolWithPartsGraphQLModel[XmlSolution, XmlExerciseContent, XmlResult, XmlExPart] = XmlGraphQLModels
+  override val jsonFormats   = XmlToolJsonProtocol
+  override val graphQlModels = XmlGraphQLModels
+  override val initialData   = XmlInitialData.initialData
 
   // Correction
 
@@ -46,7 +42,5 @@ object XmlTool extends ToolWithParts("xml", "Xml") {
         )
     }
   }
-
-  override val initialData: InitialData[XmlExerciseContent] = XmlInitialData.initialData
 
 }

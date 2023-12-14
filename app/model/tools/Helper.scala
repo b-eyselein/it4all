@@ -1,11 +1,9 @@
 package model.tools
 
-import model.{Exercise, ExerciseContent, ExerciseContentWithParts}
+import model.{Exercise, ExerciseContent}
 
 object Helper {
 
   type UntypedExercise = Exercise[_ <: ExerciseContent]
-
-  type UntypedExerciseWithParts = Exercise[_ <: ExerciseContentWithParts]
 
 }

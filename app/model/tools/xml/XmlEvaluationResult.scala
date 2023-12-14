@@ -1,7 +1,7 @@
 package model.tools.xml
 
 import de.uniwue.dtd.model._
-import enumeratum.{EnumEntry, PlayEnum}
+import enumeratum.{EnumEntry, Enum}
 import model.matching.{Match, MatchType}
 import model.points._
 import org.xml.sax.SAXParseException
@@ -12,22 +12,18 @@ sealed trait XmlEvaluationResult
 
 sealed abstract class XmlErrorType(val german: String) extends EnumEntry
 
-object XmlErrorType extends PlayEnum[XmlErrorType] {
+object XmlErrorType extends Enum[XmlErrorType] {
+
+  case object FATAL   extends XmlErrorType("Fataler Fehler")
+  case object ERROR   extends XmlErrorType("Fehler")
+  case object WARNING extends XmlErrorType("Warnung")
 
   val values: IndexedSeq[XmlErrorType] = findValues
-
-  case object FATAL extends XmlErrorType("Fataler Fehler")
-
-  case object ERROR extends XmlErrorType("Fehler")
-
-  case object WARNING extends XmlErrorType("Warnung")
 
 }
 
 object XmlError {
-
   def fromSAXParseException(errorType: XmlErrorType, e: SAXParseException): XmlError = XmlError(errorType, e.getMessage, e.getLineNumber)
-
 }
 
 final case class XmlError(

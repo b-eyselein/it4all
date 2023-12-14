@@ -6,7 +6,7 @@ import play.api.libs.json._
 
 import scala.annotation.unused
 
-object FlaskToolJsonProtocol extends ToolJsonProtocol[FilesSolutionInput, FlaskExerciseContent] with FilesSolutionToolJsonProtocol {
+object FlaskToolJsonProtocol extends ToolJsonProtocol[FilesSolutionInput, FlaskExerciseContent] with FilesSolutionToolJsonProtocol[FlaskExerciseContent] {
 
   // Test Config
 

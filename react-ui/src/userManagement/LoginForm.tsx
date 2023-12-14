@@ -1,13 +1,13 @@
 import { Field, Form, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import { LoginMutationVariables, useLoginMutation } from './graphql';
+import { LoginMutationVariables, useLoginMutation } from '../graphql';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import classNames from 'classnames';
 import * as yup from 'yup';
-import { homeUrl } from './urls';
-import { login, newCurrentUserSelector } from './store';
+import { homeUrl } from '../urls';
+import { login, newCurrentUserSelector } from '../store';
 
 const loginValuesSchema: yup.ObjectSchema<LoginMutationVariables> = yup.object({
   username: yup.string().required(),

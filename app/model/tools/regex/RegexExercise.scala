@@ -5,13 +5,12 @@ import model.ExerciseContent
 
 sealed trait RegexCorrectionType extends EnumEntry
 
-case object RegexCorrectionType extends PlayEnum[RegexCorrectionType] {
+object RegexCorrectionType extends PlayEnum[RegexCorrectionType] {
+
+  case object MATCHING   extends RegexCorrectionType
+  case object EXTRACTION extends RegexCorrectionType
 
   override val values: IndexedSeq[RegexCorrectionType] = findValues
-
-  case object MATCHING extends RegexCorrectionType
-
-  case object EXTRACTION extends RegexCorrectionType
 
 }
 

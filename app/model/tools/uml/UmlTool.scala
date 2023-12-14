@@ -1,11 +1,10 @@
 package model.tools.uml
 
-import initialData.InitialData
 import initialData.uml.UmlInitialData
 import model.graphql.ToolWithPartsGraphQLModel
 import model.matching.MatchingResult
-import model.tools._
-import model.tools.uml.matcher._
+import model.tools.ToolWithParts
+import model.tools.uml.matcher.{UmlAssociationMatch, UmlAttributeMatch, UmlClassMatch, UmlImplementationMatch, UmlMethodMatch}
 import model.{Exercise, User}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -25,11 +24,9 @@ object UmlTool extends ToolWithParts("uml", "Uml", true) {
   type AssociationComparison    = MatchingResult[UmlAssociation, UmlAssociationMatch]
   type ImplementationComparison = MatchingResult[UmlImplementation, UmlImplementationMatch]
 
-  // Yaml, Html forms, Json
-
-  override val jsonFormats: ToolWithPartsJsonProtocol[UmlClassDiagram, UmlExerciseContent, UmlExPart] = UmlToolJsonProtocol
-
+  override val jsonFormats                                                                                         = UmlToolJsonProtocol
   override val graphQlModels: ToolWithPartsGraphQLModel[UmlClassDiagram, UmlExerciseContent, UmlResult, UmlExPart] = UmlGraphQLModels
+  override val initialData                                                                                         = UmlInitialData.initialData
 
   // Correction
 
@@ -39,7 +36,5 @@ object UmlTool extends ToolWithParts("uml", "Uml", true) {
     exercise: UmlExercise,
     part: UmlExPart
   )(implicit executionContext: ExecutionContext): Future[UmlResult] = Future.fromTry { UmlCorrector.correct(solution, exercise, part) }
-
-  override val initialData: InitialData[UmlExerciseContent] = UmlInitialData.initialData
 
 }

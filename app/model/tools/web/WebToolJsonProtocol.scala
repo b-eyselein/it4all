@@ -2,14 +2,12 @@ package model.tools.web
 
 import model.tools._
 import model.tools.web.sitespec._
-import model.{ExerciseFile, FilesSolution, FilesSolutionInput}
+import model.{ExerciseFile, FilesSolution, FilesSolutionInput, KeyValueObject}
 import play.api.libs.json.{Format, Json, OFormat}
 
 import scala.annotation.unused
 
-object WebToolJsonProtocol extends ToolWithPartsJsonProtocol[FilesSolutionInput, WebExerciseContent, WebExPart] with FilesSolutionToolJsonProtocol {
-
-  override val partTypeFormat: Format[WebExPart] = WebExPart.jsonFormat
+object WebToolJsonProtocol extends ToolJsonProtocol[FilesSolutionInput, WebExerciseContent] with FilesSolutionToolJsonProtocol[WebExerciseContent] {
 
   private val jsActionFormat: Format[JsAction] = {
     @unused implicit val jatf: Format[JsActionType] = JsActionType.jsonFormat
@@ -18,7 +16,7 @@ object WebToolJsonProtocol extends ToolWithPartsJsonProtocol[FilesSolutionInput,
   }
 
   private val webElementSpecFormat: Format[WebElementSpec] = {
-    @unused implicit val af: Format[Map[String, String]] = keyValueObjectMapFormat
+    @unused implicit val af: Format[Map[String, String]] = KeyValueObject.mapFormat
 
     Json.format
   }

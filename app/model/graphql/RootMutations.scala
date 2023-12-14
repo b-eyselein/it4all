@@ -2,15 +2,12 @@ package model.graphql
 
 import com.github.t3hnar.bcrypt._
 import model._
-import model.tools.flask.FlaskTool
 import model.tools.{ToolList, ToolWithParts, ToolWithoutParts}
-import play.api.Logger
 import play.api.libs.json._
 import sangria.macros.derive._
 import sangria.marshalling.playJson._
 import sangria.schema._
 
-import scala.annotation.unused
 import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -19,8 +16,6 @@ final case class RegisterValues(username: String, password: String, passwordRepe
 final case class UserCredentials(username: String, password: String)
 
 trait RootMutations extends ExerciseQuery with JwtHelpers {
-
-  private val logger = Logger(classOf[RootMutations])
 
   // Registration
 
@@ -92,11 +87,7 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
   // FIXME: tools without parts!
   private val exerciseCorrectionFields: Seq[Field[GraphQLContext, Unit]] = ToolList.tools.map[Field[GraphQLContext, Unit]] {
     case toolWithParts: ToolWithParts =>
-      val partTypeInputArg: Argument[toolWithParts.PartType] = {
-        @unused implicit val partFormat: Format[toolWithParts.PartType] = toolWithParts.jsonFormats.partTypeFormat
-
-        Argument("part", toolWithParts.graphQlModels.partEnumType)
-      }
+      val partTypeInputArg: Argument[toolWithParts.PartType] = Argument("part", toolWithParts.graphQlModels.partEnumType)
 
       val solTypeInputArg: Argument[toolWithParts.SolInputType] = {
         implicit val solTypeFormat: Format[toolWithParts.SolInputType] = toolWithParts.jsonFormats.solutionInputFormat
@@ -119,10 +110,6 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
 
         result <- toolWithParts.correctAbstract(user, solution, ex, part)
 
-        _ =
-          if (ex.toolId == FlaskTool.id) { logger.warn(result.toString) }
-          else { () }
-
         solutionId <- tableDefs.futureInsertSolutionWithPart(
           ex.toolId,
           ex.collectionId,
@@ -134,10 +121,6 @@ trait RootMutations extends ExerciseQuery with JwtHelpers {
           result.points,
           result.maxPoints
         )
-
-        _ =
-          if (ex.toolId == FlaskTool.id) { logger.warn(result.toString) }
-          else { () }
       } yield CorrectionResult(result, solutionId)
 
       val toolExerciseMutationsType = ObjectType(

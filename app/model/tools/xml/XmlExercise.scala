@@ -1,17 +1,16 @@
 package model.tools.xml
 
-import enumeratum.PlayEnum
-import model.{ExPart, ExerciseContent, ExerciseContentWithParts}
+import enumeratum.Enum
+import model.{ExPart, ExerciseContent}
 
 sealed abstract class XmlExPart(val partName: String, val id: String) extends ExPart
 
-object XmlExPart extends PlayEnum[XmlExPart] {
+object XmlExPart extends Enum[XmlExPart] {
+
+  case object GrammarCreationXmlPart  extends XmlExPart(partName = "Grammatik", id = "grammar")
+  case object DocumentCreationXmlPart extends XmlExPart(partName = "Dokument", id = "document")
 
   val values: IndexedSeq[XmlExPart] = findValues
-
-  case object GrammarCreationXmlPart extends XmlExPart(partName = "Grammatik", id = "grammar")
-
-  case object DocumentCreationXmlPart extends XmlExPart(partName = "Dokument", id = "document")
 
 }
 
@@ -21,8 +20,7 @@ final case class XmlExerciseContent(
   grammarDescription: String,
   rootNode: String,
   sampleSolutions: Seq[XmlSolution]
-) extends ExerciseContent
-    with ExerciseContentWithParts {
+) extends ExerciseContent {
 
   override protected type S = XmlSolution
 

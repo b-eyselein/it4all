@@ -1,18 +1,17 @@
 package model.tools.web
 
-import enumeratum.PlayEnum
-import model._
+import enumeratum.Enum
 import model.tools.web.sitespec.SiteSpec
+import model.{ExPart, ExerciseFile, FileExerciseContent, FilesSolution}
 
 sealed abstract class WebExPart(val partName: String, val id: String) extends ExPart
 
-object WebExPart extends PlayEnum[WebExPart] {
-
-  val values: IndexedSeq[WebExPart] = findValues
+object WebExPart extends Enum[WebExPart] {
 
   case object HtmlPart extends WebExPart(partName = "Html-Teil", id = "html")
+  case object JsPart   extends WebExPart(partName = "Js-Teil", id = "js")
 
-  case object JsPart extends WebExPart(partName = "Js-Teil", id = "js")
+  val values: IndexedSeq[WebExPart] = findValues
 
 }
 
@@ -22,8 +21,7 @@ final case class WebExerciseContent(
   sampleSolutions: Seq[FilesSolution],
   htmlText: Option[String] = None,
   jsText: Option[String] = None
-) extends FileExerciseContent
-    with ExerciseContentWithParts {
+) extends FileExerciseContent {
 
   override def parts: Seq[ExPart] = {
     val htmlPart = if (siteSpec.htmlTasks.nonEmpty) Some(WebExPart.HtmlPart) else None

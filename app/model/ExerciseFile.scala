@@ -1,8 +1,8 @@
 package model
 
 import better.files._
-import sangria.schema.{ObjectType, fields, Field, StringType, BooleanType, InputObjectType, InputField}
 import model.graphql.GraphQLContext
+import sangria.schema._
 
 sealed trait ExerciseFile {
   val name: String

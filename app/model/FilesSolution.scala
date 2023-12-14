@@ -1,7 +1,7 @@
 package model
 
-import sangria.schema.{ObjectType, fields, ListType, Field}
 import model.graphql.GraphQLContext
+import sangria.schema.{Field, ListType, ObjectType, fields}
 
 sealed trait IFilesSolution {
   def files: Seq[ExerciseFile]

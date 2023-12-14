@@ -1,6 +1,6 @@
 package model
 
-import enumeratum.{EnumEntry, PlayEnum}
+import enumeratum.{EnumEntry, Enum}
 import model.graphql.GraphQLContext
 import sangria.schema.{Field, IntType, ObjectType, StringType, fields}
 
@@ -10,7 +10,7 @@ sealed abstract class Level(val level: Int) extends EnumEntry {
 
 }
 
-object Level extends PlayEnum[Level] {
+object Level extends Enum[Level] {
 
   case object Beginner     extends Level(1)
   case object Intermediate extends Level(2)

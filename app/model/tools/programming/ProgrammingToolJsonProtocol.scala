@@ -7,10 +7,8 @@ import play.api.libs.json._
 import scala.annotation.unused
 
 object ProgrammingToolJsonProtocol
-    extends ToolWithPartsJsonProtocol[FilesSolutionInput, ProgrammingExerciseContent, ProgExPart]
-    with FilesSolutionToolJsonProtocol {
-
-  override val partTypeFormat: Format[ProgExPart] = ProgExPart.jsonFormat
+    extends ToolJsonProtocol[FilesSolutionInput, ProgrammingExerciseContent]
+    with FilesSolutionToolJsonProtocol[ProgrammingExerciseContent] {
 
   // Exercise
 

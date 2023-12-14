@@ -23,11 +23,10 @@ sealed trait JsActionType extends EnumEntry
 
 object JsActionType extends PlayEnum[JsActionType] {
 
-  override val values: IndexedSeq[JsActionType] = findValues
-
-  case object Click extends JsActionType
-
+  case object Click   extends JsActionType
   case object FillOut extends JsActionType
+
+  override val values: IndexedSeq[JsActionType] = findValues
 
 }
 

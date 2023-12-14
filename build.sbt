@@ -2,10 +2,8 @@ val commonSettings = Seq(
   scalaVersion := "2.13.12",
   organization := "de.uniwue.is",
   libraryDependencies ++= Seq(
-    "org.scalatestplus.play" %% "scalatestplus-play"   % "7.0.0" % Test, // Apache 2.0
-    "com.github.pathikrit"   %% "better-files"         % "3.9.2", // MIT
-    "com.beachape"           %% "enumeratum-play"      % "1.7.3", // MIT
-    "com.beachape"           %% "enumeratum-play-json" % "1.7.3" // MIT
+    "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.0" % Test, // Apache 2.0
+    "com.github.pathikrit"   %% "better-files"       % "3.9.2" // MIT
   ),
   scalacOptions ++= Seq("-Wunused"),
   semanticdbEnabled := true,
@@ -40,6 +38,10 @@ val seleniumVersion  = "4.13.0"
 
 libraryDependencies ++= Seq(
   guice,
+
+  // better enums
+  "com.beachape" %% "enumeratum-play"      % "1.7.3", // MIT
+  "com.beachape" %% "enumeratum-play-json" % "1.7.3", // MIT
 
   // JWT
   "com.github.jwt-scala" %% "jwt-play-json" % "9.4.5", // Apache 2.0
