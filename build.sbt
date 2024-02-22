@@ -1,11 +1,11 @@
 val commonSettings = Seq(
-  scalaVersion := "2.13.12",
+  scalaVersion := "3.3.1",
   organization := "de.uniwue.is",
   libraryDependencies ++= Seq(
     "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.0" % Test, // Apache 2.0
     "com.github.pathikrit"   %% "better-files"       % "3.9.2" // MIT
   ),
-  scalacOptions ++= Seq("-Wunused"),
+  // scalacOptions ++= Seq("-Wunused"),
   semanticdbEnabled := true,
   semanticdbVersion := scalafixSemanticdb.revision
 )
@@ -15,7 +15,7 @@ lazy val dtd_parser = (project in file("./dtd_parser"))
   .settings(
     name                                            := "dtd_parser",
     version                                         := "0.1.0-SNAPSHOT",
-    libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
+    libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "2.3.0"
   )
 
 lazy val root = (project in file("."))
@@ -47,7 +47,7 @@ libraryDependencies ++= Seq(
   "com.github.jwt-scala" %% "jwt-play-json" % "9.4.5", // Apache 2.0
 
   // BCrypt
-  "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0", // Apache 2.0
+  ("com.github.t3hnar" %% "scala-bcrypt" % "4.3.0").cross(CrossVersion.for3Use2_13), // Apache 2.0
 
   // Docker
   "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0

@@ -4,7 +4,7 @@ import enumeratum.{Enum, EnumEntry}
 
 sealed abstract class BinaryClassificationResultType(val correct: Boolean) extends EnumEntry
 
-object BinaryClassificationResultTypes extends Enum[BinaryClassificationResultType] {
+object BinaryClassificationResultType extends Enum[BinaryClassificationResultType] {
 
   case object TruePositive  extends BinaryClassificationResultType(correct = true)
   case object FalsePositive extends BinaryClassificationResultType(correct = false)

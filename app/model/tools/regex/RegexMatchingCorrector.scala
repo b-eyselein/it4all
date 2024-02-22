@@ -32,11 +32,11 @@ object RegexMatchingCorrector {
     val matchResults = exerciseContent.matchTestData.map { matchTestData =>
       val classificationResultType: BinaryClassificationResultType = matchTestData.data match {
         case userRegex(_*) =>
-          if (matchTestData.isIncluded) BinaryClassificationResultTypes.TruePositive
-          else BinaryClassificationResultTypes.FalsePositive
+          if (matchTestData.isIncluded) BinaryClassificationResultType.TruePositive
+          else BinaryClassificationResultType.FalsePositive
         case _ =>
-          if (matchTestData.isIncluded) BinaryClassificationResultTypes.FalseNegative
-          else BinaryClassificationResultTypes.TrueNegative
+          if (matchTestData.isIncluded) BinaryClassificationResultType.FalseNegative
+          else BinaryClassificationResultType.TrueNegative
       }
 
       RegexMatchingSingleResult(matchTestData.data, matchTestData.isIncluded, classificationResultType)

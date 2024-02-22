@@ -18,8 +18,6 @@ class AttributeSpecificationTest extends AnyFlatSpec {
 
     assert(spec.toString == "\"" + DefaultValue + "\"")
     assert(spec.default == DefaultValue)
-
-    assert(DefaultValueSpecification.unapply(spec).contains(DefaultValue))
   }
 
   "A #FIXED value attribute specification" should "have a value and a toString representation of" in {
@@ -27,8 +25,6 @@ class AttributeSpecificationTest extends AnyFlatSpec {
 
     assert(spec.toString == "#FIXED \"" + FixedValue + "\"")
     assert(spec.value == FixedValue)
-
-    assert(FixedValueSpecification.unapply(spec).contains(FixedValue))
   }
 
 }

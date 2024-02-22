@@ -18,8 +18,6 @@ class AttributeListTest extends AnyFlatSpec {
       assert(attlist.attributeDefinitions.head == attrDef)
 
       assert(attlist.asString == s"<!ATTLIST $elementName ${attrDef.asString}>")
-
-      assert(AttributeList.unapply(attlist).contains((elementName, Seq(attrDef))))
     }
 
     val (attrName1, attrName2) = ("attribute1", "attribute2")
@@ -44,8 +42,6 @@ class AttributeListTest extends AnyFlatSpec {
              |    ${attrDef2.asString}
              |>""".stripMargin
       )
-
-      assert(AttributeList.unapply(attList).contains((elementName, attrDefs)))
     }
   }
 }
@@ -64,8 +60,6 @@ class AttributeDefinitionTest extends AnyFlatSpec {
       assert(definition.attributeSpecification == attrSpec)
 
       assert(definition.asString == attrName + " " + attrType.toString + " " + attrSpec.toString)
-
-      assert(AttributeDefinition.unapply(definition).contains((attrName, attrType, attrSpec)))
     }
   }
 }

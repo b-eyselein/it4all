@@ -18,6 +18,9 @@ import scala.util.{Failure, Success}
 
 final case class BasicLtiLaunchRequest(lms: String, username: String)
 
+object BasicLtiLaunchRequest:
+  def unapply(lr: BasicLtiLaunchRequest) : Some[(String, String)]= Some(lr.lms,lr.username)
+
 final case class GraphQLRequest(
   query: String,
   operationName: Option[String],

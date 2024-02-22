@@ -56,7 +56,7 @@ object RegexGraphQLModels extends ToolGraphQLModel[String, RegexExerciseContent,
       Field("points", FloatType, resolve = _.value.points.asDouble),
       Field("maxPoints", FloatType, resolve = _.value.maxPoints.asDouble)
     )
-  ).withPossibleTypes(() => List(regexMatchingResultType, regexExtractionResultType))
+  ) // .withPossibleTypes(() => List(regexMatchingResultType, regexExtractionResultType))
 
   private val regexMatchingResultType: ObjectType[Unit, RegexMatchingResult] = {
     @unused implicit val rmert: ObjectType[Unit, RegexMatchingSingleResult] = regexMatchingEvaluationResultType

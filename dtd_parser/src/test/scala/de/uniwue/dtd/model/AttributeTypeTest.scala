@@ -22,8 +22,6 @@ class AttributeTypeTest extends AnyFlatSpec {
 
     assert(attrType.values == enumValues)
     assert(attrType.toString == "(" + enumValues.mkString(" | ") + ")")
-
-    assert(EnumAttributeType.unapply(attrType).contains(enumValues))
   }
 
 }
