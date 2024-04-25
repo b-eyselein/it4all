@@ -1,17 +1,18 @@
 package model.core
 
 import better.files.File
-import com.spotify.docker.client.DockerClient.LogsParam
-import com.spotify.docker.client.messages.HostConfig.Bind
-import com.spotify.docker.client.messages.{ContainerConfig, ContainerCreation, ContainerExit, HostConfig}
-import com.spotify.docker.client.{DefaultDockerClient, DockerClient}
+import org.mandas.docker.client.DockerClient.LogsParam
+import org.mandas.docker.client.messages.{ContainerConfig, ContainerCreation, ContainerExit, HostConfig}
+import org.mandas.docker.client.{DefaultDockerClient, DockerClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters._
+import org.mandas.docker.client.builder.resteasy.ResteasyDockerClientBuilder
 
 final case class DockerBind(fromPath: File, toPath: File, isReadOnly: Boolean = false) {
 
-  def toBind: Bind = Bind
+  def toBind: HostConfig.Bind = HostConfig.Bind
+    .builder()
     .from(fromPath.path.toAbsolutePath.toString)
     .to(toPath.path.toAbsolutePath.toString)
     .readOnly(isReadOnly)
@@ -29,7 +30,7 @@ final case class RunContainerResult(statusCode: Int, logs: String)
 
 object DockerConnector {
 
-  private val dockerClient: DockerClient = DefaultDockerClient.fromEnv().build()
+  private val dockerClient: DockerClient = new ResteasyDockerClientBuilder().fromEnv().build()
 
   def imageExists(scalaDockerImage: ScalaDockerImage): Boolean = imageExists(scalaDockerImage.name)
 

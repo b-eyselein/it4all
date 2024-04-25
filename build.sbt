@@ -36,11 +36,12 @@ Universal / mappings += (baseDirectory.value / "docker-compose_prod.yaml") -> "d
 val playSlickVersion = "6.0.0-M2"
 val seleniumVersion  = "4.13.0"
 
+dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.14.2"
+
 libraryDependencies ++= Seq(
   guice,
 
   // better enums
-  // "com.beachape" %% "enumeratum-play"      % "1.7.3", // MIT
   "com.beachape" %% "enumeratum-play-json" % "1.7.3", // MIT
 
   // JWT
@@ -50,7 +51,10 @@ libraryDependencies ++= Seq(
   "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0", // Apache 2.0
 
   // Docker
-  "com.spotify" % "docker-client" % "8.16.0", // Apache 2.0
+  "org.mandas"                       % "docker-client"                    % "7.0.8",       // Apache 2.0
+  "org.jboss.resteasy"               % "resteasy-client"                  % "6.1.0.Final", // Apache 2.0
+  "org.jboss.resteasy"               % "resteasy-core"                    % "6.1.0.Final", // Apache 2.0
+  "com.fasterxml.jackson.jakarta.rs" % "jackson-jakarta-rs-json-provider" % "2.13.1",      // Apache 2.0
 
   // GraphQL
   "org.sangria-graphql" %% "sangria"           % "4.0.2", // Apache 2.0
