@@ -10,7 +10,7 @@ it4all is a web correction framework for
 - Nary Numbers, Boolean Algebra
 - Regular Expressions
 
-[![pipeline status](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/badges/master/pipeline.svg)](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/-/commits/master)
+[![pipeline status](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/badges/main/pipeline.svg)](https://gitlab2.informatik.uni-wuerzburg.de/bje40dc/it4all/-/commits/main)
 
 ## Development
 
@@ -45,6 +45,13 @@ docker-compose up -d
 
 # Start the server with
 sbt run
+
+# install frontend dependencies
+cd react-ui
+npm i
+
+# start frontent
+npm run start
 ```
 
 ### Following starts
