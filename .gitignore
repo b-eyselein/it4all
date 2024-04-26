@@ -17,4 +17,8 @@ data/*
 
 .idea/
 
+.metals/
 .bsp/
+metals.sbt
+
+**/.bloop
