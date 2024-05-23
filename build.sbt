@@ -1,5 +1,5 @@
 val commonSettings = Seq(
-  scalaVersion := "2.13.13",
+  scalaVersion := "2.13.14",
   organization := "de.uniwue.is",
   libraryDependencies ++= Seq(
     "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.0" % Test, // Apache 2.0
