@@ -4,7 +4,7 @@ val slickPgVersion    = "0.21.1"
 val seleniumVersion   = "4.8.0"
 
 val commonSettings = Seq(
-  scalaVersion := "2.13.10",
+  scalaVersion := "2.13.14",
   organization := "de.uniwue.is",
   libraryDependencies ++= Seq(
     "org.scalatestplus.play" %% "scalatestplus-play"   % "5.1.0" % Test, // Apache 2.0
